@@ -9,7 +9,9 @@ This process may seem complex, but it is a **one-time** setup.
 Install Prerequisite Software
 -----------------------------
 ### VirtualBox & Vagrant
-1. Install [VirtualBox][virtual-box] and [Vagrant][vagrant] for Mac (accept the default installer options)
+1. Install [VirtualBox][virtual-box] and [Vagrant][vagrant] for Mac (accept the default installer options).
+
+    *[Info]* [VirtualBox][virtual-box] is free virtualization software that allows you to run a computer inside your computer. [Vagrant][vagrant] is a command line tool (Terminal) for managing and interacting with virtual machines.
 
 ### Xcode
 1. Install [Xcode][Xcode] from the AppStore (free)
