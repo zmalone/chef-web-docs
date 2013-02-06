@@ -38,7 +38,11 @@ Chef runs best on Ruby 1.9 or higher. There are multiple ways to install Ruby on
 
 1. Install `git`, `rbenv` and `ruby` (copy-paste into Terminal):
 
-        brew install git && brew update && brew install rbenv ruby-build && echo 'eval "$(rbenv init -)"' >> ~/.bash_profile && source ~/.bash_profile
+        brew install git
+        brew update
+        brew install rbenv ruby-build
+        echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
+        source ~/.bash_profile
 
         rbenv install 1.9.3-p374
         rbenv shell   1.9.3-p374
