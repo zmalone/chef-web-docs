@@ -2,19 +2,28 @@ Part 2 - Working with Chef Repo
 ===============================
 Prerequisite Steps
 ------------------
-1. Sign up for a free [Chef Hosted account][chef-hosted] and download the `chef-repo` starter pack.
+1. Sign up for a free [Chef Hosted account][chef-hosted] and download your `knife.rb` and `.pem` files to your `~/Downloads` folder. You should have these 3 files:
 
-    **[Note]** Currently this does not happen. Use these alternative instructions and skip over #2:
+        [your_organization_name]-validator.pem
+        [your_username].pem
+        knife.rb
 
-            mkdir p ~/Development/ && git clone git@github.com ~/Development/chef-repo
+    For example, if your username was "seth" and you organization was "fluffy":
 
-    If you've already signed up for Chef Hosted, make sure you have your starter pack before continuing. If you've misplaced it, you can download another one from your [Management Console][management-console]. (Make sure to check your Downloads folder first)
+        fluffy-validator.pem
+        seth.pem
+        knife.rb
 
-1. Move the `chef-repo` folder to a more permanent location. Make a new folder in your home directory called "Development" and drag the entire `chef-repo` folder inside "Development". Your folder structure should look like this:
+1. Clone the `chef-repo` into the `Development` folder from github. In Terminal:
 
-        \_ $HOME
-          \_ Development
-            \_ chef-repo
+        mkdir ~/Development
+        git clone git://github.com/opscode/chef-repo ~/Development/chef-repo
+
+1. Create the `.chef` directory and move your private files there:
+
+        mkdir ~/Development/chef-repo/.chef
+        mv ~/Downloads/*.pem ~/Development/chef-repo/.chef/
+        mv ~/Downloads/knife.rb ~/Development/chef-repo/.chef/
 
 1. Open up Terminal (see Part 1 if you forget) and "Change Directory" (`cd`) into our `chef-repo`:
 
@@ -22,9 +31,11 @@ Prerequisite Steps
 
     **[Note]** All the commands in the rest of this Quick Start guide should be run from this directory.
 
-1. Initialize this repository under source version control with git. In Terminal:
+1. Verify your credentials are correct with `knife` (the CLI tool for Chef). In Terminal:
 
-        git init .
+        knife client list
+
+    _[TODO]_ What output do we see here?
 
 Working with chef-repo
 ----------------------
