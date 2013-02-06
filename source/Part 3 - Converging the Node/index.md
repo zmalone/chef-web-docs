@@ -10,7 +10,9 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
 
 1. Create, initialize, and start the Opscode base box (one time). In Terminal:
 
-        vagrant init opscode-ubuntu-1204 https://opscode-vm.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_chef-10.18.2.box && vagrant up
+        vagrant init opscode-ubuntu-1204 \
+          https://opscode-vm.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_chef-10.18.2.box
+        vagrant up
 
     **[Note]** This will create a `Vagrantfile` in the root of your repository.
 
