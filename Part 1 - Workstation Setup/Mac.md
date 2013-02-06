@@ -47,6 +47,8 @@ Chef runs best on Ruby 1.9 or higher. There are multiple ways to install Ruby on
         gem update --sytem
         gem install bundler --no-ri --no-rdoc
 
+    *[Note]* Git is an SCM version control tool we will use later.
+
 
 Rock On!
 --------
