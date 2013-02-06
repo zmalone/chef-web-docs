@@ -20,7 +20,11 @@ Prerequisite Steps
 
         cd ~/Development/chef-repo
 
-    **All the commands in the rest of this Quick Start guide should be run from this directory.**
+    **[Note]** All the commands in the rest of this Quick Start guide should be run from this directory.
+
+1. Initialize this repository under source version control with git. In Terminal:
+
+        git init .
 
 Working with chef-repo
 ----------------------
@@ -32,7 +36,14 @@ Working with chef-repo
 
     You'll notice a lot of `README.md` files. These are for your reference - feel free to read them now, but that's not required to continue with this Quick Start guide.
 
-1. Open up the `Gemfile` in your editor.
+1. Open up the `Gemfile` in your editor and add the following content:
+
+    ```ruby
+    source :rubygems
+
+    gem 'chef', '~> 11.2'
+    gem 'berkshelf', '~> 1.0'
+    ```
 
 1. Run the `bundle` command to install the dependencies listed in the `Gemfile`:
 
@@ -43,6 +54,11 @@ Working with chef-repo
 1. Prepare our `chef-repo` for use with Berkshelf:
 
         bundle exec berks init
+
+1. Save these changes to git:
+
+        git add .
+        git commit -m "Created initial bundle with Chef and Berkshelf"
 
 1. Add two community cookbooks to your `Berksfile` (created by the last command in your `chef-repo`):
 
@@ -58,6 +74,11 @@ Working with chef-repo
         bundle exec berks install
 
     By default, the `chef-repo` includes the [apache2 cookbook][apache2-cookbook] in the Berksfile.
+
+1. Save these changes to git:
+
+        git add .
+        git commit -m "Added apache2 and networking_basic to Berkshelf"
 
 Create a Simple Cookbook
 ------------------------
@@ -145,6 +166,11 @@ We leveraged the power of [Berkshelf][berkshelf] and the [Community Site][apache
 
     The comments are pretty self-explanatory, and these aliases are created for all users.
 
+1. Save these changes to git:
+
+        git add .
+        git commit -m "Created aliases recipe"
+
 Upload the Cookbooks
 --------------------
 In order for our nodes to download these cookbooks, we need to upload them to the Hosted Chef Server.
@@ -159,10 +185,15 @@ In order for our nodes to download these cookbooks, we need to upload them to th
 
 Recap
 -----
-We now have two recipes:
+We now have 3 recipes:
 
   1. `recipe[apache2]` - via Berkshelf
-  2. `recipe[aliases]` - created ourselves
+  1. `recipe[networking_basic]` - via Berkshelf
+  1. `recipe[aliases]` - created ourselves
+
+If you look at the git log, you can see all the changes we've made thus far:
+
+    git log
 
 We can add these to our `run_list` in [Part 3 of this Quick Start guide][part-3]!
 

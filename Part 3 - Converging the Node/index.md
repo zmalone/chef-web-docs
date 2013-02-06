@@ -12,11 +12,18 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
 
         vagrant init opscode-ubuntu-1204 https://opscode-vm.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_chef-10.18.2.box && vagrant up
 
-    **[Note]** In the future, can start the machine with:
+    **[Note]** This will create a `Vagrantfile` in the root of your repository.
+
+    *[Info]* In the future, can start the machine with:
 
         vagrant up
 
-1. Bootstrap the machine with `knife`. Use the ip address you got before. In Terminal:
+1. Save these changes to git:
+
+        git add .
+        git commit -m "Added vagrant"
+
+1. Bootstrap the virtual machine with `knife`. In Terminal:
 
         knife bootstrap localhost \
           --ssh-user vagrant \
@@ -24,6 +31,8 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
           --ssh-port 2222 \
           --run-list "recipe[aliases],recipe[apache2],recipe[networking_basic]" \
           --sudo
+
+    *[Info]* We are setting the `run_list` to include the three recipes we created in Part 2. There are multiple ways to configure a `run_list` - See the [Getting Started Guide][not-done-yet] for more information
 
 1. After a few seconds and some output, you should see something like this:
 
