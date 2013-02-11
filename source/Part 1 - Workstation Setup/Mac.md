@@ -33,6 +33,8 @@ Because OSX does not ship with a package manager, you will need to install [home
 
         ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
 
+    **[Warning]** If you've install MacPorts, you'll need to [uninstall MacPorts][uninstall-macports] first
+
 ### Ruby
 Chef runs best on Ruby 1.9 or higher. There are multiple ways to install Ruby on OSX, but for simplicity this guide will use [rbenv][rbenv].
 
@@ -66,3 +68,4 @@ That's it! Your system is now prepared for Chef. [Continue onto Part 2][part-2].
 [homebrew]: http://mxcl.github.com/homebrew/ "Homebrew"
 [rbenv]: https://github.com/sstephenson/rbenv "rbenv"
 [part-2]: ../Part+2+-+Working+with+Chef+Repo "Part 2 - Working with Chef Repo"
+[mac-ports]: http://guide.macports.org/chunked/installing.macports.uninstalling.html "Uninstall MacPorts"

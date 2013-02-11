@@ -1,9 +1,6 @@
 Part 3 - Converging the Node
 ============================
 
-### TODO
-- Need a base box without Chef! The bootstrap fails because Chef is already installed. We want to mock a "real" bootstrap as best as possible.
-
 Create the Base Box
 -------------------
 We need a "machine" (or "node" in the Chef language) to provision. We are going to create a Virtual Machine with Vagrant + VirtualBox + Opscode VMs.
