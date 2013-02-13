@@ -19,7 +19,7 @@ Prerequisite Steps
         mkdir ~/Development
         git clone git://github.com/opscode/chef-repo ~/Development/chef-repo
 
-1. Create the `.chef` directory and move your private files there:
+1. Create the `.chef` directory and move your private files there. In Terminal:
 
         mkdir ~/Development/chef-repo/.chef
         mv ~/Downloads/*.pem ~/Development/chef-repo/.chef/
@@ -31,11 +31,16 @@ Prerequisite Steps
 
     **[Note]** All the commands in the rest of this Quick Start guide should be run from this directory.
 
+1. Install chef:
+
+        gem install chef
+
 1. Verify your credentials are correct with `knife` (the CLI tool for Chef). In Terminal:
 
         knife client list
 
     _[TODO]_ What output do we see here?
+
 
 Working with chef-repo
 ----------------------
@@ -43,74 +48,30 @@ Working with chef-repo
 
     ![Chef Repo Sublime Text 2](../assets/chef-repo-sidebar.png)
 
-    The `.chef` directory is very important. These are **your** credentials for accessing the Chef Server. Do not share them with anyone else. Treat them like a password.
+    *[Note]* The files in your `.chef` directory is very important. These are **your** credentials for accessing the Chef Server. Do not share them with anyone else. Treat them like a password.
 
-    You'll notice a lot of `README.md` files. These are for your reference - feel free to read them now, but that's not required to continue with this Quick Start guide.
+    *[Info]* You'll notice a lot of `README.md` files. These are for your reference - feel free to read them now, but that's not required to continue with this Quick Start guide.
 
-1. Open up the `Gemfile` in your editor and add the following content:
+1. We are going to setup a basic apache installation first. Download the `apache2` and `networking_basic` community cookbooks using `knife`. In Terminal:
 
-    ```ruby
-    source :rubygems
+        knife cookbook site install apache2
+        knife cookbook site install networking_basic
 
-    gem 'chef', '~> 11.2'
-    gem 'berkshelf', '~> 1.0'
-    ```
+    *[Info]* `knife` is the command-line tool for Chef on your workstation.
 
-1. Run the `bundle` command to install the dependencies listed in the `Gemfile`:
-
-        bundle install
-
-    This will install Chef and [Berskhelf][berkshelf] (a cookbook-dependency management tool).
-
-1. Prepare our `chef-repo` for use with Berkshelf:
-
-        bundle exec berks init
-
-1. Save these changes to git:
-
-        git add .
-        git commit -m "Created initial bundle with Chef and Berkshelf"
-
-1. Add two community cookbooks to your `Berksfile` (created by the last command in your `chef-repo`):
-
-    ```ruby
-    site :opscode
-
-    cookbook 'apache2', '~> 1.4'
-    cookbook 'networking_basic', '~> 0.0.5'
-    ```
-
-1. Run the `berks` command to install the cookbooks in our Berksfile:
-
-        bundle exec berks install
-
-    By default, the `chef-repo` includes the [apache2 cookbook][apache2-cookbook] in the Berksfile.
-
-1. Save these changes to git:
-
-        git add .
-        git commit -m "Added apache2 and networking_basic to Berkshelf"
+1. Look in your cookbooks directory and you should now see two folders, apache2 and networking_basic.
 
 Create a Simple Cookbook
 ------------------------
-We leveraged the power of [Berkshelf][berkshelf] and the [Community Site][apache2-cookbook], but let's also write our own cookbook before bootstrapping our first node. We will be adding shell aliases and global environment variables.
+We leveraged the power of the [Community Site][apache2-cookbook] to install 2 cookbooks, but let's also write our own cookbook before bootstrapping our first node. We will be adding shell aliases and global environment variables.
 
-1. Add the `magic_shell` cookbook as a dependency in the `Berksfile`:
+1. Install the `magic_shell` cookbook using `knife`:
 
-    ```ruby
-    # ... existing cookbooks from earlier
-    cookbook 'magic_shell', '~> 0.2.0'
-    ```
+        knife cookbook site install magic_shell
 
-1. Run the `berks` command to install:
+1. Create a new cookbook called "aliases":
 
-        bundle exec berks install
-
-    This will install the `magic_shell` cookbook on your local workstation.
-
-1. Create a new cookbook. We'll call it "aliases":
-
-        bundle exec knife cookbook create aliases
+        knife cookbook create aliases
 
     You should see output like this:
 
@@ -139,9 +100,9 @@ We leveraged the power of [Berkshelf][berkshelf] and the [Community Site][apache
     depends 'magic_shell', '~> 0.2.0'
     ```
 
-    If you're not familiar with Chef, this allows us to leverage the `magic_shell` cookbook inside our `aliases` cookbook.
+    If you're not familiar with Chef, this allows us to leverage the `magic_shell` LWRP inside our `aliases` cookbook.
 
-    It's also a best practice to fill in the `maintainer` and `maintainer_email` with your information, but that's unnecessary for this Quick Start guide.
+    *[Info]* It's best practice to fill in the `maintainer` and `maintainer_email` with your information, but that's unnecessary for this Quick Start guide.
 
 1. Open up the default recipe in your Text Editor (it's in `cookbooks/aliases/recipes/default.rb`). It should look like this:
 
@@ -156,7 +117,7 @@ We leveraged the power of [Berkshelf][berkshelf] and the [Community Site][apache
     #
     ```
 
-1. Let's create some magic shell aliases - you can use these or make up your own:
+1. Let's create some shell aliases - feel free to use these or make up your own:
 
     ```ruby
     # Alias `h` to go home
@@ -186,13 +147,11 @@ Upload the Cookbooks
 --------------------
 In order for our nodes to download these cookbooks, we need to upload them to the Hosted Chef Server.
 
-1. Upload our community cookbooks managed by Berkshelf:
+1. Upload all our cookbooks to the Chef Server with `knife`:
 
-        bundle exec berks upload
+        bundle exec knife cookbook upload -a
 
-1. Upload our local cookbook with knife:
-
-        bundle exec knife cookbook upload aliases
+    *[Note]* You need to upload cookbooks to your Chef Server in order for nodes to find them.
 
 Recap
 -----
@@ -206,7 +165,7 @@ If you look at the git log, you can see all the changes we've made thus far:
 
     git log
 
-We can add these to our `run_list` in [Part 3 of this Quick Start guide][part-3]!
+We can add these recipes to our `run_list` in [Part 3 of this Quick Start guide][part-3]!
 
 [chef-hosted]: http://www.opscode.com/hosted-chef/ "Sign up for Hosted Chef"
 [management-console]: http://manage.opscode.com "Opscode Management Console"

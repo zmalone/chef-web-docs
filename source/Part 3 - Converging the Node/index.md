@@ -31,7 +31,7 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
           --run-list "recipe[aliases],recipe[apache2],recipe[networking_basic]" \
           --sudo
 
-    *[Info]* We are setting the `run_list` to include the three recipes we created in Part 2. There are multiple ways to configure a `run_list` - See the [Getting Started Guide][not-done-yet] for more information
+    *[Info]* We are setting the `run_list` to include the three recipes we created in Part 2. There are multiple ways to configure a `run_list` - See the [Getting Started Guide][getting-started-guide] for more information
 
 1. After a few seconds and some output, you should see something like this:
 
@@ -74,10 +74,19 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
           www-data  3163  0.0  0.7 678560  2832 ?        Sl   21:14   0:00 /usr/sbin/apache2 -k start
           vagrant   6477  0.0  0.2   9384   928 pts/0    S+   21:43   0:00 grep --color=auto apache
 
-  - Download a "webpage":
+  - Download the default apache webpage:
 
           vagrant@vagrant:~$ curl localhost
           <html><body><h1>It works!</h1>
           <p>This is the default web page for this server.</p>
           <p>The web server software is running but no content has been added, yet.</p>
           </body></html>
+
+That's it!
+----------
+You have successfully converged your first node with Chef! Pat yourself on the back and check out some [common use cases][common-use-cases] with Chef or head over to our more in-depth [Getting Started Guide][getting-started-guide].
+
+- - -
+
+  [common-use-cases]: http://not-done-yet "Not done yet"
+  [getting-started-guide]: http://not-done-yet "Not done yet"
