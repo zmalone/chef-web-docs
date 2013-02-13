@@ -25,6 +25,7 @@ The documentation for the [application cookbook][application] recommends naming 
 
     depends 'application'
     depends 'application_ruby'
+    depends 'database'
     ```
 
     We can now leverage the application LWRP in our cookbook.
@@ -32,6 +33,32 @@ The documentation for the [application cookbook][application] recommends naming 
 3. Open up the default recipe and add following:
 
     ```ruby
+    # Install support packages
+    %w(nodejs git).each do |package|
+      package package do
+        action :install
+      end
+    end
+
+    include_recipe 'mysql::server'
+    include_recipe 'mysql::client'
+    include_recipe 'mysql::ruby'
+
+    # Create the database
+    connection = { host: 'localhost', username: 'root', password: node['mysql']['server_root_password'] }
+    mysql_database 'kandan' do
+      connection    connection
+      action        :create
+    end
+
+    # Create the database user
+    mysql_database_user 'kandan' do
+      connection    connection
+      password      'not_secure_at_all'
+      action        :create
+    end
+
+    # Deploy the application
     application 'kandan' do
       path          '/var/www/kandan'
       owner         node['apache']['user']
@@ -41,8 +68,6 @@ The documentation for the [application cookbook][application] recommends naming 
       revision      'master'
 
       migrate       true
-      packages      ['nodejs']
-      gems          ['execjs']
 
       # rails-specific configuration
       rails do
