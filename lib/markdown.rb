@@ -1,51 +1,18 @@
-require 'html/pipeline'
-
-module Markdown
-  extend self
-
-  def parse(content)
-    pipeline.call(content)[:output].to_s
-  end
-
-  private
-  def pipeline
-    @pipeline ||= HTML::Pipeline.new([
-      HTML::Pipeline::MarkdownFilter,
-      HTML::Pipeline::AutolinkFilter,
-      HTML::Pipeline::ImageMaxWidthFilter,
-      HTML::Pipeline::SyntaxHighlightFilter,
-      HTML::Pipeline::AbsoluteImageFilter
-    ], context)
-  end
-
-  def context
-    {
-      asset_root: File.expand_path('source/assets'),
-      base_url:   File.expand_path('build/assets'),
-      gfm:        true
-    }
+require 'redcarpet'
+class Redcarpet::Render::HTML
+  def postprocess(document)
+    ZurbFoundation.alerts(document)
   end
 end
 
+module ZurbFoundation
+  extend self
 
-require 'uri'
-
-module HTML
-  class Pipeline
-    class AbsoluteImageFilter < Filter
-      def call
-        doc.search('img').each do |img|
-          unless img['src'].nil?
-            src = img['src'].strip
-
-            if src.start_with? '.'
-              img['src'] = File.expand_path File.join(context[:base_url], src)
-            end
-          end
-        end
-
-        doc
-      end
-    end
+  def alerts(content)
+    content.gsub!(/<p>\[INFO\](.*)<\/p>/)     { "<div class=\"alert-box\">#{$1.strip}</div>" }
+    content.gsub!(/<p>\[SUCCESS\](.*)<\/p>/)  { "<div class=\"alert-box success\">#{$1.strip}</div>" }
+    content.gsub!(/<p>\[WARN\](.*)<\/p>/)     { "<div class=\"alert-box alert\">#{$1.strip}</div>" }
+    content.gsub!(/<p>\[NOTE\](.*)<\/p>/)     { "<div class=\"alert-box secondary\">#{$1.strip}</div>" }
+    content
   end
 end

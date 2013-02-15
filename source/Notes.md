@@ -1,1 +1,0 @@
-- http://www.opscode.com/chef/install differentiate workspace install
