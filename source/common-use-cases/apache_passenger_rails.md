@@ -1,16 +1,20 @@
+---
+title: 'Apache 2, Passenger, and Rails'
+---
+
 Apache 2 + Passenger + Rails with Chef
 ======================================
 
-Install the application Cookbook
---------------------------------
+[WARN] This part of the guide is still a work-in-progress.
+
+### Install the application Cookbook
 We will be leveraging the power of the [application][application] and [application_ruby][application-ruby], so let's install that:
 
-    knife cookbook site install application
-    knife cookbook site install application_ruby
+    $ knife cookbook site install application application_ruby
 
+- - -
 
-Create our cookbook
--------------------
+### Create our cookbook
 The documentation for the [application cookbook][application] recommends naming the cookbook after the app. In this example, we will be deploying a Rails app called [kandan][kandan] - an open-source company chat server.
 
 1. Create the `kandan` cookbook:
@@ -87,8 +91,6 @@ The documentation for the [application cookbook][application] recommends naming 
     end
     ```
 
-- - -
-
-  [application]: https://github.com/opscode-cookbooks/application "Chef Application Cookbook"
-  [application-ruby]: https://github.com/opscode-cookbooks/application_ruby "Chef Application Ruby Cookbook"
-  [kandan]: https://github.com/kandanapp/kandan "Kandan app"
+[application]: https://github.com/opscode-cookbooks/application "Chef Application Cookbook"
+[application-ruby]: https://github.com/opscode-cookbooks/application_ruby "Chef Application Ruby Cookbook"
+[kandan]: https://github.com/kandanapp/kandan "Kandan app"

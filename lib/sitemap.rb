@@ -16,6 +16,10 @@ class Middleman::Sitemap::Resource
     !self.children.empty?
   end
 
+  def children
+    super.sort
+  end
+
   def page?
     self.ext == '.html' && !self.data['title'].blank?
   end

@@ -65,6 +65,7 @@ set :markdown, fenced_code_blocks: true, smartypants: false
 set :css_dir, 'assets/stylesheets'
 set :js_dir, 'assets/javascripts'
 set :images_dir, 'assets/images'
+set :fonts_dir, 'assets/fonts'
 
 # Build-specific configuration
 configure :build do

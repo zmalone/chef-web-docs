@@ -17,7 +17,7 @@ We leveraged the power of the [Community Site][apache2-cookbook] to install 2 co
 
     If you're not familiar with Chef, this allows us to leverage the `magic_shell` LWRP inside our `aliases` cookbook.
 
-    [INFO] It's best practice to fill in the `maintainer` and `maintainer_email` with your information, but that's unnecessary for this Quick Start guide.
+    [INFO] It's best practice to fill fields with your information, but that's unnecessary for this Quick Start guide.
 
 1. Open up the default recipe in your Text Editor (it's in `cookbooks/aliases/recipes/default.rb`). Let's create some shell aliases to this recipe - feel free to use these or make up your own:
 

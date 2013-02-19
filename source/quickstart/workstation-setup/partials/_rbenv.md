@@ -37,6 +37,6 @@ rbenv is a Ruby Version Manager - it allows you to have multiple versions of Rub
 Now install Chef as a gem:
 
     $ gem install chef
-    $ rbenv rehahs
+    $ rbenv rehash
 
 [xcode]: https://itunes.apple.com/us/app/Xcode/id497799835?mt=12 "Download Xcode from the AppStore"
