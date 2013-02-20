@@ -2,6 +2,8 @@
 title: 'Register for Hosted Chef'
 video: 'http://www.youtube.com/embed/-2X9thayC0E'
 layout: 'screencast'
+description: 'Register for Hosted Chef - the easiest way to get started with Chef.'
+keywords: 'register, hosted chef, manage.opscode.com'
 ---
 
 We will use Hosted Chef for this tutorial. With Hosted Chef, you can manage up to five nodes for free. This makes it the perfect option for learning Chef.

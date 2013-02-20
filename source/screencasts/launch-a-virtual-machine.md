@@ -2,6 +2,8 @@
 title: 'Launch a Virtual Machine'
 video: 'http://www.youtube.com/embed/R5DQw8PGDiM'
 layout: 'screencast'
+description: 'Launch a Virtual Machine with Vagrant and VirtualBox for Opscode Chef.'
+keywords: 'vagrant up, vm, virtual machine, launch, standup'
 ---
 
 This tutorial will demonstrate using Chef to manage a virtual machine that is running on your local workstation. The virtual machine will be managed by Vagrant. All code in the tutorial will be tracked in git.

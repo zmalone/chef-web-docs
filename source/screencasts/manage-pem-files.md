@@ -2,6 +2,8 @@
 title: 'Manage .pem Files'
 video: 'http://www.youtube.com/embed/7n8ig6qJ5r0'
 layout: 'screencast'
+description: 'Download and install your knife.rb and validation.pem for Opscode Chef.'
+keywords: 'knife.rb, username.pem, organization.pem, authentication, chef-repo, .chef'
 ---
 
 The Chef server provides three files that must be in the Chef repository and are required when connecting to the Chef server:

@@ -2,6 +2,8 @@
 title: 'Install Vagrant'
 video: 'http://www.youtube.com/embed/O8TirqrZjRM'
 layout: 'screencast'
+description: 'Install Vagrant for use with Opscode Chef.'
+keywords: 'vagrant, vm, virtualbox, virtualization'
 ---
 
 Vagrant is a tool that will allow you to easily create and manage virtual machines in VirtualBox.

@@ -2,6 +2,8 @@
 title: 'Push a Repository to GitHub'
 video: 'http://www.youtube.com/embed/8IZb4e1_bDw'
 layout: 'screencast'
+description: 'Push to the remote chef-repo for Opscode Chef.'
+keywords: 'chef-repo, github, git, scm'
 ---
 
 1. Add a git remote
