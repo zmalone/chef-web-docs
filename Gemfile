@@ -8,5 +8,5 @@ gem 'redcarpet',            '~> 2.2.2'
 gem 'slim',                 '~> 1.3.6'
 
 group :production do
-  gem 'therubyracer'
+  gem 'therubyracer',       '~> 0.11.3'
 end
