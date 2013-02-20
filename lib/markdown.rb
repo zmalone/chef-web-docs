@@ -19,7 +19,6 @@ module ZurbFoundation
     @content = content
     @app = options[:app]
 
-    partials
     videos
 
     return @content
@@ -48,10 +47,6 @@ module ZurbFoundation
     content.gsub!(/<p>\[SUCCESS\] (.+)<\/p>/)  { "<div class=\"alert-box success\"><i class=\"icon-ok-sign\"></i> #{$1}</div>" }
     content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box alert\"><i class=\"icon-warning-sign\"></i> #{$1}</div>" }
     content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"icon-info-sign\"></i> #{$1}</div>" }
-  end
-
-  def partials
-    content.gsub!(/\[PARTIAL (.+)\]/) { app.partial($1) }
   end
 
   def videos
