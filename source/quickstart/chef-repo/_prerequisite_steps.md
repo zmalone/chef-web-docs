@@ -1,5 +1,5 @@
 ##### Prerequisite Steps
-1. Sign up for a free [Chef Hosted account][chef-hosted] and download your `knife.rb` and `*.pem` files to your `~/Downloads` folder. You should have these 3 files:
+1. Sign up for a free [Opscode Chef account][chef-hosted] and download your `knife.rb` and `*.pem` files to your `~/Downloads` folder. You should have these 3 files:
 
         [your_organization_name]-validator.pem
         [your_username].pem
