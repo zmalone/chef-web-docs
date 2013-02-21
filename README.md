@@ -26,13 +26,6 @@ Installation
         $ bundle exec middleman server
 
 
-Making Changes
---------------
-1. **Make a new branch!**
-
-1. Make changes. You can leave the middleman server running in the background and the changes will automatically re-build.
-
-
 Building
 --------
 1. To build the full site (and smush images, compress javascript, etc), run the following command:
@@ -45,6 +38,14 @@ Building
         $ 0
 
 
-Publishing
-----------
-TODO
+Contributing
+------------
+1. **Make a new branch**
+
+1. Make changes
+
+1. Build locally and make sure the build succeeds (exit 0)
+
+1. Submit a [Pull Request](https://github.com/opscode/quick-start/pull/new)
+
+1. (optional) Mention something in #learnchef on IRC or @learnchef on Twitter
