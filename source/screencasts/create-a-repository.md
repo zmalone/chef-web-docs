@@ -1,5 +1,5 @@
 ---
-title: 'Create a Repository on GitHub'
+title: 'Create a Repository'
 video: 'http://www.youtube.com/embed/9YtFNQgJbR0'
 layout: 'screencast'
 description: 'Create a Repostitory on github for use with Opscode Chef.'

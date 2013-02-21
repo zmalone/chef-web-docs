@@ -1,5 +1,5 @@
 ---
-title: 'Push a Repository to GitHub'
+title: 'Push a Repository'
 video: 'http://www.youtube.com/embed/8IZb4e1_bDw'
 layout: 'screencast'
 description: 'Push to the remote chef-repo for Opscode Chef.'
