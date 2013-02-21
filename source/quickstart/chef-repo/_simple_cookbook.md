@@ -1,5 +1,5 @@
 ##### Create a Simple Cookbook
-We leveraged the power of the [Community Site][apache2-cookbook] to install 2 cookbooks, but let's also write our own cookbook before bootstrapping our first node. We will be adding shell aliases and global environment variables.
+We leveraged the power of the [Community Site][apache2-cookbook] to install two cookbooks, but let's also write our own cookbook before bootstrapping our first node. We will be adding shell aliases and global environment variables.
 
 1. Install the `magic_shell` cookbook using `knife`:
 
