@@ -7,7 +7,7 @@ Because OSX does not ship with a package manager, you will need to install [home
 
         $ ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
 
-  [WARN] If you've install MacPorts, you'll need to [uninstall MacPorts](http://guide.macports.org/chunked/installing.macports.uninstalling.html) first!
+  [WARN] If you've installed MacPorts, you'll need to [uninstall MacPorts](http://guide.macports.org/chunked/installing.macports.uninstalling.html) first!
 
 1. Install git. In terminal:
 

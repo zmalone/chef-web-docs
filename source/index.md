@@ -16,7 +16,7 @@ A: Chef is an infrastructure automation and configuration management framework. 
 A: Chef supports a wide variety of cloud providers including Amazon AWS, Google App Engine, OpenStack, Rackspace, and Linode. To see if your provider is supported, visit the [Chef Docs](http://docs.opscode.com).
 
 **Q: What are all these `.pem` files?**<br>
-A: Chef uses those pem files to securely communicate and authenticate you against the Chef Server.
+A: Chef uses those pem files to authenticate you against the Chef Server.
 
 **Q: Do I need to know Ruby to use Chef?**<br>
-A: No, but it help. For more information, check out the [Just Enough Ruby for Chef](http://docs.opscode.com/just_enough_ruby_for_chef.html) section on [Chef Docs](http://docs.opscode.com).
+A: No, but it helps. For more information, check out the [Just Enough Ruby for Chef](http://docs.opscode.com/just_enough_ruby_for_chef.html) section on [Chef Docs](http://docs.opscode.com).
