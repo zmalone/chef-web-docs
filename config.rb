@@ -1,5 +1,6 @@
 require 'lib/markdown'
 require 'lib/sitemap'
+require 'lib/compass'
 
 ###
 # Config
