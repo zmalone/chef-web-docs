@@ -2,6 +2,11 @@ require 'lib/markdown'
 require 'lib/sitemap'
 
 ###
+# Config
+###
+set :site_url, 'learnchef.opscode.com'
+
+###
 # Compass
 ###
 
@@ -35,6 +40,7 @@ activate :directory_indexes
 # with_layout :admin do
 #   page "/admin/*"
 # end
+page '/sitemap.xml', layout: false
 
 # Proxy (fake) files
 # page "/this-page-has-no-template.html", :proxy => "/template-file.html" do
