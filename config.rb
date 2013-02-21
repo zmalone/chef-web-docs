@@ -27,6 +27,7 @@ Slim::Engine.set_default_options pretty: true, disable_escape: true
 ###
 
 activate :directory_indexes
+set :trailing_slash, false
 
 # Per-page layout changes:
 #
