@@ -3,7 +3,7 @@
 
         $ vagrant ssh
 
-1. Verify the `sites` alias
+1. Verify the `sites` alias:
 
         vagrant@vagrant:~$ sites
         vagrant@vagrant:/etc/apache2/sites-enabled$ pwd
