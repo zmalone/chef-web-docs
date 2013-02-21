@@ -7,6 +7,8 @@
 
     [WARN] These files are **your** credentials to the the Chef Server - do not share them with anyone else!
 
+    If you are unsure of where to find these files, watch the [screencast on managing .pem files](https://learnchef.opscode.com/screencasts/manage-pem-files/).
+
 1. Clone the `chef-repo` into the `Development` folder from github. In Terminal:
 
         $ mkdir ~/Development
