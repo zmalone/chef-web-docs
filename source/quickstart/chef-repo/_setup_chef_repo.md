@@ -8,8 +8,6 @@
         $ knife cookbook site install apache2
         $ knife cookbook site install networking_basic
 
-    [NOTE] `knife` is the command-line tool for Chef on your workstation.
-
 1. Look in your cookbooks directory and you should now see two folders, `apache2` and `networking_basic`.
 
 [sublime-text-2]: http://www.sublimetext.com/2 "Sublime Text 2"

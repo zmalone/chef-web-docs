@@ -28,6 +28,6 @@
 
         $ knife client list
 
-    _[TODO]_ What output do we see here?
+    [NOTE] `knife` is the command-line tool for Chef on your workstation.
 
 [chef-hosted]: http://www.opscode.com/hosted-chef/ "Sign up for Hosted Chef"
