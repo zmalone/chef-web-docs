@@ -1,6 +1,6 @@
 ---
 title: 'Install Vagrant'
-video: 'http://www.youtube.com/embed/O8TirqrZjRM'
+video: 'https://www.youtube.com/embed/O8TirqrZjRM'
 layout: 'screencast'
 description: 'Install Vagrant for use with Opscode Chef.'
 keywords: 'vagrant, vm, virtualbox, virtualization'

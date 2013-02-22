@@ -1,6 +1,6 @@
 ---
 title: 'Install git'
-video: 'http://www.youtube.com/embed/nrgpI0wdouc'
+video: 'https://www.youtube.com/embed/nrgpI0wdouc'
 layout: 'screencast'
 description: 'Install git for use with Opscode Chef.'
 keywords: 'git, github'

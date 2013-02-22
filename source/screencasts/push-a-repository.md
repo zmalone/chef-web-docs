@@ -1,6 +1,6 @@
 ---
 title: 'Push a Repository'
-video: 'http://www.youtube.com/embed/8IZb4e1_bDw'
+video: 'https://www.youtube.com/embed/8IZb4e1_bDw'
 layout: 'screencast'
 description: 'Push to the remote chef-repo for Opscode Chef.'
 keywords: 'chef-repo, github, git, scm'

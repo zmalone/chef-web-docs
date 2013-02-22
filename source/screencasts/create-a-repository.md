@@ -1,6 +1,6 @@
 ---
 title: 'Create a Repository'
-video: 'http://www.youtube.com/embed/9YtFNQgJbR0'
+video: 'https://www.youtube.com/embed/9YtFNQgJbR0'
 layout: 'screencast'
 description: 'Create a Repostitory on github for use with Opscode Chef.'
 keywords: 'github, repository, chef-repo'

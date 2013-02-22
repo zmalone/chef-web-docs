@@ -1,6 +1,6 @@
 ---
 title: 'Register for Hosted Chef'
-video: 'http://www.youtube.com/embed/-2X9thayC0E'
+video: 'https://www.youtube.com/embed/-2X9thayC0E'
 layout: 'screencast'
 description: 'Register for Hosted Chef - the easiest way to get started with Chef.'
 keywords: 'register, hosted chef, manage.opscode.com'
