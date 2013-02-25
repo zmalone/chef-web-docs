@@ -43,6 +43,8 @@ set :trailing_slash, false
 #   page "/admin/*"
 # end
 page '/sitemap.xml', layout: false
+page '/robots.txt', layout: false
+page '/humans.txt', layout: false
 
 # Proxy (fake) files
 # page "/this-page-has-no-template.html", :proxy => "/template-file.html" do
