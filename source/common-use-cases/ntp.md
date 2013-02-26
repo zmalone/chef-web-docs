@@ -20,7 +20,7 @@ This will generate a folder in the `cookbooks` directory of your repository with
 ##### Name the Recipe
 1. Recipe names directly correspond to directory structure:
 
-        recipe[ntp::foo] => cookbooks/ntp/recipes/foo.rb
+  ![Chef run_list to Directory Mapping](run-list-directory-structure.png)
 
   [INFO] A recipe is a *subset* or "piece" of a cookbook.
 
