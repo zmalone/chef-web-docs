@@ -6,7 +6,7 @@ deprecates: 'http://wiki.opscode.com/display/chef/Guide+to+Creating+A+Cookbook+a
 
 NTP with Chef
 =============
-One of the most common problems in the sysadmin world is managing time. Thankfully, we have the [NTP project](http://www.ntp.org/) to help alleviate this problem. In this guide, we will setup NTP using Chef on a Vagrant instance.
+One of the most common problems for system administrators is ensuring system time is correct. Thankfully, we have the [NTP project](http://www.ntp.org/) to help alleviate this problem. In this guide, we will setup NTP using Chef on a Vagrant instance.
 
 ##### Create the ntp cookbook
 To get started, we need to create the `ntp` cookbook. We can use the knife command to generate this scaffolding for us:
@@ -31,7 +31,7 @@ This will generate a folder in the `cookbooks` directory of your repository with
         recipe[ntp] => cookbooks/ntp/recipes/default.rb # implicit
         recipe[ntp::default] => cookbooks/ntp/recipes/default.rb # explicit
 
-For simplicity in this guide, we will just use the `default` recipe, but you should consider splitting your cookbooks into multiple sub-recipes.
+For simplicity in this guide, we will just use the `default` recipe, but it is common practice to use multiple recipes to separate functionality for a specific cookbook, such as "client" vs "server".
 
 - - -
 
