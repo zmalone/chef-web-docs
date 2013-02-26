@@ -1,4 +1,4 @@
-### Homebrew & Git
+##### Homebrew & Git
 Because OSX does not ship with a package manager, you will need to install [homebrew][homebrew].
 
 1. Open Terminal from `/Applications/Utilities/Terminal`

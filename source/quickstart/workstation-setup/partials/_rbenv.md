@@ -1,4 +1,4 @@
-##### Xcode
+###### Xcode
 Xcode is a free apple application - you wont be using it directly, but the build tools are necessary to compile Ruby on your system.
 
 1. Install [Xcode][xcode] from the AppStore
@@ -13,7 +13,7 @@ Xcode is a free apple application - you wont be using it directly, but the build
 
 - - -
 
-##### rbenv
+###### rbenv
 rbenv is a Ruby Version Manager - it allows you to have multiple versions of Ruby on your system and easily switch between them.
 
 1. Install rbenv and ruby-build from homebrew. In Terminal:
@@ -33,7 +33,7 @@ rbenv is a Ruby Version Manager - it allows you to have multiple versions of Rub
 
 - - -
 
-##### chef
+###### chef
 Now install Chef as a gem:
 
     $ gem install chef

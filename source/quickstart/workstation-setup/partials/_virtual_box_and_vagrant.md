@@ -1,4 +1,4 @@
-### VirtualBox & Vagrant
+##### VirtualBox & Vagrant
 
 Install [VirtualBox][virtual-box] [VIDEO http://www.youtube.com/embed/cFqcf5E5itQ] and [Vagrant][vagrant] [VIDEO http://www.youtube.com/embed/O8TirqrZjRM] for your operating system.
 
