@@ -46,6 +46,6 @@ class Middleman::Sitemap::Resource
   end
 
   def <=>(other_resource)
-    [(self.data['order'] || 0), self.title.downcase] <=> [(other_resource.data['order'] || 0), other_resource.title.downcase]
+    [self.data['order'].to_i, self.title.downcase] <=> [other_resource.data['order'].to_i, other_resource.title.downcase]
   end
 end
