@@ -1,6 +1,7 @@
 ---
 title: 'NTP'
 order: 1
+deprecates: 'http://wiki.opscode.com/display/chef/Guide+to+Creating+A+Cookbook+and+Writing+A+Recipe'
 ---
 
 NTP with Chef
