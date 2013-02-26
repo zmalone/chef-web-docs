@@ -9,5 +9,5 @@ keywords: 'github, repository, chef-repo'
 1. Navigate to [https://github.com](https://github.com)
 1. Sign In
 1. Click the "Create a new repo" icon next to your login name.
-1. Specify the Owner, Repository Name, Descriptionn.
+1. Specify the Owner, Repository Name, Description.
 1. Press the "Create repository button"
