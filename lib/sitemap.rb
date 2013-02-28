@@ -5,6 +5,16 @@ class Middleman::Sitemap::Store
   def root
     self.resources.select { |resource| resource.root? }
   end
+
+  def roots
+    index.children.select { |child| child.page? }
+  end
+
+  private
+
+    def index
+      self.find_resource_by_path('/index.html')
+    end
 end
 
 class Middleman::Sitemap::Resource
@@ -46,6 +56,6 @@ class Middleman::Sitemap::Resource
   end
 
   def <=>(other_resource)
-    [self.data['order'].to_i, self.title.downcase] <=> [other_resource.data['order'].to_i, other_resource.title.downcase]
+    [self.data['order'].to_i, (self.title || '').downcase] <=> [other_resource.data['order'].to_i, (other_resource.title || '').downcase]
   end
 end
