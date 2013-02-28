@@ -38,13 +38,13 @@ For simplicity in this guide, we will just use the `default` recipe, but it is c
 ##### Write the Recipe
 In the default recipe `recipes/default.rb`, add the following:
 
-1. Install the NTM package. The package provider is built into Chef - it will check to see the running operating system and use the appropriate method (yum, apt, etc):
+1. Install the NTP package. The package provider is built into Chef - it will check to see the running operating system and use the appropriate method (yum, apt, etc):
 
     ```ruby
     package 'ntp'
     ```
 
-1. Next we need to write ou the NTP configuration template using Chef's Template provider:
+1. Next we need to write out the NTP configuration template using Chef's Template provider:
 
     ```ruby
     template '/etc/ntp.conf' do
@@ -53,7 +53,7 @@ In the default recipe `recipes/default.rb`, add the following:
     end
     ```
 
-1. Finally, alert Chef of the service ans start it:
+1. Finally, alert Chef of the service and start it:
 
     ```ruby
     service 'ntpd' do
