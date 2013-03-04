@@ -7,7 +7,7 @@ class Middleman::Sitemap::Store
   end
 
   def roots
-    index.children.select { |child| child.page? }
+    index.children.select { |child| child.page? }.sort
   end
 
   private
@@ -15,6 +15,7 @@ class Middleman::Sitemap::Store
     def index
       self.find_resource_by_path('/index.html')
     end
+
 end
 
 class Middleman::Sitemap::Resource
