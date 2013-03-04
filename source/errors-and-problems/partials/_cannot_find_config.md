@@ -14,4 +14,4 @@ FATAL: Chef::Exceptions::PrivateKeyMissing: I cannot read /etc/chef/validation.p
 
 You can work around this issue by supplying the full path to your `client.rb`:
 
-    $ chef-client -c /etc/chec/client.rb
+    $ chef-client -c /etc/chef/client.rb
