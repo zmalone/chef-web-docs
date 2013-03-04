@@ -21,9 +21,9 @@ The general `Net::HTTPServerException: 401 "Unauthorized"` error will usually oc
 
 1. Make sure you are using the same `node_name` as your intial `chef-client` run.
 
-    This can happen for a number of reasons. For example, if your `client.rb` does not specify your node name and you have recently changed the systems hostname.
+    This can happen for a number of reasons. For example, if your `client.rb` does not specify your node name and you have recently changed the system's hostname.
 
-    Running `chef-client` with debug logging will allow you to see the node name the client is trying to authenticate with:
+    Running `chef-client -l debug` will allow you to see the node name the client is trying to authenticate with:
 
     ```bash
     DEBUG: Signing the request as SOME_NODE_NAME
