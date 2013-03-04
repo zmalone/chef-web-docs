@@ -12,8 +12,6 @@ FATAL: Chef::Exceptions::PrivateKeyMissing: I cannot read /etc/chef/validation.p
 
 ##### Troubleshooting
 
-This error is related to bug [CHEF-2317](http://tickets.opscode.com/browse/CHEF-2317) on Windows, and can also happen on Linux or Mac.
-
 You can work around this issue by supplying the full path to your `client.rb`:
 
     $ chef-client -c /etc/chec/client.rb
