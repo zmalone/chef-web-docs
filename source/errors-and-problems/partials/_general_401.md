@@ -10,7 +10,11 @@ The general `Net::HTTPServerException: 401 "Unauthorized"` error will usually oc
 
   On a management station:
 
-        $ knife client delete FQDN -y; knife node delete FQDN -y
+        # Dump the current node to JSON
+        $ knife node show NODE_NAME -fJ > NODE_NAME.json
+
+        $ knife client delete FQDN -y
+        $ knife node delete FQDN -y
 
   On an affected node (as root):
 
@@ -18,6 +22,10 @@ The general `Net::HTTPServerException: 401 "Unauthorized"` error will usually oc
         $ chef-client
 
   When `client-client` runs, it will register the API client and generate the correct key.
+
+  **After successfully running chef-client on the node**, you re-load the run_list and node attributes:
+
+        $ knife node from file NODE_NAME.json
 
 1. Make sure you are using the same `node_name` as your intial `chef-client` run.
 
