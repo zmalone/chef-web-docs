@@ -39,4 +39,8 @@ The general `Net::HTTPServerException: 401 "Unauthorized"` error will usually oc
 
     You can fix this by explicitly setting the `node_name` in your `client.rb` to match the name originally used to register.
 
+    ```ruby
+    node_node 'mynode.mycompany.com'
+    ```
+
     Alternatively, you can re-register using the method described in step one.
