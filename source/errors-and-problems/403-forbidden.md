@@ -33,6 +33,9 @@ ERROR: Running exception handlers
 The URL will help you determine the type of permission issue. If the URL is an index action (i.e. operating on a collection of resources, like `/nodes`) then this is a global permission. If the URL is operating on an instance of a collection (i.e. `/nodes/NODENAME`) then this is an object permission issue.
 
 - - -
+
+[INFO] For Private Chef customers, please talk to your Private Chef Administrator.
+
 To fix the global permissions:
 
 1. Login to the [Opscode Management Console](https://manage.opscode.com) and click on the failing object type (most likely `node`)
