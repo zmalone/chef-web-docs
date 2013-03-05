@@ -7,4 +7,4 @@ FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
 FATAL: Net::HTTPServerException: 401 "Unauthorized"
 ```
 
-it means that your system clock has drifted from the actual time by more than 15 minutes. This can be fixed by syncing your clock with an NTP server.
+it means that your system clock has drifted from the actual time by more than 15 minutes. This can be fixed by synchronizing your clock with an NTP server.
