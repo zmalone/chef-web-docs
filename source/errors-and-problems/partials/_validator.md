@@ -11,7 +11,7 @@ FATAL: Net::HTTPServerException: 401 "Unauthorized"
 
 ##### Troubleshooting Steps
 
-1. Check if there's a file named "ORGANIZATION-validator" in the following locations:
+1. Check if there's a file named "ORGANIZATION-validator.pem" in the following locations:
 
         ~/.chef
         ~/projects/current_project/.chef
