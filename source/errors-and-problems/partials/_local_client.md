@@ -13,7 +13,7 @@ when issuing `knife` commands, it means your local `client.rb` is unable to auth
 
 1. Verify you have the correct values in your `knife.rb` file, especially `node_name` and `client_key`.
 
-1. Check if there's a file named "USERNAME.pem" in the following locations:
+1. Check if the file referenced in `client_key` above (usually `USERNAME.pem`) exists. Some common locations include :
 
         ~/.chef
         ~/projects/current_project/.chef
