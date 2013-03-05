@@ -15,7 +15,7 @@ FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
 FATAL: Net::HTTPServerException: 403 "Forbidden"
 ```
 
-this is an indication that there is an issue with permissions on the Hosted Chef server.
+this is an indication that there is an issue with permissions on the Chef server.
 
 - - -
 
