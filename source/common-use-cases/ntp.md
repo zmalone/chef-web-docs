@@ -8,6 +8,8 @@ NTP with Chef
 =============
 One of the most common problems for system administrators is ensuring system time is correct. Thankfully, we have the [NTP project](http://www.ntp.org/) to help alleviate this problem. In this guide, we will setup NTP using Chef on a Vagrant instance.
 
+---
+
 ##### Create the ntp cookbook
 To get started, we need to create the `ntp` cookbook. We can use the knife command to generate this scaffolding for us:
 
@@ -15,7 +17,7 @@ To get started, we need to create the `ntp` cookbook. We can use the knife comma
 
 This will generate a folder in the `cookbooks` directory of your repository with many subdirectories.
 
-- - -
+---
 
 ##### Name the Recipe
 1. Recipe names directly correspond to directory structure:
@@ -33,7 +35,7 @@ This will generate a folder in the `cookbooks` directory of your repository with
 
 For simplicity in this guide, we will just use the `default` recipe, but it is common practice to use multiple recipes to separate functionality for a specific cookbook, such as "client" vs "server".
 
-- - -
+---
 
 ##### Write the Recipe
 In the default recipe `recipes/default.rb`, add the following:
@@ -76,7 +78,7 @@ In the default recipe `recipes/default.rb`, add the following:
     end
     ```
 
-- - -
+---
 
 ##### Create the Template
 Create a new file in `templates/default/ntp.conf.erb` (since that's what we provided to the source attribute in the previous step) and add the following:
@@ -95,7 +97,7 @@ driftfile /var/lib/ntp/drift
 keys /etc/ntp/keys
 ```
 
-- - -
+---
 
 ##### Wrap Up
 There are some final (and optional depending on your setup) steps:
