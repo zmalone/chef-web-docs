@@ -1,12 +1,12 @@
 ---
 title: 'Bash &rarr; Chef'
-long_title: 'Convert a bash script to a Chef Recipe'
+long_title: 'Convert a Shell Script to a Chef Recipe'
 order: 2
 description: 'A very common use case with Chef is to take antiquated in-house bash scripts and convert them to idempotent Chef resources. This guide will walk you through converting a simple bash script into a robust Chef recipe.'
 keywords: 'bash, bash to chef, chef to bash, convert, chef, opscode'
 ---
 
-Convert a Shell script to a Chef Recipe
+Convert a Shell Script to a Chef Recipe
 =======================================
 A very common use case with Chef is to take antiquated in-house bash scripts and convert them to idempotent Chef resources. This guide will walk you through converting a simple bash script into a robust Chef recipe.
 
@@ -29,7 +29,7 @@ sudo echo "<?php phpinfo(); ?>" >> /var/www/info.php
 # Visit http://localhost/info.php
 ```
 
-We can see that this simple script installs a web server, php, and mysql. It then instructs the user to visit a URL and see that PHP was successfully installed.
+We can see that this simple script installs a Web server, PHP, and MySQL. It then instructs the user to visit a URL and see that PHP was successfully installed.
 
 ---
 
@@ -89,7 +89,7 @@ While you could easily use the `package` resource to install all of these things
     include_recipe 'phpmyadmin'
     ```
 
-  This really includes everything we need except the `info.php` file. It installs apache2, mysql server and client, php, php mysql modules, and phpmyadmin.
+  This really includes everything we need except the `info.php` file. It installs Apache 2, MySQL Server and MySQL Client, PHP, PHP MySQL modules, and phpmyadmin.
 
 1. Create and use the `info.php` template:
 
