@@ -59,4 +59,15 @@ class Middleman::Sitemap::Resource
   def <=>(other_resource)
     [self.data['order'].to_i, (self.title || '').downcase] <=> [other_resource.data['order'].to_i, (other_resource.title || '').downcase]
   end
+
+  def method_missing(m, *args, &block)
+    meth = m.to_s
+    if meth =~ /_child\?$/
+      # quickstart_child?, common_use_cases_child?, etc.
+      parent = meth.gsub('_child?', '').gsub('_', '-')
+      self.page? && !self.store.roots.include?(self) && self.path.include?("#{parent}/")
+    else
+      super
+    end
+  end
 end
