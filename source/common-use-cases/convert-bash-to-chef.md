@@ -109,3 +109,12 @@ While you could easily use the `package` resource to install all of these things
     ```
 
 1. That's it! You've succesfully converted a bash script into a simple Chef recipe.
+
+---
+
+##### Afterthoughts
+What are the advantages of converting this bash script into a Chef recipe?
+
+1. **Idempotency** - Since Chef is idempotent (meaning you can apply an operation multiple times and always receive the same end result), you don't have to worry if Apache was already installed. Because Chef is idempotent by nature, it will only install Apache if necessary. The same is true for PHP and MySQL in this example.
+2. **Reusability & Cross Platform** - The original shell script was specifically for Ubuntu, but what about Centos, Solaris, RedHat, or even Windows? Chef is cross-platform, which means the same recipe will run on multiple operating systems with little to no effort on your part.
+3. **Versioning** - With everything in your Chef repo, you leverage the power of git and version control; but you were probably already doing that with your shell scripts. Chef adds an additional versioning layer to each cookbook. Every cookbook version is a unique artifact, meaning you can freeze its contents and follow Semantic Versioning in your organization.
