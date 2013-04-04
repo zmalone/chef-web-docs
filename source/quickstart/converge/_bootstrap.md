@@ -5,7 +5,7 @@
           --ssh-user vagrant \
           --ssh-password vagrant \
           --ssh-port 2222 \
-          --run-list "recipe[aliases],recipe[apache2],recipe[networking_basic]" \
+          --run-list "recipe[apt],recipe[aliases],recipe[apache2],recipe[networking_basic]" \
           --sudo
 
 1. After a few seconds and some output, you should see something like this:
