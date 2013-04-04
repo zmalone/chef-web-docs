@@ -29,11 +29,3 @@
         www-data  3162  0.0  0.8 744160  3340 ?        Sl   21:14   0:00 /usr/sbin/apache2 -k start
         www-data  3163  0.0  0.7 678560  2832 ?        Sl   21:14   0:00 /usr/sbin/apache2 -k start
         vagrant   6477  0.0  0.2   9384   928 pts/0    S+   21:43   0:00 grep --color=auto apache
-
-1. Download the default apache webpage:
-
-        vagrant@vagrant:~$ curl localhost
-        <html><body><h1>It works!</h1>
-        <p>This is the default web page for this server.</p>
-        <p>The web server software is running but no content has been added, yet.</p>
-        </body></html>
