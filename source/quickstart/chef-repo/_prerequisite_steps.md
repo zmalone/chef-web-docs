@@ -30,6 +30,10 @@
 
         $ knife client list
 
+  You should see something like:
+
+        [your_organization_name]-validator
+
     [NOTE] `knife` is the command-line tool for Chef on your workstation.
 
 [chef-hosted]: http://www.opscode.com/hosted-chef/ "Sign up for Hosted Chef"
