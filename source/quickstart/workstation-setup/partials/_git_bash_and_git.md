@@ -1,4 +1,4 @@
 ##### Git Bash and Git
-Download and run the [Git Installer for Windows][windows-git-installer], accepting the default options. This will install git bash in your Programs directory.
+Download and run the installer for your operating system on [http://git-scm.com](http://git-scm.com), accepting the default options.
 
-[windows-git-installer]: https://msysgit.googlecode.com/files/Git-1.8.1.2-preview20130201.exe "Windows Git Installer"
+Depending on your operating system, this will also install "git bash" in your Programs directory. You should use git bash (not Command Prompt or Windows Powershell) when working with Chef. On Mac and Linux, you should use Terminal.
