@@ -1,18 +1,6 @@
-##### Homebrew & Git
-Because OSX does not ship with a package manager, you will need to install [homebrew][homebrew].
+###### homebrew
+Homebrew is "the missing package manager for OS X". We will use homebrew to install a Ruby version manager and a Ruby builder. You could also use homebrew to install Ruby for you, but that's not recommended at this time.
 
-1. Open Terminal from `/Applications/Utilities/Terminal`
+Installing homebrew is just a single command.
 
-1. Install [homebrew][homebrew] by running this command in Terminal:
-
-        $ ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
-
-  [WARN] If you've installed MacPorts, you'll need to [uninstall MacPorts](http://guide.macports.org/chunked/installing.macports.uninstalling.html) first!
-
-1. Install git. In terminal:
-
-        $ brew install git
-
-[homebrew]: http://mxcl.github.com/homebrew/ "Homebrew"
-[rbenv]: https://github.com/sstephenson/rbenv "rbenv"
-[git]: http://git-scm.org "Git"
+    $ ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
