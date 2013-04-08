@@ -107,8 +107,7 @@ Now we can use the `knife-ec2` plugin to create and provision this EC2 instance 
       --image ami-fd20ad94 \
       --identity-file ~/.ssh/aws.pem \
       --run-list "role[memcached]" \
-      --ssh-user ubuntu \
-      --distro ubuntu12.04-gems
+      --ssh-user ubuntu
 
 Make sure you replace the flags appropiately for your region and configuration. Most of them are just implementation details, but the important thing to note is the `run-list` option, where we specified `role[memcached]`. This tells Chef to bootstrap this node with the memcached role (thus install memcached). This will take about 2 minutes to spin up.
 
@@ -147,8 +146,7 @@ And bootstrap another node:
       --image ami-fd20ad94 \
       --identity-file ~/.ssh/aws.pem \
       --run-list "role[redis]" \
-      --ssh-user ubuntu \
-      --distro ubuntu12.04-gems
+      --ssh-user ubuntu
 
 ---
 
@@ -245,8 +243,7 @@ And we can now this role to the `run_list` during the bootstrap:
       --image ami-fd20ad94 \
       --identity-file ~/.ssh/aws.pem \
       --run-list "role[my_app]" \
-      --ssh-user ubuntu \
-      --distro ubuntu12.04-gems
+      --ssh-user ubuntu
 
 It's okay to bootstrap this node now, even though we aren't done with the `my_app` recipe yet. Because Chef is idempotent, we can continue to work on this cookbook and only new changes are applied. This also mimics the kind of workflow you would have over time inside your organization.
 
