@@ -20,6 +20,9 @@ Pre-requisite steps:
 1. Setup and download your EC2 Key Pair
 1. Create an Access Key and Associated Secret Token on AWS
 
+[WARN] Using Amazon EC2 will cost money.
+[WARN] Leaving your instance running could result in unexpected costs.
+
 ---
 
 ##### Clone Chef Repo
@@ -178,7 +181,7 @@ Let's use `knife` to create a new recipe for the app, we'll call it `my_app`:
 
     $ knife cookbook create my_app
 
-This will create a skeleton cookbook with scaffolded files. Since we are depending on apache2 and passenger, we need to add those cookbooks as dependencies in the `metadata.rb`:
+This will create a skeleton cookbook with scaffolded files. Since we are depending on apache2 and passenger, we need to add those cookbooks and the others as dependencies in the `metadata.rb`:
 
 ```ruby
 depends 'apache2'
@@ -187,7 +190,26 @@ depends 'git'
 depends 'passenger_apache2'
 ```
 
-Let's add some default attributes. This will help DRY up our code and allow for overrides in the future. In the `attributes/default.rb` file:
+Let's make a role for our `my_app` cookbook in `roles/my_app.rb`:
+
+```ruby
+name 'my_app'
+description 'A single application server'
+run_list(
+  'recipe[git]',
+  'recipe[mysql::server]',
+  'recipe[mysql::client]',
+  'recipe[mysql::ruby]',
+  'recipe[apache2]',
+  'recipe[passenger_apache2]',
+  'recipe[passenger_apache2::mod_rails]',
+  'recipe[my_app]'
+)
+```
+
+As you can see, we are just setting the `run_list` to include all of the dependencies we just listed, as well as our `my_app` cookbook.
+
+Back in the `my_app` cookbook, let's add some default attributes. This will help DRY up our code and allow for overrides in the future. In the `attributes/default.rb` file:
 
 ```ruby
 default['my_app']['root'] = '/var/www/my_app'
@@ -196,53 +218,25 @@ default['my_app']['database']['username'] = 'my_app'
 default['my_app']['database']['password'] = 'secret'
 ```
 
-Let's add a few things to our default recipe:
+Let's code to create the directory structure (from Capistrano docs):
 
-1. Install git
+```ruby
+%w(/ releases shared shared/bin shared/config shared/log shared/pids shared/system).each do |directory|
+  directory "#{node['my_app']['root']}/#{directory}" do
+    owner         node['apache']['user']
+    group         node['apache']['group']
+    mode          '0755'
+    recursive     true
+  end
+end
+```
 
-    ```ruby
-    include_recipe 'git'
-    ```
-
-2. Install MySQL (both server and client):
-
-    ```ruby
-    include_recipe 'mysql::server'
-    include_recipe 'mysql::client'
-    include_recipe 'mysql::ruby'
-    ```
-
-3. Install Apache 2:
-
-    ```ruby
-    include_recipe 'apache2'
-    ```
-
-4. Install Passenger:
-
-    ```ruby
-    include_recipe 'passenger_apache2'
-    include_recipe 'passenger_apache2::mod_rails'
-    ```
-
-5. Setup directory structure:
-
-    ```ruby
-    %w(/ releases shared shared/bin shared/config shared/log shared/pids shared/system).each do |directory|
-      directory "#{node['my_app']['root']}/#{directory}" do
-        owner         node['apache']['user']
-        group         node['apache']['group']
-        mode          '0755'
-        recursive     true
-      end
-    end
-    ```
-
-And then upload this cookbook to the Chef Server:
+And then upload this cookbook and the associated role to the Chef Server:
 
     $ knife cookbook upload my_app
+    $ knife role from file roles/my_app.rb
 
-And we can now add the recipe directly to a `run_list` during a bootstrap:
+And we can now this role to the `run_list` during the bootstrap:
 
     $ knife ec2 server create \
       --availability-zone us-east-1a \
@@ -250,11 +244,11 @@ And we can now add the recipe directly to a `run_list` during a bootstrap:
       --flavor t1.micro \
       --image ami-fd20ad94 \
       --identity-file ~/.ssh/aws.pem \
-      --run-list "recipe[my_app]" \
+      --run-list "role[my_app]" \
       --ssh-user ubuntu \
       --distro ubuntu12.04-gems
 
-It's okay to bootstrap this node now, even though we aren't done with the recipe yet. Because Chef is idempotent, we can continue to work on this cookbook and only new changes are applied. This also mimics the kind of workflow you would have over time inside your organization.
+It's okay to bootstrap this node now, even though we aren't done with the `my_app` recipe yet. Because Chef is idempotent, we can continue to work on this cookbook and only new changes are applied. This also mimics the kind of workflow you would have over time inside your organization.
 
 Let this run in the background (passenger takes a long time to install). But make sure you grab the `CNAME` of the ec2 instance, because you can SSH into it later:
 
@@ -287,7 +281,7 @@ And the associated template in `templates/default/config/redis.yml.erb`:
 host: "<%= @host %>"
 ```
 
-We can follow a simlar process for memcached:
+We can follow a similar process for memcached:
 
 ```ruby
 memcached_server = search(:node, 'role:memcached').first
