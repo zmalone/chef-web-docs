@@ -70,7 +70,7 @@ It turns out that memcached and redis already have community versions we can lev
 - [memcached](http://community.opscode.com/cookbooks/memcached)
 - [redisio](http://community.opscode.com/cookbooks/redisio)
 
-Create a new file called `Berskfile` at the root of your Chef repo and add the following:
+Create a new file called `Berksfile` at the root of your Chef repo and add the following:
 
 ```ruby
 site :opscode
