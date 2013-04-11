@@ -216,7 +216,7 @@ default['my_app']['database']['username'] = 'my_app'
 default['my_app']['database']['password'] = 'secret'
 ```
 
-Let's code to create the directory structure (from Capistrano docs):
+Let's code to create the directory structure (from Capistrano docs). In the default recipe (`my_app/recipes/default.rb`):
 
 ```ruby
 %w(/ releases shared shared/bin shared/config shared/log shared/pids shared/system).each do |directory|
