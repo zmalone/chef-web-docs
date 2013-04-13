@@ -51,14 +51,14 @@ In the default recipe `recipes/default.rb`, add the following:
     ```ruby
     template '/etc/ntp.conf' do
       source    'ntp.conf.erb'
-      notifies  :restart, 'service[ntpd]'
+      notifies  :restart, 'service[ntp]'
     end
     ```
 
 1. Finally, alert Chef of the service and start it:
 
     ```ruby
-    service 'ntpd' do
+    service 'ntp' do
       action [:enable, :start]
     end
     ```
@@ -70,10 +70,10 @@ In the default recipe `recipes/default.rb`, add the following:
 
     template '/etc/ntp.conf' do
       source    'ntp.conf.erb'
-      notifies  :restart, 'service[ntpd]'
+      notifies  :restart, 'service[ntp]'
     end
 
-    service 'ntpd' do
+    service 'ntp' do
       action [:enable, :start]
     end
     ```
