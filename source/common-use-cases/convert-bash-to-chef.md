@@ -51,7 +51,7 @@ While you could easily use the `package` resource to install all of these things
 1. Install apache2 - [community](http://community.opscode.com/cookbooks/apache2)
 1. Install php - [community](http://community.opscode.com/cookbooks/php)
 1. Install mysql - [community](http://community.opscode.com/cookbooks/mysql)
-1. Install phpmyadmin - [community](http://community.opscode.com/cookbooks/phpmyadmin)
+1. Install phpmyadmin - `package` resource
 1. Configure php to use mysql - [community](https://github.com/opscode-cookbooks/php#deprecated-recipes)
 1. Create an `info.php` page with content
 
@@ -71,12 +71,11 @@ While you could easily use the `package` resource to install all of these things
     depends 'apache2'
     depends 'mysql'
     depends 'php'
-    depends 'phpmyadmin'
     ```
 
 1. If you're using Hosted Chef, you'll need to make sure those cookbooks are installed and available on the Chef Server. If you're using Chef Solo, make sure they are in your path.
 
-1. Open the default recipe (`recipes/default.rb`) and use the `include_recipe` directive to include the necessary components from the other cookbooks:
+1. Open the default recipe (`recipes/default.rb`) and use the `include_recipe` directive and the `package` provider to include the necessary components from the other cookbooks:
 
     ```ruby
     # cookbooks/shell_to_chef/recipes/default.rb
@@ -86,7 +85,8 @@ While you could easily use the `package` resource to install all of these things
     include_recipe 'mysql::server'
     include_recipe 'php'
     include_recipe 'php::module_mysql'
-    include_recipe 'phpmyadmin'
+
+    package 'phpmyadmin'
     ```
 
   This really includes everything we need except the `info.php` file. It installs Apache 2, MySQL Server and MySQL Client, PHP, PHP MySQL modules, and phpmyadmin.
@@ -108,7 +108,7 @@ While you could easily use the `package` resource to install all of these things
     end
     ```
 
-1. That's it! You've succesfully converted a bash script into a simple Chef recipe.
+1. That's it! You've successfully converted a bash script into a simple Chef recipe.
 
 ---
 
