@@ -1,5 +1,6 @@
 #= require foundation
 #= require analytics
+#= require munchkin
 #= require snap_engage
 
 $ ->
