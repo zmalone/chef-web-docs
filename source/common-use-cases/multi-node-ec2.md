@@ -20,8 +20,7 @@ Pre-requisite steps:
 1. Setup and download your EC2 Key Pair
 1. Create an Access Key and Associated Secret Token on AWS
 
-[WARN] Using Amazon EC2 will cost money.
-[WARN] Leaving your instance running could result in unexpected costs.
+[WARN] Leaving your EC2 instances running could result in unexpected costs.
 
 ---
 

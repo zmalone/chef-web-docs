@@ -1,13 +1,17 @@
 source 'https://rubygems.org'
 
-gem 'middleman',            '~> 3.0.11'
-gem 'middleman-syntax',     '~> 1.0.1'
+gem 'middleman',            '~> 3.1.0.beta.1'
+gem 'middleman-syntax',     '~> 1.1.1'
 gem 'middleman-smusher',    '~> 3.0.0'
 
-gem 'builder',              '~> 3.1.4'
+gem 'builder',              '~> 3.2.0'
 gem 'redcarpet',            '~> 2.2.2'
-gem 'slim',                 '~> 1.3.6'
+gem 'rb-fsevent',           '~> 0.9'
+gem 'slim',                 '~> 1.3.8'
+gem 'zurb-foundation',      github: 'zurb/foundation', ref: 'fb0cdaec'
+
+# gem 'jquery-rails'
 
 group :production do
-  gem 'therubyracer',       '~> 0.11.3'
+  gem 'therubyracer',       '~> 0.11.4'
 end
