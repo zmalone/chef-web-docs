@@ -1,43 +1,49 @@
 doctype html
-html
-  head
-    title= [current_page.title, 'Opscode Learn Chef'].compact.join(' | ')
-    meta charset='utf-8'
-    meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'
-    meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'
-    meta name='google-site-verification' content='qEVkGXAX8Q-ld5fbiGUittJ6Kbf-YtAJwUZCA5M7tRk'
+/[if IE 8]
+  html.no-js.lt-ie9 lang="en"
+/[if gt IE 8]
+  html.no-js lang="en"
 
-    - if data.page.description
-      meta name='description' content=data.page.description
-    - if data.page.keywords
-      meta name='keywords' content=data.page.keywords
-    = stylesheet_link_tag 'application'
+head
+  title= [current_page.title, 'Opscode Learn Chef'].compact.join(' | ')
+  meta charset='utf-8'
+  meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'
+  meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'
+  meta name='google-site-verification' content='qEVkGXAX8Q-ld5fbiGUittJ6Kbf-YtAJwUZCA5M7tRk'
 
-  body class=page_classes
-    header.row
-      .seven.columns
-        h2= link_to 'Opscode', '/', id: 'logo'
-      .five.columns
-        ul.inline-list.top-nav
+  - if data.page.description
+    meta name='description' content=data.page.description
+  - if data.page.keywords
+    meta name='keywords' content=data.page.keywords
+  = stylesheet_link_tag 'application'
+
+body class=page_classes
+  header#header
+    .row
+      .large-2.columns
+        h2= link_to '#learnchef', '/', id: 'logo'
+      .large-10.columns
+        ul#top-nav.hide-for-small
           li= link_to 'Home', 'http://www.opscode.com'
           li= link_to 'Docs', 'http://docs.opscode.com'
           li= link_to '#learnchef', 'http://webchat.freenode.net/?channel=learnchef'
           li= link_to '@learnchef', 'https://twitter.com/learnchef'
-      hr
+      / hr
 
-    section.row
-      .three.columns#sidebar
+  section.row
+    .large-3.columns
+      #sidebar
         = partial 'layouts/sidebar'
 
-      .nine.columns
-        = yield
+    .large-9.columns
+      = yield
 
-    footer.row
-      hr
-      .four.columns
-        ul.inline-list
-          li= link_to 'Feedback', '/feedback'
-      .eight.columns
-        p align="right" Copyright &copy; #{Time.now.year} Opscode, Inc. All Rights Reserved.
+  footer.row
+    hr
+    .large-4.columns
+      ul.inline-list
+        li= link_to 'Feedback', '/feedback'
+    .large-8.columns
+      p align="right" Copyright &copy; #{Time.now.year} Opscode, Inc. All Rights Reserved.
 
-    = javascript_include_tag 'application'
+  = javascript_include_tag 'application'

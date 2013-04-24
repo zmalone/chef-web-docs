@@ -16,9 +16,10 @@ set :site_url, 'learnchef.opscode.com'
 # require 'susy'
 
 # Change Compass configuration
-# compass_config do |config|
-#   config.output_style = :compact
-# end
+compass_config do |config|
+  # config.output_style = :compact
+  config.line_comments = false
+end
 
 # Slim Configuration
 Slim::Engine.set_default_options pretty: true, disable_escape: true

@@ -1,13 +1,14 @@
 nav role="nav"
-  ul.tabs.vertical
+  .section-container.accordion data-section="accordion"
     - sitemap.roots.sort.each do |page|
-      li class=(page.current?(self) ? 'active' : nil)
-        = link_to page.data['title'], page
+      section class=(page.current?(self) ? 'active' : nil) data-section-title="1"
+        p.title= link_to page.data['title'], page
         - if page.children?
-          ul
-            - page.children.each do |child|
-              li class=(child.current?(self) ? 'active' : nil) = link_to child.data['title'], child
+          div.content data-section-content="1"
+            ul.side-nav
+              - page.children.each do |child|
+                li class=(child.current?(self) ? 'active' : nil) = link_to child.data['title'], child
 
-= link_to '/feedback', id: 'quickstart-help-button', onclick: 'javascript: return SnapABug.startLink();' do
+= link_to '/feedback', id: 'quickstart-help-button', onclick: 'javascript: return SnapABug.startLink();', class: 'expand button' do
   span.icon.icon-comments
   |  Help I'm Stuck!

@@ -1,7 +1,12 @@
+#= require jquery
 #= require foundation
+
 #= require analytics
 #= require munchkin
 #= require snap_engage
+
+$ ->
+  $(document).foundation()
 
 $ ->
   $window = $(window)
