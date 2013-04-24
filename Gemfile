@@ -8,7 +8,7 @@ gem 'builder',              '~> 3.2.0'
 gem 'redcarpet',            '~> 2.2.2'
 gem 'rb-fsevent',           '~> 0.9'
 gem 'slim',                 '~> 1.3.8'
-gem 'zurb-foundation',      github: 'zurb/foundation', ref: 'fb0cdaec'
+gem 'zurb-foundation',      git: 'git://github.com/zurb/foundation', ref: 'fb0cdaec'
 
 # gem 'jquery-rails'
 
