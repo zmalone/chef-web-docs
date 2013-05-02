@@ -3,7 +3,7 @@ class Analytics
     window._gaq ?= []
     window._gaq.push ['_setAccount', account_id]
     window._gaq.push ['_setDomainName', domain_name]
-    window._gaq.push ['_trackPageview', domain_name]
+    window._gaq.push ['_trackPageview']
 
     addScript()
 
