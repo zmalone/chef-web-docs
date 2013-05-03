@@ -12,7 +12,7 @@ We leveraged the power of the [Community Site][apache2-cookbook] to install thre
 1. If you expand the `cookbooks` folder you'll notice that a new folder `aliases` has been created. Open up the `metadata.rb` in your editor and add a dependency on `magic_shell` at the bottom of the file:
 
     ```ruby
-    depends 'magic_shell', '~> 0.2.0'
+    depends 'magic_shell'
     ```
 
     If you're not familiar with Chef, this allows us to leverage the `magic_shell` LWRP inside our `aliases` cookbook.
