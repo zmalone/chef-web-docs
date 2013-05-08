@@ -14,3 +14,5 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
 1. Start the virtual machine. In Terminal:
 
         $ vagrant up
+
+  [WARN] This process can take up to 10 minutes. Do not interrupt the process.
