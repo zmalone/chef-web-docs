@@ -11,8 +11,35 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
 
     [NOTE] This will create a `Vagrantfile` in the root of your repository.
 
+  You should see output like:
+
+  ```text
+  A Vagrantfile has been placed in this directory. You are
+  now ready to `vagrant up` your first virtual environment!
+
+  Please read the comments in the Vagrantfile as well as documentation
+  on vagrantup.com for more information on using Vagrant.
+  ```
+
 1. Start the virtual machine. In Terminal:
 
         $ vagrant up
+
+  You should see output like:
+
+  ```text
+  Bringing machine 'default' up with 'virtualbox' provider...
+
+  [default] Box 'opscode-ubuntu-1204' was not found.
+  Fetching box from specified URL for the provider 'virtualbox'.
+
+  Note that if the URL does not have a box for this provider,
+  you should interrupt Vagrant now and add the box yourself.
+
+  Otherwise Vagrant will attempt to download the full box prior
+  to discovering this error.
+
+  Downloading or copying the box...
+  ```
 
   [WARN] This process can take up to 10 minutes. Do not interrupt the process.
