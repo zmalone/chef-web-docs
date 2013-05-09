@@ -1,5 +1,5 @@
 ##### Recap
-We now have 4 recipes:
+We now have the following recipes:
 
   1. `recipe[apt]` - via community
   1. `recipe[apache2]` - via community
