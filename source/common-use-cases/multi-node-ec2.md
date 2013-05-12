@@ -19,6 +19,7 @@ Pre-requisite steps:
 1. Register for an [Amazon AWS Account](http://aws.amazon.com)
 1. Setup and download your EC2 Key Pair
 1. Create an Access Key and Associated Secret Token on AWS
+1. Allow port 22 access on your EC2 security group
 
 [WARN] Leaving your EC2 instances running could result in unexpected costs.
 
@@ -40,6 +41,8 @@ knife[:aws_access_key_id] = 'ACCESS_KEY_ID'
 knife[:aws_ssh_key_id] = 'KEY_ID'
 knife[:aws_secret_access_key] = 'SECRET_ACCESS_KEY'
 ```
+
+The `aws_ssh_key_id` is the name of your EC2 Key Pair. For example, if you downloaded your keypair as into `~/.ssh/foo.pem`, use "foo" as the `aws_ssh_key_id`.
 
 ---
 
@@ -107,6 +110,8 @@ Now we can use the `knife-ec2` plugin to create and provision this EC2 instance 
       --identity-file ~/.ssh/aws.pem \
       --run-list "role[memcached]" \
       --ssh-user ubuntu
+
+[NOTE] AMIs are linked to a particular availability zone.
 
 Make sure you replace the flags appropiately for your region and configuration. Most of them are just implementation details, but the important thing to note is the `run-list` option, where we specified `role[memcached]`. This tells Chef to bootstrap this node with the memcached role (thus install memcached). This will take about 2 minutes to spin up.
 
