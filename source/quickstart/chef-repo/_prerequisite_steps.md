@@ -1,13 +1,13 @@
 ##### Prerequisite Steps
 1. Sign up for a free Opscode [Hosted Chef account][chef-hosted] and download your `knife.rb` and `*.pem` files to your `~/Downloads` folder. You should have these 3 files:
 
+    [NOTE] If you are unsure of where to find these files, watch the [screencast on managing .pem files](https://learnchef.opscode.com/screencasts/manage-pem-files/).
+
         [your_organization_name]-validator.pem
         [your_username].pem
         knife.rb
 
     [WARN] These files are **your** credentials to the the Chef Server - do not share them with anyone else!
-
-    If you are unsure of where to find these files, watch the [screencast on managing .pem files](https://learnchef.opscode.com/screencasts/manage-pem-files/).
 
 1. Clone the `chef-repo` into the `Development` folder from github. In Terminal:
 
