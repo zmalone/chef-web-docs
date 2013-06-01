@@ -102,7 +102,7 @@ keys /etc/ntp/keys
 ##### Wrap Up
 There are some final (and optional depending on your setup) steps:
 
-1. Commit these changes to git (if you're using git or scm)
+1. Commit these changes to [git](http://git-scm.com) (we recommend git, but you can use any SCM tool)
 1. Upload this cookbook to the Chef Server (if you're using Hosted or Private Chef)
 1. Look on the community site:
 
