@@ -3,7 +3,6 @@
 
 #= require analytics
 #= require munchkin
-#= require snap_engage
 
 $ ->
   $(document).foundation()
