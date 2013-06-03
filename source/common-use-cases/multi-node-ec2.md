@@ -52,9 +52,9 @@ Next, add a `Gemfile` so that we can lock down the version of Chef and include s
 ```ruby
 source 'https://rubygems.org'
 
-gem 'berkshelf',    '~> 1.2.1'
-gem 'chef',         '~> 11.4.0'
-gem 'knife-ec2',    '~> 0.6.2'
+gem 'berkshelf',    '~> 1.4.5'
+gem 'chef',         '~> 11.4.4'
+gem 'knife-ec2',    '~> 0.6.4'
 ```
 
 - Berkshelf will help us manage our community cookbook dependencies. It's kind of like "bundler", but for cookbooks.
