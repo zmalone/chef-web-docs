@@ -43,3 +43,5 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
   ```
 
   [WARN] This process can take up to 10 minutes. Do not interrupt the process.
+
+  [NOTE] We are using a Virtual Machine and Vagrant here. You could just as easily use a remote server (like EC2 or Rackspace) or a physical server.
