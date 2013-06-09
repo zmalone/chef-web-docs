@@ -60,7 +60,9 @@ gem 'knife-ec2',    '~> 0.6.4'
 - Berkshelf will help us manage our community cookbook dependencies. It's kind of like "bundler", but for cookbooks.
 - We lock the Chef version to make sure everyone on our team is using the same version.
 
-Run the `bundle` command to install those dependencies.
+Run the `bundle` command to install those dependencies:
+
+    $ bundle install --path vendor
 
 Next, before I go any further, I'm going to check the community site. It's possible that some of the heavy-lifting has already been done for me.
 
