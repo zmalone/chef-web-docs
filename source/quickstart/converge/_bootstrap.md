@@ -1,4 +1,7 @@
 ##### Bootstrap the node
+
+[NOTE] If you've used Vagrant before, please make sure all instances but this one are turned of (`vagrant halt`) before bootstrapping.
+
 1. Bootstrap the virtual machine with `knife`. In Terminal:
 
         $ knife bootstrap localhost \
