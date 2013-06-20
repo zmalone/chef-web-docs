@@ -26,5 +26,3 @@ Check if the file referenced in `validation_key` above (usually `ORGANIZATION-va
   You can then select 'Regenerate validation key' next to the organization you need the key for.
 
   [WARN] Your teammates co-workers will need a copy of this new key.
-
-  [NOTE] See our [screencast on managing your Chef pem files](/screencasts/manage-pem-files) for more detailed steps.

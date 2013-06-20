@@ -3,7 +3,7 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
 
 1. Move into your working directory using the `cd` command:
 
-        $ cd ~/Development/chef-repo
+        $ cd ~/chef-repo
 
 1. Create, initialize, and start the Opscode base box (one time). In Terminal:
 
