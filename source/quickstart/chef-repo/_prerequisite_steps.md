@@ -1,16 +1,32 @@
 ##### Prerequisite Steps
+1. Sign up for a free Opscode [Hosted Chef account][chef-hosted] and download your `knife.rb` and `*.pem` files to your `~/Downloads` folder. You should have these 3 files:
 
-1. Sign up for a free Opscode [Hosted Chef account][chef-hosted] and download the **Starter Kit**.
+    [NOTE] If you are unsure of where to find these files, watch the [screencast on managing .pem files](https://learnchef.opscode.com/screencasts/manage-pem-files/).
 
-1. Extract the Starter Kit into your home directory. (It will extract as `chef-repo`)
+        [your_organization_name]-validator.pem
+        [your_username].pem
+        knife.rb
+
+    [WARN] These files are **your** credentials to the the Chef Server - do not share them with anyone else!
+
+1. Clone the `chef-repo` into the `Development` folder from github. In Terminal:
+
+        $ mkdir ~/Development
+        $ git clone git://github.com/opscode/chef-repo ~/Development/chef-repo
+
+1. Create the `.chef` directory and move your private files there. In Terminal:
+
+        $ mkdir ~/Development/chef-repo/.chef
+        $ mv ~/Downloads/*.pem ~/Development/chef-repo/.chef/
+        $ mv ~/Downloads/knife.rb ~/Development/chef-repo/.chef/
 
 1. "Change Directory" (`cd`) into our `chef-repo`. In Terminal:
 
-        $ cd ~/chef-repo
+        $ cd ~/Development/chef-repo
 
     [NOTE] All remaining commands should be run from this directory.
 
-1. Verify your connection with `knife` (the CLI tool for Chef). In Terminal:
+1. Verify your credentials are correct with `knife` (the CLI tool for Chef). In Terminal:
 
         $ knife client list
 

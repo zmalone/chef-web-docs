@@ -9,6 +9,6 @@
         $ knife cookbook site install apache2
         $ knife cookbook site install networking_basic
 
-1. Look in your `cookbooks` directory and you should now see three folders, `apt`, `apache2`, and `networking_basic`.
+1. Look in your cookbooks directory and you should now see three folders, `apt`, `apache2`, and `networking_basic`.
 
 [sublime-text-2]: http://www.sublimetext.com/2 "Sublime Text 2"
