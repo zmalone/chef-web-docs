@@ -66,6 +66,9 @@ page '/humans.txt', layout: false
 #   end
 # end
 
+# Enable Livereload
+activate :livereload
+
 # Enable syntax highlighting
 activate :syntax
 
