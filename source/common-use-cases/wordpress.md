@@ -95,7 +95,7 @@ knife bootstrap FQDN (options)
 
 As you can see, there are many flags and parameters that we can pass to the bootstrap command.
 
-The first parameter (and the only required parameter) is the IP Address or DNS name of the remote server. The remote server must be running SSH or WinRM.
+The first parameter (and the only required parameter) is the IP Address or DNS name of the remote server. The remote server must be running SSH (for this tutorial).
 
     $ knife bootstrap IP_ADDRESS
 
