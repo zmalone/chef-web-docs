@@ -50,7 +50,7 @@ There's always an intentional disconnect between the Chef Server and your local 
 
 This will upload wordpress and all of its dependencies to the remote Chef Server.
 
-Now that the cookbooks are on the server, we need to bootstrap a node with the wordpress cookbook in the run list. We will use `knife`, the Command Line Tool for Chef, to accomplish this.
+Now that the cookbooks are on the server, we need to bootstrap a node with the wordpress cookbook in the run list. We will use `knife`, the command line tool for Chef, to accomplish this.
 
 Because `knife` is a command line tool, we can use it interactively. Let's look at the help output for the `bootstrap` command:
 
