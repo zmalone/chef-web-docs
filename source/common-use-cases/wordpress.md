@@ -107,6 +107,8 @@ I also want to name this node. By default, Chef will use the FQDN of the host, b
 
     $ --node-name target
 
+[NOTE] This flag specifies the name of the node on the Chef Server, not the hostname of the machine.
+
 Lastly, we can specify the `run_list` for this node during the bootstrap:
 
     $ --run-list "recipe[wordpress::default]"
