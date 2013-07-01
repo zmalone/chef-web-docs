@@ -16,7 +16,7 @@ If you're familiar with PHP Wordpress, you know that it has the following requir
 2. MySQL Database Server
 3. PHP
 
-Additionally, we need to:
+To have a fully functional Wordpress installation, our Chef cookbook will also need to:
 
 1. Download the latest Wordpress package
 2. Configure Apache, MySQL, and PHP to work in harmony
