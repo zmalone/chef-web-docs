@@ -29,7 +29,7 @@ We will be using [Berkshelf](http://berkshelf.org) - a Chef cookbook dependency 
 
     $ gem install berkshelf
 
-Next, create a file named `Berksfile` in your `chef-repo`. Remember, all commands should be run from inside your `chef-repo`:
+Next, create a file named `Berksfile` in your Chef repository. Remember, all commands should be run from inside your chef repository:
 
 ```ruby
 site :opscode
