@@ -1,7 +1,7 @@
 ---
 title: 'Multi-Node EC2'
 long_title: 'Spin up a multi-node EC2 application with Chef'
-order: 3
+order: 4
 layout: 'common-use-case'
 description: 'Dive into Chef by spinning up an EC2 virtual infrastructure complete with Redis, MySQL, memcached, Apache, and Passenger.'
 keywords: 'ec2, amazon, multi-node, chef, opscode'
