@@ -36,7 +36,7 @@ site :opscode
 cookbook 'wordpress', '~> 1.1.2'
 ```
 
-The first line says "use the Opscode community site for cookbooks". The second line defines the wordpress cookbook as a dependency and locks to a specific version.
+The first line tells Berkshelf to get the following items from the Opscode community website. The second line defines the wordpress cookbook as a dependency and locks to a specific version.
 
 Next, we need to download this cookbook from the cookbook site. We can do this by running `berks install`:
 
