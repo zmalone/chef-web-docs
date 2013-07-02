@@ -121,7 +121,7 @@ When we press enter (press enter), Chef will connect to our remote machine via S
 
 In the next step of the bootstrap process, Chef will attempt to register this node with the remote Chef Server. The node will first request a client key from the Chef Server, using the validation key. The Chef Server will respond with the client key, which the node will then sign all subsequent requests.
 
-Finally, once the node is registered with the Chef Server, the final phase of the bootstrap process is to "run Chef". This will execute the `run_list` for this node (if you recall, we passed it in as a parameter). In other words, this will install wordpress.
+Finally, once the node is registered with the Chef Server, the final phase of the bootstrap process is to "run Chef". This will execute the `run_list` we specified in the bootstrap command from earlier. In other words, this will install wordpress.
 
 During this time Chef is executing the wordpress cookbook. This cookbook handles the installation of Apache, MySQL, PHP, and the inner bindings of those tools in harmony. Once the bootstrap completes, we should have a working wordpress installation.
 
