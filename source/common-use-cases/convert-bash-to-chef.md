@@ -2,6 +2,7 @@
 title: 'Bash &rarr; Chef'
 long_title: 'Convert a Shell Script to a Chef Recipe'
 order: 2
+layout: 'common-use-case'
 description: 'A very common use case with Chef is to take antiquated in-house bash scripts and convert them to idempotent Chef resources. This guide will walk you through converting a simple bash script into a robust Chef recipe.'
 keywords: 'bash, bash to chef, chef to bash, convert, chef, opscode'
 ---

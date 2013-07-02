@@ -1,6 +1,7 @@
 ---
 title: 'NTP'
 order: 1
+layout: 'common-use-case'
 deprecates: 'http://wiki.opscode.com/display/chef/Guide+to+Creating+A+Cookbook+and+Writing+A+Recipe'
 ---
 
