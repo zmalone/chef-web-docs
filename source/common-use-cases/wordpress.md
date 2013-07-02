@@ -113,7 +113,7 @@ Lastly, we can specify the `run_list` for this node during the bootstrap:
 
     $ --run-list "recipe[wordpress::default]"
 
-Notice that I used the "recipe-bracket" notation. This is how we refer to the default recipe of the wordpress cookbook.
+Notice that I used the "recipe-bracket" notation. This is how we refer to the default recipe of the wordpress cookbook. The syntax is `cookbook::recipe`, so `bacon::eggs` would refer to `cookbooks/bacon/recipes/eggs.rb`.
 
 [NOTE] You will need to insert the correct values and flags based on your remote target machine.
 
