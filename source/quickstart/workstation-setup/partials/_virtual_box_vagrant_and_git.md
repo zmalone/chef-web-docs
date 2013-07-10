@@ -1,6 +1,6 @@
 ##### VirtualBox & Vagrant
 
-The rest of this tutorial assumes we have the following installed:
+The rest of this tutorial assumes that the following is installed with default settings:
 
 * [Virtual Box][virtual-box] to provide a local virtual machine to manage using Chef,
 * [Vagrant][vagrant] to give a command line interface to manage it and,
