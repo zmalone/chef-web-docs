@@ -2,15 +2,10 @@
 
 The rest of this tutorial assumes that the following is installed with default settings:
 
-* [Virtual Box][virtual-box] to provide a local virtual machine to manage using Chef,
-* [Vagrant][vagrant] to give a command line interface to manage it and,
-* [Git][git] to revision our Chef code.
-
-<!-- Install [VirtualBox][virtual-box] [VIDEO http://www.youtube.com/embed/cFqcf5E5itQ] and [Vagrant][vagrant] [VIDEO http://www.youtube.com/embed/O8TirqrZjRM] for your operating system. -->
-
 [WARN] Use [VirtualBox v4.2.10][virtual-box-old] or below, v4.2.14 introduced breaking changes to Vagrant!
 
-[virtual-box]: https://www.virtualbox.org/wiki/Downloads "VirtualBox for your computer"
-[vagrant]: http://downloads.vagrantup.com/ "Vagrant for your computer"
-[git]: http://git-scm.com/
+* <a href="https://www.virtualbox.org/wiki/Download_Old_Builds_4_2" target="_blank">Virtual Box</a> to provide a local virtual machine to manage using Chef,
+* <a href="http://downloads.vagrantup.com/" target="_blank">Vagrant</a> to give a command line interface to manage it and,
+* <a href="http://git-scm.com/" target="_blank">Git</a> to revision our Chef code.
+
 [virtual-box-old]: https://www.virtualbox.org/wiki/Download_Old_Builds_4_2
