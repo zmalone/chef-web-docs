@@ -1,12 +1,12 @@
 ##### Prerequisite Steps
-1. Sign up for a free Opscode [Hosted Chef account][chef-hosted] and download your `knife.rb`, `[username].pem`, and `[organization_name]-validator.pem` files to your `~/Downloads` folder. You should have these 3 files:
+1. Sign up for a free Opscode [Hosted Chef account][chef-hosted] and download the following 3 files into your `~/Downloads` directory:
+
+- `knife.rb`
+- `[username].pem`
+- `[organization_name]-validator.pem`
 
     [NOTE] If you are unsure of where to find these files, watch the [screencast on managing .pem files][pem-screencast].
-
-        [organization_name]-validator.pem
-        [username].pem
-        knife.rb
-
+    
     [WARN] These files are **your** credentials to the the Chef Server - do not share them with anyone else!
 
 1. Make a `Developement` directory and clone the [example Chef repository][chef-repo-github] from Opscode, into it. In a terminal:
@@ -20,7 +20,7 @@
         $ mv ~/Downloads/*.pem ~/Development/chef-repo/.chef/
         $ mv ~/Downloads/knife.rb ~/Development/chef-repo/.chef/
 
-1. "Change Directory" (`cd`) into our `chef-repo`. In a terminal:
+1. "Change Directory" (`cd`) into `chef-repo`. In a terminal:
 
         $ cd ~/Development/chef-repo
 
@@ -30,7 +30,7 @@
 
         $ knife client list
 
-  You should see something like:
+    You should see something like:
 
         [organization_name]-validator
 

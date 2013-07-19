@@ -1,5 +1,9 @@
 ##### Recap
-We now have the following recipes:
+Our workstation is now set up. We now have:
+
+- Credentials setup and verified
+- Our `chef-repo` repository setup
+- The following recipes to use on a new node:
 
   1. `recipe[apt]` - via community
   1. `recipe[apache2]` - via community
@@ -7,4 +11,4 @@ We now have the following recipes:
   1. `recipe[magic_shell]` - via community
   1. `recipe[aliases]` - created ourselves
 
-We can add these recipes to our `run_list` in Part 3!
+The next step will be to add these recipes to the `run_list` of a new node in Part 3.
