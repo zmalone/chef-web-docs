@@ -3,7 +3,7 @@
 
     [NOTE] If you don't have a plain text editor, download a [free trial of Sublime Text 2][sublime-text-2].
 
-1. Download the `apt`, `apache2`, and `networking_basic` community cookbooks using `knife`. In Terminal:
+1. Download the `apt`, `apache2`, and `networking_basic` community cookbooks using `knife`. In a terminal:
 
         $ knife cookbook site install apt
         $ knife cookbook site install apache2
