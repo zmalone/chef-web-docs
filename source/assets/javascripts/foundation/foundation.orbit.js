@@ -96,7 +96,7 @@
           $slides_container = $(slider),
           $container = $slides_container.wrap(self._container_html()).parent(),
           $slides = $slides_container.children();
-      
+
       $.extend(true, self.settings, self.data_options($slides_container));
 
       if (self.settings.navigation_arrows) {

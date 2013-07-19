@@ -121,7 +121,7 @@
           int_settings_count = integer_settings.length;
 
       if (!this.settings.init) this.init();
-      
+
       // non configureable settings
       this.settings.$content_el = $this;
       this.settings.$body = $(this.settings.tipContainer);
@@ -589,7 +589,7 @@
         width: this.outerWidth(el, true),
         height: this.outerHeight(el, true)
       });
-      
+
       exposeCover = $(this.settings.template.exposeCover);
 
       origCSS = {
