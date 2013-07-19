@@ -38,6 +38,13 @@ Building
         $ 0
 
 
+Publishing
+----------
+- **Always submit PRs/changes against the master branch**
+- Verify changes on https://learnchef-rs-preprod.opscode.com/
+- Merge `master` into `release`
+
+
 Contributing
 ------------
 1. **Make a new branch**
