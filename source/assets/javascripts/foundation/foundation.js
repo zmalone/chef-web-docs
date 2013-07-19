@@ -32,17 +32,17 @@ if (typeof jQuery === "undefined" &&
   if (!Array.prototype.filter) {
     Array.prototype.filter = function(fun /*, thisp */) {
       "use strict";
-   
+
       if (this == null) {
         throw new TypeError();
       }
-   
+
       var t = Object(this),
           len = t.length >>> 0;
       if (typeof fun != "function") {
           return;
       }
-   
+
       var res = [],
           thisp = arguments[1];
       for (var i = 0; i < len; i++) {
@@ -53,7 +53,7 @@ if (typeof jQuery === "undefined" &&
           }
         }
       }
-   
+
       return res;
     };
 
@@ -63,9 +63,9 @@ if (typeof jQuery === "undefined" &&
           // closest thing possible to the ECMAScript 5 internal IsCallable function
           throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
         }
-     
-        var aArgs = Array.prototype.slice.call(arguments, 1), 
-            fToBind = this, 
+
+        var aArgs = Array.prototype.slice.call(arguments, 1),
+            fToBind = this,
             fNOP = function () {},
             fBound = function () {
               return fToBind.apply(this instanceof fNOP && oThis
@@ -73,10 +73,10 @@ if (typeof jQuery === "undefined" &&
                  : oThis,
                aArgs.concat(Array.prototype.slice.call(arguments)));
             };
-     
+
         fNOP.prototype = this.prototype;
         fBound.prototype = new fNOP();
-     
+
         return fBound;
       };
     }
@@ -104,7 +104,7 @@ if (typeof jQuery === "undefined" &&
           args = [scope, method, options, response],
           responses = [],
           nc = nc || false;
-          
+
       // disable library error catching,
       // used for development only
       if (nc) this.nc = nc;
@@ -193,11 +193,11 @@ if (typeof jQuery === "undefined" &&
 
     random_str : function (length) {
       var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
-      
+
       if (!length) {
           length = Math.floor(Math.random() * chars.length);
       }
-      
+
       var str = '';
       for (var i = 0; i < length; i++) {
           str += chars[Math.floor(Math.random() * chars.length)];

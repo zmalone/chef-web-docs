@@ -39,7 +39,7 @@
       $(this.scope).on('arrival.fndtn.magellan', '[data-magellan-arrival]', function (e) {
         var $destination = $(this),
             $expedition = $destination.closest('[data-magellan-expedition]'),
-            activeClass = $expedition.attr('data-magellan-active-class') 
+            activeClass = $expedition.attr('data-magellan-active-class')
               || self.settings.activeClass;
 
           $destination
@@ -118,7 +118,7 @@
 
     set_threshold : function () {
       if (!this.settings.threshold) {
-        this.settings.threshold = (this.fixed_magellan.length > 0) ? 
+        this.settings.threshold = (this.fixed_magellan.length > 0) ?
           this.outerHeight(this.fixed_magellan, true) : 0;
       }
     },
