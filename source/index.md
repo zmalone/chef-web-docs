@@ -13,7 +13,7 @@ title: "Welcome to #learnchef"
 A: Chef is an infrastructure automation and configuration management framework. Simply put, Chef is "Infrastructure as Code".
 
 **Q: Can I use Chef with Amazon AWS, Windows Azure, Google Compute Engine, Rackspace, or another cloud provider?**<br>
-A: Chef supports a wide variety of cloud providers including Amazon AWS, Windows Azure, Google Compute Engine, OpenStack, Rackspace, and Linode. To see if your provider is supported, visit the [Chef Docs][knife-docs].
+A: Chef supports a wide variety of cloud providers including Amazon AWS, Windows Azure, Google Compute Engine, OpenStack, Rackspace, and Linode. To see if your provider is supported, visit the [Chef Docs][knife-plugins].
 
 **Q: What are all these `.pem` files?**<br>
 A: Chef uses those pem files to authenticate you against the Chef Server.
