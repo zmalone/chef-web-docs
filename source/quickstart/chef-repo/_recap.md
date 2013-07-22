@@ -11,4 +11,4 @@ Our workstation is now set up. We now have:
   1. `recipe[magic_shell]` - via community
   1. `recipe[aliases]` - created ourselves
 
-The next step will be to add these recipes to the `run_list` of a new node in Part 3.
+The next step is adding these recipes to the `run_list` of a new node in Part 3.
