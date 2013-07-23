@@ -13,7 +13,7 @@ We leveraged the power of the [Community Site][apache2-cookbook] to install thre
 
 1. If you now look into the `cookbooks` directory you'll notice that a new directory, `aliases`, has been created. Open up the `metadata.rb` in a plain text editor and add a dependency on the `magic_shell` cookbook we installed earlier, at the bottom of the file:
 
-    ``` ruby
+    ```ruby
     depends 'magic_shell'
     ```
 
@@ -25,7 +25,7 @@ We leveraged the power of the [Community Site][apache2-cookbook] to install thre
 
 1. Open up the default recipe for our new `aliases` cookbook (`chef-repo/cookbooks/aliases/recipes/default.rb`) in a text editor. Let's create some shell aliases for this recipe - feel free to use these or make up your own:
 
-    ``` ruby
+    ```ruby
     # Alias `h` to go home
     magic_shell_alias 'h' do
       command 'cd ~'
