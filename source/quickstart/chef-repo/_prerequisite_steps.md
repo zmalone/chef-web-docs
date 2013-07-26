@@ -34,7 +34,7 @@
 
         [organization_name]-validator
 
-    [NOTE] `knife` is the command-line (CLI) tool for use with Chef on your workstation.
+    [NOTE] `knife` is a command-line tool that provides an interface between a local Chef repository and the Chef Server.
 
 [chef-hosted]: http://www.opscode.com/hosted-chef/ "Sign up for Hosted Chef"
 [pem-screencast]: https://learnchef.opscode.com/screencasts/manage-pem-files/
