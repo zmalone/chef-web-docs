@@ -38,7 +38,9 @@ Pre-requisite steps:
   knife[:aws_secret_access_key] = 'SECRET_ACCESS_KEY'
   ```
 
-  The `aws_ssh_key_id` is the name of your EC2 Key Pair. For example, if you downloaded your keypair as into `~/.ssh/foo.pem`, use "foo" as the `aws_ssh_key_id`.
+  The `aws_ssh_key_id` is the name of your EC2 Key Pair as seen in the AWS EC2 management console.
+
+  For example, if you created a Key Pair with the name of `chef-EC2` in the EC2 management console, then you would use `chef-EC2` as the `aws_ssh_key_id`, regardless of the Key Pair's `.pem` file name.
 
 1. Next, we need to install some helpful community tools:
 
