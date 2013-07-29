@@ -14,8 +14,8 @@
       tooltipClass : '.tooltip',
       appendTo: 'body',
       tipTemplate : function (selector, content) {
-        return '<span data-selector="' + selector + '" class="' 
-          + Foundation.libs.tooltips.settings.tooltipClass.substring(1) 
+        return '<span data-selector="' + selector + '" class="'
+          + Foundation.libs.tooltips.settings.tooltipClass.substring(1)
           + '">' + content + '<span class="nub"></span></span>';
       }
     },
@@ -33,20 +33,20 @@
       if (typeof method != 'string') {
         if (Modernizr.touch) {
           $(this.scope)
-            .on('click.fndtn.tooltip touchstart.fndtn.tooltip touchend.fndtn.tooltip', 
+            .on('click.fndtn.tooltip touchstart.fndtn.tooltip touchend.fndtn.tooltip',
               '[data-tooltip]', function (e) {
               e.preventDefault();
               $(self.settings.tooltipClass).hide();
               self.showOrCreateTip($(this));
             })
-            .on('click.fndtn.tooltip touchstart.fndtn.tooltip touchend.fndtn.tooltip', 
+            .on('click.fndtn.tooltip touchstart.fndtn.tooltip touchend.fndtn.tooltip',
               this.settings.tooltipClass, function (e) {
               e.preventDefault();
               $(this).fadeOut(150);
             });
         } else {
           $(this.scope)
-            .on('mouseenter.fndtn.tooltip mouseleave.fndtn.tooltip', 
+            .on('mouseenter.fndtn.tooltip mouseleave.fndtn.tooltip',
               '[data-tooltip]', function (e) {
               var $this = $(this);
 

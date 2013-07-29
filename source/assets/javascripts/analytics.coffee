@@ -15,6 +15,16 @@ class Analytics
   failedConverge: ->
     window._gaq.push ['_trackEvent', 'Converges', 'Failed', 'Failed converge']
 
+  contentUseful: ->
+    window._gaq.push ['_trackEvent', window.location.pathname, 'Useful']
+    hideUsefulness()
+    false
+
+  contentNotUseful: ->
+    window._gaq.push ['_trackEvent', window.location.pathname, 'Not Useful']
+    hideUsefulness()
+    false
+
   addScript = ->
     ga = document.createElement("script")
     ga.type = "text/javascript"
@@ -23,5 +33,8 @@ class Analytics
     s = document.getElementsByTagName("script")[0]
     s.parentNode.insertBefore ga, s
     true
+
+  hideUsefulness = ->
+    $('p#usefulness').html('Thank you!')
 
 @Analytics = new Analytics('UA-6369228-7', 'opscode.com')

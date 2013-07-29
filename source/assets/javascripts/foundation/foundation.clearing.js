@@ -79,8 +79,8 @@
 
             // if clearing is open and the current image is
             // clicked, go to the next image in sequence
-            if (target.hasClass('visible') 
-              && current[0] === target[0] 
+            if (target.hasClass('visible')
+              && current[0] === target[0]
               && next.length > 0 && self.is_open(current)) {
               target = next;
               image = target.find('img');
