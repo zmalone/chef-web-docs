@@ -6,7 +6,7 @@
         $ knife cookbook site install networking_basic
 
 1. Look in your `cookbooks` directory. In a terminal:
-	
+
 		$ ls cookbooks
 
 	You should now see three folders: `apt`, `apache2`, and `networking_basic`.
