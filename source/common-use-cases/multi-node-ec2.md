@@ -33,7 +33,7 @@ Pre-requisite steps:
   ```ruby
   # knife.rb
 
-  kknife[:aws_access_key_id] = 'ACCESS_KEY_ID'
+  knife[:aws_access_key_id] = 'ACCESS_KEY_ID'
   knife[:aws_ssh_key_id] = 'KEY_ID'
   knife[:aws_secret_access_key] = 'SECRET_ACCESS_KEY'
   ```
