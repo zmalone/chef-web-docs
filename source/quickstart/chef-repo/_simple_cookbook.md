@@ -36,9 +36,9 @@ We leveraged the power of the [Community Site][apache2-cookbook] to install thre
       command "cd #{node['apache']['dir']}/sites-enabled"
     end
 
-    # Set Vim as the default editor
+    # Set Nano as the default editor
     magic_shell_environment 'EDITOR' do
-      value 'vim'
+      value 'nano'
     end
     ```
 
