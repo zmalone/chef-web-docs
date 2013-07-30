@@ -15,10 +15,10 @@
         vagrant@vagrant:~$ pwd
         /home/vagrant
 
-1. Finally, make sure our `EDITOR` is vim:
+1. Finally, make sure our `EDITOR` is nano:
 
         vagrant@vagrant:~$ echo $EDITOR
-        vim
+        nano
 
 1. Make sure apache is running!
 
