@@ -5,23 +5,7 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
 
         $ cd ~/chef-repo
 
-1. Create, initialize, and start the Opscode base box (one time). In Terminal:
-
-        $ vagrant init opscode-ubuntu-1204 https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04-i386_chef-11.4.4.box --no-color
-
-    [NOTE] This will create a `Vagrantfile` in the root of your repository.
-
-  You should see output like:
-
-  ```text
-  A Vagrantfile has been placed in this directory. You are
-  now ready to `vagrant up` your first virtual environment!
-
-  Please read the comments in the Vagrantfile as well as documentation
-  on vagrantup.com for more information on using Vagrant.
-  ```
-
-1. Start the virtual machine. In Terminal:
+1. The Starter Kit already includes a `vagrantfile` Vagrant will use to initialize an Ubuntu virtual machine. Start the virtual machine using the following commands in a terminal:
 
         $ vagrant up --no-color
 
