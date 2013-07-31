@@ -5,7 +5,7 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
 
         $ cd ~/chef-repo
 
-1. The Starter Kit already includes a `vagrantfile` Vagrant will use to initialize an Ubuntu virtual machine. Start the virtual machine using the following commands in a terminal:
+1. The Starter Kit you downloaded earlier already includes a `vagrantfile` which Vagrant uses to initialize a virtual machine. Start the virtual machine using the following commands in a terminal:
 
         $ vagrant up --no-color
 
@@ -26,6 +26,6 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
   Downloading or copying the box...
   ```
 
-  [WARN] This process can take up to 10 minutes. Do not interrupt the process.
+  [WARN] This process can take up to 10 minutes and requires access to `amazonaws.com`. Do not interrupt the process.
 
   [NOTE] We are using a Virtual Machine and Vagrant here. You could just as easily use a remote server (like EC2 or Rackspace) or a physical server.
