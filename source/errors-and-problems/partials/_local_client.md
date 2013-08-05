@@ -21,4 +21,6 @@ when issuing `knife` commands, it means your local `client.rb` is unable to auth
 
   If one is present, verify that it has the correct read permissions.
 
-1. If there's no file, you will need to re-download your Starter Kit from the Chef Server management console.
+1. If there's no file, you will need to regenerate your client key.
+
+  [NOTE] See our [screencast on managing your Chef pem files](/screencasts/manage-pem-files) for more detailed steps.
