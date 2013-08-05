@@ -8,7 +8,7 @@ description: 'See an example of executing an inline batch script on a Windows no
 
 Windows Batch
 =================
-This guide will cover installing the [knife-windows](http://docs.opscode.com/plugin_knife_windows.html) plugin, preparing a Windows node for use with Chef, and executing a simple inline batch script. This tutorial assumes that you have already completed the `Workstation Setup` and `Using Chef Repo` sections of learnchef, so that you have a working `chef-repo`.
+This guide will cover installing the [knife-windows][knife-windows-docs] plugin, preparing a Windows node for use with Chef, and executing a simple inline batch script. This tutorial assumes that you have already completed the `Workstation Setup` and `Using Chef Repo` sections of learnchef, so that you have a working `chef-repo`.
 
 ---
 
@@ -56,7 +56,7 @@ In order to use Chef to manage a Windows node, we will need to either enabled `w
 	> winrm set winrm/config/service @{AllowUnencrypted="true"}
 	> winrm set winrm/config/service/auth @{Basic="true"}
 
-[NOTE] See the [knife-windows](https://github.com/opscode/knife-windows#knife-bootstrap-windows-ssh) documentation for instructions on using a standalone SSH server to bootstrap a Windows node.
+[NOTE] See the [knife-windows][knife-windows-docs-ssh] documentation for instructions on using a standalone SSH server to bootstrap a Windows node.
 
 ---
 
@@ -90,4 +90,8 @@ In this tutorial we:
 
 - Installed the `knife-windows` plugin (in the form of a Ruby gem) onto our workstation
 - Created a new cookbook `learnchef-batch`
-- Used the [batch](http://docs.opscode.com/resource_batch.html) resource to execute a batch script
+- Used the [batch][batch-resource-docs] resource to execute a batch script
+
+[knife-windows-docs]: http://docs.opscode.com/plugin_knife_windows.html
+[knife-windows-docs-ssh]: https://github.com/opscode/knife-windows#knife-bootstrap-windows-ssh
+[batch-resource-docs]: http://docs.opscode.com/resource_batch.html
