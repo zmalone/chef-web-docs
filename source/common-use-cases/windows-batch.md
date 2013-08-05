@@ -45,7 +45,7 @@ This tutorial assumes that you have already completed the `Workstation Setup` an
 	```
 	include_recipe "windows"
 
-	windows_batch "Which platform?" do
+	batch "Which platform?" do
 	  code <<-EOH
 	@ECHO OFF
 	 
@@ -105,4 +105,4 @@ In this tutorial we:
 
 - Installed the `knife-windows` plugin (in the form of a Ruby gem) onto our workstation
 - Created a new cookbook `learnchef-batch`
-- Used the [windows_batch](http://docs.opscode.com/lwrp_windows.html#windows-batch) resource to execute a batch script
+- Used the [batch](http://docs.opscode.com/lwrp_windows.html#windows-batch) resource to execute a batch script
