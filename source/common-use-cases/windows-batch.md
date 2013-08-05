@@ -8,9 +8,7 @@ description: 'See an example of executing an inline batch script on a Windows no
 
 Windows Batch
 =================
-This guide will cover installing the [knife-windows](http://docs.opscode.com/plugin_knife_windows.html) plugin, preparing a Windows node for use with Chef, and executing a simple inline batch script.
-
-This tutorial assumes that you have already completed the `Workstation Setup` and `Using Chef Repo` sections of learnchef, so that you have a working `chef-repo`.
+This guide will cover installing the [knife-windows](http://docs.opscode.com/plugin_knife_windows.html) plugin, preparing a Windows node for use with Chef, and executing a simple inline batch script. This tutorial assumes that you have already completed the `Workstation Setup` and `Using Chef Repo` sections of learnchef, so that you have a working `chef-repo`.
 
 ---
 
@@ -20,9 +18,6 @@ This tutorial assumes that you have already completed the `Workstation Setup` an
 
 		$ gem install knife-windows 
 
-1. Our batch cookbook will use resources from the community [windows cookbook](http://community.opscode.com/cookbooks/windows) to execute our batch scripts, so we will need to install this cookbook on our workstation. In a terminal:
-
-		$ knife cookbook site install windows
 
 1. Create a cookbook called `learnchef-batch`. In a terminal:
 
@@ -30,20 +25,10 @@ This tutorial assumes that you have already completed the `Workstation Setup` an
 
 	A new `learnchef-batch` directory will have been added the the `chef-repo/cookbooks` directory.
 
-1. Open the `chef-repo/coobooks/learnchef-batch/metadata.rb` file and append the following to the end of the file:
-
-	```
-	depends 'windows'
-	```
-
-	This lets the Chef Server know that the `learnchef-batch` cookbook requires the `windows` cookbook, information the Chef Server will pass on to the node, so that it knows to collect both cookbooks when it checks in.
-
-   [INFO] It's common practice to fill fields with your information, but unnecessary for this Quick Start guide.
 
 1. Open the `chef-repo/coobooks/learnchef-batch/recipes/default.rb` file and add the following:
 
 	```
-	include_recipe "windows"
 
 	batch "Which platform?" do
 	  code <<-EOH
@@ -55,9 +40,9 @@ This tutorial assumes that you have already completed the `Workstation Setup` an
 	end
 	```
 
-1. Upload both our `learnchchef-batch` cookbook and the `windows` cookbook to the Chef Server. In a terminal:
+1. Upload our new `learnchchef-batch` cookbook to the Chef Server. In a terminal:
 
-		$ knife cookbook upload windows learnchef-batch
+		$ knife cookbook upload learnchef-batch
 
 ---
 
@@ -99,10 +84,10 @@ Lets verify that a `platform.txt` got created at the Windows `%SystemDrive%` (ty
 
 ---
 
-##### Wrap Up
+##### Recap
 
 In this tutorial we:
 
 - Installed the `knife-windows` plugin (in the form of a Ruby gem) onto our workstation
 - Created a new cookbook `learnchef-batch`
-- Used the [batch](http://docs.opscode.com/lwrp_windows.html#windows-batch) resource to execute a batch script
+- Used the [batch](http://docs.opscode.com/resource_batch.html) resource to execute a batch script
