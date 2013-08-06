@@ -61,7 +61,7 @@ In order to use Chef to manage a Windows node, we need to either enabled `winrm`
 
 ##### Bootstrapping the Windows node via Winrm
 
-Now that we have both our Windows node prepared and our `learnchef-batch` cookbook uploaded to the Chef Server, we can bootstrap the Windows node via `winrm`. You will need to know the username and password of an administrator on the Windows node. In a terminal:
+Now that we have both our Windows node prepared and our `learnchef-batch` cookbook uploaded to the Chef Server, we can bootstrap the Windows node via `winrm`. You need to know the username and password of an administrator on the Windows node. In a terminal:
 
 	$ knife bootstrap windows winrm <node_FQDN_or_IP> \
 	 --winrm-user="<administrative_user>" \
