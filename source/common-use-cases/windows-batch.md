@@ -14,7 +14,7 @@ This guide will cover installing the [knife-windows][knife-windows-docs] plugin,
 
 ##### Prepare the Workstation
 
-1. Install the `knife-windows` Ruby gem on your workstation. You may or may not need to preface this command with `sudo`. In a terminal:
+1. Install the `knife-windows` Ruby gem on your workstation. You may need to preface this command with `sudo`. In a terminal:
 
 		$ gem install knife-windows 
 
@@ -28,8 +28,7 @@ This guide will cover installing the [knife-windows][knife-windows-docs] plugin,
 
 1. Open the `chef-repo/coobooks/learnchef-batch/recipes/default.rb` file and add the following:
 
-	```
-
+	```ruby
 	batch "Which platform?" do
 	  code <<-EOH
 	@ECHO OFF
@@ -48,7 +47,7 @@ This guide will cover installing the [knife-windows][knife-windows-docs] plugin,
 
 ##### Preparing the Windows node
 
-In order to use Chef to manage a Windows node, we will need to either enabled `winrm` on the node, or install a standalone SSH server to acommidate the bootstrapping process. In this tutorial, we will enable `winrm`. On the Windows node, from a `Powershell` or `cmd.exe` session with administrative rights:
+In order to use Chef to manage a Windows node, we need to either enabled `winrm` on the node, or install a standalone SSH server to acommidate the bootstrapping process. In this tutorial, we enable `winrm`. On the Windows node, from a `Powershell` or `cmd.exe` session with administrative rights:
 
 	> winrm quickconfig -q
 	> winrm set winrm/config/winrs @{MaxMemoryPerShellMB="300"}
@@ -72,7 +71,7 @@ Now that we have both our Windows node prepared and our `learnchef-batch` cookbo
 ---
 
 ##### Verify the changes
-Lets verify that a `platform.txt` got created at the Windows `%SystemDrive%` (typically `C:\`) location on the Windows node.
+Let's verify that a `platform.txt` was created at the Windows `%SystemDrive%` (typically `C:\`) location on the Windows node.
 
 1. Open a new window in `Explorer.exe` on the Windows node and paste `%SystemDrive%` into the location bar.
 
