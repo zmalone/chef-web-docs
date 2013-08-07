@@ -26,12 +26,6 @@
 
     [INFO] All remaining commands should be run from within this directory.
 
-1. Initialize the Chef Repo as a git repository:
-
-        $ git init .
-        $ git add .
-        $ git commit -m "Initial commit"
-
 1. Verify your credentials are correct using the `knife` command. In a terminal:
 
         $ knife client list
