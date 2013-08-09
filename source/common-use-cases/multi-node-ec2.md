@@ -17,7 +17,7 @@ In this tutorial, we will use Chef to spin up a 3-node environment on EC2:
 
 Pre-requisite steps:
 
-1. Have a working `chef-repo` (see [Using Chef Repo](quickstart/chef-repo) if you do not)
+1. Have a working `chef-repo` (see [Using Chef Repo](http://learnchef.opscode.com/quickstart/chef-repo/) if you do not)
 1. Register for an [Amazon AWS Account](http://aws.amazon.com)
 1. Setup and download your EC2 Key Pair
 1. Create an Access Key and Associated Secret Token on AWS
