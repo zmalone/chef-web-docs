@@ -34,7 +34,7 @@ The URL will help you determine the type of permission issue. If the URL is an i
 
 - - -
 
-[INFO] For Private Chef customers, please talk to your Private Chef Administrator.
+[INFO] For Enterprise Chef customers, please talk to your Enterprise Chef Administrator.
 
 To fix the global permissions:
 

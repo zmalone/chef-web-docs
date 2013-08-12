@@ -74,7 +74,7 @@ While you could easily use the `package` resource to install all of these things
     depends 'php'
     ```
 
-1. If you're using Hosted Chef, you'll need to make sure those cookbooks are installed and available on the Chef Server. If you're using Chef Solo, make sure they are in your path.
+1. If you're using Enterprise Chef, you'll need to make sure those cookbooks are installed and available on the Chef Server. If you're using Chef Solo, make sure they are in your path.
 
 1. Open the default recipe (`recipes/default.rb`) and use the `include_recipe` directive and the `package` provider to include the necessary components from the other cookbooks:
 

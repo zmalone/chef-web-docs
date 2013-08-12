@@ -1,5 +1,6 @@
 ##### Prerequisite Steps
-1. Sign up for a free Opscode [Hosted Chef account][chef-hosted] and download the following 3 files into your `~/Downloads` directory:
+
+1. Sign up for a free Opscode [Enterprise Chef account][chef-enterprise] and download the **Starter Kit**.
 
 - `knife.rb`
 - `[username].pem`
@@ -42,6 +43,6 @@
 
     [NOTE] `knife` is a command-line tool that provides an interface between a local Chef repository and the Chef Server.
 
-[chef-hosted]: http://www.opscode.com/hosted-chef/ "Sign up for Hosted Chef"
+[chef-enterprise]: http://www.opscode.com/enterprise-chef/ "Sign up for Enterprise Chef"
 [pem-screencast]: https://learnchef.opscode.com/screencasts/manage-pem-files/
 [chef-repo-github]: http://github.com/opscode/chef-repo
