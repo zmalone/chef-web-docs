@@ -18,3 +18,5 @@
         localhost Chef Client finished, 18 resources updated
 
     This means the node "converged" successfully.
+
+[INFO] If the bootstrap fails, or you need to retrace your steps for whatever reason, you can reset the node's keypair and the configuration on the server by using the "knife client delete vagrant.vm --yes" and "knife node delete vagrant.vm --yes" commands.
