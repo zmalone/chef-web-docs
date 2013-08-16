@@ -2,7 +2,7 @@
 title: 'Windows Batch'
 long_title: 'Execute an Inline Batch Script on a Windows Node'
 order: 5
-layout: 'common-use-case'
+layout: 'starter-use-case'
 description: 'See an example of executing an inline batch script on a Windows node.'
 ---
 
