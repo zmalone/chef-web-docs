@@ -16,7 +16,7 @@ This guide will cover installing the [knife-windows][knife-windows-docs] plugin,
 
 1. Install the `knife-windows` Ruby gem on your workstation. You may need to preface this command with `sudo`. In a terminal:
 
-		$ gem install knife-windows 
+		$ gem install knife-windows
 
 
 1. Create a cookbook called `learnchef-batch`. In a terminal:
@@ -32,7 +32,7 @@ This guide will cover installing the [knife-windows][knife-windows-docs] plugin,
 	batch "Which platform?" do
 	  code <<-EOH
 	@ECHO OFF
-	 
+
 	ECHO The platform = %OS% >> %SystemDrive%\platform.txt
 
 	  EOH
