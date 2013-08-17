@@ -11,10 +11,12 @@
           --run-list "recipe[apt],recipe[aliases],recipe[apache2],recipe[networking_basic]" \
           --sudo
 
-    [NOTE] If you're behind a proxy, you'll need to use the [`--bootstrap-proxy`](http://docs.opscode.com/knife_bootstrap.html) option
+[NOTE] If you're behind a proxy, you'll need to use the [`--bootstrap-proxy`](http://docs.opscode.com/knife_bootstrap.html) option
 
 1. After a few seconds and some output, you should see something like this:
 
         localhost Chef Client finished, 18 resources updated
 
     This means the node "converged" successfully.
+
+[INFO] If the bootstrap fails, or you need to retrace your steps for whatever reason, you can reset the node's keypair and the configuration on the server by using the "knife client delete vagrant.vm --yes" and "knife node delete vagrant.vm --yes" commands.
