@@ -3,7 +3,6 @@
 
         $ knife cookbook site install apt
         $ knife cookbook site install apache2
-        $ knife cookbook site install networking_basic
 
 1. Look in your `cookbooks` directory. In a terminal:
 	
