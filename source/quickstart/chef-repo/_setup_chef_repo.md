@@ -5,7 +5,7 @@
         $ git add .
         $ git commit -m "Initial commit"
 
-1. Download the `apt`, `apache2`, and `networking_basic` community cookbooks using `knife`. In a terminal:
+1. Download the `apt` and `apache2` community cookbooks using `knife`. In a terminal:
 
         $ knife cookbook site install apt
         $ knife cookbook site install apache2
