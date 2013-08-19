@@ -3,7 +3,7 @@ We need a "machine" (or "node" in the Chef language) to provision. We are going 
 
 1. Move into your working directory using the `cd` command:
 
-        $ cd ~/Development/chef-repo
+        $ cd ~/chef-repo
 
 1. The Starter Kit you downloaded earlier already includes a `vagrantfile` which Vagrant uses to initialize a virtual machine. Start the virtual machine using the following commands in a terminal:
 
