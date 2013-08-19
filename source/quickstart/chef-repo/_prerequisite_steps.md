@@ -37,6 +37,6 @@
 
     [NOTE] `knife` is a command-line tool that provides an interface between a local Chef repository and the Chef Server.
 
-[chef-enterprise]: http://www.opscode.com/enterprise-chef/ "Sign up for Enterprise Chef"
+[chef-enterprise]: https://getchef.opscode.com/signup "Sign up for Enterprise Chef"
 [pem-screencast]: https://learnchef.opscode.com/screencasts/manage-pem-files/
 [chef-repo-github]: http://github.com/opscode/chef-repo
