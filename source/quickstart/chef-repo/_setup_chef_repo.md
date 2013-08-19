@@ -1,6 +1,7 @@
 ##### Setup your chef-repo
 
 1. Initialize the Chef Repo as a git repository:
+
         $ git init .
         $ git add .
         $ git commit -m "Initial commit"
