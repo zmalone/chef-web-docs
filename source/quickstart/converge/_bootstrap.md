@@ -8,7 +8,7 @@
           --ssh-user vagrant \
           --ssh-password vagrant \
           --ssh-port 2222 \
-          --run-list "recipe[apt],recipe[aliases],recipe[apache2],recipe[networking_basic]" \
+          --run-list "recipe[apt],recipe[aliases],recipe[apache2]" \
           --sudo
 
 [NOTE] If you're behind a proxy, you'll need to use the [`--bootstrap-proxy`](http://docs.opscode.com/knife_bootstrap.html) option

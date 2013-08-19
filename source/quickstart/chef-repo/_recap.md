@@ -7,7 +7,6 @@ Our workstation is now set up. We now have:
 
   1. `recipe[apt]` - via community
   1. `recipe[apache2]` - via community
-  1. `recipe[networking_basic]` - via community
   1. `recipe[magic_shell]` - via community
   1. `recipe[aliases]` - created ourselves
 
