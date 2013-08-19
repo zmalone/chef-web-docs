@@ -14,4 +14,4 @@
 	
 		$ ls cookbooks
 
-	You should now see three folders: `apt`, `apache2`, and `networking_basic`.
+	You should now see two folders: `apt` and `apache2`.
