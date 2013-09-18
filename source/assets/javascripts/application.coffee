@@ -2,6 +2,7 @@
 #= require foundation
 
 #= require analytics
+#= require munchkin
 
 $ ->
   $(document).foundation()
