@@ -16,7 +16,7 @@ To get started, we need to create a new cookbook called "ntp". We can use the `k
 
     $ knife cookbook create ntp
 
-This will generate an `ntp` directory in the `cookbooks` directory of your chef-repo (`chef-repo/cookbooks/ntp`) with several of subdirectories in it, such as `recipes`, `providers` and `attributes` to name a few.
+This will generate an `ntp` directory in the `cookbooks` directory of your chef-repo (`chef-repo/cookbooks/ntp`) with several subdirectories in it, such as `recipes`, `providers` and `attributes`.
 
 ---
 
@@ -46,9 +46,9 @@ For simplicity in this guide, we will just use the `default` recipe, but it is c
     package 'ntp'
     ```
 
-The `package` resource is built into Chef, making Chef smart enough to determine which package manager to use (yum, apt, etc) based on the node's operating system. You can read more about the resources in the [Chef's documentation][docs-resources].
+  The `package` resource is built into Chef, making Chef smart enough to determine which package manager to use (yum, apt, etc) based on the node's operating system. You can read more about the resources in the [Chef's documentation][docs-resources].
 
-[NOTE] If the package for NTP is already installed, Chef will **not** try to re-install it.
+  [NOTE] If the package for NTP is already installed, Chef will **not** try to re-install it.
 
 1. Next we need to write out an NTP configuration file template using Chef's `template` resource:
 
@@ -59,7 +59,7 @@ The `package` resource is built into Chef, making Chef smart enough to determine
     end
     ```
 
-The line beginning with "template" tells Chef to use the `template` resource to create the file residing at `/etc/ntp.conf`. The line beginning with "source" describes the file we will be using as a template for the final `ntp.conf` file. And the line beginning with "notifies" tells Chef to restart the NTP service (which we tell Chef about next) once the final `ntp.conf` file is created.
+  The line beginning with "template" tells Chef to use the `template` resource to create the file residing at `/etc/ntp.conf`. The line beginning with "source" describes the file we will be using as a template for the final `ntp.conf` file. And the line beginning with "notifies" tells Chef to restart the NTP service (which we tell Chef about next) once the final `ntp.conf` file is created.
 
 1. Finally, alert Chef of the service and start it:
 
@@ -103,7 +103,7 @@ driftfile /var/lib/ntp/drift
 keys /etc/ntp/keys
 ```
 
-[INFO] Chef uses `erubis` (.erb file extension) templates so that Ruby can inserted into these file templates, as with "node['fqdn']" above. This gives the creation of configuration files from templates the ability to be dynamic based on Ruby code or Chef information.
+[INFO] Chef uses `erubis` (.erb file extension) templates so that Ruby can be inserted into these file templates, as with "node['fqdn']" above. This gives the creation of configuration files from templates the ability to be dynamic based on Ruby code or Chef information.
 
 ---
 
@@ -120,7 +120,7 @@ To apply the functionality within our "ntp" cookbook to a node, we would need to
 
 [WARN] If you look on the [community site][community-site] you'll see there's already an [NTP cookbook][ntp-community-cookbook]. Oh no!
 
-The community cookbook is much more feature-complete than the one we've written and is designed to fit more use cases. While this cookbook serves as a great learning process, checking the community site before developing your own cookbooks can save you from re-inventing the wheel.
+The community cookbook is much more feature-complete than the one we've written and is designed to fit more use cases. While this cookbook serves as a great learning process, checking the community site before developing your own cookbooks can save you from re-inventing the wheel. You can always contribute to the community cookbooks if you create something useful.
 
 [ntp-project]: http://www.ntp.org/
 [docs-resources]: http://docs.opscode.com/resource.html
