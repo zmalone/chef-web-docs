@@ -7,47 +7,54 @@ deprecates: 'http://wiki.opscode.com/display/chef/Guide+to+Creating+A+Cookbook+a
 
 NTP with Chef
 =============
-One of the most common problems for system administrators is ensuring system time is correct. Thankfully, we have the [NTP project](http://www.ntp.org/) to help alleviate this problem. In this guide, we will setup NTP using Chef on a Vagrant instance.
+Clock synchronization across a network of computers is important for a number of reasons. The [NTP][ntp-project] is protocol designed to synchronize the clocks of computers over a network. In this guide, we will write our own NTP cookbook.
+
+
+##### Pre-requisite Steps
+This tutorial assumes you have completed the QuickStart Guide, and already have a working `chef-repo`.
 
 ---
 
-##### Create the ntp cookbook
-To get started, we need to create the `ntp` cookbook. We can use the knife command to generate this scaffolding for us:
+##### Create our ntp cookbook
+To get started, we need to create a new cookbook called "ntp". We can use the `knife` command to generate some basic files and folders for us:
 
     $ knife cookbook create ntp
 
-This will generate a folder in the `cookbooks` directory of your repository with many subdirectories.
+This will generate an `ntp` directory in the `cookbooks` directory of your chef-repo (`chef-repo/cookbooks/ntp`) with several subdirectories in it, such as `recipes`, `providers` and `attributes`, the initial framework for our cookbook.
 
 ---
 
 ##### Name the Recipe
-1. Recipe names directly correspond to directory structure:
+1. Recipe names directly correspond to the structure within a cookbook's directory:
 
   ![Chef run_list to Directory Mapping](run-list-directory-structure.png)
 
   [INFO] A recipe is a *subset* or "piece" of a cookbook.
 
-1. There is also a special recipe in every cookbook called `default.rb`. It is executed by default when the recipe is executed:
+1. There is also a special recipe in every cookbook called `default.rb`. It is executed by default when the cookbook is added to a `run_list` without explicitely listing a recipe within that cookbook:
 
         # These are functionally equivalent:
 
         recipe[ntp] => cookbooks/ntp/recipes/default.rb # implicit
         recipe[ntp::default] => cookbooks/ntp/recipes/default.rb # explicit
 
-For simplicity in this guide, we will just use the `default` recipe, but it is common practice to use multiple recipes to separate functionality for a specific cookbook, such as "client" vs "server".
+For simplicity in this guide, we will just use the `default` recipe, but it is common practice to use multiple recipes to separate functionality that may be needed within a single cookbook, such as a peice of software that can be configured as both a client or a server.
 
 ---
 
 ##### Write the Recipe
-In the default recipe `recipes/default.rb`, add the following:
 
-1. Install the NTP package. The package provider is built into Chef - it will check to see the running operating system and use the appropriate method (yum, apt, etc):
+1. First we need to ensure that a package containing the ntp software is installed on our node. Open the default recipe (`chef-repo/cookbooks/ntp/recipes/default.rb`) in a text editor and add the following:
 
     ```ruby
     package 'ntp'
     ```
 
-1. Next we need to write out the NTP configuration template using Chef's Template provider:
+  The `package` resource is built into Chef, making Chef smart enough to determine which package manager to use (yum, apt, etc) based on the node's operating system. You can read more about the resources in the [Chef's documentation][docs-resources].
+
+  [NOTE] If the package for NTP is already installed, Chef will **not** try to re-install it.
+
+1. Next we need to write out an NTP configuration file template using Chef's `template` resource:
 
     ```ruby
     template '/etc/ntp.conf' do
@@ -55,6 +62,8 @@ In the default recipe `recipes/default.rb`, add the following:
       notifies  :restart, 'service[ntp]'
     end
     ```
+
+  The line beginning with "template" tells Chef to use the `template` resource to create the file residing at `/etc/ntp.conf` on the node. The next line (beginning with "source") describes the file we will be using as a template for the final `ntp.conf`. And the final line (beginning with "notifies") tells Chef to restart the NTP service, which we tell Chef about next, once the final `ntp.conf` file is created.
 
 1. Finally, alert Chef of the service and start it:
 
@@ -82,7 +91,7 @@ In the default recipe `recipes/default.rb`, add the following:
 ---
 
 ##### Create the Template
-Create a new file in `templates/default/ntp.conf.erb` (since that's what we provided to the source attribute in the previous step) and add the following:
+Create a new file in `chef-repo/cookbooks/ntp/templates/default/ntp.conf.erb` (since that's what we provided to the template resource in the previous step) and add the following:
 
 ```bash
 # This file was generated by Chef for '<%= node['fqdn'] %>'.
@@ -98,15 +107,26 @@ driftfile /var/lib/ntp/drift
 keys /etc/ntp/keys
 ```
 
+[INFO] Chef uses `erubis` (.erb file extension) templates so that Ruby can be inserted into these file templates, as with "node['fqdn']" above. This gives the creation of configuration files from templates the ability to be dynamic based on Ruby code or Chef information.
+
 ---
 
-##### Wrap Up
-There are some final (and optional depending on your setup) steps:
+##### Recap
 
-1. Commit these changes to [git](http://git-scm.com) (we recommend git, but you can use any SCM tool)
-1. Upload this cookbook to the Chef Server (if you're using Enterprise Chef)
-1. Look on the community site:
+In this tutorial we:
 
-  [WARN] If you look on the [community site](https://community.opscode.com) you'll see there's already an [NTP cookbook](https://community.opscode.com/cookbooks/ntp). Oh no!
+- Created our own cookbook to install and configure NTP
+- Learned about cookbook structure and recipe name convention
+- Learned how to use the `package` resource and its `notifies` action
+- Learned how to use the `service` resource
 
-  This brings up an important rule in the Chef world - **always check the community site first** before writing your own cookbook. The community cookbook is much more feature-complete than the one we've written and is designed to fit more use cases. While this cookbook serves as a great learning process, always check the community site before developing your own cookbook.
+To apply the functionality within our "ntp" cookbook to a node, we would need to upload this cookbook to a Chef server, add it to the `run_list` of that node, and run `chef-client` on that node. 
+
+[WARN] If you look on the [community site][community-site] you'll see there's already an [NTP cookbook][ntp-community-cookbook]. Oh no!
+
+The community cookbook is much more feature-complete than the one we've written and is designed to fit more use cases. While this cookbook serves as a great learning process, checking the community site before developing your own cookbooks can save you from re-inventing the wheel. You can always contribute to the community cookbooks if you create something useful.
+
+[ntp-project]: http://www.ntp.org/
+[docs-resources]: http://docs.opscode.com/resource.html
+[community-site]: https://community.opscode.com
+[ntp-community-cookbook]: https://community.opscode.com/cookbooks/ntp
