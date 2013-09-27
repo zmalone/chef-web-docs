@@ -7,16 +7,20 @@ deprecates: 'http://wiki.opscode.com/display/chef/Guide+to+Creating+A+Cookbook+a
 
 NTP with Chef
 =============
-A common problem for system administrators is ensuring system time is correct. Thankfully, we have the [NTP project][ntp-project] to help alleviate this problem. In this guide, we will write our own NTP cookbook. This tutorial assumes you have completed the QuickStart Guide, and already have a working `chef-repo`.
+Clock synchronization across a network of computers is important for a number of reasons. The [NTP][ntp-project] is protocol designed to synchronize the clocks of computers over a network. In this guide, we will write our own NTP cookbook.
+
+
+##### Pre-requisite Steps
+This tutorial assumes you have completed the QuickStart Guide, and already have a working `chef-repo`.
 
 ---
 
-##### Create the ntp cookbook
+##### Create our ntp cookbook
 To get started, we need to create a new cookbook called "ntp". We can use the `knife` command to generate some basic files and folders for us:
 
     $ knife cookbook create ntp
 
-This will generate an `ntp` directory in the `cookbooks` directory of your chef-repo (`chef-repo/cookbooks/ntp`) with several subdirectories in it, such as `recipes`, `providers` and `attributes`.
+This will generate an `ntp` directory in the `cookbooks` directory of your chef-repo (`chef-repo/cookbooks/ntp`) with several subdirectories in it, such as `recipes`, `providers` and `attributes`, the initial framework for our cookbook.
 
 ---
 
@@ -59,7 +63,7 @@ For simplicity in this guide, we will just use the `default` recipe, but it is c
     end
     ```
 
-  The line beginning with "template" tells Chef to use the `template` resource to create the file residing at `/etc/ntp.conf`. The line beginning with "source" describes the file we will be using as a template for the final `ntp.conf` file. And the line beginning with "notifies" tells Chef to restart the NTP service (which we tell Chef about next) once the final `ntp.conf` file is created.
+  The line beginning with "template" tells Chef to use the `template` resource to create the file residing at `/etc/ntp.conf` on the node. The next line (beginning with "source") describes the file we will be using as a template for the final `ntp.conf`. And the final line (beginning with "notifies") tells Chef to restart the NTP service, which we tell Chef about next, once the final `ntp.conf` file is created.
 
 1. Finally, alert Chef of the service and start it:
 
