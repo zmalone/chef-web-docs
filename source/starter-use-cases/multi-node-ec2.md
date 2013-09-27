@@ -109,7 +109,7 @@ Upload this role to Chef:
 Now we can use the `knife-ec2` plugin to create and provision this EC2 instance for us:
 
     $ knife ec2 server create \
-      --availability-zone us-east-1a \
+      --availability-zone us-east-1d \
       --node-name memcached.learnchef.demo \
       --flavor t1.micro \
       --image ami-fd20ad94 \
@@ -150,7 +150,7 @@ And we'll upload this role:
 And bootstrap another node:
 
     $ knife ec2 server create \
-      --availability-zone us-east-1a \
+      --availability-zone us-east-1d \
       --node-name redis.learnchef.demo \
       --flavor t1.micro \
       --image ami-fd20ad94 \
@@ -247,7 +247,7 @@ And then upload this cookbook and the associated role to the Chef Server:
 And we can now this role to the `run_list` during the bootstrap:
 
     $ knife ec2 server create \
-      --availability-zone us-east-1a \
+      --availability-zone us-east-1d \
       --node-name app.learnchef.demo \
       --flavor t1.micro \
       --image ami-fd20ad94 \
