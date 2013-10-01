@@ -46,7 +46,7 @@ knife[:aws_ssh_key_id] = 'KEY_ID'
 knife[:aws_secret_access_key] = 'SECRET_ACCESS_KEY'
 ```
 
-The `aws_ssh_key_id` is the name of your EC2 Key Pair. For example, if you downloaded your keypair as into `~/.ssh/foo.pem`, use "foo" as the `aws_ssh_key_id`.
+The `aws_ssh_key_id` is the name of your EC2 Key Pair.
 
 ---
 
