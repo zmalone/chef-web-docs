@@ -11,7 +11,9 @@
           --run-list "recipe[apt],recipe[aliases],recipe[apache2]" \
           --sudo
 
-[NOTE] If you're behind a proxy, you'll need to use the [`--bootstrap-proxy`](http://docs.opscode.com/knife_bootstrap.html) option
+	[NOTE] If you're behind a proxy, you'll need to use the [`--bootstrap-proxy`](http://docs.opscode.com/knife_bootstrap.html) option.
+
+	[WARN] "__--ssh-port 2222__" may not be correct if you have multiple Vagrant VMs running. Look for which port Vagrant has selected for SSH forwarding from the output of the previous `vagrant up` command.
 
 1. After a few seconds and some output, you should see something like this:
 
