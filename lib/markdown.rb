@@ -1,5 +1,4 @@
 require 'redcarpet'
-require 'CGI'
 
 class Redcarpet::Render::HTML
   # https://github.com/bhollis/middleman/blob/7be0590acf/middleman-core/lib/middleman-core/renderers/redcarpet.rb#L35-L41
@@ -56,9 +55,10 @@ module ZurbFoundation
   def anchors
     content.gsub!(/<h([0-9])>(.*)<\/h[0-9]>/) do
       size = $1
-      flat = $2.downcase.delete(' ')
-      escaped = CGI::escape(flat)
-      "<h#{size}><a name=\"#{escaped}\"></a>#{$2}</h#{size}>"
+      old = $2
+      flat = old.downcase.delete(' ')
+      escaped = flat.gsub(/\W/, "")
+      "<h#{size}><a name=\"#{escaped}\"></a>#{old}</h#{size}>"
     end
   end
 
