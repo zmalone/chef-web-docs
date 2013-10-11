@@ -1,4 +1,5 @@
 require 'redcarpet'
+
 class Redcarpet::Render::HTML
   # https://github.com/bhollis/middleman/blob/7be0590acf/middleman-core/lib/middleman-core/renderers/redcarpet.rb#L35-L41
   attr_accessor :middleman_app
@@ -29,6 +30,7 @@ module ZurbFoundation
     @app = options[:app]
 
     alerts
+    anchors
 
     return @content
   end
@@ -47,6 +49,17 @@ module ZurbFoundation
     content.gsub!(/<p>\[SUCCESS\] (.+)<\/p>/)  { "<div class=\"alert-box success\"><i class=\"icon-ok-sign\"></i> #{$1}</div>" }
     content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box alert\"><i class=\"icon-warning-sign\"></i> #{$1}</div>" }
     content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"icon-info-sign\"></i> #{$1}</div>" }
+  end
+
+
+  def anchors
+    content.gsub!(/<h([0-9])>(.*)<\/h[0-9]>/) do
+      size = $1
+      old = $2
+      flat = old.downcase.delete(' ')
+      escaped = flat.gsub(/\W/, "")
+      "<h#{size}><a name=\"#{escaped}\"></a>#{old}</h#{size}>"
+    end
   end
 
   def videos
