@@ -15,4 +15,3 @@ gem 'zurb-foundation',      git: 'git://github.com/zurb/foundation', ref: 'fb0cd
 group :production do
   gem 'therubyracer',       '~> 0.11.4'
 end
-
