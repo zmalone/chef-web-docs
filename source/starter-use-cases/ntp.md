@@ -38,7 +38,7 @@ This will generate an `ntp` directory in the `cookbooks` directory of your chef-
         recipe[ntp] => cookbooks/ntp/recipes/default.rb # implicit
         recipe[ntp::default] => cookbooks/ntp/recipes/default.rb # explicit
 
-For simplicity in this guide, we will just use the `default` recipe, but it is common practice to use multiple recipes to separate functionality that may be needed within a single cookbook, such as a peice of software that can be configured as both a client or a server.
+For simplicity in this guide, we will just use the `default` recipe, but it is common practice to use multiple recipes to separate functionality that may be needed within a single cookbook, such as a piece of software that can be configured as both a client or a server.
 
 ---
 
