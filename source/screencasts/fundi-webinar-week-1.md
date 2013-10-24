@@ -26,8 +26,4 @@ This is an Overview of Chef. After viewing this webinar you will be able to:
 
 [Browse the questions and answers][fundi-week-1-qa] that came up during the Overview of Chef
 
-## Continue the Series
-
-Register now for Week 2 - Install Chef & Configure Your Organization. This webinar will be presented on Thursday, October 24 at 10am PT.
-
 [fundi-week-1-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-1-qa.pdf
