@@ -1,33 +1,40 @@
 `---
 title: 'Chef Fundamentals Module 2'
-video: 'https://www.youtube.com/embed/yh9osPQA_-k'
+video: 'http://www.youtube.com/watch?v=r3mN2M9n51Y'
 layout: 'screencast'
 description: 'Describe how Chef thinks about Infrastructure Automation'
 keywords: 'opscode, chef, chef-repo, fundamentals, overview'
 ---
 
-This is an Overview of Chef. After viewing this webinar you will be able to:
+After completing this webinar, you will be able to:
 
-- Describe how Chef thinks about Infrastructure Automation
-- Define the following terms:
-	- Node
-	- Resource
-	- Recipe
-	- Cookbook
-	- Run List
-	- Roles
-	- Search
+- Login to Enterprise Chef
+- Describe Knife, the Chef command line utility
+- Use Knife on your workstation
+- Manage your Organization in Enterprise Chef
 
-## View the Slides
+There are a few things that you will need to do to prepare for next week's webinar.  Please be sure to complete the pre-work prior to joining the live event:
 
-<iframe src="http://www.slideshare.net/slideshow/embed_code/27261926" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/opscode/week-1-overview-of-chef" title="Chef Fundamentals Training Series - Module 1" target="_blank">Chef Fundamentals Training Series - Module 1</a> </strong> from <strong><a href="http://www.slideshare.net/opscode" target="_blank">Opscode, Inc.</a></strong> </div>
+Pre-work:
 
-## Q & A From Overview of Chef
+Before attending this webinar you should watch the first webinar in the series and install some software, see below for details.
 
-[Browse the questions and answers][fundi-week-1-qa] that came up during the Overview of Chef
+Workstation Requirements: Attendees should have workstation for the webinar. The following operating systems have been tested as workstation systems with the hands on exercises:
+Windows 7
+Mac OS X 10.7.3+
+Ubuntu 10.04, 12.04
+Other platforms and platform versions may work without modification.
 
-## Continue the Series
+Software Requirements:
 
-Register now for Week 2 - Install Chef & Configure Your Organization. This webinar will be presented on Thursday, October 24 at 10am PT.
-
-[fundi-week-1-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-1-qa.pdf
+Attendees should install non-Chef required software before the workshop starts.
+An application that will allow the student to create an SSH connection to a remote server and SCP files to a remote server.  Recommended applications:
+Windows - puTTY
+Mac OS X - the built-in Terminal application or iTerm2
+Ubuntu - the built in Terminal application
+A Programmer's text editor that allows the student to have multiple files open at one time and includes syntax highlighting.  Recommended applications, pick one:
+Sublime Text 2
+vim
+emacs
+Questions?  Send them to training@opscode.com.
+See you there!
