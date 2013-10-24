@@ -28,7 +28,7 @@ This is an Overview of Chef. After viewing this webinar you will be able to:
 
 ## Continue the Series
 
-[Chef Fundamentals Module 2][fundi-week-2-youtube]
+[Chef Fundamentals Module 2][fundi-week-2]
 
 [fundi-week-1-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-1-qa.pdf
-[fundi-week-2-youtube]: http://www.youtube.com/watch?v=r3mN2M9n51Y
+[fundi-week-2]: /screencasts/fundi-webinar-week-2
