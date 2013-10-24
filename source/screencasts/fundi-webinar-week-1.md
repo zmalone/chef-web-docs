@@ -3,7 +3,7 @@ title: 'Chef Fundamentals Module 1'
 video: 'https://www.youtube.com/embed/yh9osPQA_-k'
 layout: 'screencast'
 description: 'Describe how Chef thinks about Infrastructure Automation'
-keywords: 'opscode, chef, chef-repo, fundamentals, overview'
+keywords: 'opscode, chef, chef-repo, fundamentals, overview, webinar'
 ---
 
 This is an Overview of Chef. After viewing this webinar you will be able to:
