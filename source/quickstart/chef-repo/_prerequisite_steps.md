@@ -30,4 +30,3 @@
 [pem-screencast]: https://learnchef.opscode.com/screencasts/manage-pem-files/
 [chef-repo-github]: http://github.com/opscode/chef-repo
 [preview-orgs]: https://preview.opscode.com/organizations/
-[preview]: https://preview.opscode.com
