@@ -8,7 +8,7 @@ keywords: 'opscode, chef, chef-repo, fundamentals, overview, webinar'
 
 # Chef Fundamentals Module 3
 
-The third installment of the Chef Fundamentals Webinar Series will be held Thursday, October 31, 2013 at 10:00AM Pacific Time.  Please [register for this webinar][week-3-signup] and complete the pre-work listed below.
+The third installment of the Chef Fundamentals Webinar Series will be held Thursday, October 31, 2013 10:00 am Pacific Daylight Time.  This is a free event.  Please [register for this webinar][week-3-signup] and complete the pre-work listed below.
 
 After completing this webinar, you will be able to:
 
@@ -77,13 +77,13 @@ Use your own Virtual Machine (VM) or Server.  It must meet the following criteri
 
 Opscode publishes a public AMI on EC2 that may be used for the training lab.
 
-- Search for ‘oc-training-public’
+- Search for 'oc-training-public' (ami-641c8e0d)
 - m1.small should be sufficient
 - Open ports 22, 80-90 in security group
 
 ##### Use the BETA Chef Training Lab
 
-Opscode is working with cloudshare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.
+Opscode is working with cloudshare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.  Would you like to help us test this solution out?  [Launch your own training lab now][chef-lab].
 
 Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 
