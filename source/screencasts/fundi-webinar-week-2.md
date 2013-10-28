@@ -19,7 +19,7 @@ Please be sure to complete the pre-work if you intend to follow along with the w
 
 Before watching this webinar recording you should [watch the first webinar in the series][fundi-week-1] and install some software, see below for details.
 
-**Workstation Requirements**: Viewers should have a workstation for the webinar. The following operating systems have been tested as workstation systems with the hands on exercises:
+**Workstation Requirements**: The following operating systems have been tested as workstation systems with the hands on exercises:
 
 - Windows 7
 - Mac OS X 10.7.3+
@@ -41,6 +41,8 @@ A Programmer's text editor that allows the participants to have multiple files o
 - [Sublime Text 2][sublime-text-2]
 - [vim][vim]
 - [emacs][emacs]
+
+A source code version control system.  The exercises will demonstarte using [git][git] which is the recommended version control system.
 
 ## View the Slides 
 
@@ -65,3 +67,4 @@ Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 [fundi-week-2-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-2-qa.pdf
 [week-3-signup]: http://pages.opscode.com/20131031-chef-fundamentals-module-3.html
 [trainging-at-opscode-com]: mailto:training@opscode.com
+[git]: http://git-scm.com/
