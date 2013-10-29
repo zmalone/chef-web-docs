@@ -77,7 +77,7 @@ Use your own Virtual Machine (VM) or Server.  It must meet the following criteri
 
 Opscode publishes a public AMI on EC2 that may be used for the training lab.
 
-- Search for 'oc-training-public' (ami-641c8e0d)
+- Search for 'oc-training-public' (ami-641c8e0d) in the US East (N. Virginia) Region
 - m1.small should be sufficient
 - Open ports 22, 80-90 in security group
 
