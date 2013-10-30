@@ -62,7 +62,16 @@ A source code version control system.  The exercises will demonstarte using [git
 
 ### Training Lab Requirements:
 
-You will need a server or virtual machine in order to complete the training lab exercises.  There are three different options that you may use:
+You will need a server or virtual machine in order to complete the training lab exercises.  There are four different options that you may use.
+
+To participate in the labs for module 3, you will need the following
+
+- Hostname or IP Address of your training lab server
+- SSH Username 
+- SSH Password
+- SSH Port (default is 22)
+
+Watch the [Chef Fundamentals Webinar - Training Lab Setup video][youtube-training-lab] for more information on setting up your training lab.
 
 ##### Bring your own Node
 
@@ -72,6 +81,10 @@ Use your own Virtual Machine (VM) or Server.  It must meet the following criteri
 - 512 MB RAM
 - 15 GB Disk
 - sudo or root level permissions
+
+##### Use the Vagrant Instance from the Starter Kit
+
+The Starter Kit provided by Hosted Enterprise Chef includes a Vagrantfile which can be used to launch a [Vagrant][vagrantup] instance.
 
 ##### Launch an instance of a public AMI on EC2
 
@@ -83,7 +96,7 @@ Opscode publishes a public AMI on EC2 that may be used for the training lab.
 
 ##### Use the BETA Chef Training Lab
 
-Opscode is working with cloudshare to beta test a Chef training lab.  This lab is intended for use with the Chef Fundamentals Webinar series.  Would you like to help us test this solution?  Check back here about 24 hours before the webinar begins for a link to the training lab.
+Opscode is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.  Would you like to help us test this solution?  [Launch your own training lab now][chef-lab].
 
 Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 
@@ -98,3 +111,6 @@ Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 [git]: http://git-scm.com/
 [trainging-at-opscode-com]: mailto:training@opscode.com
 [omnibus-installer]: http://www.opscode.com/chef/install/
+[chef-lab]: http://opscode-cheflab.herokuapp.com/attend
+[vagrantup]:  http://vagrantup.com
+[youtube-training-lab]: http://youtu.be/4RrzK1ozitE
