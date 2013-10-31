@@ -1,8 +1,8 @@
 ---
 title: 'Chef Fundamentals Module 3'
-video: 'https://www.youtube.com/embed/eq4W36FWnwo'
+video: 'https://www.youtube.com/embed/71Cq4bCxgDk'
 layout: 'screencast'
-description: 'Bootstrap a Node and Write a Cookbook'
+description: 'Set Up a Node & Write a Cookbook'
 keywords: 'opscode, chef, chef-repo, fundamentals, overview, webinar'
 ---
 
