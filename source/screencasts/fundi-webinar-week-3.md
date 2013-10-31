@@ -6,10 +6,6 @@ description: 'Bootstrap a Node and Write a Cookbook'
 keywords: 'opscode, chef, chef-repo, fundamentals, overview, webinar'
 ---
 
-# Chef Fundamentals Module 3
-
-The third installment of the Chef Fundamentals Webinar Series will be held Thursday, October 31, 2013 10:00 am Pacific Daylight Time.  This is a free event.  Please [register for this webinar][week-3-signup] and complete the pre-work listed below.
-
 After completing this webinar, you will be able to:
 
 - Install Chef on nodes using `knife bootstrap`
@@ -56,7 +52,7 @@ A Programmer's text editor that allows the participants to have multiple files o
 - [vim][vim]
 - [emacs][emacs]
 
-A source code version control system.  The exercises will demonstarte using [git][git] which is the recommended version control system.
+A source code version control system.  The exercises will demonstrate using [git][git] which is the recommended version control system.
 
 [Install the Chef Client][omnibus-installer] on your local workstation.
 
