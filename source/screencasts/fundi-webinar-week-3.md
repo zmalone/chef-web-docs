@@ -1,14 +1,10 @@
 ---
 title: 'Chef Fundamentals Module 3'
-video: 
-layout: 
-description: 'Bootstrap a Node and Write a Cookbook'
+video: 'https://www.youtube.com/embed/71Cq4bCxgDk'
+layout: 'screencast'
+description: 'Set Up a Node & Write a Cookbook'
 keywords: 'opscode, chef, chef-repo, fundamentals, overview, webinar'
 ---
-
-# Chef Fundamentals Module 3
-
-The third installment of the Chef Fundamentals Webinar Series will be held Thursday, October 31, 2013 10:00 am Pacific Daylight Time.  This is a free event.  Please [register for this webinar][week-3-signup] and complete the pre-work listed below.
 
 After completing this webinar, you will be able to:
 
@@ -56,7 +52,7 @@ A Programmer's text editor that allows the participants to have multiple files o
 - [vim][vim]
 - [emacs][emacs]
 
-A source code version control system.  The exercises will demonstarte using [git][git] which is the recommended version control system.
+A source code version control system.  The exercises will demonstrate using [git][git] which is the recommended version control system.
 
 [Install the Chef Client][omnibus-installer] on your local workstation.
 
@@ -98,11 +94,22 @@ Opscode publishes a public AMI on EC2 that may be used for the training lab.
 
 Opscode is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.  Would you like to help us test this solution?  [Launch your own training lab now][chef-lab].
 
+## View the Slides
+
+<iframe src="http://www.slideshare.net/slideshow/embed_code/27791349" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/opscode/week-3-setup-node-and-write-cookbook" title="Chef Fundamentals Training Series Module 3: Setting up Nodes and Cookbook Authoring" target="_blank">Chef Fundamentals Training Series Module 3: Setting up Nodes and Cookbook Authoring</a> </strong> from <strong><a href="http://www.slideshare.net/opscode" target="_blank">Opscode, Inc.</a></strong> </div>
+
+## Q & A From Set Up a Node & Write a Cookbook
+
+[Browse the questions and answers][fundi-week-3-qa] that came up during Set Up a Node & Write a Cookbook
+
+## Continue the Series
+
+[Please join us][week-4-signup] for our fourth session - Understanding the chef-client run - on Thursday, November 7, 2013 10:00 am Pacific Daylight Time. This is a free event.
+
 Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 
 [fundi-week-1]: /screencasts/fundi-webinar-week-1
 [fundi-week-2]: /screencasts/fundi-webinar-week-2
-[week-3-signup]: http://pages.opscode.com/20131031-chef-fundamentals-module-3.html
 [puTTY]: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
 [iTerm2]: http://www.iterm2.com/#/section/home
 [sublime-text-2]: http://www.sublimetext.com/
@@ -114,3 +121,5 @@ Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 [chef-lab]: http://opscode-cheflab.herokuapp.com/attend
 [vagrantup]:  http://vagrantup.com
 [youtube-training-lab]: http://youtu.be/4RrzK1ozitE
+[week-4-signup]: http://pages.opscode.com/20131107-chef-fundamentals-module-4.html
+[fundi-week-3-qa]: http://pages.opscode.com/rs/opscode/images/Chef%20Fundamentals%20Webinar%20Module%203%20QA.pdf
