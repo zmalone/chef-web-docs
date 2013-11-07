@@ -97,7 +97,7 @@ While you could easily use the `package` resource to install all of these things
     ```ruby
     # cookbooks/shell_to_chef/templates/default/info.php
 
-    <?php php_info(); ?>
+    <?php phpinfo(); ?>
     ```
 
     ```ruby
