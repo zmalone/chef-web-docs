@@ -15,7 +15,7 @@ Join Opscode Community Manager [Nathen Harvey][nathenharvey-twitter] as he cover
 * Week 1 - [Overview of Chef][week1_webinar]
 * Week 2 - [Install Chef & Setup Your Organization][week2_webinar]
 * Week 3 - [Setup a Node & Write Your First Cookbook][week3_webinar]
-* Week 4 - Understanding the chef-client run (7-Nov-2013)
+* Week 4 - [Understanding the chef-client run][week4_webinar]
 * Week 5 - Working with Templates (14-Nov-2013)
 * Week 6 - Roles, Community Cookbooks, & Further Resources (21-Nov-2013)
 
@@ -45,3 +45,4 @@ A: The #learnchef campaign was designed to be "the quickest path to converge". I
 [week1_webinar]: screencasts/fundi-webinar-week-1/
 [week2_webinar]: screencasts/fundi-webinar-week-2/
 [week3_webinar]: screencasts/fundi-webinar-week-3/
+[week4_webinar]: screencasts/fundi-webinar-week-4/
