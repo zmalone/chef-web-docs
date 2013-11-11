@@ -1,6 +1,6 @@
 ---
 title: 'Chef Fundamentals Module 4'
-video: 'https://www.youtube.com/embed/'
+video: 'https://www.youtube.com/embed/H3Ggublb378'
 layout: 'screencast'
 description: 'Understanding the chef-client Run'
 keywords: 'opscode, chef, chef-repo, fundamentals, overview, webinar'
