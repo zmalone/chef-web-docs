@@ -10,6 +10,7 @@ After completing this webinar, you will be able to:
 
 - Write variable content to a file using the template resource
 - Add arbitrary data attributes to your infrastructure description
+- Specify a run list when bootstrapping a node
 
 ## Q & A Working with Templates
 
