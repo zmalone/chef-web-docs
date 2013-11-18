@@ -21,13 +21,15 @@ After completing this webinar, you will be able to:
 
 ## Continue the Series
 
-[Please join us][week-5-signup] for our fifth session - Working with Templates - on Thursday, November 14, 2013 10:00 am Pacific Daylight Time. This is a free event.
+[Chef Fundamentals Module 5][fundi-week-5]
 
 Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 
 [fundi-week-1]: /screencasts/fundi-webinar-week-1
 [fundi-week-2]: /screencasts/fundi-webinar-week-2
 [fundi-week-3]: /screencasts/fundi-webinar-week-3
+[fundi-week-4]: /screencasts/fundi-webinar-week-4
+[fundi-week-5]: /screencasts/fundi-webinar-week-5
 [week-5-signup]: http://pages.opscode.com/20131114-chef-fundamentals-module-5.html
 [fundi-week-4-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module4-qa.pdf
 [trainging-at-opscode-com]: mailto:training@opscode.com
