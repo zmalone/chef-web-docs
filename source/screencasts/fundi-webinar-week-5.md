@@ -8,8 +8,8 @@ keywords: 'opscode, chef, chef-repo, fundamentals, overview, webinar, template'
 
 After completing this webinar, you will be able to:
 
-- List the steps taken by a Chef-Client run
-- Explain the basic security model of Chef
+- Write variable content to a file using the template resource
+- Add arbitrary data attributes to your infrastructure description
 
 ## Q & A Working with Templates
 
