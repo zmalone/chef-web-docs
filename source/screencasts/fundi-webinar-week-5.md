@@ -26,6 +26,7 @@ Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 [fundi-week-2]: /screencasts/fundi-webinar-week-2
 [fundi-week-3]: /screencasts/fundi-webinar-week-3
 [fundi-week-4]: /screencasts/fundi-webinar-week-4
+[fundi-week-5]: /screencasts/fundi-webinar-week-5
 [week-6-signup]: http://pages.opscode.com/20131121-chef-fundamentals-module-6.html
 [fundi-week-5-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-5-qa.pdf
 [trainging-at-opscode-com]: mailto:training@opscode.com
