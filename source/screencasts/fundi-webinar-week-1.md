@@ -32,3 +32,6 @@ This is an Overview of Chef. After viewing this webinar you will be able to:
 
 [fundi-week-1-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-1-qa.pdf
 [fundi-week-2]: /screencasts/fundi-webinar-week-2
+[fundi-week-3]: /screencasts/fundi-webinar-week-3
+[fundi-week-4]: /screencasts/fundi-webinar-week-4
+[fundi-week-5]: /screencasts/fundi-webinar-week-5

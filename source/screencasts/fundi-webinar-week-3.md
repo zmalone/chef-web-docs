@@ -104,12 +104,15 @@ Opscode is working with CloudShare to beta test a [Chef training lab][chef-lab].
 
 ## Continue the Series
 
-[Please join us][week-4-signup] for our fourth session - Understanding the chef-client run - on Thursday, November 7, 2013 10:00 am Pacific Daylight Time. This is a free event.
+[Chef Fundamentals Module 4][fundi-week-4]
 
 Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 
 [fundi-week-1]: /screencasts/fundi-webinar-week-1
 [fundi-week-2]: /screencasts/fundi-webinar-week-2
+[fundi-week-3]: /screencasts/fundi-webinar-week-3
+[fundi-week-4]: /screencasts/fundi-webinar-week-4
+[fundi-week-5]: /screencasts/fundi-webinar-week-5
 [puTTY]: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
 [iTerm2]: http://www.iterm2.com/#/section/home
 [sublime-text-2]: http://www.sublimetext.com/
