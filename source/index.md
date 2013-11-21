@@ -17,7 +17,7 @@ Join Opscode Community Manager [Nathen Harvey][nathenharvey-twitter] as he cover
 * Week 3 - [Setup a Node & Write Your First Cookbook][week3_webinar]
 * Week 4 - [Understanding the chef-client run][week4_webinar]
 * Week 5 - [Working with Templates][week5_webinar]
-* Week 6 - [Roles, Community Cookbooks, & Further Resources][week6_webinar] (21-Nov-2013)
+* Week 6 - [Roles, Community Cookbooks, & Further Resources][week6_webinar]
 
 Each session will be approximately an hour long, including time for Q&A.
 

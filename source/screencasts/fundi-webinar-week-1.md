@@ -30,8 +30,13 @@ This is an Overview of Chef. After viewing this webinar you will be able to:
 
 [Chef Fundamentals Module 2][fundi-week-2]
 
+## Send Us Your Feedback!
+
+Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
+
 [fundi-week-1-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-1-qa.pdf
 [fundi-week-2]: /screencasts/fundi-webinar-week-2
 [fundi-week-3]: /screencasts/fundi-webinar-week-3
 [fundi-week-4]: /screencasts/fundi-webinar-week-4
 [fundi-week-5]: /screencasts/fundi-webinar-week-5
+[survey]: https://www.surveymonkey.com/s/H53HFMH

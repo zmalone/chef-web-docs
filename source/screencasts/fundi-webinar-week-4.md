@@ -25,6 +25,10 @@ After completing this webinar, you will be able to:
 
 Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 
+## Send Us Your Feedback!
+
+Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
+
 [fundi-week-1]: /screencasts/fundi-webinar-week-1
 [fundi-week-2]: /screencasts/fundi-webinar-week-2
 [fundi-week-3]: /screencasts/fundi-webinar-week-3
@@ -33,3 +37,4 @@ Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 [week-5-signup]: http://pages.opscode.com/20131114-chef-fundamentals-module-5.html
 [fundi-week-4-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module4-qa.pdf
 [trainging-at-opscode-com]: mailto:training@opscode.com
+[survey]: https://www.surveymonkey.com/s/H53HFMH

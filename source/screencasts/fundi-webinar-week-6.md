@@ -1,14 +1,10 @@
 ---
 title: 'Chef Fundamentals Module 6'
-video: 
-layout: 
+video: 'https://www.youtube.com/embed/46NQNzkCe_U'
+layout: 'screencast'
 description: 'Roles, Community Cookbooks, & Further Resources'
 keywords: 'opscode, chef, chef-repo, fundamentals, overview, webinar'
 ---
-
-# Chef Fundamentals Module 6
-
-The sixth installment of the Chef Fundamentals Webinar Series will be held [Thursday, November 21, 2013 at 10:00 am Pacific Standard Time][time-and-date].  This is a free event.  Please [register for this webinar][week-6-signup] and complete the pre-work listed below.
 
 After completing this webinar, you will be able to:
 
@@ -35,8 +31,20 @@ If you're using the BETA Chef Training Lab, you'll need to [launch a new instanc
 
 There is a [video on YouTube][youtube-lab-reset] that demonstrates the process of resetting your BETA Chef Training Lab.
 
-[time-and-date]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Module+6&iso=20131121T13&p1=419&ah=1
-[week-6-signup]: http://pages.opscode.com/20131121-chef-fundamentals-module-6.html
+## View the Slides
+
+<iframe src="http://www.slideshare.net/slideshow/embed_code/28500250" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/opscode/week6-roles-environmentscommunity" title="Chef Fundamentals Training Series Module 6: Roles, Environments, Community Cookbooks, and Other Resources" target="_blank">Chef Fundamentals Training Series Module 6: Roles, Environments, Community Cookbooks, and Other Resources</a> </strong> from <strong><a href="http://www.slideshare.net/opscode" target="_blank">Opscode, Inc.</a></strong> </div>
+
+## Q & A Working with Templates
+
+[Browse the questions and answers][fundi-week-6-qa] that came up during "Working with Templates"
+
+## Send Us Your Feedback!
+
+Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
+
+Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
+
 [community-site]: http://community.opscode.com
 [week1_webinar]: /screencasts/fundi-webinar-week-1/
 [week2_webinar]: /screencasts/fundi-webinar-week-2/
@@ -45,3 +53,6 @@ There is a [video on YouTube][youtube-lab-reset] that demonstrates the process o
 [week5_webinar]: /screencasts/fundi-webinar-week-5/
 [chef-lab]: http://opscode-cheflab.herokuapp.com/attend
 [youtube-lab-reset]: http://www.youtube.com/watch?v=XJdVXAZ95xE
+[fundi-week-6-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-6-qa.pdf
+[survey]: https://www.surveymonkey.com/s/H53HFMH
+[trainging-at-opscode-com]: mailto:training@opscode.com
