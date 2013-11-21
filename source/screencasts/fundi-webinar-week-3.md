@@ -125,4 +125,4 @@ Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 [vagrantup]:  http://vagrantup.com
 [youtube-training-lab]: http://youtu.be/4RrzK1ozitE
 [week-4-signup]: http://pages.opscode.com/20131107-chef-fundamentals-module-4.html
-[fundi-week-3-qa]: http://pages.opscode.com/rs/opscode/images/Chef%20Fundamentals%20Webinar%20Module%203%20QA.pdf
+[fundi-week-3-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-3-qa.pdf
