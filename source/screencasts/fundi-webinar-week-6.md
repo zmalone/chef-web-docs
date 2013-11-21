@@ -31,7 +31,9 @@ Before watching this webinar recording you should watch the first five webinars 
 
 ### Reset your BETA Chef Training Lab
 
-If you're using the BETA Chef Training Lab, you'll need to [launch a new instance of the lab][chef-lab] before joining the webinar.  Opscode is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.
+If you're using the BETA Chef Training Lab, you'll need to [launch a new instance of the lab][chef-lab] before joining the webinar.  Opscode is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.  
+
+There is a [video on YouTube][youtube-lab-reset] that demonstrates the process of resetting your BETA Chef Training Lab.
 
 [time-and-date]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Module+6&iso=20131121T13&p1=419&ah=1
 [week-6-signup]: http://pages.opscode.com/20131121-chef-fundamentals-module-6.html
@@ -42,3 +44,4 @@ If you're using the BETA Chef Training Lab, you'll need to [launch a new instanc
 [week4_webinar]: /screencasts/fundi-webinar-week-4/
 [week5_webinar]: /screencasts/fundi-webinar-week-5/
 [chef-lab]: http://opscode-cheflab.herokuapp.com/attend
+[youtube-lab-reset]: http://www.youtube.com/watch?v=XJdVXAZ95xE
