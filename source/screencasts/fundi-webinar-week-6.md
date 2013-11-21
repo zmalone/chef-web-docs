@@ -35,9 +35,9 @@ There is a [video on YouTube][youtube-lab-reset] that demonstrates the process o
 
 <iframe src="http://www.slideshare.net/slideshow/embed_code/28500250" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/opscode/week6-roles-environmentscommunity" title="Chef Fundamentals Training Series Module 6: Roles, Environments, Community Cookbooks, and Other Resources" target="_blank">Chef Fundamentals Training Series Module 6: Roles, Environments, Community Cookbooks, and Other Resources</a> </strong> from <strong><a href="http://www.slideshare.net/opscode" target="_blank">Opscode, Inc.</a></strong> </div>
 
-## Q & A Working with Templates
+## Q &amp; A - Roles, Environments, Community Cookbooks, &amp; Further Resources
 
-[Browse the questions and answers][fundi-week-6-qa] that came up during "Working with Templates"
+[Browse the questions and answers][fundi-week-6-qa] that came up during "Roles, Environments, Community Cookbooks, &amp; Further Resources"
 
 ## Send Us Your Feedback!
 
