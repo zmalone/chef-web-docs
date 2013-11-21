@@ -36,9 +36,9 @@ If you're using the BETA Chef Training Lab, you'll need to [launch a new instanc
 [time-and-date]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Module+6&iso=20131121T13&p1=419&ah=1
 [week-6-signup]: http://pages.opscode.com/20131121-chef-fundamentals-module-6.html
 [community-site]: http://community.opscode.com
-[week1_webinar]: screencasts/fundi-webinar-week-1/
-[week2_webinar]: screencasts/fundi-webinar-week-2/
-[week3_webinar]: screencasts/fundi-webinar-week-3/
-[week4_webinar]: screencasts/fundi-webinar-week-4/
-[week5_webinar]: screencasts/fundi-webinar-week-5/
+[week1_webinar]: /screencasts/fundi-webinar-week-1/
+[week2_webinar]: /screencasts/fundi-webinar-week-2/
+[week3_webinar]: /screencasts/fundi-webinar-week-3/
+[week4_webinar]: /screencasts/fundi-webinar-week-4/
+[week5_webinar]: /screencasts/fundi-webinar-week-5/
 [chef-lab]: http://opscode-cheflab.herokuapp.com/attend
