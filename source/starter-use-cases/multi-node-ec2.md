@@ -124,7 +124,7 @@ Make sure you replace the flags appropiately for your region and configuration. 
 ---
 
 ##### Redis
-Using a very similar pattern as before, let's create a new `redis` role. Just to spice things up a bit, I'm going to configure to redis instances on the same node, one master and one slave.
+Using a very similar pattern as before, let's create a new `redis` role. Just to spice things up a bit, I'm going to configure two redis instances on the same node, one master and one slave.
 
 ```ruby
 name 'redis'
