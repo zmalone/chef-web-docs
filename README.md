@@ -61,6 +61,8 @@ Contributing
 License and Authors
 -------------------
 - Author:: Seth Vargo (sethvargo@gmail.com)
+- Author:: Isa Farnik (isa@getchef.com)
+- Author:: Nathen Harvey (nharvey@getchef.com)
 
 Copyright 2013-2014 Chef
 
