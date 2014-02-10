@@ -10,7 +10,7 @@ title: "Welcome to #learnchef"
 
 This series will prepare key development, engineering, and operations staff to use Chef. Each of the core units in the course has hands on exercises to reinforce the material. You will learn Chef by using it. At the end of the class, you will have a code repository that can be used and modified to solve real business problems.
 
-Join Opscode Community Manager [Nathen Harvey][nathenharvey-twitter] as he covers:
+Join Chef Community Manager [Nathen Harvey][nathenharvey-twitter] as he covers:
 
 * Week 1 - [Overview of Chef][week1_webinar]
 * Week 2 - [Install Chef & Setup Your Organization][week2_webinar]
@@ -38,7 +38,7 @@ A: Chef uses those pem files to authenticate you against the Chef Server.
 A: No, but it helps. For more information, check out the [Just Enough Ruby for Chef](http://docs.opscode.com/just_enough_ruby_for_chef.html) section on [Chef Docs](http://docs.opscode.com).
 
 **Q: What about Open Source Chef?**<br>
-A: The #learnchef campaign was designed to be "the quickest path to converge". Instead of spending hours trying to get Chef installed, we want you to experience the full power of Chef as quickly as possible. For this reason, we recommend new Chefs register for a [free Enterprise Chef](http://www.opscode.com/enterprise-chef/) account and we'll take care of the Chef Server for you. While there may be some content in this guide that applies to the Open Source Chef Server, #learnchef should not be considered an authoritative source for that resource. Instead, please visit the [official Opscode docs](http://docs.opscode.com). You should also check out Joshua Timberman's [Chef 11 Server: Up and Running](http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/) blog post.
+A: The #learnchef campaign was designed to be "the quickest path to converge". Instead of spending hours trying to get Chef installed, we want you to experience the full power of Chef as quickly as possible. For this reason, we recommend new Chefs register for a [free Enterprise Chef](http://www.getchef.com/enterprise-chef/) account and we'll take care of the Chef Server for you. While there may be some content in this guide that applies to the Open Source Chef Server, #learnchef should not be considered an authoritative source for that resource. Instead, please visit the [official Chef docs](http://docs.opscode.com). You should also check out Joshua Timberman's [Chef 11 Server: Up and Running](http://www.getchef.com/blog/2013/03/11/chef-11-server-up-and-running/) blog post.
 
 [knife-plugins]: http://docs.opscode.com/chef/knife_plugins.html
 [nathenharvey-twitter]: http://twitter.com/nathenharvey
