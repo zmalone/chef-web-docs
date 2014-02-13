@@ -3,4 +3,4 @@ Homebrew is "the missing package manager for OS X". We will use homebrew to inst
 
 Installing homebrew is just a single command.
 
-    $ ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+    ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
