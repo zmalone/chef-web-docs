@@ -39,7 +39,7 @@ This guide will cover installing the [knife-windows][knife-windows-docs] plugin,
 	end
 	```
 
-1. Upload our new `learnchchef-batch` cookbook to the Chef Server. In a terminal:
+1. Upload our new `learnchef-batch` cookbook to the Chef Server. In a terminal:
 
 		$ knife cookbook upload learnchef-batch
 
