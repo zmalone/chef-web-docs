@@ -26,7 +26,7 @@ This guide will cover installing the [knife-windows][knife-windows-docs] plugin,
 	A new `learnchef-batch` directory will have been added the the `chef-repo/cookbooks` directory.
 
 
-1. Open the `chef-repo/coobooks/learnchef-batch/recipes/default.rb` file and add the following:
+1. Open the `chef-repo/cookbooks/learnchef-batch/recipes/default.rb` file and add the following:
 
 	```ruby
 	batch "Which platform?" do
@@ -39,7 +39,7 @@ This guide will cover installing the [knife-windows][knife-windows-docs] plugin,
 	end
 	```
 
-1. Upload our new `learnchchef-batch` cookbook to the Chef Server. In a terminal:
+1. Upload our new `learnchef-batch` cookbook to the Chef Server. In a terminal:
 
 		$ knife cookbook upload learnchef-batch
 
