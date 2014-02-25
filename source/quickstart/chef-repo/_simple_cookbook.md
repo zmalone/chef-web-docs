@@ -21,7 +21,7 @@ We leveraged the power of the [Community Site][apache2-cookbook] to install thre
 
     [NOTE] If you don't have a plain text editor, download a [free trial of Sublime Text 2][sublime-text-2].
     
-    [INFO] It's common practice to fill fields with your information, but unnecessary for this Quick Start guide.
+    [INFO] It's common practice to fill fields with your information, but unnecessary for this QuickStart guide.
 
 1. Open up the default recipe for our new `aliases` cookbook (`chef-repo/cookbooks/aliases/recipes/default.rb`) in a text editor. Let's create some shell aliases for this recipe - feel free to use these or make up your own:
 
