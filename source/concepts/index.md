@@ -18,4 +18,4 @@ On the sidebar to the left, see links to detailed pages covering each of the fol
   * [Recipes](concepts/recipes)
   * [Resources](concepts/resources)
   * [Cookbooks](concepts/cookbooks)
-  * [Run Lists](concepts/run-lists)
+  * [Run-lists](concepts/run-lists)

@@ -14,4 +14,4 @@ Resources are the fundamental building blocks of Chef configuration and represen
   * A service that should be running
   * A file that should be generated
 
-Resources are gathered into Recipes and then applied to systems via thef Chef Client. For more information, see the [Chef Documentation](http://docs.opscode.com/resource.html). 
+Resources are gathered into Recipes and then applied to systems via thef Chef Client. For more information, see the [Chef Documentation for Resources](http://docs.opscode.com/resource.html). 

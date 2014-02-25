@@ -16,4 +16,4 @@ Recipes are Chef configuration policy that describe resources and their desired 
   * Execute other recipes
   * And more...
 
-For more information, see the [Chef Documentation](http://docs.opscode.com/essentials_cookbook_recipes.html).
+For more information, see the [Chef Documentation for Recipes](http://docs.opscode.com/essentials_cookbook_recipes.html).

@@ -15,4 +15,4 @@ A cookbook is the fundamental unit of configuration and policy distribution. Eac
   * Metadata about recipes (including dependencies), version constraints, supported platforms, and so on
   * Custom resources and providers
 
-For more information, see the [Chef Documentation](http://docs.opscode.com/essentials_cookbooks.html).
+For more information, see the [Chef Documentation for Cookbooks](http://docs.opscode.com/essentials_cookbooks.html).
