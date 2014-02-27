@@ -20,7 +20,7 @@ We leveraged the power of the [Community Site][apache2-cookbook] to install thre
     If you're not familiar with Chef, this allows us to leverage LWRP (light weight resource provider) functionality of the `magic_shell` cookbook inside our `aliases` cookbook (allowing us to create aliases on our node).
 
     [NOTE] If you don't have a plain text editor, download a [free trial of Sublime Text 2][sublime-text-2].
-    
+
     [INFO] It's common practice to fill fields with your information, but unnecessary for this QuickStart guide.
 
 1. Open up the default recipe for our new `aliases` cookbook (`chef-repo/cookbooks/aliases/recipes/default.rb`) in a text editor. Let's create some shell aliases for this recipe - feel free to use these or make up your own:
@@ -42,5 +42,5 @@ We leveraged the power of the [Community Site][apache2-cookbook] to install thre
     end
     ```
 
-[apache2-cookbook]: http://community.opscode.com/cookbooks/apache2 "Opscode Apache2 Cookbook"
+[apache2-cookbook]: http://community.opscode.com/cookbooks/apache2 "Chef Apache2 Cookbook"
 [sublime-text-2]: http://www.sublimetext.com/2 "Sublime Text 2"

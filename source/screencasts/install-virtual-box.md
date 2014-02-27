@@ -2,7 +2,7 @@
 title: 'Install VirtualBox'
 video: 'https://www.youtube.com/embed/cFqcf5E5itQ'
 layout: 'screencast'
-description: 'Install VirtualBox for use with Opscode Chef.'
+description: 'Install VirtualBox for use with Chef.'
 keywords: 'vagrant, vm, virtualbox, virtualization'
 ---
 

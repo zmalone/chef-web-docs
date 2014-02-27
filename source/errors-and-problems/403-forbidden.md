@@ -38,7 +38,7 @@ The URL will help you determine the type of permission issue. If the URL is an i
 
 To fix the global permissions:
 
-1. Login to the [Opscode Management Console](https://manage.opscode.com) and click on the failing object type (most likely `node`)
+1. Login to the [Chef Management Console](https://manage.opscode.com) and click on the failing object type (most likely `node`)
 
 2. Click on the permissions sub-tab. Which permission it needs, depends on which request that failed:
 
@@ -51,7 +51,7 @@ To fix the global permissions:
 
 To fix object permissions:
 
-1. Login to the [Opscode Management Console](https://manage.opscode.com) and click on the failing object type (most likely `node`)
+1. Login to the [Chef Management Console](https://manage.opscode.com) and click on the failing object type (most likely `node`)
 
 2. Click on the object in the list that is causing the error
 

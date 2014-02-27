@@ -44,7 +44,7 @@ A Programmer's text editor that allows the participants to have multiple files o
 
 A source code version control system.  The exercises will demonstarte using [git][git] which is the recommended version control system.
 
-## View the Slides 
+## View the Slides
 
 <iframe src="http://www.slideshare.net/slideshow/embed_code/27535570" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/opscode/chef-fundamentals-training-series-module-2" title="Chef Fundamentals Training Series Module 2: Workstation Setup" target="_blank">Chef Fundamentals Training Series Module 2: Workstation Setup</a> </strong> from <strong><a href="http://www.slideshare.net/opscode" target="_blank">Opscode, Inc.</a></strong> </div>
 
@@ -57,7 +57,7 @@ A source code version control system.  The exercises will demonstarte using [git
 [Chef Fundamentals Module 3][fundi-week-3]
 
 
-Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
+Questions? Please email us at [training@getchef.com][trainging-at-getchef-com].
 
 ## Send Us Your Feedback!
 
@@ -75,6 +75,6 @@ Thank you for participating in our Chef Fundamentals Webinar series.  What did y
 [emacs]: http://www.gnu.org/software/emacs/
 [fundi-week-2-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-2-qa.pdf
 [week-3-signup]: http://pages.opscode.com/20131031-chef-fundamentals-module-3.html
-[trainging-at-opscode-com]: mailto:training@opscode.com
+[trainging-at-getchef-com]: mailto:training@getchef.com
 [git]: http://git-scm.com/
 [survey]: https://www.surveymonkey.com/s/H53HFMH
