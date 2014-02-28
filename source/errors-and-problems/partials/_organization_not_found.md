@@ -2,7 +2,7 @@ If you see this error when trying to recreate the key, it's possible that the cl
 
 You will need to create the validator key again and fix it's permissions by using the following directions. In these directions, ORGANIZATION should be replaced by your organizations short name.
 
-1. Login to the [Opscode Management Console](https://manage.opscode.com)
+1. Login to the [Chef Management Console](https://manage.opscode.com)
 
 1. Click on the 'clients' tab
 

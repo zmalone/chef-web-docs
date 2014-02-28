@@ -2,7 +2,7 @@
 title: 'Launch a Virtual Machine'
 video: 'https://www.youtube.com/embed/R5DQw8PGDiM'
 layout: 'screencast'
-description: 'Launch a Virtual Machine with Vagrant and VirtualBox for Opscode Chef.'
+description: 'Launch a Virtual Machine with Vagrant and VirtualBox for Chef.'
 keywords: 'vagrant up, vm, virtual machine, launch, standup'
 ---
 

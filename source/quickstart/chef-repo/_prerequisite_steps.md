@@ -1,6 +1,6 @@
 ##### Prerequisite Steps
 
-1. Sign up for a free Opscode [Enterprise Chef account][chef-enterprise] and download the **Starter Kit**. Alternatively:
+1. Sign up for a free [Hosted Enterprise Chef account][chef-enterprise] and download the **Starter Kit**. Alternatively:
 
 	1. Login and navigate to [preview.opscode.com/organizations][preview-orgs]
 	1. Select your organization in the middle of the page

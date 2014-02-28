@@ -2,7 +2,7 @@
 title: 'Manage .pem Files'
 video: 'https://www.youtube.com/embed/7n8ig6qJ5r0'
 layout: 'screencast'
-description: 'Download and install your knife.rb and validation.pem for Opscode Chef.'
+description: 'Download and install your knife.rb and validation.pem for Chef.'
 keywords: 'knife.rb, username.pem, organization.pem, authentication, chef-repo, .chef'
 ---
 

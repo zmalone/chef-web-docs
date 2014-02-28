@@ -3,7 +3,7 @@ title: 'PHP Wordpress'
 long_title: 'Deploy a PHP Wordpress Application with Chef'
 order: 3
 layout: 'starter-use-case'
-description: 'Learn how to setup a Wordpress site on a fresh server in less than 10 minutes with Opscode Chef! Install and configure Apache, MySQL, PHP, and more.'
+description: 'Learn how to setup a Wordpress site on a fresh server in less than 10 minutes with Chef! Install and configure Apache, MySQL, PHP, and more.'
 ---
 
 PHP Wordpress
