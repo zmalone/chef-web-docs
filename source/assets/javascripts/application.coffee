@@ -3,23 +3,10 @@
 
 #= require analytics
 #= require munchkin
+#= require section-links
 
 $ ->
   $(document).foundation()
-
-$ ->
-  $window = $(window)
-  $sidebar = $('#sidebar')
-  elTop = $sidebar.offset().top - 25
-
-  #$window.scroll ->
-  #  $sidebar.css
-  #    width: $sidebar.outerWidth()
-  #  $sidebar.toggleClass('sticky', $window.scrollTop() > elTop)
-
-  #$window.resize ->
-  #  $sidebar.css
-  #    width: ''
 
 $ ->
   $("a.workstation-setup:contains('Windows')").click() if navigator.appVersion.indexOf("Win") != -1
