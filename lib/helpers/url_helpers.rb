@@ -11,4 +11,8 @@ module URLHelpers
   def hec_sign_up_url
     'https://preview.opscode.com/signup'
   end
+
+  def hec_manage_url
+    'https://preview.opscode.com/'
+  end
 end
