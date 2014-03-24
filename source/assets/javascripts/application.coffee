@@ -4,6 +4,7 @@
 #= require analytics
 #= require munchkin
 #= require section-links
+#= require sidebar-links
 
 $ ->
   $(document).foundation()
