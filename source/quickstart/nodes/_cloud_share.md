@@ -4,13 +4,22 @@ If you are not currently set up to use Vagrant or EC2, please take advantage of 
 * CentOS Training Lab [Need Link, see this card]
 * Windows Training Lab [Need Link, see this card]
 
-We have also published a detailed video tutorial on setting up this lab.
+We have also published a detailed [video tutorial on setting up this lab](https://www.youtube.com/watch?v=XJdVXAZ95xE).
 
-Here’s what happens next:
+Here's what happens next:
 
-* Sign Up Page: After clicking the link above you will be taken to a sign up page for Cloudshare (the cloud hosting platform we are working with).
+* Sign Up Page: After clicking the link above you will be taken to a sign up page for CloudShare (the cloud hosting platform we are working with).
+
+![sign up page](/assets/images/quickstart/nodes/cloud-share/sign-up.png)
+
 * Enter the Environment: Once the sign up form is completed you will enter the environment. The status bar at the top will let you know that a VM is being provisioned for you.
 * "Start Using This Environment": Once provisioned, the "Start Using This Environment" button will light up. Click it.
+
+![start using](/assets/images/quickstart/nodes/cloud-share/start-environment.png)
+
 * "View Details": You will see a single Ubuntu 10.04 VM listed in the window. Click "more details" and write down the following information:
  * The external address
  * SSH username and password
+
+![view-details](/assets/images/quickstart/nodes/cloud-share/single-centos-node.png)
+![view details more](/assets/images/quickstart/nodes/cloud-share/single-centos-node-more.png)
