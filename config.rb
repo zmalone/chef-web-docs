@@ -1,8 +1,15 @@
 require 'lib/sitemap'
 require 'lib/compass'
-require 'lib/helpers/markdown_helpers'
 require 'lib/helpers/tab_helpers'
 require 'lib/helpers/url_helpers'
+
+# In development you can use `binding.pry` anywhere to pause execution and bring
+# up a Ruby REPL
+begin
+  require 'pry'
+rescue LoadError
+  logger.debug 'Pry is missing and will not be loaded.'
+end
 
 ###
 # Config
