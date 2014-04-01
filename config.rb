@@ -1,4 +1,3 @@
-require 'lib/markdown'
 require 'lib/sitemap'
 require 'lib/compass'
 require 'lib/helpers/markdown_helpers'
@@ -64,7 +63,6 @@ page '/humans.txt', layout: false
 
 # Methods defined in the helpers block are available in templates
 helpers do
-  include MarkdownHelpers
   include TabHelpers
   include URLHelpers
 end
