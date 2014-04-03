@@ -1,5 +1,6 @@
 require 'lib/sitemap'
 require 'lib/compass'
+require 'lib/markdown'
 require 'lib/helpers/tab_helpers'
 require 'lib/helpers/url_helpers'
 
