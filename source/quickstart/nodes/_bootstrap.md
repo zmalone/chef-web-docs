@@ -1,0 +1,54 @@
+## Bootstrap Your VM
+
+After completing the steps above on your platform of choice, you should have the following:
+
+* One VM or server that you’ll use for the Learn Chef tutorials
+* The IP address or public hostname
+* An application for establishing an ssh connection
+* "sudo" or "root" permissions on the VM
+
+First, let's take the external address of the VM you have and paste it into the browser. You should see that nothing is currently set up.
+
+In order to turn this VM into something useful, we first need to bootstrap it. In the bootstrapping process, a Chef client is installed on the VM and checks in with the Chef Server.
+
+[WARN] TODO For Windows users, install windows plugin for knife before bootstrapping?
+
+Follow these steps to bootstrap your VM:
+
+* Open up the terminal window on your workstation and navigate to your chef-repo
+* Open up the `knife` bootstrapping help options by entering the command below:
+
+```
+knife bootstrap --help
+```
+
+You will see the list of options used with `knife bootstrap` in order to specify ssh credentials, node names, etc.
+
+Enter the following command into the terminal, substituting the external IP and SSH credentials of your own VM.
+
+[WARN] TODO username & password is “chef” for all images we’re using?
+
+```
+knife bootstrap [EXTERNAL ADDRESS] --sudo -x chef -P chef -N "target1"
+```
+
+[WARN] TODO same command for windows?
+
+```
+PS \> knife bootstrap windows winrm <EXTERNAL_ADDRESS> -x chef –P chef -N “node1"
+```
+
+After hitting enter, you will be prompted to re-enter the sudo password.
+
+From the terminal window, you will see the various activities of the bootstrapping process take place (see example below.)
+
+### What Happens in Bootstrapping?
+
+* A secure connection to Hosted Enterprise Chef is established
+* Chef client is downloaded, including Ruby and Ohai (Chef’s system profiler)
+* Any Cookbooks are downloaded (more on that later)
+* A Run List is executed (more on that later)
+
+To verify that the process completed, let’s move back to the <a href="https://preview.opscode.com" target="_blank">Management Console of Hosted Enterprise Chef</a>.
+
+When logged into your account and the organization used for this tutorial series, you should see a single node listed on the Nodes tab.

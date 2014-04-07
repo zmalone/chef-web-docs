@@ -23,7 +23,7 @@ To have a fully functional Wordpress installation, our Chef cookbook will also n
 
 We will use the [wordpress cookbook](http://community.opscode.com/cookbooks/wordpress) to automate this process.
 
-If you do not already have Chef installed and configured on your system, please follow the [Workstation Setup](/quickstart/workstation-setup) guide.
+If you do not already have Chef installed and configured on your system, please follow the [Workstation Quick Start guide](/quickstart/workstation).
 
 We will be using [Berkshelf](http://berkshelf.com) - a Chef cookbook dependency manager. Install Berkshelf into Ruby using the `gem` command:
 
