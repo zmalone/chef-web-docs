@@ -1,6 +1,6 @@
 If you are not currently set up to use Vagrant or EC2, please take advantage of our Chef Training Lab, which is currently in beta. This lab is intended for use with Learn Chef. To do so, choose from one of the Training Labs below:
 
-* [Ubuntu Training Lab](http://opscode-cheflab.herokuapp.com/attend)
+* [Ubuntu Training Lab](http://opscode-cheflab.herokuapp.com/labs/fundamentalswebinar/ubuntu/attend)
 * CentOS Training Lab [Need Link, see this card]
 * Windows Training Lab [Need Link, see this card]
 
