@@ -48,7 +48,8 @@ There is a [video on YouTube][youtube-lab-reset] that demonstrates the process o
 If you're using the BETA Chef Training Lab, you may need to [launch a new instance of the lab][chef-lab] before completing [module 5][week5_webinar] or [module 6][week6_webinar].  CHEF is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.
 
 
-[chef-lab]: http://opscode-cheflab.herokuapp.com/attend
+[chef-lab]: http://opscode-cheflab.herokuapp.com/labs/fundamentalswebinar/ubuntu/attend
+[vagrantup]:  http://vagrantup.com
 [youtube-lab-reset]: http://www.youtube.com/watch?v=XJdVXAZ95xE
 [week3_webinar]: /screencasts/fundi-webinar-week-3/
 [week4_webinar]: /screencasts/fundi-webinar-week-4/
