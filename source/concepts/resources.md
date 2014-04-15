@@ -8,10 +8,10 @@ description: 'An overview of the concept of resources in Chef.'
 keywords: 'chef, resource'
 ---
 
-Resources are the fundamental building blocks of Chef configuration and represent a piece of the system and its desired state. Examples include:
+A _resource_ is the fundamental building block of Chef configuration and represents one part of the system and its desired state. Examples include:
   
-  * A package that should be installed
-  * A service that should be running
-  * A file that should be generated
+  * a package that should be installed
+  * a service that should be running
+  * a file that should be generated
 
-Resources are gathered into Recipes and then applied to systems via thef Chef Client. For more information, see the [Chef Documentation for Resources](http://docs.opscode.com/resource.html). 
+Resources are gathered into recipes. The Chef client applies resource requirements to nodes. For more information, see [About Resources and Providers](http://docs.opscode.com/resource.html). 
