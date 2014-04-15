@@ -8,4 +8,4 @@ description: 'An overview of the concept of nodes in Chef.'
 keywords: 'chef, node'
 ---
 
-Nodes represent the servers in your infrastructure that are maintained by Chef. Nodes can be physical servers, virtual machines, public or private cloud instances or network devices. A Node may belong to just one Environment within one Organization. A Node may have zero or more Roles applied to it. For more information, see the [Chef Documentation for Nodes](http://docs.opscode.com/chef_overview_nodes.html).
+A _node_ represents a servers in your infrastructure that is maintained by the Chef server. A node can be a physical server, virtual machine, public or private cloud instance, or a network device. A node may only belong to one environment in one organization. A node can have zero or more roles applied to it. For more information, see [About Nodes](http://docs.opscode.com/chef_overview_nodes.html).

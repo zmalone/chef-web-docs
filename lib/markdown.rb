@@ -59,7 +59,7 @@ module ZurbFoundation
       old = $2
       flat = old.downcase.delete(' ')
       escaped = flat.gsub(/\W/, "")
-      "<h#{size}><a name=\"#{escaped}\"></a>#{old}</h#{size}>"
+      "<h#{size}><a class=\"section-link\" name=\"#{escaped}\" href=\"##{escaped}\">&#167;</a>#{old}</h#{size}>"
     end
   end
 

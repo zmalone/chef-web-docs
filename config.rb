@@ -1,6 +1,16 @@
-require 'lib/markdown'
 require 'lib/sitemap'
 require 'lib/compass'
+require 'lib/markdown'
+require 'lib/helpers/tab_helpers'
+require 'lib/helpers/url_helpers'
+
+# In development you can use `binding.pry` anywhere to pause execution and bring
+# up a Ruby REPL
+begin
+  require 'pry'
+rescue LoadError
+  logger.debug 'Pry is missing and will not be loaded.'
+end
 
 ###
 # Config
@@ -60,11 +70,10 @@ page '/humans.txt', layout: false
 # activate :automatic_image_sizes
 
 # Methods defined in the helpers block are available in templates
-# helpers do
-#   def some_helper
-#     "Helping"
-#   end
-# end
+helpers do
+  include TabHelpers
+  include URLHelpers
+end
 
 # Enable Livereload
 activate :livereload

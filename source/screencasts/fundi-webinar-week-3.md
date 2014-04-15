@@ -125,7 +125,7 @@ Thank you for participating in our Chef Fundamentals Webinar series.  What did y
 [git]: http://git-scm.com/
 [trainging-at-opscode-com]: mailto:training@opscode.com
 [omnibus-installer]: http://www.opscode.com/chef/install/
-[chef-lab]: http://opscode-cheflab.herokuapp.com/attend
+[chef-lab]: http://opscode-cheflab.herokuapp.com/labs/fundamentalswebinar/ubuntu/attend
 [vagrantup]:  http://vagrantup.com
 [youtube-training-lab]: http://youtu.be/4RrzK1ozitE
 [week-4-signup]: http://pages.opscode.com/20131107-chef-fundamentals-module-4.html

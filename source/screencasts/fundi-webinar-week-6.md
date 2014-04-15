@@ -51,7 +51,7 @@ Questions? Please email us at [training@opscode.com][trainging-at-opscode-com].
 [week3_webinar]: /screencasts/fundi-webinar-week-3/
 [week4_webinar]: /screencasts/fundi-webinar-week-4/
 [week5_webinar]: /screencasts/fundi-webinar-week-5/
-[chef-lab]: http://opscode-cheflab.herokuapp.com/attend
+[chef-lab]: http://opscode-cheflab.herokuapp.com/labs/fundamentalswebinar/ubuntu/attend
 [youtube-lab-reset]: http://www.youtube.com/watch?v=XJdVXAZ95xE
 [fundi-week-6-qa]: http://pages.opscode.com/rs/opscode/images/chef-fundamentals-module-6-qa.pdf
 [survey]: https://www.surveymonkey.com/s/H53HFMH

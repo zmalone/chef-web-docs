@@ -10,6 +10,14 @@ gem 'rb-fsevent',           '~> 0.9'
 gem 'slim',                 '~> 1.3.8'
 gem 'zurb-foundation',      :git => 'git://github.com/zurb/foundation', :ref => 'fb0cdaec'
 
+group :development, :test do
+  gem 'pry'
+end
+
+group :test do
+  gem 'rspec' # Unit testing
+end
+
 group :production do
   gem 'therubyracer',       '~> 0.11.4'
 end
