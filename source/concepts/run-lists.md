@@ -8,4 +8,4 @@ description: 'An overview of the concept of run-lists in Chef.'
 keywords: 'chef, run list'
 ---
 
-A Run-list is an ordered list of policies (in the form of Roles and/or Recipes) that are run by the Chef-client in an exact order every single time. The Chef Client obtains its Run-list from the Chef Server and ensures that the Node complies with the policies described in the Run-list. For more information, see the [Chef Documentation for Run-lists](http://docs.opscode.com/essentials_node_object_run_lists.html).
+A _run-list_ is an ordered list of policies that the Chef client runs. A run-list can contain any combination of roles and recipes and are run in the same order every time. The Chef client downloads its run-list from the Chef server and ensures that the node complies with the policies described in the run-list. For more information, see [About Run-lists](http://docs.opscode.com/essentials_node_object_run_lists.html).
