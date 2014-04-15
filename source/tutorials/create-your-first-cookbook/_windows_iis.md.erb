@@ -1,0 +1,112 @@
+## Configure IIS on Windows Server
+
+Here you'll set up and validate IIS on Windows Server in 7 steps.
+
+### Step 1: Create the cookbook
+
+The [knife](http://docs.opscode.com/knife.html) command provides an interface between your workstation and the Chef server. 
+From your **chef-repo** directory, run the **knife** command to create a new cookbook.
+
+```bash
+knife cookbook create iis_tutorial
+```
+
+At this point, everything is set up locally, and nothing's sent to the Chef server. You'll upload the cookbook in a later step.
+
+### Step 2: Write the recipe
+
+When you create a cookbook, Chef creates a default recipe for you. From your text editor, open up the default recipe in the **iis_tutorial** cookbook. 
+
+```
+cookbooks\iis_tutorial\recipes\default.rb
+```
+
+Now let's write some Ruby code to perform these actions:
+
+  * install IIS
+  * start the World Wide Web Publishing Service
+  * configure the home page
+
+Here's the code you need to add to default.rb: 
+
+```ruby
+powershell_script "Install IIS" do
+  action :run
+  code "add-windowsfeature Web-Server"
+end
+
+service "w3svc" do
+  action [ :enable, :start ]
+end
+
+cookbook_file ‘c:\inetpub\wwwroot\Default.htm’ do
+  source "Default.htm"
+  rights :read, "Everyone"
+end
+```
+
+### Step 3: Add a file resource
+
+The final part of the recipe you just wrote uses the [cookbook_file](http://docs.opscode.com/resource_cookbook_file.html) resource to copy the home page. Now you need to add that resource to your cookbook. 
+
+Open Default.htm in your text editor.
+
+``` 
+cookbooks\iis_tutorial\files\default\Default.htm
+```
+
+And write out the homepage like this: 
+
+```html
+<html>
+<body>
+  <h1>Hello, world!</h1>
+</body>
+</html>
+```
+
+### Step 4: Upload the cookbook to the Chef server
+
+From the chef-repo directory, run **knife**'s [cookbook upload](http://docs.opscode.com/knife_cookbook.html#upload) command to upload your cookbook.
+
+```bash
+knife cookbook upload iis_tutorial
+```
+
+A copy of your cookbook is now on the Chef server.
+
+### Step 5: Create the run list 
+
+The [run list](/concepts/run-lists/) defines the order in which recipes are run. In this tutorial, you have just one receipe in your run list. 
+
+To configure the run list for your Windows Server node, first navigate to [manage.opscode.com](https://manage.opscode.com) and log in to your Chef account. Then from the **Nodes** tab, select your node and open its run list.
+
+![Opening the run list](tutorials/open-run-list-webui.png)
+
+Now drag the recipe from the **Available Recipes** box to the **Current Run List** box. Then click **Save Run List**.
+
+![Setting and saving the run list](tutorials/edit-run-list-webui.png)
+
+### Step 6: Run the Chef client
+
+Next you'll run [chef-client](http://docs.opscode.com/essentials_chef_client.html) to get the latest cookbooks from the Chef server and bring your target node to its expected state. 
+
+Log into your Windows Server node either through Remote Desktop or through a telnet session and run **chef-client**.
+
+```bash
+chef-client
+```
+
+As the Chef client runs, you'll see Windows Server configure itself to run IIS and copy your basic web page to **c:\inetpub\wwwroot**.
+
+### Step 7: Verify your home page 
+
+After the Chef client run completes, open a web browser from any computer and navigate to your test node. For example, if you're running on EC2, the URL might resemble:
+
+```
+http://ec2-xx-xx-xx-x.compute-1.amazonaws.com
+```
+
+You'll see "Hello, world!" in your browser.
+
+You did it! Now try the [Linux](#configureapacheonlinux) version of this tutorial, or jump to the [bottom](#awesome) for next steps.
