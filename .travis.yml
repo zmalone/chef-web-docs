@@ -1,3 +1,9 @@
+before_install:
+   - sudo apt-get update -qq
+   - sudo apt-get install -qq linkchecker
+cache:
+  - apt
+  - bundler
 deploy:
   - provider: s3
     access_key_id: 'abcd'
@@ -8,4 +14,4 @@ deploy:
     on:
       all_branches: true
 install: bundle install --deployment --without development
-script: bundle exec middleman build
+script: 'bundle exec middleman build && linkchecker build'
