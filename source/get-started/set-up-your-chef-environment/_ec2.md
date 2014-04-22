@@ -6,12 +6,15 @@ For each AMI listed here, login with username **chef** and password **chef**.
   * Public Windows Server 2012 AMI (<a href="https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Images:filter=all-images;platform=all-platforms;visibility=public-images;search=ami-97d0ccfe" target="_blank">ami-97d0ccfe</a>) in the US East (N. Virginia) Region
 2. From the EC2 Management Console, click **Launch**. Follow the prompts. You can accept the default settings for all steps except the following:
   * On **Step 2**, choose your instance type. A **t1.micro** instance is the most cost-effective and should be sufficient for Learn Chef tutorials.
-  * On **Step 6**, ensure these ports are open. Ensure that the **Source** column is **Anywhere**.
-      * Linux: **22** (SSH), **80-90** (HTTP), **443** (SSL)
-      * Windows: **3389** (RDP), **80-90** (HTTP), **5985-6000** (WinRM)
-      
-
-      Most of these ports are used by the bootstrap process, which you'll learn about next. The HTTP ports are later used by the Learn Chef tutorials, so we recommend you open them now.  
+  * On **Step 6**, ensure these ports are open. Ensure that the **Source** column is **Anywhere**. Most of these ports are used by the bootstrap process, which you'll learn about next. The HTTP ports are later used by the Learn Chef tutorials, so we recommend you open them now.
+      * Linux: 
+         * **22** (SSH)
+         * **80-90** (HTTP)
+         * **443** (SSL)
+      * Windows: 
+         * **3389** (RDP)
+         * **80-90** (HTTP)
+         * **5985-6000** (WinRM)
   * After you complete **Step 7**, choose **Proceed without a key pair**. 
 
 These images are simlilar to the base images, with these modifications:

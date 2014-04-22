@@ -1,7 +1,7 @@
 ---
-title: 'Chef Concepts'
+title: 'Concepts'
 order: 2
-description: 'An overview of concepts and terminology in Chef.'
+description: 'Provides an overview of concepts and terminology in Chef'
 keywords: 'chef, overview, concepts, terminology'
 ---
 
