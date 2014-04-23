@@ -84,13 +84,21 @@ Now drag the recipe from the **Available Recipes** box to the **Current Run List
 
 Next you'll run [chef-client](http://docs.opscode.com/essentials_chef_client.html) to get the latest cookbooks from the Chef server and bring your target node to its expected state. 
 
-Log into your Linux node either through SSH.
+The easiest way to run **chef-client** is to run the **knife** command from your local workstation. (Recall that you ran the **knife** command when you [bootstrapped](/get-started#bootstraptheimage) your node and that **knife** serves as the interface between you and the Chef server.)
+
+Here's the command.
 
 ```bash
-ssh chef@[EXTERNAL_ADDRESS]
+knife ssh ec2-xx-xx-xx-xx.compute-1.amazonaws.com 'sudo chef-client' -m -x chef -P chef
 ```
 
-Now run **chef-client** with root privileges.
+Replace **ec2-xx-xx-xx-xx.compute-1.amazonaws.com** with your node's IP address or hostname. If you're not using an EC2 image, replace the **-x** and **-P** arguments with the username and password for an account that has root access.
+
+Alternatively, you can log into your Linux node through SSH and then run **chef-client**.
+
+```bash
+ssh chef@ec2-xx-xx-xx-xx.compute-1.amazonaws.com
+```
 
 ```bash
 sudo chef-client
