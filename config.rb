@@ -113,3 +113,10 @@ configure :build do
   # Or use a different image path
   # set :http_path, "/Content/images/"
 end
+
+# Write out a REVISION file that shows which revision we're running
+after_build do
+  open("#{root_path.join('build', 'REVISION')}", 'w').write(
+    ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
+  )
+end
