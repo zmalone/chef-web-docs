@@ -54,9 +54,9 @@ set :trailing_slash, false
 # with_layout :admin do
 #   page "/admin/*"
 # end
-page '/sitemap.xml', layout: false
+page '/redirection_rules.xml', layout: false
 page '/robots.txt', layout: false
-page '/humans.txt', layout: false
+page '/sitemap.xml', layout: false
 
 # S3 hosting needs a page at the root
 page '/error.html', directory_index: false
@@ -99,9 +99,6 @@ set :fonts_dir, 'assets/fonts'
 configure :build do
   # For example, change the Compass output style for deployment
   activate :minify_css
-
-  # Use gzip
-  activate :gzip
 
   # Minify Javascript on build
   activate :minify_javascript

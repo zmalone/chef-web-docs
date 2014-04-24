@@ -10,6 +10,12 @@ gem 'rb-fsevent',           '~> 0.9'
 gem 'slim',                 '~> 1.3.8'
 gem 'zurb-foundation',      :git => 'git://github.com/zurb/foundation', :ref => 'fb0cdaec'
 
+group :deploy do
+  # Gems for Travis S3 deploy
+  gem 'aws-sdk'
+  gem 'mime-types'
+end
+
 group :development, :test do
   gem 'pry'
 end
