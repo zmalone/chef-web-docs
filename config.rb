@@ -1,6 +1,7 @@
 require 'lib/sitemap'
 require 'lib/compass'
 require 'lib/markdown'
+require 'lib/helpers/deploy_helpers'
 require 'lib/helpers/tab_helpers'
 require 'lib/helpers/url_helpers'
 
@@ -74,6 +75,7 @@ page '/error.html', directory_index: false
 
 # Methods defined in the helpers block are available in templates
 helpers do
+  include DeployHelpers
   include TabHelpers
   include URLHelpers
 end
