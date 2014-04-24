@@ -1,17 +1,15 @@
-#before_install:
-   #- sudo apt-get update -qq
-   #- sudo apt-get install -qq linkchecker
 cache:
-  # - apt
-  - bundler
+  directories:
+    - vendor/bundle
+    - build
 deploy:
   - provider: s3
     access_key_id: 'abcd'
     secret_access_key: 'efgh'
-    bucket: preprod.learnchef.com
+    bucket: learn-preprod.getchef.com
     skip_cleanup: true
     local-dir: build
     on:
-      branch: nls/travis
+      branch: master
 install: bundle install --deployment --without development
 script: bundle exec middleman build
