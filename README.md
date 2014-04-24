@@ -1,8 +1,9 @@
-Chef Quickstart Guide
-=====================
+Learn Chef
+==========
 
 Installation
 ------------
+
 1. Clone the repository:
 
         $ git clone git@github.com:opscode/quick-start.git
@@ -25,9 +26,9 @@ Installation
 
         $ bundle exec middleman server
 
-
 Building
 --------
+
 1. To build the full site (and smush images, compress javascript, etc), run the following command:
 
         $ bundle exec middleman build --clean
@@ -37,16 +38,18 @@ Building
         $ echo $?
         $ 0
 
-
 Publishing
 ----------
+
 - **Always submit PRs/changes against the master branch**
 - Verify changes on https://learnchef-rs-preprod.opscode.com/
 - Merge `master` into `release`
 
+See the [deployment documentation](doc/deploy.md) for more information.
 
 Contributing
 ------------
+
 1. **Make a new branch**
 
 1. Make changes
@@ -60,12 +63,15 @@ Contributing
 
 License and Authors
 -------------------
-- Author:: Seth Vargo (sethvargo@gmail.com)
+
 - Author:: Isa Farnik (isa@getchef.com)
 - Author:: Nathen Harvey (nharvey@getchef.com)
+- Author:: Christian Nunciato (cnunciato@getchef.com)
+- Author:: Seth Vargo (sethvargo@gmail.com)
 - Author:: Thomas Petchel (tpetchel@getchef.com)
+- Author:: Nathan L Smith (smith@getchef.com)
 
-Copyright 2013-2014 Chef
+Copyright (c) 2013-2014 Chef Software, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

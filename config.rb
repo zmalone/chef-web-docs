@@ -54,9 +54,9 @@ set :trailing_slash, false
 # with_layout :admin do
 #   page "/admin/*"
 # end
-page '/redirection_rules.xml', layout: false
 page '/robots.txt', layout: false
 page '/sitemap.xml', layout: false
+page '/website_configuration.xml', layout: false
 
 # S3 hosting needs a page at the root
 page '/error.html', directory_index: false
