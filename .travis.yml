@@ -3,13 +3,15 @@ cache:
     - vendor/bundle
     - build
 deploy:
-  - provider: s3
-    access_key_id: 'abcd'
-    secret_access_key: 'efgh'
-    bucket: learn-preprod.getchef.com
-    skip_cleanup: true
-    local-dir: build
-    on:
-      branch: master
+  provider: s3
+  access_key_id: # chef-preprod learn-chef IAM user
+    secure: "EqjjwDiXjoSUwI8Hp0ZIqh0tDCcgFYE1oCLO2jHzVxwanuBBj2F37TfoS87ry6mdQ1YyHAeXmfAKWP4Ixyy1OyMmdEYyXyKW/iX5BePrag5k700iJo8JE1msI7f7PF08aswhJ7+6vvS3epfcZUaUmo97lcA83kNDo4X+wJaNWPY="
+  secret_access_key:
+    secure: "WcKc36uw3SmcurYdU9vTYjJAVAMa4I0853FABJIebFd7M5b2XADHqrPWAVrqPclI4B6ylPjTRFFQ5T6+1KGK3tcpKNDFIKYYyZAYK8WFMGMW4b6SXc8X7eO49uJSexNVuYhe8AFTwua9HCuWroYLnWVPGPCRjfgcdZUDyCgGkqc="
+  bucket: learn-preprod.getchef.com
+  skip_cleanup: true
+  local-dir: build
+  on:
+    branch: master
 install: bundle install --deployment --without development
 script: bundle exec middleman build
