@@ -13,6 +13,7 @@ gem 'zurb-foundation',      :git => 'git://github.com/zurb/foundation', :ref => 
 group :deploy do
   # Gems for Travis S3 deploy
   gem 'aws-sdk'
+  gem 'dpl'
   gem 'mime-types'
 end
 
