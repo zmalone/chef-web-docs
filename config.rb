@@ -1,6 +1,7 @@
 require 'lib/sitemap'
 require 'lib/compass'
 require 'lib/markdown'
+require 'lib/helpers/deploy_helpers'
 require 'lib/helpers/tab_helpers'
 require 'lib/helpers/url_helpers'
 
@@ -53,9 +54,9 @@ set :trailing_slash, false
 # with_layout :admin do
 #   page "/admin/*"
 # end
-page '/sitemap.xml', layout: false
 page '/robots.txt', layout: false
-page '/humans.txt', layout: false
+page '/sitemap.xml', layout: false
+page '/website_configuration.xml', layout: false
 
 # S3 hosting needs a page at the root
 page '/error.html', directory_index: false
@@ -74,6 +75,7 @@ page '/error.html', directory_index: false
 
 # Methods defined in the helpers block are available in templates
 helpers do
+  include DeployHelpers
   include TabHelpers
   include URLHelpers
 end
@@ -97,9 +99,6 @@ set :fonts_dir, 'assets/fonts'
 configure :build do
   # For example, change the Compass output style for deployment
   activate :minify_css
-
-  # Use gzip
-  activate :gzip
 
   # Minify Javascript on build
   activate :minify_javascript
