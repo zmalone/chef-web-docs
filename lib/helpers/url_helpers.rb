@@ -9,10 +9,10 @@ module URLHelpers
   end
 
   def hec_sign_up_url
-    'https://preview.opscode.com/signup'
+    'https://manage.opscode.com/signup'
   end
 
   def hec_manage_url
-    'https://preview.opscode.com/'
+    'https://manage.opscode.com/'
   end
 end
