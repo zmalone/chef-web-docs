@@ -1,0 +1,258 @@
+---
+title: "Write for multiple platforms"
+order: 2
+layout: tutorial
+description: Learn what happens during a **chef-client** run and revise your Linux cookbook to run on multiple distros.
+keywords: 'chef-client, multi-platform, multiple platforms, cookbook'
+---
+
+# Write for multiple platforms
+
+So far you've [set up your Chef environment](/get-started/) and [created your first cookbook](/tutorials/create-your-first-cookbook/) that configured a web server and dished up some basic content. In the first tutorial, you chose between configuring IIS on Windows Server and Apache on Linux. In this tutorial, we'll modify the Linux version of that receipe so you have just one that works on multiple Linux distros.
+
+But first we'll take a quick look at what happens during a **chef-client** run.
+
+## What happens during a **chef-client** run?
+
+<%= partial '/tutorials/partials/_what-happens-during-a-chef-client-run/' %> 
+
+**chef-client** takes action only when it needs to. Think of it as *test and repair*. Chef looks at the current state of each resource and applies action only when that resource is out of policy. Consider a policy that states that the **httpd** package must be installed. If the package is already installed, Chef takes no action. Otherwise it will bring the system into policy, perhaps by running **yum install httpd**. If something else later removes this package, Chef will repair the system during its next run.
+
+After **chef-client** completes, you can also run a *notification handler* - a module that you install to perform some action after the run completes. For example, you can send an email that details the run, send a message to an IRC chatroom, or record to your database how long the client run took so you can create a trend report. We'll show how to write a notification handler in a future tutorial.
+
+You can get more technical details about the [chef-client run](http://docs.opscode.com/essentials_nodes_chef_run.html
+) in the Chef documentation.
+
+## Configure Apache to work on multiple Linux distributions 
+
+Here you'll write Ruby code to modify the Apache cookbook. You'll also practice creating a new cookbook and uploading it to the Chef server.
+
+Both Linux recipes from the previous tutorial are similar. The differences lie in the package name (**apache** versus **httpd**) and the location of the document root (**/var/www/** versus **/var/www/html/**.) Therefore, our strategy will be to write a base recipe and use variables to fill in the parts that differ. We'll use the **platform** node attribute to determine which flavor of Linux is running.
+
+If you followed only the Windows Server track in the previous tutorial, you can still read through these steps. The concepts apply to any receipe. Or, run through the [Linux](/tutorials/create-your-first-cookbook#configureapacheonlinux) track now.
+
+[INFO] Chef provides a more robust implementation of this cookbook that works with more platforms - just create a cookbook named **apache2**.
+
+## Step 1: Create the cookbook
+
+As a refresher, let's create a new cookbook for our combined receipe. 
+
+From the **chef-repo** directory on your workstation, run the **knife** command to create a new cookbook.
+
+```bash
+knife cookbook create apache-tutorial-2
+```
+
+Remember, everything is set up locally, and nothing's sent to the Chef server yet. You'll upload the cookbook in a bit.
+
+## Step 2: Write the base Apache recipe
+
+From your text editor, open up the default recipe in the **apache** cookbook. 
+
+```
+cookbooks/apache-tutorial-2/recipes/default.rb
+```
+
+Add the recipe from the previous tutorial that runs on Ubuntu or Debian to create a starting point. 
+
+```ruby
+%= partial '/tutorials/create-your-first-cookbook/partials/_apache_recipe' %
+package "apache2" do
+  action :install
+end
+ 
+service "apache2" do
+  action [ :enable, :start ]
+end
+ 
+cookbook_file "/var/www/index.html" do
+  source "index.html"
+  mode "0644"
+end
+```
+
+This recipe ensures that Apache is installed and started, and that the home page is properly configured.
+
+## Step 3: Define the variables
+
+At the top of default.rb, add these variables to match the package name, service name, and document root of the **apache** receipe.
+
+```ruby
+# These variables configure Ubuntu and Debian.
+package_name = "apache2"
+service_name = "apache2"
+document_root = "/var/www"
+```
+
+## Step 4: Determine the running Linux distribution 
+
+Add this code immediately following the variable definitions to reassign their values if the running Linux system is in the Red Hat family.
+
+```ruby
+if platform?("redhat", "centos", "fedora")
+  package_name = "httpd"
+  service_name = "httpd"
+  document_root = "/var/www/html"
+end
+```
+
+The [platform?](http://docs.opscode.com/dsl_recipe_method_platform.html) method is equivalent to **node["platform"]**. Both read the **platform** attribute from the **node** object. Therefore, you can also write the preceding as:
+
+```ruby
+if ["redhat", "centos", "fedora"].include? node["platform"]
+  package_name = "httpd"
+  service_name = "httpd"
+  document_root = "/var/www/html"
+end
+```
+
+If you're a developer, but new to Ruby, you may be more familiar with code that looks like this:
+
+```ruby
+platform = node["platform"]
+if platform == "redhat" || platform == "centos" || platform == "fedora"
+  package_name = "httpd"
+  service_name = "httpd"
+  document_root = "/var/www/html"
+end
+```
+
+Although you can write code in this way, the previous examples better fit the Ruby style.
+
+## Step 5: Apply the variables to the recipe
+
+Replace the hard-coded strings in the **package** and **service** resources with our variables, as follows:
+
+```ruby
+package package_name do
+  action :install
+end
+
+service service_name do
+  action [ :enable, :start ]
+end
+```
+
+Now update the **cookbook_file** resource to use the **document_root** variable. To do so, use a pound sign **#** followed by curly braces **{}** to embed the value of **document_root** in the file path string.
+
+```ruby
+cookbook_file "#{document_root}/index.html" do
+  source "index.html"
+  mode "0644"
+end
+```
+
+## Step 6: Double-check your receipe
+
+Confirm that your revised recipe looks like this and save the file.
+
+```ruby
+# These variables configure Ubuntu and Debian.
+package_name = "apache2"
+service_name = "apache2"
+document_root = "/var/www"
+
+if platform?("redhat", "centos", "fedora")
+  package_name = "httpd"
+  service_name = "httpd"
+  document_root = "/var/www/html"
+end
+
+package package_name do
+  action :install
+end
+ 
+service service_name do
+  action [ :enable, :start ]
+end
+ 
+cookbook_file "#{document_root}/index.html" do
+  source "index.html"
+  mode "0644"
+end
+```
+
+## Step 7: Add the file resource
+
+As you did in the previous tutorial, add the home page as a resource to your cookbook. 
+
+Open index.html in your text editor.
+
+``` 
+cookbooks/apache-tutorial-2/files/default/index.html
+```
+
+And write out the homepage like this: 
+
+```html
+<html>
+<body>
+  <h1>Hello, world!</h1>
+</body>
+</html>
+```
+
+## Step 8: Upload the cookbook to the Chef server
+
+From the chef-repo directory, run **knife**'s [cookbook upload](http://docs.opscode.com/knife_cookbook.html#upload) command to upload your cookbook.
+
+```bash
+knife cookbook upload apache-tutorial-2
+```
+
+A copy of your cookbook is now on the Chef server.
+
+## Step 9: Create the run-list 
+
+Now update the run-list like you did in the previous tutorial.
+
+Navigate to [manage.opscode.com](https://manage.opscode.com) and log in to your Chef account. Then from the **Nodes** tab, select your node and open its run-list.
+
+![Opening the run list](tutorials/open-run-list-webui.png)
+
+Now drag the recipe from the **Available Recipes** box to the **Current Run List** box. Then click **Save Run List**.
+
+![Setting and saving the run list](tutorials/edit-run-list-webui.png)
+
+## Step 10: Run chef-client
+
+Run [chef-client](http://docs.opscode.com/essentials_chef_client.html) to get the latest cookbooks from the Chef server and bring your target node to its expected state. 
+
+Remember, you have two options to do this. 
+
+**Option 1.** Run the **knife** command from your local workstation. Here's an example.
+
+```bash
+knife ssh ec2-xx-xx-xx-xx.compute-1.amazonaws.com 'sudo chef-client' -m -x chef -P chef
+```
+
+**Option 2.** Log into your Linux node through SSH and then run **chef-client**.
+
+```bash
+ssh chef@ec2-xx-xx-xx-xx.compute-1.amazonaws.com
+```
+```bash
+sudo chef-client
+```
+
+As **chef-client** runs, you'll see Linux configure itself to run Apache and copy your basic web page to the document root.
+
+## Step 11: Verify your home page 
+
+After the **chef-client** run completes, open a web browser from any computer and navigate to your test node. For example, if you're running on EC2, the URL might resemble:
+
+```
+http://ec2-xx-xx-xx-x.compute-1.amazonaws.com
+```
+
+You'll see "Hello, world!" in your browser, just as you did in the previous tutorial.
+
+## What next?
+
+Congratulations. Now you have a basic sense of what happens during a **chef-client** run. The main takeaway is that you can run the **chef-client** command as often as you'd like because configuration changes are performed only when needed.
+
+You've also used a node attribute to revise the Apache cookbook to run on multiple Linux distros. 
+
+Check out the [Additional resources](/additional-resources) page to access videos, community cookbooks, and the Chef reference documentation. 
+
+We'll have more tutorials soon to move you on your journey towards complete IT automation.
