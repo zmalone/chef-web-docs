@@ -1,6 +1,6 @@
 ---
 title: 'Environments'
-order: 2
+order: 7
 layout: concept
 video: '//www.youtube.com/embed/hWCIXSS25UI'
 image: 'environments.png'

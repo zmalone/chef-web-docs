@@ -8,17 +8,17 @@ The [knife](http://docs.opscode.com/knife.html) command provides an interface be
 From your **chef-repo** directory, run the **knife** command to create a new cookbook.
 
 ```bash
-knife cookbook create iis_tutorial
+knife cookbook create iis-tutorial-1
 ```
 
 At this point, everything is set up locally, and nothing's sent to the Chef server. You'll upload the cookbook in a later step.
 
 ### Step 2: Write the recipe
 
-When you create a cookbook, Chef creates a default recipe for you. From your text editor, open up the default recipe in the **iis_tutorial** cookbook. 
+When you create a cookbook, Chef creates a default recipe for you. From your text editor, open up the default recipe in the **iis-tutorial-1** cookbook. 
 
 ```
-cookbooks\iis_tutorial\recipes\default.rb
+cookbooks/iis-tutorial-1/recipes/default.rb
 ```
 
 Now let's write some Ruby code to perform these actions:
@@ -30,18 +30,18 @@ Now let's write some Ruby code to perform these actions:
 Here's the code you need to add to default.rb: 
 
 ```ruby
-powershell_script "Install IIS" do
+powershell_script 'Install IIS' do
   action :run
-  code "add-windowsfeature Web-Server"
+  code 'add-windowsfeature Web-Server'
 end
 
-service "w3svc" do
+service 'w3svc' do
   action [ :enable, :start ]
 end
 
-cookbook_file ‘c:\inetpub\wwwroot\Default.htm’ do
-  source "Default.htm"
-  rights :read, "Everyone"
+cookbook_file 'c:\inetpub\wwwroot\Default.htm' do
+  source 'Default.htm'
+  rights :read, 'Everyone'
 end
 ```
 
@@ -51,8 +51,8 @@ The final part of the recipe you just wrote uses the [cookbook_file](http://docs
 
 Open Default.htm in your text editor.
 
-``` 
-cookbooks\iis_tutorial\files\default\Default.htm
+```bash 
+cookbooks/iis-tutorial-1/files/default/Default.htm
 ```
 
 And write out the homepage like this: 
@@ -70,24 +70,24 @@ And write out the homepage like this:
 From the chef-repo directory, run **knife**'s [cookbook upload](http://docs.opscode.com/knife_cookbook.html#upload) command to upload your cookbook.
 
 ```bash
-knife cookbook upload iis_tutorial
+knife cookbook upload iis-tutorial-1
 ```
 
 A copy of your cookbook is now on the Chef server.
 
 ### Step 5: Create the run list 
 
-The [run list](/concepts/run-lists/) defines the order in which recipes are run. In this tutorial, you have just one receipe in your run list. 
+The [run list](/concepts/run-lists/) defines the order in which recipes are run. In this tutorial, you have just one recipe in your run list. 
 
 To configure the run list for your Windows Server node, first navigate to [manage.opscode.com](https://manage.opscode.com) and log in to your Chef account. Then from the **Nodes** tab, select your node and open its run list.
 
-![Opening the run list](tutorials/open-run-list-webui.png)
+![Opening the run list](tutorials/open-run-list-webui-windows.png)
 
 Now drag the recipe from the **Available Recipes** box to the **Current Run List** box. Then click **Save Run List**.
 
 ![Setting and saving the run list](tutorials/edit-run-list-webui.png)
 
-### Step 6: Run the Chef client
+### Step 6: Run chef-client
 
 Next you'll run [chef-client](http://docs.opscode.com/essentials_chef_client.html) to get the latest cookbooks from the Chef server and bring your target node to its expected state. 
 
@@ -99,15 +99,15 @@ Here's the command.
 knife winrm ec2-xx-xx-xx-xx.compute-1.amazonaws.com chef-client -m -x chef -P chef
 ```
 
-Replace **ec2-xx-xx-xx-xx.compute-1.amazonaws.com** with your node's IP address or hostname. If you're not using an EC2 image, replace the **-x** and **-P** arguments with the username and password for an account that has Administrator access.
+Replace **ec2-xx-xx-xx-xx.compute-1.amazonaws.com** with your node's IP address or hostname. If you're not using a Chef EC2 image, replace the **-x** and **-P** arguments with the username and password for an account that has Administrator access.
 
 [INFO] Alternatively, you can log into your Windows Server node through Remote Desktop and run the **chef-client** command from PowerShell or the command prompt. Just be sure to open your prompt as Administrator.
 
-As the Chef client runs, you'll see Windows Server configure itself to run IIS and copy your basic web page to **c:\inetpub\wwwroot**.
+As **chef-client** runs, you'll see Windows Server configure itself to run IIS and copy your basic web page to **c:\inetpub\wwwroot**.
 
 ### Step 7: Verify your home page 
 
-After the Chef client run completes, open a web browser from any computer and navigate to your test node. For example, if you're running on EC2, the URL might resemble:
+After the **chef-client** run completes, open a web browser from any computer and navigate to your test node. For example, if you're running on EC2, the URL might resemble:
 
 ```
 http://ec2-xx-xx-xx-x.compute-1.amazonaws.com
@@ -115,4 +115,4 @@ http://ec2-xx-xx-xx-x.compute-1.amazonaws.com
 
 You'll see "Hello, world!" in your browser.
 
-You did it! Now try the [Linux](#configureapacheonlinux) version of this tutorial, or jump to the [bottom](#awesome) for next steps.
+You did it! Now try the [Linux](#configureapacheonlinux) version of this tutorial, or jump to the [bottom](#whatnext) for next steps.

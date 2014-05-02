@@ -1,6 +1,6 @@
 ---
 title: 'Resources'
-order: 6
+order: 1
 layout: concept
 video: '//www.youtube.com/embed/05Jv7Wai8i8'
 image: 'resources.png'

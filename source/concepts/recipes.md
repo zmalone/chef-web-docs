@@ -1,6 +1,6 @@
 ---
 title: 'Recipes'
-order: 5
+order: 2
 layout: concept
 video: '//www.youtube.com/embed/5bQ5_4AwiyY'
 image: 'recipes.png'
