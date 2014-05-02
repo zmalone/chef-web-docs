@@ -56,17 +56,17 @@ cookbooks/apache-tutorial-2/recipes/default.rb
 Add the recipe from the previous tutorial that runs on Ubuntu or Debian to create a starting point. 
 
 ```ruby
-package "apache2" do
+package 'apache2' do
   action :install
 end
  
-service "apache2" do
+service 'apache2' do
   action [ :enable, :start ]
 end
  
-cookbook_file "/var/www/index.html" do
-  source "index.html"
-  mode "0644"
+cookbook_file '/var/www/index.html' do
+  source 'index.html'
+  mode '0644'
 end
 ```
 
@@ -78,9 +78,9 @@ At the top of default.rb, add these variables to match the package name, service
 
 ```ruby
 # These variables configure Ubuntu and Debian.
-package_name = "apache2"
-service_name = "apache2"
-document_root = "/var/www"
+package_name = 'apache2'
+service_name = 'apache2'
+document_root = '/var/www'
 ```
 
 ## Step 4: Determine the running Linux distribution 
@@ -88,20 +88,20 @@ document_root = "/var/www"
 Add this code immediately following the variable definitions to reassign their values if the running Linux system is in the Red Hat family.
 
 ```ruby
-if platform_family? "rhel"
-  package_name = "httpd"
-  service_name = "httpd"
-  document_root = "/var/www/html"
+if platform_family? 'rhel'
+  package_name = 'httpd'
+  service_name = 'httpd'
+  document_root = '/var/www/html'
 end
 ```
 
-The [platform_family?](http://docs.opscode.com/dsl_recipe_method_platform_family.html) method is equivalent to **node["platform_family"]**. Both read the **platform_family** attribute from the **node** object. Therefore, you can also write the preceding as:
+The [platform_family?](http://docs.opscode.com/dsl_recipe_method_platform_family.html) method is equivalent to **node['platform_family']**. Both read the **platform_family** attribute from the **node** object. Therefore, you can also write the preceding as:
 
 ```ruby
-if node["platform_family"] == "rhel"
-  package_name = "httpd"
-  service_name = "httpd"
-  document_root = "/var/www/html"
+if node['platform_family'] == 'rhel'
+  package_name = 'httpd'
+  service_name = 'httpd'
+  document_root = '/var/www/html'
 end
 ```
 
@@ -119,14 +119,16 @@ service service_name do
 end
 ```
 
-Now update the **cookbook_file** resource to use the **document_root** variable. To do so, use a pound sign **#** followed by curly braces **{}** to embed the value of **document_root** in the file path string.
+Now update the **cookbook_file** resource to use the **document_root** variable. To do so, use a pound sign **#** followed by curly braces **{}** to embed the value of **document_root** in the file path string (this syntax is called _string interpolation_.)
 
 ```ruby
 cookbook_file "#{document_root}/index.html" do
-  source "index.html"
-  mode "0644"
+  source 'index.html'
+  mode '0644'
 end
 ```
+
+The tutorials typically use single quotes for strings, but for things like string interpolation, you need double quotes.
 
 ## Step 6: Double-check your recipe
 
@@ -134,14 +136,14 @@ Confirm that your revised recipe looks like this and save the file.
 
 ```ruby
 # These variables configure Ubuntu and Debian.
-package_name = "apache2"
-service_name = "apache2"
-document_root = "/var/www"
+package_name = 'apache2'
+service_name = 'apache2'
+document_root = '/var/www'
 
-if platform_family? "rhel"
-  package_name = "httpd"
-  service_name = "httpd"
-  document_root = "/var/www/html"
+if platform_family? 'rhel'
+  package_name = 'httpd'
+  service_name = 'httpd'
+  document_root = '/var/www/html'
 end
 
 package package_name do
@@ -153,8 +155,8 @@ service service_name do
 end
  
 cookbook_file "#{document_root}/index.html" do
-  source "index.html"
-  mode "0644"
+  source 'index.html'
+  mode '0644'
 end
 ```
 
@@ -194,7 +196,7 @@ Now update the run-list like you did in the previous tutorial.
 
 Navigate to [manage.opscode.com](https://manage.opscode.com) and log in to your Chef account. Then from the **Nodes** tab, select your node and open its run-list.
 
-![Opening the run list](tutorials/open-run-list-webui.png)
+![Opening the run list](tutorials/open-run-list-webui-linux.png)
 
 Now drag the recipe from the **Available Recipes** box to the **Current Run List** box. Then click **Save Run List**.
 
@@ -231,7 +233,7 @@ After the **chef-client** run completes, open a web browser from any computer an
 http://ec2-xx-xx-xx-x.compute-1.amazonaws.com
 ```
 
-You'll see "Hello, world!" in your browser, just as you did in the previous tutorial.
+You'll see **Hello, world!** in your browser, just as you did in the previous tutorial.
 
 ## What next?
 

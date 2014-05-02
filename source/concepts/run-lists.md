@@ -1,6 +1,6 @@
 ---
 title: 'Run-lists'
-order: 8
+order: 4
 layout: concept
 video: '//www.youtube.com/embed/z74DW4m6_Tw'
 image: 'run-lists.png'

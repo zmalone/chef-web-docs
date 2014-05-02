@@ -18,7 +18,7 @@ At this point, everything is set up locally, and nothing's sent to the Chef serv
 When you create a cookbook, Chef creates a default recipe for you. From your text editor, open up the default recipe in the **iis-tutorial-1** cookbook. 
 
 ```
-cookbooks\iis-tutorial-1\recipes\default.rb
+cookbooks/iis-tutorial-1/recipes/default.rb
 ```
 
 Now let's write some Ruby code to perform these actions:
@@ -30,18 +30,18 @@ Now let's write some Ruby code to perform these actions:
 Here's the code you need to add to default.rb: 
 
 ```ruby
-powershell_script "Install IIS" do
+powershell_script 'Install IIS' do
   action :run
-  code "add-windowsfeature Web-Server"
+  code 'add-windowsfeature Web-Server'
 end
 
-service "w3svc" do
+service 'w3svc' do
   action [ :enable, :start ]
 end
 
-cookbook_file ‘c:\inetpub\wwwroot\Default.htm’ do
-  source "Default.htm"
-  rights :read, "Everyone"
+cookbook_file 'c:\inetpub\wwwroot\Default.htm' do
+  source 'Default.htm'
+  rights :read, 'Everyone'
 end
 ```
 
@@ -52,7 +52,7 @@ The final part of the recipe you just wrote uses the [cookbook_file](http://docs
 Open Default.htm in your text editor.
 
 ```bash 
-cookbooks\iis-tutorial-1\files\default\Default.htm
+cookbooks/iis-tutorial-1/files/default/Default.htm
 ```
 
 And write out the homepage like this: 
@@ -81,7 +81,7 @@ The [run list](/concepts/run-lists/) defines the order in which recipes are run.
 
 To configure the run list for your Windows Server node, first navigate to [manage.opscode.com](https://manage.opscode.com) and log in to your Chef account. Then from the **Nodes** tab, select your node and open its run list.
 
-![Opening the run list](tutorials/open-run-list-webui.png)
+![Opening the run list](tutorials/open-run-list-webui-windows.png)
 
 Now drag the recipe from the **Available Recipes** box to the **Current Run List** box. Then click **Save Run List**.
 

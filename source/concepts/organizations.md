@@ -1,6 +1,6 @@
 ---
 title: 'Organizations'
-order: 1
+order: 8
 layout: concept
 video: '//www.youtube.com/embed/-k-HRFhjVN4'
 description: 'An overview of the concept of organizations in Chef.'

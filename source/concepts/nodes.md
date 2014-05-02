@@ -1,6 +1,6 @@
 ---
 title: 'Nodes'
-order: 4
+order: 5
 layout: concept
 video: '//www.youtube.com/embed/JetGq-h1KMg'
 image: 'nodes.png'
