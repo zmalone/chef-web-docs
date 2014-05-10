@@ -40,7 +40,7 @@ CHEF publishes a public AMI on EC2 that may be used for the training lab.
 
 ##### Use the BETA Chef Training Lab
 
-CHEF is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.  Would you like to help us test this solution?  [Launch your own training lab now][chef-lab].
+CHEF is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.  Would you like to help us test this solution?  [Launch your own training lab now][chef-lab]. 
 
 **Reset your BETA Chef Training Lab**
 
