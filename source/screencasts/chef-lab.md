@@ -51,6 +51,7 @@ If you're using the BETA Chef Training Lab, you may need to [launch a new instan
 [chef-lab]: http://opscode-cheflab.herokuapp.com/labs/fundamentalswebinar/ubuntu/attend
 [vagrantup]:  http://vagrantup.com
 [youtube-lab-reset]: http://www.youtube.com/watch?v=XJdVXAZ95xE
+[youtube-training-lab]: http://www.youtube.com/watch?v=4RrzK1ozitE
 [week3_webinar]: /screencasts/fundi-webinar-week-3/
 [week4_webinar]: /screencasts/fundi-webinar-week-4/
 [week5_webinar]: /screencasts/fundi-webinar-week-5/
