@@ -25,6 +25,34 @@ After viewing this webinar you will be able to:
 
 Before joining this webinar you should [watch the first episode:  Overview of Chef][spring-fund-week-1].
 
+##### Workstation Requirements
+
+The following operating systems have been tested as workstation systems with the hands on exercises:
+
+- Windows 7+
+- Mac OS X 10.7.3+
+- Ubuntu 10.04+
+
+Other platforms and platform versions may work without modification.
+
+##### Software Requirements:
+
+Participants should install non-Chef required software before the workshop starts.
+
+An application that will allow participants to create an SSH connection to a remote server and SCP files to a remote server.  Recommended applications:
+
+- Windows - [puTTY][puTTY]
+- Mac OS X - the built-in Terminal application or [iTerm2][iTerm2]
+- Ubuntu - the built in Terminal application
+
+A Programmer's text editor that allows the participants to have multiple files open at one time and includes syntax highlighting.  Recommended applications, **pick one**:
+
+- [Sublime Text 2][sublime-text-2]
+- [vim][vim]
+- [emacs][emacs]
+
+The [chef-client][omnibus-installer] application which includes the `knife` command line utility
+
 [Sign up for this webinar now!](http://pages.getchef.com/cheffundamentalsseries.html)
 
 
@@ -43,3 +71,9 @@ Before joining this webinar you should [watch the first episode:  Overview of Ch
 [chef-lab]: /screencasts/spring-fundamentals/chef-lab
 [discussion-forum]: https://groups.google.com/d/forum/learnchef-fundamentals-webinar
 [survey]: http://evocalize.com/consumer/survey/chef/springwebinar-2
+[puTTY]: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
+[iTerm2]: http://www.iterm2.com/#/section/home
+[sublime-text-2]: http://www.sublimetext.com/
+[vim]: http://www.vim.org/
+[emacs]: http://www.gnu.org/software/emacs/
+[omnibus-installer]: http://www.getchef.com/chef/install/
