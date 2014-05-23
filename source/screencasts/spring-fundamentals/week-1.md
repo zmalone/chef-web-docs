@@ -22,13 +22,13 @@ After viewing this webinar you will be able to:
 
 ##### Video
 
-<iframe width="560" height="315" src="http://www.youtube.com/embed/S5lHUpzoCYo" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/S5lHUpzoCYo" frameborder="0" allowfullscreen></iframe>
 
 <p>&nbsp;</p>
 
 ##### Slides
 
-<iframe src="http://www.slideshare.net/slideshow/embed_code/35045897" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<iframe src="https://www.slideshare.net/slideshow/embed_code/35045897" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
 
 <p>&nbsp;</p>
 
