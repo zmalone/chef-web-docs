@@ -1,26 +1,29 @@
 ---
-title: Chef Fundamentals Webinar Series
-order: 4
-description: Chef Fundamentals Webinar Series
+title: Chef Fundamentals Webinar Series - Part 1
+description: First in a series of webinars covering the fundamentals of Chef.  Provides an overview of Chef, workstation setup, and signing up for hosted Chef.
 keywords: training, videos, screencasts
 ---
-# Chef Fundamentals Webinar Series
 
-[Sign up for our latest Chef Fundamentals Series is now available!](http://pages.getchef.com/cheffundamentalsseries.html)
+# Node Setup, Resources, and Recipes
 
-Join Chef Technical Community Director, [Nathen Harvey](http://twitter.com/nathenharvey), as he covers the fundamentals of using Chef in this webinar series.  Each webinar includes hands-on labs and is followed by a Q &amp; A session, so bring your questions!
+This session will be held on [Tuesday, May 27 at 17:00 UTC / 10:00 PDT][week-2-time]
 
-Each session lasts about one hour.
+After viewing this webinar you will be able to:
 
-  * Week 1 - [Overview of Chef][spring-fund-week-1]
-  * Week 2 - [Node Setup, Resources &amp; Recipes][spring-fund-week-2] - [Tuesday, May 27 at 17:00 UTC / 10:00 PDT][week-2-time]
-  * Week 3 - Working with the Node object - [Tuesday, June 3 at 17:00 UTC / 10:00 PDT][week-3-time]
-  * Week 4 - Common configuration data with Databags - [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
-  * Week 5 - Using Roles and Environments - [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
-  * Week 6 - Community Cookbooks and Further Resources - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
+* Install Chef nodes using `knife bootstrap`
+* Explain how `knife bootstrap` configures a node to use the Organization created in the previous section
+* Explain the basic configuration needed to run `chef-client`
+* Describe in detail what a cookbook is
+* Create a new cookbook
+* Explain what a recipe is
+* Describe how to use the `package`, `service`, and `template` resources
+* Upload a cookbook to the Chef Server
+* Explain what a run list is, and how to set it for a node via knife
+* Explain the output of a `chef-client` run 
 
-* <small>Topics subject to change, schedule unlikely to change</small>
+[Sign up for this webinar now!](http://pages.getchef.com/cheffundamentalsseries.html)
 
+[Watch the first episode:  Overview of Chef][spring-fund-week-1]
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
