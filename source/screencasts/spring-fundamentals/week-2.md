@@ -1,6 +1,6 @@
 ---
-title: Chef Fundamentals Webinar Series - Part 1
-description: First in a series of webinars covering the fundamentals of Chef.  Provides an overview of Chef, workstation setup, and signing up for hosted Chef.
+title: Chef Fundamentals Webinar Series - Part 2
+description: Second in a series of webinars covering the fundamentals of Chef.  In this webinar we setup a node and write our first cookbook.
 keywords: training, videos, screencasts
 ---
 
@@ -47,9 +47,9 @@ An application that will allow participants to create an SSH connection to a rem
 - Mac OS X - the built-in Terminal application or [iTerm2][iTerm2]
 - Ubuntu - the built in Terminal application
 
-A Programmer's text editor that allows the participants to have multiple files open at one time and includes syntax highlighting.  Recommended applications, **pick one**:
+A programmer's text editor that allows the participants to have multiple files open at one time and includes syntax highlighting.  Recommended applications, **pick one**:
 
-- [Sublime Text 2][sublime-text-2]
+- [Sublime Text 2][sublime-text-2] **best choice for everyone**
 - [vim][vim]
 - [emacs][emacs]
 

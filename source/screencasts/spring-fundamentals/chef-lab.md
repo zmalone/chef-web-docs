@@ -14,9 +14,8 @@ You will need a server or virtual machine in order to complete the training lab 
 To participate in the labs for webinar modules [2][spring-fund-week-2], [3][spring-fund-week-3], [4][spring-fund-week-4], [5][spring-fund-week-5], and [6][spring-fund-week-6], you will need the following:
 
 - Hostname or IP Address of your training lab server
-- SSH Username
-- SSH Password
-- SSH Port (default is 22)
+- ssh Username
+- ssh Password
 
 ##### Use the Chef Training Lab
  
@@ -47,8 +46,8 @@ Write down the **Username** and **Password** that are displayed.
 You should now have the following details about your Chef Training Lab:
 
 * External Address
-* SSH Username
-* SSH Password
+* ssh Username
+* ssh Password
 
 
 ##### Bring your own Virtual Machine
@@ -57,7 +56,7 @@ If you'd rather not use the [Chef Training Lab](#usethecheftraininglab), you may
 
 - CentOS 6+
 - 512 MB RAM
-- 15 GB Disk
+- 8 GB Disk
 - sudo or root level permissions
 
 

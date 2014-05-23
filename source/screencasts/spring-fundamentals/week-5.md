@@ -1,6 +1,6 @@
 ---
-title: Chef Fundamentals Webinar Series - Part 1
-description: First in a series of webinars covering the fundamentals of Chef.  Provides an overview of Chef, workstation setup, and signing up for hosted Chef.
+title: Chef Fundamentals Webinar Series - Part 5
+description: Fifth in a series of webinars covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 ---
 # Chef Fundamentals Webinar Series
@@ -16,9 +16,9 @@ Each session lasts about one hour.
   * Week 1 - [Overview of Chef][spring-fund-week-1]
   * Week 2 - [Node Setup, Resources &amp; Recipes][spring-fund-week-2] - [Tuesday, May 27 at 17:00 UTC / 10:00 PDT][week-2-time]
   * Week 3 - [Working with the Node object][spring-fund-week-3] - [Tuesday, June 3 at 17:00 UTC / 10:00 PDT][week-3-time]
-  * Week 4 - [Common configuration data with Databags][spring-fund-week-4] - [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
+  * Week 4 - [Common configuration data with Data Bags][spring-fund-week-4] - [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
   * Week 5 - [Using Roles and Environments][spring-fund-week-5] - [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
-  * Week 6 - [Community Cookbooks and Further Resources][spring-fund-week-6] - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
+  * Week 6 - [Community cookbooks and further resources][spring-fund-week-6] - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
 
 * <small>Topics subject to change, schedule unlikely to change</small>
 
