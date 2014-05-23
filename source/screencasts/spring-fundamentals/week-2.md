@@ -21,9 +21,13 @@ After viewing this webinar you will be able to:
 * Explain what a run list is, and how to set it for a node via knife
 * Explain the output of a `chef-client` run 
 
+### Pre-work:
+
+Before joining this webinar you should [watch the first episode:  Overview of Chef][spring-fund-week-1].
+
 [Sign up for this webinar now!](http://pages.getchef.com/cheffundamentalsseries.html)
 
-[Watch the first episode:  Overview of Chef][spring-fund-week-1]
+
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
