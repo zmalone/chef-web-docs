@@ -1,10 +1,11 @@
 ---
-title: Chef Fundamentals Webinar Series
-order: 4
-description: Chef Fundamentals Webinar Series
+title: Chef Fundamentals Webinar Series - Part 6
+description: Sixth in a series of webinars covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 ---
 # Chef Fundamentals Webinar Series
+
+This session will be held on [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
 
 [Sign up for our latest Chef Fundamentals Series is now available!](http://pages.getchef.com/cheffundamentalsseries.html)
 
@@ -14,13 +15,12 @@ Each session lasts about one hour.
 
   * Week 1 - [Overview of Chef][spring-fund-week-1]
   * Week 2 - [Node Setup, Resources &amp; Recipes][spring-fund-week-2] - [Tuesday, May 27 at 17:00 UTC / 10:00 PDT][week-2-time]
-  * Week 3 - Working with the Node object - [Tuesday, June 3 at 17:00 UTC / 10:00 PDT][week-3-time]
-  * Week 4 - Common configuration data with Data Bags - [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
-  * Week 5 - Using Roles and Environments - [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
-  * Week 6 - Community cookbooks and further resources - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
+  * Week 3 - [Working with the Node object][spring-fund-week-3] - [Tuesday, June 3 at 17:00 UTC / 10:00 PDT][week-3-time]
+  * Week 4 - [Common configuration data with Data Bags][spring-fund-week-4] - [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
+  * Week 5 - [Using Roles and Environments][spring-fund-week-5] - [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
+  * Week 6 - [Community cookbooks and further resources][spring-fund-week-6] - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
 
 * <small>Topics subject to change, schedule unlikely to change</small>
-
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
@@ -35,4 +35,4 @@ Each session lasts about one hour.
 [week-6-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+6&iso=20140624T10&p1=234&ah=1
 [chef-lab]: /screencasts/spring-fundamentals/chef-lab
 [discussion-forum]: https://groups.google.com/d/forum/learnchef-fundamentals-webinar
-[survey]: http://evocalize.com/consumer/survey/chef/springwebinar-2
+[survey]: http://evocalize.com/consumer/survey/chef/springwebinar-6
