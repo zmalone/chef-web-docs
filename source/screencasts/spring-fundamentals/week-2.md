@@ -19,7 +19,9 @@ After viewing this webinar you will be able to:
 * Describe how to use the `package`, `service`, and `template` resources
 * Upload a cookbook to the Chef Server
 * Explain what a run list is, and how to set it for a node via knife
-* Explain the output of a `chef-client` run 
+* Explain the output of a `chef-client` run
+
+During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.  You may [launch your lab environment][chef-lab] shortly before the webinar begins or as part of the webinar.
 
 ### Pre-work:
 
