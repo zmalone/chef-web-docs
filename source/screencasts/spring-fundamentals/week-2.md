@@ -4,9 +4,7 @@ description: Second in a series of webinars covering the fundamentals of Chef.  
 keywords: training, videos, screencasts
 ---
 
-# Node Setup, Resources, and Recipes
-
-This session will be held on [Tuesday, May 27 at 17:00 UTC / 10:00 PDT][week-2-time]
+# Node setup, resources, and recipes
 
 After viewing this webinar you will be able to:
 
@@ -23,7 +21,19 @@ After viewing this webinar you will be able to:
 
 During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.  You may [launch your lab environment][chef-lab] shortly before the webinar begins or as part of the webinar.
 
-### Pre-work:
+##### Video
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/KQEj9rZwLb8" frameborder="0" allowfullscreen></iframe>
+
+<p>&nbsp;</p>
+
+##### Slides
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/35176302" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+<p>&nbsp;</p>
+
+### Pre-work
 
 Before joining this webinar you should [watch the first episode:  Overview of Chef][spring-fund-week-1].
 
@@ -54,6 +64,25 @@ A programmer's text editor that allows the participants to have multiple files o
 - [emacs][emacs]
 
 The [chef-client][omnibus-installer] application which includes the `knife` command line utility
+
+### Homework
+
+Before participating in [Chef Fundamentals Module 3][spring-fund-week-3], you may want to get a little more information on exactly what happens when you run the `chef-client` application.  Checkout this video for a detailed explanation of the `chef-client` run.  After viewing this video, you will be able to:
+
+* List all the steps taken by a `chef-client` during a run
+* Explain the basic security model of Chef
+* Explain the concepts of the resource collection
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/grvlVNvCU9w" frameborder="0" allowfullscreen></iframe>
+
+### What's Next?
+
+* Please join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
+* [Chef Fundamentals Module 3][spring-fund-week-3]
+
+#### Send Us Your Feedback!
+
+Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
 
 [Sign up for this webinar now!](http://pages.getchef.com/cheffundamentalsseries.html)
 
