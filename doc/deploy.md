@@ -15,6 +15,19 @@ Preprod uses the _master_ branch and lives at http://learn-preprod.getchef.com.s
 
 Sandbox uses the _sandbox_ branch and lives at http://learn-sandbox.getchef.com.s3-website-us-east-1.amazonaws.com/
 
+## Deploying to the Sandbox
+
+To deploy your special branch to the Sandbox environment:
+
+```bash
+git checkout -t origin/sandbox # or just `git checkout sandbox` if you've done this before
+git reset --hard my-special-branch
+git push --force origin sandbox
+```
+
+After Travis is done building, your content will be at the Sandbox URL shown
+above.
+
 ## Redirects
 
 The XML for redirection needs to be set manually in the bucket properties on the
