@@ -3,15 +3,27 @@ cache:
     - vendor/bundle
     - build
 deploy:
-  provider: s3
-  access_key_id: # chef-preprod learn-chef IAM user
-    secure: "EDI8FIhQWzTg/zPabIQON7bYIudYFm+QUsrKhksNYIFz/i+kUDED+3jXFMYIzeK8hQVM82jtfNReT0DYjHXTPmPCF10B7D+w4NmEtInpW7O0OB52NJZrBTkTOipjcqLeZu/TngMn+JKkCzkBe3FwmPgSM2U+/fjQ+BKn9lOCy4c="
-  secret_access_key:
-    secure: "QxYru5Si17xLKmBx4Il6nFnKTqJSrdetyKGpD6FYdRXVB6aHV3PLMjJ/WwhuDrpUPYkSx/qIurZwexKH1WkO1BiukCuWetrSrUsnV8uVphoTHDsafLdAu1UW9uymuFPNvZTY4LQI0n0+tJjSQ2XGzJ4Vo360bEiLn3r+xiZ3/RQ="
-  bucket: learn-preprod.getchef.com
-  skip_cleanup: true
-  local-dir: build
-  on:
-    branch: master
+  # Preprod
+  - provider: s3
+    access_key_id: # chef-preprod learn-chef IAM user
+      secure: "EDI8FIhQWzTg/zPabIQON7bYIudYFm+QUsrKhksNYIFz/i+kUDED+3jXFMYIzeK8hQVM82jtfNReT0DYjHXTPmPCF10B7D+w4NmEtInpW7O0OB52NJZrBTkTOipjcqLeZu/TngMn+JKkCzkBe3FwmPgSM2U+/fjQ+BKn9lOCy4c="
+    secret_access_key:
+      secure: "QxYru5Si17xLKmBx4Il6nFnKTqJSrdetyKGpD6FYdRXVB6aHV3PLMjJ/WwhuDrpUPYkSx/qIurZwexKH1WkO1BiukCuWetrSrUsnV8uVphoTHDsafLdAu1UW9uymuFPNvZTY4LQI0n0+tJjSQ2XGzJ4Vo360bEiLn3r+xiZ3/RQ="
+    bucket: learn-preprod.getchef.com
+    skip_cleanup: true
+    local-dir: build
+    on:
+      branch: master
+  # Sandbox
+  - provider: s3
+    access_key_id: # chef-preprod learn-chef IAM user
+      secure: "EDI8FIhQWzTg/zPabIQON7bYIudYFm+QUsrKhksNYIFz/i+kUDED+3jXFMYIzeK8hQVM82jtfNReT0DYjHXTPmPCF10B7D+w4NmEtInpW7O0OB52NJZrBTkTOipjcqLeZu/TngMn+JKkCzkBe3FwmPgSM2U+/fjQ+BKn9lOCy4c="
+    secret_access_key:
+      secure: "QxYru5Si17xLKmBx4Il6nFnKTqJSrdetyKGpD6FYdRXVB6aHV3PLMjJ/WwhuDrpUPYkSx/qIurZwexKH1WkO1BiukCuWetrSrUsnV8uVphoTHDsafLdAu1UW9uymuFPNvZTY4LQI0n0+tJjSQ2XGzJ4Vo360bEiLn3r+xiZ3/RQ="
+    bucket: learn-sandbox.getchef.com
+    skip_cleanup: true
+    local-dir: build
+    on:
+      branch: sandbox
 install: bundle install --deployment --without development
 script: bundle exec middleman build
