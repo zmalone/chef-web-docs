@@ -1,0 +1,463 @@
+---
+title: 'Configure a package and service'
+order: 2
+layout: tutorial
+description: TODO
+keywords: TODO
+---
+# Configure a package and service
+
+[Last time](/rhel/configure-a-resource/) you learned how to manage a file resource. Let's extend that idea to also manage a package and a service, which are also kinds of resources.
+
+<i class="icon-cogs icon-2x" style="float:left; margin-right:10px;"></i> Imagine you need to build out a web server. Not too hard, right? Now imagine you need to build it a dozen or more times across your infrastructure. You know that as your project evolves, dependencies change and additional requirements get added to the mix. You may eventually want to add a load balancer, a database server, and who knows what else. You know you're going to need something more than a shell script to manage all that complexity. Enter Chef.
+
+Your goal is to install and start a web server and have it serve up a home page that displays some basic info about the server that's hosting it.
+
+Although you don't need prior knowledge about web servers, configuring one is a great way to learn how to work with packages and services. 
+
+## Setup
+
+Open a terminal window and <codeinline>cd</codeinline> to the directory you used in the previous tutorial. We recommend ~/chef-tutorials/.
+
+```bash
+$ mkdir ~/chef-tutorials
+$ cd ~/chef-tutorials
+```
+
+Because you'll install a package, you'll need root access on your machine.
+
+## Install the Apache package 
+
+In the previous tutorial, you configured a file resource. Packages and services are also kinds of resources. Let's use Chef to install and start Apache HTTP Server. On RHEL and CentOS, the name of the Apache package and service is **httpd**. 
+
+We assume that you don't have Apache already installed. But don't worry if you do - the output of the Chef commands we show here just may vary slightly from what you see, but the result will be the same.
+
+Now let's install the Apache package. Add this recipe to a file named webserver.rb.
+
+```ruby
+# webserver.rb
+package 'httpd'
+```
+
+We don't need to specify an action because <codeinline>install</codeinline> is the default.
+
+Now run it.
+
+```bash
+$ sudo chef-apply webserver.rb
+```
+
+You'll see Chef install the package.
+
+```bash
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * package[httpd] action install
+    - install version 2.2.15-30.el6.centos of package httpd
+```
+
+Run the recipe a second time, and you'll see that Chef does no work because we're in the desired state.
+
+```bash
+$ sudo chef-apply webserver.rb
+```
+
+```bash
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * package[httpd] action install (up to date)
+  ```
+
+## Enable and start the Apache service 
+
+Now let's enable and start the service. Modify webserver.rb to look like this.
+
+```ruby
+# webserver.rb
+package 'httpd'
+
+service 'httpd' do
+  action [:enable, :start]
+end
+```
+
+This code uses a list to declare multiple actions. Order matters. Here, the service is enabled and then it is started.
+
+Now run it.
+
+```bash
+$ sudo chef-apply webserver.rb
+```
+
+```bash
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * package[httpd] action install (up to date)
+  * service[httpd] action enable
+    - enable service service[httpd]
+
+  * service[httpd] action start
+    - start service service[httpd]
+```
+
+Next we'll add a home page.
+
+## Add a home page
+
+Let's spruce things up and add a custom home page.
+
+You already know how to configure a <codeinline>file</codeinline> resource; add this one between the <codeinline>package</codeinline> and <codeinline>service</codeinline> resources in webserver.rb, making the entire recipe look like this.
+
+```ruby
+# webserver.rb
+package 'httpd'
+
+file '/var/www/html/index.html' do
+  content '<html>
+  <body>
+    <h1>hello from 192.168.145.132!</h1>
+  </body>
+</html>'
+end
+
+service 'httpd' do
+  action [:enable, :start]
+end
+```
+
+Now run it.
+
+```bash
+$ sudo chef-apply webserver.rb
+```
+
+Your home page is now added.
+
+```
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * package[httpd] action install (up to date)
+  * file[/var/www/index.html] action create
+    - update content in file /var/www/index.html from none to bce910
+        --- /var/www/index.html 2014-05-15 03:38:54.524394740 -0700
+        +++ /tmp/.index.html20140515-18937-ibjog5 2014-05-15 03:39:13.516394179 -0700
+        @@ -1,5 +1,6 @@
+        +<html>
+        +  <body>
+        +    <h1>hello from 192.168.145.132!</h1>
+        +  </body>
+        +</html>
+
+  * service[httpd] action enable (up to date)
+  * service[httpd] action start (up to date)
+```
+
+From a web browser, navigate to http://localhost. You'll see something like this.
+
+![The basic home page](rhel/webserver-basic.png)
+
+<ul class="icons">
+  <li><i class="icon-info-sign"></i>If your browser can't connect, it could be that a firewall is blocking incoming connections on port 80. In that case, try the <codeinline>curl</codeinline> command.
+  </li>
+</ul>
+
+```bash
+$ curl http://localhost
+```
+
+So far so good! But you may notice a few problems with our recipe.
+
+<ul class="icons">
+  <li><i class="icon-exclamation-sign"></i>The HTML code lives inside the recipe, so there is no clear separation between your web site code and your Chef recipe that manages of it. You'd never do this in practice.</li>
+  <li><i class="icon-exclamation-sign"></i>The IP address is hard-coded. We all know that hard-coded data makes programs brittle. Each time the server's IP address changes or the recipe is run on a new machine, you must manually change the IP address string.</li>
+</ul>
+
+Let's fix these problems, starting with the first one.
+
+## Create a cookbook to make things more manageable
+
+Let's solve the first problem and move the HTML code outside of the recipe. To do so, we'll create a _cookbook_. A cookbook defines a scenario - such as everything needed to install and configure a web server. In essense, a cookbook helps you stay organized. 
+
+First, create a cookbooks/ directory and <codeinline>cd</codeinline> there.
+
+```bash
+$ mkdir cookbooks 
+$ cd cookbooks
+```
+
+<comment>crushtime-6: ^ Folks mentioned as they worked through this that chef-[command] is picky about where you are in the dir structure. For example, must be in cookbooks/ to run the cookbook, but above cookbooks to create one. Follow the 'do what I mean' paradigm by automatically traversing the dir hierarchy up and down to place things where they need to go.</comment>
+
+Now run <codeinline>chef</codeinline> to generate a cookbook.
+
+```bash
+$ chef generate cookbook webserver
+```
+
+Here's what the directory structure looks like.
+
+```bash
+cookbooks/
+└── webserver
+    ├── Berksfile
+    ├── chefignore
+    ├── metadata.rb
+    ├── README.md
+    └── recipes
+        └── default.rb
+```
+
+The main thing of note is the default recipe, named default.rb. This is where we'll move our Apache recipe in a moment.
+
+But first, run this commmand to generate the HTML file for our home page.
+
+```bash
+$ chef generate file webserver index.html
+```
+
+The file gets created under files/default/.
+
+```bash
+webserver/
+├── Berksfile
+├── chefignore
+├── files
+│   └── default
+│       └── index.html
+├── metadata.rb
+├── README.md
+└── recipes
+    └── default.rb
+```
+
+Now add our code to the new HTML file.
+
+```html
+<!- files/default/index.html ->
+<html>
+  <body>
+    <h1>hello from 192.168.145.132!</h1>
+  </body>
+</html>
+```
+
+Now modify the default recipe, recipes/default.rb, to reference the HTML file.
+
+```ruby
+# recipes/default.rb
+package 'httpd'
+
+cookbook_file '/var/www/html/index.html' do
+  source 'index.html'
+end
+
+service 'httpd' do
+  action [:enable, :start]
+end
+```
+
+Notice that the <codeinline>file</codeinline> resource becomes <codeinline>cookbook\_file</codeinline>. The <codeinline>cookbook\_file</codeinline> resource transfers a file from a sub-directory of your cookbook's files/ directory to the path you specify. Here, we transfer the file files/default/index.html to Apache's document root.
+
+Now run the cookbook. To do so, we switch to the <codeinline>chef-client</codeinline> command and specify what's called the _run-list_. 
+
+```bash
+$ sudo chef-client --local-mode --runlist webserver
+```
+
+<comment>crushtime-2: ^ A few undelightful things happen. First, you get a WARN saying that no config file was found. If this is really a problem, it should say why. Otherwise, perhaps this should be an INFO or nothing when running in local mode. Second, we should remove the SSL WARN in local mode because MITM attacks aren't possible in local mode.</comment>
+
+<comment>crushtime-3: ^ Typing --local-mode or -z is a pain. Make it the default when no configuration is present.</comment>
+
+Imagine that you have multiple recipes that you want to apply, one after the next. The run-list enables you to specify them, as well as order that they're applied.
+
+The result is the same as before, but with a cookbook things are now easier to manage.
+
+Let's move on and solve our second problem, and that's to remove the hard-coded IP address from the HTML file.
+
+## Create a template to configure the HTML file
+
+Next we're going to create a _template_. A template is simlilar to files/default/index.html, except that a template uses placeholders that are filled in as the recipe runs.
+
+Run this command to generate a template for our home page.
+
+```bash
+$ chef generate template webserver index.html
+```
+
+Here's the updated directory structure. The file index.html.erb exists under templates/default (note that for a template Chef adds the .erb extension to the file name.)
+
+```bash
+webserver/
+├── Berksfile
+├── chefignore
+├── files
+│   └── default
+│       └── index.html
+├── metadata.rb
+├── README.md
+├── recipes
+│   └── default.rb
+└── templates
+    └── default
+        └── index.html.erb
+```
+
+Now edit templates/default/index.html.erb to look like this.
+
+```html
+<!- templates/default/index.html.erb ->
+<html>
+  <body>
+    <h1>hello from <%%= node['ipaddress'] %>!</h1>
+  </body>
+</html>
+```
+
+Now update recipes/default.rb by replacing the <codeinline>cookbook\_file</codeinline> resource with this <codeinline>template</codeinline> resource.
+
+```ruby
+package 'httpd' 
+
+template '/var/www/html/index.html' do
+  source 'index.html.erb'
+end
+
+service 'httpd' do
+  action [:enable, :start]
+end
+```
+
+The <codeinline>template</codeinline> resource is similar to <codeinline>cookbook\_file</codeinline> except that it reads from the cookbook's template/ directory and fills in the placeholders before copying the file to the destination. 
+
+At this point, the file /files/default/index.html is no longer needed because we've switched to using a template. For this tutorial, you can leave it where it is.
+
+Now run the cookbook with our template enabled.
+
+```bash
+$ sudo chef-client --local-mode --runlist webserver
+```
+
+Open a web browser and navigate to http://localhost. The result is the same as before, but now the IP address is found automatically!
+
+<i class="icon-exclamation-sign"></i> But entering the run-list each time can get tiresome, especially once you have multiple cookbooks that you want to run in the same session. Let's fix this problem next.
+
+## Use a node object to save the run-list and read system attributes
+
+A _node_ represents a server and is typically a virtual machine or physical server - basically any compute resource in your infrastructure. When you ran <codeinline>chef-client</codeinline> for the first time, Chef created what's called a _node object_ for you. The default node name Chef provides is the FQDN of your server. 
+
+Run this command to get the name of your node object.
+
+```bash
+$ knife node list --local-mode
+```
+
+We'll use the name **localhost** in this tutorial. Replace **localhost** with your node name in the steps that follow.
+
+### Save the run-list
+
+Let's bind the run-list to the node object so that we no longer have to specify it. Run this to add webserver to the node's run-list.
+
+```bash
+$ knife node run_list add localhost webserver --local-mode
+```
+
+You'll see something like this.
+
+```
+localhost:
+  run_list: recipe[webserver]
+```
+
+Now when you run <codeinline>chef-client</codeinline> all you have to do is specify the node's name and Chef will fetch the run-list. 
+
+```bash
+$ sudo chef-client --node-name localhost --local-mode
+```
+
+Because we haven't changed the cookbook, no action is taken, but you'll see that Chef applied the run-list and evaluated the correct cookbook. This is why we persist node objects.
+
+```bash
+...
+resolving cookbooks for run list: ["webserver"]
+Synchronizing Cookbooks:
+  - webserver
+Compiling Cookbooks...
+Converging 3 resources
+Recipe: webserver::default
+  * package[httpd] action install (up to date)
+  * template[/var/www/html/index.html] action create (up to date)
+  * service[httpd] action enable (up to date)
+  * service[httpd] action start (up to date)
+...
+```
+
+### Read system attributes
+
+Recall this is what our home page template looks like.
+
+```html
+<!- templates/default/index.html.erb ->
+<html>
+  <body>
+    <h1>hello from <%%= node['ipaddress'] %>!</h1>
+  </body>
+</html>
+```
+
+When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. This example gets the node's <codeinline>ipaddress</codeinline> attribute.
+
+Modify templates/default/index.html.erb like this to display more info about the web server. 
+
+```html
+<!- templates/default/index.html.erb ->
+<html>
+  <body>
+    <h1>hello from <%%= node['ipaddress'] %>!</h1>
+
+    <pre>
+      <%%= node['hostname'] %>
+      <%%= node['platform'] %> - <%%= node['platform_version'] %>
+      <%%= node['memory']['total'] %> RAM
+      <%%= node['cpu']['total'] %> CPUs
+    </pre>
+  </body>
+</html>
+```
+
+Run <codeinline>chef-client</codeinline>.
+
+```bash
+$ sudo chef-client --node-name localhost --local-mode
+```
+
+When you refresh your browser, you'll see something like this.
+
+![The web server's attributes](rhel/webserver-node-attributes.png)
+
+Check out [this](http://docs.opscode.com/chef_overview_attributes.html#automatic-ohai) page if you want to play with more node attributes.
+
+<comment>crushtime-12: ^ We were originally going to show ohai here. ohai is not included by default in /opt/chefdk/bin. It should be.</comment>
+
+## Wrap up
+
+<i class="icon-trophy icon-2x" style="float:left; margin-right:10px;"></i> Wow, we've covered a lot of ground here! You started with some basic knowledge on how to use Chef to manage a file. Now you're familiar with more of Chef's capabilities. You can now:
+
+<ul class="icons">
+  <li><i class="icon-star"></i>configure a package and a service.</li>
+  <li><i class="icon-star"></i>organize your work into a cookbook.</li>
+
+  <li><i class="icon-star"></i>work with a run-list.</li>
+  <li><i class="icon-star"></i>associate your run-list with a node.</li>
+  <li><i class="icon-star"></i>combine a template with a node object to load system attributes.</li>
+</ul>
+
+If you'd like, check out the reference on some of the concepts we just covered.
+
+  * [package](http://docs.opscode.com/resource_package.html)
+  * [service](http://docs.opscode.com/resource_service.html)
+  * [cookbook_file](http://docs.opscode.com/resource_cookbook_file.html)
+  * [About Cookbooks](http://docs.opscode.com/essentials_cookbooks.html)
+  * [About Templates](http://docs.opscode.com/essentials_cookbook_templates.html)
+  * [About Run-lists](http://docs.opscode.com/essentials_node_object_run_lists.html)
+  * [About Node Objects](http://docs.opscode.com/essentials_node_object.html)
+
+## Next
+
+You've successfully used Chef to configure a few kinds of resources, including a web server, but locally on your own computer. In the next tutorial, find out what it's like to move out to a real server environment and how Chef can help you manage your infrastructure as you scale.
+
+<%= link_to 'Add a second server &rarr;', '/rhel/add-a-second-server/', class: 'button radius' %>
