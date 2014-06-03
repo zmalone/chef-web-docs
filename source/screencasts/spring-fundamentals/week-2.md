@@ -84,7 +84,7 @@ Before participating in [Chef Fundamentals Module 3][spring-fund-week-3], you ma
 
 Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
 
-[Sign up for this webinar now!](http://pages.getchef.com/cheffundamentalsseries.html)
+There is still time to [register and join the series](http://pages.getchef.com/cheffundamentalsseries.html).
 
 
 
