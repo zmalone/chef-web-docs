@@ -3,27 +3,58 @@ title: Chef Fundamentals Webinar Series - Part 3
 description: Third in a series of webinars covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 ---
-# Chef Fundamentals Webinar Series
+# Node object and Chef roles
 
-This session will be held on [Tuesday, June 3 at 17:00 UTC / 10:00 PDT][week-3-time]
+After viewing this webinar you will be able to:
 
-[Sign up for our latest Chef Fundamentals Series is now available!](http://pages.getchef.com/cheffundamentalsseries.html)
+* Explain what the node object represents in Chef
+* Show details about a node
+* Describe what node attributes are
+* Retrieve a node attribute
+* Describe where and how attributes are set
+* Explain the attribute merge order and precedence rules
+* Declare an attribute with a recipe and set its value
+* Explain what Roles are, and how they are used to provide clarity 
+* Discuss the Role JSON DSL
+* Explain how merge order affects the precedence hierarchy
 
-Join Chef Technical Community Director, [Nathen Harvey](http://twitter.com/nathenharvey), as he covers the fundamentals of using Chef in this webinar series.  Each webinar includes hands-on labs and is followed by a Q &amp; A session, so bring your questions!
+During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.  You may [launch your lab environment][chef-lab] shortly before the webinar begins or as part of the webinar.
 
-Each session lasts about one hour.
+### Pre-work
 
-  * Week 1 - [Overview of Chef][spring-fund-week-1]
-  * Week 2 - [Node Setup, Resources &amp; Recipes][spring-fund-week-2] - [Tuesday, May 27 at 17:00 UTC / 10:00 PDT][week-2-time]
-  * Week 3 - [Working with the Node object][spring-fund-week-3] - [Tuesday, June 3 at 17:00 UTC / 10:00 PDT][week-3-time]
-  * Week 4 - [Common configuration data with Data Bags][spring-fund-week-4] - [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
-  * Week 5 - [Using Roles and Environments][spring-fund-week-5] - [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
-  * Week 6 - [Community cookbooks and further resources][spring-fund-week-6] - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
+Before joining this webinar you should watch and complete the labs for the following modules.
 
-* <small>Topics subject to change, schedule unlikely to change</small>
+* [Overview of Chef][spring-fund-week-1]
+* [Node setup, resources, and recipes][spring-fund-week-2]
+* [Module 2 Homework - The chef-client application][week2-homework]
+
+##### Video
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/nQogf89hgnM" frameborder="0" allowfullscreen></iframe>
+
+<p>&nbsp;</p>
+
+##### Slides
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/35439974" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+<p>&nbsp;</p>
+
+### What's Next?
+
+* Please join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
+* [Chef Fundamentals Module 4][spring-fund-week-4]
+
+#### Send Us Your Feedback!
+
+Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
+
+There is still time to [register and join the series](http://pages.getchef.com/cheffundamentalsseries.html).
+
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
+[week2-homework]: /screencasts/spring-fundamentals/week-2/#homework
 [spring-fund-week-3]: /screencasts/spring-fundamentals/week-3
 [spring-fund-week-4]: /screencasts/spring-fundamentals/week-4
 [spring-fund-week-5]: /screencasts/spring-fundamentals/week-5
