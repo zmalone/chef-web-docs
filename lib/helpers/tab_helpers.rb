@@ -27,20 +27,26 @@ module TabHelpers
   def tab(title, options = {}, &block)
     concat(
       content_tag(:section) do
-        content_tag(:p, 'class'              => 'title',
-                        'data-section-title' => true) do
-          tab_title_text = title
-          if options[:icon]
-            tab_title_text = "<i class='icon-#{options[:icon]}'></i> #{tab_title_text}"
-          end
-          link_to tab_title_text, "##{parameterize(title)}"
-        end
-        content_tag(:div, 'class'                => 'content',
-                          'data-section-content' => true,
-                          'data-slug'            => parameterize(title)) do
-          capture(&block)
-        end
+        generate_tab_title(title,options) + generate_tab_content(title,capture(&block),options)
       end
     )
   end
+
+  def generate_tab_title(title,options)
+    tab_title_text = title
+    
+    if options[:icon]
+      tab_title_text = "<i class='icon-#{options[:icon]}'></i> #{tab_title_text}"
+    end
+
+    title_content = link_to tab_title_text, "##{parameterize(title)}"
+    content_tag(:p,title_content, 'class' => 'title', 'data-section-title' => true)
+  end
+
+  def generate_tab_content(title,content,options)
+    content_tag(:div, content, 'class' => 'content',
+                               'data-section-content' => true,
+                               'data-slug' => parameterize(title))
+  end
+
 end
