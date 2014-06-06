@@ -24,6 +24,7 @@ Each session lasts about one hour.
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
+[week2-homework]: /screencasts/spring-fundamentals/week-2/#homework
 [spring-fund-week-3]: /screencasts/spring-fundamentals/week-3
 [spring-fund-week-4]: /screencasts/spring-fundamentals/week-4
 [spring-fund-week-5]: /screencasts/spring-fundamentals/week-5
