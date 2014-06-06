@@ -15,12 +15,40 @@ Each session lasts about one hour.
 
   * Week 1 - [Overview of Chef][spring-fund-week-1]
   * Week 2 - [Node Setup, Resources &amp; Recipes][spring-fund-week-2]
-  * Week 3 - [Working with the Node object and Roles][spring-fund-week-2]
-  * Week 4 - Common configuration data with Data Bags - [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
+  * Week 3 - [Working with the Node object and Roles][spring-fund-week-3]
+  * Week 4 - [Common configuration data with Data Bags][spring-fund-week-4] - [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
   * Week 5 - Using Environments - [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
   * Week 6 - Community cookbooks and further resources - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
 
 * <small>Topics subject to change, schedule unlikely to change</small>
+
+### Pre-work
+
+Before joining this webinar you should watch and complete the labs for the following modules.
+
+* [Overview of Chef][spring-fund-week-1]
+* [Node setup, resources, and recipes][spring-fund-week-2]
+* [The chef-client application][week2-homework]
+* [Working with the Node object and Roles][spring-fund-week-3]
+* [Common configuration data with Data Bags][spring-fund-week-4]
+
+Approximately 10 minutes before the webinar begins you should set-up your Chef Training Lab.
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/9bidpd-LiNw" frameborder="0" allowfullscreen></iframe>
+
+<p>&nbsp;</p>
+
+### What's Next?
+
+* Join us [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
+* Join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
+
+
+#### Send Us Your Feedback!
+
+Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
+
+There is still time to [register and join the series](http://pages.getchef.com/cheffundamentalsseries.html).
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
