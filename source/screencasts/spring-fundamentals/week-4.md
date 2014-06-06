@@ -3,7 +3,7 @@ title: Chef Fundamentals Webinar Series - Part 4
 description: Fourth in a series of webinars covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 ---
-# Chef Fundamentals Webinar Series
+# Common configuration data with Data Bags
 
 This session will be held on [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
 
@@ -15,11 +15,26 @@ Before joining this webinar you should watch and complete the labs for the follo
 
 * [Overview of Chef][spring-fund-week-1]
 * [Node setup, resources, and recipes][spring-fund-week-2]
-* [Module 2 Homework - The chef-client application][week2-homework]
+* [The chef-client application][week2-homework]
 * [Working with the Node object and Roles][spring-fund-week-3]
 
 Approximately 10 minutes before the webinar begins you should set-up your Chef Training Lab.
 
+<iframe width="560" height="315" src="//www.youtube.com/embed/9bidpd-LiNw" frameborder="0" allowfullscreen></iframe>
+
+<p>&nbsp;</p>
+
+### What's Next?
+
+* Join us [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time] for Common configuration data with Data Bags
+* Join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
+
+
+#### Send Us Your Feedback!
+
+Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
+
+There is still time to [register and join the series](http://pages.getchef.com/cheffundamentalsseries.html).
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
