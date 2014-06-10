@@ -5,7 +5,7 @@ keywords: training, videos, screencasts
 ---
 # Node object and Chef roles
 
-After viewing this webinar you will be able to: 
+After viewing this webinar you will be able to:
 
 * Explain what the node object represents in Chef
 * Show details about a node
