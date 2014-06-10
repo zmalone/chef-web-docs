@@ -1,0 +1,149 @@
+---
+title: 'Add dynamic configuration'
+order: 4
+layout: tutorial
+description: TODO
+keywords: TODO
+---
+# Add dynamic configuration
+
+**Time to complete: 10 minutes**
+
+[Last time](/rhel/make-your-recipe-more-manageable/) you learned how to create a cookbook to make things more manageable. A cookbook enabled you to separate your web page from your recipe. We ended by changing the home page to display the server's IP address. But we encountered one inherent problem &ndash; hard-coded strings make it hard to scale.
+
+<i class="icon-wrench greeniconcolor icon-2x" style="float:left; margin-right:10px;"></i> Let's solve the hard-coded string problem by using a template to provide placeholders that are filled in as the recipe runs.
+
+## Set up your working directory
+
+Open a terminal window and <codeinline>cd</codeinline> to the directory you used in the previous tutorial, for example, <filepath>~/chef-tutorials/</filepath>.
+
+```bash
+$ cd ~/chef-tutorials
+```
+
+## Create a template
+
+Run this command to generate a template for our home page.
+
+```bash
+$ chef generate template webserver index.html
+```
+
+Here's the updated directory structure. The file <filepath>index.html.erb</filepath> exists under <filepath>webserver/templates/default</filepath> (note that for a template Chef adds the .erb extension to the file name.)
+
+[COMMENT] When should we disclose ERB? In fact, when should we disclose that this is Ruby at all!?
+
+```bash
+webserver/
+├── Berksfile
+├── chefignore
+├── files
+│   └── default
+│       └── index.html
+├── metadata.rb
+├── README.md
+├── recipes
+│   └── default.rb
+└── templates
+    └── default
+        └── index.html.erb
+```
+
+Now edit <filepath>webserver/templates/default/index.html.erb</filepath> to look like this.
+
+```html
+<html>
+  <body>
+    <h1>hello from <%%= node['ipaddress'] %></h1>
+  </body>
+</html>
+```
+
+Now update <filepath>webserver/recipes/default.rb</filepath> by replacing the <codeinline>cookbook\_file</codeinline> resource with this <codeinline>template</codeinline> resource.
+
+```ruby
+package 'httpd'
+
+service 'httpd' do
+  action [:start, :enable]
+end
+
+template '/var/www/html/index.html' do
+  source 'index.html.erb'
+end
+```
+
+[CONCEPT] A <codeinline>template</codeinline> resource is similar to the <codeinline>cookbook\_file</codeinline> resource that you previously created except that it reads from the cookbook's <filepath>template</filepath> directory and fills in the placeholders before copying the file to the destination.
+
+At this point <filepath>webserver/files/default/index.html</filepath> is no longer needed because we've switched to using a template. In production you'd probably remove this file. But for this tutorial, you can leave it where it is.
+
+Now run the cookbook with our template enabled.
+
+```bash
+$ sudo chef-client --local-mode --runlist webserver
+```
+
+Open a web browser and navigate to http://localhost. The result is the same as before, but now the IP address is found automatically!
+
+## So how do templates work?
+
+To understand how templates work, you should first understand what a node is. A _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure. When you ran <codeinline>chef-client</codeinline> for the first time, Chef created what's called a _node object_ for you. This node object contains a number of attributes that describe the server, and these attributes are saved in a file on disk.
+
+When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the server's attributes from the file into an in-memory copy. For our home page, we want to display the server's IP address. To do so, we access the <codeinline>ipaddress</codeinline> attribute of the <codeinline>node</codeinline> object.
+
+Let's discover what other node attributes you can use.
+
+## Add more server attributes to the home page
+
+For fun let's display more info about the server on our home page. Modify <filepath>webserver/templates/default/index.html.erb</filepath> like this.
+
+```html
+<html>
+  <body>
+    <h1>hello from <%%= node['ipaddress'] %></h1>
+
+    <pre>
+      <%%= node['hostname'] %>
+      <%%= node['platform'] %> - <%%= node['platform_version'] %>
+      <%%= node['memory']['total'] %> RAM
+      <%%= node['cpu']['total'] %> CPUs
+    </pre>
+  </body>
+</html>
+```
+
+The updated web page displays the server's host name, platform info, total installed memory, and number of CPUs in addition to its IP address.
+
+Before we run <codeinline>chef-client</codeinline> we need to know the name of your node. The default node name Chef provides is the FQDN of your server. Later you'll see how to specify a name.
+
+Run this command to get the name of your node object. Note the name for the next step.
+
+```bash
+$ knife node list --local-mode
+```
+
+[COMMENT] The warning <codeinline>WARNING: No knife configuration file found</codeinline> is undelightful.
+
+We'll use the name **localhost** in this tutorial. Replace **localhost** with your node name in the steps that follow.
+
+Now run <codeinline>chef-client</codeinline> to update the home page. Remember to replace **localhost** with your node's name.
+
+```bash
+$ sudo chef-client --node-name localhost --local-mode
+```
+
+When you refresh your browser, you'll see something like this.
+
+![The web server's attributes](rhel/webserver-node-attributes.png)
+
+[CONCEPT] Check out [this](http://docs.opscode.com/chef_overview_attributes.html#automatic-ohai) page if you want to experiment with more node attributes.
+
+[COMMENT] crushtime-12: ^ We were originally going to show ohai here. ohai is not included by default in /opt/chefdk/bin. It should be.
+
+Great, you now have a greater sense of how templates can help you create a cookbook that leverages server info, and therefore eliminate things like hard-coded strings.
+
+You've run <codeinline>chef-client</codeinline> a lot by now, and entering the run-list each time can get tiresome, especially once you have multiple cookbooks that you want to run across multiple servers. Wouldn't it be better if you could specify the run-list only when you set up the server and when you change the run-list?
+
+In the next tutorial, we'll see how to associate your server with a specific run-list and recap what we've done so far.
+
+<%= link_to 'Save the run-list &rarr;', '/rhel/save-the-run-list/', class: 'button radius' %>

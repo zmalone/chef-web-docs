@@ -50,6 +50,10 @@ module ZurbFoundation
     content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box alert\"><i class=\"icon-warning-sign\"></i> #{$1}</div>" }
     content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"icon-info-sign\"></i> #{$1}</div>" }
     content.gsub!(/<p>\[DOCS\] (.+)<\/p>/)     { "<div class=\"alert-box docs\"><i class=\"icon-book\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[CONCEPT\] (.+)<\/p>/)  { "<div class=\"alert-box concept\"><i class=\"icon-lightbulb yellowiconcolor icon-2x\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[SIDEBAR\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><i class=\"icon-comment blueiconcolor icon-2x\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"icon-exclamation-sign rediconcolor icon-2x\"></i> #{$1}</div>" }
+
   end
 
 

@@ -1,0 +1,105 @@
+---
+title: 'Save the run-list'
+order: 5
+layout: tutorial
+description: TODO
+keywords: TODO
+---
+# Save the run-list
+
+**Time to complete: 10 minutes**
+
+[Last time](/rhel/add-dynamic-configuration/) you used a template to dynamically retrieve server attributes when <codeinline>chef-client</codeinline> runs.
+
+<i class="icon-wrench greeniconcolor icon-2x" style="float:left; margin-right:10px;"></i> Let's make <codeinline>chef-client</codeinline> easier to run by associating the server with its run-list.
+
+## Set up your working directory
+
+Open a terminal window and <codeinline>cd</codeinline> to the directory you used in the previous tutorial, for example, <filepath>~/chef-tutorials/</filepath>.
+
+```bash
+$ cd ~/chef-tutorials
+```
+
+## Get the node name
+
+Recall that the default node name Chef provides is the FQDN of your server.
+
+If you don't remember your node's name, run this command to get it.
+
+```bash
+$ knife node list --local-mode
+```
+
+We'll use the name **localhost** in this tutorial. Replace **localhost** with your node name in the steps that follow.
+
+## Save the run-list
+
+Let's bind the run-list to the node object so that we no longer have to specify it. Run this to add the **webserver** recipe to the node's run-list.
+
+[COMMENT] One thing that's confusing me is that we have a _cookbook_ named webserver. How does this relate to the notion of a webserver _recipe_? The only recipe we have is default.rb. How does it know it's this one?
+
+```bash
+$ sudo knife node run_list add localhost webserver --local-mode
+```
+
+You'll see something like this.
+
+```
+localhost:
+  run_list: recipe[webserver]
+```
+
+Now when you run <codeinline>chef-client</codeinline> all you have to do is specify the node's name and Chef will fetch the run-list.
+
+```bash
+$ sudo chef-client --node-name localhost --local-mode
+```
+
+Because we haven't changed the cookbook, no action is taken, but you'll see that Chef applied the run-list and evaluated the correct cookbook.
+
+```bash
+...
+resolving cookbooks for run list: ["webserver"]
+Synchronizing Cookbooks:
+  - webserver
+Compiling Cookbooks...
+Converging 3 resources
+Recipe: webserver::default
+  * package[httpd] action install (up to date)
+  * service[httpd] action start (up to date)
+  * service[httpd] action enable (up to date)
+  * template[/var/www/html/index.html] action create (up to date)
+...
+```
+
+At first, it may not seem like a big win to replace <codeinline>--runlist webserver</codeinline> with <codeinline>--node-name localhost</codeinline>, but the wins will become more apparent once you start running multiple recipes every time you run <codeinline>chef-client</codeinline>.
+
+[CONCEPT] Associating a run-list with the server is why Chef persists node objects.
+
+## Wrap up
+
+Wow, we've covered a lot of ground so far! You started by configuring a file and then learned more about Chef's capabilities by configuring a web server. You can now:
+
+  * configure a file, a package and a service.
+  * organize your work into a cookbook.
+  * work with a run-list.
+  * associate your run-list with a node.
+  * combine a template with a node object to load system attributes.
+
+Now's a good opportunity to check out the reference on some of the concepts we just covered.
+
+[COMMENT] Are these the best resources for right now? Cut this? Keep it? Change it?
+
+  * [About Cookbooks](http://docs.opscode.com/essentials_cookbooks.html)
+  * [About Templates](http://docs.opscode.com/essentials_cookbook_templates.html)
+  * [About Run-lists](http://docs.opscode.com/essentials_node_object_run_lists.html)
+  * [About Node Objects](http://docs.opscode.com/essentials_node_object.html)
+
+## What's next?
+
+You've successfully used Chef to configure a few kinds of resources, but locally on your own computer.
+
+In the next tutorial, find out what it's like to move out to a real server environment and how Chef can help you manage your infrastructure as you scale.
+
+<%= link_to 'Scale out with Chef server &rarr;', '/rhel/scale-out-with-chef-server/', class: 'button radius' %>
