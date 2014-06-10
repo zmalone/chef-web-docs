@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 
 gem 'middleman',            '~> 3.3.3'
-gem 'middleman-syntax',     '~> 1.1.1'
+gem 'middleman-syntax',     '~> 2.0.0'
 gem 'middleman-smusher',    '~> 3.0.0'
-gem 'middleman-livereload' 
+gem 'middleman-livereload'
 gem 'builder',              '~> 3.2.0'
 gem 'redcarpet',            '~> 2.2.2'
 gem 'rb-fsevent',           '~> 0.9'
