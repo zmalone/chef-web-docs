@@ -7,19 +7,19 @@ layout: tutorial
 
 **Time to complete: 15 minutes**
 
-If you haven't yet set up a RHEL or CentOS machine and installed the Chef tools, see the [parent](/rhel/) page to learn how.
+If you haven't set up a RHEL or CentOS machine and installed the Chef tools, see the [parent](/rhel/) page to learn how.
 
-<i class="icon-wrench greeniconcolor icon-2x" style="float:left; margin-right:10px;"></i> Let's look at a basic configuration management project to get oriented to how Chef works. In particular you'll learn how to manage a file, which in Chef we call a _resource_. Chef puts together resources that describe how to configure a system.
+<i class="icon-wrench greeniconcolor icon-2x" style="float:left; margin-right:10px;"></i> Let's look at a basic configuration management project to get oriented to how Chef works. First, you'll learn how to manage a file, which is an example of a _resource_. A resource describes some piece of infrastructure, such as a file, a template, or a package.
 
-You're tasked with deploying and maintaining your department's latest service component. The component will initially run on a dozen servers, but you might need to add or remove servers later. There's a lot involved &ndash; configuring firewall access, setting user permissions, and so on. But for now let's just focus on one part &ndash; the message of the day (MOTD) file that the service displays to the user when she logs on to the service. This file is named <filepath>greeting</filepath>.
+## Your job
 
-You need to change the contents of this file often to keep users up-to-date on the state of the service. When you deploy your app, you need to create the file and set its contents. Later, you want to easily change the file's contents. Last of all, you need to make sure that no other process changes it.
+You have to deploy and maintain your department's latest service component. Your job involves many activities, but for now you're going to figure out how to manage the message of the day (MOTD) file, named <filepath>motd</filepath>, that the service displays to users when they log on.
 
-How will you keep everything updated on so many servers? You don't want to manage each server manually. That would be tedious and error prone, and next month you'll be working on something new anyway. And yes, you could write a script to manage the MOTD, but even a task like managing a file's contents has its complexities. For instance, you might need to build in logic that detects whether the file has changed before you overwrite it so that you copy the file only when necessary.
+How will you keep the file updated? You don't want to manage each server manually. You could write a script, but even a task like managing a file's contents has its complexities. For instance, maybe you need to build in logic that detects whether the file has changed before you overwrite it so that you copy the file only when necessary.
 
-Let's manage the <filepath>greeting</filepath> file using Chef. Your Chef programs typically do a number of things to configure each app or service. But for now, let's just focus on getting the file installed and kept up to date.
+**Let's use Chef to install the file and keep it up to date.** This tutorial has 6 steps.
 
-## Set up your working directory
+## 1. Set up your working directory
 
 Open a terminal window and create a directory to work in. We recommend <filepath>~/chef-tutorials/</filepath>.
 
@@ -28,14 +28,16 @@ $ mkdir ~/chef-tutorials
 $ cd ~/chef-tutorials
 ```
 
-## Create a file
+## 2. Create a file
 
-In this step, you'll create a file and set its contents. To keep things basic, let's say that <filepath>greeting</filepath> is installed in the <filepath>/tmp</filepath> directory.
+When you deploy your app, you need to create the file and set its contents.
+
+To keep things basic, let's say that <filepath>motd</filepath> is installed in the <filepath>/tmp</filepath> directory.
 
 In your working directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
 
 ```ruby
-file '/tmp/greeting' do
+file '/tmp/motd' do
   content 'hello world'
 end
 ```
@@ -50,15 +52,15 @@ $ chef-apply hello.rb
 
 [COMMENT] crushtime-4: &uarr; Perhaps all commands should center around 'chef'. For example, 'chef apply' instead of 'chef-apply'. Exceptions to this are chef-client and knife.
 
-The output tells us that a new file was created at <filepath>/tmp/greeting</filepath>.
+The output tells us that a new file was created at <filepath>/tmp/motd</filepath>.
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/greeting] action create
-    - create new file /tmp/greeting
-    - update content in file /tmp/greeting from none to de031d
-        --- /tmp/greeting  2014-05-13 14:52:54.025253948 -0700
-        +++ /tmp/.greeting20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
+  * file[/tmp/motd] action create
+    - create new file /tmp/motd
+    - update content in file /tmp/motd from none to de031d
+        --- /tmp/motd  2014-05-13 14:52:54.025253948 -0700
+        +++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
         @@ -1 +1,2 @@
         +hello world
     - restore selinux security context
@@ -67,13 +69,13 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 Now verify that the file was written. Run the <codeinline>head</codeinline> command, which prints the first few lines of the file you give it.
 
 ```bash
-$ head /tmp/greeting
+$ head /tmp/motd
 ```
 ```bash
 hello world
 ```
 
-## Run the command a second time
+## 3. Run the command a second time
 
 Let's see now what happens when you run the same command again.
 
@@ -85,21 +87,23 @@ This time you get a different response.
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/greeting] action create (up to date)
+  * file[/tmp/motd] action create (up to date)
 ```
 
 This is because Chef does work only when it needs to.
 
-Chef looks at the current configuration state and applies action only if it doesn't match the desired state. Here, Chef doesn't create or modify <filepath>/tmp/greeting</filepath> because it already exists and its contents didn't change.
+Chef looks at the current configuration state and applies action only if it doesn't match the desired state. Here, Chef doesn't create or modify <filepath>/tmp/motd</filepath> because it already exists and its contents didn't change.
 
-[CONCEPT] Chef calls <filepath>hello.rb</filepath> a _recipe_, which is an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
+[CONCEPT] In Chef, <filepath>hello.rb</filepath> is an example of a _recipe_, which is an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
 
-## Update the file's contents
+## 4. Update the file's contents
 
-Now you want to update the MOTD. To do so, modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
+The MOTD frequently changes.
+
+Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
 
 ```ruby
-file '/tmp/greeting' do
+file '/tmp/motd' do
   content 'hello chef'
 end
 ```
@@ -114,19 +118,21 @@ This time Chef does work because we've changed the desired state and need to upd
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/greeting] action create
-    - update content in file /tmp/greeting from de031d to b1522f
-        --- /tmp/greeting  2014-05-13 14:52:54.025253948 -0700
-        +++ /tmp/.greeting20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
+  * file[/tmp/motd] action create
+    - update content in file /tmp/motd from de031d to b1522f
+        --- /tmp/motd  2014-05-13 14:52:54.025253948 -0700
+        +++ /tmp/.motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
         @@ -1,2 +1,2 @@
         -hello world
         +hello chef
     - restore selinux security context
 ```
 
-## Ensure the file is not changed
+## 5. Ensure the file is not changed
 
-Now imagine that a co-worker manually changes <filepath>/tmp/greeting</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy like this.
+You need to make sure that no other process can change the MOTD.
+
+Imagine that a co-worker manually changes <filepath>/tmp/motd</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy like this.
 
 ```
 hello robots
@@ -140,10 +146,10 @@ $ sudo chef-apply hello.rb
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/greeting] action create
-    - update content in file /tmp/greeting from 9b0c18 to b1522f
-        --- /tmp/greeting  2014-05-13 15:03:47.638770524 -0700
-        +++ /tmp/.greeting20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
+  * file[/tmp/motd] action create
+    - update content in file /tmp/motd from 9b0c18 to b1522f
+        --- /tmp/motd  2014-05-13 15:03:47.638770524 -0700
+        +++ /tmp/.motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
         @@ -1,2 +1,2 @@
         -hello robots
         +hello chef
@@ -152,22 +158,18 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 [COMMENT] Need sudo for this. Go back when the sudo/backup issue resolved...
 
-Chef restored the original configuration that you prescribed. This is actually a really good thing because Chef ensures that the actual state of your infrastructure matches what you desire, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
+Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your infrastructure matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
 
-But now your co-worker's hard work is lost, right?
-
-Luckily, Chef saves a backup of the previous resource version, so all is not lost. You can recover the changes and incorporate them into your recipe so that it gets applied when Chef runs. Backups are saved to <filepath>/var/chef/backup</filepath>, and Chef maintains the previous 5 versions by default. You typically don't need to work with backups, but it's good to know that they're there when you need them.
-
-[COMMENT] crushtime-1: ^ saving backups to /var/chef/backup requires root access, when the recipe otherwise might not need it. Consider moving backups to home directory, perhaps only when running in --local-mode. That way, you don't need to run with sudo by default.
+[COMMENT] crushtime-1: ^ I cut the part about backups due to overwhelming feedback, but saving backups to /var/chef/backup requires root access, when the recipe otherwise might not need it. Consider moving backups to home directory, perhaps only when running in --local-mode. That way, you don't need to run with sudo by default.
 
 [COMMENT] crushtime-1: ^ tangental comment, but if a recipe fails, the error log gets written to a location that requires sudo access to read. This might cause chef-[command] to require sudo when it normally wouldn't.
 
-## Delete the file
+## 6. Delete the file
 
 OK, let's clean up. From your working directory, create a new recipe file named <filepath>goodbye.rb</filepath> and save this content to it.
 
 ```ruby
-file '/tmp/greeting' do
+file '/tmp/motd' do
   action :delete
 end
 ```
@@ -184,17 +186,17 @@ $ sudo chef-apply goodbye.rb
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/greeting] action delete
-    - delete file /tmp/greeting
+  * file[/tmp/motd] action delete
+    - delete file /tmp/motd
 ```
 
-The output shows that <filepath>/tmp/greeting</filepath> is now gone, but let's prove it.
+The output shows that <filepath>/tmp/motd</filepath> is now gone, but let's prove it.
 
 ```bash
-$ ls /tmp/greeting
+$ ls /tmp/motd
 ```
 ```bash
-ls: cannot access /tmp/greeting: No such file or directory
+ls: cannot access /tmp/motd: No such file or directory
 ```
 
 ## What have we learned?

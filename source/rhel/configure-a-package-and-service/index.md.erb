@@ -9,16 +9,17 @@ keywords: package, service, file, resource, Apache, httpd
 
 **Time to complete: 15 minutes**
 
-[Last time](/rhel/configure-a-resource/) you learned how to manage a file resource. Let's extend that idea to also manage a package and a service, which are also kinds of resources. Although you don't need prior knowledge about web servers, configuring one is a great way to learn how to work with packages and services.
+[Last time](/rhel/configure-a-resource/) you learned how to manage a file resource. Let's extend that idea to manage a package and a service, which are also kinds of resources. Although you don't need prior knowledge about web servers, configuring one is a great way to learn how to work with packages and services.
 
 <i class="icon-wrench greeniconcolor icon-2x" style="float:left; margin-right:10px;"></i> Your latest task is to build a web server for your department. Not too hard, right?
 
-Now imagine you need to build it a dozen or more times across your infrastructure. You know that as your project evolves, dependencies change and additional requirements get added to the mix. You may eventually want to add a load balancer, a database server, and who knows what else. You know you're going to need something more than a shell script to manage all that complexity.
+## Your job
 
-Your goal is to install and start a web server and have it serve up a home page that displays some basic info about the server that's hosting it. We'll build upon and improve the server configuration in the next few tutorials that follow.
+Now imagine you need to build it on multiple servers. You know that as your project evolves, you may eventually add a load balancer, a database server, and who knows what else. You know you're going to need something more than a shell script to manage all that complexity.
 
+For now let's focus on installing and starting one web server and have it serve up a home page that displays some basic info about the host. We'll build upon it in the next few tutorials.
 
-[WARN] Before you start, be sure that you have root access to your RHEL machine because installing Apache requires it.
+[CONCEPT] Before you start, be sure that you have root access to your RHEL machine because installing Apache requires it.
 
 ## Set up your working directory
 
@@ -32,9 +33,7 @@ $ cd ~/chef-tutorials
 
 In the previous tutorial, you configured a file resource. Packages and services are also kinds of resources. Let's use Chef to install and start Apache HTTP Server. On RHEL and CentOS, the name of the Apache package and service is **httpd**.
 
-We assume that you don't have Apache already installed. But don't worry if you do &ndash; the output of the Chef commands we show here just may vary slightly from what you see, but the result will be the same.
-
-Now let's install the Apache package. From your working directory, add this recipe to a file named <filepath>webserver.rb</filepath>.
+Let's install the Apache package. From your working directory, add this recipe to a file named <filepath>webserver.rb</filepath>.
 
 ```ruby
 package 'httpd'
@@ -56,7 +55,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
     - install version 2.2.15-30.el6.centos of package httpd
 ```
 
-Run the recipe a second time, and you'll see that Chef does no work because there's nothing to do &ndash; the package is already in the desired state.
+Run the recipe a second time, and you'll see that Chef does no work because there's nothing to do &ndash; the package is already installed.
 
 ```bash
 $ sudo chef-apply webserver.rb
@@ -79,7 +78,7 @@ service 'httpd' do
 end
 ```
 
-This code uses a list to declare multiple actions. Order matters. Here, the service is started and then it is set to be enabled when the server boots. If starting the web server should fail, the program terminates. That's why we start the service before we enable it &ndash; if the service can't start then we don't want to enable it.
+This code uses a list to declare multiple actions. Order matters. Here, the service is started and then it is set to be enabled when the server boots. If starting the web server should fail, the program terminates. If the service can't start then we don't want to enable it.
 
 Now apply it.
 
@@ -97,7 +96,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
     - enable service service[httpd]
 ```
 
-As we've already seen, the package is already installed, so there's nothing to do there. The service is then started and enabled.
+As we've already seen, the package is already installed, so there's nothing to do. The service is started and enabled.
 
 Next we'll add a home page.
 
@@ -153,7 +152,7 @@ From a web browser, navigate to http://localhost. You'll see something like this
 
 ![The basic home page](rhel/webserver-basic.png)
 
-[WARN] If your browser can't connect, it could be that a firewall is blocking incoming connections on port 80. In that case, try running the <codeinline>curl</codeinline> command: <codeinline>curl http://localhost</codeinline>.
+[CONCEPT] If your browser can't connect, it could be that a firewall is blocking incoming connections on port 80. In that case, try running the <codeinline>curl</codeinline> command: <codeinline>curl http://localhost</codeinline>.
 
 So far so good! You now know how to work with three kinds of resources &ndash; files, packages, and services.
 
