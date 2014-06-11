@@ -18,7 +18,7 @@ After viewing this webinar you will be able to:
 * Discuss the Role JSON DSL
 * Explain how merge order affects the precedence hierarchy
 
-During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.  You may [launch your lab environment][chef-lab] shortly before the webinar begins or as part of the webinar.
+During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.
 
 ### Pre-work
 
