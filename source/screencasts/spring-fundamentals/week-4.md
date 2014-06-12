@@ -5,9 +5,10 @@ keywords: training, videos, screencasts
 ---
 # Common configuration data with Data Bags
 
-This session will be held on [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time]
+After viewing this webinar you will be able to:
 
-There is still time to [register and join the series](http://pages.getchef.com/cheffundamentalsseries.html).
+* Use Data Bags for data-driven recipes
+* Use multiple recipes for a node's run list
 
 ### Pre-work
 
@@ -18,15 +19,27 @@ Before joining this webinar you should watch and complete the labs for the follo
 * [The chef-client application][week2-homework]
 * [Working with the Node object and Roles][spring-fund-week-3]
 
-Approximately 10 minutes before the webinar begins you should set-up your Chef Training Lab.
+During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.
 
 <iframe width="560" height="315" src="//www.youtube.com/embed/9bidpd-LiNw" frameborder="0" allowfullscreen></iframe>
 
 <p>&nbsp;</p>
 
+##### Video
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/fS_yrFNSL9w" frameborder="0" allowfullscreen></iframe>
+
+<p>&nbsp;</p>
+
+##### Slides
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/35709568" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+<p>&nbsp;</p>
+
 ### What's Next?
 
-* Join us [Tuesday, June 10 at 17:00 UTC / 10:00 PDT][week-4-time] for Common configuration data with Data Bags
+* Join us [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time] for [Environments][spring-fund-week-5]
 * Join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
 
 
