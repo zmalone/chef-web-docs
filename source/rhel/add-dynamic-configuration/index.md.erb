@@ -9,21 +9,36 @@ keywords: TODO
 
 **Time to complete: 10 minutes**
 
-[Last time](/rhel/make-your-recipe-more-manageable/) you learned how to create a cookbook to make things more manageable. A cookbook enabled you to separate your web page from your recipe. We ended by changing the home page to display the server's IP address. But we encountered one inherent problem &ndash; hard-coded strings make it hard to scale.
+[Last time](/rhel/make-your-recipe-more-manageable/) you learned how to create a cookbook to separate your HTML code from your recipe &ndash; making things much more manageable. We ended the lesson by changing the home page to display the server's IP address. But we encountered a problem &ndash; hard-coded strings make it difficult to scale.
 
-<i class="icon-wrench greeniconcolor icon-2x" style="float:left; margin-right:10px;"></i> Let's solve the hard-coded string problem by using a template to provide placeholders that are filled in as the recipe runs.
+Let's solve the problem by using a template to provide placeholders that are filled in as the recipe runs. This is called dynamic configuration.
 
-## Set up your working directory
+## <i class="icon-wrench greeniconcolor" style="margin-right:3px;"></i> Your job
 
-Open a terminal window and <codeinline>cd</codeinline> to the directory you used in the previous tutorial, for example, <filepath>~/chef-tutorials/</filepath>.
+The leads in your department hear about your new web server, and want to see a demo of your great work &ndash; tomorrow. The web server will run on multiple instances, and one requirement is to display server info on the home page that uniquely identifies each one.
 
-```bash
-$ cd ~/chef-tutorials
-```
+Jerry, your lead, suggests that as part of the demo you configure the web server from scratch to show how easy it is to scale. And while you're at it, he suggests that you add more info to the home page to describe the server, including the platform it's running on and the total amount of memory and CPU count.
 
-## Create a template
+You already can display the IP address, so you're ahead of the game &ndash; except that you realize that the IP address is hard-coded. Folks will notice. Sure, you could hack something together to get it working, but why not do it the right way so you're not left scrambling later?
 
-Run this command to generate a template for our home page.
+<sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:395px;">
+<span style="line-height:2.0;"><i class="icon-search"></i>&nbsp;**As you read, keep in mind that:**</span><br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>a _template_ provides placeholders that are filled in later when the recipe runs..<br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>a template is a type of resource, just like a file, package, or service.<br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>Chef provides many details about your server, called _attributes_.
+</sidebar>
+
+## <i class="icon-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
+
+  1. [Create a template file](#1createatemplatefile)
+  1. [Add template code to your HTML](#2addtemplatecodetoyourhtml)
+  1. [Reference the template from your recipe](#3referencethetemplatefromyourrecipe)
+  1. [Run the cookbook](#4runthecookbook)
+  1. [Add more server attributes to the home page](#5addmoreserverattributestothehomepage)
+
+## 1. Create a template file
+
+Run this command to generate a template HTML file for our home page.
 
 ```bash
 $ chef generate template webserver index.html
@@ -49,6 +64,8 @@ webserver/
         └── index.html.erb
 ```
 
+## 2. Add template code to your HTML
+
 Now edit <filepath>webserver/templates/default/index.html.erb</filepath> to look like this.
 
 ```html
@@ -59,7 +76,9 @@ Now edit <filepath>webserver/templates/default/index.html.erb</filepath> to look
 </html>
 ```
 
-Now update <filepath>webserver/recipes/default.rb</filepath> by replacing the <codeinline>cookbook\_file</codeinline> resource with this <codeinline>template</codeinline> resource.
+## 3. Reference the template from your recipe
+
+Update <filepath>webserver/recipes/default.rb</filepath> by replacing the <codeinline>cookbook\_file</codeinline> resource with this <codeinline>template</codeinline> resource.
 
 ```ruby
 package 'httpd'
@@ -73,9 +92,11 @@ template '/var/www/html/index.html' do
 end
 ```
 
-[CONCEPT] A <codeinline>template</codeinline> resource is similar to the <codeinline>cookbook\_file</codeinline> resource that you previously created except that it reads from the cookbook's <filepath>template</filepath> directory and fills in the placeholders before copying the file to the destination.
+A <codeinline>template</codeinline> resource is similar to the <codeinline>cookbook\_file</codeinline> resource that you previously created except that it reads from the cookbook's <filepath>template</filepath> directory and fills in the placeholders before copying the file to the destination.
 
-At this point <filepath>webserver/files/default/index.html</filepath> is no longer needed because we've switched to using a template. In production you'd probably remove this file. But for this tutorial, you can leave it where it is.
+[CONCEPT] At this point <filepath>webserver/files/default/index.html</filepath> is no longer needed because we've switched to using a template. In production you'd probably remove this file. But for this lesson, you can leave it where it is.
+
+## 4. Run the cookbook
 
 Now run the cookbook with our template enabled.
 
@@ -83,19 +104,15 @@ Now run the cookbook with our template enabled.
 $ sudo chef-client --local-mode --runlist webserver
 ```
 
-Open a web browser and navigate to http://localhost. The result is the same as before, but now the IP address is found automatically!
+Open a web browser and navigate to **http://localhost**. The result is the same as before, but now the IP address is found automatically!
 
-## So how do templates work?
-
-To understand how templates work, you should first understand what a node is. A _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure. When you ran <codeinline>chef-client</codeinline> for the first time, Chef created what's called a _node object_ for you. This node object contains a number of attributes that describe the server, and these attributes are saved in a file on disk.
-
-When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the server's attributes from the file into an in-memory copy. For our home page, we want to display the server's IP address. To do so, we access the <codeinline>ipaddress</codeinline> attribute of the <codeinline>node</codeinline> object.
+![The home page with IP address](rhel/webserver-ip-address.png)
 
 Let's discover what other node attributes you can use.
 
-## Add more server attributes to the home page
+## 5. Add more server attributes to the home page
 
-For fun let's display more info about the server on our home page. Modify <filepath>webserver/templates/default/index.html.erb</filepath> like this.
+Now let's display the additional server info that Jerry asked for on our home page. Modify <filepath>webserver/templates/default/index.html.erb</filepath> like this.
 
 ```html
 <html>
@@ -114,24 +131,6 @@ For fun let's display more info about the server on our home page. Modify <filep
 
 The updated web page displays the server's host name, platform info, total installed memory, and number of CPUs in addition to its IP address.
 
-Before we run <codeinline>chef-client</codeinline> we need to know the name of your node. The default node name Chef provides is the FQDN of your server. Later you'll see how to specify a name.
-
-Run this command to get the name of your node object. Note the name for the next step.
-
-```bash
-$ knife node list --local-mode
-```
-
-[COMMENT] The warning <codeinline>WARNING: No knife configuration file found</codeinline> is undelightful.
-
-We'll use the name **localhost** in this tutorial. Replace **localhost** with your node name in the steps that follow.
-
-Now run <codeinline>chef-client</codeinline> to update the home page. Remember to replace **localhost** with your node's name.
-
-```bash
-$ sudo chef-client --node-name localhost --local-mode
-```
-
 When you refresh your browser, you'll see something like this.
 
 ![The web server's attributes](rhel/webserver-node-attributes.png)
@@ -140,10 +139,27 @@ When you refresh your browser, you'll see something like this.
 
 [COMMENT] crushtime-12: ^ We were originally going to show ohai here. ohai is not included by default in /opt/chefdk/bin. It should be.
 
-Great, you now have a greater sense of how templates can help you create a cookbook that leverages server info, and therefore eliminate things like hard-coded strings.
+## <i class="icon-comments greeniconcolor" style="margin-right:3px;"></i> So how do templates work?
 
-You've run <codeinline>chef-client</codeinline> a lot by now, and entering the run-list each time can get tiresome, especially once you have multiple cookbooks that you want to run across multiple servers. Wouldn't it be better if you could specify the run-list only when you set up the server and when you change the run-list?
+To understand how templates work, you should first understand what a node is. A _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure that's managed by Chef. When you ran <codeinline>chef-client</codeinline> for the first time, Chef created what's called a _node object_ for you. This node object contains a number of attributes that describe the server, and these attributes are saved in a file on disk.
 
-In the next tutorial, we'll see how to associate your server with a specific run-list and recap what we've done so far.
+When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the server's attributes from the file into an in-memory copy. For our home page, we want to display the server's IP address. To do so, we access the <codeinline>ipaddress</codeinline> attribute of the <codeinline>node</codeinline> object.
+
+The default node name Chef provides is the FQDN of your server. Later you'll see how to specify a name.
+
+## <i class="icon-road blueiconcolor" style="margin-right:3px;"></i> Wrap-up and what's next
+
+Great, you now understand how to use [templates][template] for dynamic configuration. Dynamic configuration means that you can write a single, general recipe that’s customized for a particular node as the recipe runs. You don’t have to write a separate, special recipe for every node anymore.
+
+You ran the [chef][chef] command to set up the cookbook and [chef-client][chef-client] to run it.
+
+You've run <codeinline>chef-client</codeinline> a lot by now. Entering the run-list each time can get tiresome, especially once you have multiple cookbooks. And it can get difficult to manage once you're running them on multiple servers. Wouldn't it be better if you could specify the run-list only when you set up the server and when you change the run-list?
+
+In the next lesson, we'll see how to associate your server with a specific run-list and we'll also recap what we've done so far.
 
 <%= link_to 'Save the run-list &rarr;', '/rhel/save-the-run-list/', class: 'button radius' %>
+
+
+[template]: http://docs.opscode.com/essentials_cookbook_templates.html
+[chef]: http://docs.opscode.com/ctl_chef.html
+[chef-client]: http://docs.opscode.com/ctl_chef_client.html

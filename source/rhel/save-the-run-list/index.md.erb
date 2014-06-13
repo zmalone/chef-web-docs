@@ -9,33 +9,39 @@ keywords: TODO
 
 **Time to complete: 10 minutes**
 
-[Last time](/rhel/add-dynamic-configuration/) you used a template to dynamically retrieve server attributes when <codeinline>chef-client</codeinline> runs.
+[Last time](/rhel/add-dynamic-configuration/) you learned about how dynamic configuration helps you write a single, general recipe that you can use everywhere. You also learned that a node is any computer &ndash; physical or virtual &ndash; that's managed by Chef.
 
-<i class="icon-wrench greeniconcolor icon-2x" style="float:left; margin-right:10px;"></i> Let's make <codeinline>chef-client</codeinline> easier to run by associating the server with its run-list.
+## <i class="icon-wrench greeniconcolor" style="margin-right:3px;"></i> Your job
 
-## Set up your working directory
+Your demo to the leads went off without a hitch! Now that you have a bit of downtime, let's make <codeinline>chef-client</codeinline> easier to run by by associating your node with its run-list.
 
-Open a terminal window and <codeinline>cd</codeinline> to the directory you used in the previous tutorial, for example, <filepath>~/chef-tutorials/</filepath>.
+<sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:395px;">
+<span style="line-height:2.0;"><i class="icon-search"></i>&nbsp;**You'll learn:**</span><br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>how to get the name of your node.<br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>how to bind your node to its run-list.<br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>why Chef persists node objects.
+</sidebar>
 
-```bash
-$ cd ~/chef-tutorials
-```
+## <i class="icon-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
-## Get the node name
+  1. [Get the node name](#1getthenodename)
+  1. [Save the run-list](#2savetherunlist)
 
-Recall that the default node name Chef provides is the FQDN of your server.
+## 1. Get the node name
 
-If you don't remember your node's name, run this command to get it.
+Run this command to get the name of your node object. Note the name for the next step.
 
 ```bash
 $ knife node list --local-mode
 ```
 
+[COMMENT] The warning <codeinline>WARNING: No knife configuration file found</codeinline> is undelightful.
+
 We'll use the name **localhost** in this tutorial. Replace **localhost** with your node name in the steps that follow.
 
-## Save the run-list
+## 2. Save the run-list
 
-Let's bind the run-list to the node object so that we no longer have to specify it. Run this to add the **webserver** recipe to the node's run-list.
+Run this to add the **webserver** cookbook to the node's run-list.
 
 [COMMENT] One thing that's confusing me is that we have a _cookbook_ named webserver. How does this relate to the notion of a webserver _recipe_? The only recipe we have is default.rb. How does it know it's this one?
 
@@ -50,7 +56,7 @@ localhost:
   run_list: recipe[webserver]
 ```
 
-Now when you run <codeinline>chef-client</codeinline> all you have to do is specify the node's name and Chef will fetch the run-list.
+Now you no longer need to specify the run-list. When you run <codeinline>chef-client</codeinline> all you have to do is specify the node's name and Chef will fetch the run-list.
 
 ```bash
 $ sudo chef-client --node-name localhost --local-mode
@@ -73,13 +79,27 @@ Recipe: webserver::default
 ...
 ```
 
-At first, it may not seem like a big win to replace <codeinline>--runlist webserver</codeinline> with <codeinline>--node-name localhost</codeinline>, but the wins will become more apparent once you start running multiple recipes every time you run <codeinline>chef-client</codeinline>.
+[CONCEPT] Associating run-lists with nodes is why Chef persists node objects. But at first, it may not seem like a big win to replace <codeinline>--runlist webserver</codeinline> with <codeinline>--node-name localhost</codeinline>, but the wins will become more apparent once you start running multiple cookbooks every time you run <codeinline>chef-client</codeinline>.
 
-[CONCEPT] Associating a run-list with the server is why Chef persists node objects.
+## <i class="icon-road blueiconcolor" style="margin-right:3px;"></i> Wrap-up and what's next
 
-## Wrap up
+We've covered a lot of ground so far! You learned what a resource is and managed these types:
 
-Wow, we've covered a lot of ground so far! You started by configuring a file and then learned more about Chef's capabilities by configuring a web server. You can now:
+  * [file]
+  * [package]
+  * [service]
+  * [cookbook_file]
+  * [template]
+
+You worked with these tools:
+
+  * [chef]
+  * [chef-apply]
+  * [chef-client]
+  * [knife]
+
+
+You started by configuring a file and then learned more about Chef's capabilities by configuring a web server. You can now:
 
   * configure a file, a package and a service.
   * organize your work into a cookbook.
@@ -87,19 +107,17 @@ Wow, we've covered a lot of ground so far! You started by configuring a file and
   * associate your run-list with a node.
   * combine a template with a node object to load system attributes.
 
-Now's a good opportunity to check out the reference on some of the concepts we just covered.
-
-[COMMENT] Are these the best resources for right now? Cut this? Keep it? Change it?
-
-  * [About Cookbooks](http://docs.opscode.com/essentials_cookbooks.html)
-  * [About Templates](http://docs.opscode.com/essentials_cookbook_templates.html)
-  * [About Run-lists](http://docs.opscode.com/essentials_node_object_run_lists.html)
-  * [About Node Objects](http://docs.opscode.com/essentials_node_object.html)
-
-## What's next?
-
-You've successfully used Chef to configure a few kinds of resources, but locally on your own computer.
-
-In the next tutorial, find out what it's like to move out to a real server environment and how Chef can help you manage your infrastructure as you scale.
+You've successfully used Chef to configure a few kinds of resources, but locally on your own computer. In the next lesson, find out what it's like to move out to a real server environment and how Chef can help you manage your infrastructure as you scale.
 
 <%= link_to 'Scale out with Chef server &rarr;', '/rhel/scale-out-with-chef-server/', class: 'button radius' %>
+
+
+[file]: http://docs.opscode.com/resource_file.html
+[package]: http://docs.opscode.com/resource_package.html
+[service]: http://docs.opscode.com/resource_service.html
+[cookbook_file]: http://docs.opscode.com/cookbook_file.html
+[template]: http://docs.opscode.com/template.html
+[chef]: http://docs.opscode.com/ctl_chef.html
+[chef-apply]: http://docs.opscode.com/ctl_chef_apply.html
+[chef-client]: http://docs.opscode.com/ctl_chef_client.html
+[knife]: http://docs.opscode.com/chef/knife.html

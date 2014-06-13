@@ -9,31 +9,36 @@ keywords: package, service, file, resource, Apache, httpd
 
 **Time to complete: 15 minutes**
 
-[Last time](/rhel/configure-a-resource/) you learned how to manage a file resource. Let's extend that idea to manage a package and a service, which are also kinds of resources. Although you don't need prior knowledge about web servers, configuring one is a great way to learn how to work with packages and services.
+Let's extend what you learned about file management in the [previous tutorial](/rhel/configure-a-resource/) to manage the Apache package and its service. Packages and services are also types of resources.
 
-<i class="icon-wrench greeniconcolor icon-2x" style="float:left; margin-right:10px;"></i> Your latest task is to build a web server for your department. Not too hard, right?
+Although you don't need prior knowledge about web servers, configuring one is a great way to learn how to extend your Chef skills.
 
-## Your job
+## <i class="icon-wrench greeniconcolor" style="margin-right:3px;"></i> Your job
 
-Now imagine you need to build it on multiple servers. You know that as your project evolves, you may eventually add a load balancer, a database server, and who knows what else. You know you're going to need something more than a shell script to manage all that complexity.
+Everyone at Widget Corp is talking about what an awesome job you did keeping the Message of the Day up to date! You even got to take that long-deserved vacation. Now that you're back, Jerry, your manager, asked you to build a web server for your department. Not too hard, right?
 
-For now let's focus on installing and starting one web server and have it serve up a home page that displays some basic info about the host. We'll build upon it in the next few tutorials.
+You know that the project will evolve, and you want to be prepared for whatever complexities get added to the mix. You'll probably need to attach a database server, and possibly scale out to multiple servers, some on prem and others in the cloud. You know you're going to need something more than institutional knowledge and a shell script to manage all that complexity. You remember the mess that you had to deal with when Stanley left Widget Corp last year. No one knew what state the corporate web server was in or how to update it. Let's not repeat it!
 
-[CONCEPT] Before you start, be sure that you have root access to your RHEL machine because installing Apache requires it.
+For now let's focus on installing and starting one web server and have it serve up a home page that displays some basic info about the host. We'll expand on this idea in later tutorials.
 
-## Set up your working directory
+<sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:395px;">
+<span style="line-height:2.0;"><i class="icon-search"></i>&nbsp;**As you read, watch for:**</span><br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>how order affects a recipe's behavior.<br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>how to declare multiple actions.<br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>what problems might arise with the web server's home page.
+</sidebar>
 
-Open a terminal window and <codeinline>cd</codeinline> to the directory you used in the previous tutorial, for example, <filepath>~/chef-tutorials/</filepath>.
+## <i class="icon-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
-```bash
-$ cd ~/chef-tutorials
-```
+  1. [Install the Apache package](#1installtheapachepackage)
+  1. [Start and enable the Apache service](#2startandenabletheapacheservice)
+  1. [Add a home page](#3addahomepage)
 
-## Install the Apache package
+## 1. Install the Apache package
 
-In the previous tutorial, you configured a file resource. Packages and services are also kinds of resources. Let's use Chef to install and start Apache HTTP Server. On RHEL and CentOS, the name of the Apache package and service is **httpd**.
+Let's use Chef to install and start Apache HTTP Server. On RHEL and CentOS, the name of the Apache package and service is **httpd**.
 
-Let's install the Apache package. From your working directory, add this recipe to a file named <filepath>webserver.rb</filepath>.
+First install the Apache package. From your working directory, add this recipe to a file named <filepath>webserver.rb</filepath>.
 
 ```ruby
 package 'httpd'
@@ -41,7 +46,7 @@ package 'httpd'
 
 We don't need to specify an action because <codeinline>install</codeinline> is the default.
 
-Now apply it.
+Now run <codeinline>chef-apply</codeinline> to apply it.
 
 ```bash
 $ sudo chef-apply webserver.rb
@@ -66,7 +71,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install (up to date)
   ```
 
-## Start and enable the Apache service
+## 2. Start and enable the Apache service
 
 Now let's start the service and enable it when the server boots. Modify <filepath>webserver.rb</filepath> to look like this.
 
@@ -78,7 +83,7 @@ service 'httpd' do
 end
 ```
 
-This code uses a list to declare multiple actions. Order matters. Here, the service is started and then it is set to be enabled when the server boots. If starting the web server should fail, the program terminates. If the service can't start then we don't want to enable it.
+This code uses a list to declare multiple actions.
 
 Now apply it.
 
@@ -100,11 +105,11 @@ As we've already seen, the package is already installed, so there's nothing to d
 
 Next we'll add a home page.
 
-## Add a home page
+## 3. Add a home page
 
 Let's spruce things up and add a custom home page.
 
-You already know how to configure a <codeinline>file</codeinline> resource; append this one to the end of <filepath>webserver.rb</filepath>, making the entire recipe look like this.
+You already know how to configure a <codeinline>file</codeinline> resource; append one that configures the default home page, <filepath>/var/www/html/index.html</filepath>, to the end of <filepath>webserver.rb</filepath>. The entire recipe now looks like this.
 
 ```ruby
 package 'httpd'
@@ -148,16 +153,57 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
     - restore selinux security context
 ```
 
-From a web browser, navigate to http://localhost. You'll see something like this.
+From a web browser, navigate to **http://localhost**. You'll see something like this.
 
 ![The basic home page](rhel/webserver-basic.png)
 
 [CONCEPT] If your browser can't connect, it could be that a firewall is blocking incoming connections on port 80. In that case, try running the <codeinline>curl</codeinline> command: <codeinline>curl http://localhost</codeinline>.
 
-So far so good! You now know how to work with three kinds of resources &ndash; files, packages, and services.
+## <i class="icon-comments greeniconcolor" style="margin-right:3px;"></i> Does order matter?
 
-But you may notice one big problem with our recipe - the HTML code lives inside it, so there is no clear separation between your web site code and your Chef recipe that manages of it. You'd never do this in practice.
+Yes it does! Let's take another quick look at our webserver recipe.
+
+```ruby
+package 'httpd'
+
+service 'httpd' do
+  action [:start, :enable]
+end
+
+file '/var/www/html/index.html' do
+  content '<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>'
+end
+```
+
+The resources are applied in the order they are specified in the recipe. So here the package is installed, then the service is configured, and finally the home page is set. And again, if any resource is already in the desired state, Chef simply moves on to the next one.
+
+The same idea applies to the action list <codeinline>[:start, :enable]</codeinline> for configuring the service. The service is started before it is enabled when the server boots.
+
+It's important to always think about how you order your resources. For example, the recipe wouldn't work if we tried to configure the Apache service before the package is even installed.
+
+A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error.) That's why we ordered the service actions the way we did. If the service can't start then we don't want to enable it.
+
+## <i class="icon-road blueiconcolor" style="margin-right:3px;"></i> Wrap-up and what's next
+
+So far so good! You now know how to work with three types of resources:
+
+  * [file][file]
+  * [package][package]
+  * [service][service]
+
+You also learned how order affects a recipe's behavior.
+
+But you may notice one big problem with our recipe &ndash; the HTML code lives inside it, so there is no clear separation between your web site code and the recipe that manages it. It's a good incremental step because it helps you get things working, but this of course would never scale to a full web site.
 
 In the next tutorial, you'll learn how to create a _cookbook_ to make your Chef recipes more manageable.
 
 <%= link_to 'Make your recipe more manageable &rarr;', '/rhel/make-your-recipe-more-manageable/', class: 'button radius' %>
+
+
+[file]: http://docs.opscode.com/resource_file.html
+[package]: http://docs.opscode.com/resource_package.html
+[service]: http://docs.opscode.com/resource_service.html

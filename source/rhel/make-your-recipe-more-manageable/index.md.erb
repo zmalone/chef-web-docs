@@ -9,21 +9,29 @@ keywords: cookbook, recipe
 
 **Time to complete: 15 minutes**
 
-[Last time](/rhel/configure-a-package-and-service/) you learned how to manage package and a service by configuring a web server. You also added a basic web page, but there was one problem &ndash; the code for your HTML page was embedded in the Chef recipe.
+[Last time](/rhel/configure-a-package-and-service/) you learned how to manage package and a service by configuring a web server. You also added a basic web page, but there was one problem &ndash; although it helped you verifiy that your web server was properly configured, the code for your HTML page was embedded in the Chef recipe.
 
-<i class="icon-wrench greeniconcolor icon-2x" style="float:left; margin-right:10px;"></i> Let's pick up where we left off in the previous tutorial by creating a _cookbook_ to make our recipe easier to manage. A cookbook provides structure to your recipe and enables you to more easily reference external files, such as our web server's home page. In essense, a cookbook helps you stay organized.
+## <i class="icon-wrench greeniconcolor" style="margin-right:3px;"></i> Your job
 
-## Set up your working directory
+You check in with Jerry, and he likes what he sees so far. But he agrees that now's a good time to think about how to make things more manageable. Let's pick up where we left off by creating a _cookbook_ to make our web server recipe easier to manage. A cookbook provides structure to your recipes and enables you to more easily reference external files, such as our web server's home page. In essence, a cookbook helps you stay organized.
 
-Open a terminal window and <codeinline>cd</codeinline> to the directory you used in the previous tutorial, for example, <filepath>~/chef-tutorials/</filepath>.
+<sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:395px;">
+<span style="line-height:2.0;"><i class="icon-search"></i>&nbsp;**As you read, think about:**</span><br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>how cookbooks help you stay organized.<br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>why the run-list is important.<br>
+  <i class="icon-check-empty" style="margin-right:5px;"></i>what problems might arise when you configure a second web server, or the server's IP address changes.
+</sidebar>
 
-```bash
-$ cd ~/chef-tutorials
-```
+## <i class="icon-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
-## Where we left off
+  1. [Create a cookbook](#1createacookbook)
+  1. [Create a cookbook file](#2createacookbookfile)
+  1. [Update the recipe](#3updatetherecipe)
+  1. [Show the server's IP address on the home page](#4showtheserver39sipaddressonthehomepage)
 
-To refresh your memory, here's the web server recipe we ended with in the previous tutorial. It installs Apache, starts and enables the service, and configures a basic home page.
+## <i class="icon-eye-open blueiconcolor" style="margin-right:3px;"></i> A look at where we left off
+
+To refresh your memory, here's the web server recipe we wrote in the previous tutorial. It installs Apache, starts and enables the service when the server boots, and configures a basic home page.
 
 ```ruby
 package 'httpd'
@@ -41,7 +49,7 @@ file '/var/www/html/index.html' do
 end
 ```
 
-## Create a cookbook
+## 1. Create a cookbook
 
 First, from your working directory, create a <filepath>cookbooks</filepath> directory and <codeinline>cd</codeinline> there.
 
@@ -58,7 +66,7 @@ Now run the <codeinline>chef</codeinline> command to generate a cookbook named *
 $ chef generate cookbook webserver
 ```
 
-You'll see lots of output. To summarize, here's what the command created.
+Here's the directory structure that the command created.
 
 ```bash
 cookbooks/
@@ -73,7 +81,7 @@ cookbooks/
 
 Note the default recipe, named <filepath>default.rb</filepath>. This is where we'll move our Apache recipe in a moment.
 
-## Create a cookbook file
+## 2. Create a cookbook file
 
 Now we'll migrate the home page to our cookbook. Run this commmand to generate the HTML file for our home page.
 
@@ -81,7 +89,7 @@ Now we'll migrate the home page to our cookbook. Run this commmand to generate t
 $ chef generate file webserver index.html
 ```
 
-Again, you'll see some more output statements. The file <filepath>index.html</filepath> gets created under <filepath>files/default</filepath>.
+The file <filepath>index.html</filepath> gets created under <filepath>webserver/files/default</filepath>.
 
 ```bash
 webserver/
@@ -106,7 +114,7 @@ Now copy the contents of the HTML file from your recipe to the new HTML file, <f
 </html>
 ```
 
-## Update the recipe
+## 3. Update the recipe
 
 Modify the default recipe, <filepath>webserver/recipes/default.rb</filepath>, to reference the HTML file.
 
@@ -122,9 +130,9 @@ cookbook_file '/var/www/html/index.html' do
 end
 ```
 
-Notice that the <codeinline>file</codeinline> resource becomes <codeinline>cookbook\_file</codeinline>. The <codeinline>cookbook\_file</codeinline> resource transfers a file from a sub-directory of your cookbook's <filepath>files</filepath> directory to the path you specify. Here, we transfer the file <filepath>webserver/files/default/index.html</filepath> to Apache's document root.
+Notice that the <codeinline>file</codeinline> resource becomes <codeinline>cookbook\_file</codeinline>. The <codeinline>cookbook\_file</codeinline> resource transfers a file from a sub-directory of your cookbook's <filepath>files</filepath> directory to the path you specify. Here, we transfer the file <filepath>webserver/files/default/index.html</filepath> to Apache's document root, <filepath>/var/www/html/index.html</filepath>.
 
-Now run the cookbook. To do so, we switch to the <codeinline>chef-client</codeinline> command and specify what's called the _run-list_.
+Now run the cookbook. To do so, we switch to the <codeinline>chef-client</codeinline> command and specify what's called the _run-list_. The run-list simply lets you specify which cookbooks to run, and the order in which to run them. This is handy once you have lots of cookbooks, and the order in which they run is important.
 
 ```bash
 $ sudo chef-client --local-mode --runlist webserver
@@ -134,11 +142,9 @@ $ sudo chef-client --local-mode --runlist webserver
 
 [COMMENT] crushtime-3: ^ Typing --local-mode or -z is a pain. Make it the default when no configuration is present.
 
-[CONCEPT] Imagine that you have multiple recipes that you want to apply, one after the next. The run-list enables you to specify them, as well as order that they're applied.
-
 The result is the same as before, but with a cookbook things are now easier to manage.
 
-## Show the server's IP address on the home page
+## 4. Show the server's IP address on the home page
 
 Now let's spice up the home page and show the web server's IP address. Modify <filepath>webserver/files/default/index.html</filepath> like this, but replace the IP address here with your own (you can get your IP address by running the <codeinline>ifconfig</codeinline> command.)
 
@@ -150,7 +156,7 @@ Now let's spice up the home page and show the web server's IP address. Modify <f
 </html>
 ```
 
-Run <codeinline>chef-client</codeinline> to replace the home page.
+Run <codeinline>chef-client</codeinline> to run the recipe and update the home page.
 
 ```bash
 $ sudo chef-client --local-mode --runlist webserver
@@ -160,12 +166,16 @@ When you refresh your browser, you'll see the new home page.
 
 ![The home page with IP address](rhel/webserver-ip-address.png)
 
-## What's next?
+## <i class="icon-road blueiconcolor" style="margin-right:3px;"></i> Wrap-up and what's next
 
-Your recipe is shaping up! You've created a cookbook to stay organized and used the <codeinline>cookbook\_file</codeinline> resource to reference it from your recipe.
+Your web server is shaping up! With a [cookbook][cookbook] you're now better organized. You also learned about how the [cookbook_file][cookbook_file] resource enables you to reference an external file from your recipe. And although we have just one recipe, we saw how a [run-list][run-list] lets us run multiple cookbooks from one command.
 
-But now imagine you want to run this recipe on another web server, or your server's IP address changes. Then what? You would either have to manually change the string each time or invent some process that replaces the IP address for you. What a pain.
+But now imagine you want to run this recipe on a second web server, or your server's IP address changes. Then what? The IP address is hard-coded, so you would either have to manually change the string each time something changes or invent some process that replaces the IP address for you. What a pain!
 
-We'll solve that problem in the next tutorial, where you'll use a _template_ to add dynamic configuration to your recipe.
+We'll solve that problem in the next lesson, where you'll use a _template_ to add dynamic configuration to your recipe.
 
 <%= link_to 'Add dynamic configuration &rarr;', '/rhel/add-dynamic-configuration/', class: 'button radius' %>
+
+[cookbook]: http://docs.opscode.com/essentials_cookbooks.html
+[cookbook_file]: http://docs.opscode.com/resource_cookbook_file.html
+[run-list]: http://docs.opscode.com/essentials_node_object_run_lists.html

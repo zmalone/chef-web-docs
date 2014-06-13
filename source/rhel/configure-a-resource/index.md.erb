@@ -26,8 +26,10 @@ Welcome to Widget Corp! Maya, your benevolent comrade, has asked you to take ove
 
 Like those before you, you could try to remember to update it every day &ndash; but good luck taking a vacation. You could write a script &ndash; but even managing a file has its complexities. There must be a better way to solve it. Your boss always tells you to think creatively!
 
+Let's see how Chef can make things easier.
+
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:395px;">
-<span style="line-height:2.0;">**As you read, be on the lookout for:**</span><br>
+<span style="line-height:2.0;"><i class="icon-search"></i>&nbsp;**As you read, be on the lookout for:**</span><br>
   <i class="icon-check-empty" style="margin-right:5px;"></i>what a resource is.<br>
   <i class="icon-check-empty" style="margin-right:5px;"></i>how a recipe works.<br>
   <i class="icon-check-empty" style="margin-right:5px;"></i>what default actions Chef takes.<br>
@@ -204,25 +206,22 @@ $ ls /tmp/motd
 ls: cannot access /tmp/motd: No such file or directory
 ```
 
-## <i class="icon-comments greeniconcolor" style="margin-right:3px;"></i> What happened?
+## <i class="icon-comments greeniconcolor" style="margin-right:3px;"></i> You just wrote a recipe!
 
-You ran a few basic Chef commands and got a flavor of what Chef can do. Here are a few details you should know about.
+In Chef, <filepath>hello.rb</filepath> is an example of a _recipe_, or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer. Our recipe states everything we need to manage the MOTD file. You used [chef-apply][chef-apply] to apply a recipe from the command line.
 
-In Chef, <filepath>hello.rb</filepath> is an example of a _recipe_, which is an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer. Our recipe here states everything we need to manage the MOTD file.
+## <i class="icon-comments greeniconcolor" style="margin-right:3px;"></i> Resources have default actions
 
-When you deleted the file, you saw the <codeinline>delete</codeinline> action. Think of an _action_ as the process that achieves the desired configuration state. Every resource in Chef has a default action, and it's the most common affirmative one &ndash; for example, _create_ a file, _install_ a package, and _start_ a service. When we created the file we didn't specify the <codeinline>create</codeinline> action when we created the file because <codeinline>create</codeinline> is the default. But of course you can specify it if you want.
+When you deleted the file, you saw the <codeinline>delete</codeinline> action. Think of an action as the process that achieves the desired configuration state. Every resource in Chef has a default action, and it's the most common affirmative one &ndash; for example, _create_ a file, _install_ a package, and _start_ a service. When we created the file we didn't specify the <codeinline>create</codeinline> action when we created the file because <codeinline>create</codeinline> is the default. But of course you can specify it if you want.
 
-### To summarize
+## <i class="icon-road blueiconcolor" style="margin-right:3px;"></i> Wrap-up and what's next
 
-<ul class="icons">
-<li><i class="icon-check"></i>A <i>resource</i> describes one part of the system and its desired state. A file is an example of a resource.</li>
-<li><i class="icon-check"></i>A <i>recipe</i> is an ordered series of configuration states. You might have one recipe to configure your web server and another for your database server.</li>
-<li><i class="icon-check"></i>An <i>action</i> is the part of a resource that achieves the desired configuration state. The default action is the most common affirmative one, such as creating a file.</li>
-<li><i class="icon-check"></i>Chef applies configuration state only when it needs to.</li>
-</ul>
+You ran a few basic Chef commands and got a flavor of what Chef can do. You learned that a resource describes one part of the system and its desired state and worked with a [file][file] resource.
 
-## <i class="icon-road blueiconcolor" style="margin-right:3px;"></i> What's next?
-
-Of course, Chef is about more than just setting up files. Next you'll apply what you've learned to install and configure a package and service.
+Of course, your job is about more than just setting up files. Next you'll apply what you've learned to install and configure a package and service.
 
 <%= link_to 'Configure a package and service &rarr;', '/rhel/configure-a-package-and-service/', class: 'button radius' %>
+
+
+[file]: http://docs.opscode.com/resource_file.html
+[chef-apply]: http://docs.opscode.com/ctl_chef_apply.html
