@@ -3,39 +3,26 @@ title: 'Configure a resource'
 order: 2
 layout: tutorial
 ---
-# Configure a resource
+[TIMETOCOMPLETE] 15
 
-**Time to complete: 15 minutes**
+# Configure a resource
 
 Let's look at a basic configuration management project to get oriented to how Chef works. You'll learn how to manage a file, which is an example of a _resource_. A resource describes some piece of infrastructure, such as a file, a template, or a package.
 
 ## <i class="fa fa-question-circle blueiconcolor" style="margin-right:3px;"></i> All set up?
 
-Verify you have:
-
-<ul class="fa-ul">
-  <li><i class="fa-li fa fa-check"></i>a CentOS or Red Hat Enterprise Linux (RHEL) instance with sudo / root access.</li>
-  <li><i class="fa-li fa fa-check"></i>Chef DK installed.</li>
-  <li><i class="fa-li fa fa-check"></i>a terminal window open to a directory to work in.</li>
-  <li><i class="fa-li fa fa-check"></i>your favorite text editor open.</li>
-</ul>
-
-Missing something on that list? [Get set up](/rhel/get-set-up).
+Do you have a CentOS VM with the Chef tools installed? If not, [get a virtual machine](/rhel/get-a-virtual-machine).
 
 ## <i class="fa fa-wrench greeniconcolor" style="margin-right:3px;"></i> Your job
 
-Welcome to Widget Corp! Maya, your benevolent comrade, has asked you to take over the arduous task of updating the Message of the Day. Everyone keeps talking about how much a pain it is to update the MOTD. And now, they are so happy to give it to you.
+Welcome to Widget Corp! Your boss Jerry has asked you to take over the arduous task of updating the Message of the Day. Like those before you, you could try to remember to update it every day &ndash; but good luck taking a vacation. You could write a script &ndash; but even managing a file has its complexities.
 
-Like those before you, you could try to remember to update it every day &ndash; but good luck taking a vacation. You could write a script &ndash; but even managing a file has its complexities. There must be a better way to solve it. Your boss always tells you to think creatively!
-
-Let's see how Chef can make things easier.
+There must be a better way to solve it. Let's see how Chef can make things easier.
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:400px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, be on the lookout for:**</span><br>
-  <i class="fa fa-check"></i>&nbsp; what a resource is.<br>
-  <i class="fa fa-check"></i>&nbsp; how a recipe works.<br>
-  <i class="fa fa-check"></i>&nbsp; what default actions Chef takes.<br>
-  <i class="fa fa-check"></i>&nbsp; how and when Chef applies configuration state.<br>
+  <i class="fa fa-check"></i>&nbsp; what resources and recipes are.<br>
+  <i class="fa fa-check"></i>&nbsp; what happens when you run <codeinline>chef-apply</codeinline>.<br>
 </sidebar>
 
 ## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
@@ -45,14 +32,16 @@ Let's see how Chef can make things easier.
   1. [Ensure the file's contents are not changed by anyone else](#3ensurethefile39scontentsarenotchangedbyanyoneelse)
   1. [Delete the file](#4deletethefile)
 
+<hr>
+
 ## 1. Create the file
 
-You need to create the file and set its contents. To keep things basic, let's install the MOTD to <filepath>/tmp/motd</filepath>.
+First you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
 
-In your working directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
+From your working directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
 
 ```ruby
-file '/tmp/motd' do
+file 'motd' do
   content 'hello world'
 end
 ```
@@ -63,17 +52,17 @@ From your terminal window, run <codeinline>chef-apply</codeinline> to apply what
 $ chef-apply hello.rb
 ```
 
-[COMMENT] crushtime-4: &uarr; Perhaps all commands should center around 'chef'. For example, 'chef apply' instead of 'chef-apply'. Exceptions to this are chef-client and knife.
+[COMMENT] crushtime-4: 'chef-apply' should be 'chef apply'.
 
-The output tells us that a new file was created at <filepath>/tmp/motd</filepath>.
+The output tells us that a new file was created at <filepath>motd</filepath>.
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/motd] action create
-    - create new file /tmp/motd
-    - update content in file /tmp/motd from none to de031d
-        --- /tmp/motd  2014-05-13 14:52:54.025253948 -0700
-        +++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
+  * file[motd] action create
+    - create new file motd
+    - update content in file motd from none to de031d
+        --- motd  2014-05-13 14:52:54.025253948 -0700
+        +++ .motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
         @@ -1 +1,2 @@
         +hello world
     - restore selinux security context
@@ -82,9 +71,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 Now verify that the file was written. Run the <codeinline>head</codeinline> command, which prints the first few lines of the file you give it.
 
 ```bash
-$ head /tmp/motd
-```
-```bash
+$ head motd
 hello world
 ```
 
@@ -100,21 +87,21 @@ This time you get a different response.
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/motd] action create (up to date)
+  * file[motd] action create (up to date)
 ```
 
 This is because Chef does work only when it needs to.
 
-Chef looks at the current configuration state and applies action only if it doesn't match the desired state. Here, Chef doesn't create or modify <filepath>/tmp/motd</filepath> because it already exists and its contents didn't change.
+Chef looks at the current configuration state and applies action only if it doesn't match the desired state. Here, Chef doesn't create or modify <filepath>motd</filepath> because it already exists and its contents didn't change.
 
 ## 2. Update the file's contents
 
-As we know, the MOTD frequently changes.
+Now you need to change the MOTD.
 
 Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
 
 ```ruby
-file '/tmp/motd' do
+file 'motd' do
   content 'hello chef'
 end
 ```
@@ -129,10 +116,10 @@ This time Chef does work because we've changed the desired state of the file and
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/motd] action create
-    - update content in file /tmp/motd from de031d to b1522f
-        --- /tmp/motd  2014-05-13 14:52:54.025253948 -0700
-        +++ /tmp/.motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
+  * file[motd] action create
+    - update content in file motd from de031d to b1522f
+        --- motd  2014-05-13 14:52:54.025253948 -0700
+        +++ .motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
         @@ -1,2 +1,2 @@
         -hello world
         +hello chef
@@ -143,10 +130,10 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 You need to make sure that no other process can change the MOTD.
 
-Imagine that a co-worker manually changes <filepath>/tmp/motd</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy like this.
+Imagine that a co-worker manually changes <filepath>motd</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor or like this.
 
 ```
-hello robots
+echo 'hello robots' >> motd
 ```
 
 Now run <codeinline>chef-apply</codeinline>.
@@ -157,10 +144,10 @@ $ sudo chef-apply hello.rb
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/motd] action create
-    - update content in file /tmp/motd from 9b0c18 to b1522f
-        --- /tmp/motd  2014-05-13 15:03:47.638770524 -0700
-        +++ /tmp/.motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
+  * file[motd] action create
+    - update content in file motd from 9b0c18 to b1522f
+        --- motd  2014-05-13 15:03:47.638770524 -0700
+        +++ .motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
         @@ -1,2 +1,2 @@
         -hello robots
         +hello chef
@@ -180,7 +167,7 @@ Chef restored the original configuration. This is actually a really good thing b
 OK, you're done experimenting with the MOTD, so let's clean up. From your working directory, create a new recipe file named <filepath>goodbye.rb</filepath> and save this content to it.
 
 ```ruby
-file '/tmp/motd' do
+file 'motd' do
   action :delete
 end
 ```
@@ -195,30 +182,48 @@ $ sudo chef-apply goodbye.rb
 
 ```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[/tmp/motd] action delete
-    - delete file /tmp/motd
+  * file[motd] action delete
+    - delete file motd
 ```
 
-The output shows that <filepath>/tmp/motd</filepath> is now gone, but let's prove it.
+The output shows that <filepath>motd</filepath> is now gone, but let's prove it.
 
 ```bash
-$ ls /tmp/motd
+$ ls motd
 ```
 ```bash
-ls: cannot access /tmp/motd: No such file or directory
+ls: cannot access motd: No such file or directory
 ```
 
-## <i class="fa fa-file-text greeniconcolor" style="margin-right:3px;"></i> You just wrote a recipe!
+<hr>
 
-In Chef, <filepath>hello.rb</filepath> is an example of a _recipe_, or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer. Our recipe states everything we need to manage the MOTD file. You used [chef-apply][chef-apply] to apply a recipe from the command line.
-
-## <i class="fa fa-bolt greeniconcolor" style="margin-right:3px;"></i> Resources have default actions
-
-When you deleted the file, you saw the <codeinline>delete</codeinline> action. Think of an action as the process that achieves the desired configuration state. Every resource in Chef has a default action, and it's the most common affirmative one &ndash; for example, _create_ a file, _install_ a package, and _start_ a service. When we created the file we didn't specify the <codeinline>create</codeinline> action when we created the file because <codeinline>create</codeinline> is the default. But of course you can specify it if you want.
-
-## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> Wrap-up and what's next
+## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
 
 You ran a few basic Chef commands and got a flavor of what Chef can do. You learned that a resource describes one part of the system and its desired state and worked with a [file][file] resource.
+
+### <i class="fa fa-file-text greeniconcolor" style="margin-right:3px;"></i> Recipes organize resources
+
+In Chef, <filepath>hello.rb</filepath> is an example of a [recipe](http://docs.opscode.com/essentials_cookbook_recipes.html), or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
+
+Our recipe states everything we need to manage the MOTD file. You used [chef-apply][chef-apply] to apply that recipe from the command line.
+
+### <i class="fa fa-bolt greeniconcolor" style="margin-right:3px;"></i> Resources have actions
+
+When you deleted the file, you saw the <codeinline>delete</codeinline> action.
+
+Think of an action as the process that achieves the desired configuration state. Every resource in Chef has a default action, and it's the most common affirmative one &ndash; for example, _create_ a file, _install_ a package, and _start_ a service.
+
+When we created the file we didn't specify the <codeinline>create</codeinline> action when we created the file because <codeinline>create</codeinline> is the default. But of course you can specify it if you want.
+
+The documentation for each resource type, [file](http://docs.opscode.com/resource_file.html) for example, explains the type's default action.
+
+### <i class="fa fa-cog greeniconcolor" style="margin-right:3px;"></i> Resources have attributes
+
+When you created the file, you didn't specify its mode or group &ndash; you specified only its contents. That's because Chef provides defaults for those. We'll look at attributes later.
+
+<hr>
+
+## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
 
 Of course, your job is about more than just setting up files. Next you'll apply what you've learned to install and configure a package and service.
 
