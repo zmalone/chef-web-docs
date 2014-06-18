@@ -87,6 +87,13 @@ activate :livereload
 # Enable syntax highlighting
 activate :syntax
 
+# CloudFront
+activate :cloudfront do |cloudfront|
+  cloudfront.access_key_id     = ENV['AWS_ACCESS_KEY_ID']
+  cloudfront.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+  cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
+end
+
 # S3 Redirects
 activate :s3_redirect do |config|
   config.bucket  = ENV['AWS_S3_BUCKET']

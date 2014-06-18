@@ -1,8 +1,30 @@
+before_install: ./bin/preinstall-travis-deploy-dependencies
+bundler_args: --deployment --without development
 cache:
+  bundler: true
   directories:
-    - vendor/bundle
+    - $(rvm gemdir)
     - build
 deploy:
+  # Prod
+  - provider: s3
+    access_key_id: # chef-prod learn-chef IAM user
+      secure: "RB+cF7bA8oI39kNa+pwF4fIkYbeTYddBqE3OEcxGwaKQ1JI6ej+yKEIyv7hB+825gbn/x+yuVMK5BigR3RsLDeCp+Q9Khv8aroC0ZXUdf/aM6Z9x6C7hORV7+/2qPwxvXDwCwbifeieSXz0dzRLOgzjp9WYgM5BWZmlUpZoV5Bo="
+    secret_access_key:
+      secure: "Elc66revkDU5zMv7i1bE/wXNfLmmhz/7rnnHo+uAI9I/UoXeRYCE5HTLD8OSHycniEpu/3j7YWeJFaUx+RCyoSIbSMW1lNSuHE7aZMeo8bI/xJxML+jDrR/NE1Iz/bXKhlKWbH9hXaorXaZ+VgY0Um30yRBRtKdDZ4KMcTCw30I="
+    bucket: learn.getchef.com
+    endpoint: learn.getchef.com.s3-website-us-east-1.amazonaws.com
+    skip_cleanup: true
+    local-dir: build
+    env:
+      - CLOUDFRONT_DISTRIBUTION_ID=E1WC83ND9PN8RY
+      # AWS_ACCESS_KEY_ID
+      - secure: "qyK6429tsY/vBk+sF/mkn0D2nB0R/v6IBWahQrKV7Iupiz85pMlsAzitBUGktIXlPATOWVP/I/A2SmZwcM+Vpu8mbOSd222FvZQAsHNHLUHHlz/Yq5Hd+dVsMie5LFlaLKAWwh61uZgGBFlutB4pu5KFNhfwlnaeIor7AjWw/d4="
+      # AWS_SECRET_ACCESS_KEY
+      - secure: "h9w/4nCltY+G/y4NlXSxfxb1PxqZq1XXgM+GJTKCdw2QbxUxf7k2EaxR1YUvi5AINx96Su5OFQVU/t9syvAJGi0aH/6FZajjpZ5hiX5BDT2kXnjBi5us9MXlEccmqJXqd86QRbq56tj1xppHczOaSQd8JJ4N535cOG+pQKXqfvU="
+    on:
+      branch: release
+    after_deploy: MM_ENV=build bundle exec middleman invalidate
   # Preprod
   - provider: s3
     access_key_id: # chef-preprod learn-chef IAM user
@@ -31,4 +53,4 @@ deploy:
       - AWS_S3_BUCKET=learn-sandbox.getchef.com
 after_deploy: bundle exec middleman s3_redirect
 install: bundle install --deployment --without development
-script: bundle exec middleman build
+script: bundle exec middleman build --verbose
