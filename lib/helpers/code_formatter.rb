@@ -32,8 +32,14 @@ module Middleman
           lexed_code.to_a[1..-1]
         end
 
+        # TODO: Currently this will only remove comments that look like:
+        #   ruby single line comment or an HTML comment.
+        #
+        #   # path/to/filename.rb
+        #   OR
+        #   <!-- path/to/filename.erb -->
         def create_title_from_comment(content)
-          content.gsub(/^\s\S+\s*/,"")
+          content.gsub(/^\s*(?:#|<!--)\s*/,"").gsub(/\s*-->\s*$/,"")
         end
 
         def default_filename
@@ -46,14 +52,13 @@ module Middleman
 
         def source_window(content,filepath)
           %{<div class="window">
-            <nav class="control-window">
-              <a href="#finder" class="close" data-rel="close">close</a>
-              <a href="#" class="minimize">minimize</a>
-              <a href="#" class="deactivate">deactivate</a>
-            </nav>
-            <h1 class="titleInside">#{filepath}</h1>
-            <div class="container"><div class="editor">#{content}</div></div>
-          </div>}
+              <nav class="control-window">
+                <a href="#finder" class="close" data-rel="close">close</a>
+                <a href="#" class="minimize">minimize</a>
+                <a href="#" class="deactivate">deactivate</a>
+              </nav>
+              <h1 class="titleInside">#{filepath}</h1>
+              <div class="container"><div class="editor">#{content}</div></div></div>}
         end
       end
 
