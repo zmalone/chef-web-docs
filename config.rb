@@ -17,6 +17,7 @@ end
 # Config
 ###
 set :site_url, 'learnchef.opscode.com'
+set :canonical_protocol_and_hostname, "http://#{site_url}"
 
 ###
 # Compass
