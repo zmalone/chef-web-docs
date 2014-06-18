@@ -89,10 +89,9 @@ activate :syntax
 # S3 Redirects
 activate :s3_redirect do |config|
   config.bucket  = ENV['AWS_S3_BUCKET']
-  config.region = ENV['AWS_REGION']
   config.aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
   config.aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
-  config.after_build = true
+  config.after_build = false
 end
 
 # Parse code blocks

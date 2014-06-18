@@ -15,7 +15,6 @@ deploy:
     on:
       branch: master
     env:
-      - AWS_REGION=us-east-1
       - AWS_S3_BUCKET=learn-preprod.getchef.com
   # Sandbox
   - provider: s3
@@ -29,7 +28,7 @@ deploy:
     on:
       branch: sandbox
     env:
-      - AWS_REGION=us-east-1
       - AWS_S3_BUCKET=learn-sandbox.getchef.com
+after_deploy: bundle exec middleman s3_redirect
 install: bundle install --deployment --without development
 script: bundle exec middleman build
