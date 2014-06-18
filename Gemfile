@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'middleman',            '~> 3.1.0.beta.1'
 gem 'middleman-syntax',     '~> 1.1.1'
+gem 'middleman-s3_redirect'
 gem 'middleman-smusher',    '~> 3.0.0'
 gem 'middleman-livereload' 
 gem 'builder',              '~> 3.2.0'
