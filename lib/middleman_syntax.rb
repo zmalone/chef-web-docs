@@ -1,112 +1,52 @@
+require 'lib/helpers/code_formatter'
+require 'lib/helpers/default_formatter'
+require 'lib/helpers/terminal_formatter'
+require 'rouge'
+
 module Middleman
   module Syntax
     module Highlighter
 
       # A helper module for highlighting code
       def self.highlight(code, language=nil, opts={})
-        lexer = Rouge::Lexer.find_fancy(language, code) || Rouge::Lexers::PlainText
+        code.strip!
 
-        code = code.strip
+        return "" if code_block_is_empty?(code)
+
+        lexer = lexer_for_language_or_code(language,code)
 
         highlighter_options = options.to_h.merge(opts)
         highlighter_options[:css_class] = [ highlighter_options[:css_class], lexer.tag ].join(' ')
         lexer_options = highlighter_options.delete(:lexer_options)
 
-        # why </div> why?
-        if code.strip == "" || code.strip == "</div>"
-          ""
-        elsif lexer.tag == "ruby" || lexer.tag == "html"
-          code, filepath = find_filepath(code)
-          highlighter_options.merge!(:line_numbers => true)
-          formatter = Rouge::Formatters::HTML.new(highlighter_options)
-          inner_content = pygments_wrap formatter.format(lexer.lex(code, options.lexer_options)), highlighter_options[:css_class]
-          source_window inner_content, filepath
-        elsif lexer.tag == "shell" || lexer.tag == "bash"
-          code, working_dir = find_working_dir(code)
-          prompt_content = promptize(code)
-          # formatter = Rouge::Formatters::HTML.new(highlighter_options)
-          # inner_content = pygments_wrap formatter.format(lexer.lex(code, options.lexer_options)), highlighter_options[:css_class]
-          terminal_window prompt_content, working_dir
-        else
-          formatter = Rouge::Formatters::HTML.new(highlighter_options)
-          pygments_wrap formatter.format(lexer.lex(code, options.lexer_options)), highlighter_options[:css_class]
+        lexed_code = lexer.lex(code, lexer_options)
+
+        formatter = formatter_for_language(lexer.tag)
+        formatter.render(lexed_code, highlighter_options)
+      end
+
+      def self.lexer_for_language_or_code(language,code)
+        Rouge::Lexer.find_fancy(language, code) || Rouge::Lexers::PlainText
+      end
+
+      def self.code_block_is_empty?(code)
+        code == "" || code == "</div>"
+      end
+
+      def self.formatters
+        @formatters ||= begin
+          hash = { "ruby" => CodeFormatter.new,
+                   "html" => CodeFormatter.new,
+                   "bash" => TerminalFormatter.new,
+                   "shell" => TerminalFormatter.new }
+
+          hash.default = DefaultFormatter.new
+          hash
         end
       end
 
-      def self.promptize(content)
-        lines_of_content = content.strip.lines
-        gutters = lines_of_content.map { |line| gutter(line) }
-        lines_of_code = lines_of_content.map { |line| line_of_code(line) }
-
-        table = "<table><tr>"
-        table += "<td class='gutter'><pre class='line-numbers'>#{gutters.join("\n")}</pre></td>"
-        table += "<td class='code'><pre><code>#{lines_of_code.join("")}</code></pre></td>"
-        table += "</tr></table>"
-      end
-
-      def self.command_character
-        "$"
-      end
-
-      def self.gutter(line)
-        gutter_value = line.start_with?(command_character) ? command_character : "&nbsp;"
-        "<span class='line-number'>#{gutter_value}</span>"
-      end
-
-      def self.line_of_code(line)
-        if line.start_with?(command_character)
-          line_class = "command"
-          line = line.sub(command_character,'').strip
-        else
-          line_class = "output"
-        end
-        "<span class='line #{line_class}'>#{line}</span>"
-      end
-
-      def self.pygments_wrap(content,css_class)
-        "<div class='#{css_class}'><pre>#{content}</pre></div>"
-      end
-
-      def self.find_filepath(code)
-        code_lines = code.split("\n")
-        if code_lines.first.start_with?("#")
-          [ code_lines[1..-1].join("\n"), code_lines.first.split("#",2).last ]
-        else
-          [ code, "Random File" ]
-        end
-      end
-
-      def self.find_working_dir(code)
-        code_lines = code.split("\n")
-        if code_lines.first.start_with?("#")
-          [ code_lines[1..-1].join("\n"), code_lines.first.split("#",2).last ]
-        else
-          [ code, "~/chef_repo" ]
-        end
-      end
-
-      def self.source_window(content,filepath)
-        %{<div class="window">
-          <nav class="control-window">
-            <a href="#finder" class="close" data-rel="close">close</a>
-            <a href="#" class="minimize">minimize</a>
-            <a href="#" class="deactivate">deactivate</a>
-          </nav>
-          <h1 class="titleInside">#{filepath}</h1>
-          <div class="container"><div class="editor">#{content}</div></div>
-        </div>}
-      end
-
-      def self.terminal_window(content,filepath)
-        %{<div class="window">
-          <nav class="control-window">
-            <a href="#finder" class="close" data-rel="close">close</a>
-            <a href="#" class="minimize">minimize</a>
-            <a href="#" class="deactivate">deactivate</a>
-          </nav>
-          <h1 class="titleInside">#{filepath}</h1>
-          <div class="container"><div class="terminal">#{content}</div></div>
-        </div>}
+      def self.formatter_for_language(language)
+        formatters[language]
       end
 
     end
