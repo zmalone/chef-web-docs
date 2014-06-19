@@ -24,7 +24,7 @@ deploy:
       - secure: "h9w/4nCltY+G/y4NlXSxfxb1PxqZq1XXgM+GJTKCdw2QbxUxf7k2EaxR1YUvi5AINx96Su5OFQVU/t9syvAJGi0aH/6FZajjpZ5hiX5BDT2kXnjBi5us9MXlEccmqJXqd86QRbq56tj1xppHczOaSQd8JJ4N535cOG+pQKXqfvU="
     on:
       branch: release
-    after_deploy: MM_ENV=build bundle exec middleman invalidate
+    after_deploy: bundle exec middleman invalidate
   # Preprod
   - provider: s3
     access_key_id: # chef-preprod learn-chef IAM user
@@ -52,5 +52,4 @@ deploy:
     env:
       - AWS_S3_BUCKET=learn-sandbox.getchef.com
 after_deploy: bundle exec middleman s3_redirect
-install: bundle install --deployment --without development
 script: bundle exec middleman build --verbose
