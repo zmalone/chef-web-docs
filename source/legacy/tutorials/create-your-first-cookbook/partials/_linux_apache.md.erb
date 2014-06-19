@@ -4,18 +4,19 @@ Here you'll set up and validate Apache on Linux in 7 steps.
 
 ### Step 1: Create the cookbook
 
-The [knife](http://docs.opscode.com/knife.html) command provides an interface between your workstation and the Chef server. 
+The [knife](http://docs.opscode.com/knife.html) command provides an interface between your workstation and the Chef server.
 From your **chef-repo** directory, run the **knife** command to create a new cookbook.
 
 ```bash
-knife cookbook create apache-tutorial-1
+# ~/chef_repo
+$ knife cookbook create apache-tutorial-1
 ```
 
 At this point, everything is set up locally, and nothing's sent to the Chef server. You'll upload the cookbook in a later step.
 
 ### Step 2: Write the recipe
 
-When you create a cookbook, Chef creates a default recipe for you. From your text editor, open up the default recipe in the **apache-tutorial-1** cookbook. 
+When you create a cookbook, Chef creates a default recipe for you. From your text editor, open up the default recipe in the **apache-tutorial-1** cookbook.
 
 ```
 cookbooks/apache-tutorial-1/recipes/default.rb
@@ -31,7 +32,7 @@ Here's the code you need to add to default.rb. Apache is configured differently 
 
 <% tabs do %>
   <% tab 'apache', icon: 'layers' do %>
-    <%= partial '/legacy/tutorials/create-your-first-cookbook/partials/apache_recipe' %>   
+    <%= partial '/legacy/tutorials/create-your-first-cookbook/partials/_apache_recipe' %>
   <% end %>
   <% tab 'httpd', icon: 'layers' do %>
     <%= partial '/legacy/tutorials/create-your-first-cookbook/partials/httpd_recipe' %>
@@ -40,17 +41,12 @@ Here's the code you need to add to default.rb. Apache is configured differently 
 
 ### Step 3: Add a file resource
 
-The final part of the recipe you just wrote uses the [cookbook_file](http://docs.opscode.com/resource_cookbook_file.html) resource to copy the home page. Now you need to add that resource to your cookbook. 
+The final part of the recipe you just wrote uses the [cookbook_file](http://docs.opscode.com/resource_cookbook_file.html) resource to copy the home page. Now you need to add that resource to your cookbook.
 
-Open index.html in your text editor.
-
-``` 
-cookbooks/apache-tutorial-1/files/default/index.html
-```
-
-And write out the homepage like this: 
+Open index.html in your text editor and write out the homepage like this:
 
 ```html
+# cookbooks/apache-tutorial-1/files/default/index.html
 <html>
 <body>
   <h1>Hello, world!</h1>
@@ -63,14 +59,15 @@ And write out the homepage like this:
 From the chef-repo directory, run **knife**'s [cookbook upload](http://docs.opscode.com/knife_cookbook.html#upload) command to upload your cookbook.
 
 ```bash
-knife cookbook upload apache-tutorial-1
+# chef-repo
+$ knife cookbook upload apache-tutorial-1
 ```
 
 A copy of your cookbook is now on the Chef server.
 
-### Step 5: Create the run list 
+### Step 5: Create the run list
 
-The [run list](/concepts/run-lists/) defines the order in which recipes are run. In this tutorial, you have just one recipe in your run list. 
+The [run list](/concepts/run-lists/) defines the order in which recipes are run. In this tutorial, you have just one recipe in your run list.
 
 To configure the run list for your Linux node, first navigate to [manage.opscode.com](https://manage.opscode.com) and log in to your Chef account. Then from the **Nodes** tab, select your node and open its run list.
 
@@ -82,14 +79,14 @@ Now drag the recipe from the **Available Recipes** box to the **Current Run List
 
 ### Step 6: Run chef-client
 
-Next you'll run [chef-client](http://docs.opscode.com/essentials_chef_client.html) to get the latest cookbooks from the Chef server and bring your target node to its expected state. 
+Next you'll run [chef-client](http://docs.opscode.com/essentials_chef_client.html) to get the latest cookbooks from the Chef server and bring your target node to its expected state.
 
 The easiest way to run **chef-client** is to run the **knife** command from your local workstation. (Recall that you ran the **knife** command when you [bootstrapped](/get-started#bootstraptheimage) your node and that **knife** serves as the interface between you and the Chef server.)
 
 Here's the command.
 
 ```bash
-knife ssh ec2-xx-xx-xx-xx.compute-1.amazonaws.com 'sudo chef-client' -m -x chef -P chef
+$ knife ssh ec2-xx-xx-xx-xx.compute-1.amazonaws.com 'sudo chef-client' -m -x chef -P chef
 ```
 
 Replace **ec2-xx-xx-xx-xx.compute-1.amazonaws.com** with your node's IP address or hostname. If you're not using a Chef EC2 image, replace the **-x** and **-P** arguments with the username and password for an account that has root access.
@@ -97,24 +94,24 @@ Replace **ec2-xx-xx-xx-xx.compute-1.amazonaws.com** with your node's IP address 
 Alternatively, you can log into your Linux node through SSH and then run **chef-client**.
 
 ```bash
-ssh chef@ec2-xx-xx-xx-xx.compute-1.amazonaws.com
+$ ssh chef@ec2-xx-xx-xx-xx.compute-1.amazonaws.com
 ```
 
 ```bash
-sudo chef-client
+$ ssh sudo chef-client
 ```
 
 If you're using Vagrant, here's the command to use.
 
 ```bash
-knife ssh localhost 'sudo chef-client' -m -x vagrant -P vagrant --ssh-port 2222
+$ knife ssh localhost 'sudo chef-client' -m -x vagrant -P vagrant --ssh-port 2222
 ```
 
 [WARN] **--ssh-port 2222** might not be correct if you're running more than one Vagrant VM. You can get the port that Vagrant selects for SSH forwarding from the output of the **vagrant up** command.
 
 As **chef-client** runs, you'll see Linux configure itself to run Apache and copy your basic web page to **/var/www/index.html** or **/var/www/html/index.html**.
 
-### Step 7: Verify your home page 
+### Step 7: Verify your home page
 
 After the **chef-client** run completes, open a web browser from any computer and navigate to your test node. For example, if you're running on EC2, the URL might resemble:
 

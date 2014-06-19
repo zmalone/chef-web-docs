@@ -83,8 +83,10 @@ end
 # Enable Livereload
 activate :livereload
 
-# Enable syntax highlighting
-activate :syntax
+# Enable syntax highlighting - turn off the default wrapping
+activate :syntax, wrap: false
+# Override the middleman-syntax to provide backwards compat with pygments wrap
+require 'lib/middleman_syntax'
 
 # Parse code blocks
 set :markdown_engine, :redcarpet

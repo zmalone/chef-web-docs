@@ -9,9 +9,12 @@ layout: tutorial
 
 Let's look at a basic configuration management project to get oriented to how Chef works. You'll learn how to manage a file, which is an example of a _resource_. A resource describes some piece of infrastructure, such as a file, a template, or a package.
 
+Remember, you'll be configuring your CentOS VM locally to get the hang of things. Later you'll learn how to manage one remotely.
+
 ## <i class="fa fa-question-circle blueiconcolor" style="margin-right:3px;"></i> All set up?
 
-Do you have a CentOS VM with the Chef tools installed? If not, [get a virtual machine](/rhel/get-a-virtual-machine).
+  * Do you have a CentOS VM with the Chef tools installed? If not, [get a virtual machine](/rhel/get-a-virtual-machine).
+  * Make sure you have a command prompt open to the <filepath>~/chef-repo</filepath> directory. We'll refer to this as your working directory.
 
 ## <i class="fa fa-wrench greeniconcolor" style="margin-right:3px;"></i> Your job
 
@@ -41,6 +44,7 @@ First you need to create the file and set the initial MOTD. To keep things basic
 From your working directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
 
 ```ruby
+# hello.rb
 file 'motd' do
   content 'hello world'
 end
@@ -49,14 +53,8 @@ end
 From your terminal window, run <codeinline>chef-apply</codeinline> to apply what you've written.
 
 ```bash
+# ~/chef-repo
 $ chef-apply hello.rb
-```
-
-[COMMENT] crushtime-4: 'chef-apply' should be 'chef apply'.
-
-The output tells us that a new file was created at <filepath>motd</filepath>.
-
-```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - create new file motd
@@ -68,9 +66,14 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
     - restore selinux security context
 ```
 
+[COMMENT] crushtime-4: 'chef-apply' should be 'chef apply'.
+
+The output tells us that a new file, <filepath>motd</filepath>, was created.
+
 Now verify that the file was written. Run the <codeinline>head</codeinline> command, which prints the first few lines of the file you give it.
 
 ```bash
+# ~/chef-repo
 $ head motd
 hello world
 ```
@@ -80,17 +83,13 @@ hello world
 Let's see now what happens when you run the same command again.
 
 ```bash
+# ~/chef-repo
 $ chef-apply hello.rb
-```
-
-This time you get a different response.
-
-```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create (up to date)
 ```
 
-This is because Chef does work only when it needs to.
+This time you get a different response. This is because Chef does work only when it needs to.
 
 Chef looks at the current configuration state and applies action only if it doesn't match the desired state. Here, Chef doesn't create or modify <filepath>motd</filepath> because it already exists and its contents didn't change.
 
@@ -101,6 +100,7 @@ Now you need to change the MOTD.
 Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
 
 ```ruby
+# hello.rb
 file 'motd' do
   content 'hello chef'
 end
@@ -109,12 +109,8 @@ end
 And run <codeinline>chef-apply</codeinline>.
 
 ```bash
+# ~/chef-repo
 $ sudo chef-apply hello.rb
-```
-
-This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
-
-```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - update content in file motd from de031d to b1522f
@@ -126,23 +122,24 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
     - restore selinux security context
 ```
 
+This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
+
 ## 3. Ensure the file's contents are not changed by anyone else
 
 You need to make sure that no other process can change the MOTD.
 
 Imagine that a co-worker manually changes <filepath>motd</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor or like this.
 
-```
+```bash
+# ~/chef-repo
 echo 'hello robots' >> motd
 ```
 
 Now run <codeinline>chef-apply</codeinline>.
 
 ```bash
+# ~/chef-repo
 $ sudo chef-apply hello.rb
-```
-
-```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - update content in file motd from 9b0c18 to b1522f
@@ -167,6 +164,7 @@ Chef restored the original configuration. This is actually a really good thing b
 OK, you're done experimenting with the MOTD, so let's clean up. From your working directory, create a new recipe file named <filepath>goodbye.rb</filepath> and save this content to it.
 
 ```ruby
+# goodbye.rb
 file 'motd' do
   action :delete
 end
@@ -175,23 +173,20 @@ end
 Now apply <filepath>goodbye.rb</filepath> to delete the file.
 
 ```bash
+# ~/chef-repo
 $ sudo chef-apply goodbye.rb
-```
-
-[COMMENT] Need sudo for this. Go back when the sudo issue resolved...
-
-```bash
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action delete
     - delete file motd
 ```
 
+[COMMENT] Need sudo for this. Go back when the sudo issue resolved...
+
 The output shows that <filepath>motd</filepath> is now gone, but let's prove it.
 
 ```bash
+# ~/chef-repo
 $ ls motd
-```
-```bash
 ls: cannot access motd: No such file or directory
 ```
 
@@ -219,7 +214,7 @@ The documentation for each resource type, [file](http://docs.opscode.com/resourc
 
 ### <i class="fa fa-cog greeniconcolor" style="margin-right:3px;"></i> Resources have attributes
 
-When you created the file, you didn't specify its mode or group &ndash; you specified only its contents. That's because Chef provides defaults for those. We'll look at attributes later.
+When you created the file, you didn't specify its mode or group &ndash; you specified only its contents. That's because Chef provides defaults for those. We'll look at resource attributes such as these later.
 
 <hr>
 
