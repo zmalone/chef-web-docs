@@ -16,15 +16,9 @@ Installation
 
         $ bundle install
 
-  If you get an error installing `charlock_holmes`, you need to install `icu4c`:
-
-        $ brew install icu4c
-
-  And run the `bundle` command again.
-
 1. Start the server:
 
-        $ bundle exec middleman server
+        $ bin/middleman server
 
 Building
 --------
@@ -42,7 +36,7 @@ Publishing
 ----------
 
 - **Always submit PRs/changes against the master branch**
-- Verify changes on https://learnchef-rs-preprod.opscode.com/
+- Verify changes on http://learn-preprod.getchef.com/
 - Merge `master` into `release`
 
 See the [deployment documentation](doc/deploy.md) for more information.

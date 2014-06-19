@@ -1,5 +1,15 @@
+require 'uri'
+
 # Helpers for URL shortcuts
 module URLHelpers
+  def canonical_link_tag(path)
+    tag :link, :rel => 'canonical', :href => canonical_url(path)
+  end
+
+  def canonical_url(path)
+    URI.join(canonical_protocol_and_hostname, path).to_s
+  end
+
   def chef_install_url
     'http://www.getchef.com/chef/install/'
   end
