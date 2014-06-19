@@ -14,6 +14,8 @@ deploy:
     local-dir: build
     on:
       branch: master
+    env:
+      - AWS_S3_BUCKET=learn-preprod.getchef.com
   # Sandbox
   - provider: s3
     access_key_id: # chef-preprod learn-chef IAM user
@@ -25,5 +27,8 @@ deploy:
     local-dir: build
     on:
       branch: sandbox
+    env:
+      - AWS_S3_BUCKET=learn-sandbox.getchef.com
+after_deploy: bundle exec middleman s3_redirect
 install: bundle install --deployment --without development
 script: bundle exec middleman build

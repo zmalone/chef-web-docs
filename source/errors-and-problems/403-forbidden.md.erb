@@ -1,3 +1,0 @@
-<% content_for :head do %>
-  <meta http-equiv="refresh" content="0;url=http://docs.opscode.com/errors.html#forbidden" />
-<% end %>
