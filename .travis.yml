@@ -9,21 +9,13 @@ deploy:
   # Prod
   - provider: s3
     access_key_id: # chef-prod learn-chef IAM user
-      secure: "RB+cF7bA8oI39kNa+pwF4fIkYbeTYddBqE3OEcxGwaKQ1JI6ej+yKEIyv7hB+825gbn/x+yuVMK5BigR3RsLDeCp+Q9Khv8aroC0ZXUdf/aM6Z9x6C7hORV7+/2qPwxvXDwCwbifeieSXz0dzRLOgzjp9WYgM5BWZmlUpZoV5Bo="
+      secure: "EQIbgGOlxHtkExVO/9kuMiZk65kyKfO/gBu/cvlISeMBtsN5/GmS3cKzcLeHU4LVqyViAIxzrJ88Ph2WrWUBrQhREhveJBkfzgTUZ2guGiKZS5W5rUpiaQ9Q/rstuEc1xyw+2EUrcNcskFMthYaXTCZ8mZjn150HCl4zyREEMVQ="
     secret_access_key:
-      secure: "Elc66revkDU5zMv7i1bE/wXNfLmmhz/7rnnHo+uAI9I/UoXeRYCE5HTLD8OSHycniEpu/3j7YWeJFaUx+RCyoSIbSMW1lNSuHE7aZMeo8bI/xJxML+jDrR/NE1Iz/bXKhlKWbH9hXaorXaZ+VgY0Um30yRBRtKdDZ4KMcTCw30I="
+      secure: "pmZTPeOJXFyxiRwK0CrQX6/iY9whTUIpurADleJ3Vnp7gRuLDbIwIWGKOg+UEh/aY3hMfakKo1+tkkmrT02g/6iGYdRUL54BiIrFubyF/1HU3xD4zrDV/KIsH604k0PQJRq7P1HwQ1iVyzgJIEl3e56lDe8fTi52RMyCvP5oi/c="
     bucket: learn.getchef.com
     endpoint: learn.getchef.com.s3-website-us-east-1.amazonaws.com
     skip_cleanup: true
     local-dir: build
-    env:
-      global:
-        - AWS_S3_BUCKET=learn.getchef.com
-        - CLOUDFRONT_DISTRIBUTION_ID=E1WC83ND9PN8RY
-        # AWS_ACCESS_KEY_ID
-        - secure: "qyK6429tsY/vBk+sF/mkn0D2nB0R/v6IBWahQrKV7Iupiz85pMlsAzitBUGktIXlPATOWVP/I/A2SmZwcM+Vpu8mbOSd222FvZQAsHNHLUHHlz/Yq5Hd+dVsMie5LFlaLKAWwh61uZgGBFlutB4pu5KFNhfwlnaeIor7AjWw/d4="
-        # AWS_SECRET_ACCESS_KEY
-        - secure: "h9w/4nCltY+G/y4NlXSxfxb1PxqZq1XXgM+GJTKCdw2QbxUxf7k2EaxR1YUvi5AINx96Su5OFQVU/t9syvAJGi0aH/6FZajjpZ5hiX5BDT2kXnjBi5us9MXlEccmqJXqd86QRbq56tj1xppHczOaSQd8JJ4N535cOG+pQKXqfvU="
     on:
       branch: release
     after_deploy: bundle exec middleman invalidate
@@ -38,13 +30,6 @@ deploy:
     local-dir: build
     on:
       branch: master
-    env:
-      global:
-        - AWS_S3_BUCKET=learn-preprod.getchef.com
-        # AWS_ACCESS_KEY_ID
-        - secure: "ttV4xy4aOjyu8ZR7G9YqT8JjsrSzXiw4guC+nb9sp3Wo8Trvj4BYo4nrJFG1Q9Jt4H45Nmx30/YVT87bdPRGq7iMGp93DWnpcTDokBcFQHTlM+V10XoxEdIYtpMD1dDf6fuuFWBhYLj4wRQ3oKSTihrzZMlUidPV3Qi/SFdfbuA="
-        # AWS_SECRET_ACCESS_KEY
-        - secure: "fDhR/+Jg9UJ36ZnBYgNVlf7EAdR0W0jGkt+2L68AbXmVdUT+8g3nHzrqY7EyPkDVforBwexAsO/pHCw05GmRmpw6/MT2aR10IwKm5+yn6UjhgX6TA+ns2Zd/KCQhcbszM1F7Rl5uDAlkZWRgo+eQNHET6FwDstO55DONXiGdDhM="
   # Sandbox
   - provider: s3
     access_key_id: # chef-preprod learn-chef IAM user
@@ -56,11 +41,18 @@ deploy:
     local-dir: build
     on:
       branch: sandbox
-    env:
-      global:
-        - AWS_S3_BUCKET=learn-sandbox.getchef.com
-        # AWS_ACCESS_KEY_ID
-        - secure: "ttV4xy4aOjyu8ZR7G9YqT8JjsrSzXiw4guC+nb9sp3Wo8Trvj4BYo4nrJFG1Q9Jt4H45Nmx30/YVT87bdPRGq7iMGp93DWnpcTDokBcFQHTlM+V10XoxEdIYtpMD1dDf6fuuFWBhYLj4wRQ3oKSTihrzZMlUidPV3Qi/SFdfbuA="
-        # AWS_SECRET_ACCESS_KEY
-        - secure: "fDhR/+Jg9UJ36ZnBYgNVlf7EAdR0W0jGkt+2L68AbXmVdUT+8g3nHzrqY7EyPkDVforBwexAsO/pHCw05GmRmpw6/MT2aR10IwKm5+yn6UjhgX6TA+ns2Zd/KCQhcbszM1F7Rl5uDAlkZWRgo+eQNHET6FwDstO55DONXiGdDhM="
+env:
+  global:
+    - CLOUDFRONT_DISTRIBUTION_ID=E1WC83ND9PN8RY
+    # PREPROD_AWS_ACCESS_KEY_ID
+    - secure: "mA2cVclqelvN22KD28gYMaMtIbukBgcS9fjXHYBfQLHnhNw/L/JrupAaBdE0mSosEITsHQua4Sxe00HsPB49UYrYX6zC8Q4FJa/LYmcz+XjdIK7kal3ZWUKu8HqCnqLncAm35hsWsaek0LsZRAKWYEJxTXOnKZKR266k7m1x5G8="
+    # PREPROD_AWS_SECRET_ACCESS_KEY
+    - secure: "cd0WPcv+jCzvOZgwNNcdO+vFVSuvoWwiq4iKPmwy8f2YerQ5Lv0DLshQeGLkTnRrLQK9xkGxyJQutOp35dhpc4kXR1suUFD7GdefAv0fd0mVMHthe/Hts/63XrwQgRN0hQMVPY0OInUcFm9FSWKQq9E2H0QnwKhggLZh0+H0yro="
+    - PREPROD_AWS_S3_BUCKET=learn-preprod.getchef.com
+    # PROD_AWS_ACCESS_KEY_ID
+    - secure: "Uj+cLgQNwo+IlWGEwYFN+Sk8zIV9z8ltERf31h1Lv1PJq9eEVHHJxjBoqVSkd7NapKs+jeF9upSxJ0asstI/5Ph8Gdz6IvXA6u1VKxXHRcKWNLEyd6vvCUJmLJcMeH3MOWRKGszTYBaNyQaW5eO9qoBJCXcviVg82Ts9AuH0fS4="
+    # PROD_AWS_SECRET_ACCESS_KEY
+    - secure: "HKr7eZEgzAcfE/ykJn4aWQNWvbM+iHRqYCEhUFQa7PjiDLBk09qjT5umieSu9889WvJcYpaj6rTtKFeFYfgy50NGHCIN29Ca1a1wir2Xabpu9lo8kAR9YmVFuuYl6/ezB5YS5aCUejAAi6suUKRdXYhE7vX94rsotA2lh/42uY0="
+    - PROD_AWS_S3_BUCKET=learn.getchef.com
+    - SANDBOX_AWS_S3_BUCKET=learn-sandbox.getchef.com
 script: bundle exec middleman build

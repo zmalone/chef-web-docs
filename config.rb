@@ -81,25 +81,32 @@ helpers do
   include URLHelpers
 end
 
-# Enable Livereload
-activate :livereload
-
 # Enable syntax highlighting
 activate :syntax
 
 # CloudFront
-activate :cloudfront do |cloudfront|
-  cloudfront.access_key_id     = ENV['AWS_ACCESS_KEY_ID']
-  cloudfront.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
-  cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
-end
+if travis?
+  activate :cloudfront do |cloudfront|
+    cloudfront.access_key_id     = aws_access_key_id
+    cloudfront.secret_access_key = aws_secret_access_key
+    cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
+  end
 
-# S3 Redirects
-activate :s3_redirect do |config|
-  config.bucket = ENV['AWS_S3_BUCKET']
-  config.aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
-  config.aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
-  config.after_build = true
+  # S3 Redirects
+  activate :s3_redirect do |config|
+    config.bucket = aws_s3_bucket
+    config.aws_access_key_id = aws_access_key_id
+    config.aws_secret_access_key = aws_secret_access_key
+    config.after_build = true
+  end
+else
+  # We use redirects below. The redirect method is not defined. Define it to do
+  # nothing.
+  def redirect(from = '', to = '')
+  end
+
+  # Enable Livereload
+  activate :livereload
 end
 
 # Parse code blocks
