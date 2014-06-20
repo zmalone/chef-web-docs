@@ -16,7 +16,7 @@ end
 ###
 # Config
 ###
-set :site_url, 'learnchef.opscode.com'
+set :site_url, 'learn.getchef.com'
 set :canonical_protocol_and_hostname, "http://#{site_url}"
 
 ###
