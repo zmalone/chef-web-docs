@@ -1,14 +1,30 @@
+before_install: ./bin/preinstall-travis-deploy-dependencies
+bundler_args: --deployment --without development
 cache:
+  bundler: true
   directories:
-    - vendor/bundle
+    - $(rvm gemdir)
     - build
 deploy:
+  # Prod
+  - provider: s3
+    access_key_id: # chef-prod learn-chef IAM user
+      secure: "EQIbgGOlxHtkExVO/9kuMiZk65kyKfO/gBu/cvlISeMBtsN5/GmS3cKzcLeHU4LVqyViAIxzrJ88Ph2WrWUBrQhREhveJBkfzgTUZ2guGiKZS5W5rUpiaQ9Q/rstuEc1xyw+2EUrcNcskFMthYaXTCZ8mZjn150HCl4zyREEMVQ="
+    secret_access_key:
+      secure: "pmZTPeOJXFyxiRwK0CrQX6/iY9whTUIpurADleJ3Vnp7gRuLDbIwIWGKOg+UEh/aY3hMfakKo1+tkkmrT02g/6iGYdRUL54BiIrFubyF/1HU3xD4zrDV/KIsH604k0PQJRq7P1HwQ1iVyzgJIEl3e56lDe8fTi52RMyCvP5oi/c="
+    bucket: learn.getchef.com
+    endpoint: learn.getchef.com.s3-website-us-east-1.amazonaws.com
+    skip_cleanup: true
+    local-dir: build
+    on:
+      branch: release
+    after_deploy: bundle exec middleman invalidate
   # Preprod
   - provider: s3
     access_key_id: # chef-preprod learn-chef IAM user
-      secure: "EDI8FIhQWzTg/zPabIQON7bYIudYFm+QUsrKhksNYIFz/i+kUDED+3jXFMYIzeK8hQVM82jtfNReT0DYjHXTPmPCF10B7D+w4NmEtInpW7O0OB52NJZrBTkTOipjcqLeZu/TngMn+JKkCzkBe3FwmPgSM2U+/fjQ+BKn9lOCy4c="
+      secure: "qKNaFrRrVJAxflH56cZhy4bsZ7Hm5IYql3++ko7LlPa5yMCbfBS+9A4McXEv+0axlT6ytzSUfEkl7KKZLY4VX4RjF/GM95HTA5gAc8Ko6unAyfv1K2pQDTYtoNR4XVSGtBcwNREkXlTY52e3PEM31pwa9n1yKOnDqaPG5s+e4wg="
     secret_access_key:
-      secure: "QxYru5Si17xLKmBx4Il6nFnKTqJSrdetyKGpD6FYdRXVB6aHV3PLMjJ/WwhuDrpUPYkSx/qIurZwexKH1WkO1BiukCuWetrSrUsnV8uVphoTHDsafLdAu1UW9uymuFPNvZTY4LQI0n0+tJjSQ2XGzJ4Vo360bEiLn3r+xiZ3/RQ="
+      secure: "C5tFJ82XCansErEWXlgdFAJbGi3Q8Yd08xSa+UtJlQ6JcnhJsWic9o90bvJJLzygm2oy2KpXAB1ma2ygOL02mZqvOqF1tznPwIG10StMsMGkj+C4sCoSMnMm5Hg1Rh0HL4t5OVGMVj3COeYisX1agWV+xo0mx8X1O2j4Db6Gy/U="
     bucket: learn-preprod.getchef.com
     skip_cleanup: true
     local-dir: build
@@ -17,13 +33,26 @@ deploy:
   # Sandbox
   - provider: s3
     access_key_id: # chef-preprod learn-chef IAM user
-      secure: "EDI8FIhQWzTg/zPabIQON7bYIudYFm+QUsrKhksNYIFz/i+kUDED+3jXFMYIzeK8hQVM82jtfNReT0DYjHXTPmPCF10B7D+w4NmEtInpW7O0OB52NJZrBTkTOipjcqLeZu/TngMn+JKkCzkBe3FwmPgSM2U+/fjQ+BKn9lOCy4c="
+      secure: "qKNaFrRrVJAxflH56cZhy4bsZ7Hm5IYql3++ko7LlPa5yMCbfBS+9A4McXEv+0axlT6ytzSUfEkl7KKZLY4VX4RjF/GM95HTA5gAc8Ko6unAyfv1K2pQDTYtoNR4XVSGtBcwNREkXlTY52e3PEM31pwa9n1yKOnDqaPG5s+e4wg="
     secret_access_key:
-      secure: "QxYru5Si17xLKmBx4Il6nFnKTqJSrdetyKGpD6FYdRXVB6aHV3PLMjJ/WwhuDrpUPYkSx/qIurZwexKH1WkO1BiukCuWetrSrUsnV8uVphoTHDsafLdAu1UW9uymuFPNvZTY4LQI0n0+tJjSQ2XGzJ4Vo360bEiLn3r+xiZ3/RQ="
+      secure: "C5tFJ82XCansErEWXlgdFAJbGi3Q8Yd08xSa+UtJlQ6JcnhJsWic9o90bvJJLzygm2oy2KpXAB1ma2ygOL02mZqvOqF1tznPwIG10StMsMGkj+C4sCoSMnMm5Hg1Rh0HL4t5OVGMVj3COeYisX1agWV+xo0mx8X1O2j4Db6Gy/U="
     bucket: learn-sandbox.getchef.com
     skip_cleanup: true
     local-dir: build
     on:
       branch: sandbox
-install: bundle install --deployment --without development
+env:
+  global:
+    - CLOUDFRONT_DISTRIBUTION_ID=E1WC83ND9PN8RY
+    # PREPROD_AWS_ACCESS_KEY_ID
+    - secure: "KpcB5rdx3zgsXbojx0RW3sKRzXVO6rUILb/Uz25r2UuCvamRbnUyXnzGd2H/EkYE1DkMy59bZO3/6Sq0jQV//K9OrXDpkDVYGomr0jTsA8PxMCCGxwEobXGZ3yEqrJWVV0UfHZMIv736/CD2z/Zc7SJ/B++zYqeRoshcul9RJ98="
+    # PREPROD_AWS_SECRET_ACCESS_KEY
+    - secure: "qeaE65re5x+R6G/vF8xmfE/U0xZ2QDn1HgMrxdXcN7IVDtPWjDvEX8m8sJD7LFOey8sV5VgCMBloXDJttGqNFO0Sgrb5T58LbzCuH4TU9EiqoDoY/BAvco5/Y/iU93z7BC4VaxWa/bWWyzV4Mn2EH/8KYkchwllmVpwgxBAc8Ww="
+    - PREPROD_AWS_S3_BUCKET=learn-preprod.getchef.com
+    # PROD_AWS_ACCESS_KEY_ID
+    - secure: "Uj+cLgQNwo+IlWGEwYFN+Sk8zIV9z8ltERf31h1Lv1PJq9eEVHHJxjBoqVSkd7NapKs+jeF9upSxJ0asstI/5Ph8Gdz6IvXA6u1VKxXHRcKWNLEyd6vvCUJmLJcMeH3MOWRKGszTYBaNyQaW5eO9qoBJCXcviVg82Ts9AuH0fS4="
+    # PROD_AWS_SECRET_ACCESS_KEY
+    - secure: "HKr7eZEgzAcfE/ykJn4aWQNWvbM+iHRqYCEhUFQa7PjiDLBk09qjT5umieSu9889WvJcYpaj6rTtKFeFYfgy50NGHCIN29Ca1a1wir2Xabpu9lo8kAR9YmVFuuYl6/ezB5YS5aCUejAAi6suUKRdXYhE7vX94rsotA2lh/42uY0="
+    - PROD_AWS_S3_BUCKET=learn.getchef.com
+    - SANDBOX_AWS_S3_BUCKET=learn-sandbox.getchef.com
 script: bundle exec middleman build

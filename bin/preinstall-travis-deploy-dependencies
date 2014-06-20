@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Every time Travis CI deploys to S3 it installs the below gems in an
+# "Installing deploy dependencies" step, which takes a long time (mostly
+# because aws-sdk depends on Nokogiri, which builds libxml every time). This
+# step happens after the "store build cache" step, so just adding $(rvm gemdir)
+# to the "cache" section in .travis.yml doesn't help.
+#
+# As a work-around, we "preinstall" those gems by running this script with the
+# .travis.yml "before_install" hook. This works because Travis (apparently)
+# doesn't ask for specific versions of these gems in the "Installing deploy
+# dependencies" step, so it gets the same versions as the below command does.
+# If Travis starts asking for specific versions, this script will have to be
+# updated to match, and will have to be kept up-to-date, which will suck.
+
+gem install dpl aws-sdk mime-types
