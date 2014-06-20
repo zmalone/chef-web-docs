@@ -111,6 +111,37 @@ describe DeployHelpers do
     end
   end
 
+  describe 'deploy?' do
+    subject(:deploy?) { helper.deploy? }
+
+    context 'when TRAVIS_BRANCH is master' do
+      it 'is true' do
+        ENV['TRAVIS_BRANCH'] = 'master'
+        expect(deploy?).to eq true
+      end
+    end
+
+    context 'when TRAVIS_BRANCH is release' do
+      it 'is true' do
+        ENV['TRAVIS_BRANCH'] = 'release'
+        expect(deploy?).to eq true
+      end
+    end
+
+    context 'when TRAVIS_BRANCH is sandbox' do
+      it 'is true' do
+        ENV['TRAVIS_BRANCH'] = 'sandbox'
+        expect(deploy?).to eq true
+      end
+    end
+
+    context 'when TRAVIS_BRANCH is something else' do
+      it 'is false' do
+        expect(deploy?).to eq false
+      end
+    end
+  end
+
   describe 'travis?' do
     context 'when the TRAVIS environment variable is set' do
       it 'is true' do
