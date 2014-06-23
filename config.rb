@@ -57,7 +57,6 @@ set :trailing_slash, false
 # end
 page '/robots.txt', layout: false
 page '/sitemap.xml', layout: false
-page '/website_configuration.xml', layout: false
 
 # S3 hosting needs a page at the root
 page '/error.html', directory_index: false
@@ -85,7 +84,7 @@ end
 activate :syntax
 
 # CloudFront
-if travis?
+if deploy?
   activate :cloudfront do |cloudfront|
     cloudfront.access_key_id     = aws_access_key_id
     cloudfront.secret_access_key = aws_secret_access_key
@@ -104,10 +103,10 @@ else
   # nothing.
   def redirect(from = '', to = '')
   end
-
-  # Enable Livereload
-  activate :livereload
 end
+
+# Enable Livereload
+activate :livereload unless travis?
 
 # Parse code blocks
 set :markdown_engine, :redcarpet

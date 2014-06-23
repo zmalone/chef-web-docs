@@ -6,11 +6,11 @@ Installation
 
 1. Clone the repository:
 
-        $ git clone git@github.com:opscode/quick-start.git
+        $ git clone git@github.com:opscode/learn-chef.git
 
 1. CD into the project:
 
-        $ cd quick-start
+        $ cd learn-chef
 
 1. Bundle the projects:
 
@@ -50,7 +50,7 @@ Contributing
 
 1. Build locally and make sure the build succeeds (exit 0)
 
-1. Submit a [Pull Request](https://github.com/opscode/quick-start/pull/new)
+1. Submit a [Pull Request](https://github.com/opscode/learn-chef/pull/new)
 
 1. (optional) Mention something in #learnchef on IRC or @learnchef on Twitter
 
