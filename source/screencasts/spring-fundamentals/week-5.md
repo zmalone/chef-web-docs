@@ -3,24 +3,13 @@ title: Chef Fundamentals Webinar Series - Part 5
 description: Fifth in a series of webinars covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 ---
-# Chef Fundamentals Webinar Series
+# Environments and knife-ec2
 
-This session will be held on [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
+After viewing this webinar you will be able to:
 
-[Sign up for our latest Chef Fundamentals Series is now available!](http://pages.getchef.com/cheffundamentalsseries.html)
-
-Join Chef Technical Community Director, [Nathen Harvey](http://twitter.com/nathenharvey), as he covers the fundamentals of using Chef in this webinar series.  Each webinar includes hands-on labs and is followed by a Q &amp; A session, so bring your questions!
-
-Each session lasts about one hour.
-
-  * Week 1 - [Overview of Chef][spring-fund-week-1]
-  * Week 2 - [Node Setup, Resources &amp; Recipes][spring-fund-week-2]
-  * Week 3 - [Working with the Node object and Roles][spring-fund-week-3]
-  * Week 4 - [Common configuration data with Data Bags][spring-fund-week-4]
-  * Week 5 - Using Environments - [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
-  * Week 6 - Community cookbooks and further resources - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
-
-* <small>Topics subject to change, schedule unlikely to change</small>
+* Describe what an Environment is, and how it is different from an Organization 
+* Set cookbook version constraints
+* Describe the process for launching a server on Amazon's EC2 using the `knife ec2 server create` command
 
 ### Pre-work
 
@@ -32,15 +21,27 @@ Before joining this webinar you should watch and complete the labs for the follo
 * [Working with the Node object and Roles][spring-fund-week-3]
 * [Common configuration data with Data Bags][spring-fund-week-4]
 
-Approximately 10 minutes before the webinar begins you should set-up your Chef Training Lab.
+During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.
 
 <iframe width="560" height="315" src="//www.youtube.com/embed/9bidpd-LiNw" frameborder="0" allowfullscreen></iframe>
 
 <p>&nbsp;</p>
 
+##### Video
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/NI45i5IoF7I" frameborder="0" allowfullscreen></iframe>
+
+<p>&nbsp;</p>
+
+##### Slides
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/36206195" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+<p>&nbsp;</p>
+
 ### What's Next?
 
-* Join us [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
+* Join us [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time] for [Community cookbooks and further resources][spring-fund-week-6]
 * Join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
 
 

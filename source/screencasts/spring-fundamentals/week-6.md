@@ -17,7 +17,7 @@ Each session lasts about one hour.
   * Week 2 - [Node Setup, Resources &amp; Recipes][spring-fund-week-2]
   * Week 3 - [Working with the Node object and Roles][spring-fund-week-3]
   * Week 4 - [Common configuration data with Data Bags][spring-fund-week-4]
-  * Week 5 - [Using Environments][spring-fund-week-5] - [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time]
+  * Week 5 - [Using Environments and knife-ec2][spring-fund-week-5]
   * Week 6 - Community cookbooks and further resources - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
 
 * <small>Topics subject to change, schedule unlikely to change</small>
