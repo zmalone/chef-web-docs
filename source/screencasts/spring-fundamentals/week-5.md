@@ -33,13 +33,11 @@ During this webinar we will use the [Chef Training Lab][chef-lab] to launch a vi
 
 <p>&nbsp;</p>
 
-<!--
 ##### Slides
 
-<iframe src="//www.slideshare.net/slideshow/embed_code/35709568" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<iframe src="//www.slideshare.net/slideshow/embed_code/36206195" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
 
 <p>&nbsp;</p>
---> 
 
 ### What's Next?
 
