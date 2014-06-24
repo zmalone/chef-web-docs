@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gem 'middleman',            '~> 3.3.3'
 gem 'middleman-syntax',     '~> 2.0.0'
+gem 'middleman-cloudfront'
+gem 'middleman-s3_redirect'
 gem 'middleman-smusher',    '~> 3.0.0'
 gem 'middleman-livereload'
 gem 'builder',              '~> 3.2.0'
@@ -11,6 +13,7 @@ gem 'slim',                 '~> 1.3.8'
 gem 'zurb-foundation',      :git => 'git://github.com/zurb/foundation', :ref => 'fb0cdaec'
 
 group :development, :test do
+  gem 'aws-sdk' # For AWS data syncing
   gem 'pry'
 end
 

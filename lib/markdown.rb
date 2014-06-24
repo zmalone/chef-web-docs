@@ -75,12 +75,6 @@ module ZurbFoundation
   def extras
       content.gsub!(/<p>\[TIMETOCOMPLETE\] (.+)<\/p>/) {
       "<div style='float:right; border:1px solid #666; display: inline-block; padding:5px; border-radius:5px; margin:15px;'><center><i class='fa fa-clock-o fa-3x blueiconcolor'></i><br><b>#{$1} minutes</b></center></div>" }
-      
-      content.gsub!(/<p>\[GIT\] (.+)<\/p>/) {
-      "<div style='float:right; border:1px solid #666; display: inline-block; padding:5px; border-radius:5px; margin:15px;'><center><i class='fa fa-github-o blackiconcolor'></i>&nbsp Need to pick back up later on another computer? Get the final files for this lesson <a href='#{$1}'>here</a>.</div>" }
-      
-      content.gsub!(/<p>\[GIT2\] (.+)<\/p>/) { "<div class=\"alert-box success\"><i class=\"fa fa-github blackiconcolor fa-2x\"></i> Need to pick back up later on another computer? Get the final files for this lesson <a href='#{$1}'>here</a>.</div>" }
-
   end
 
   def render(string)

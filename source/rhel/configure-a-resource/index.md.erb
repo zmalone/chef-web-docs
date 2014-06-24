@@ -7,7 +7,7 @@ layout: tutorial
 
 # Configure a resource
 
-Let's look at a basic configuration management project to get oriented to how Chef works. You'll learn how to manage a file, which is an example of a _resource_. A resource describes some piece of infrastructure, such as a file, a template, or a package.
+Let's look at a basic configuration management project to get oriented to how Chef works. You'll learn how to manage the Message of the Day (MOTD) file for your organization. A file is an example of a _resource_. A resource describes some piece of infrastructure, such as a file, a template, or a package.
 
 Remember, you'll be configuring your CentOS VM locally to get the hang of things. Later you'll learn how to manage one remotely.
 
@@ -15,12 +15,6 @@ Remember, you'll be configuring your CentOS VM locally to get the hang of things
 
   * Do you have a CentOS VM with the Chef tools installed? If not, [get a virtual machine](/rhel/get-a-virtual-machine).
   * Make sure you have a command prompt open to the <filepath>~/chef-repo</filepath> directory. We'll refer to this as your working directory.
-
-## <i class="fa fa-wrench greeniconcolor" style="margin-right:3px;"></i> Your job
-
-Welcome to Widget Corp! Your boss Jerry has asked you to take over the arduous task of updating the Message of the Day. Like those before you, you could try to remember to update it every day &ndash; but good luck taking a vacation. You could write a script &ndash; but even managing a file has its complexities.
-
-There must be a better way to solve it. Let's see how Chef can make things easier.
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:400px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, be on the lookout for:**</span><br>
@@ -44,7 +38,7 @@ First you need to create the file and set the initial MOTD. To keep things basic
 From your working directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
 
 ```ruby
-# hello.rb
+# ~/chef-repo/hello.rb
 file 'motd' do
   content 'hello world'
 end
@@ -100,7 +94,7 @@ Now you need to change the MOTD.
 Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
 
 ```ruby
-# hello.rb
+# ~/chef-repo/hello.rb
 file 'motd' do
   content 'hello chef'
 end
@@ -132,7 +126,7 @@ Imagine that a co-worker manually changes <filepath>motd</filepath> by replacing
 
 ```bash
 # ~/chef-repo
-echo 'hello robots' >> motd
+$ echo 'hello robots' >> motd
 ```
 
 Now run <codeinline>chef-apply</codeinline>.
@@ -196,6 +190,12 @@ ls: cannot access motd: No such file or directory
 
 You ran a few basic Chef commands and got a flavor of what Chef can do. You learned that a resource describes one part of the system and its desired state and worked with a [file][file] resource.
 
+### <i class="fa fa-cubes greeniconcolor" style="margin-right:3px;"></i> Resources describe the what, not the how
+
+A _policy_ states a requirement, such as what software and files should be installed and how they should be configured. Chef ensures that your server complies with the policies that you define.
+
+Your policy declares _what_ state each resource should be in, but not _how_ to get there. In this lesson, you declared that the file <filepath>motd</filepath> must exist and what its contents are, but you didn't specify how to do it. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
+
 ### <i class="fa fa-file-text greeniconcolor" style="margin-right:3px;"></i> Recipes organize resources
 
 In Chef, <filepath>hello.rb</filepath> is an example of a [recipe](http://docs.opscode.com/essentials_cookbook_recipes.html), or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
@@ -208,7 +208,7 @@ When you deleted the file, you saw the <codeinline>delete</codeinline> action.
 
 Think of an action as the process that achieves the desired configuration state. Every resource in Chef has a default action, and it's the most common affirmative one &ndash; for example, _create_ a file, _install_ a package, and _start_ a service.
 
-When we created the file we didn't specify the <codeinline>create</codeinline> action when we created the file because <codeinline>create</codeinline> is the default. But of course you can specify it if you want.
+When we created the file we didn't specify the <codeinline>create</codeinline> action because <codeinline>create</codeinline> is the default. But of course you can specify it if you want.
 
 The documentation for each resource type, [file](http://docs.opscode.com/resource_file.html) for example, explains the type's default action.
 

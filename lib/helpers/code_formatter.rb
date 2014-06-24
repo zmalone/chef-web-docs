@@ -2,13 +2,14 @@ module Middleman
   module Syntax
     module Highlighter
 
+require 'pry'
+
       class CodeFormatter
         def render(lexed_code, highlighter_options)
           highlighter_options.merge!(:line_numbers => true)
-
-          lexed_code, filepath = extract_filepath_if_present(lexed_code)
+          lexed_code, filepath, has_filepath = extract_filepath_if_present(lexed_code)
           formatter = Rouge::Formatters::HTML.new(highlighter_options)
-          inner_content = pygments_wrap formatter.format(lexed_code), highlighter_options[:css_class]
+          inner_content = pygments_wrap formatter.format(has_filepath ? lexed_code[1..-1] : lexed_code).strip, highlighter_options[:css_class]
           source_window inner_content, 'Editor: ' + filepath
         end
 
@@ -17,9 +18,9 @@ module Middleman
 
           if comment_token?(first_token_type)
             # Bad that I am specifying the comment to strip ... this does not port
-            [ remove_comment(lexed_code), create_title_from_comment(first_token_content) ]
+            [ remove_comment(lexed_code), create_title_from_comment(first_token_content), true ]
           else
-            [ lexed_code, default_filename ]
+            [ lexed_code, default_filename, false ]
           end
         end
 

@@ -13,7 +13,7 @@ module Middleman
           first_token_type, first_token_content = lexed_code.first
 
           if first_token_type.name == :Comment || first_token_type.parent.name == :Comment
-            [ trim_comment(lexed_code), first_token_content.gsub(/^#+\s*/,"") ]
+            [ trim_comment(lexed_code), first_token_content.gsub(/^#+\s*/,"").strip ]
           else
             [ lexed_code, default_working_dir ]
           end
@@ -27,41 +27,98 @@ module Middleman
           "~/"
         end
 
+        require 'cgi'
+
         def promptize(content)
 
           gutters = []
           lines_of_code = []
-          last_token_was_a_prompt = false
-          last_token_was_an_escape = false
-
-          # lines_of_content = content.strip.lines
+          buffer = ""
+          # unroll the content into a single text buffer
           content.each do |token,text|
-            next if text == "\n"
-
-            if token.name == :Prompt
-              last_token_was_a_prompt = true
-              gutters.push gutter(text.strip)
-            elsif token.name == :Escape
-              lines_of_code.push "<span class='escape'>#{text.strip}</span>"
-              last_token_was_an_escape = true
-            else
-              lines = text.strip.split("\n")
-              lines_of_code.push line_of_code(lines.first,last_token_was_a_prompt || last_token_was_an_escape)
-              if lines.length > 1
-                lines[1..-1].each { |line| lines_of_code.push line_of_code(line,false) }
-              end
-
-              if last_token_was_a_prompt
-                lines[1..-1].each { |line| gutters.push gutter("&nbsp;") }
-              else
-                lines.each { |line| gutters.push gutter("&nbsp;") }
-              end
-
-              last_token_was_a_prompt = false
-              last_token_was_an_escape = false
-            end
-
+            buffer += text
           end
+          # process escape characters & split into lines
+          lines = CGI.escapeHTML(buffer.strip).split("\n")
+          # process each line
+          lines.each do |line|
+            if line.length > 1 && line[0] == '$'
+              # begins with prompt, so push $ onto gutter and add the remaining
+              # line to the lines of code
+              gutters.push gutter('$')
+              lines_of_code.push line_of_code(line.length > 2 ? line[2..-1] : "", true)
+            else
+              # no gutter, so just push a space onto gutter and add the entire
+              # line to the lines of code
+              gutters.push gutter("&nbsp;")
+              lines_of_code.push line_of_code(line, false)
+            end
+          end
+
+          # gutters = []
+          # lines_of_code = []
+          # last_token_was_a_prompt = false
+          # last_token_was_an_escape = false
+          # current_line = ""
+          # saw_echo = false
+          #
+          # # lines_of_content = content.strip.lines
+          # content.each do |token,text|
+          #   next if text == "\n"
+          #   #   lines_of_code.push newline
+          #   #   next
+          #   # end
+          #
+          #   #binding.pry
+          #   if text == "echo"
+          #     saw_echo = true
+          #   end
+          #
+          #   if token.name == :Prompt
+          #     last_token_was_a_prompt = true
+          #     gutters.push gutter(current_line + text.strip)
+          #     current_line = ""
+          #   elsif token.name == :Escape
+          #     lines_of_code.push "<span class='escape'>current_line + #{text.strip}</span>"
+          #     last_token_was_an_escape = true
+          #     current_line = ""
+          #   elsif token.name == :Operator || token.name == :Keyword || token.name == :Builtin || token.name == :Single
+          #     current_line += text
+          #   else
+          #     lines = text.strip.split("\n")
+          #
+          #     if token.name != :Text
+          #       binding.pry
+          #     end
+          #
+          #     line = lines.first
+          #     if (line)
+          #       line = current_line + line
+          #     elsif current_line != ""
+          #       line = current_line
+          #     end
+          #     current_line = ""
+          #
+          #     lines_of_code.push line_of_code(line, last_token_was_a_prompt || last_token_was_an_escape)
+          #
+          #     if lines.length > 1
+          #       lines[1..-1].each { |line| lines_of_code.push line_of_code(line,false) }
+          #
+          #       if last_token_was_a_prompt
+          #         if saw_echo
+          #           #binding.pry
+          #         end
+          #         lines[1..-1].each { |line| gutters.push gutter("&nbsp;") }
+          #       else
+          #         lines.each { |line| gutters.push gutter("&nbsp;") }
+          #       end
+          #     end
+          #
+          #     last_token_was_a_prompt = false
+          #     last_token_was_an_escape = false
+          #   end
+          #
+          # end
 
           table = "<table><tr>"
           table += "<td class='gutter'><pre class='line-numbers'>#{gutters.join("")}</pre></td>"
@@ -87,7 +144,7 @@ module Middleman
             line_class = "output"
           end
           if line
-            "<span class='line #{line_class}'>#{line.strip}</span>"
+            "<span class='line #{line_class}'>#{line}</span>"
           else
             ""
           end
