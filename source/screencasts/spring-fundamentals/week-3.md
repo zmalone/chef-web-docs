@@ -42,15 +42,12 @@ Before joining this webinar you should watch and complete the labs for the follo
 
 ### What's Next?
 
-* Please join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
 * [Chef Fundamentals Module 4][spring-fund-week-4]
+* Please join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
 
 #### Send Us Your Feedback!
 
 Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
-
-There is still time to [register and join the series](http://pages.getchef.com/cheffundamentalsseries.html).
-
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2

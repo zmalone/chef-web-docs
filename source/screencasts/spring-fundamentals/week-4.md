@@ -39,15 +39,13 @@ During this webinar we will use the [Chef Training Lab][chef-lab] to launch a vi
 
 ### What's Next?
 
-* Join us [Tuesday, June 17 at 17:00 UTC / 10:00 PDT][week-5-time] for [Environments][spring-fund-week-5]
+* [Environments and knife-ec2][spring-fund-week-5]
 * Join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
 
 
 #### Send Us Your Feedback!
 
 Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
-
-There is still time to [register and join the series](http://pages.getchef.com/cheffundamentalsseries.html).
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
