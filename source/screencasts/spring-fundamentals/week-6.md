@@ -3,24 +3,13 @@ title: Chef Fundamentals Webinar Series - Part 6
 description: Sixth in a series of webinars covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 ---
-# Chef Fundamentals Webinar Series
+# Community cookbooks and further resources
 
-This session will be held on [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
+After viewing this webinar you will be able to:
 
-[Sign up for our latest Chef Fundamentals Series is now available!](http://pages.getchef.com/cheffundamentalsseries.html)
-
-Join Chef Technical Community Director, [Nathen Harvey](http://twitter.com/nathenharvey), as he covers the fundamentals of using Chef in this webinar series.  Each webinar includes hands-on labs and is followed by a Q &amp; A session, so bring your questions!
-
-Each session lasts about one hour.
-
-  * Week 1 - [Overview of Chef][spring-fund-week-1]
-  * Week 2 - [Node Setup, Resources &amp; Recipes][spring-fund-week-2]
-  * Week 3 - [Working with the Node object and Roles][spring-fund-week-3]
-  * Week 4 - [Common configuration data with Data Bags][spring-fund-week-4]
-  * Week 5 - [Using Environments and knife-ec2][spring-fund-week-5]
-  * Week 6 - Community cookbooks and further resources - [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
-
-* <small>Topics subject to change, schedule unlikely to change</small>
+* Find, preview, and download cookbooks from the Chef Community site
+* Use knife to work with the Community Site API
+* Download, extract, examine and implement cookbooks from the Community site
 
 ### Pre-work
 
@@ -31,25 +20,33 @@ Before joining this webinar you should watch and complete the labs for the follo
 * [The chef-client application][week2-homework]
 * [Working with the Node object and Roles][spring-fund-week-3]
 * [Common configuration data with Data Bags][spring-fund-week-4]
-* [Using Environments][spring-fund-week-5]
+* [Environments and knife-ec2][spring-fund-week-5]
 
-Approximately 10 minutes before the webinar begins you should set-up your Chef Training Lab.
+During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.
 
 <iframe width="560" height="315" src="//www.youtube.com/embed/9bidpd-LiNw" frameborder="0" allowfullscreen></iframe>
 
 <p>&nbsp;</p>
 
+##### Video
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/ovTIeS3kx4g" frameborder="0" allowfullscreen></iframe>
+
+<p>&nbsp;</p>
+
+##### Slides
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/36252227" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+<p>&nbsp;</p>
+
 ### What's Next?
 
-* Join us [Tuesday, June 24 at 17:00 UTC / 10:00 PDT][week-6-time]
 * Join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
-
 
 #### Send Us Your Feedback!
 
 Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
-
-There is still time to [register and join the series](http://pages.getchef.com/cheffundamentalsseries.html).
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
