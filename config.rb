@@ -16,7 +16,7 @@ end
 ###
 # Config
 ###
-set :site_url, 'learnchef.opscode.com'
+set :site_url, 'learn.getchef.com'
 set :canonical_protocol_and_hostname, "http://#{site_url}"
 
 ###
@@ -81,28 +81,33 @@ helpers do
   include URLHelpers
 end
 
-# Enable Livereload
-activate :livereload
-
-# Enable syntax highlighting - turn off the default wrapping
-activate :syntax, wrap: false
-# Override the middleman-syntax to provide backwards compat with pygments wrap
-require 'lib/middleman_syntax'
+# Enable syntax highlighting
+activate :syntax
 
 # CloudFront
-activate :cloudfront do |cloudfront|
-  cloudfront.access_key_id     = ENV['AWS_ACCESS_KEY_ID']
-  cloudfront.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
-  cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
+if deploy?
+  activate :cloudfront do |cloudfront|
+    cloudfront.access_key_id     = aws_access_key_id
+    cloudfront.secret_access_key = aws_secret_access_key
+    cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
+  end
+
+  # S3 Redirects
+  activate :s3_redirect do |config|
+    config.bucket = aws_s3_bucket
+    config.aws_access_key_id = aws_access_key_id
+    config.aws_secret_access_key = aws_secret_access_key
+    config.after_build = true
+  end
+else
+  # We use redirects below. The redirect method is not defined. Define it to do
+  # nothing.
+  def redirect(from = '', to = '')
+  end
 end
 
-# S3 Redirects
-activate :s3_redirect do |config|
-  config.bucket = ENV['AWS_S3_BUCKET']
-  config.aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
-  config.aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
-  config.after_build = true
-end
+# Enable Livereload
+activate :livereload unless travis?
 
 # Parse code blocks
 set :markdown_engine, :redcarpet
@@ -122,10 +127,10 @@ redirect '/errors-and-problems/403-forbidden', 'http://docs.opscode.com/errors.h
 redirect '/errors-and-problems/workflow-problems', 'http://docs.opscode.com/errors.html#workflow-problems'
 redirect '/quickstart', '/set-up-your-chef-environment'
 redirect '/quickstart/chef-server', '/set-up-your-chef-environment#step1setupchefserver'
-redirect '/quickstart/converge', '/set-up-your-chef-environment##step3setupanodetomanage'
-redirect '/quickstart/nodes', '/set-up-your-chef-environment##step3setupanodetomanage'
-redirect '/quickstart/workstation', '/set-up-your-chef-environment##step2setupyourworkstation'
-redirect '/quickstart/workstation-setup', '/set-up-your-chef-environment##step2setupyourworkstation'
+redirect '/quickstart/converge', '/set-up-your-chef-environment#step3setupanodetomanage'
+redirect '/quickstart/nodes', '/set-up-your-chef-environment#step3setupanodetomanage'
+redirect '/quickstart/workstation', '/set-up-your-chef-environment#step2setupyourworkstation'
+redirect '/quickstart/workstation-setup', '/set-up-your-chef-environment#step2setupyourworkstation'
 redirect '/screencasts', '/additional-resources#cheffundamentalswebinarseries'
 redirect '/set-up-your-chef-environment', '/get-started'
 redirect '/starter-use-cases', '/legacy/starter-use-cases/'
