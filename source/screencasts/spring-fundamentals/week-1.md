@@ -34,8 +34,8 @@ After viewing this webinar you will be able to:
 
 ##### What's Next?
 
-* Please join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
 * [Chef Fundamentals Module 2][spring-fund-week-2]
+* Please join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
 
 ##### Send Us Your Feedback!
 
