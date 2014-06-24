@@ -23,7 +23,7 @@ Let's pick up by creating a _cookbook_ to make our web server recipe easier to m
 
   1. [Create a cookbook](#1createacookbook)
   1. [Create a cookbook file](#2createacookbookfile)
-  1. [Update the recipe to reference the external file](#3updatetherecipetoreferencetheexternalfile)
+  1. [Update the recipe to reference the HTML file](#3updatetherecipetoreferencethehtmlfile)
 
 ## 1. Create a cookbook
 
@@ -47,10 +47,9 @@ $ chef generate cookbook webserver
 Here's the directory structure that the command created.
 
 ```bash
-# ~/chef-repo
-$ cd ..
+# ~/chef-repo/cookbooks
 $ tree
-cookbooks/
+.
 └── webserver
     ├── Berksfile
     ├── chefignore
@@ -58,6 +57,8 @@ cookbooks/
     ├── README.md
     └── recipes
         └── default.rb
+
+2 directories, 5 files
 ```
 
 Note the default recipe, named <filepath>default.rb</filepath>. This is where we'll move our Apache recipe in a moment.
@@ -67,7 +68,7 @@ Note the default recipe, named <filepath>default.rb</filepath>. This is where we
 Now we'll migrate the home page to our cookbook. First, run this commmand to generate the HTML file for our home page.
 
 ```bash
-# ~/chef-repo
+# ~/chef-repo/cookbooks
 $ chef generate template webserver index.html
 ```
 
@@ -76,19 +77,19 @@ The file <filepath>index.html.erb</filepath> gets created under <filepath>webser
 ```bash
 # ~/chef-repo/cookbooks
 $ tree cookbooks
-webserver/
-├── Berksfile
-├── chefignore
-├── files
-│   └── default
-│       └── index.html
-├── metadata.rb
-├── README.md
-├── recipes
-│   └── default.rb
-└── templates
-    └── default
-        └── index.html.erb
+.
+└── webserver
+    ├── Berksfile
+    ├── chefignore
+    ├── metadata.rb
+    ├── README.md
+    ├── recipes
+    │   └── default.rb
+    └── templates
+        └── default
+            └── index.html.erb
+
+4 directories, 6 files
 ```
 
 The .erb extension simply means that the file can have placeholders. More on that later.
@@ -132,13 +133,15 @@ $ sudo chef-client --local-mode --runlist webserver
 
 [COMMENT] crushtime-3: ^ Typing --local-mode or -z is a pain. Make it the default when no configuration is present.
 
-The result is the same as before, but with a cookbook things are now easier to manage.
+Refresh your browser. The result is the same as before, but with a cookbook things are now easier to manage.
+
+![The basic home page](rhel/webserver-basic.png)
 
 ## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
 
-Your web server is shaping up! With a [cookbook][cookbook] you're now better organized. You also learned about how the [template][template] resource enables you to reference an external file from your recipe.
+Your web server is shaping up! With a [cookbook][cookbook] you're now better organized. You learned how the [template][template] resource enables you to reference an external file from your recipe.
 
-You also saw the saw the [run-list][run-list]. The run-list simply lets you specify which cookbooks to run, and the order in which to run them. This is handy once you have lots of cookbooks, and the order in which they run is important.
+You also saw the [run-list][run-list]. The run-list lets you specify which cookbooks to run, and the order in which to run them. This is handy once you have lots of cookbooks, and the order in which they run is important.
 
 ## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
 

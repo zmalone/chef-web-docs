@@ -1,9 +1,6 @@
 module Middleman
   module Syntax
     module Highlighter
-
-require 'pry'
-
       class CodeFormatter
         def render(lexed_code, highlighter_options)
           highlighter_options.merge!(:line_numbers => true)
@@ -44,7 +41,7 @@ require 'pry'
         end
 
         def default_filename
-          "Random File"
+          "Untitled"
         end
 
         def pygments_wrap(content,css_class)

@@ -13,7 +13,7 @@ keywords: TODO
 
 Chef provides information about your server that you can access from your cookbooks. Let's update our home page to display some info about the server. By doing so, you'll also practice updating your  cookbook, uploading it to the Chef server, and seeing changes appear on your server.
 
-You already learned how to use the <codeinline>template</codeinline> resource to reference the HTML file for your home page, so you're already set up to add placeholders to your HTML file that are filled in as the recipe runs. This is called dynamic configuration.
+You already learned how to use the <codeinline>template</codeinline> resource to reference the HTML file for your home page, so you're already set up to add placeholders to your HTML file that are filled in as the recipe runs. This is an example of dynamic configuration.
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:510px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, keep in mind that:**</span><br>
@@ -24,12 +24,12 @@ You already learned how to use the <codeinline>template</codeinline> resource to
 
 ## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
-  1. [Add template code to your HTML](#2addtemplatecodetoyourhtml)
-  1. [Reference the template from your recipe](#3referencethetemplatefromyourrecipe)
-  1. [Run the cookbook](#4runthecookbook)
-  1. [Add more server attributes to the home page](#5addmoreserverattributestothehomepage)
+  1. [Add template code to your HTML](#1addtemplatecodetoyourhtml)
+  1. [Upload your cookbook to the Chef server](#2uploadyourcookbooktothechefserver)
+  1. [Run the cookbook on your node](#3runthecookbookonyournode)
+  1. [Confirm the result](#4confirmtheresult)
 
-## 2. Add template code to your HTML
+## 1. Add template code to your HTML
 
 Change <filepath>index.html.erb</filepath> to look like this.
 
@@ -67,21 +67,21 @@ $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-passw
 
 Open a web browser and navigate to your web server.
 
-![The home page with IP address](rhel/webserver-ip-address.png)
+![The home page with IP address](misc/webserver-template-remote.png)
 
 Chef discovers and adds the IP address for you automatically!
 
 ## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
 
-Dynamic configuration means that you can write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipes for every node. [templates][template] enables you to do this.
+Dynamic configuration means that you can write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node. [Templates][template] enable you to do this.
 
-You also ran <codeinline>knife ssh</codeinline> to update your node. [knife ssh][knifessh] invokes the command you specify over an SSH connection on a node &ndash; in our case <codeinline>sudo chef-client</codeinline>. You'll learn in a later lesson why <codeinline>knife ssh</codeinline> is so powerful.
+You also ran <codeinline>knife ssh</codeinline> to update your node. [knife ssh][knifessh] invokes the command you specify over an SSH connection on a node &ndash; in our case <codeinline>sudo chef-client</codeinline>. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
 
 ### <i class="fa fa-puzzle-piece greeniconcolor" style="margin-right:3px;"></i> Templates work through node objects
 
-To understand how templates work, you should first understand a bit more about what a node is. Recall that a _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure that's managed by Chef. When you ran <codeinline>chef-client</codeinline> for the first time, Chef created what's called a _node object_ for you. This node object contains a number of attributes that describe the server, and these attributes are saved on the Chef server.
+To understand how templates work, you should first understand a bit more about what a node is. Recall that a _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure that's managed by Chef. When you bootstrapped your node, the Chef server created what's called a _node object_ for you. This node object contains a number of attributes that describe the server, and these attributes are saved on the Chef server.
 
-When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the server's attributes from the file into an in-memory copy. For our home page, we want to display the server's IP address. To do so, we access the <codeinline>ipaddress</codeinline> attribute of the <codeinline>node</codeinline> object.
+When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the node's attributes from the Chef server into memory. For our home page, we want to display the server's IP address. To do so, we access the <codeinline>ipaddress</codeinline> attribute of the <codeinline>node</codeinline> object.
 
 When you bootstrapped your node, we suggested the name **node1**. The node name can be whatever you want. The server's FQDN is the default.
 
