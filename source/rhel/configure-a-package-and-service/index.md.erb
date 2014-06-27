@@ -11,7 +11,7 @@ keywords: package, service, file, resource, Apache, httpd
 
 Let's extend what you learned about file management in the [previous lesson](/rhel/configure-a-resource/) to manage the Apache HTTP Server package and its service. Like files, packages and services are also types of resources.
 
-Of course, you can set up one web server manually. But with Chef it'll be easier to manage your infrastruture as you scale, add complexity, and roll out new configuration policies.
+Of course, you can set up one web server manually. But with Chef it'll be easier to manage your infrastructure as you scale, add complexity, and roll out new configuration policies.
 
 Although you don't need prior knowledge about web servers, configuring one is a great way to grow your Chef skills.
 
@@ -47,7 +47,7 @@ Now run <codeinline>chef-apply</codeinline> to apply the recipe.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply webserver.rb
+$ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install
     - install version 2.2.15-30.el6.centos of package httpd
@@ -57,7 +57,7 @@ Run the recipe a second time.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply webserver.rb
+$ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install (up to date)
   ```
@@ -83,7 +83,7 @@ Now apply it.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply webserver.rb
+$ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install (up to date)
   * service[httpd] action start
@@ -122,29 +122,29 @@ Now apply it.
 
 ```bash
 # ~/chef-repo/
-$ sudo chef-apply webserver.rb
+$ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install (up to date)
   * service[httpd] action start (up to date)
   * service[httpd] action enable (up to date)
-  * file[/var/www/index.html] action create
-    - update content in file /var/www/index.html from none to bce910
-        --- /var/www/index.html 2014-05-15 03:38:54.524394740 -0700
-        +++ /tmp/.index.html20140515-18937-ibjog5 2014-05-15 03:39:13.516394179 -0700
-        @@ -1,5 +1,6 @@
+  * file[/var/www/html/index.html] action create
+    - create new file /var/www/html/index.html
+    - update content in file /var/www/html/index.html from none to b8b8af
+        --- /var/www/html/index.html2014-06-27 15:11:55.190162819 -0400
+        +++ /tmp/.index.html20140627-9382-1nx42372014-06-27 15:11:55.190162819 -0400
+        @@ -1 +1,6 @@
         +<html>
         +  <body>
         +    <h1>hello world</h1>
         +  </body>
-        +</html>
-    - restore selinux security context
+        +  </html>
 ```
 
 Confirm that your web page is available. From a web browser, navigate to **http://localhost**. You'll see something like this.
 
 ![The basic home page](rhel/webserver-basic.png)
 
-[CONCEPT] If your browser can't connect, it could be that a firewall is blocking incoming connections on port 80. In that case, try running the <codeinline>curl</codeinline> command: <codeinline>curl http://localhost</codeinline>.
+[CONCEPT] If you're working from SSH, try running the <codeinline>curl</codeinline> command: <codeinline>curl http://localhost</codeinline>.
 
 <hr>
 
@@ -181,11 +181,11 @@ The same idea applies to the action list <codeinline>[:start, :enable]</codeinli
 
 It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the Apache service before the package is even installed.
 
-A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error.) That's why we ordered the service actions the way we did. If the service can't start then we don't want to enable it.
+A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't start then we don't want to enable it.
 
 ## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
 
-You may notice one big problem with our recipe &ndash; the HTML code lives inside it, so there is no clear separation between your web site code and your recipe to manage it. It's a good incremental step because it helps you get things working, but this of course would never scale to a full web site.
+You may notice one big problem with our recipe &ndash; the HTML code lives inside it, so there is no clear separation between our web site code and our recipe to manage it. It's a good incremental step because it helps you get things working, but this of course would never scale to a full web site.
 
 Next you'll learn how to create a _cookbook_ to make your Chef recipes more manageable.
 

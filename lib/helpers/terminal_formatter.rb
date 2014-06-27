@@ -51,6 +51,7 @@ module Middleman
               # no gutter, so just push a space onto gutter and add the entire
               # line to the lines of code
               gutters.push gutter("&nbsp;")
+              line = "&nbsp;" if line == "" # work-around fact that blank lines are eaten
               lines_of_code.push line_of_code(line, false)
             end
           end

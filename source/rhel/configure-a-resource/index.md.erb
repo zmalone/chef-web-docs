@@ -7,9 +7,9 @@ layout: tutorial
 
 # Configure a resource
 
-Let's look at a basic configuration management project to get oriented to how Chef works. You'll learn how to manage the Message of the Day (MOTD) file for your organization. A file is an example of a _resource_. A resource describes some piece of infrastructure, such as a file, a template, or a package.
+To get started, let's look at a basic configuration management project. You'll learn how to manage the Message of the Day (MOTD) file for your organization. A file is an example of a _resource_. A resource describes some piece of infrastructure, such as a file, a template, or a package.
 
-Remember, you'll be configuring your CentOS VM locally to get the hang of things. Later you'll learn how to manage one remotely.
+Remember, you'll be configuring your CentOS VM locally. This is not how you'd typically work in your production environment, but it's a great way to get the hang of things.
 
 ## <i class="fa fa-question-circle blueiconcolor" style="margin-right:3px;"></i> All set up?
 
@@ -33,7 +33,7 @@ Remember, you'll be configuring your CentOS VM locally to get the hang of things
 
 ## 1. Create the file
 
-First you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
+First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
 
 From your working directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
 
@@ -53,11 +53,10 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - create new file motd
     - update content in file motd from none to de031d
-        --- motd  2014-05-13 14:52:54.025253948 -0700
-        +++ .motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
+        --- motd        2014-05-13 14:52:54.025253948 -0700
+        +++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
         @@ -1 +1,2 @@
         +hello world
-    - restore selinux security context
 ```
 
 [COMMENT] crushtime-4: 'chef-apply' should be 'chef apply'.
@@ -74,7 +73,7 @@ hello world
 
 ### Run the command a second time
 
-Let's see now what happens when you run the same command again.
+Now, let's see now what happens when you run the same command again.
 
 ```bash
 # ~/chef-repo
@@ -85,11 +84,11 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 This time you get a different response. This is because Chef does work only when it needs to.
 
-Chef looks at the current configuration state and applies action only if it doesn't match the desired state. Here, Chef doesn't create or modify <filepath>motd</filepath> because it already exists and its contents didn't change.
+Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <filepath>motd</filepath> because it already exists and its contents didn't change.
 
 ## 2. Update the file's contents
 
-Now you need to change the MOTD.
+Now you're going to change the MOTD.
 
 Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
 
@@ -100,20 +99,19 @@ file 'motd' do
 end
 ```
 
-And run <codeinline>chef-apply</codeinline>.
+Run <codeinline>chef-apply</codeinline>.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply hello.rb
+$ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - update content in file motd from de031d to b1522f
-        --- motd  2014-05-13 14:52:54.025253948 -0700
-        +++ .motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
+        --- motd        2014-05-13 14:52:54.025253948 -0700
+        +++ /tmp/.motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
         @@ -1,2 +1,2 @@
         -hello world
         +hello chef
-    - restore selinux security context
 ```
 
 This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
@@ -122,7 +120,7 @@ This time Chef does work because we've changed the desired state of the file and
 
 You need to make sure that no other process can change the MOTD.
 
-Imagine that a co-worker manually changes <filepath>motd</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor or like this.
+Imagine that a co-worker manually changes <filepath>motd</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor. Or you can change the file from the command line like this.
 
 ```bash
 # ~/chef-repo
@@ -133,21 +131,18 @@ Now run <codeinline>chef-apply</codeinline>.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply hello.rb
+$ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - update content in file motd from 9b0c18 to b1522f
-        --- motd  2014-05-13 15:03:47.638770524 -0700
-        +++ .motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
+        --- motd        2014-05-13 15:03:47.638770524 -0700
+        +++ /tmp/.motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
         @@ -1,2 +1,2 @@
         -hello robots
         +hello chef
-    - restore selinux security context
 ```
 
-[COMMENT] Need sudo for this. Go back when the sudo/backup issue resolved...
-
-Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resources matches what you specify, even if they are altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
+Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resource matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
 
 [COMMENT] crushtime-1: ^ I cut the part about backups due to overwhelming feedback, but saving backups to /var/chef/backup requires root access, when the recipe otherwise might not need it. Consider moving backups to home directory, perhaps only when running in --local-mode. That way, you don't need to run with sudo by default.
 
@@ -168,13 +163,11 @@ Now apply <filepath>goodbye.rb</filepath> to delete the file.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply goodbye.rb
+$ chef-apply goodbye.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action delete
     - delete file motd
 ```
-
-[COMMENT] Need sudo for this. Go back when the sudo issue resolved...
 
 The output shows that <filepath>motd</filepath> is now gone, but let's prove it.
 
@@ -188,19 +181,13 @@ ls: cannot access motd: No such file or directory
 
 ## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
 
-You ran a few basic Chef commands and got a flavor of what Chef can do. You learned that a resource describes one part of the system and its desired state and worked with a [file][file] resource.
+You ran a few basic Chef commands and got a flavor of what Chef can do. You learned that a resource describes one part of the system and its desired state and you worked with a [file][file] resource.
 
 ### <i class="fa fa-cubes greeniconcolor" style="margin-right:3px;"></i> Resources describe the what, not the how
 
-A _policy_ states a requirement, such as what software and files should be installed and how they should be configured. Chef ensures that your server complies with the policies that you define.
+Your policy declares _what_ state each resource should be in, but not _how_ to get there. In this lesson, you declared that the file <filepath>motd</filepath> must exist and what its contents are, but you didn't specify how to apply that policy. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
 
-Your policy declares _what_ state each resource should be in, but not _how_ to get there. In this lesson, you declared that the file <filepath>motd</filepath> must exist and what its contents are, but you didn't specify how to do it. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
-
-### <i class="fa fa-file-text greeniconcolor" style="margin-right:3px;"></i> Recipes organize resources
-
-In Chef, <filepath>hello.rb</filepath> is an example of a [recipe](http://docs.opscode.com/essentials_cookbook_recipes.html), or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
-
-Our recipe states everything we need to manage the MOTD file. You used [chef-apply][chef-apply] to apply that recipe from the command line.
+A recipe declares what state each resource should be in but not how to achieve that state. Chef handles these complexities for you.
 
 ### <i class="fa fa-bolt greeniconcolor" style="margin-right:3px;"></i> Resources have actions
 
@@ -212,9 +199,11 @@ When we created the file we didn't specify the <codeinline>create</codeinline> a
 
 The documentation for each resource type, [file](http://docs.opscode.com/resource_file.html) for example, explains the type's default action.
 
-### <i class="fa fa-cog greeniconcolor" style="margin-right:3px;"></i> Resources have attributes
+### <i class="fa fa-file-text greeniconcolor" style="margin-right:3px;"></i> Recipes organize resources
 
-When you created the file, you didn't specify its mode or group &ndash; you specified only its contents. That's because Chef provides defaults for those. We'll look at resource attributes such as these later.
+In Chef, <filepath>hello.rb</filepath> is an example of a [recipe](http://docs.opscode.com/essentials_cookbook_recipes.html), or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
+
+Our recipe states everything we need to manage the MOTD file. You used [chef-apply][chef-apply] to apply that recipe from the command line.
 
 <hr>
 

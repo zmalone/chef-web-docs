@@ -9,9 +9,9 @@ keywords: cookbook, recipe
 
 # Make your recipe more manageable
 
-[Last time](/rhel/configure-a-package-and-service/) you learned how to manage a package and a service by configuring a web server. You also added a basic web page. But there was one problem &ndash; although it helped you verifiy that your web server was properly configured, the code for your HTML page was embedded in the Chef recipe.
+[Last time](/rhel/configure-a-package-and-service/) you learned how to manage a package and a service by configuring a web server. You also added a basic web page. But there was one problem &ndash; although it helped you verify that your web server was properly configured, the code for your HTML page was embedded in the Chef recipe.
 
-Let's pick up by creating a _cookbook_ to make our web server recipe easier to manage. A cookbook provides structure to your recipes and enables you to more easily reference external files, such as our web server's home page. In essence, a cookbook helps you stay organized.
+Let's create a _cookbook_ to make our web server recipe easier to manage. A cookbook provides structure to your recipes and enables you to more easily reference external files, such as our web server's home page. In essence, a cookbook helps you stay organized.
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:440px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, think about:**</span><br>
@@ -65,7 +65,7 @@ Note the default recipe, named <filepath>default.rb</filepath>. This is where we
 
 ## 2. Create a cookbook file
 
-Now we'll migrate the home page to our cookbook. First, run this commmand to generate the HTML file for our home page.
+Now we'll migrate the home page to our cookbook. First, run this command to generate the HTML file for our home page.
 
 ```bash
 # ~/chef-repo/cookbooks
@@ -76,7 +76,7 @@ The file <filepath>index.html.erb</filepath> gets created under <filepath>webser
 
 ```bash
 # ~/chef-repo/cookbooks
-$ tree cookbooks
+$ tree
 .
 └── webserver
     ├── Berksfile
@@ -107,7 +107,7 @@ Now copy the contents of the HTML file from your recipe to the new HTML file, <f
 
 ## 3. Update the recipe to reference the HTML file
 
-Modify the default recipe, <filepath>default.rb</filepath>, like this.
+Write out the recipe, <filepath>default.rb</filepath>, like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
@@ -126,7 +126,7 @@ Now run the cookbook. To do so, we use the <codeinline>chef-client</codeinline> 
 
 ```bash
 # ~/chef-repo
-$ sudo chef-client --local-mode --runlist webserver
+$ chef-client --local-mode --runlist webserver
 ```
 
 [COMMENT] crushtime-2: ^ A few undelightful things happen. First, you get a WARN saying that no config file was found. If this is really a problem, it should say why. Otherwise, perhaps this should be an INFO or nothing when running in local mode. Second, we should remove the SSL WARN in local mode because MITM attacks aren't possible in local mode.
@@ -141,7 +141,7 @@ Refresh your browser. The result is the same as before, but with a cookbook thin
 
 Your web server is shaping up! With a [cookbook][cookbook] you're now better organized. You learned how the [template][template] resource enables you to reference an external file from your recipe.
 
-You also saw the [run-list][run-list]. The run-list lets you specify which cookbooks to run, and the order in which to run them. This is handy once you have lots of cookbooks, and the order in which they run is important.
+You also saw the [run-list][run-list]. The run-list lets you specify which recipes to run, and the order in which to run them. This is handy once you have lots of cookbooks, and the order in which they run is important.
 
 ## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
 

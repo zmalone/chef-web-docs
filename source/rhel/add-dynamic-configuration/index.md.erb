@@ -9,11 +9,11 @@ keywords: TODO
 
 # Add dynamic configuration
 
-[Last time](/rhel/bootstrap-your-node) you learned how to bootstrap your server. During the bootstrap process, your server installed the Chef tools, downloaded the latest cookbooks, and executed the run-list.
+[Last time](/rhel/bootstrap-your-node) you learned how to bootstrap your web server node. During the bootstrap process, your node installed the Chef tools, downloaded the latest cookbooks, and executed the run-list.
 
-Chef provides information about your server that you can access from your cookbooks. Let's update our home page to display some info about the server. By doing so, you'll also practice updating your  cookbook, uploading it to the Chef server, and seeing changes appear on your server.
+Chef provides information about your node that you can access from your cookbooks. Let's update our home page to display some info about the server. You'll practice updating your cookbook, uploading it to the Chef server, and seeing the changes appear on your node.
 
-You already learned how to use the <codeinline>template</codeinline> resource to reference the HTML file for your home page, so you're already set up to add placeholders to your HTML file that are filled in as the recipe runs. This is an example of dynamic configuration.
+You already learned [how to use the <codeinline>template</codeinline> resource](/rhel/make-your-recipe-more-manageable/) to reference the HTML file for your home page, so you're all set to add placeholders to your HTML file that are filled in as the recipe runs. This is an example of dynamic configuration.
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:510px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, keep in mind that:**</span><br>
@@ -55,10 +55,10 @@ Uploaded 1 cookbook.
 
 ## 3. Run the cookbook on your node
 
-Run <codeinline>knife ssh</codeinline> to run your cookbook on your node. Replace <codeinline>ADDRESS</codeinline>, <codeinline>USER</codeinline>, and <codeinline>PASSWORD</codeinline> with yours.
+Run <codeinline>knife ssh</codeinline> to run your cookbook on your node. Replace <codeinline>ADDRESS</codeinline> and <codeinline>PASSWORD</codeinline> with yours.
 
 ```bash
-$ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password PASSWORD
+$ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user root --ssh-password PASSWORD
 ```
 
 [COMMENT] crushtime: It appears that you need the <codeinline>--manual-list</codeinline> here. Otherwise, you get <codeinline>FATAL: No nodes returned from search!</codeinline>. After looking at the docs, still not sure what it is or why it's needed. Can a default be assumed?
@@ -79,11 +79,9 @@ You also ran <codeinline>knife ssh</codeinline> to update your node. [knife ssh]
 
 ### <i class="fa fa-puzzle-piece greeniconcolor" style="margin-right:3px;"></i> Templates work through node objects
 
-To understand how templates work, you should first understand a bit more about what a node is. Recall that a _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure that's managed by Chef. When you bootstrapped your node, the Chef server created what's called a _node object_ for you. This node object contains a number of attributes that describe the server, and these attributes are saved on the Chef server.
+To understand how templates work, you should first understand a bit more about nodes. Recall that a _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure that's managed by Chef. When you bootstrapped your node, the Chef server created what's called a _node object_ for you. This node object contains a number of attributes that describe the node, and these attributes are saved on the Chef server.
 
 When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the node's attributes from the Chef server into memory. For our home page, we want to display the server's IP address. To do so, we access the <codeinline>ipaddress</codeinline> attribute of the <codeinline>node</codeinline> object.
-
-When you bootstrapped your node, we suggested the name **node1**. The node name can be whatever you want. The server's FQDN is the default.
 
 ## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
 
@@ -108,6 +106,8 @@ Here's one example that displays the server's host name, platform, total install
 ```
 
 [COMMENT] crushtime-12: ^ We were originally going to show ohai here. ohai is not included by default in /opt/chefdk/bin. It should be.
+
+We're working on more tutorials. Please check back soon!
 
 
 [template]: http://docs.opscode.com/essentials_cookbook_templates.html

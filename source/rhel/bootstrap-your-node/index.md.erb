@@ -9,17 +9,17 @@ keywords: TODO
 
 # Bootstrap your node
 
-Any computer that is managed by a Chef server is called a _node_. We call the process that installs the Chef tools on a node and the initial check-in to the Chef server _bootstrapping_ the node.
+Recall that any computer that is managed by a Chef server is called a _node_. We call the process that installs the Chef tools on a node and the initial check-in to the Chef server _bootstrapping_ the node.
 
-Let's bootstrap a server and execute the web server cookbook.
+Let's bootstrap a node and execute the web server cookbook on it.
 
 ## <i class="fa fa-question-circle blueiconcolor" style="margin-right:3px;"></i> All set up?
 
 If you haven't set up a Chef server and uploaded your cookbook to it, the [previous lesson](/rhel/get-ready-to-add-another-server/) shows you how.
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:575px;">
-<span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**Keep in mind these concepts as you read:**</span><br>
-  <i class="fa fa-check"></i>&nbsp; a _node_ is any server in your infrastructure.<br>
+<span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**Keep in mind as you read:**</span><br>
+  <i class="fa fa-check"></i>&nbsp; a _node_ is any computer managed by Chef.<br>
   <i class="fa fa-check"></i>&nbsp; _bootstrapping_ installs the Chef tools and does an initial check-in.<br>
 </sidebar>
 
@@ -39,21 +39,31 @@ You can use your own or use the CentOS training lab. The training lab below is d
 
 <%= link_to 'Access the training lab &nbsp;<i class=\'fa fa-external-link\'></i>', "http://opscode-cheflab.herokuapp.com/labs/learnchef/centos/attend/", class: 'button radius', :target => 'blank' %>
 
-[Here's](/rhel/get-a-virtual-machine/) a reminder on how to set up the training lab. Remember to write down:
+Then follow these steps.
 
-  * The server's external hostname or IP address.
+1. Wait a few moments for CloudShare to provision the server. Click the **Start Using This Environment** button after it lights up.
+![start using](/assets/images/quickstart/nodes/cloud-share/start-environment.png)
+1. Click **More details**.
+![view-details](/assets/images/quickstart/nodes/cloud-share/single-centos-node.png)
+1. Write down the following information:
+  * The external address
   * The SSH username and password
+![view details more](/assets/images/quickstart/nodes/cloud-share/centos-show-password.png)
+
+[CONCEPT] The environment will be available to you for 24 hours. Just fire up another one if it expires.
 
 ## 2. Bootstrap your server
 
-Run this command to bootstrap your node. Replace <codeinline>ADDRESS</codeinline> with your server's FQDN or IP address, and <codeinline>USER</codeinline> and <codeinline>PASSWORD</codeinline> with your root credentials.
+**You can close or minimize the window for the CloudShare VM you just set up. All that's needed is for the VM to be running and for you to have the logon credentials handy.**
+
+Remember that the CloudShare VM that you set up previously is your workstation. _From that VM_, run this command to bootstrap your node. Replace <codeinline>ADDRESS</codeinline> with your server's external address and <codeinline>PASSWORD</codeinline> with your root credentials.
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap ADDRESS --sudo --ssh-user USER --ssh-password PASSWORD --node-name nodet1 --run-list 'recipe[webserver]'
+$ knife bootstrap ADDRESS --sudo --ssh-user root --ssh-password PASSWORD --node-name node1 --run-list 'recipe[webserver]' --bootstrap-version 11.12.8
 ```
 
-The optional <codeinline>--node-name</codeinline> argument uniquely identifies the node with the Chef server. Its value can be whatever you want.
+The optional <codeinline>--node-name</codeinline> argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's fully qualified domain name (FQDN) is the default.
 
 ## 3. Confirm the result
 
@@ -69,6 +79,6 @@ The <codeinline>knife bootstrap</codeinline> command established an SSH connecti
 
 ## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> Wrap-up and what's next
 
-Next let's spice things up and add some info about your web server on your home page.
+Next let's spice things up and add some info about your web server to your home page.
 
 <%= link_to 'Add dynamic configuration &rarr;', '/rhel/add-dynamic-configuration/', class: 'button radius' %>
