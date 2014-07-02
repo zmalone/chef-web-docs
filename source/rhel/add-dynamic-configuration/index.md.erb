@@ -13,7 +13,7 @@ keywords: TODO
 
 Chef provides information about your node that you can access from your cookbooks. Let's update our home page to display some info about the server. You'll practice updating your cookbook, uploading it to the Chef server, and seeing the changes appear on your node.
 
-You already learned [how to use the <codeinline>template</codeinline> resource](/rhel/make-your-recipe-more-manageable/) to reference the HTML file for your home page, so you're all set to add placeholders to your HTML file that are filled in as the recipe runs. This is an example of dynamic configuration.
+You already learned [how to use the template resource](/rhel/make-your-recipe-more-manageable/) to reference the HTML file for your home page, so you're all set to add placeholders to your HTML file that are filled in as the recipe runs. This is an example of dynamic configuration.
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:510px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, keep in mind that:**</span><br>
@@ -28,6 +28,7 @@ You already learned [how to use the <codeinline>template</codeinline> resource](
   1. [Upload your cookbook to the Chef server](#2uploadyourcookbooktothechefserver)
   1. [Run the cookbook on your node](#3runthecookbookonyournode)
   1. [Confirm the result](#4confirmtheresult)
+  1. [Experiment with more node attributes](#5experimentwithmorenodeattributes)
 
 ## 1. Add template code to your HTML
 
@@ -58,7 +59,7 @@ Uploaded 1 cookbook.
 Run <codeinline>knife ssh</codeinline> to run your cookbook on your node. Replace <codeinline>ADDRESS</codeinline> and <codeinline>PASSWORD</codeinline> with yours.
 
 ```bash
-$ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user root --ssh-password PASSWORD
+$ knife ssh ADDRESS 'chef-client' --manual-list --ssh-user root --ssh-password PASSWORD
 ```
 
 [COMMENT] crushtime: It appears that you need the <codeinline>--manual-list</codeinline> here. Otherwise, you get <codeinline>FATAL: No nodes returned from search!</codeinline>. After looking at the docs, still not sure what it is or why it's needed. Can a default be assumed?
@@ -71,21 +72,9 @@ Open a web browser from any computer and navigate to your web server.
 
 Chef discovers and adds the IP address for you automatically!
 
-## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
+## 5. Experiment with more node attributes
 
-Dynamic configuration means that you can write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node. [Templates][template] enable you to do this.
-
-You also ran <codeinline>knife ssh</codeinline> to update your node. [knife ssh][knifessh] invokes the command you specify over an SSH connection on a node &ndash; in our case <codeinline>sudo chef-client</codeinline>. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
-
-### <i class="fa fa-puzzle-piece greeniconcolor" style="margin-right:3px;"></i> Templates work through node objects
-
-To understand how templates work, you should first understand a bit more about nodes. Recall that a _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure that's managed by Chef. When you bootstrapped your node, the Chef server created what's called a _node object_ for you. This node object contains a number of attributes that describe the node, and these attributes are saved on the Chef server.
-
-When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the node's attributes from the Chef server into memory. For our home page, we want to display the server's IP address. To do so, we access the <codeinline>ipaddress</codeinline> attribute of the <codeinline>node</codeinline> object.
-
-## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
-
-For fun, [check out](http://docs.opscode.com/chef_overview_attributes.html#automatic-ohai) what other node attributes you can use and experiment with them on your home page.
+If you want to and have time, [check out](http://docs.opscode.com/chef_overview_attributes.html#automatic-ohai) what other node attributes you can use and experiment with them on your home page.
 
 Here's one example that displays the server's host name, platform, total installed memory, and number of CPUs in addition to its IP address. Try it if you'd like, then follow the steps in this lesson to upload your cookbook to the Chef server and run <codeinline>chef-client</codeinline> on your node.
 
@@ -105,9 +94,28 @@ Here's one example that displays the server's host name, platform, total install
 </html>
 ```
 
-[COMMENT] crushtime-12: ^ We were originally going to show ohai here. ohai is not included by default in /opt/chefdk/bin. It should be.
+## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
 
-We're working on more tutorials. Please check back soon!
+Dynamic configuration means that you can write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node. [Templates][template] enable you to do this.
+
+You also ran <codeinline>knife ssh</codeinline> to update your node. [knife ssh][knifessh] invokes the command you specify over an SSH connection on a node &ndash; in our case <codeinline>sudo chef-client</codeinline>. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
+
+### <i class="fa fa-puzzle-piece greeniconcolor" style="margin-right:3px;"></i> Templates work through node objects
+
+To understand how templates work, you should first understand a bit more about nodes. Recall that a _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure that's managed by Chef. When you bootstrapped your node, the Chef server created what's called a _node object_ for you. This node object contains a number of attributes that describe the node, and these attributes are saved on the Chef server.
+
+When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the node's attributes from the Chef server into memory. For our home page, we want to display the server's IP address. To do so, we access the <codeinline>ipaddress</codeinline> attribute of the <codeinline>node</codeinline> object.
+
+## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
+
+That's all we have for now. Please check back soon for more tutorials!
+
+In the meantime, here are some things you can try.
+
+* Continue to experiment with your CloudShare VMs, or install the [Chef DK](http://www.getchef.com/downloads/chef-dk/) and the [Starter Kit](https://manage.opscode.com/starter-kit) on your workstation and configure one of your own servers.
+* Explore [manage.opscode.com](https://manage.opscode.com/). See what info's availble for your nodes and what else you can do.
+* Try writing a cookbook to install and configure a piece of software you use. Check out the [Chef Supermarket](http://supermarket.getchef.com/) to see if there's already an existing cookbook for that, and compare what the differences are.
+* If you run into trouble, contact <a href="mailto:learnchef@getchef.com?subject=Feedback on #learnchef">learnchef@getchef.com</a> or ask for help at [#chef](irc://irc.freenode.net/chef) on IRC.
 
 
 [template]: http://docs.opscode.com/essentials_cookbook_templates.html

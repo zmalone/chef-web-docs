@@ -22,8 +22,9 @@ Let's create a _cookbook_ to make our web server recipe easier to manage. A cook
 ## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
   1. [Create a cookbook](#1createacookbook)
-  1. [Create a cookbook file](#2createacookbookfile)
-  1. [Update the recipe to reference the HTML file](#3updatetherecipetoreferencethehtmlfile)
+  1. [Create a template](#2createatemplate)
+  1. [Update the recipe to reference the HTML template](#3updatetherecipetoreferencethehtmltemplate)
+  1. [Run the cookbook](#4runthecookbook)
 
 ## 1. Create a cookbook
 
@@ -63,9 +64,9 @@ $ tree
 
 Note the default recipe, named <filepath>default.rb</filepath>. This is where we'll move our Apache recipe in a moment.
 
-## 2. Create a cookbook file
+## 2. Create a template
 
-Now we'll migrate the home page to our cookbook. First, run this command to generate the HTML file for our home page.
+Now we'll move the home page to our cookbook to an external file. First, run this command to generate the HTML file for our home page.
 
 ```bash
 # ~/chef-repo/cookbooks
@@ -105,7 +106,7 @@ Now copy the contents of the HTML file from your recipe to the new HTML file, <f
 </html>
 ```
 
-## 3. Update the recipe to reference the HTML file
+## 3. Update the recipe to reference the HTML template
 
 Write out the recipe, <filepath>default.rb</filepath>, like this.
 
@@ -122,12 +123,18 @@ template '/var/www/html/index.html' do
 end
 ```
 
+[CONCEPT] We're asking you to write things out a second time only because we're moving from the basic recipe approach to using a cookbook. In practice, you'll start with a cookbook, so you won't have to do things twice.
+
+## 4. Run the cookbook
+
 Now run the cookbook. To do so, we use the <codeinline>chef-client</codeinline> command and specify what's called the _run-list_.
 
 ```bash
 # ~/chef-repo
 $ chef-client --local-mode --runlist webserver
 ```
+
+[CONCEPT] You ran <codeinline>chef-apply</codeinline> to run a single recipe from and command line. <codeinline>chef-client</codeinline> is what you use to run a cookbook. You'll be using <codeinline>chef-client</codeinline> a lot more in the future.
 
 [COMMENT] crushtime-2: ^ A few undelightful things happen. First, you get a WARN saying that no config file was found. If this is really a problem, it should say why. Otherwise, perhaps this should be an INFO or nothing when running in local mode. Second, we should remove the SSL WARN in local mode because MITM attacks aren't possible in local mode.
 
@@ -139,7 +146,7 @@ Refresh your browser. The result is the same as before, but with a cookbook thin
 
 ## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
 
-Your web server is shaping up! With a [cookbook][cookbook] you're now better organized. You learned how the [template][template] resource enables you to reference an external file from your recipe.
+Your web server is shaping up! With a [cookbook][cookbook] you're now better organized. A cookbook adds structure to your work. You can now author your HTML code in its own file and use  a [template][template] resource to reference it from your recipe.
 
 You also saw the [run-list][run-list]. The run-list lets you specify which recipes to run, and the order in which to run them. This is handy once you have lots of cookbooks, and the order in which they run is important.
 

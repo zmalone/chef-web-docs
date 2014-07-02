@@ -9,13 +9,13 @@ keywords: TODO
 
 # Get ready to add another server
 
-You learned how to use Chef to bring up a web server and serve a home page that displays some basic info about the server. You configured the server by running the commands directly on it, which is a great way to experiment with Chef.
+You learned how to use Chef to bring up a web server and serve a basic home page. You configured the server by running the commands directly on it, which is a great way to experiment with Chef.
 
 Let's take a step towards how you use Chef in your production environment by configuring a second web server that you manage remotely from your workstation.
 
 A typical Chef workflow consists of three parts &ndash; your workstation, a Chef server, and nodes.
 
-![Your workstation, a Chef server, and nodes](chef-architecture.png)
+<img src="/assets/images/chef-architecture.svg" style="box-shadow: none;" alt="Your workstation, a Chef server, and nodes" />
 
 * Your __workstation__ is the computer from which you author your cookbooks and administer your network. It's typically the laptop or desktop computer you work from everyday. But in this lesson, you'll continue to use the CloudShare VM that we provide as your workstation.
 * __Chef server__ acts as a central hub for your cookbooks. This is what you'll set up in this lesson.
@@ -35,29 +35,36 @@ If you haven't completed the [previous tutorial](/rhel/make-your-recipe-more-man
 
 ## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
-  1. [Sign up for Hosted Enterprise Chef](#1signupforhostedenterprisechef)
+  1. [Sign up for hosted Enterprise Chef](#1signupforhostedenterprisechef)
   1. [Install the Starter Kit](#2installthestarterkit)
   1. [Upload your cookbook to the Chef server](#3uploadyourcookbooktothechefserver)
 
 <hr>
 
-## 1. Sign up for Hosted Enterprise Chef
+## 1. Sign up for hosted Enterprise Chef
 
-The easiest way to set up a Chef server is to let us host it for you on Hosted Enterprise Chef. To get set up, just fill out the form on our sign-up page.
+[CONCEPT] If you already have a hosted Enterprise Chef account, you can skip this step.
 
-<a class='button radius' href='<%= hec_sign_up_url %>' target='_blank'>Sign up for a free trial of Hosted Enterprise Chef&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+The easiest way to set up a Chef server is to let us host it for you on hosted Enterprise Chef. To get set up, just fill out the form on our sign-up page.
+
+[CONCEPT] Do this from your CloudShare VM. You'll need to switch your CloudShare VM to Console mode if you're using SSH.
+
+<a class='button radius' href='<%= hec_sign_up_url %>' target='_blank'>Sign up for a free trial of hosted Enterprise Chef&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+
+After you sign up, follow these steps.
+
+1. Click **Create New Organization**.
+1. Enter a full name and short name for your organization. An organization is typcally a company name, or a department within a company. These names can be whatever you want, but the short name must be unique.
+1. Click **Create Organization**.
 
 Now you need to download some files that enable you to communicate with the Chef server.
 
 ## 2. Install the Starter Kit
 
-The Starter Kit provides certificates and other files that enable you to securely communicate with the Chef server. Follow these steps from your CloudShare VM.
+[CONCEPT] If you already have a Starter Kit, you can skip this step. [Download](https://manage.opscode.com/starter-kit) a new Starter Kit if you have a hosted Enterprise Chef account but don't have a Starter Kit.
 
-[CONCEPT] You'll need to switch your CloudShare VM to Console mode if you're using SSH.
+The Starter Kit provides certificates and other files that enable you to securely communicate with the Chef server.
 
-  1. Navigate to <%= link_to "#{hec_manage_url}", "#{hec_manage_url}", :target => "_blank" %> and sign in.
-  1. From the **Administration** tab, choose the organization that you created when you signed up for Hosted Enterprise Chef.
-  1. From the **Actions** column, select **Starter Kit**.
   1. Click the **Download Starter Kit** button.
   1. Click **Proceed**. Save the file <filepath>chef-starter.zip</filepath> to your computer.
   1. Extract <filepath>chef-starter.zip</filepath> to your working directory, <filepath>~/chef-repo</filepath>. Here's one way to do it.
@@ -74,6 +81,8 @@ Now let's upload our web server cookbook to the Chef server. From anywhere under
 ```bash
 # ~/chef-repo
 $ knife cookbook upload webserver
+Uploading webserver    [0.1.0]
+Uploaded 1 cookbook.
 ```
 
 <hr>

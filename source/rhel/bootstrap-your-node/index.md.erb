@@ -9,7 +9,7 @@ keywords: TODO
 
 # Bootstrap your node
 
-Recall that any computer that is managed by a Chef server is called a _node_. We call the process that installs the Chef tools on a node and the initial check-in to the Chef server _bootstrapping_ the node.
+Recall that any computer that's managed by a Chef server is called a _node_. We call the process that installs the Chef tools on a node and the initial check-in to the Chef server _bootstrapping_ the node.
 
 Let's bootstrap a node and execute the web server cookbook on it.
 
@@ -25,17 +25,17 @@ If you haven't set up a Chef server and uploaded your cookbook to it, the [previ
 
 ## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
-  1. [Fire up a second server](#1fireupasecondserver)
-  1. [Bootstrap your server](#2bootstrapyourserver)
+  1. [Fire up a node to manage](#1fireupanodetomanage)
+  1. [Bootstrap your node](#2bootstrapyournode)
   1. [Confirm the result](#3confirmtheresult)
 
 <hr>
 
-## 1. Fire up a second server
+## 1. Fire up a node to manage
 
-You'll need a second RHEL or CentOS server to which you have root access.
+You'll need a RHEL or CentOS node to manage. We provide a CentOS training lab that you can use. This training lab is different than the one you set up previously, as it doesn't have the Chef tools installed.
 
-You can use your own or use the CentOS training lab. The training lab below is different than the one you set up previously, as it doesn't have the Chef tools installed.
+[CONCEPT] If you prefer, you can use your own RHEL or CentOS 6 machine. You don't need to install anything on it. All you need is its external address and root credentials.
 
 <%= link_to 'Access the training lab &nbsp;<i class=\'fa fa-external-link\'></i>', "http://opscode-cheflab.herokuapp.com/labs/learnchef/centos/attend/", class: 'button radius', :target => 'blank' %>
 
@@ -52,15 +52,15 @@ Then follow these steps.
 
 [CONCEPT] The environment will be available to you for 24 hours. Just fire up another one if it expires.
 
-## 2. Bootstrap your server
+## 2. Bootstrap your node
 
-**You can close or minimize the window for the CloudShare VM you just set up. All that's needed is for the VM to be running and for you to have the logon credentials handy.**
+**You can close or minimize the window for the CloudShare VM you just set up. All that's needed is for the VM to be running and for you to have the root credentials handy.**
 
 Remember that the CloudShare VM that you set up previously is your workstation. _From that VM_, run this command to bootstrap your node. Replace <codeinline>ADDRESS</codeinline> with your server's external address and <codeinline>PASSWORD</codeinline> with your root credentials.
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap ADDRESS --sudo --ssh-user root --ssh-password PASSWORD --node-name node1 --run-list 'recipe[webserver]' --bootstrap-version 11.12.8
+$ knife bootstrap ADDRESS --ssh-user root --ssh-password PASSWORD --node-name node1 --run-list 'recipe[webserver]' --bootstrap-version 11.12.8
 ```
 
 The optional <codeinline>--node-name</codeinline> argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's fully qualified domain name (FQDN) is the default.
