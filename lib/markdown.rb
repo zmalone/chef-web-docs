@@ -31,6 +31,7 @@ module ZurbFoundation
 
     alerts
     anchors
+    extras
 
     return @content
   end
@@ -45,11 +46,15 @@ module ZurbFoundation
   end
 
   def alerts
-    content.gsub!(/<p>\[INFO\] (.+)<\/p>/)     { "<div class=\"alert-box\"><i class=\"icon-exclamation-sign\"></i> #{$1}</div>" }
-    content.gsub!(/<p>\[SUCCESS\] (.+)<\/p>/)  { "<div class=\"alert-box success\"><i class=\"icon-ok-sign\"></i> #{$1}</div>" }
-    content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box alert\"><i class=\"icon-warning-sign\"></i> #{$1}</div>" }
-    content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"icon-info-sign\"></i> #{$1}</div>" }
-    content.gsub!(/<p>\[DOCS\] (.+)<\/p>/)     { "<div class=\"alert-box docs\"><i class=\"icon-book\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[INFO\] (.+)<\/p>/)     { "<div class=\"alert-box\"><i class=\"fa fa-exclamation-triangle\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[SUCCESS\] (.+)<\/p>/)  { "<div class=\"alert-box success\"><i class=\"fa fa-thumbs-o-up\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box alert\"><i class=\"fa fa-warning\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"fa fa-info-circle\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[DOCS\] (.+)<\/p>/)     { "<div class=\"alert-box docs\"><i class=\"fa fa-book\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[CONCEPT\] (.+)<\/p>/)  { "<div class=\"alert-box concept\"><i class=\"fa fa-info-circle blueiconcolor\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[SIDEBAR\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><i class=\"fa fa-comment blueiconcolor fa-2x\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-exclamation-triangle rediconcolor fa-2x\"></i> #{$1}</div>" }
+
   end
 
 
@@ -64,7 +69,12 @@ module ZurbFoundation
   end
 
   def videos
-    content.gsub!(/\[VIDEO ([\w\d\:\/\.]+)\]/) { "<a href=\"#{$1}\" target=\"_TOP\"><i class=\"icon-youtube-sign\"></i></a>" }
+    content.gsub!(/\[VIDEO ([\w\d\:\/\.]+)\]/) { "<a href=\"#{$1}\" target=\"_TOP\"><i class=\"fa fa-youtube\"></i></a>" }
+  end
+
+  def extras
+      content.gsub!(/<p>\[TIMETOCOMPLETE\] (.+)<\/p>/) {
+      "<div style='float:right; border:1px solid #666; display: inline-block; padding:5px; border-radius:5px; margin:15px;'><center><i class='fa fa-clock-o fa-3x blueiconcolor'></i><br><b>#{$1} minutes</b></center></div>" }
   end
 
   def render(string)
