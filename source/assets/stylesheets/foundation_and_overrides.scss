@@ -14,7 +14,7 @@ $secondary-red: #6d3528;
 $alert-box-background: #fcf8e3;
 $alert-box-border: #fbeed5;
 $alert-box-foreground: #c09853;
-$alert-box-link: $primary-blue;
+$alert-box-link: $primary-orange;
 
 //
 // Foundation Variables
@@ -41,8 +41,8 @@ $em-base: 16px !default;
 
 // We use these to control various global styles
 $body-bg: #ffffff;
-$body-font-color: #435363;
-$body-font-family: "Gotham", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$body-font-color: #666;
+$body-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 $body-font-weight: normal;
 $body-font-style: normal;
 
@@ -57,10 +57,13 @@ $primary-color: $primary-orange;
 $secondary-color: $primary-gray;
 $alert-color: $secondary-red;
 $success-color: $secondary-green;
-$docs-color: $primary-blue;
+$docs-color: darken($primary-blue, 20%);
+$concept-color: #fff3e4;
+$sidebar-color: lighten($secondary-gray,35%);
+$comment-color: lighten(yellow, 30%);
 
 // We use these to make sure border radius matches unless we want it different.
-$global-radius: 5px;
+$global-radius: 3px;
 // $global-rounded: 1000px;
 
 // We use these to control inset shadow shiny edges and depressions.
@@ -125,18 +128,18 @@ $row-width: emCalc(1280px);
 // $header-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 // $header-font-weight: bold;
 // $header-font-style: normal;
-// $header-font-color: #222;
+$header-font-color: $primary-gray;
 // $header-line-height: 1.4;
 // $header-top-margin: .2em;
 // $header-bottom-margin: .5em;
 // $header-text-rendering: optimizeLegibility;
 
 // We use these to control header font sizes
-// $h1-font-size: emCalc(44px);
-// $h2-font-size: emCalc(37px);
-// $h3-font-size: emCalc(27px);
-// $h4-font-size: emCalc(23px);
-// $h5-font-size: emCalc(18px);
+$h1-font-size: emCalc(38.5px);
+$h2-font-size: emCalc(30px);
+$h3-font-size: emCalc(25px);
+$h4-font-size: emCalc(25px);
+$h5-font-size: emCalc(20px);
 // $h6-font-size: 1em;
 
 // These control how subheaders are styled
@@ -1079,18 +1082,24 @@ $side-nav-link-color: $secondary-color;
 }
 
 .highlight {
-  margin-bottom: $paragraph-margin-bottom;
   padding: 5px;
+  padding-bottom: 0px;
 
   pre {
-    line-height: 1.4;
+    line-height: 1.5;
     overflow: auto;
     padding: 10px;
+    margin: 0px;
+    font-family: Monaco, monospace;
   }
 }
 
 ul, ol, dl {
   list-style-position: inside;
+}
+
+li:not(:last-child) {
+    margin-bottom: 5px;
 }
 
 // Uses Sass alert() mixin to add 'docs' alert box
@@ -1102,6 +1111,73 @@ ul, ol, dl {
 }
 .docs {
   color: #fff
+}
+
+.concept {
+  @include alert(
+    $bg: $concept-color,
+    $radius: false
+  );
+}
+.concept {
+  color: inherit;
+  font-size: 95%;
+  border-style: none;
+  border-left: solid 2px lighten($primary-gray, 25%);
+  line-height: 1.6;
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+}
+
+.alert {
+  @include alert(
+    $bg: $alert-color,
+    $radius: false
+  );
+}
+.alert {
+  color: inherit;
+  font-family: inherit;
+  font-size: 90%;
+  border-style: none;
+  border-left: 2px solid yellow;
+  line-height: 1.5;
+}
+
+.sidebar {
+  @include alert(
+    $bg: $sidebar-color,
+    $radius: false
+  );
+}
+.sidebar {
+  color: inherit;
+  font-size: 100%;
+  border-style: none;
+  border-left: 2px solid $primary-blue;
+  line-height: 1.5;
+}
+
+.comment {
+  @include alert(
+    $bg: $comment-color,
+    $radius: false
+  );
+}
+.comment {
+  color: red;
+  font-size: 100%;
+  border: 2px solid black;
+  line-height: 1.5;
+  display: none;
+}
+
+.success a:link, a:visited a:hover a:active {
+	color: #666;
+}
+
+.helpful {
+  border: 1px solid #666;
+  line-height: 1.5;
 }
 
 /* Hacky hacky do not copy prompt money */
@@ -1122,9 +1198,64 @@ sidebar {
     float: right;
     display: block;
     padding: 10px 15px 13px 15px;
-    margin-bottom: 10px;
-    background-color: lighten($primary-orange, 40%);
-    border: solid 1px lighten($secondary-gray, 25%);
+    margin: 10px;
+    background-color: lighten($secondary-gray, 45%);
+    border: solid 1px lighten($primary-gray, 25%);
+    font-size: normal;
+    max-width: 250px;
+    line-height: 1.8;
+    @include radius;
+}
+
+codeinline {
+    display: inline;
+    padding: 2px 4px 3px 4px;
+    margin-bottom: 1em;
+    background-color: $primary-gray;
+    font-family: Monaco, monospace !important;
+    overflow: auto;
+    color: #fff;
+    border:1px solid $secondary-gray;
+    font-size: 80%;
+}
+
+filepath {
+    display: inline;
+    padding: 2px 4px 3px 4px;
+    margin-bottom: 1em;
+    background-color: #efefef;
+    font-family: Monaco, inherit;
+    overflow: auto;
+    color: inherit;
+    border:1px solid $primary-gray;
     font-size: smaller;
-    max-width: 200px;
+}
+
+.yellowiconcolor {color:darken($secondary-yellow,1%);}
+.greeniconcolor {color:darken($secondary-green,10%);}
+.blueiconcolor {color:darken($primary-blue,10%);}
+.rediconcolor {color:lighten($secondary-red,10%);}
+.blackiconcolor {color:#000;}
+
+.helpfulbuttoncolor {background-color:darken(#00ff00,30%);}
+.nothelpfulbuttoncolor {background-color:lighten($secondary-red,20%);}
+
+// Darken bold text
+body strong, b { color: #000; }
+
+// Darken h1's
+h1 { 
+  color: #555;
+}
+
+// Set custom heading attributes
+h1, h2, h3, h4, h5, h6 {
+  font-family: Helvetica Neue, inherit;
+  line-height: normal;
+  font-weight: normal;
+  margin-bottom: 20px;
+}
+
+h1 ~ *:not(div):not(h2):not(h3):not(h4):not(h5):not(h6) {
+    margin-left: 15px;
 }

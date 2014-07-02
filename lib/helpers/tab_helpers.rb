@@ -34,9 +34,9 @@ module TabHelpers
 
   def generate_tab_title(title,options)
     tab_title_text = title
-    
+
     if options[:icon]
-      tab_title_text = "<i class='icon-#{options[:icon]}'></i> #{tab_title_text}"
+      tab_title_text = "<i class='fa fa-#{options[:icon]}'></i> #{tab_title_text}"
     end
 
     title_content = link_to tab_title_text, "##{parameterize(title)}"
