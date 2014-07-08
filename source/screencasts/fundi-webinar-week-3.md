@@ -84,7 +84,7 @@ Opscode is working with CloudShare to beta test a [Chef training lab][chef-lab].
 
 ##### Use the Vagrant Instance from the Starter Kit
 
-The Starter Kit provided by Hosted Enterprise Chef includes a Vagrantfile which can be used to launch a [Vagrant][vagrantup] instance.
+The Starter Kit provided by hosted Enterprise Chef includes a Vagrantfile which can be used to launch a [Vagrant][vagrantup] instance.
 
 ## View the Slides
 

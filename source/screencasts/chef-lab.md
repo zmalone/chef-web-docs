@@ -37,7 +37,7 @@ If you're using the Chef Training Lab, you may need to [launch a new instance of
 
 ##### Use the Vagrant Instance from the Starter Kit
 
-The Starter Kit provided by Hosted Enterprise Chef includes a Vagrantfile which can be used to launch a [Vagrant][vagrantup] instance.
+The Starter Kit provided by hosted Enterprise Chef includes a Vagrantfile which can be used to launch a [Vagrant][vagrantup] instance.
 
 
 [chef-lab]: http://opscode-cheflab.herokuapp.com/labs/fundamentalswebinar/ubuntu/attend
