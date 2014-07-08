@@ -26,14 +26,14 @@ Use your own Virtual Machine (VM) or Server.  It must meet the following criteri
 - 15 GB Disk
 - sudo or root level permissions
 
-##### Use the BETA Chef Training Lab
+##### Use the Chef Training Lab
 
 CHEF is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.  Would you like to help us test this solution?  [Launch your own training lab now][chef-lab].
 
-**Reset your BETA Chef Training Lab**
+**Reset your Chef Training Lab**
 
-There is a [video on YouTube][youtube-lab-reset] that demonstrates the process of resetting your BETA Chef Training Lab.
-If you're using the BETA Chef Training Lab, you may need to [launch a new instance of the lab][chef-lab] before completing [module 5][week5_webinar] or [module 6][week6_webinar].  CHEF is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.
+There is a [video on YouTube][youtube-lab-reset] that demonstrates the process of resetting your Chef Training Lab.
+If you're using the Chef Training Lab, you may need to [launch a new instance of the lab][chef-lab] before completing [module 5][week5_webinar] or [module 6][week6_webinar].  CHEF is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.
 
 ##### Use the Vagrant Instance from the Starter Kit
 

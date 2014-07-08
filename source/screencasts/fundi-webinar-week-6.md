@@ -25,11 +25,11 @@ Before watching this webinar recording you should watch the first five webinars 
 * Week 4 - [Understanding the chef-client run][week4_webinar]
 * Week 5 - [Working with Templates][week5_webinar]
 
-### Reset your BETA Chef Training Lab
+### Reset your Chef Training Lab
 
-If you're using the BETA Chef Training Lab, you'll need to [launch a new instance of the lab][chef-lab] before joining the webinar.  Opscode is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.  
+If you're using the Chef Training Lab, you'll need to [launch a new instance of the lab][chef-lab] before joining the webinar.  Opscode is working with CloudShare to beta test a [Chef training lab][chef-lab].  This lab is intended for use with the Chef Fundamentals Webinar series.  
 
-There is a [video on YouTube][youtube-lab-reset] that demonstrates the process of resetting your BETA Chef Training Lab.
+There is a [video on YouTube][youtube-lab-reset] that demonstrates the process of resetting your Chef Training Lab.
 
 ## View the Slides
 
