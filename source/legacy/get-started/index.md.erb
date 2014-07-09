@@ -31,9 +31,9 @@ Expect to take about 20-30 minutes to work through the setup process.
 
 Chef server comes in two flavors: <%= link_to 'Enterprise Chef', ec_sign_up_url, target: '_blank' %> and <%= link_to 'Open Source Chef', chef_install_url, target: '_blank' %>.
 
-You can run Enterprise Chef either on premises, or let us host it for you on Hosted Enterprise Chef. To help you experience Chef as quickly as possible, we recommend that you sign up for a free trial of Hosted Enterprise Chef. Just fill out the form on our sign up page. 
+You can run Enterprise Chef either on premises, or let us host it for you on hosted Enterprise Chef. To help you experience Chef as quickly as possible, we recommend that you sign up for a free trial of hosted Enterprise Chef. Just fill out the form on our sign up page. 
 
-<%= link_to 'Sign up for a free trial of Hosted Enterprise Chef', hec_sign_up_url, class: 'button radius' %>
+<%= link_to 'Sign up for a free trial of hosted Enterprise Chef', hec_sign_up_url, class: 'button radius' %>
 
 
 After you evaluate Chef, read [Which Chef is Right for You?](http://www.getchef.com/chef/#which-chef) to understand which version of Chef works best for your organization. You can also check out Joshua Timberman's [Chef 11 Server: Up and Running](http://www.getchef.com/blog/2013/03/11/chef-11-server-up-and-running/) blog post to get a feel for what it's like to set up Chef server yourself.
@@ -48,7 +48,7 @@ Chef supports administration from many flavors of Windows, Mac OS, Linux, and Un
 
 ### Install the Starter Kit
 
-During the Hosted Enterprise Chef signup process, you created an organization. Now you need to install the Starter Kit to enable your workstation to communicate with the Chef server (authenication is done through **.pem** certificates.)
+During the hosted Enterprise Chef signup process, you created an organization. Now you need to install the Starter Kit to enable your workstation to communicate with the Chef server (authenication is done through **.pem** certificates.)
 
 1. Navigate to <%= link_to "#{hec_manage_url}starter-kit", "#{hec_manage_url}starter-kit" %>.
 2. If you have multiple organizations, choose the organization for which you would like to use the Starter Kit.
@@ -87,22 +87,17 @@ A node can be practically any computer with an operating system that is connecte
 
 ### Deploy an image
 
-Although you can use a physical machine, we recommend using a virtual machine so that you can easily spin up and tear down instances. We've provided a number of preconfigured images on Amazon EC2, and highly recommend that you start there. 
+Although you can use a physical machine, we recommend using a virtual machine so that you can easily spin up and tear down instances. We've provided a number of preconfigured images in the Chef Training Lab, and highly recommend that you start there. 
 
 If you're a Vagrant user, the Enterprise Chef Starter Kit includes a Vagrantfile which can be used to launch a Vagrant instance. 
 
-If you are not currently set up to use Vagrant or EC2, you can try our Chef Training Lab.
-
 <% tabs do %>
-  <% tab 'Amazon EC2' do %>
-    <%= partial 'set-up-your-chef-environment/ec2' %>
+  <% tab 'Chef Training Lab' do %>
+    <%= partial 'set-up-your-chef-environment/cloud_share' %>
   <% end # tab %>
   <% tab 'Vagrant' do %>
     <%= partial 'set-up-your-chef-environment/vagrant' %>
   <% end %>
-  <% tab 'Chef Training Lab' do %>
-    <%= partial 'set-up-your-chef-environment/cloud_share' %>
-  <% end # tab %>
 <% end # tabs %>
 
 ### Bootstrap the image
@@ -121,25 +116,25 @@ If you're bootstrapping a Windows node, you'll first need to install the **knife
 /opt/chef/embedded/bin/gem install knife-windows
 ```
 
-Then to bootstrap the Windows node, you run the **knife bootstrap** command. Bootstrapping a Windows Server image on EC2 looks like this:
+Then to bootstrap the Windows node, you run the **knife bootstrap** command. Bootstrapping a Windows Server image in the Chef Training Lab looks like this:
 
 ```
-knife bootstrap windows winrm ec2-xx-xx-xx-xx.compute-1.amazonaws.com -x chef –P chef -N node1
+knife bootstrap windows winrm uvxxxxxxxxxxxxxxxxx.vm.cld.sr -x chef –P chef -N node1
 ```
 
-Replace **ec2-xx-xx-xx-xx.compute-1.amazonaws.com** with your node's IP address or hostname. If you're not using an EC2 image, replace the **-x** and **-P** arguments with the username and password for an account that has Administrator access.
+Replace **uvxxxxxxxxxxxxxxxxx.vm.cld.sr** with your node's external address. If you're not using an instance in the Chef Training Lab, replace the **-x** and **-P** arguments with the username and password for an account that has Administrator access.
 
 The **-N** argument specifies the node's name. It can be whatever you like.
 
 #### Bootstrap a Linux node
 
-If you're bootstrapping a Linux node, navigate to the **chef-repo** directory and run the **knife bootstrap** command. Bootstrapping a Linux image on EC2 looks like this:
+If you're bootstrapping a Linux node, navigate to the **chef-repo** directory and run the **knife bootstrap** command. Bootstrapping the CentOS image in the Chef Training Lab looks like this:
  
 ```bash
-knife bootstrap ec2-xx-xx-xx-xx.compute-1.amazonaws.com --sudo -x chef -P chef -N node1
+knife bootstrap uvxxxxxxxxxxxxxxxxx.vm.cld.sr --sudo -x chef -P chef -N node1
 ```
 
-Replace **ec2-xx-xx-xx-xx.compute-1.amazonaws.com** with your node's IP address or hostname. If you're not using an EC2 image, replace the **-x** and **-P** arguments with the username and password for an account that has root access.
+Replace **uvxxxxxxxxxxxxxxxxx.vm.cld.sr** with your node's external address. If you're not using an instance in the Chef Training Lab, replace the **-x** and **-P** arguments with the username and password for an account that has root access.
 
 The **-N** argument specifies the node's name. It can be whatever you like.
 
