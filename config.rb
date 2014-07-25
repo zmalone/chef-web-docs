@@ -128,6 +128,7 @@ redirect '/starter-use-cases/multi_node_ec2', '/legacy/starter-use-cases/multi-n
 redirect '/starter-use-cases/ntp', '/legacy/starter-use-cases/ntp/'
 redirect '/starter-use-cases/windows-match', '/legacy/starter-use-cases/windows-batch/'
 redirect '/starter-use-cases/wordpress', '/legacy/starter-use-cases/wordpress/'
+redirect '/rhel/get-a-virtual-machine', '/rhel/'
 
 # Build-specific configuration
 configure :build do

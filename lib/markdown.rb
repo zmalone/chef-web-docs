@@ -54,6 +54,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[CONCEPT\] (.+)<\/p>/)  { "<div class=\"alert-box concept\"><i class=\"fa fa-info-circle blueiconcolor\"></i> #{$1}</div>" }
     content.gsub!(/<p>\[SIDEBAR\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><i class=\"fa fa-comment blueiconcolor fa-2x\"></i> #{$1}</div>" }
     content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-exclamation-triangle rediconcolor fa-2x\"></i> #{$1}</div>" }
+    content.gsub!(/<p>\[ERROR\] (.+)<\/p>/)  { "<div class=\"alert-box error\"><i class=\"fa fa-exclamation-triangle rediconcolor fa-2x\"></i> #{$1}</div>" }
 
   end
 
