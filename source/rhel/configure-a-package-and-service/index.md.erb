@@ -55,17 +55,19 @@ Now run <codeinline>chef-apply</codeinline> to apply the recipe.
 
 ```bash
 # ~/chef-repo
-$ chef-apply webserver.rb
+$ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install
-    - install version 2.2.15-30.el6.centos of package httpd
+    - install version 2.2.15-31.el6.centos of package httpd
 ```
+
+[CONCEPT] <codeinline>sudo</codeinline> is required because this command installs a package and therefore must be run with root privileges. If you're running at root, you can omit the <codeinline>sudo</codeinline> of the command.
 
 Run the recipe a second time.
 
 ```bash
 # ~/chef-repo
-$ chef-apply webserver.rb
+$ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install (up to date)
   ```
@@ -91,12 +93,11 @@ Now apply it.
 
 ```bash
 # ~/chef-repo
-$ chef-apply webserver.rb
+$ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install (up to date)
   * service[httpd] action start
     - start service service[httpd]
-
   * service[httpd] action enable
     - enable service service[httpd]
 ```
@@ -132,7 +133,7 @@ Now apply it.
 
 ```bash
 # ~/chef-repo/
-$ chef-apply webserver.rb
+$ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install (up to date)
   * service[httpd] action start (up to date)
@@ -150,11 +151,21 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
         +  </html>
 ```
 
-Confirm that your web page is available. From a web browser, navigate to **http://localhost**. You'll see something like this.
+Run the <codeinline>curl</codeinline> command to confirm that your web page is available.
 
-![The basic home page](rhel/webserver-basic.png)
+```bash
+# ~/chef-repo
+$ curl localhost
+<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>
+```
 
-[CONCEPT] If you're working from SSH, try running the <codeinline>curl</codeinline> command: <codeinline>curl http://localhost</codeinline>.
+Optionally, from a web browser on another machine, navigate to your server. You'll see something like this.
+
+![The basic home page](misc/webserver-basic.png)
 
 <hr>
 

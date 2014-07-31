@@ -29,20 +29,35 @@ Option 2: let us provide a CentOS virtual machine that has the Chef tools instal
 
 ## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
-  1. [Create the file](#1createthefile)
-  1. [Update the file's contents](#2updatethefile39scontents)
-  1. [Ensure the file's contents are not changed by anyone else](#3ensurethefile39scontentsarenotchangedbyanyoneelse)
-  1. [Delete the file](#4deletethefile)
+  1. [Set up your working directory](#1setupyourworkingdirectory)
+  1. [Create the MOTD file](#2createthemotdfile)
+  1. [Update the MOTD file's contents](#3updatethemotdfile39scontents)
+  1. [Ensure the MOTD file's contents are not changed by anyone else](#4ensurethemotdfile39scontentsarenotchangedbyanyoneelse)
+  1. [Delete the MOTD file](#5deletethemotdfile)
 
 <hr />
 
-## 1. Create the file
+## 1. Set up your working directory
+
+If you're working from your own RHEL or CentOS machine, create the <codeinline>chef-repo</codeinline> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
+
+```bash
+$ mkdir ~/chef-repo
+```
+
+Now <codeinline>cd</codeinline> there.
+
+```bash
+$ cd ~/chef-repo
+```
+
+## 2. Create the MOTD file
 
 First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
 
-From your working directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
+From your <codeinline>~/chef-repo</codeinline> directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
 
-[CONCEPT] If you don't have a preferred text editor, try <codeinline>vi</codeinline>. This [vi in 10 minutes](http://www.unix-manuals.com/tutorials/vi/vi-in-10-1.html) tutorial can help you get oriented to the commands you'll need to create, edit, and save a file.
+[CONCEPT] If you don't have a preferred text editor, try <codeinline>Vim</codeinline>. This [interactive Vim tutorial](http://www.openvim.com/tutorial.html) tutorial can help you get oriented to the commands you'll need to create, edit, and save a file.
 
 ```ruby
 # ~/chef-repo/hello.rb
@@ -93,7 +108,7 @@ This time you get a different response. This is because Chef does work only when
 
 Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <filepath>motd</filepath> because it already exists and its contents didn't change.
 
-## 2. Update the file's contents
+## 3. Update the MOTD file's contents
 
 Now you're going to change the MOTD.
 
@@ -123,7 +138,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
 
-## 3. Ensure the file's contents are not changed by anyone else
+## 4. Ensure the MOTD file's contents are not changed by anyone else
 
 You need to make sure that no other process can change the MOTD.
 
@@ -155,7 +170,7 @@ Chef restored the original configuration. This is actually a really good thing b
 
 [COMMENT] crushtime-1: ^ tangental comment, but if a recipe fails, the error log gets written to a location that requires sudo access to read. This might cause chef-[command] to require sudo when it normally wouldn't.
 
-## 4. Delete the file
+## 5. Delete the MOTD file
 
 OK, you're done experimenting with the MOTD, so let's clean up. From your working directory, create a new recipe file named <filepath>goodbye.rb</filepath> and save this content to it.
 

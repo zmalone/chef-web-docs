@@ -10,18 +10,57 @@ if (!String.prototype.format) {
   };
 }
 
+function setCookie(cname, cvalue, exdate) {
+    var d = new Date();
+    var expires = "expires=" + new Date(exdate).toGMTString();
+    document.cookie = cname + "=" + cvalue + "; " + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+    }
+    return "";
+}
+
 function formatLocalTime(utcTimeString) {
   var date = new Date(utcTimeString);
   var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  var hours = ["12", "1", "2", "3", "4", "5", "6",
+               "7", "8", "9", "10", "11", "12",
+               "1", "2", "3", "4", "5", "6",
+               "7", "8", "9", "10", "11", "12"];
   hour = date.getHours();
   // Thu, July23 at 10:45 AM
-  return days[date.getDay()] + ", " + months[date.getMonth()] + " " + date.getDate() + " at " + (hour > 12 ? hour - 12 : hour) + ":" + ("0" + date.getMinutes()).slice(-2) + (hour > 11 ? " PM" : " AM");
+  return days[date.getDay()] + ", " + months[date.getMonth()] + " " + date.getDate() + " at " +
+  hours[date.getHours()] + ":" + ("0" + date.getMinutes()).slice(-2) + (hour > 11 ? " PM" : " AM");
 }
 
-function provisionHelper(url, hide_id, show_id, show_id_on_success, show_id_on_error, success_callback) {
-  document.getElementById(hide_id).style.display = 'none';
+function provisionHelper(provider, os, module, button_id, show_id, show_id_on_success, show_id_on_error, success_callback) {
+  //document.getElementById(hide_id).style.display = 'none';
+  var button, session_id, url, module_path;
+
+  button = document.getElementById(button_id);
+  button.style.disabled = true;
+  button.style.cursor = 'default';
+  button.style.background = '#ccc';
+  button.style.borderColor = '#aaa';
+
   document.getElementById(show_id).style.display = 'inherit';
+
+  module_path = "{0}/{1}/{2}".format(provider, os, module);
+
+  url = "http://localhost:3000/labs/{0}/provision".format(module_path);
+  session_id = getCookie(module_path);
+  if (session_id != "") {
+    url += "?session_id=" + session_id;
+  }
+  console.log("SESSION_ID " + session_id)
 
   $.ajax({
     dataType: 'json',
@@ -33,7 +72,6 @@ function provisionHelper(url, hide_id, show_id, show_id_on_success, show_id_on_e
       var oSuccess, data;
 
       data = result[0];
-      //console.log(data);
 
       document.getElementById(show_id).style.display = 'none';
 
@@ -43,7 +81,11 @@ function provisionHelper(url, hide_id, show_id, show_id_on_success, show_id_on_e
         data.username,
         data.password,
         data.ip,
-        formatLocalTime(data.expirationTime));
+        formatLocalTime(data.expirationTime),
+        data.access_restriction);
+
+      setCookie(module_path, data.session_id, data.expirationTime);
+
       oSuccess.style.display = 'inherit';
 
       if (typeof success_callback !== 'undefined') {

@@ -143,18 +143,43 @@ Now run the cookbook. To do so, we use the <codeinline>chef-client</codeinline> 
 
 ```bash
 # ~/chef-repo
-$ chef-client --local-mode --runlist webserver
+$ sudo chef-client --local-mode --runlist webserver
+[2014-07-28T20:05:38+00:00] WARN: No config file found or specified on command line, using command line options.
+Starting Chef Client, version 11.14.0.rc.2
+resolving cookbooks for run list: ["webserver"]
+Synchronizing Cookbooks:
+  - webserver
+Compiling Cookbooks...
+Converging 3 resources
+Recipe: webserver::default
+  * package[httpd] action install (up to date)
+  * service[httpd] action start (up to date)
+  * service[httpd] action enable (up to date)
+  * template[/var/www/html/index.html] action create
+    - update content in file /var/www/html/index.html from 2914aa to ef4ffd
+    (no diff)
+    - restore selinux security context
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 1/4 resources updated in 5.902863207 seconds
 ```
 
 [CONCEPT] You ran <codeinline>chef-apply</codeinline> to run a single recipe from the command line. <codeinline>chef-client</codeinline> is what you use to run a cookbook. You'll be using <codeinline>chef-client</codeinline> a lot more in the future.
 
-[COMMENT] crushtime-2: ^ A few undelightful things happen. First, you get a WARN saying that no config file was found. If this is really a problem, it should say why. Otherwise, perhaps this should be an INFO or nothing when running in local mode. Second, we should remove the SSL WARN in local mode because MITM attacks aren't possible in local mode.
+Run <codeinline>curl</codeinline> again or refresh your web browser to confirm that your web page is still available.
 
-[COMMENT] crushtime-3: ^ Typing --local-mode or -z is a pain. Make it the default when no configuration is present.
+```bash
+# ~/chef-repo
+$ curl localhost
+<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>
+```
 
-Refresh your browser. The result is the same as before, but with a cookbook things are now easier to manage.
-
-![The basic home page](rhel/webserver-basic.png)
+The result is the same as before, but with a cookbook things are now easier to manage.
 
 ## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
 
