@@ -46,7 +46,7 @@ function provisionHelper(provider, os, module, button_id, show_id, show_id_on_su
   var button, session_id, url, module_path;
 
   button = document.getElementById(button_id);
-  button.style.disabled = true;
+  button.style.disabled = 'disabled';
   button.style.cursor = 'default';
   button.style.background = '#ccc';
   button.style.borderColor = '#aaa';
