@@ -57,9 +57,6 @@ helpers do
   include URLHelpers
 end
 
-# Enable syntax highlighting
-activate :syntax
-
 # CloudFront
 if deploy?
   activate :cloudfront do |cloudfront|
