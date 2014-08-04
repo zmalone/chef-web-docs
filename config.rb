@@ -23,10 +23,6 @@ set :canonical_protocol_and_hostname, "http://#{site_url}"
 # Compass
 ###
 
-# Susy grids in Compass
-# First: gem install susy
-# require 'susy'
-
 # Change Compass configuration
 compass_config do |config|
   # config.output_style = :compact
@@ -44,34 +40,15 @@ activate :directory_indexes
 set :trailing_slash, false
 
 # Per-page layout changes:
-#
-# With no layout
-# page "/path/to/file.html", :layout => false
-#
-# With alternative layout
-# page "/path/to/file.html", :layout => :otherlayout
-#
-# A path which all have the same layout
-# with_layout :admin do
-#   page "/admin/*"
-# end
 page '/robots.txt', layout: false
 page '/sitemap.xml', layout: false
 
 # S3 hosting needs a page at the root
 page '/error.html', directory_index: false
 
-# Proxy (fake) files
-# page "/this-page-has-no-template.html", :proxy => "/template-file.html" do
-#   @which_fake_page = "Rendering a fake page with a variable"
-# end
-
 ###
 # Helpers
 ###
-
-# Automatic image dimensions on image_tag helper
-# activate :automatic_image_sizes
 
 # Methods defined in the helpers block are available in templates
 helpers do
@@ -79,9 +56,6 @@ helpers do
   include TabHelpers
   include URLHelpers
 end
-
-# Enable syntax highlighting
-activate :syntax
 
 # CloudFront
 if deploy?
@@ -161,9 +135,6 @@ configure :build do
 
   # Compress PNGs after build
   activate :smusher
-
-  # Or use a different image path
-  # set :http_path, "/Content/images/"
 end
 
 # Write out a REVISION file that shows which revision we're running
