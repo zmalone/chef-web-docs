@@ -1,0 +1,282 @@
+---
+title: 'Configure a resource'
+order: 1
+layout: tutorial
+---
+[TIMETOCOMPLETE] 15
+
+# Configure a resource
+
+To get started, let's look at a basic configuration management project. You'll learn how to manage the Message of the Day (MOTD) file for your organization. A file is an example of a _resource_. A resource describes some piece of infrastructure, such as a file, a template, or a package.
+
+## <i class="fa fa-linux" style="margin-right:3px;"></i> Get a Linux machine
+
+In this tutorial, you'll configure the server directly. That's why it's important that you have a Linux machine available. In later tutorials, you'll manage Ubuntu servers removely from whichever operating system you choose &ndash; be it Linux, Mac OS, or Windows.
+
+There are two ways to get set up.
+
+Option 1: use your own Linux machine. If you have an Ubuntu machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
+
+Option 2: let us provide an Ubuntu virtual machine that has the Chef tools installed for you. Just click the button below.
+
+<div id="pre-launch">
+<center>
+<a id="launch-button" href="javascript:provisionHelper('ec2', 'ubuntu', 'localmode', 'launch-button', 'launching', 'machine-details', 'launch-error')" class="button radius"><i class='fa fa-play'></i>&nbsp;Reserve an Ubuntu virtual machine</a>
+</center>
+</div>
+
+<div id="launching" style="display: none;">
+<div class="spinner">
+  <div class="cube1"></div>
+  <div class="cube2"></div>
+</div>
+<center>We're provisioning a virtual machine for you. This'll take just a minute.</center>
+</div>
+
+<div id="machine-details" class="indent" style="display: none">
+{0} Your virtual machine is all ready to go! Here's how to log in using SSH.
+<p/>
+<div class="window">
+            <nav class="control-window">
+              <a href="#finder" class="close" data-rel="close">close</a>
+              <a href="#" class="minimize">minimize</a>
+              <a href="#" class="deactivate">deactivate</a>
+            </nav>
+            <h1 class="titleInside">Terminal: ~/</h1>
+            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">ssh {1}@{3}</span><span class="line output">{1}@{3}'s password: {2}</span></code></pre></td></tr></tbody></table></div></div>
+</div>
+
+<p>
+The environment expires <b>{4}</b>. If it expires, you're welcome to spin up a new one.
+
+We hope you'll use the virtual machine to continue experimenting with Chef after you complete the tutorial. We only ask that you use the machine respectfully.
+</p>
+
+[CONCEPT] Although certificate-based authentication is more secure, we'll start with passwords because they're easier to get started with.
+
+</div>
+
+<div id="launch-error" class="alert-box error" style="display: none">
+
+<i class="fa fa-exclamation-circle" style="color: #ff2222"></i> Something went wrong while provisioning your machine. We'll look into it. If you get the error again in a few minutes, either try the first option above or <a href="mailto:learnchef@getchef.com?subject=Feedback on Learn Chef">contact us</a>.
+
+</div>
+
+<sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:400px;">
+<span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, be on the lookout for:**</span><br>
+  <i class="fa fa-check"></i>&nbsp; what resources and recipes are.<br>
+  <i class="fa fa-check"></i>&nbsp; what happens when you run <codeinline>chef-apply</codeinline>.<br>
+</sidebar>
+
+## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
+
+  1. [Set up your working directory](#1setupyourworkingdirectory)
+  1. [Create the MOTD file](#2createthemotdfile)
+  1. [Update the MOTD file's contents](#3updatethemotdfile39scontents)
+  1. [Ensure the MOTD file's contents are not changed by anyone else](#4ensurethemotdfile39scontentsarenotchangedbyanyoneelse)
+  1. [Delete the MOTD file](#5deletethemotdfile)
+
+<hr>
+
+## 1. Set up your working directory
+
+If you're working from your own Ubuntu machine, create the <codeinline>chef-repo</codeinline> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
+
+```bash
+$ mkdir ~/chef-repo
+```
+
+Now <codeinline>cd</codeinline> there.
+
+```bash
+$ cd ~/chef-repo
+```
+
+## 2. Create the MOTD file
+
+First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
+
+From your <codeinline>~/chef-repo</codeinline> directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
+
+[CONCEPT] If you don't have a preferred text editor, try <codeinline>Vim</codeinline>. This [interactive Vim tutorial](http://www.openvim.com/tutorial.html) tutorial can help you get oriented to the commands you'll need to create, edit, and save a file.
+
+```ruby
+# ~/chef-repo/hello.rb
+file 'motd' do
+  content 'hello world'
+end
+```
+
+From your terminal window, run <codeinline>chef-apply</codeinline> to apply what you've written.
+
+```bash
+# ~/chef-repo
+$ chef-apply hello.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * file[motd] action create
+    - create new file motd
+    - update content in file motd from none to de031d
+        --- motd        2014-05-13 14:52:54.025253948 -0700
+        +++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
+        @@ -1 +1,2 @@
+        +hello world
+```
+
+[COMMENT] crushtime-4: 'chef-apply' should be 'chef apply'.
+
+The output tells us that a new file, <filepath>motd</filepath>, was created.
+
+Now verify that the file was written. Run the <codeinline>more</codeinline> command, which prints to the console the file you give it.
+
+```bash
+# ~/chef-repo
+$ more motd
+hello world
+```
+
+### Run the command a second time
+
+Now, let's see now what happens when you run the same command again.
+
+```bash
+# ~/chef-repo
+$ chef-apply hello.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * file[motd] action create (up to date)
+```
+
+This time you get a different response. This is because Chef does work only when it needs to.
+
+Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <filepath>motd</filepath> because it already exists and its contents didn't change.
+
+## 3. Update the MOTD file's contents
+
+Now you're going to change the MOTD.
+
+Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
+
+```ruby
+# ~/chef-repo/hello.rb
+file 'motd' do
+  content 'hello chef'
+end
+```
+
+Run <codeinline>chef-apply</codeinline>.
+
+```bash
+# ~/chef-repo
+$ chef-apply hello.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * file[motd] action create
+    - update content in file motd from de031d to b1522f
+        --- motd        2014-05-13 14:52:54.025253948 -0700
+        +++ /tmp/.motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
+        @@ -1,2 +1,2 @@
+        -hello world
+        +hello chef
+```
+
+This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
+
+## 4. Ensure the MOTD file's contents are not changed by anyone else
+
+You need to make sure that no other process can change the MOTD.
+
+Imagine that a co-worker manually changes <filepath>motd</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor. Or you can change the file from the command line like this.
+
+```bash
+# ~/chef-repo
+$ echo 'hello robots' > motd
+```
+
+Now run <codeinline>chef-apply</codeinline>.
+
+```bash
+# ~/chef-repo
+$ chef-apply hello.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * file[motd] action create
+    - update content in file motd from 9b0c18 to b1522f
+        --- motd        2014-05-13 15:03:47.638770524 -0700
+        +++ /tmp/.motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
+        @@ -1,2 +1,2 @@
+        -hello robots
+        +hello chef
+```
+
+Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resource matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
+
+[COMMENT] crushtime-1: ^ I cut the part about backups due to overwhelming feedback, but saving backups to /var/chef/backup requires root access, when the recipe otherwise might not need it. Consider moving backups to home directory, perhaps only when running in --local-mode. That way, you don't need to run with sudo by default.
+
+[COMMENT] crushtime-1: ^ tangental comment, but if a recipe fails, the error log gets written to a location that requires sudo access to read. This might cause chef-[command] to require sudo when it normally wouldn't.
+
+## 5. Delete the MOTD file
+
+OK, you're done experimenting with the MOTD, so let's clean up. From your working directory, create a new file named <filepath>goodbye.rb</filepath> and save this content to it.
+
+```ruby
+# goodbye.rb
+file 'motd' do
+  action :delete
+end
+```
+
+Now apply <filepath>goodbye.rb</filepath> to delete the file.
+
+```bash
+# ~/chef-repo
+$ chef-apply goodbye.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * file[motd] action delete
+    - delete file motd
+```
+
+The output shows that <filepath>motd</filepath> is now gone, but let's prove it.
+
+```bash
+# ~/chef-repo
+$ more motd
+motd: No such file or directory
+```
+
+<hr>
+
+## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
+
+You ran a few basic Chef commands and got a flavor of what Chef can do. You learned that a resource describes one part of the system and its desired state. You worked with a [file][file], which is one kind of resource.
+
+### <i class="fa fa-cubes greeniconcolor" style="margin-right:3px;"></i> Resources describe the what, not the how
+
+Your policy declares _what_ state each resource should be in, but not _how_ to get there. In this lesson, you declared that the file <filepath>motd</filepath> must exist and what its contents are, but you didn't specify how to apply that policy. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
+
+A recipe declares what state each resource should be in but not how to achieve that state. Chef handles these complexities for you.
+
+### <i class="fa fa-bolt greeniconcolor" style="margin-right:3px;"></i> Resources have actions
+
+When you deleted the file, you saw the <codeinline>delete</codeinline> action.
+
+Think of an action as the process that achieves the desired configuration state. Every resource in Chef has a default action, and it's the most common affirmative one &ndash; for example, _create_ a file, _install_ a package, and _start_ a service.
+
+When we created the file we didn't specify the <codeinline>create</codeinline> action because <codeinline>create</codeinline> is the default. But of course you can specify it if you want.
+
+The documentation for each resource type, [file](http://docs.opscode.com/resource_file.html) for example, explains the type's default action.
+
+### <i class="fa fa-file-text greeniconcolor" style="margin-right:3px;"></i> Recipes organize resources
+
+In Chef, <filepath>hello.rb</filepath> is an example of a [recipe](http://docs.opscode.com/essentials_cookbook_recipes.html), or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
+
+Our recipe states everything we need to manage the MOTD file. You used [chef-apply][chef-apply] to apply that recipe from the command line.
+
+<hr>
+
+## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
+
+Of course, your job is about more than just setting up files. Next you'll apply what you've learned to install and configure a package and service.
+
+<%= link_to 'Configure a package and service &rarr;', '/ubuntu/configure-a-package-and-service/', class: 'button radius' %>
+
+<script src='../../../assets/javascripts/provision.js' type='text/javascript'></script>
+
+[file]: http://docs.opscode.com/resource_file.html
+[chef-apply]: http://docs.opscode.com/ctl_chef_apply.html
