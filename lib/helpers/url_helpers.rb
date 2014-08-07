@@ -10,19 +10,39 @@ module URLHelpers
     URI.join(canonical_protocol_and_hostname, path).to_s
   end
 
+  def chef_url
+    'http://www.getchef.com'
+  end
+
+  def chef_docs_url
+    'http://docs.getchef.com'
+  end
+
   def chef_install_url
-    'http://www.getchef.com/chef/install/'
+    "#{chef_url}/chef/install/"
+  end
+
+  def chef_lab_url
+    'http://opscode-cheflab.herokuapp.com'
+  end
+
+  def chef_training_url
+    "#{chef_url}/training/"
   end
 
   def ec_sign_up_url
-    'http://www.getchef.com/contact/on-premises/'
+    "#{chef_url}/contact/on-premises/"
   end
 
   def hec_sign_up_url
-    'https://manage.opscode.com/signup'
+    "#{hec_manage_url}/signup"
   end
 
   def hec_manage_url
-    'https://manage.opscode.com/'
+    'https://manage.opscode.com'
+  end
+
+  def learn_chef_twitter_url
+    'https://twitter.com/learnchef'
   end
 end
