@@ -60,7 +60,7 @@ function provisionHelper(provider, os, module, button_id, show_id, show_id_on_su
   if (session_id != "") {
     url += "?session_id=" + session_id;
   }
-  console.log("SESSION_ID " + session_id)
+  //console.log("SESSION_ID " + session_id)
 
   $.ajax({
     dataType: 'json',
