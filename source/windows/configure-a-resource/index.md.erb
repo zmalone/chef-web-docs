@@ -15,7 +15,7 @@ In this tutorial, you'll configure the server directly. That's why it's importan
 
 There are two ways to get set up.
 
-Option 1: use your own Windows Server machine. If you have a machine that meets the [system requirements](<%= chef_docs_url %>/chef_system_requirements.html) that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
+Option 1: use your own Windows Server machine. If you have a machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
 
 Option 2: let us provide an Windows Server virtual machine that has the Chef tools installed for you. Just click the button below.
 
@@ -28,19 +28,21 @@ Option 2: let us provide an Windows Server virtual machine that has the Chef too
   <i class="fa fa-check"></i>&nbsp; what happens when you run <codeinline>chef-apply</codeinline>.<br>
 </sidebar>
 
-## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
+## <i class="fa fa-tasks" style="margin-right:3px;"></i> Here's what you'll do
 
   1. [Set up your working directory](#1setupyourworkingdirectory)
-  1. [Create the MOTD file](#2createthemotdfile)
-  1. [Update the MOTD file's contents](#3updatethemotdfile39scontents)
-  1. [Ensure the MOTD file's contents are not changed by anyone else](#4ensurethemotdfile39scontentsarenotchangedbyanyoneelse)
-  1. [Delete the MOTD file](#5deletethemotdfile)
+  1. [Create the INI file](#2createtheinifile)
+  1. [Update the INI file's contents](#3updatetheinifile39scontents)
+  1. [Ensure the INI file's contents are not changed by anyone else](#4ensuretheinifile39scontentsarenotchangedbyanyoneelse)
+  1. [Delete the INI file](#5deletetheinifile)
 
 <hr>
 
 ## 1. Set up your working directory
 
-If you're working from your own windows machine, create the <codeinline>chef-repo</codeinline> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
+[WINDOWS] &nbsp;For this tutorial, you'll work from Windows PowerShell. Open it as Administrator.
+
+If you're working from your own Windows Server machine, create the <codeinline>chef-repo</codeinline> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
 
 ```bash
 $ mkdir ~/chef-repo
@@ -52,18 +54,18 @@ Now <codeinline>cd</codeinline> there.
 $ cd ~/chef-repo
 ```
 
-## 2. Create the MOTD file
+## 2. Create the INI file
 
-First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
+First, you need to create the file and set its initial contents. To keep things basic, let's configure the file in the working directory.
 
 From your <codeinline>~/chef-repo</codeinline> directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
 
-[CONCEPT] If you don't have a preferred text editor, try <codeinline>Vim</codeinline>. This [interactive Vim tutorial](http://www.openvim.com/tutorial.html) tutorial can help you get oriented to the commands you'll need to create, edit, and save a file.
-
 ```ruby
 # ~/chef-repo/hello.rb
-file 'motd' do
-  content 'hello world'
+file_name = File.expand_path('settings.ini', File.dirname(__FILE__))
+
+file file_name do
+  content 'greeting=hello chef'
 end
 ```
 
@@ -73,25 +75,25 @@ From your terminal window, run <codeinline>chef-apply</codeinline> to apply what
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[motd] action create
-    - create new file motd
-    - update content in file motd from none to de031d
-        --- motd        2014-05-13 14:52:54.025253948 -0700
-        +++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
-        @@ -1 +1,2 @@
-        +hello world
+  * file[C:/Users/chef/chef-repo/settings.ini] action create
+    - create new file C:/Users/chef/chef-repo/settings.ini
+    - update content in file C:/Users/chef/chef-repo/settings.ini from none to 6823fa
+    --- C:/Users/chef/chef-repo/settings.ini    2014-08-12 21:27:13.000000000 +0000
+    +++ C:/Users/chef/AppData/Local/Temp/settings.ini20140812-2592-1st3xlm      2014-08-12 21:27:13.000000000 +0000
+    @@ -1 +1,2 @@
+    +greeting=hello world
 ```
 
 [COMMENT] crushtime-4: 'chef-apply' should be 'chef apply'.
 
-The output tells us that a new file, <filepath>motd</filepath>, was created.
+The output tells us that a new file, <filepath>settings.ini</filepath>, was created.
 
-Now verify that the file was written. Run the <codeinline>more</codeinline> command, which prints to the console the file you give it.
+Now verify that the file was written. Run the <codeinline>Get-Content</codeinline> PowerShell cmdlet, which reads from the file you give it.
 
 ```bash
 # ~/chef-repo
-$ more motd
-hello world
+$ Get-Content settings.ini
+greeting=hello world
 ```
 
 ### Run the command a second time
@@ -102,23 +104,25 @@ Now, let's see now what happens when you run the same command again.
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[motd] action create (up to date)
+  * file[C:/Users/chef/chef-repo/settings.ini] action create (up to date)
 ```
 
 This time you get a different response. This is because Chef does work only when it needs to.
 
-Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <filepath>motd</filepath> because it already exists and its contents didn't change.
+Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <filepath>settings.ini</filepath> because it already exists and its contents didn't change.
 
-## 3. Update the MOTD file's contents
+## 3. Update the INI file's contents
 
-Now you're going to change the MOTD.
+Now you're going to change the INI file.
 
 Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
 
 ```ruby
 # ~/chef-repo/hello.rb
-file 'motd' do
-  content 'hello chef'
+file_name = File.expand_path('settings.ini', File.dirname(__FILE__))
+
+file file_name do
+  content 'greeting=hello chef'
 end
 ```
 
@@ -128,26 +132,26 @@ Run <codeinline>chef-apply</codeinline>.
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[motd] action create
-    - update content in file motd from de031d to b1522f
-        --- motd        2014-05-13 14:52:54.025253948 -0700
-        +++ /tmp/.motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
-        @@ -1,2 +1,2 @@
-        -hello world
-        +hello chef
+  * file[C:/Users/chef/chef-repo/settings.ini] action create
+    - update content in file C:/Users/chef/chef-repo/settings.ini from 6823fa to cfde92
+    --- C:/Users/chef/chef-repo/settings.ini    2014-08-12 21:27:13.000000000 +0000
+    +++ C:/Users/chef/AppData/Local/Temp/settings.ini20140812-3908-1ilgurd      2014-08-12 21:29:25.000000000 +0000
+    @@ -1,2 +1,2 @@
+    -greeting=hello world
+    +greeting=hello chef
 ```
 
 This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
 
-## 4. Ensure the MOTD file's contents are not changed by anyone else
+## 4. Ensure the INI file's contents are not changed by anyone else
 
-You need to make sure that no other process can change the MOTD.
+You need to make sure that no other process can change the INI file.
 
-Imagine that a co-worker manually changes <filepath>motd</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor. Or you can change the file from the command line like this.
+Imagine that a co-worker manually changes <filepath>settings.ini</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor. Or you can change the file from the command line like this.
 
 ```bash
 # ~/chef-repo
-$ echo 'hello robots' > motd
+$ Set-Content .\settings.ini 'greeting=hello robots'
 ```
 
 Now run <codeinline>chef-apply</codeinline>.
@@ -156,28 +160,26 @@ Now run <codeinline>chef-apply</codeinline>.
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[motd] action create
-    - update content in file motd from 9b0c18 to b1522f
-        --- motd        2014-05-13 15:03:47.638770524 -0700
-        +++ /tmp/.motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
-        @@ -1,2 +1,2 @@
-        -hello robots
-        +hello chef
+  * file[C:/Users/chef/chef-repo/settings.ini] action create
+    - update content in file C:/Users/chef/chef-repo/settings.ini from 49c070 to cfde92
+    --- C:/Users/chef/chef-repo/settings.ini    2014-08-12 21:32:38.000000000 +0000
+    +++ C:/Users/chef/AppData/Local/Temp/settings.ini20140812-1288-1ub7kv2      2014-08-12 21:32:52.000000000 +0000
+    @@ -1,2 +1,2 @@
+    -greeting=hello robots
+    +greeting=hello chef
 ```
 
 Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resource matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
 
-[COMMENT] crushtime-1: ^ I cut the part about backups due to overwhelming feedback, but saving backups to /var/chef/backup requires root access, when the recipe otherwise might not need it. Consider moving backups to home directory, perhaps only when running in --local-mode. That way, you don't need to run with sudo by default.
+## 5. Delete the INI file
 
-[COMMENT] crushtime-1: ^ tangental comment, but if a recipe fails, the error log gets written to a location that requires sudo access to read. This might cause chef-[command] to require sudo when it normally wouldn't.
-
-## 5. Delete the MOTD file
-
-OK, you're done experimenting with the MOTD, so let's clean up. From your working directory, create a new file named <filepath>goodbye.rb</filepath> and save this content to it.
+OK, you're done experimenting with the INI file, so let's clean up. From your working directory, create a new file named <filepath>goodbye.rb</filepath> and save this content to it.
 
 ```ruby
 # goodbye.rb
-file 'motd' do
+file_name = File.expand_path('settings.ini', File.dirname(__FILE__))
+
+file file_name do
   action :delete
 end
 ```
@@ -188,31 +190,31 @@ Now apply <filepath>goodbye.rb</filepath> to delete the file.
 # ~/chef-repo
 $ chef-apply goodbye.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[motd] action delete
-    - delete file motd
+  * file[C:/Users/chef/chef-repo/settings.ini] action delete
+    - delete file C:/Users/chef/chef-repo/settings.ini
 ```
 
-The output shows that <filepath>motd</filepath> is now gone, but let's prove it.
+The output shows that <filepath>settings.ini</filepath> is now gone, but let's prove it.
 
 ```bash
 # ~/chef-repo
-$ more motd
-motd: No such file or directory
+$ Test-Path .\settings.ini
+False
 ```
 
 <hr>
 
-## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
+## <i class="fa fa-question" style="margin-right:3px;"></i> What did we see here?
 
 You ran a few basic Chef commands and got a flavor of what Chef can do. You learned that a resource describes one part of the system and its desired state. You worked with a [file][file], which is one kind of resource.
 
-### <i class="fa fa-cubes greeniconcolor" style="margin-right:3px;"></i> Resources describe the what, not the how
+### <i class="fa fa-cubes" style="margin-right:3px;"></i> Resources describe the what, not the how
 
-Your policy declares _what_ state each resource should be in, but not _how_ to get there. In this lesson, you declared that the file <filepath>motd</filepath> must exist and what its contents are, but you didn't specify how to apply that policy. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
+Your policy declares _what_ state each resource should be in, but not _how_ to get there. In this lesson, you declared that the file <filepath>settings.ini</filepath> must exist and what its contents are, but you didn't specify how to apply that policy. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
 
 A recipe declares what state each resource should be in but not how to achieve that state. Chef handles these complexities for you.
 
-### <i class="fa fa-bolt greeniconcolor" style="margin-right:3px;"></i> Resources have actions
+### <i class="fa fa-bolt" style="margin-right:3px;"></i> Resources have actions
 
 When you deleted the file, you saw the <codeinline>delete</codeinline> action.
 
@@ -222,15 +224,15 @@ When we created the file we didn't specify the <codeinline>create</codeinline> a
 
 The documentation for each resource type, [file](http://docs.opscode.com/resource_file.html) for example, explains the type's default action.
 
-### <i class="fa fa-file-text greeniconcolor" style="margin-right:3px;"></i> Recipes organize resources
+### <i class="fa fa-file-text" style="margin-right:3px;"></i> Recipes organize resources
 
 In Chef, <filepath>hello.rb</filepath> is an example of a [recipe](http://docs.opscode.com/essentials_cookbook_recipes.html), or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
 
-Our recipe states everything we need to manage the MOTD file. You used [chef-apply][chef-apply] to apply that recipe from the command line.
+Our recipe states everything we need to manage the INI file. You used [chef-apply][chef-apply] to apply that recipe from the command line.
 
 <hr>
 
-## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
+## <i class="fa fa-road" style="margin-right:3px;"></i> What's next
 
 Of course, your job is about more than just setting up files. Next you'll apply what you've learned to install and configure a package and service.
 

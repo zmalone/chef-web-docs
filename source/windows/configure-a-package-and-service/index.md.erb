@@ -2,26 +2,26 @@
 title: 'Configure a package and service'
 order: 2
 layout: tutorial
-description: Configure Apache web server as a way to learn how to work with packages and services
-keywords: package, service, file, resource, Apache, apache2
+description: Configure IIS web server as a way to learn how to work with packages and services
+keywords: package, service, file, resource, Internet Information Services , IIS
 ---
 [TIMETOCOMPLETE] 15
 
 # Configure a package and service
 
-Let's extend what you learned about file management in the [previous lesson](/windows/configure-a-resource/) to manage the Apache HTTP Server package and its service. Like files, packages and services are also types of resources.
+Let's extend what you learned about file management in the [previous lesson](/windows/configure-a-resource/) to manage an Internet Information Services (IIS) web server. Like files, packages and services are also types of resources.
 
 Of course, you can set up one web server manually. But with Chef it'll be easier to manage your infrastructure as you scale, add complexity, and roll out new configuration policies.
 
 Although you don't need prior knowledge about web servers, configuring one is a great way to grow your Chef skills.
 
-## <i class="fa fa-linux" style="margin-right:3px;"></i> Get a Linux machine
+## <i class="fa fa-windows" style="margin-right:3px;"></i> Get a Windows Server machine
 
 Like the previous tutorial, you'll configure the server directly. You can continue with the Linux machine you used in the previous tutorial, but let's review the options.
 
-Option 1: use your own Linux machine. If you have an windows machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
+Option 1: use your own Windows Server machine. If you have a machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
 
-Option 2: let us provide an windows machine that has the Chef tools installed for you. Just click the button below.
+Option 2: let us provide an Windows Server virtual machine that has the Chef tools installed for you. Just click the button below.
 
 <div id="pre-launch">
 <center>
@@ -38,17 +38,23 @@ Option 2: let us provide an windows machine that has the Chef tools installed fo
 </div>
 
 <div id="machine-details" class="indent" style="display: none">
-{0} Your virtual machine is all ready to go! Here's how to log in using SSH.
+{0} Your virtual machine is all ready to go! Download the RDP shortcut file to connect.
+
 <p/>
-<div class="window">
-            <nav class="control-window">
-              <a href="#finder" class="close" data-rel="close">close</a>
-              <a href="#" class="minimize">minimize</a>
-              <a href="#" class="deactivate">deactivate</a>
-            </nav>
-            <h1 class="titleInside">Terminal: ~/</h1>
-            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">ssh {1}@{3}</span><span class="line output">{1}@{3}'s password: {2}</span></code></pre></td></tr></tbody></table></div></div>
+<center>
+<a href="http://localhost:3000/labs/download_rdp?user_name={1}&ip_address={3}" class="button radius"><i class="fa fa-download"></i>&nbsp;Download Remote Desktop File</a>
+</center>
+
+Or connect using your remote desktop client.
+
+<div>
+</p>
+
+[RDPINFO] {3}, {1}, {2}
+
 </div>
+
+<p/>
 
 <p>
 The environment expires <b>{4}</b>. If it expires, you're welcome to spin up a new one.
@@ -72,54 +78,59 @@ We hope you'll use the virtual machine to continue experimenting with Chef after
 
 ## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
-  1. [Install the Apache package](#1installtheapachepackage)
-  1. [Start and enable the Apache service](#2startandenabletheapacheservice)
-  1. [Add a home page](#3addahomepage)
+  1. [Install IIS](#1installiis)
+  1. [Start the World Wide Web Publishing Service](#2starttheworldwidewebpublishingservice)
+  1. [Configure the home page](#3configurethehomepage)
 
-## 1. Install the Apache package
+## 1. Install IIS
 
-Let's install the Apache package, **apache2**. From your working directory, add this recipe to a file named <filepath>webserver.rb</filepath>.
+Let's install IIS. From your working directory, add this recipe to a file named <filepath>webserver.rb</filepath>.
 
 ```ruby
 # ~/chef-repo/webserver.rb
-package 'apache2'
+powershell_script 'Install IIS' do
+  code 'add-windowsfeature Web-Server'
+end
 ```
 
-We don't need to specify an action because <codeinline>install</codeinline> is the default.
+We don't need to specify an action because <codeinline>run</codeinline> is the default.
 
 Now run <codeinline>chef-apply</codeinline> to apply the recipe.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply webserver.rb
+$ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[apache2] action install
-    - install version 2.4.6-2windows2.2 of package apache2
+  * powershell_script[Install IIS] action run
+    - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
+"C:/Users/chef/AppData/Local/Temp/chef-script20140812-3480-xwa5in.ps1"
 ```
-
-[CONCEPT] <codeinline>sudo</codeinline> is required because this command installs a package and therefore must be run with root privileges. If you're running as root on your own machine, you can omit <codeinline>sudo</codeinline> from the command.
 
 Run the recipe a second time.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply webserver.rb
+$ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[apache2] action install (up to date)
-  ```
+  * powershell_script[Install IIS] action run
+    - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
+"C:/Users/chef/AppData/Local/Temp/chef-script20140812-4088-7kv0y2.ps1"
+```
 
-You see that Chef does no work because there's nothing to do &ndash; the package is already installed.
+The output is similar but the command took much less time to complete. That's because Chef detected that IIS is already installed and therefore did not try to install it again.
 
-## 2. Start and enable the Apache service
+## 2. Start the World Wide Web Publishing Service
 
-Now let's start the Apache service and enable it when the server boots. Modify <filepath>webserver.rb</filepath> to look like this.
+Now let's start the World Wide Web Publishing Service and enable it when the server boots. Modify <filepath>webserver.rb</filepath> to look like this.
 
 ```ruby
 # ~/chef-repo/webserver.rb
-package 'apache2'
+powershell_script 'Install IIS' do
+  code 'add-windowsfeature Web-Server'
+end
 
-service 'apache2' do
-  action [:start, :enable]
+service 'w3svc' do
+  action [:enable, :start]
 end
 ```
 
@@ -129,32 +140,34 @@ Now apply it.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply webserver.rb
+$ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[apache2] action install (up to date)
-  * service[apache2] action start (up to date)
-  * service[apache2] action enable (up to date)
+  * powershell_script[Install IIS] action run
+    - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
+"C:/Users/chef/AppData/Local/Temp/chef-script20140812-3396-e15lo1.ps1"
+  * service[w3svc] action enable (up to date)
+  * service[w3svc] action start (up to date)
 ```
 
-The package is already installed, so there's nothing to do. Similarly, the service is already started and enabled. On some Linux distros, Apache is not started or enabled as it is installed. With Chef, this is easy to verify.
+IIS is already installed, so there's nothing to do. Similarly, the service is already started and enabled. But with Chef it's easy to ensure that everything is in the expected state.
 
 ## 3. Add a home page
 
 Let's spruce things up and add a custom home page.
 
-You already know how to configure a <codeinline>file</codeinline> resource; append one that configures the default home page, <filepath>/var/www/index.html</filepath>, to the end of <filepath>webserver.rb</filepath>. The entire recipe now looks like this.
-
-[CONCEPT] Tip: Although we believe typing in the code and commands is a great way to learn, remember you can copy the text from the code and terminal boxes and paste them into your SSH session.
+You already know how to configure a <codeinline>file</codeinline> resource; append one that configures the default home page, <filepath>c:\inetpub\wwwroot\Default.htm</filepath>, to the end of <filepath>webserver.rb</filepath>. The entire recipe now looks like this.
 
 ```ruby
 # ~/chef-repo/webserver.rb
-package 'apache2'
-
-service 'apache2' do
-  action [:start, :enable]
+powershell_script 'Install IIS' do
+  code 'add-windowsfeature Web-Server'
 end
 
-file '/var/www/index.html' do
+service 'w3svc' do
+  action [:enable, :start]
+end
+
+file 'c:\inetpub\wwwroot\Default.htm' do
   content '<html>
   <body>
     <h1>hello world</h1>
@@ -167,20 +180,19 @@ Now apply it.
 
 ```bash
 # ~/chef-repo/
-$ sudo chef-apply webserver.rb
+$ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[apache2] action install (up to date)
-  * service[apache2] action start (up to date)
-  * service[apache2] action enable (up to date)
-  * file[/var/www/index.html] action create
-    - update content in file /var/www/index.html from 94850c to 2914aa
-    --- /var/www/index.html	2014-08-05 21:26:03.638403000 +0000
-    +++ /tmp/.index.html20140805-3788-1rrovsq	2014-08-05 21:30:24.930403000 +0000
-    @@ -1,5 +1,6 @@
-    -<html><body><h1>It works!</h1>
-    -<p>This is the default web page for this server.</p>
-    -<p>The web server software is running but no content has been added, yet.</p>
-    -</body></html>
+  * powershell_script[Install IIS] action run
+    - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
+"C:/Users/chef/AppData/Local/Temp/chef-script20140812-1796-9ausln.ps1"
+  * service[w3svc] action enable (up to date)
+  * service[w3svc] action start (up to date)
+  * file[c:\inetpub\wwwroot\Default.htm] action create
+    - create new file c:\inetpub\wwwroot\Default.htm
+    - update content in file c:\inetpub\wwwroot\Default.htm from none to 2914aa
+    --- c:\inetpub\wwwroot\Default.htm  2014-08-12 22:37:18.000000000 +0000
+    +++ C:/Users/chef/AppData/Local/Temp/Default.htm20140812-1796-18gnegz       2014-08-12 22:37:18.000000000 +0000
+    @@ -1 +1,6 @@
     +<html>
     +  <body>
     +    <h1>hello world</h1>
@@ -218,9 +230,9 @@ Let's take another quick look at our web server recipe.
 
 ```ruby
 # ~/chef-repo/webserver.rb
-package 'apache2'
+package 'iis2'
 
-service 'apache2' do
+service 'iis2' do
   action [:start, :enable]
 end
 
@@ -237,7 +249,7 @@ The resources are applied in the order they are specified in the recipe. So here
 
 The same idea applies to the action list <codeinline>[:start, :enable]</codeinline> for configuring the service. The service is started before it is enabled when the server boots.
 
-It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the Apache service before the package is even installed.
+It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the IIS service before the package is even installed.
 
 A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't start then we don't want to enable it.
 
