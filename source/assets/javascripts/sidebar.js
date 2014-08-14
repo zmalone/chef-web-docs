@@ -10,7 +10,7 @@ var INITIAL_SIDEBAR_OFFSET = 112;
 $(window).scroll(function() {
   var top = $(window).scrollTop();
   if(top > HEADER_HEIGHT) {
-    $('#sidebar').css("top", 20);
+    $('#sidebar').css("top", INITIAL_SIDEBAR_OFFSET - HEADER_HEIGHT);
   } else {
     $('#sidebar').css("top", -1 * $(window).scrollTop() + INITIAL_SIDEBAR_OFFSET);
   }
