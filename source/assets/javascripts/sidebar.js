@@ -3,15 +3,18 @@ $('.accordion').on('click', '.title a', function (event) {
   window.location.assign(event.currentTarget.href);
 });
 
-var HEADER_HEIGHT = 92;
-var INITIAL_SIDEBAR_OFFSET = 112;
+(function() {
+  var sidebar = $('#sidebar');
+  var headerHeight = $('#header').height();
+  var initialSidebarOffset = sidebar.offset().top;
 
-// Makes the sidebar slide along with the content while the window scrolls.
-$(window).scroll(function() {
-  var top = $(window).scrollTop();
-  if(top > HEADER_HEIGHT) {
-    $('#sidebar').css("top", INITIAL_SIDEBAR_OFFSET - HEADER_HEIGHT);
-  } else {
-    $('#sidebar').css("top", -1 * $(window).scrollTop() + INITIAL_SIDEBAR_OFFSET);
-  }
-});
+  // Makes the sidebar slide along with the content while the window scrolls.
+  $(window).scroll(function() {
+    var top = $(window).scrollTop();
+    if(top > headerHeight) {
+      sidebar.css("top", initialSidebarOffset - headerHeight);
+    } else {
+      sidebar.css("top", -1 * top + initialSidebarOffset);
+    }
+  });
+}());
