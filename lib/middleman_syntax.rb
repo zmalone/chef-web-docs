@@ -13,6 +13,9 @@ module Middleman
 
         return "" if code_block_is_empty?(code)
 
+        format_language = language
+        language = language_for_format(language)
+
         lexer = lexer_for_language_or_code(language,code)
 
         highlighter_options = options.to_h.merge(opts)
@@ -21,7 +24,7 @@ module Middleman
 
         lexed_code = lexer.lex(code, lexer_options)
 
-        formatter = formatter_for_language(lexer.tag)
+        formatter = formatter_for_language(format_language)
         formatter.render(lexed_code, highlighter_options)
       end
 
@@ -38,7 +41,8 @@ module Middleman
           hash = { "ruby" => CodeFormatter.new,
                    "html" => CodeFormatter.new,
                    "bash" => TerminalFormatter.new,
-                   "shell" => TerminalFormatter.new }
+                   "shell" => TerminalFormatter.new,
+                   "ps" => TerminalFormatter.new('Windows PowerShell') }
 
           hash.default = DefaultFormatter.new
           hash
@@ -49,6 +53,15 @@ module Middleman
         formatters[language]
       end
 
+      # enable the syntax highlight language to differ from the formatter
+      def self.language_for_format(language)
+        case language
+        when 'ps'
+          'bash'
+        else
+          language
+        end
+      end
     end
   end
 end

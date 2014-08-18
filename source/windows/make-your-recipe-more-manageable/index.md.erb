@@ -13,11 +13,11 @@ keywords: cookbook, recipe
 
 Let's create a _cookbook_ to make our web server recipe easier to manage. A cookbook provides structure to your recipes and enables you to more easily reference external files, such as our web server's home page. In essence, a cookbook helps you stay organized.
 
-## <i class="fa fa-linux" style="margin-right:3px;"></i> Get a Linux machine
+## <i class="fa fa-windows" style="margin-right:3px;"></i> Get a Windows Server machine
 
-Like the previous tutorials, you'll configure the server directly. You can continue with the Linux machine you used in the previous tutorial, but let's review the options.
+Like the previous tutorials, you'll configure the server directly. You can continue with the Windows Server machine you used in the previous tutorial, but let's review the options.
 
-Option 1: use your own Linux machine. If you have an windows machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
+Option 1: use your own machine. If you have a Windows Server machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
 
 Option 2: let us provide an windows virtual machine that has the Chef tools installed for you. Just click the button below.
 
@@ -36,17 +36,23 @@ Option 2: let us provide an windows virtual machine that has the Chef tools inst
 </div>
 
 <div id="machine-details" class="indent" style="display: none">
-{0} Your virtual machine is all ready to go! Here's how to log in using SSH.
+{0} Your virtual machine is all ready to go! Download the RDP shortcut file to connect.
+
 <p/>
-<div class="window">
-            <nav class="control-window">
-              <a href="#finder" class="close" data-rel="close">close</a>
-              <a href="#" class="minimize">minimize</a>
-              <a href="#" class="deactivate">deactivate</a>
-            </nav>
-            <h1 class="titleInside">Terminal: ~/</h1>
-            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">ssh {1}@{3}</span><span class="line output">{1}@{3}'s password: {2}</span></code></pre></td></tr></tbody></table></div></div>
+<center>
+<a href="http://localhost:3000/labs/download_rdp?user_name={1}&ip_address={3}" class="button radius"><i class="fa fa-download"></i>&nbsp;Download Remote Desktop File</a>
+</center>
+
+Or connect using your remote desktop client.
+
+<div>
+</p>
+
+[RDPINFO] {3}, {1}, {2}
+
 </div>
+
+<p/>
 
 <p>
 The environment expires <b>{4}</b>. If it expires, you're welcome to spin up a new one.
@@ -97,20 +103,22 @@ Here's the directory structure that the command created.
 
 ```bash
 # ~/chef-repo/cookbooks
-$ tree
-.
-└── webserver
-    ├── Berksfile
-    ├── chefignore
-    ├── metadata.rb
-    ├── README.md
-    └── recipes
-        └── default.rb
-
-2 directories, 5 files
+$ tree /F
+Folder PATH listing
+Volume serial number is 5E71-6BA3
+C:.
+└───webserver
+    │   .kitchen.yml
+    │   Berksfile
+    │   chefignore
+    │   metadata.rb
+    │   README.md
+    │
+    └───recipes
+            default.rb
 ```
 
-Note the default recipe, named <filepath>default.rb</filepath>. This is where we'll move our Apache recipe in a moment.
+Note the default recipe, named <filepath>default.rb</filepath>. This is where we'll move our IIS recipe in a moment.
 
 ## 2. Create a template
 
@@ -121,24 +129,27 @@ Now we'll move the home page to our cookbook to an external file. First, run thi
 $ chef generate template webserver index.html
 ```
 
-The file <filepath>index.html.erb</filepath> gets created under <filepath>webserver/templates/default</filepath>.
+The file <filepath>index.html.erb</filepath> gets created under <filepath>webserver\templates\default</filepath>.
 
 ```bash
-# ~/chef-repo/cookbooks
-$ tree
-.
-└── webserver
-    ├── Berksfile
-    ├── chefignore
-    ├── metadata.rb
-    ├── README.md
-    ├── recipes
-    │   └── default.rb
-    └── templates
-        └── default
-            └── index.html.erb
-
-4 directories, 6 files
+# ~\chef-repo\cookbooks
+$ tree /F
+Folder PATH listing
+Volume serial number is 5E71-6BA3
+C:.
+└───webserver
+    │   .kitchen.yml
+    │   Berksfile
+    │   chefignore
+    │   metadata.rb
+    │   README.md
+    │
+    ├───recipes
+    │       default.rb
+    │
+    └───templates
+        └───default
+                index.html.erb
 ```
 
 The .erb extension simply means that the file can have placeholders. More on that later.
@@ -146,7 +157,7 @@ The .erb extension simply means that the file can have placeholders. More on tha
 Now copy the contents of the HTML file from your recipe to the new HTML file, <filepath>index.html.erb</filepath>.
 
 ```html
-<!-- ~/chef-repo/cookbooks/webserver/templates/default/index.html.erb -->
+<!-- ~\chef-repo\cookbooks\webserver\templates\default\index.html.erb -->
 <html>
   <body>
     <h1>hello world</h1>
@@ -159,14 +170,16 @@ Now copy the contents of the HTML file from your recipe to the new HTML file, <f
 Write out the recipe, <filepath>default.rb</filepath>, like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/webserver/recipes/default.rb
-package 'apache2'
+# ~\chef-repo\cookbooks\webserver\recipes\default.rb
+powershell_script 'Install IIS' do
+  code 'add-windowsfeature Web-Server'
+end
 
-service 'apache2' do
+service 'w3svc' do
   action [:start, :enable]
 end
 
-template '/var/www/index.html' do
+template 'c:\inetpub\wwwroot\Default.htm' do
   source 'index.html.erb'
 end
 ```
@@ -176,9 +189,9 @@ end
 Now run the cookbook. To do so, we use the <codeinline>chef-client</codeinline> command and specify what's called the _run-list_.
 
 ```bash
-# ~/chef-repo
-$ sudo chef-client --local-mode --runlist webserver
-[2014-07-28T20:05:38+00:00] WARN: No config file found or specified on command line, using command line options.
+# ~\chef-repo
+$ chef-client --local-mode --runlist webserver
+[2014-08-13T21:48:03+00:00] WARN: No config file found or specified on command line, using command line options.
 Starting Chef Client, version 11.14.0.rc.2
 resolving cookbooks for run list: ["webserver"]
 Synchronizing Cookbooks:
@@ -186,26 +199,27 @@ Synchronizing Cookbooks:
 Compiling Cookbooks...
 Converging 3 resources
 Recipe: webserver::default
-  * package[apache2] action install (up to date)
-  * service[apache2] action start (up to date)
-  * service[apache2] action enable (up to date)
-  * template[/var/www/index.html] action create
-    - update content in file /var/www/index.html from 2914aa to ef4ffd
+  * powershell_script[Install IIS] action run
+    - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
+"C:/Users/chef/AppData/Local/Temp/chef-script20140813-2360-tltb25.ps1"
+  * service[w3svc] action start (up to date)
+  * service[w3svc] action enable (up to date)
+  * template[c:\inetpub\wwwroot\Default.htm] action create
+    - update content in file c:\inetpub\wwwroot\Default.htm from 2914aa to 100c2f
     (no diff)
-    - restore selinux security context
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 1/4 resources updated in 5.902863207 seconds
+Chef Client finished, 2/4 resources updated in 38.188832 seconds
 ```
 
 [CONCEPT] You ran <codeinline>chef-apply</codeinline> to run a single recipe from the command line. <codeinline>chef-client</codeinline> is what you use to run a cookbook.
 
-Run <codeinline>curl</codeinline> again or refresh your web browser to confirm that your web page is still available.
+Run <codeinline>Invoke-WebRequest</codeinline> or refresh your web browser to confirm that your web page is still available.
 
 ```bash
-# ~/chef-repo
-$ curl localhost
+# ~\chef-repo
+$ (Invoke-WebRequest localhost).Content
 <html>
   <body>
     <h1>hello world</h1>

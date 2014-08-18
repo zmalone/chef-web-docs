@@ -3,10 +3,15 @@ module Middleman
     module Highlighter
 
       class TerminalFormatter
+        def initialize(title_prefix = 'Terminal')
+          puts "title prefix is " + title_prefix
+          @title_prefix = title_prefix
+        end
+
         def render(lexed_code, highlighter_options)
           lexed_code, working_dir = find_working_dir(lexed_code)
           prompt_content = promptize(lexed_code)
-          terminal_window prompt_content, "Terminal: " + working_dir
+          terminal_window prompt_content, @title_prefix + ": " + working_dir
         end
 
         def find_working_dir(lexed_code)

@@ -40,46 +40,48 @@ Option 2: let us provide an Windows Server virtual machine that has the Chef too
 
 ## 1. Set up your working directory
 
-[WINDOWS] &nbsp;For this tutorial, you'll work from Windows PowerShell. Open it as Administrator.
+When working with Chef from Windows, we recommend that you use Windows PowerShell. Open it as Administrator.
 
 If you're working from your own Windows Server machine, create the <codeinline>chef-repo</codeinline> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
 
-```bash
-$ mkdir ~/chef-repo
+```ps
+# C:\Windows\system32
+$ mkdir ~\chef-repo
 ```
+
+[WINDOWS] In PowerShell, <filepath>~</filepath> represents the current user's home directory, for example <filepath>C:\Users\chef</filepath>.
 
 Now <codeinline>cd</codeinline> there.
 
-```bash
-$ cd ~/chef-repo
+```ps
+# C:\Windows\system32
+$ cd ~\chef-repo
 ```
 
 ## 2. Create the INI file
 
 First, you need to create the file and set its initial contents. To keep things basic, let's configure the file in the working directory.
 
-From your <codeinline>~/chef-repo</codeinline> directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
+From your <codeinline>~\chef-repo</codeinline> directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
 
 ```ruby
-# ~/chef-repo/hello.rb
-file_name = File.expand_path('settings.ini', File.dirname(__FILE__))
-
-file file_name do
+# ~\chef-repo\hello.rb
+file 'C:\Users\chef\chef-repo\settings.ini' do
   content 'greeting=hello chef'
 end
 ```
 
 From your terminal window, run <codeinline>chef-apply</codeinline> to apply what you've written.
 
-```bash
-# ~/chef-repo
+```ps
+# ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:/Users/chef/chef-repo/settings.ini] action create
-    - create new file C:/Users/chef/chef-repo/settings.ini
-    - update content in file C:/Users/chef/chef-repo/settings.ini from none to 6823fa
-    --- C:/Users/chef/chef-repo/settings.ini    2014-08-12 21:27:13.000000000 +0000
-    +++ C:/Users/chef/AppData/Local/Temp/settings.ini20140812-2592-1st3xlm      2014-08-12 21:27:13.000000000 +0000
+  * file[C:\Users\chef\chef-repo\settings.ini] action create
+    - create new file C:\Users\chef\chef-repo\settings.ini
+    - update content in file C:\Users\chef\chef-repo\settings.ini from none to 6823fa
+    --- C:\Users\chef\chef-repo\settings.ini    2014-08-16 01:04:33.000000000 +0000
+    +++ C:/Users/chef/AppData/Local/Temp/2/settings.ini20140816-2080-5hrzgl     2014-08-16 01:04:33.000000000 +0000
     @@ -1 +1,2 @@
     +greeting=hello world
 ```
@@ -90,8 +92,8 @@ The output tells us that a new file, <filepath>settings.ini</filepath>, was crea
 
 Now verify that the file was written. Run the <codeinline>Get-Content</codeinline> PowerShell cmdlet, which reads from the file you give it.
 
-```bash
-# ~/chef-repo
+```ps
+# ~\chef-repo
 $ Get-Content settings.ini
 greeting=hello world
 ```
@@ -100,8 +102,8 @@ greeting=hello world
 
 Now, let's see now what happens when you run the same command again.
 
-```bash
-# ~/chef-repo
+```ps
+# ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[C:/Users/chef/chef-repo/settings.ini] action create (up to date)
@@ -118,7 +120,7 @@ Now you're going to change the INI file.
 Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
 
 ```ruby
-# ~/chef-repo/hello.rb
+# ~\chef-repo\hello.rb
 file_name = File.expand_path('settings.ini', File.dirname(__FILE__))
 
 file file_name do
@@ -128,8 +130,8 @@ end
 
 Run <codeinline>chef-apply</codeinline>.
 
-```bash
-# ~/chef-repo
+```ps
+# ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[C:/Users/chef/chef-repo/settings.ini] action create
@@ -149,15 +151,15 @@ You need to make sure that no other process can change the INI file.
 
 Imagine that a co-worker manually changes <filepath>settings.ini</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor. Or you can change the file from the command line like this.
 
-```bash
-# ~/chef-repo
+```ps
+# ~\chef-repo
 $ Set-Content .\settings.ini 'greeting=hello robots'
 ```
 
 Now run <codeinline>chef-apply</codeinline>.
 
-```bash
-# ~/chef-repo
+```ps
+# ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[C:/Users/chef/chef-repo/settings.ini] action create
@@ -186,8 +188,8 @@ end
 
 Now apply <filepath>goodbye.rb</filepath> to delete the file.
 
-```bash
-# ~/chef-repo
+```ps
+# ~\chef-repo
 $ chef-apply goodbye.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[C:/Users/chef/chef-repo/settings.ini] action delete
@@ -196,7 +198,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 The output shows that <filepath>settings.ini</filepath> is now gone, but let's prove it.
 
-```bash
+```ps
 # ~/chef-repo
 $ Test-Path .\settings.ini
 False

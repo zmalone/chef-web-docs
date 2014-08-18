@@ -121,7 +121,7 @@ The output is similar but the command took much less time to complete. That's be
 
 ## 2. Start the World Wide Web Publishing Service
 
-Now let's start the World Wide Web Publishing Service and enable it when the server boots. Modify <filepath>webserver.rb</filepath> to look like this.
+Now let's start the IIS World Wide Web Publishing Service (W3SVC) and enable it when the server boots. Modify <filepath>webserver.rb</filepath> to look like this.
 
 ```ruby
 # ~/chef-repo/webserver.rb
@@ -130,7 +130,7 @@ powershell_script 'Install IIS' do
 end
 
 service 'w3svc' do
-  action [:enable, :start]
+  action [:start, :enable]
 end
 ```
 
@@ -164,7 +164,7 @@ powershell_script 'Install IIS' do
 end
 
 service 'w3svc' do
-  action [:enable, :start]
+  action [:start, :enable]
 end
 
 file 'c:\inetpub\wwwroot\Default.htm' do
@@ -200,17 +200,18 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
     +</html>
 ```
 
-Run the <codeinline>curl</codeinline> command to confirm that your web page is available.
+Run the <codeinline>Invoke-WebRequest</codeinline> PowerShell cmdlet to confirm that your web page is available.
 
 ```bash
-# ~/chef-repo
-$ curl localhost
+# ~\chef-repo
+$ (Invoke-WebRequest localhost).Content
 <html>
   <body>
     <h1>hello world</h1>
   </body>
 </html>
 ```
+
 
 Optionally, from a web browser on another machine, navigate to your server. You'll see something like this.
 
@@ -230,13 +231,15 @@ Let's take another quick look at our web server recipe.
 
 ```ruby
 # ~/chef-repo/webserver.rb
-package 'iis2'
+powershell_script 'Install IIS' do
+  code 'add-windowsfeature Web-Server'
+end
 
-service 'iis2' do
+service 'w3svc' do
   action [:start, :enable]
 end
 
-file '/var/www/index.html' do
+file 'c:\inetpub\wwwroot\Default.htm' do
   content '<html>
   <body>
     <h1>hello world</h1>
@@ -245,11 +248,11 @@ file '/var/www/index.html' do
 end
 ```
 
-The resources are applied in the order they are specified in the recipe. So here the package is installed, then the service is configured, and finally the home page is set. If any resource is already in the desired state, Chef simply moves on to the next one.
+The resources are applied in the order they are specified in the recipe. So here IIS is installed, then the W3SVC service is configured, and finally the home page is set. If any resource is already in the desired state, Chef simply moves on to the next one.
 
-The same idea applies to the action list <codeinline>[:start, :enable]</codeinline> for configuring the service. The service is started before it is enabled when the server boots.
+The same idea applies to the action list <codeinline>[:start, :enable]</codeinline> for configuring the W3SVC service. The service is started before it is enabled when the server boots.
 
-It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the IIS service before the package is even installed.
+It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the W3SVC service before the package is even installed.
 
 A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't start then we don't want to enable it.
 

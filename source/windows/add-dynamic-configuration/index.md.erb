@@ -15,7 +15,7 @@ Chef provides information about your node that you can access from your cookbook
 
 You already learned [how to use the template resource](/windows/make-your-recipe-more-manageable/) to reference the HTML file for your home page, so you're all set to add placeholders to your HTML file that are filled in as the recipe runs. This is an example of dynamic configuration.
 
-# <i class="fa fa-linux" style="margin-right:3px;"></i> Get a Linux machine
+# <i class="fa fa-windows" style="margin-right:3px;"></i> Get a Windows Server machine
 
 This tutorial builds on the [previous one](/windows/bootstrap-your-node), so you'll need a bootstrapped node that's configured with our web server. If you no longer have access to that environment, take a few minutes to spin up a new one and run through the previous tutorial again.
 
@@ -36,17 +36,23 @@ If you need a fresh environment, take one on us. Just click the button below.
 </div>
 
 <div id="machine-details" class="indent" style="display: none">
-{0} Your virtual machine is all ready to go! <b>You don't need to SSH into the server now</b>, but here's the connection info in case you need it later.
+{0} Your virtual machine is all ready to go! <b>You don't need to RDP into the server now</b>, but here's the connection info in case you need it later.
+
 <p/>
-<div class="window">
-            <nav class="control-window">
-              <a href="#finder" class="close" data-rel="close">close</a>
-              <a href="#" class="minimize">minimize</a>
-              <a href="#" class="deactivate">deactivate</a>
-            </nav>
-            <h1 class="titleInside">Terminal: ~/</h1>
-            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">ssh {1}@{3}</span><span class="line output">{1}@{3}'s password: {2}</span></code></pre></td></tr></tbody></table></div></div>
+<center>
+<a href="http://localhost:3000/labs/download_rdp?user_name={1}&ip_address={3}" class="button radius"><i class="fa fa-download"></i>&nbsp;Download Remote Desktop File</a>
+</center>
+
+Or connect using your remote desktop client.
+
+<div>
+</p>
+
+[RDPINFO] {3}, {1}, {2}
+
 </div>
+
+<p/>
 
 <p>
 The environment expires <b>{4}</b>. If it expires, you're welcome to spin up a new one.
@@ -103,7 +109,7 @@ Uploaded 1 cookbook.
 ## 3. Run the cookbook on your node
 
 <div id="knife-intro" class="indent">
-Run <codeinline>knife ssh</codeinline> to run your cookbook on your node. If you're working with your own server and not the one that we provide, replace <codeinline>ADDRESS</codeinline>, <codeinline>USER</codeinline>, and <codeinline>PASSWORD</codeinline> with your values.
+Run <codeinline>knife winrm</codeinline> to run your cookbook on your node. If you're working with your own server and not the one that we provide, replace <codeinline>ADDRESS</codeinline>, <codeinline>USER</codeinline>, and <codeinline>PASSWORD</codeinline> with your values.
 </div>
 <p/>
 <div id="knife-command" class="window">
@@ -113,7 +119,7 @@ Run <codeinline>knife ssh</codeinline> to run your cookbook on your node. If you
               <a href="#" class="deactivate">deactivate</a>
             </nav>
             <h1 class="titleInside">Terminal: ~/</h1>
-            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password PASSWORD</span></code></pre></td></tr></tbody></table></div></div>
+            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife winrm ADDRESS chef-client --manual-list --winrm-user USER --winrm-password PASSWORD</span></code></pre></td></tr></tbody></table></div></div>
           </div>
 
 ## 4. Confirm the result
@@ -150,7 +156,7 @@ Here's one example that displays the server's host name, platform, total install
 
 Dynamic configuration means that you can write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node. [Templates][template] enable you to do this.
 
-You also ran <codeinline>knife ssh</codeinline> to update your node. [knife ssh][knifessh] invokes the command you specify over an SSH connection on a node &ndash; in our case <codeinline>sudo chef-client</codeinline>. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
+You also ran <codeinline>knife ssh</codeinline> to update your node. [knife ssh][knifessh] invokes the command you specify over an SSH connection on a node &ndash; in our case <codeinline>chef-client</codeinline>. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
 
 ### <i class="fa fa-puzzle-piece greeniconcolor" style="margin-right:3px;"></i> Templates work through node objects
 
