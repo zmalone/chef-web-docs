@@ -3,7 +3,7 @@ title: 'Configure a package and service'
 order: 2
 layout: tutorial
 description: Configure IIS web server as a way to learn how to work with packages and services
-keywords: package, service, file, resource, Internet Information Services , IIS
+keywords: package, service, file, resource, Internet Information Services, IIS, W3SVC
 ---
 [TIMETOCOMPLETE] 15
 
@@ -19,7 +19,7 @@ Although you don't need prior knowledge about web servers, configuring one is a 
 
 Like the previous tutorial, you'll configure the server directly. You can continue with the Windows Server machine you used in the previous tutorial, but let's review the options.
 
-Option 1: use your own Windows Server machine. If you have a machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
+Option 1: use your own Windows Server machine. If you have a machine that meets the [system requirements](http://docs.getchef.com/chef_system_requirements.html) that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
 
 Option 2: let us provide an Windows Server virtual machine that has the Chef tools installed for you. Just click the button below.
 
@@ -90,7 +90,7 @@ Let's install IIS. From your working directory, add this recipe to a file named 
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'add-windowsfeature Web-Server'
-  not_if 'powershell -noninteractive -noprofile -command "exit [int32]((Get-WindowsFeature –Name Web-Server) -eq $null)"'
+  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
 end
 ```
 
@@ -98,7 +98,7 @@ We don't need to specify an action because <codeinline>run</codeinline> is the d
 
 Now run <codeinline>chef-apply</codeinline> to apply the recipe.
 
-```bash
+```ps
 # ~/chef-repo
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
@@ -109,16 +109,14 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 Run the recipe a second time.
 
-```bash
+```ps
 # ~/chef-repo
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * powershell_script[Install IIS] action run
-    - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
-"C:/Users/chef/AppData/Local/Temp/chef-script20140812-4088-7kv0y2.ps1"
+  * powershell_script[Install IIS] action run (skipped due to only_if)
 ```
 
-The output is similar but the command took much less time to complete. That's because Chef detected that IIS is already installed and therefore did not try to install it again.
+This time, Chef does not reinstall IIS. That's because the <codeinline>only\_if</codeinline> attribute executes the resource only when the condition is true. In this case, we use the <codeinline>Get-WindowsFeature</codeinline> PowerShell cmdlet to get the name of the installed web server. The <codeinline>only\_if</codeinline> attribute evaluates to true if the web server name is not set.
 
 ## 2. Start the World Wide Web Publishing Service
 
@@ -128,6 +126,7 @@ Now let's start the IIS World Wide Web Publishing Service (W3SVC) and enable it 
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'add-windowsfeature Web-Server'
+  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
 end
 
 service 'w3svc' do
@@ -139,18 +138,16 @@ This code uses a list to declare multiple actions.
 
 Now apply it.
 
-```bash
+```ps
 # ~/chef-repo
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * powershell_script[Install IIS] action run
-    - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
-"C:/Users/chef/AppData/Local/Temp/chef-script20140812-3396-e15lo1.ps1"
-  * service[w3svc] action enable (up to date)
+  * powershell_script[Install IIS] action run (skipped due to only_if)
   * service[w3svc] action start (up to date)
+  * service[w3svc] action enable (up to date)
 ```
 
-IIS is already installed, so there's nothing to do. Similarly, the service is already started and enabled. But with Chef it's easy to ensure that everything is in the expected state.
+IIS is already installed, so again there's nothing to do. Similarly, the W3SVC service is already started and enabled. The command would install IIS if it got uninstalled and enable the W3SVC service if it was stopped or disabled.
 
 ## 3. Configure the home page
 
@@ -162,7 +159,7 @@ You already know how to configure a <codeinline>file</codeinline> resource; appe
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'add-windowsfeature Web-Server'
-  not_if 'powershell -noninteractive -noprofile -command "exit [int32]((Get-WindowsFeature –Name Web-Server) -eq $null)"'
+  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
 end
 
 service 'w3svc' do
@@ -180,20 +177,18 @@ end
 
 Now apply it.
 
-```bash
+```ps
 # ~/chef-repo/
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * powershell_script[Install IIS] action run
-    - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
-"C:/Users/chef/AppData/Local/Temp/chef-script20140812-1796-9ausln.ps1"
-  * service[w3svc] action enable (up to date)
+  * powershell_script[Install IIS] action run (skipped due to only_if)
   * service[w3svc] action start (up to date)
+  * service[w3svc] action enable (up to date)
   * file[c:\inetpub\wwwroot\Default.htm] action create
     - create new file c:\inetpub\wwwroot\Default.htm
     - update content in file c:\inetpub\wwwroot\Default.htm from none to 2914aa
-    --- c:\inetpub\wwwroot\Default.htm  2014-08-12 22:37:18.000000000 +0000
-    +++ C:/Users/chef/AppData/Local/Temp/Default.htm20140812-1796-18gnegz       2014-08-12 22:37:18.000000000 +0000
+    --- c:\inetpub\wwwroot\Default.htm  2014-08-19 21:19:58.000000000 +0000
+    +++ C:/Users/chef/AppData/Local/Temp/2/Default.htm20140819-596-1vshr64      2014-08-19 21:19:58.000000000 +0000
     @@ -1 +1,6 @@
     +<html>
     +  <body>
@@ -204,7 +199,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 Run the <codeinline>Invoke-WebRequest</codeinline> PowerShell cmdlet to confirm that your web page is available.
 
-```bash
+```ps
 # ~\chef-repo
 $ (Invoke-WebRequest localhost).Content
 <html>
@@ -214,7 +209,6 @@ $ (Invoke-WebRequest localhost).Content
 </html>
 ```
 
-
 Optionally, from a web browser on another machine, navigate to your server. You'll see something like this.
 
 ![The basic home page](misc/webserver-basic.png)
@@ -223,7 +217,7 @@ Optionally, from a web browser on another machine, navigate to your server. You'
 
 ## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
 
-You saw how to work with the package and service resources. You now know how to work with three types of resources: [file][file], [package][package], and [service][service].
+You saw how to work with the package and service resources. You now know how to work with three types of resources: [file][file], [powershell_script][powershell_script], and [service][service].
 
 You also saw how to apply multiple actions. But how does Chef know what order to apply resources and actions?
 
@@ -235,6 +229,7 @@ Let's take another quick look at our web server recipe.
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'add-windowsfeature Web-Server'
+  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
 end
 
 service 'w3svc' do
@@ -269,5 +264,5 @@ Next you'll learn how to create a _cookbook_ to make your Chef recipes more mana
 <script src='../../../assets/javascripts/provision.js' type='text/javascript'></script>
 
 [file]: http://docs.opscode.com/resource_file.html
-[package]: http://docs.opscode.com/resource_package.html
+[powershell_script]: http://docs.getchef.com/resource_powershell_script.html
 [service]: http://docs.opscode.com/resource_service.html

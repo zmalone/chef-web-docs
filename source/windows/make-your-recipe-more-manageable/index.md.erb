@@ -17,7 +17,7 @@ Let's create a _cookbook_ to make our web server recipe easier to manage. A cook
 
 Like the previous tutorials, you'll configure the server directly. You can continue with the Windows Server machine you used in the previous tutorial, but let's review the options.
 
-Option 1: use your own machine. If you have a Windows Server machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
+Option 1: use your own machine. If you have a Windows Server machine that meets the [system requirements](http://docs.getchef.com/chef_system_requirements.html) that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
 
 Option 2: let us provide an windows virtual machine that has the Chef tools installed for you. Just click the button below.
 
@@ -84,7 +84,7 @@ We hope you'll use the virtual machine to continue experimenting with Chef after
 
 First, from your working directory, create a <filepath>cookbooks</filepath> directory and <codeinline>cd</codeinline> there.
 
-```bash
+```ps
 # ~/chef-repo
 $ mkdir cookbooks
 $ cd cookbooks
@@ -94,14 +94,14 @@ $ cd cookbooks
 
 Now run the <codeinline>chef</codeinline> command to generate a cookbook named **learn_chef_iis**.
 
-```bash
+```ps
 # ~/chef-repo/cookbooks
 $ chef generate cookbook learn_chef_iis
 ```
 
 Here's the directory structure that the command created.
 
-```bash
+```ps
 # ~/chef-repo/cookbooks
 $ tree /F
 Folder PATH listing
@@ -124,14 +124,14 @@ Note the default recipe, named <filepath>default.rb</filepath>. This is where we
 
 Now we'll move the home page to our cookbook to an external file. First, run this command to generate the HTML file for our home page.
 
-```bash
+```ps
 # ~/chef-repo/cookbooks
 $ chef generate template learn_chef_iis index.html
 ```
 
 The file <filepath>index.html.erb</filepath> gets created under <filepath>learn_chef_iis\templates\default</filepath>.
 
-```bash
+```ps
 # ~\chef-repo\cookbooks
 $ tree /F
 Folder PATH listing
@@ -173,6 +173,7 @@ Write out the recipe, <filepath>default.rb</filepath>, like this.
 # ~\chef-repo\cookbooks\learn_chef_iis\recipes\default.rb
 powershell_script 'Install IIS' do
   code 'add-windowsfeature Web-Server'
+  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
 end
 
 service 'w3svc' do
@@ -188,10 +189,10 @@ end
 
 Now run the cookbook. To do so, we use the <codeinline>chef-client</codeinline> command and specify what's called the _run-list_.
 
-```bash
+```ps
 # ~\chef-repo
 $ chef-client --local-mode --runlist learn_chef_iis
-[2014-08-13T21:48:03+00:00] WARN: No config file found or specified on command line, using command line options.
+[2014-08-19T21:29:02+00:00] WARN: No config file found or specified on command line, using command line options.
 Starting Chef Client, version 11.14.0.rc.2
 resolving cookbooks for run list: ["learn_chef_iis"]
 Synchronizing Cookbooks:
@@ -199,9 +200,7 @@ Synchronizing Cookbooks:
 Compiling Cookbooks...
 Converging 3 resources
 Recipe: learn_chef_iis::default
-  * powershell_script[Install IIS] action run
-    - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
-"C:/Users/chef/AppData/Local/Temp/chef-script20140813-2360-tltb25.ps1"
+  * powershell_script[Install IIS] action run (skipped due to only_if)
   * service[w3svc] action start (up to date)
   * service[w3svc] action enable (up to date)
   * template[c:\inetpub\wwwroot\Default.htm] action create
@@ -210,14 +209,14 @@ Recipe: learn_chef_iis::default
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 2/4 resources updated in 38.188832 seconds
+Chef Client finished, 1/3 resources updated in 20.482954 seconds
 ```
 
 [CONCEPT] You ran <codeinline>chef-apply</codeinline> to run a single recipe from the command line. <codeinline>chef-client</codeinline> is what you use to run a cookbook.
 
 Run <codeinline>Invoke-WebRequest</codeinline> or refresh your web browser to confirm that your web page is still available.
 
-```bash
+```ps
 # ~\chef-repo
 $ (Invoke-WebRequest localhost).Content
 <html>
