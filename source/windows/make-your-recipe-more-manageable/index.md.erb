@@ -92,11 +92,11 @@ $ cd cookbooks
 
 [COMMENT] crushtime-6: ^ Folks mentioned as they worked through this that chef-[command] is picky about where you are in the dir structure. For example, must be in <filepath>cookbooks</filepath> to run the cookbook, but above cookbooks to create one. Follow the 'do what I mean' paradigm by automatically traversing the dir hierarchy up and down to place things where they need to go.
 
-Now run the <codeinline>chef</codeinline> command to generate a cookbook named **webserver**.
+Now run the <codeinline>chef</codeinline> command to generate a cookbook named **learn_chef_iis**.
 
 ```bash
 # ~/chef-repo/cookbooks
-$ chef generate cookbook webserver
+$ chef generate cookbook learn_chef_iis
 ```
 
 Here's the directory structure that the command created.
@@ -107,7 +107,7 @@ $ tree /F
 Folder PATH listing
 Volume serial number is 5E71-6BA3
 C:.
-└───webserver
+└───learn_chef_iis
     │   .kitchen.yml
     │   Berksfile
     │   chefignore
@@ -126,10 +126,10 @@ Now we'll move the home page to our cookbook to an external file. First, run thi
 
 ```bash
 # ~/chef-repo/cookbooks
-$ chef generate template webserver index.html
+$ chef generate template learn_chef_iis index.html
 ```
 
-The file <filepath>index.html.erb</filepath> gets created under <filepath>webserver\templates\default</filepath>.
+The file <filepath>index.html.erb</filepath> gets created under <filepath>learn_chef_iis\templates\default</filepath>.
 
 ```bash
 # ~\chef-repo\cookbooks
@@ -137,7 +137,7 @@ $ tree /F
 Folder PATH listing
 Volume serial number is 5E71-6BA3
 C:.
-└───webserver
+└───learn_chef_iis
     │   .kitchen.yml
     │   Berksfile
     │   chefignore
@@ -157,7 +157,7 @@ The .erb extension simply means that the file can have placeholders. More on tha
 Now copy the contents of the HTML file from your recipe to the new HTML file, <filepath>index.html.erb</filepath>.
 
 ```html
-<!-- ~\chef-repo\cookbooks\webserver\templates\default\index.html.erb -->
+<!-- ~\chef-repo\cookbooks\learn_chef_iis\templates\default\index.html.erb -->
 <html>
   <body>
     <h1>hello world</h1>
@@ -170,7 +170,7 @@ Now copy the contents of the HTML file from your recipe to the new HTML file, <f
 Write out the recipe, <filepath>default.rb</filepath>, like this.
 
 ```ruby
-# ~\chef-repo\cookbooks\webserver\recipes\default.rb
+# ~\chef-repo\cookbooks\learn_chef_iis\recipes\default.rb
 powershell_script 'Install IIS' do
   code 'add-windowsfeature Web-Server'
 end
@@ -190,15 +190,15 @@ Now run the cookbook. To do so, we use the <codeinline>chef-client</codeinline> 
 
 ```bash
 # ~\chef-repo
-$ chef-client --local-mode --runlist webserver
+$ chef-client --local-mode --runlist learn_chef_iis
 [2014-08-13T21:48:03+00:00] WARN: No config file found or specified on command line, using command line options.
 Starting Chef Client, version 11.14.0.rc.2
-resolving cookbooks for run list: ["webserver"]
+resolving cookbooks for run list: ["learn_chef_iis"]
 Synchronizing Cookbooks:
-  - webserver
+  - learn_chef_iis
 Compiling Cookbooks...
 Converging 3 resources
-Recipe: webserver::default
+Recipe: learn_chef_iis::default
   * powershell_script[Install IIS] action run
     - execute "powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File
 "C:/Users/chef/AppData/Local/Temp/chef-script20140813-2360-tltb25.ps1"

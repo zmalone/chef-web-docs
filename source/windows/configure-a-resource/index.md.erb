@@ -45,7 +45,7 @@ When working with Chef from Windows, we recommend that you use Windows PowerShel
 If you're working from your own Windows Server machine, create the <codeinline>chef-repo</codeinline> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
 
 ```ps
-# C:\Windows\system32
+# C:\Users\chef
 $ mkdir ~\chef-repo
 ```
 
@@ -54,7 +54,7 @@ $ mkdir ~\chef-repo
 Now <codeinline>cd</codeinline> there.
 
 ```ps
-# C:\Windows\system32
+# C:\Users\chef
 $ cd ~\chef-repo
 ```
 
@@ -67,7 +67,7 @@ From your <codeinline>~\chef-repo</codeinline> directory, create a file named <f
 ```ruby
 # ~\chef-repo\hello.rb
 file 'C:\Users\chef\chef-repo\settings.ini' do
-  content 'greeting=hello chef'
+  content 'greeting=hello world'
 end
 ```
 
@@ -90,7 +90,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 The output tells us that a new file, <filepath>settings.ini</filepath>, was created.
 
-Now verify that the file was written. Run the <codeinline>Get-Content</codeinline> PowerShell cmdlet, which reads from the file you give it.
+Run the <codeinline>Get-Content</codeinline> PowerShell cmdlet to verify that the file was written.
 
 ```ps
 # ~\chef-repo
@@ -106,7 +106,7 @@ Now, let's see now what happens when you run the same command again.
 # ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:/Users/chef/chef-repo/settings.ini] action create (up to date)
+  * file[C:\Users\chef\chef-repo\settings.ini] action create (up to date)
 ```
 
 This time you get a different response. This is because Chef does work only when it needs to.
@@ -121,9 +121,7 @@ Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello che
 
 ```ruby
 # ~\chef-repo\hello.rb
-file_name = File.expand_path('settings.ini', File.dirname(__FILE__))
-
-file file_name do
+file 'C:\Users\chef\chef-repo\settings.ini' do
   content 'greeting=hello chef'
 end
 ```
@@ -134,9 +132,9 @@ Run <codeinline>chef-apply</codeinline>.
 # ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:/Users/chef/chef-repo/settings.ini] action create
-    - update content in file C:/Users/chef/chef-repo/settings.ini from 6823fa to cfde92
-    --- C:/Users/chef/chef-repo/settings.ini    2014-08-12 21:27:13.000000000 +0000
+  * file[C:\Users\chef\chef-repo\settings.ini] action create
+    - update content in file C:\Users\chef\chef-repo\settings.ini from 6823fa to cfde92
+    --- C:\Users\chef\chef-repo\settings.ini    2014-08-12 21:27:13.000000000 +0000
     +++ C:/Users/chef/AppData/Local/Temp/settings.ini20140812-3908-1ilgurd      2014-08-12 21:29:25.000000000 +0000
     @@ -1,2 +1,2 @@
     -greeting=hello world
@@ -153,7 +151,7 @@ Imagine that a co-worker manually changes <filepath>settings.ini</filepath> by r
 
 ```ps
 # ~\chef-repo
-$ Set-Content .\settings.ini 'greeting=hello robots'
+$ Set-Content settings.ini 'greeting=hello robots'
 ```
 
 Now run <codeinline>chef-apply</codeinline>.
@@ -162,9 +160,9 @@ Now run <codeinline>chef-apply</codeinline>.
 # ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:/Users/chef/chef-repo/settings.ini] action create
-    - update content in file C:/Users/chef/chef-repo/settings.ini from 49c070 to cfde92
-    --- C:/Users/chef/chef-repo/settings.ini    2014-08-12 21:32:38.000000000 +0000
+  * file[C:\Users\chef\chef-repo\settings.ini] action create
+    - update content in file C:\Users\chef\chef-repo\settings.ini from 49c070 to cfde92
+    --- C:\Users\chef\chef-repo\settings.ini    2014-08-12 21:32:38.000000000 +0000
     +++ C:/Users/chef/AppData/Local/Temp/settings.ini20140812-1288-1ub7kv2      2014-08-12 21:32:52.000000000 +0000
     @@ -1,2 +1,2 @@
     -greeting=hello robots
@@ -179,9 +177,7 @@ OK, you're done experimenting with the INI file, so let's clean up. From your wo
 
 ```ruby
 # goodbye.rb
-file_name = File.expand_path('settings.ini', File.dirname(__FILE__))
-
-file file_name do
+file 'C:\Users\chef\chef-repo\settings.ini' do
   action :delete
 end
 ```
@@ -192,15 +188,15 @@ Now apply <filepath>goodbye.rb</filepath> to delete the file.
 # ~\chef-repo
 $ chef-apply goodbye.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:/Users/chef/chef-repo/settings.ini] action delete
-    - delete file C:/Users/chef/chef-repo/settings.ini
+  * file[C:\Users\chef\chef-repo\settings.ini] action delete
+    - delete file C:\Users\chef\chef-repo\settings.ini
 ```
 
 The output shows that <filepath>settings.ini</filepath> is now gone, but let's prove it.
 
 ```ps
 # ~/chef-repo
-$ Test-Path .\settings.ini
+$ Test-Path settings.ini
 False
 ```
 

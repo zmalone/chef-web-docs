@@ -17,7 +17,7 @@ Although you don't need prior knowledge about web servers, configuring one is a 
 
 ## <i class="fa fa-windows" style="margin-right:3px;"></i> Get a Windows Server machine
 
-Like the previous tutorial, you'll configure the server directly. You can continue with the Linux machine you used in the previous tutorial, but let's review the options.
+Like the previous tutorial, you'll configure the server directly. You can continue with the Windows Server machine you used in the previous tutorial, but let's review the options.
 
 Option 1: use your own Windows Server machine. If you have a machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
 
@@ -90,6 +90,7 @@ Let's install IIS. From your working directory, add this recipe to a file named 
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'add-windowsfeature Web-Server'
+  not_if 'powershell -noninteractive -noprofile -command "exit [int32]((Get-WindowsFeature –Name Web-Server) -eq $null)"'
 end
 ```
 
@@ -151,7 +152,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 IIS is already installed, so there's nothing to do. Similarly, the service is already started and enabled. But with Chef it's easy to ensure that everything is in the expected state.
 
-## 3. Add a home page
+## 3. Configure the home page
 
 Let's spruce things up and add a custom home page.
 
@@ -161,6 +162,7 @@ You already know how to configure a <codeinline>file</codeinline> resource; appe
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'add-windowsfeature Web-Server'
+  not_if 'powershell -noninteractive -noprofile -command "exit [int32]((Get-WindowsFeature –Name Web-Server) -eq $null)"'
 end
 
 service 'w3svc' do
