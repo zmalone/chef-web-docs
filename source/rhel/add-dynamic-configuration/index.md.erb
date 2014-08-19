@@ -1,6 +1,6 @@
 ---
 title: 'Add dynamic configuration'
-order: 7
+order: 6
 layout: tutorial
 description: TODO
 keywords: TODO
@@ -14,6 +14,14 @@ keywords: TODO
 Chef provides information about your node that you can access from your cookbooks. Let's update our home page to display some info about the server. You'll practice updating your cookbook, uploading it to the Chef server, and seeing the changes appear on your node.
 
 You already learned [how to use the template resource](/rhel/make-your-recipe-more-manageable/) to reference the HTML file for your home page, so you're all set to add placeholders to your HTML file that are filled in as the recipe runs. This is an example of dynamic configuration.
+
+## <i class="fa fa-linux" style="margin-right:3px;"></i> Get a Linux machine
+
+This tutorial builds on the [previous one](/rhel/bootstrap-your-node), so you'll need a bootstrapped node that's configured with our web server. If you no longer have access to that environment, take a few minutes to spin up a new one and run through the previous tutorial again.
+
+If you need a fresh environment, take one on us. Just click the button below.
+
+<%= partial 'layouts/provisioner', locals: { title: 'CentOS', type: 'ec2-rhel-fundamentals' } %>
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:510px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, keep in mind that:**</span><br>
@@ -34,13 +42,13 @@ You already learned [how to use the template resource](/rhel/make-your-recipe-mo
 
 ## 1. Add template code to your HTML
 
-Change <filepath>index.html.erb</filepath> to look like this.
+On the local workstation copy of your <filepath>learn\_chef\_httpd</filepath> cookbook, change <filepath>index.html.erb</filepath> to look like this.
 
 ```html
-<!-- ~/chef-repo/cookbooks/webserver/templates/default/index.html.erb -->
+<!-- ~/chef-repo/cookbooks/learn_chef_httpd/templates/default/index.html.erb -->
 <html>
   <body>
-    <h1>hello from <%%= node['ipaddress'] %></h1>
+    <h1>hello from <%%= node['fqdn'] %></h1>
   </body>
 </html>
 ```
@@ -51,40 +59,46 @@ Run <codeinline>knife</codeinline> to upload the updated cookbook to the Chef se
 
 ```bash
 # ~/chef-repo
-$ knife cookbook upload webserver
-Uploading webserver      [0.1.0]
+$ knife cookbook upload learn_chef_httpd
+Uploading learn_chef_httpd      [0.1.0]
 Uploaded 1 cookbook.
 ```
 
 ## 3. Run the cookbook on your node
 
-Run <codeinline>knife ssh</codeinline> to run your cookbook on your node. Replace <codeinline>ADDRESS</codeinline> and <codeinline>PASSWORD</codeinline> with yours.
-
-```bash
-$ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user root --ssh-password PASSWORD
-```
-
-[COMMENT] crushtime: It appears that you need the <codeinline>--manual-list</codeinline> here. Otherwise, you get <codeinline>FATAL: No nodes returned from search!</codeinline>. After looking at the docs, still not sure what it is or why it's needed. Can a default be assumed?
+<div id="knife-intro" class="indent" data-chef-lab-template data-type="ec2-rhel-fundamentals">
+Run <codeinline>knife ssh</codeinline> to run your cookbook on your node. If you're working with your own server and not the one that we provide, replace <codeinline>{{address}}</codeinline>, <codeinline>{{user}}</codeinline>, and <codeinline>{{password}}</codeinline> with your values.
+</div>
+<p/>
+<div id="knife-command" class="window">
+            <nav class="control-window">
+              <div class="close">&times;</div>
+              <div class="minimize"></div>
+              <div class="deactivate"></div>
+            </nav>
+            <h1 class="titleInside">Terminal: ~/</h1>
+            <div class="container" data-chef-lab-template data-type="ec2-rhel-fundamentals"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife ssh {{address}} 'sudo chef-client' --manual-list --ssh-user {{user}} --ssh-password {{password}}</span></code></pre></td></tr></tbody></table></div></div>
+          </div>
 
 ## 4. Confirm the result
 
-Open a web browser from any computer and navigate to your web server.
+Open a web browser from your workstation and navigate to your web server.
 
-![The home page with IP address](misc/webserver-template-remote.png)
+![The home page with FQDN](misc/webserver-template.png)
 
-Chef discovers and adds the IP address for you automatically!
+Chef discovers and adds the FQDN for you automatically!
 
 ## 5. Experiment with more node attributes
 
 If you want to and have time, [check out](<%= chef_docs_url %>/chef_overview_attributes.html#automatic-ohai) what other node attributes you can use and experiment with them on your home page.
 
-Here's one example that displays the server's host name, platform, total installed memory, and number of CPUs in addition to its IP address. Try it if you'd like, then follow the steps in this lesson to upload your cookbook to the Chef server and run <codeinline>chef-client</codeinline> on your node.
+Here's one example that displays the server's host name, platform, total installed memory, and number of CPUs in addition to its FQDN. Try it if you'd like, then follow the steps in this lesson to upload your cookbook to the Chef server and run <codeinline>chef-client</codeinline> on your node.
 
 ```html
-<!-- ~/chef-repo/cookbooks/webserver/templates/default/index.html.erb -->
+<!-- ~/chef-repo/cookbooks/learn_chef_httpd/templates/default/index.html.erb -->
 <html>
   <body>
-    <h1>hello from <%%= node['ipaddress'] %></h1>
+    <h1>hello from <%%= node['fqdn'] %></h1>
 
     <pre>
       <%%= node['hostname'] %>
@@ -96,17 +110,23 @@ Here's one example that displays the server's host name, platform, total install
 </html>
 ```
 
+You'll see something like this.
+
+![The home page with FQDN](rhel/webserver-template-more.png)
+
 ## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
 
 Dynamic configuration means that you can write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node. [Templates][template] enable you to do this.
 
 You also ran <codeinline>knife ssh</codeinline> to update your node. [knife ssh][knifessh] invokes the command you specify over an SSH connection on a node &ndash; in our case <codeinline>sudo chef-client</codeinline>. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
 
+[COMMENT] Alternatively, you could SSH directly into your server and run <codeinline>sudo chef-client</codeinline>. In this tutorial, we use <codeinline>knife ssh</codeinline> because it enables us to do all of our work from our local workstation.
+
 ### <i class="fa fa-puzzle-piece greeniconcolor" style="margin-right:3px;"></i> Templates work through node objects
 
 To understand how templates work, you should first understand a bit more about nodes. Recall that a _node_ represents a server and is typically a virtual machine or physical server &ndash; basically any compute resource in your infrastructure that's managed by Chef. When you bootstrapped your node, the Chef server created what's called a _node object_ for you. This node object contains a number of attributes that describe the node, and these attributes are saved on the Chef server.
 
-When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the node's attributes from the Chef server into memory. For our home page, we want to display the server's IP address. To do so, we access the <codeinline>ipaddress</codeinline> attribute of the <codeinline>node</codeinline> object.
+When a recipe runs, a <codeinline>node</codeinline> object is loaded into the program. Chef loads the node's attributes from the Chef server into memory. For our home page, we want to display the server's fully qualified domain name (FQDN). To do so, we access the <codeinline>fqdn</codeinline> attribute of the <codeinline>node</codeinline> object.
 
 ## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
 
@@ -114,11 +134,11 @@ That's all we have for now. Please check back soon for more tutorials!
 
 In the meantime, here are some things you can try.
 
-* Continue to experiment with your CloudShare VMs, or install the [Chef DK](<%= chef_downloads_url %>/chef-dk/) and the [Starter Kit](<%= hec_manage_url %>/starter-kit) on your workstation and configure one of your own servers.
-* Explore [The Chef Management Console](<%= hec_manage_url %>). See what info's available for your nodes and what else you can do.
+* If you bootstrapped using one of our test servers, try configuring a spare server of your own.
+* Explore the [Chef Management Console](https://manage.opscode.com/). See what info's available for your nodes and what else you can do.
 * Try writing a cookbook to install and configure a piece of software you use. Check out the [Chef Supermarket](http://supermarket.getchef.com/) to see if there's already an existing cookbook for that, and compare what the differences are.
-* If you run into trouble, contact <a href="mailto:learnchef@getchef.com?subject=Feedback on #learnchef">learnchef@getchef.com</a> or ask for help at [#chef](irc://irc.freenode.net/chef) on IRC.
-
+* After you get the hang of Chef's basic commands, check out the [documentation](<%= chef_docs_url %>) to go deeper.
+* If you run into trouble, <a href="mailto:learnchef@getchef.com?subject=Feedback on #learnchef">contact us</a> or ask for help at [#chef](irc://irc.freenode.net/chef) on IRC.
 
 [template]: <%= chef_docs_url %>/essentials_cookbook_templates.html
 [chef]: <%= chef_docs_url %>/ctl_chef.html

@@ -13,9 +13,55 @@ Recall that any computer that's managed by a Chef server is called a _node_. We 
 
 Let's bootstrap a node and execute the web server cookbook on it.
 
-## <i class="fa fa-question-circle blueiconcolor" style="margin-right:3px;"></i> All set up?
+## <i class="fa fa-linux" style="margin-right:3px;"></i> Get a Linux machine to bootstrap
 
-If you haven't set up a Chef server and uploaded your cookbook to it, the [previous lesson](/rhel/get-ready-to-add-another-server/) shows you how.
+In the previous tutorials, you configured the server directly. The machine you used had the Chef tools pre-installed. Now you need to get a machine that doesn't have the Chef tools on it so you can see how the bootstrap process works.
+
+Like the previous tutorials, there are two ways to get set up.
+
+Option 1: use your own Linux machine. Any RHEL or CentOS machine that meets the [system requirements](http://docs.getchef.com/chef_system_requirements.html) works great. Don't install the Chef tools on it just yet.
+
+Option 2: let us provide a CentOS virtual machine. Just click the button below.
+
+<div id="pre-launch">
+<center>
+<a id="launch-button" href="javascript:provisionHelper('ec2', 'rhel', 'fundamentals', 'launch-button', 'launching', 'machine-details', 'launch-error', provision_success)" class="button radius"><i class='fa fa-play'></i>&nbsp;Reserve a CentOS virtual machine</a>
+</center>
+</div>
+
+<div id="launching" style="display: none;">
+<div class="spinner">
+  <div class="cube1"></div>
+  <div class="cube2"></div>
+</div>
+<center>We're provisioning a virtual machine for you. This'll take just a minute.</center>
+</div>
+
+<div id="machine-details" class="indent" style="display: none">
+{0} Your virtual machine is all ready to go! <b>You don't need to SSH into the server now</b>, but here's the connection info in case you need it later.
+<p/>
+<div class="window">
+            <nav class="control-window">
+              <a href="#finder" class="close" data-rel="close">close</a>
+              <a href="#" class="minimize">minimize</a>
+              <a href="#" class="deactivate">deactivate</a>
+            </nav>
+            <h1 class="titleInside">Terminal: ~/</h1>
+            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">ssh {1}@{3}</span><span class="line output">{1}@{3}'s password: {2}</span></code></pre></td></tr></tbody></table></div></div>
+</div>
+
+<p>
+The environment expires <b>{4}</b>. If it expires, you're welcome to spin up a new one.
+
+We hope you'll use the virtual machine to continue experimenting with Chef after you complete the tutorial. We only ask that you use the machine respectfully.
+</p>
+</div>
+
+<div id="launch-error" class="alert-box error" style="display: none">
+
+<i class="fa fa-exclamation-circle" style="color: #ff2222"></i> Something went wrong while provisioning your machine. We'll look into it. If you get the error again in a few minutes, either try the first option above or <a href="mailto:learnchef@getchef.com?subject=Feedback on Learn Chef">contact us</a>.
+
+</div>
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:575px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**Keep in mind as you read:**</span><br>
@@ -54,14 +100,19 @@ Then follow these steps.
 
 ## 2. Bootstrap your node
 
-**You can close or minimize the window for the CloudShare VM you just set up. All that's needed is for the VM to be running and for you to have the root credentials handy.**
-
-Remember that the CloudShare VM that you set up previously is your workstation. _From that VM_, run this command to bootstrap your node. Replace <codeinline>ADDRESS</codeinline> with your server's external address and <codeinline>PASSWORD</codeinline> with your root credentials.
-
-```bash
-# ~/chef-repo
-$ knife bootstrap ADDRESS --ssh-user root --ssh-password PASSWORD --node-name node1 --run-list 'recipe[webserver]' --bootstrap-version 11.12.8
-```
+<div class="indent" id="bootstrap-intro">
+From your workstation, run this command to bootstrap your node. If you're working with your own server and not the one that we provide, replace <codeinline>ADDRESS</codeinline> with your server's external address, <codeinline>USER</codeinline> with your username, and <codeinline>PASSWORD</codeinline> with your password.
+</div>
+<p/>
+<div id="bootstrap-command" class="window">
+            <nav class="control-window">
+              <a href="#finder" class="close" data-rel="close">close</a>
+              <a href="#" class="minimize">minimize</a>
+              <a href="#" class="deactivate">deactivate</a>
+            </nav>
+            <h1 class="titleInside">Terminal: ~/chef-repo</h1>
+            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife bootstrap ADDRESS --ssh-user USER --ssh-password PASSWORD --sudo --use-sudo-password --node-name node1 --run-list 'recipe[learn\_chef\_httpd]'</span></code></pre></td></tr></tbody></table></div></div>
+          </div>
 
 The optional <codeinline>--node-name</codeinline> argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's fully qualified domain name (FQDN) is the default.
 
@@ -82,3 +133,18 @@ The <codeinline>knife bootstrap</codeinline> command established an SSH connecti
 Next let's spice things up and add some info about your web server to your home page.
 
 <%= link_to 'Add dynamic configuration &rarr;', '/rhel/add-dynamic-configuration/', class: 'button radius' %>
+
+
+<script>
+function provision_success(result) {
+  var oDiv, data;
+
+  data = result[0];
+
+  oDiv = document.getElementById('bootstrap-intro');
+  oDiv.innerHTML = oDiv.innerHTML.replace('ADDRESS', data.ip).replace('USER', data.username).replace('PASSWORD', data.password);
+
+  oDiv = document.getElementById('bootstrap-command');
+  oDiv.innerHTML = oDiv.innerHTML.replace('ADDRESS', data.ip).replace('USER', data.username).replace('PASSWORD', data.password);
+}
+</script>
