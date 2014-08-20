@@ -3,9 +3,10 @@ module Middleman
     module Highlighter
 
       class TerminalFormatter
-        def initialize(options = {:prompt => "$", :title_prefix => "Terminal" })
+        def initialize(options = {:prompt => "$", :title_prefix => "Terminal", :default_working_dir => "~/" })
           @prompt = options[:prompt]
           @title_prefix = options[:title_prefix]
+          @default_working_dir = options[:default_working_dir]
         end
 
         def render(lexed_code, highlighter_options)
@@ -29,7 +30,7 @@ module Middleman
         end
 
         def default_working_dir
-          "~/"
+          @default_working_dir
         end
 
         require 'cgi'
