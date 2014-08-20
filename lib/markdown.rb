@@ -51,10 +51,10 @@ module ZurbFoundation
     content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box alert\"><i class=\"fa fa-warning\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"fa fa-info-circle\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[DOCS\] (.+)<\/p>/)     { "<div class=\"alert-box docs\"><i class=\"fa fa-book\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[CONCEPT\] (.+)<\/p>/)  { "<div class=\"alert-box concept\"><i class=\"fa fa-info-circle blueiconcolor\"></i>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-info-circle blueiconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[SIDEBAR\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><i class=\"fa fa-comment blueiconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[WINDOWS\] (.+)<\/p>/)  { "<div class=\"alert-box concept\"><i class=\"fa fa-windows blueiconcolor\"></i>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[INTERNAL\] (.+)<\/p>/)  { "<div class=\"alert-box internal\"><i class=\"fa fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[WINDOWS\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-windows blueiconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[ERROR\] (.+)<\/p>/)  { "<div class=\"alert-box error\"><i class=\"fa fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
 
   end
