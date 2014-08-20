@@ -23,45 +23,7 @@ Option 1: use your own Linux machine. Any RHEL or CentOS machine that meets the 
 
 Option 2: let us provide a CentOS virtual machine. Just click the button below.
 
-<div id="pre-launch">
-<center>
-<a id="launch-button" href="javascript:provisionHelper('ec2', 'rhel', 'fundamentals', 'launch-button', 'launching', 'machine-details', 'launch-error', provision_success)" class="button radius"><i class='fa fa-play'></i>&nbsp;Reserve a CentOS virtual machine</a>
-</center>
-</div>
-
-<div id="launching" style="display: none;">
-<div class="spinner">
-  <div class="cube1"></div>
-  <div class="cube2"></div>
-</div>
-<center>We're provisioning a virtual machine for you. This'll take just a minute.</center>
-</div>
-
-<div id="machine-details" class="indent" style="display: none">
-{0} Your virtual machine is all ready to go! <b>You don't need to SSH into the server now</b>, but here's the connection info in case you need it later.
-<p/>
-<div class="window">
-            <nav class="control-window">
-              <a href="#finder" class="close" data-rel="close">close</a>
-              <a href="#" class="minimize">minimize</a>
-              <a href="#" class="deactivate">deactivate</a>
-            </nav>
-            <h1 class="titleInside">Terminal: ~/</h1>
-            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">ssh {1}@{3}</span><span class="line output">{1}@{3}'s password: {2}</span></code></pre></td></tr></tbody></table></div></div>
-</div>
-
-<p>
-The environment expires <b>{4}</b>. If it expires, you're welcome to spin up a new one.
-
-We hope you'll use the virtual machine to continue experimenting with Chef after you complete the tutorial. We only ask that you use the machine respectfully.
-</p>
-</div>
-
-<div id="launch-error" class="alert-box error" style="display: none">
-
-<i class="fa fa-exclamation-circle" style="color: #ff2222"></i> Something went wrong while provisioning your machine. We'll look into it. If you get the error again in a few minutes, either try the first option above or <a href="mailto:learnchef@getchef.com?subject=Feedback on Learn Chef">contact us</a>.
-
-</div>
+<%= partial 'layouts/provisioner', locals: { title: 'CentOS', type: 'ec2-rhel-fundamentals' } %>
 
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:575px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**Keep in mind as you read:**</span><br>
@@ -71,37 +33,15 @@ We hope you'll use the virtual machine to continue experimenting with Chef after
 
 ## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
 
-  1. [Fire up a node to manage](#1fireupanodetomanage)
-  1. [Bootstrap your node](#2bootstrapyournode)
-  1. [Confirm the result](#3confirmtheresult)
+  1. [Bootstrap your node](#1bootstrapyournode)
+  1. [Confirm the result](#2confirmtheresult)
 
 <hr />
 
-## 1. Fire up a node to manage
-
-You'll need a RHEL or CentOS node to manage. We provide a CentOS training lab that you can use. This training lab is different than the one you set up previously, as it doesn't have the Chef tools installed.
-
-[CONCEPT] If you prefer, you can use your own RHEL or CentOS 6 machine. You don't need to install anything on it. All you need is its external address and root credentials.
-
-<%= link_to 'Access the training lab &nbsp;<i class=\'fa fa-external-link\'></i>', "#{chef_lab_url}/labs/learnchef/centos/attend/", class: 'button radius', :target => 'blank' %>
-
-Then follow these steps.
-
-1. Wait a few moments for CloudShare to provision the server. Click the **Start Using This Environment** button after it lights up.
-![start using](/assets/images/quickstart/nodes/cloud-share/start-environment.png)
-1. Click **More details**.
-![view-details](/assets/images/quickstart/nodes/cloud-share/single-centos-node.png)
-1. Write down the following information:
-  * The external address
-  * The SSH username and password
-![view details more](/assets/images/quickstart/nodes/cloud-share/centos-show-password.png)
-
-[CONCEPT] The environment will be available to you for 24 hours. Just fire up another one if it expires.
-
-## 2. Bootstrap your node
+## 1. Bootstrap your node
 
 <div class="indent" id="bootstrap-intro">
-From your workstation, run this command to bootstrap your node. If you're working with your own server and not the one that we provide, replace <codeinline>ADDRESS</codeinline> with your server's external address, <codeinline>USER</codeinline> with your username, and <codeinline>PASSWORD</codeinline> with your password.
+From your workstation, run this command to bootstrap your node. If you're working with your own server and not the one that we provide, replace <codeinline ng-non-bindable>{{address}}</codeinline> with your server's external address, <codeinline ng-non-bindable>{{user}}</codeinline> with your username, and <codeinline ng-non-bindable>{{password}}</codeinline> with your password.
 </div>
 <p/>
 <div id="bootstrap-command" class="window">
@@ -111,12 +51,12 @@ From your workstation, run this command to bootstrap your node. If you're workin
               <a href="#" class="deactivate">deactivate</a>
             </nav>
             <h1 class="titleInside">Terminal: ~/chef-repo</h1>
-            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife bootstrap ADDRESS --ssh-user USER --ssh-password PASSWORD --sudo --use-sudo-password --node-name node1 --run-list 'recipe[learn\_chef\_httpd]'</span></code></pre></td></tr></tbody></table></div></div>
+            <div class="container" data-chef-lab-template data-type="ec2-rhel-fundamentals"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife bootstrap {{address}} --ssh-user {{user}} --ssh-password {{password}} --sudo --use-sudo-password --node-name node1 --run-list 'recipe[learn\_chef\_httpd]'</span></code></pre></td></tr></tbody></table></div></div>
           </div>
 
 The optional <codeinline>--node-name</codeinline> argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's fully qualified domain name (FQDN) is the default.
 
-## 3. Confirm the result
+## 2. Confirm the result
 
 Open a web browser from any computer and navigate to your web server to see the result of your efforts.
 
@@ -133,18 +73,3 @@ The <codeinline>knife bootstrap</codeinline> command established an SSH connecti
 Next let's spice things up and add some info about your web server to your home page.
 
 <%= link_to 'Add dynamic configuration &rarr;', '/rhel/add-dynamic-configuration/', class: 'button radius' %>
-
-
-<script>
-function provision_success(result) {
-  var oDiv, data;
-
-  data = result[0];
-
-  oDiv = document.getElementById('bootstrap-intro');
-  oDiv.innerHTML = oDiv.innerHTML.replace('ADDRESS', data.ip).replace('USER', data.username).replace('PASSWORD', data.password);
-
-  oDiv = document.getElementById('bootstrap-command');
-  oDiv.innerHTML = oDiv.innerHTML.replace('ADDRESS', data.ip).replace('USER', data.username).replace('PASSWORD', data.password);
-}
-</script>
