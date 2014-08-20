@@ -42,7 +42,8 @@ module Middleman
                    "html" => CodeFormatter.new,
                    "bash" => TerminalFormatter.new,
                    "shell" => TerminalFormatter.new,
-                   "ps" => TerminalFormatter.new('Windows PowerShell') }
+                   "ps" => TerminalFormatter.new({:prompt => "PS >", :title_prefix => "Windows PowerShell"})
+                 }
 
           hash.default = DefaultFormatter.new
           hash
