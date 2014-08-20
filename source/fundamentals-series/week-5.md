@@ -1,5 +1,6 @@
 ---
-title: Chef Fundamentals Series - Part 5
+title: 'Part 5: Environments and knife-ec2'
+order: 5
 description: Fifth in a series of videos covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 ---
@@ -41,7 +42,7 @@ During this video we will use the [Chef Training Lab][chef-lab] to launch a virt
 
 ### What's Next?
 
-* [Community cookbooks and further resources][spring-fund-week-6]
+* [Part 6: Community cookbooks and further resources][spring-fund-week-6]
 * Join the [discussion forum][discussion-forum] to ask questions of your own and participate in the conversation.
 
 
@@ -49,13 +50,13 @@ During this video we will use the [Chef Training Lab][chef-lab] to launch a virt
 
 Thank you for participating in our Chef Fundamentals series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
 
-[spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
-[spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
-[week2-homework]: /screencasts/spring-fundamentals/week-2/#homework
-[spring-fund-week-3]: /screencasts/spring-fundamentals/week-3
-[spring-fund-week-4]: /screencasts/spring-fundamentals/week-4
-[spring-fund-week-5]: /screencasts/spring-fundamentals/week-5
-[spring-fund-week-6]: /screencasts/spring-fundamentals/week-6
-[chef-lab]: /screencasts/spring-fundamentals/chef-lab
+[spring-fund-week-1]: /fundamentals-series/week-1
+[spring-fund-week-2]: /fundamentals-series/week-2
+[week2-homework]: /fundamentals-series/week-2/#homework
+[spring-fund-week-3]: /fundamentals-series/week-3
+[spring-fund-week-4]: /fundamentals-series/week-4
+[spring-fund-week-5]: /fundamentals-series/week-5
+[spring-fund-week-6]: /fundamentals-series/week-6
+[chef-lab]: /fundamentals-series/chef-lab
 [discussion-forum]: https://groups.google.com/d/forum/learnchef-fundamentals-webinar
 [survey]: http://evocalize.com/consumer/survey/chef/springwebinar-5

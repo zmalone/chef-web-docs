@@ -1,5 +1,6 @@
 ---
 title: 'Chef Training Lab'
+order: 7
 description: 'Chef Training Lab'
 keywords: 'chef, fundamentals, overview, webinar'
 ---

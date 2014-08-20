@@ -1,5 +1,6 @@
 ---
-title: Chef Fundamentals Series - Part 2
+title: 'Part 2: Node setup, resources, and recipes'
+order: 2
 description: Second in a series of videos covering the fundamentals of Chef.  In this video we setup a node and write our first cookbook.
 keywords: training, videos, screencasts
 ---
@@ -65,7 +66,7 @@ The [chef-client][omnibus-installer] application which includes the <codeinline>
 
 ### Homework
 
-Before participating in [Chef Fundamentals Module 3][spring-fund-week-3], you may want to get a little more information on exactly what happens when you run the <codeinline>chef-client</codeinline> application.  Checkout this video for a detailed explanation of the <codeinline>chef-client</codeinline> run.  After viewing this video, you will be able to:
+Before participating in [Part 3: Node object and Chef roles][spring-fund-week-3], you may want to get a little more information on exactly what happens when you run the <codeinline>chef-client</codeinline> application.  Checkout this video for a detailed explanation of the <codeinline>chef-client</codeinline> run.  After viewing this video, you will be able to:
 
 * List all the steps taken by a <codeinline>chef-client</codeinline> during a run
 * Explain the basic security model of Chef
@@ -75,20 +76,20 @@ Before participating in [Chef Fundamentals Module 3][spring-fund-week-3], you ma
 
 ### What's Next?
 
-* [Chef Fundamentals Module 3][spring-fund-week-3]
+* [Part 3: Node object and Chef roles][spring-fund-week-3]
 * Please join the [discussion forum][discussion-forum] to ask questions of your own and participate in the conversation.
 
 #### Send Us Your Feedback!
 
 Thank you for participating in our Chef Fundamentals series. What did you think? How can we improve? Please [complete this short survey][survey] and let us know!
 
-[spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
-[spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
-[spring-fund-week-3]: /screencasts/spring-fundamentals/week-3
-[spring-fund-week-4]: /screencasts/spring-fundamentals/week-4
-[spring-fund-week-5]: /screencasts/spring-fundamentals/week-5
-[spring-fund-week-6]: /screencasts/spring-fundamentals/week-6
-[chef-lab]: /screencasts/spring-fundamentals/chef-lab
+[spring-fund-week-1]: /fundamentals-series/week-1
+[spring-fund-week-2]: /fundamentals-series/week-2
+[spring-fund-week-3]: /fundamentals-series/week-3
+[spring-fund-week-4]: /fundamentals-series/week-4
+[spring-fund-week-5]: /fundamentals-series/week-5
+[spring-fund-week-6]: /fundamentals-series/week-6
+[chef-lab]: /fundamentals-series/chef-lab
 [discussion-forum]: https://groups.google.com/d/forum/learnchef-fundamentals-webinar
 [survey]: http://evocalize.com/consumer/survey/chef/springwebinar-2
 [puTTY]: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
