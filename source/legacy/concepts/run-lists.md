@@ -12,4 +12,4 @@ A _run-list_ is an ordered list of policies that the Chef client runs. A run-lis
 
 [WARN] The order in which you specify policies in a run-list is very important! If one recipe requires another recipe to run first (such as to install a tool or framework), you must specify them in the proper order. Remember, the items in a run-list are run in the same order every time.  
 
-For more information, see [About Run-lists](http://docs.opscode.com/essentials_node_object_run_lists.html).
+For more information, see [About Run-lists](<%= chef_docs_url %>/essentials_node_object_run_lists.html).

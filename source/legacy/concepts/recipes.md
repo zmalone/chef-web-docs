@@ -16,4 +16,4 @@ A _recipe_ is a Chef configuration policy that describes resources and their des
   * execute other recipes
   * and more...
 
-For more information, see [About Recipes](http://docs.opscode.com/essentials_cookbook_recipes.html).
+For more information, see [About Recipes](<%= chef_docs_url %>/essentials_cookbook_recipes.html).
