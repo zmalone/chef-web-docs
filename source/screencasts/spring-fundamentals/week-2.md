@@ -1,25 +1,25 @@
 ---
-title: Chef Fundamentals Webinar Series - Part 2
-description: Second in a series of webinars covering the fundamentals of Chef.  In this webinar we setup a node and write our first cookbook.
+title: Chef Fundamentals Series - Part 2
+description: Second in a series of videos covering the fundamentals of Chef.  In this video we setup a node and write our first cookbook.
 keywords: training, videos, screencasts
 ---
 
 # Node setup, resources, and recipes
 
-After viewing this webinar you will be able to:
+After viewing this video you will be able to:
 
-* Install Chef nodes using `knife bootstrap`
-* Explain how `knife bootstrap` configures a node to use the Organization created in the previous section
-* Explain the basic configuration needed to run `chef-client`
+* Install Chef nodes using <codeinline>knife bootstrap</codeinline>
+* Explain how <codeinline>knife bootstrap</codeinline> configures a node to use the organization created in the previous section
+* Explain the basic configuration needed to run <codeinline>chef-client</codeinline>
 * Describe in detail what a cookbook is
 * Create a new cookbook
 * Explain what a recipe is
-* Describe how to use the `package`, `service`, and `template` resources
-* Upload a cookbook to the Chef Server
-* Explain what a run list is, and how to set it for a node via knife
-* Explain the output of a `chef-client` run
+* Describe how to use the <codeinline>package</codeinline>, <codeinline>service</codeinline>, and <codeinline>template</codeinline> resources
+* Upload a cookbook to the Chef server
+* Explain what a run-list is, and how to set it for a node via <codeinline>knife</codeinline>
+* Explain the output of a <codeinline>chef-client</codeinline> run
 
-During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.  You may [launch your lab environment][chef-lab] shortly before the webinar begins or as part of the webinar.
+During this video we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.  You may [launch your lab environment][chef-lab] as part of the video.
 
 ##### Video
 
@@ -35,7 +35,7 @@ During this webinar we will use the [Chef Training Lab][chef-lab] to launch a vi
 
 ### Pre-work
 
-Before joining this webinar you should [watch the first episode:  Overview of Chef][spring-fund-week-1].
+Before viewing this video you should [watch the first episode:  Overview of Chef][spring-fund-week-1].
 
 ##### Workstation Requirements
 
@@ -49,8 +49,6 @@ Other platforms and platform versions may work without modification.
 
 ##### Software Requirements:
 
-Participants should install non-Chef required software before the workshop starts.
-
 An application that will allow participants to create an SSH connection to a remote server and SCP files to a remote server.  Recommended applications:
 
 - Windows - [puTTY][puTTY]
@@ -59,17 +57,17 @@ An application that will allow participants to create an SSH connection to a rem
 
 A programmer's text editor that allows the participants to have multiple files open at one time and includes syntax highlighting.  Recommended applications, **pick one**:
 
-- [Sublime Text 2][sublime-text-2] **best choice for everyone**
+- [Sublime Text 2][sublime-text-2] (recommended)
 - [vim][vim]
 - [emacs][emacs]
 
-The [chef-client][omnibus-installer] application which includes the `knife` command line utility
+The [chef-client][omnibus-installer] application which includes the <codeinline>knife</codeinline> command line utility
 
 ### Homework
 
-Before participating in [Chef Fundamentals Module 3][spring-fund-week-3], you may want to get a little more information on exactly what happens when you run the `chef-client` application.  Checkout this video for a detailed explanation of the `chef-client` run.  After viewing this video, you will be able to:
+Before participating in [Chef Fundamentals Module 3][spring-fund-week-3], you may want to get a little more information on exactly what happens when you run the <codeinline>chef-client</codeinline> application.  Checkout this video for a detailed explanation of the <codeinline>chef-client</codeinline> run.  After viewing this video, you will be able to:
 
-* List all the steps taken by a `chef-client` during a run
+* List all the steps taken by a <codeinline>chef-client</codeinline> during a run
 * Explain the basic security model of Chef
 * Explain the concepts of the resource collection
 
@@ -78,11 +76,11 @@ Before participating in [Chef Fundamentals Module 3][spring-fund-week-3], you ma
 ### What's Next?
 
 * [Chef Fundamentals Module 3][spring-fund-week-3]
-* Please join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
+* Please join the [discussion forum][discussion-forum] to ask questions of your own and participate in the conversation.
 
 #### Send Us Your Feedback!
 
-Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
+Thank you for participating in our Chef Fundamentals series. What did you think? How can we improve? Please [complete this short survey][survey] and let us know!
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
@@ -90,11 +88,6 @@ Thank you for participating in our Chef Fundamentals Webinar series.  What did y
 [spring-fund-week-4]: /screencasts/spring-fundamentals/week-4
 [spring-fund-week-5]: /screencasts/spring-fundamentals/week-5
 [spring-fund-week-6]: /screencasts/spring-fundamentals/week-6
-[week-2-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+2&iso=20140527T10&p1=234&ah=1
-[week-3-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+3&iso=20140603T10&p1=234&ah=1
-[week-4-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+4&iso=20140610T10&p1=234&ah=1
-[week-5-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+5&iso=20140617T10&p1=234&ah=1
-[week-6-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+6&iso=20140624T10&p1=234&ah=1
 [chef-lab]: /screencasts/spring-fundamentals/chef-lab
 [discussion-forum]: https://groups.google.com/d/forum/learnchef-fundamentals-webinar
 [survey]: http://evocalize.com/consumer/survey/chef/springwebinar-2

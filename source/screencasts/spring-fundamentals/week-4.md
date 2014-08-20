@@ -1,25 +1,25 @@
 ---
-title: Chef Fundamentals Webinar Series - Part 4
-description: Fourth in a series of webinars covering the fundamentals of Chef.
+title: Chef Fundamentals Series - Part 4
+description: Fourth in a series of videos covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 ---
-# Common configuration data with Data Bags
+# Common configuration data with data bags
 
-After viewing this webinar you will be able to:
+After viewing this video you will be able to:
 
-* Use Data Bags for data-driven recipes
-* Use multiple recipes for a node's run list
+* Use data bags for data-driven recipes
+* Use multiple recipes for a node's run-list
 
 ### Pre-work
 
-Before joining this webinar you should watch and complete the labs for the following modules.
+Before viewing this video you should watch and complete the labs for the following modules.
 
 * [Overview of Chef][spring-fund-week-1]
 * [Node setup, resources, and recipes][spring-fund-week-2]
 * [The chef-client application][week2-homework]
-* [Working with the Node object and Roles][spring-fund-week-3]
+* [Working with the node object and roles][spring-fund-week-3]
 
-During this webinar we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.
+During this video we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.
 
 <iframe width="560" height="315" src="//www.youtube.com/embed/9bidpd-LiNw" frameborder="0" allowfullscreen></iframe>
 
@@ -40,12 +40,12 @@ During this webinar we will use the [Chef Training Lab][chef-lab] to launch a vi
 ### What's Next?
 
 * [Environments and knife-ec2][spring-fund-week-5]
-* Join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
+* Join the [discussion forum][discussion-forum] to ask questions of your own and participate in the conversation.
 
 
 #### Send Us Your Feedback!
 
-Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
+Thank you for participating in our Chef Fundamentals series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
@@ -54,11 +54,6 @@ Thank you for participating in our Chef Fundamentals Webinar series.  What did y
 [spring-fund-week-4]: /screencasts/spring-fundamentals/week-4
 [spring-fund-week-5]: /screencasts/spring-fundamentals/week-5
 [spring-fund-week-6]: /screencasts/spring-fundamentals/week-6
-[week-2-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+2&iso=20140527T10&p1=234&ah=1
-[week-3-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+3&iso=20140603T10&p1=234&ah=1
-[week-4-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+4&iso=20140610T10&p1=234&ah=1
-[week-5-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+5&iso=20140617T10&p1=234&ah=1
-[week-6-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+6&iso=20140624T10&p1=234&ah=1
 [chef-lab]: /screencasts/spring-fundamentals/chef-lab
 [discussion-forum]: https://groups.google.com/d/forum/learnchef-fundamentals-webinar
 [survey]: http://evocalize.com/consumer/survey/chef/springwebinar-4

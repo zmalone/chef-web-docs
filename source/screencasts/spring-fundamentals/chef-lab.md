@@ -8,17 +8,17 @@ keywords: 'chef, fundamentals, overview, webinar'
 
 You will need a server or virtual machine in order to complete the training lab exercises.  There are two different options that you may use.
 
-* [Chef Training Lab](#usethecheftraininglab) - **recommended**
-* [Your own Virtual Machine](#bringyourownvirtualmachine)
+* [Chef Training Lab](#usethecheftraininglab) - (recommended)
+* [Your own virtual machine](#bringyourownvirtualmachine)
 
-To participate in the labs for webinar modules [2][spring-fund-week-2], [3][spring-fund-week-3], [4][spring-fund-week-4], [5][spring-fund-week-5], and [6][spring-fund-week-6], you will need the following:
+To participate in the labs for modules [2][spring-fund-week-2], [3][spring-fund-week-3], [4][spring-fund-week-4], [5][spring-fund-week-5], and [6][spring-fund-week-6], you will need the following:
 
-- Hostname or IP Address of your training lab server
-- ssh Username
-- ssh Password
+- Host name or IP address of your training lab server
+- SSH username
+- SSH password
 
 ##### Use the Chef Training Lab
- 
+
 The easiest and recommended way to complete the exercises is to [launch the Chef Training Lab][launch-training-lab].
 
 Here's what happens next:
@@ -37,7 +37,7 @@ You will see a CentOS 6.3 Server VM listed in the window. Click **More details**
 
 ![more details](/assets/images/quickstart/nodes/cloud-share/centos-more-details.png)
 
-Write down the **External Address** for the VM and click **show password** to dispaly the ssh user's password.
+Write down the **External Address** for the VM and click **show password** to display the SSH user's password.
 
 ![show password](/assets/images/quickstart/nodes/cloud-share/centos-show-password.png)
 
@@ -45,14 +45,14 @@ Write down the **Username** and **Password** that are displayed.
 
 You should now have the following details about your Chef Training Lab:
 
-* External Address
-* ssh Username
-* ssh Password
+* External address
+* SSH username
+* SSH password
 
 
 ##### Bring your own Virtual Machine
 
-If you'd rather not use the [Chef Training Lab](#usethecheftraininglab), you may use your own Virtual Machine (VM) or Server.  It must meet the following criteria:
+If you'd rather not use the [Chef Training Lab](#usethecheftraininglab), you may use your own VM or server. It must meet the following criteria:
 
 - CentOS 6+
 - 512 MB RAM
@@ -66,11 +66,6 @@ If you'd rather not use the [Chef Training Lab](#usethecheftraininglab), you may
 [spring-fund-week-4]: /screencasts/spring-fundamentals/week-4
 [spring-fund-week-5]: /screencasts/spring-fundamentals/week-5
 [spring-fund-week-6]: /screencasts/spring-fundamentals/week-6
-[week-2-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+2&iso=20140527T10&p1=234&ah=1
-[week-3-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+3&iso=20140603T10&p1=234&ah=1
-[week-4-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+4&iso=20140610T10&p1=234&ah=1
-[week-5-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+5&iso=20140617T10&p1=234&ah=1
-[week-6-time]: http://www.timeanddate.com/worldclock/fixedtime.html?msg=Chef+Fundamentals+Webinar+-+Part+6&iso=20140624T10&p1=234&ah=1
 [chef-lab]: /screencasts/spring-fundamentals/chef-lab
 [discussion-forum]: https://groups.google.com/d/forum/learnchef-fundamentals-webinar
 [survey]: http://evocalize.com/consumer/survey/chef/springwebinar-2

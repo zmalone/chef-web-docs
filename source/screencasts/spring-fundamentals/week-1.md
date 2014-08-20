@@ -1,24 +1,24 @@
 ---
-title: Chef Fundamentals Webinar Series - Part 1
+title: Chef Fundamentals Series - Part 1
 description: First in a series of webinars covering the fundamentals of Chef.  Provides an overview of Chef, workstation setup, and signing up for hosted Chef.
 keywords: training, videos, screencasts
 ---
 
 # Overview of Chef
 
-After viewing this webinar you will be able to:
+After viewing this video you will be able to:
 
-- Describe how Chef thinks about Infrastructure Automation
+- Describe how Chef thinks about infrastructure automation
 - Define the following terms:
   - Resource
   - Recipe
 	- Node
-	- Run List
+	- Run-list
 	- Search
-- Login to Hosted Chef
-- Run `knife` commands from your workstation 
+- Login to hosted Chef
+- Run <codeinline>knife</codeinline> commands from your workstation
 
-  
+
 
 ##### Video
 
@@ -35,11 +35,11 @@ After viewing this webinar you will be able to:
 ##### What's Next?
 
 * [Chef Fundamentals Module 2][spring-fund-week-2]
-* Please join the [discussion forum][discussion-forum] to ask questions of your own and particpate in the conversation.
+* Please join the [discussion forum][discussion-forum] to ask questions of your own and participate in the conversation.
 
 ##### Send Us Your Feedback!
 
-Thank you for participating in our Chef Fundamentals Webinar series.  What did you think?  How can we improve?  Please [complete this short survey][survey] and let us know!
+Thank you for participating in our Chef Fundamentals series. What did you think? How can we improve? Please [complete this short survey][survey] and let us know!
 
 [spring-fund-week-1]: /screencasts/spring-fundamentals/week-1
 [spring-fund-week-2]: /screencasts/spring-fundamentals/week-2
