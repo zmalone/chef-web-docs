@@ -1,6 +1,6 @@
 <div data-chef-lab-provisioner data-type="<%= type %>" ng-cloak>
   <div class="start">
-    <button class="button radius" disabled ng-disabled="machine.status == 'waiting' || machine.status == 'ready'" ng-click="machine.status = 'waiting'">
+    <button class="button radius" disabled ng-disabled="machine.status == 'waiting' || machine.status == 'ready'" ng-click="fetch()">
       <i class='fa fa-play'></i>&nbsp;Reserve a <%= title %> virtual machine
     </button>
   </div>
@@ -29,7 +29,7 @@
       </div>
     <% end %>
   <p>
-    The environment expires <b>{{ machine.expires | date: "yyyy-MM-dd 'at' H:mm a '(UTC)'" }}</b>. If it expires, you're welcome to spin
+    The environment expires <b>{{ machine.expires | date: "yyyy-MM-dd 'at' h:mm a '(UTC)'" }}</b>. If it expires, you're welcome to spin
     up a new one.
   </p>
   <p>
@@ -37,13 +37,24 @@
     after you complete the tutorial. We only ask that you use the machine
     respectfully.
   </p>
-  <div class="alert-box concept error">
+  <div class="alert-box concept">
     <i class="fa fa-info-circle blueiconcolor"></i>
     Although certificate-based authentication can be more secure, we'll start
     with passwords because they're easier to get started with.
   </div>
   </div>
-  <div ng-show="machine.status == 'error'" class="alert-box alert">
-    <i class="fa fa-exclamation-circle"></i> Something went wrong while provisioning your machine. We'll look into it. If you get the error again in a few minutes, either try the first option above or <a href="mailto:learnchef@getchef.com?subject=Feedback on Learn Chef">contact us</a>.
+  <div ng-show="machine.status == 'error'" class="concept error">
+    <p>
+      <i class="fa fa-exclamation-triangle"></i> Something went wrong while
+      provisioning your machine. We'll look into it. If you get the error again
+      in a few minutes, either try the first option above or
+      <a href="mailto:learnchef@getchef.com?subject=Feedback on Learn Chef">
+        contact us
+      </a>.
+    </p>
+    <div ng-if="machine.message">
+      <p>The message received from the provisioning server was:</p>
+      <pre>{{ machine.message }}</pre>
+    </div>
   </div>
 </div>
