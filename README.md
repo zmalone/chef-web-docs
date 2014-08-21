@@ -1,6 +1,8 @@
 Learn Chef
 ==========
 
+[![Build Status](https://magnum.travis-ci.com/opscode/learn-chef.svg?token=mNqeWExVNwGqqWxVbw6y&branch=master)](https://magnum.travis-ci.com/opscode/learn-chef)
+
 Installation
 ------------
 
