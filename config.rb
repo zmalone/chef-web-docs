@@ -148,7 +148,7 @@ configure :build do
 end
 
 before_build do
-  system 'cd lib/chef-lab-client && npm install && npm run build' or exit($?.exitstatus)
+  system 'cd lib/chef-lab-client && npm install --production && npm run build' or exit($?.exitstatus)
 end
 
 # Write out a REVISION file that shows which revision we're running
