@@ -147,6 +147,10 @@ configure :build do
   activate :smusher
 end
 
+before_build do
+  system 'cd lib/chef-lab-client && npm install && npm run build' or exit($?.exitstatus)
+end
+
 # Write out a REVISION file that shows which revision we're running
 after_build do
   open("#{root_path.join('build', 'REVISION')}", 'w').write(
