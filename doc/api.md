@@ -10,38 +10,53 @@ If it's not ready yet:
 
 ```json
 {
-  "requested_at": "2014...",
+  "type": ":machine_type",
   "status": "waiting"
 }
 ```
-
-could also give `expired`, if it existed before and is no longer available.
 
 If it is ready:
 
 ```json
 {
-  "requested_at": 2014...",
+  "type": ":machine_type",
   "status": "ready",
-  "username": "user",
+  "user": "user",
   "password": "pass",
-  "hostname": "host", // or IP? whatever
-  "expires_at": 2014..."
+  "address": "host", // or IP? whatever
+  "expires": "2014...", // an ISO date
+  "rdpFileUrl": "http://address/of/rdp/file.rdp" // for windows servers
 }
+```
+
+If there is an error:
+
+```json
+{
+  "type": ":machine_type",
+  "status": "error",
+  "message": "A useful error message"
+}
+```
 
 ## POST /machines
 
 Takes some data:
 
+```json
 {
   "user_id": "my-user-id",
   "type": "ubuntu-chefdk"
 }
+```
 
-Responds with a 204 accepted and a Location header where the machine will be.
+Responds with a 202 accepted and a Location header where the machine will be.
 
-## PUT /machines/:user_id/:machine_type
+The response body:
 
-Tells an expired machine to come back.
-
-Responds with a 204 accepted and a Location header where the machine will be.
+```json
+{
+  "type": ":machine_type",
+  "status": "waiting",
+}
+```
