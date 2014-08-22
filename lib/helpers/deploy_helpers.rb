@@ -37,7 +37,8 @@ module DeployHelpers
 
   # Is this a branch we're deploying?
   def deploy?
-    %w[ master release sandbox ].include? ENV['TRAVIS_BRANCH']
+    !ENV['TRAVIS_PULL_REQUEST'] &&
+      %w[ master release sandbox ].include?(ENV['TRAVIS_BRANCH'])
   end
 
   def preprod?

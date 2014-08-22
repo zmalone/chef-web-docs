@@ -115,8 +115,25 @@ describe DeployHelpers do
     subject(:deploy?) { helper.deploy? }
 
     context 'when TRAVIS_BRANCH is master' do
-      it 'is true' do
+      before :each do
         ENV['TRAVIS_BRANCH'] = 'master'
+      end
+
+      context 'when TRAVIS_PULL_REQUEST is not set' do
+        it 'is true' do
+          ENV['TRAVIS_PULL_REQUEST'] = nil
+          expect(deploy?).to eq true
+        end
+      end
+
+      context 'when TRAVIS_PULL_REQUEST is set' do
+        it 'is false' do
+          ENV['TRAVIS_PULL_REQUEST'] = '123'
+          expect(deploy?).to eq false
+        end
+      end
+
+      it 'is true' do
         expect(deploy?).to eq true
       end
     end
