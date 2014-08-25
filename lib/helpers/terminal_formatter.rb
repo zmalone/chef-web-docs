@@ -154,9 +154,9 @@ module Middleman
         def terminal_window(content,filepath)
           %{<div class="window">
             <nav class="control-window">
-              <a href="#finder" class="close" data-rel="close">close</a>
-              <a href="#" class="minimize">minimize</a>
-              <a href="#" class="deactivate">deactivate</a>
+              <div class="close">x</div>
+              <div class="minimize"></div>
+              <div class="deactivate"></div>
             </nav>
             <h1 class="titleInside">#{filepath}</h1>
             <div class="container"><div class="terminal">#{content}</div></div>
