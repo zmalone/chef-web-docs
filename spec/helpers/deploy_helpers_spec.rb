@@ -126,6 +126,13 @@ describe DeployHelpers do
         end
       end
 
+      context 'when TRAVIS_PULL_REQUEST is "false"' do
+        it 'is true' do
+          ENV['TRAVIS_PULL_REQUEST'] = 'false'
+          expect(deploy?).to eq true
+        end
+      end
+
       context 'when TRAVIS_PULL_REQUEST is set' do
         it 'is false' do
           ENV['TRAVIS_PULL_REQUEST'] = '123'
