@@ -14,8 +14,12 @@ module URLHelpers
     'http://www.getchef.com'
   end
 
+  def chef_downloads_url
+    'https://downloads.getchef.com'
+  end
+
   def chef_docs_url
-    'http://docs.getchef.com'
+    'https://docs.getchef.com'
   end
 
   def chef_install_url
@@ -44,5 +48,9 @@ module URLHelpers
 
   def learn_chef_twitter_url
     'https://twitter.com/learnchef'
+  end
+
+  def supermarket_url
+    'https://supermarket.getchef.com'
   end
 end

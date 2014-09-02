@@ -75,8 +75,8 @@ Next, before I go any further, I'm going to check the community site. It's possi
 ##### Add Community Cookbooks
 It turns out that memcached and redis already have community versions we can leverage:
 
-- [memcached](http://community.opscode.com/cookbooks/memcached)
-- [redisio](http://community.opscode.com/cookbooks/redisio)
+- [memcached](<%= supermarket_url %>/cookbooks/memcached)
+- [redisio](<%= supermarket_url %>/cookbooks/redisio)
 
 Create a new file called `Berksfile` at the root of your Chef repo and add the following:
 
@@ -282,7 +282,7 @@ end
 And the associated template in `templates/default/config/redis.yml.erb`:
 
 ```erb
-# This file was created by Chef for <%= node['fqdn'] %>
+# This file was created by Chef for <%%= node['fqdn'] %>
 # Do NOT modify this file by hand!
 
 host: "<%= @host %>"
@@ -307,10 +307,10 @@ end
 And the template in `templates/default/config/memcached.yml.erb`
 
 ```erb
-# This file was created by Chef for <%= node['fqdn'] %>
+# This file was created by Chef for <%%= node['fqdn'] %>
 # Do NOT modify this file by hand!
 
-host: "<%= @host %>"
+host: "<%%= @host %>"
 ```
 
 Now we need to actually create the MySQL database and user:
@@ -341,7 +341,7 @@ mysql_database_user node['my_app']['database']['username'] do
 end
 ```
 
-This code all comes from the [database community cookbook](http://community.opscode.com/cookbooks/database).
+This code all comes from the [database community cookbook](<%= supermarket_url %>/cookbooks/database).
 
 Upload this recipe again:
 
@@ -366,10 +366,10 @@ And the template in `templates/default/config/database.yml.erb`:
 production:
   adapter: mysql2
   host: localhost
-  database: '<%= node['my_app']['database']['database'] %>'
+  database: '<%%= node['my_app']['database']['database'] %>'
   pool: 5
-  username: '<%= node['my_app']['database']['username'] %>'
-  password: '<%= node['my_app']['database']['password'] %>'
+  username: '<%%= node['my_app']['database']['username'] %>'
+  password: '<%%= node['my_app']['database']['password'] %>'
 ```
 
 Lastly, in order to deploy, we'll need to give my local machine access. I could use the AWS pem files, but I want to deploy as the apache user. Let's add my public key to apache's authorized_keys:
@@ -410,13 +410,13 @@ end
 And the associated Apache Virtual Host:
 
 ```erb
-# This file is managed by chef for <%= node['fqdn'] %>
+# This file is managed by chef for <%%= node['fqdn'] %>
 # Do NOT modify this file by hand!
 
 <VirtualHost *:80>
-  DocumentRoot <%= node['my_app']['root'] %>/current/public
+  DocumentRoot <%%= node['my_app']['root'] %>/current/public
 
-  <Directory <%= node['my_app']['root'] %>/current/public>
+  <Directory <%%= node['my_app']['root'] %>/current/public>
     Options FollowSymLinks
     AllowOverride None
     Order allow,deny
@@ -429,8 +429,8 @@ And the associated Apache Virtual Host:
   </Directory>
 
   LogLevel info
-  ErrorLog <%= node['apache']['log_dir'] %>/my_app-error.log
-  CustomLog <%= node['apache']['log_dir'] %>/my_app-access.log combined
+  ErrorLog <%%= node['apache']['log_dir'] %>/my_app-error.log
+  CustomLog <%%= node['apache']['log_dir'] %>/my_app-access.log combined
 </VirtualHost>
 ```
 
