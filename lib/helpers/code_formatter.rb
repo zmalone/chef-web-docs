@@ -51,7 +51,7 @@ module Middleman
         def source_window(content,filepath)
           %{<div class="window">
               <nav class="control-window">
-                <div class="close">x</div>
+                <div class="close">&times;</div>
                 <div class="minimize"></div>
                 <div class="deactivate"></div>
               </nav>
