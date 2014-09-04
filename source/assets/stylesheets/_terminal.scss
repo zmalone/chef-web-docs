@@ -1,3 +1,11 @@
+@import "compass/css3/user-interface";
+
+@mixin selectable-text {
+  @include user-select(text);
+  -ms-user-select: text;
+  cursor: text;
+}
+
 /*-----------------------------------------------------------------------------------*/
 /* Window
 /*-----------------------------------------------------------------------------------*/
@@ -14,6 +22,8 @@
   opacity:0;
   visibility:visible;
   opacity:1;
+  @include user-select(none);
+  -ms-user-select: none;
 }
 
 .container {
@@ -40,16 +50,17 @@ h1.titleInside {
 
 nav.control-window {
   float: left;
-  padding: 2px 0px 0px 10px;
+  padding: 2px 0px 0px 7px;
   left:5px;
   top:3px;
   z-index:10;
   height:19px;
 }
 
-nav.control-window a {
+nav.control-window div {
+  vertical-align: middle;
   display: inline-block;
-  margin: 2px 0px 3px 1px;
+  margin: -7px 2px 3px 1px;
   width: 12px;
   height: 12px;
   border-radius: 100%;
@@ -57,7 +68,7 @@ nav.control-window a {
   text-indent: -9999px;
   position: relative;
 }
-nav.control-window a:before {
+nav.control-window div:before {
   content: '';
   display: block;
   position: absolute;
@@ -68,7 +79,7 @@ nav.control-window a:before {
   bottom: 0px;
   right: 0px;
 }
-nav.control-window a:after {
+nav.control-window div:after {
   content: '';
   display: block;
   position: absolute;
@@ -81,17 +92,17 @@ nav.control-window a:after {
   background: -moz-linear-gradient(white, rgba(255, 255, 255, .9) 2%, white, rgba(255, 255, 255, .4) 16%, rgba(255, 255, 255, 0) 43%, rgba(255, 255, 255, .74), rgba(255, 255, 255, .7) 122%, rgba(255, 255, 255, .7));
   box-shadow: inset 0px -3px -5px 3px rgba(255, 255, 255, 0.2), inset 0px 2px -5px 3px rgba(255, 255, 255, 0.2);
 }
-nav.control-window a.close {
+nav.control-window div.close {
   background: #FD4E4E;
 }
-nav.control-window a.minimize {
+nav.control-window div.minimize {
   background: #F3BB55;
 }
-nav.control-window a.maximize {
+nav.control-window div.maximize {
   background: #96D16F;
 }
-nav.control-window a.deactivate {
-  background: #b5b5b5;
+nav.control-window div.deactivate {
+  background: #74be4e;
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -142,11 +153,13 @@ div.terminal {
 }
 
 div.terminal span.command {
+  @include selectable-text;
   color: rgb(238,238,0);
   font-weight: bold;
 }
 
 div.terminal span.output {
+  @include selectable-text;
   color: #BBB;
   font-weight: bold;
 }
@@ -217,6 +230,7 @@ pre.lineno {
 
 
 div.editor td.code {
+  @include selectable-text;
   vertical-align: top;
 }
 
