@@ -23,6 +23,8 @@ Option 2: let us provide a CentOS virtual machine that has the Chef tools instal
 
 <%= partial 'layouts/provisioner', locals: { title: 'CentOS', type: 'ec2-rhel-localmode' } %>
 
+[WINDOWS] SSH stands for Secure Shell, and is a popular network protocol for connecting to servers remotely. While Mac OS and most Linux distributions come with an SSH client, if you're connecting from Windows you'll need to download one. We recommend [PuTTY][putty] if you don't have a preferred SSH client.
+
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:400px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, be on the lookout for:**</span><br>
   <i class="fa fa-check"></i>&nbsp; what resources and recipes are.<br>
@@ -41,7 +43,7 @@ Option 2: let us provide a CentOS virtual machine that has the Chef tools instal
 
 ## 1. Set up your working directory
 
-If you're working from your own RHEL or CentOS machine, create the <codeinline>chef-repo</codeinline> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
+If you're working from your own RHEL or CentOS machine, create the <filepath>chef-repo</filepath> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
 
 ```bash
 $ mkdir ~/chef-repo
@@ -57,7 +59,7 @@ $ cd ~/chef-repo
 
 First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
 
-From your <codeinline>~/chef-repo</codeinline> directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
+From your <filepath>~/chef-repo</filepath> directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
 
 [COMMENT] If you don't have a preferred text editor, try <codeinline>Vim</codeinline>. This [interactive Vim tutorial](http://www.openvim.com/tutorial.html) tutorial can help you get oriented to the commands you'll need to create, edit, and save a file.
 
@@ -77,10 +79,10 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - create new file motd
     - update content in file motd from none to de031d
-        --- motd        2014-05-13 14:52:54.025253948 -0700
-        +++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
-        @@ -1 +1,2 @@
-        +hello world
+    --- motd        2014-05-13 14:52:54.025253948 -0700
+    +++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
+    @@ -1 +1,2 @@
+    +hello world
 ```
 
 The output tells us that a new file, <filepath>motd</filepath>, was created.
@@ -95,7 +97,7 @@ hello world
 
 ### Run the command a second time
 
-Now, let's see now what happens when you run the same command again.
+Now, let's see now what happens when you run the same <codeinline>chef-apply</codeinline> command again.
 
 ```bash
 # ~/chef-repo
@@ -129,11 +131,11 @@ $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - update content in file motd from de031d to b1522f
-        --- motd        2014-05-13 14:52:54.025253948 -0700
-        +++ /tmp/.motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
-        @@ -1,2 +1,2 @@
-        -hello world
-        +hello chef
+    --- motd        2014-05-13 14:52:54.025253948 -0700
+    +++ /tmp/.motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
+    @@ -1,2 +1,2 @@
+    -hello world
+    +hello chef
 ```
 
 This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
@@ -157,11 +159,11 @@ $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - update content in file motd from 9b0c18 to b1522f
-        --- motd        2014-05-13 15:03:47.638770524 -0700
-        +++ /tmp/.motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
-        @@ -1,2 +1,2 @@
-        -hello robots
-        +hello chef
+    --- motd        2014-05-13 15:03:47.638770524 -0700
+    +++ /tmp/.motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
+    @@ -1,2 +1,2 @@
+    -hello robots
+    +hello chef
 ```
 
 Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resource matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
@@ -232,5 +234,6 @@ Of course, your job is about more than just setting up files. Next you'll apply 
 
 <%= link_to 'Configure a package and service &rarr;', '/rhel/configure-a-package-and-service/', class: 'button radius' %>
 
+[putty]: http://www.putty.org
 [file]: <%= chef_docs_url %>/resource_file.html
 [chef-apply]: <%= chef_docs_url %>/ctl_chef_apply.html
