@@ -78,6 +78,8 @@ Run <codeinline>knife winrm</codeinline> to run your cookbook on your node. If y
             <div class="container" data-chef-lab-template data-type="ec2-windows-fundamentals"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife winrm {{address}} chef-client --manual-list --winrm-user {{user}} --winrm-password {{password}}</span></code></pre></td></tr></tbody></table></div></div>
           </div>
 
+[COMMENT] In production, you'll likely configure <codeinline>chef-client</codeinline> to run automatically on a regular basis or in response to some event or trigger, such as when code is checked in to your repository. But for now, we'll update our server configuration by running <codeinline>chef-client</codeinline> manually.
+
 ## 4. Confirm the result
 
 Open a web browser from your workstation and navigate to your web server.
@@ -115,7 +117,9 @@ You'll see something like this.
 
 Dynamic configuration means that you can write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node. [Templates][template] enable you to do this.
 
-You also ran <codeinline>knife ssh</codeinline> to update your node. [knife ssh][knifessh] invokes the command you specify over an SSH connection on a node &ndash; in our case <codeinline>chef-client</codeinline>. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
+You also ran <codeinline>knife winrm</codeinline> to update your node. [knife winrm][knifewinrm] invokes the command you specify over a WinRM connection on a node &ndash; in our case <codeinline>chef-client</codeinline>. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
+
+[COMMENT] Alternatively, you could connect directly into your server and run <codeinline>chef-client</codeinline> manually. In this tutorial, we use <codeinline>knife winrm</codeinline> because it enables us to do all of our work from our local workstation.
 
 ### <i class="fa fa-puzzle-piece greeniconcolor" style="margin-right:3px;"></i> Templates work through node objects
 
@@ -138,4 +142,4 @@ In the meantime, here are some things you can try.
 [template]: <%= chef_docs_url %>/essentials_cookbook_templates.html
 [chef]: <%= chef_docs_url %>/ctl_chef.html
 [chef-client]: <%= chef_docs_url %>/ctl_chef_client.html
-[knifessh]: <%= chef_docs_url %>/knife_ssh.html
+[knifewinrm]: <%= chef_docs_url %>/plugin_knife_windows.html

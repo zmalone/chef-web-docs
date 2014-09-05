@@ -46,8 +46,8 @@ Let's install IIS. From your working directory, add this recipe to a file named 
 ```ruby
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
-  code 'add-windowsfeature Web-Server'
-  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
+  code 'Add-WindowsFeature Web-Server'
+  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
 end
 ```
 
@@ -70,10 +70,10 @@ Run the recipe a second time.
 # ~/chef-repo
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * powershell_script[Install IIS] action run (skipped due to only_if)
+  * powershell_script[Install IIS] action run (skipped due to not_if)
 ```
 
-This time, Chef does not reinstall IIS. That's because the <codeinline>only\_if</codeinline> attribute executes the resource only when the condition is true. In this case, we use the <codeinline>Get-WindowsFeature</codeinline> PowerShell cmdlet to get the name of the installed web server. The <codeinline>only\_if</codeinline> attribute evaluates to true if the web server name is not set.
+This time, Chef does not reinstall IIS. That's because the <codeinline>not\_if</codeinline> attribute skips the resource when the condition is true. In this case, we use the <codeinline>Get-WindowsFeature</codeinline> PowerShell cmdlet to check whether the <codeinline>Web-Server</codeinline> feature is installed.
 
 ## 2. Start the World Wide Web Publishing Service
 
@@ -82,8 +82,8 @@ Now let's start the IIS World Wide Web Publishing Service (W3SVC) and enable it 
 ```ruby
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
-  code 'add-windowsfeature Web-Server'
-  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
+  code 'Add-WindowsFeature Web-Server'
+  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
 end
 
 service 'w3svc' do
@@ -99,7 +99,7 @@ Now apply it.
 # ~/chef-repo
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * powershell_script[Install IIS] action run (skipped due to only_if)
+  * powershell_script[Install IIS] action run (skipped due to not_if)
   * service[w3svc] action start (up to date)
   * service[w3svc] action enable (up to date)
 ```
@@ -115,8 +115,8 @@ You already know how to configure a <codeinline>file</codeinline> resource; appe
 ```ruby
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
-  code 'add-windowsfeature Web-Server'
-  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
+  code 'Add-WindowsFeature Web-Server'
+  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
 end
 
 service 'w3svc' do
@@ -138,7 +138,7 @@ Now apply it.
 # ~/chef-repo/
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * powershell_script[Install IIS] action run (skipped due to only_if)
+  * powershell_script[Install IIS] action run (skipped due to not_if)
   * service[w3svc] action start (up to date)
   * service[w3svc] action enable (up to date)
   * file[c:\inetpub\wwwroot\Default.htm] action create
@@ -185,8 +185,8 @@ Let's take another quick look at our web server recipe.
 ```ruby
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
-  code 'add-windowsfeature Web-Server'
-  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
+  code 'Add-WindowsFeature Web-Server'
+  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
 end
 
 service 'w3svc' do

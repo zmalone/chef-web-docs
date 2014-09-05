@@ -47,7 +47,7 @@ $ mkdir cookbooks
 $ cd cookbooks
 ```
 
-Now run the <codeinline>chef</codeinline> command to generate a cookbook named **learn_chef_iis**.
+Now run the <codeinline>chef</codeinline> command to generate a cookbook named **learn\_chef\_iis**.
 
 ```ps
 # ~/chef-repo/cookbooks
@@ -84,7 +84,7 @@ Now we'll move the home page to our cookbook to an external file. First, run thi
 $ chef generate template learn_chef_iis index.html
 ```
 
-The file <filepath>index.html.erb</filepath> gets created under <filepath>learn_chef_iis\templates\default</filepath>.
+The file <filepath>index.html.erb</filepath> gets created under <filepath>learn\_chef\_iis\templates\default</filepath>.
 
 ```ps
 # ~\chef-repo\cookbooks
@@ -120,6 +120,8 @@ Now copy the contents of the HTML file from your recipe to the new HTML file, <f
 </html>
 ```
 
+[COMMENT] If you're using the Atom text editor, running the <codeinline>atom .</codeinline> command from your <filepath>cookbooks</filepath> directory enables you to easily navigate among your cookbook's files.
+
 ## 3. Update the recipe to reference the HTML template
 
 Write out the recipe, <filepath>default.rb</filepath>, like this.
@@ -128,7 +130,7 @@ Write out the recipe, <filepath>default.rb</filepath>, like this.
 # ~\chef-repo\cookbooks\learn_chef_iis\recipes\default.rb
 powershell_script 'Install IIS' do
   code 'add-windowsfeature Web-Server'
-  only_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).Name -eq $null"'   #
+  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
 end
 
 service 'w3svc' do
@@ -146,7 +148,7 @@ Now run the cookbook. To do so, we use the <codeinline>chef-client</codeinline> 
 
 ```ps
 # ~\chef-repo
-$ chef-client --local-mode --runlist learn_chef_iis
+$ chef-client --local-mode --runlist 'recipe[learn_chef_iis]'
 [2014-08-19T21:29:02+00:00] WARN: No config file found or specified on command line, using command line options.
 Starting Chef Client, version 11.14.0.rc.2
 resolving cookbooks for run list: ["learn_chef_iis"]
@@ -155,7 +157,7 @@ Synchronizing Cookbooks:
 Compiling Cookbooks...
 Converging 3 resources
 Recipe: learn_chef_iis::default
-  * powershell_script[Install IIS] action run (skipped due to only_if)
+  * powershell_script[Install IIS] action run (skipped due to not_if)
   * service[w3svc] action start (up to date)
   * service[w3svc] action enable (up to date)
   * template[c:\inetpub\wwwroot\Default.htm] action create
@@ -188,6 +190,8 @@ The result is the same as before, but with a cookbook things are now easier to m
 Your web server is shaping up! With a [cookbook][cookbook] you're now better organized. A cookbook adds structure to your work. You can now author your HTML code in its own file and use  a [template][template] resource to reference it from your recipe.
 
 You also saw the [run-list][run-list]. The run-list lets you specify which recipes to run, and the order in which to run them. This is handy once you have lots of cookbooks, and the order in which they run is important.
+
+[COMMENT] Keep in mind that the web server cookbook you wrote in this lesson likely won't be the one you'd use in production. Only _you_ know the specific needs for your infrastructure. You bring your requirements and Chef provides the tools that help you meet them.
 
 ## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
 
