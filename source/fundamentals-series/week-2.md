@@ -9,16 +9,16 @@ keywords: training, videos, screencasts
 
 After viewing this video you will be able to:
 
-* Install Chef nodes using <codeinline>knife bootstrap</codeinline>
-* Explain how <codeinline>knife bootstrap</codeinline> configures a node to use the organization created in the previous section
-* Explain the basic configuration needed to run <codeinline>chef-client</codeinline>
+* Install Chef nodes using `knife bootstrap`
+* Explain how `knife bootstrap` configures a node to use the organization created in the previous section
+* Explain the basic configuration needed to run `chef-client`
 * Describe in detail what a cookbook is
 * Create a new cookbook
 * Explain what a recipe is
-* Describe how to use the <codeinline>package</codeinline>, <codeinline>service</codeinline>, and <codeinline>template</codeinline> resources
+* Describe how to use the `package`, `service`, and `template` resources
 * Upload a cookbook to the Chef server
-* Explain what a run-list is, and how to set it for a node via <codeinline>knife</codeinline>
-* Explain the output of a <codeinline>chef-client</codeinline> run
+* Explain what a run-list is, and how to set it for a node via `knife`
+* Explain the output of a `chef-client` run
 
 During this video we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.  You may [launch your lab environment][chef-lab] as part of the video.
 
@@ -62,13 +62,13 @@ A programmer's text editor that allows the participants to have multiple files o
 - [vim][vim]
 - [emacs][emacs]
 
-The [chef-client][omnibus-installer] application which includes the <codeinline>knife</codeinline> command line utility
+The [chef-client][omnibus-installer] application which includes the `knife` command line utility
 
 ### Homework
 
-Before participating in [Part 3: Node object and Chef roles][spring-fund-week-3], you may want to get a little more information on exactly what happens when you run the <codeinline>chef-client</codeinline> application.  Checkout this video for a detailed explanation of the <codeinline>chef-client</codeinline> run.  After viewing this video, you will be able to:
+Before participating in [Part 3: Node object and Chef roles][spring-fund-week-3], you may want to get a little more information on exactly what happens when you run the `chef-client` application.  Checkout this video for a detailed explanation of the `chef-client` run.  After viewing this video, you will be able to:
 
-* List all the steps taken by a <codeinline>chef-client</codeinline> during a run
+* List all the steps taken by a `chef-client` during a run
 * Explain the basic security model of Chef
 * Explain the concepts of the resource collection
 

@@ -10,7 +10,7 @@ After viewing this video you will be able to:
 
 * Describe what an environment is, and how it is different from an organization
 * Set cookbook version constraints
-* Describe the process for launching a server on Amazon's EC2 using the <codeinline>knife ec2 server create</codeinline> command
+* Describe the process for launching a server on Amazon's EC2 using the `knife ec2 server create` command
 
 ### Pre-work
 
