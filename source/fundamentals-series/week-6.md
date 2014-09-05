@@ -9,7 +9,7 @@ keywords: training, videos, screencasts
 After viewing this video you will be able to:
 
 * Find, preview, and download cookbooks from the Chef community site
-* Use <codeinline>knife</codeinline> to work with the community site API
+* Use `knife` to work with the community site API
 * Download, extract, examine and implement cookbooks from the community site
 
 ### Pre-work

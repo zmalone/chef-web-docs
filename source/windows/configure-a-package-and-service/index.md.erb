@@ -33,7 +33,7 @@ Option 2: let us provide an Windows Server virtual machine that has the Chef too
   <i class="fa fa-check"></i>&nbsp; what problems arise.
 </sidebar>
 
-## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
+## <i class="fa fa-tasks" style="margin-right:3px;"></i> Here's what you'll do
 
   1. [Install IIS](#1installiis)
   1. [Start the World Wide Web Publishing Service](#2starttheworldwidewebpublishingservice)
@@ -41,7 +41,7 @@ Option 2: let us provide an Windows Server virtual machine that has the Chef too
 
 ## 1. Install IIS
 
-Let's install IIS. From your working directory, add this recipe to a file named <filepath>webserver.rb</filepath>.
+Let's install IIS. From your working directory, add this recipe to a file named <code class="file-path">webserver.rb</code>.
 
 ```ruby
 # ~/chef-repo/webserver.rb
@@ -51,9 +51,9 @@ powershell_script 'Install IIS' do
 end
 ```
 
-We don't need to specify an action because <codeinline>run</codeinline> is the default.
+We don't need to specify an action because `run` is the default.
 
-Now run <codeinline>chef-apply</codeinline> to apply the recipe.
+Now run `chef-apply` to apply the recipe.
 
 ```ps
 # ~/chef-repo
@@ -73,11 +73,11 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * powershell_script[Install IIS] action run (skipped due to not_if)
 ```
 
-This time, Chef does not reinstall IIS. That's because the <codeinline>not\_if</codeinline> attribute skips the resource when the condition is true. In this case, we use the <codeinline>Get-WindowsFeature</codeinline> PowerShell cmdlet to check whether the <codeinline>Web-Server</codeinline> feature is installed.
+This time, Chef does not reinstall IIS. That's because the `not\_if` attribute skips the resource when the condition is true. In this case, we use the `Get-WindowsFeature` PowerShell cmdlet to check whether the `Web-Server` feature is installed.
 
 ## 2. Start the World Wide Web Publishing Service
 
-Now let's start the IIS World Wide Web Publishing Service (W3SVC) and enable it when the server boots. Modify <filepath>webserver.rb</filepath> to look like this.
+Now let's start the IIS World Wide Web Publishing Service (W3SVC) and enable it when the server boots. Modify <code class="file-path">webserver.rb</code> to look like this.
 
 ```ruby
 # ~/chef-repo/webserver.rb
@@ -110,7 +110,7 @@ IIS is already installed, so again there's nothing to do. Similarly, the W3SVC s
 
 Let's spruce things up and add a custom home page.
 
-You already know how to configure a <codeinline>file</codeinline> resource; append one that configures the default home page, <filepath>c:\inetpub\wwwroot\Default.htm</filepath>, to the end of <filepath>webserver.rb</filepath>. The entire recipe now looks like this.
+You already know how to configure a `file` resource; append one that configures the default home page, <code class="file-path">c:\inetpub\wwwroot\Default.htm</code>, to the end of <code class="file-path">webserver.rb</code>. The entire recipe now looks like this.
 
 ```ruby
 # ~/chef-repo/webserver.rb
@@ -154,7 +154,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
     +</html>
 ```
 
-Run the <codeinline>Invoke-WebRequest</codeinline> PowerShell cmdlet to confirm that your web page is available.
+Run the `Invoke-WebRequest` PowerShell cmdlet to confirm that your web page is available.
 
 ```ps
 # ~\chef-repo
@@ -172,13 +172,13 @@ Optionally, from a web browser on another machine, navigate to your server. You'
 
 <hr>
 
-## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
+## <i class="fa fa-question" style="margin-right:3px;"></i> What did we see here?
 
 You saw how to work with the package and service resources. You now know how to work with three types of resources: [file][file], [powershell_script][powershell_script], and [service][service].
 
 You also saw how to apply multiple actions. But how does Chef know what order to apply resources and actions?
 
-### <i class="fa fa-list-ol greeniconcolor" style="margin-right:3px;"></i> Chef works in the order you specify
+### Chef works in the order you specify
 
 Let's take another quick look at our web server recipe.
 
@@ -204,13 +204,13 @@ end
 
 The resources are applied in the order they are specified in the recipe. So here IIS is installed, then the W3SVC service is configured, and finally the home page is set. If any resource is already in the desired state, Chef simply moves on to the next one.
 
-The same idea applies to the action list <codeinline>[:start, :enable]</codeinline> for configuring the W3SVC service. The service is started before it is enabled when the server boots.
+The same idea applies to the action list `[:start, :enable]` for configuring the W3SVC service. The service is started before it is enabled when the server boots.
 
 It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the W3SVC service before the package is even installed.
 
 A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't start then we don't want to enable it.
 
-## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
+## <i class="fa fa-road" style="margin-right:3px;"></i> What's next
 
 You may notice one big problem with our recipe &ndash; the HTML code lives inside it, so there is no clear separation between our web site code and our recipe to manage it. It's a good incremental step because it helps you get things working, but this of course would never scale to a full web site.
 

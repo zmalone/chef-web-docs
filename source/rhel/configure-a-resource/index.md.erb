@@ -28,10 +28,10 @@ Option 2: let us provide a CentOS virtual machine that has the Chef tools instal
 <sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:400px;">
 <span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, be on the lookout for:**</span><br>
   <i class="fa fa-check"></i>&nbsp; what resources and recipes are.<br>
-  <i class="fa fa-check"></i>&nbsp; what happens when you run <codeinline>chef-apply</codeinline>.<br>
+  <i class="fa fa-check"></i>&nbsp; what happens when you run `chef-apply`.<br>
 </sidebar>
 
-## <i class="fa fa-tasks rediconcolor" style="margin-right:3px;"></i> Here's what you'll do
+## <i class="fa fa-tasks" style="margin-right:3px;"></i> Here's what you'll do
 
   1. [Set up your working directory](#1setupyourworkingdirectory)
   1. [Create the MOTD file](#2createthemotdfile)
@@ -43,13 +43,13 @@ Option 2: let us provide a CentOS virtual machine that has the Chef tools instal
 
 ## 1. Set up your working directory
 
-If you're working from your own RHEL or CentOS machine, create the <filepath>chef-repo</filepath> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
+If you're working from your own RHEL or CentOS machine, create the <code class="file-path">chef-repo</code> directory under your home directory (if you're using a machine that we provided, this directory already exists.)
 
 ```bash
 $ mkdir ~/chef-repo
 ```
 
-Now <codeinline>cd</codeinline> there.
+Now `cd` there.
 
 ```bash
 $ cd ~/chef-repo
@@ -59,9 +59,9 @@ $ cd ~/chef-repo
 
 First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
 
-From your <filepath>~/chef-repo</filepath> directory, create a file named <filepath>hello.rb</filepath>, add these contents, and then save the file.
+From your <code class="file-path">~/chef-repo</code> directory, create a file named <code class="file-path">hello.rb</code>, add these contents, and then save the file.
 
-[COMMENT] If you don't have a preferred text editor, try <codeinline>Vim</codeinline>. This [interactive Vim tutorial](http://www.openvim.com/tutorial.html) tutorial can help you get oriented to the commands you'll need to create, edit, and save a file.
+[COMMENT] If you don't have a preferred text editor, try `Vim`. This [interactive Vim tutorial](http://www.openvim.com/tutorial.html) tutorial can help you get oriented to the commands you'll need to create, edit, and save a file.
 
 ```ruby
 # ~/chef-repo/hello.rb
@@ -70,7 +70,7 @@ file 'motd' do
 end
 ```
 
-From your terminal window, run <codeinline>chef-apply</codeinline> to apply what you've written.
+From your terminal window, run `chef-apply` to apply what you've written.
 
 ```bash
 # ~/chef-repo
@@ -85,9 +85,9 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
     +hello world
 ```
 
-The output tells us that a new file, <filepath>motd</filepath>, was created.
+The output tells us that a new file, <code class="file-path">motd</code>, was created.
 
-Now verify that the file was written. Run the <codeinline>more</codeinline> command, which prints to the console the file you give it.
+Now verify that the file was written. Run the `more` command, which prints to the console the file you give it.
 
 ```bash
 # ~/chef-repo
@@ -97,7 +97,7 @@ hello world
 
 ### Run the command a second time
 
-Now, let's see now what happens when you run the same <codeinline>chef-apply</codeinline> command again.
+Now, let's see now what happens when you run the same `chef-apply` command again.
 
 ```bash
 # ~/chef-repo
@@ -108,13 +108,13 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 This time you get a different response. This is because Chef does work only when it needs to.
 
-Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <filepath>motd</filepath> because it already exists and its contents didn't change.
+Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <code class="file-path">motd</code> because it already exists and its contents didn't change.
 
 ## 3. Update the MOTD file's contents
 
 Now you're going to change the MOTD.
 
-Modify <filepath>hello.rb</filepath> like this ('hello world' becomes 'hello chef'.)
+Modify <code class="file-path">hello.rb</code> like this ('hello world' becomes 'hello chef'.)
 
 ```ruby
 # ~/chef-repo/hello.rb
@@ -123,7 +123,7 @@ file 'motd' do
 end
 ```
 
-Run <codeinline>chef-apply</codeinline>.
+Run `chef-apply`.
 
 ```bash
 # ~/chef-repo
@@ -144,14 +144,14 @@ This time Chef does work because we've changed the desired state of the file and
 
 You need to make sure that no other process can change the MOTD.
 
-Imagine that a co-worker manually changes <filepath>motd</filepath> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor. Or you can change the file from the command line like this.
+Imagine that a co-worker manually changes <code class="file-path">motd</code> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor. Or you can change the file from the command line like this.
 
 ```bash
 # ~/chef-repo
 $ echo 'hello robots' > motd
 ```
 
-Now run <codeinline>chef-apply</codeinline>.
+Now run `chef-apply`.
 
 ```bash
 # ~/chef-repo
@@ -171,7 +171,7 @@ Chef restored the original configuration. This is actually a really good thing b
 
 ## 5. Delete the MOTD file
 
-OK, you're done experimenting with the MOTD, so let's clean up. From your working directory, create a new file named <filepath>goodbye.rb</filepath> and save this content to it.
+OK, you're done experimenting with the MOTD, so let's clean up. From your working directory, create a new file named <code class="file-path">goodbye.rb</code> and save this content to it.
 
 ```ruby
 # goodbye.rb
@@ -180,7 +180,7 @@ file 'motd' do
 end
 ```
 
-Now apply <filepath>goodbye.rb</filepath> to delete the file.
+Now apply <code class="file-path">goodbye.rb</code> to delete the file.
 
 ```bash
 # ~/chef-repo
@@ -190,7 +190,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
     - delete file motd
 ```
 
-The output shows that <filepath>motd</filepath> is now gone, but let's prove it.
+The output shows that <code class="file-path">motd</code> is now gone, but let's prove it.
 
 ```bash
 # ~/chef-repo
@@ -200,35 +200,35 @@ motd: No such file or directory
 
 <hr>
 
-## <i class="fa fa-question blueiconcolor" style="margin-right:3px;"></i> What did we see here?
+## <i class="fa fa-question" style="margin-right:3px;"></i> What did we see here?
 
 You ran a few basic Chef commands and got a flavor of what Chef can do. You learned that a resource describes one part of the system and its desired state. You worked with a [file][file], which is one kind of resource.
 
-### <i class="fa fa-cubes greeniconcolor" style="margin-right:3px;"></i> Resources describe the what, not the how
+### Resources describe the what, not the how
 
-Your policy declares _what_ state each resource should be in, but not _how_ to get there. In this lesson, you declared that the file <filepath>motd</filepath> must exist and what its contents are, but you didn't specify how to apply that policy. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
+Your policy declares _what_ state each resource should be in, but not _how_ to get there. In this lesson, you declared that the file <code class="file-path">motd</code> must exist and what its contents are, but you didn't specify how to apply that policy. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
 
 A recipe declares what state each resource should be in but not how to achieve that state. Chef handles these complexities for you.
 
-### <i class="fa fa-bolt greeniconcolor" style="margin-right:3px;"></i> Resources have actions
+### Resources have actions
 
-When you deleted the file, you saw the <codeinline>delete</codeinline> action.
+When you deleted the file, you saw the `delete` action.
 
 Think of an action as the process that achieves the desired configuration state. Every resource in Chef has a default action, and it's the most common affirmative one &ndash; for example, _create_ a file, _install_ a package, and _start_ a service.
 
-When we created the file we didn't specify the <codeinline>create</codeinline> action because <codeinline>create</codeinline> is the default. But of course you can specify it if you want.
+When we created the file we didn't specify the `create` action because `create` is the default. But of course you can specify it if you want.
 
 The documentation for each resource type, [file](<%= chef_docs_url %>/resource_file.html) for example, explains the type's default action.
 
-### <i class="fa fa-file-text greeniconcolor" style="margin-right:3px;"></i> Recipes organize resources
+### Recipes organize resources
 
-In Chef, <filepath>hello.rb</filepath> is an example of a [recipe](<%= chef_docs_url %>/essentials_cookbook_recipes.html), or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
+In Chef, <code class="file-path">hello.rb</code> is an example of a [recipe](<%= chef_docs_url %>/essentials_cookbook_recipes.html), or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
 
 Our recipe states everything we need to manage the MOTD file. You used [chef-apply][chef-apply] to apply that recipe from the command line.
 
 <hr>
 
-## <i class="fa fa-road blueiconcolor" style="margin-right:3px;"></i> What's next
+## <i class="fa fa-road" style="margin-right:3px;"></i> What's next
 
 Of course, your job is about more than just setting up files. Next you'll apply what you've learned to install and configure a package and service.
 

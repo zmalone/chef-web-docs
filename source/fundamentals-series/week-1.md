@@ -17,7 +17,7 @@ After viewing this video you will be able to:
 	- Run-list
 	- Search
 - Login to hosted Chef
-- Run <codeinline>knife</codeinline> commands from your workstation
+- Run `knife` commands from your workstation
 
 
 
