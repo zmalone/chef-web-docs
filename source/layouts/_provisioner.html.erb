@@ -9,15 +9,19 @@
     <%= partial 'layouts/logo_animation' %>
     <p>
       We're provisioning a virtual machine for you.<br>
-      This'll take just a minute.
+      This will take just a minute.
     </p>
   </div>
   <div ng-show="machine.status == 'ready'" class="ready">
     <% if type.include?('windows') %>
-      <%= partial 'layouts/provisioner/windows' %>
+      <%= partial 'layouts/provisioner/windows', locals: { type: type } %>
     <% else %>
       <p>
-        Your virtual machine is all ready to go! Here's how to log in using SSH:
+        <% if type.end_with? 'localmode' %>
+          Your virtual machine is all ready to go! Here's how to log in using SSH:
+        <% else %>
+          Your virtual machine is all ready to go! <b>Don't connect just yet</b> - we'll show you how to later. But here's how to log in using SSH in case you need it:
+        <% end %>
       </p>
       <div class="window">
         <nav class="control-window">
