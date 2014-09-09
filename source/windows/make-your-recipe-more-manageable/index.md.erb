@@ -129,8 +129,9 @@ Write out the recipe, <code class="file-path">default.rb</code>, like this.
 ```ruby
 # ~\chef-repo\cookbooks\learn_chef_iis\recipes\default.rb
 powershell_script 'Install IIS' do
-  code 'add-windowsfeature Web-Server'
-  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
+  code 'Add-WindowsFeature Web-Server'
+  guard_interpreter :powershell_script
+  not_if "(Get-WindowsFeature -Name Web-Server).InstallState -eq 'Installed'"
 end
 
 service 'w3svc' do

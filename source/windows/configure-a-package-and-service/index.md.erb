@@ -47,7 +47,8 @@ Let's install IIS. From your working directory, add this recipe to a file named 
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
-  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
+  guard_interpreter :powershell_script
+  not_if "(Get-WindowsFeature -Name Web-Server).InstallState -eq 'Installed'"
 end
 ```
 
@@ -73,7 +74,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * powershell_script[Install IIS] action run (skipped due to not_if)
 ```
 
-This time, Chef does not reinstall IIS. That's because the `not\_if` attribute skips the resource when the condition is true. In this case, we use the `Get-WindowsFeature` PowerShell cmdlet to check whether the `Web-Server` feature is installed.
+This time, Chef does not reinstall IIS. That's because the `not_if` attribute skips the resource when the condition is true. In this case, we use the `Get-WindowsFeature` PowerShell cmdlet to check whether the `Web-Server` feature is installed.
 
 ## 2. Start the World Wide Web Publishing Service
 
@@ -83,7 +84,8 @@ Now let's start the IIS World Wide Web Publishing Service (W3SVC) and enable it 
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
-  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
+  guard_interpreter :powershell_script
+  not_if "(Get-WindowsFeature -Name Web-Server).InstallState -eq 'Installed'"
 end
 
 service 'w3svc' do
@@ -116,7 +118,8 @@ You already know how to configure a `file` resource; append one that configures 
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
-  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
+  guard_interpreter :powershell_script
+  not_if "(Get-WindowsFeature -Name Web-Server).InstallState -eq 'Installed'"
 end
 
 service 'w3svc' do
@@ -186,7 +189,8 @@ Let's take another quick look at our web server recipe.
 # ~/chef-repo/webserver.rb
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
-  not_if 'powershell -NonInteractive -NoProfile -Command "(Get-WindowsFeature –Name Web-Server).InstallState -eq Installed"'   #
+  guard_interpreter :powershell_script
+  not_if "(Get-WindowsFeature -Name Web-Server).InstallState -eq 'Installed'"
 end
 
 service 'w3svc' do
