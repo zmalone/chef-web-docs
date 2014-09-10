@@ -13,6 +13,13 @@ module Middleman
 
         return "" if code_block_is_empty?(code)
 
+        # parse out the window style if it was supplied
+        v = language.split('-')
+        # reassign to just the language part
+        language = v[0]
+        # get window style
+        window_style = v[1]
+
         format_language = language
         language = language_for_format(language)
 
@@ -25,7 +32,7 @@ module Middleman
         lexed_code = lexer.lex(code, lexer_options)
 
         formatter = formatter_for_language(format_language)
-        formatter.render(lexed_code, highlighter_options)
+        formatter.render(lexed_code, highlighter_options, { :window_style => window_style })
       end
 
       def self.lexer_for_language_or_code(language,code)
@@ -42,7 +49,7 @@ module Middleman
                    "html" => CodeFormatter.new,
                    "bash" => TerminalFormatter.new,
                    "shell" => TerminalFormatter.new,
-                   "ps" => TerminalFormatter.new({:prompt => "PS >", :title_prefix => "Windows PowerShell", :default_working_dir => "~\\"})
+                   "ps" => TerminalFormatter.new({:prompt => "PS >", :title_prefix => "Windows PowerShell", :window_style => "Win32", :default_working_dir => "~\\"})
                  }
 
           hash.default = DefaultFormatter.new

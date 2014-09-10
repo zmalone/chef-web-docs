@@ -2,12 +2,12 @@ module Middleman
   module Syntax
     module Highlighter
       class CodeFormatter
-        def render(lexed_code, highlighter_options)
+        def render(lexed_code, highlighter_options, style_options = {})
           highlighter_options.merge!(:line_numbers => true)
           lexed_code, filepath, has_filepath = extract_filepath_if_present(lexed_code)
           formatter = Rouge::Formatters::HTML.new(highlighter_options)
           inner_content = pygments_wrap formatter.format(has_filepath ? lexed_code[1..-1] : lexed_code).strip, highlighter_options[:css_class]
-          source_window inner_content, 'Editor: ' + filepath
+          source_window inner_content, 'Editor: ' + filepath, style_options[:window_style]
         end
 
         def extract_filepath_if_present(lexed_code)
@@ -48,8 +48,8 @@ module Middleman
           "<div class='#{css_class}'><pre>#{content}</pre></div>"
         end
 
-        def source_window(content,filepath)
-          %{<div class="window">
+        def source_window(content,filepath,window_style)
+          %{<div class="window #{window_style}">
               <nav class="control-window">
                 <div class="close">&times;</div>
                 <div class="minimize"></div>
