@@ -14,11 +14,13 @@ module Middleman
         return "" if code_block_is_empty?(code)
 
         # parse out the window style if it was supplied
-        v = language.split('-')
-        # reassign to just the language part
-        language = v[0]
-        # get window style
-        window_style = v[1]
+        unless language.nil?
+          v = language.split('-')
+          # reassign to just the language part
+          language = v[0]
+          # get window style
+          window_style = v[1]
+        end
 
         format_language = language
         language = language_for_format(language)

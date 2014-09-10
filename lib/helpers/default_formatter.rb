@@ -3,7 +3,7 @@ module Middleman
     module Highlighter
 
       class DefaultFormatter
-        def render(lexed_code, highlighter_options)
+        def render(lexed_code, highlighter_options, style_options = {})
           formatter = Rouge::Formatters::HTML.new(highlighter_options)
           pygments_wrap formatter.format(lexed_code), highlighter_options[:css_class]
         end
