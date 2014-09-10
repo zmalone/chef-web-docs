@@ -15,7 +15,7 @@ In this tutorial, you'll configure the server directly. That's why it's importan
 
 There are two ways to get set up.
 
-Option 1: use your own Windows Server machine. If you have a machine that meets the [system requirements](<%= chef_docs_url %>/chef_system_requirements.html) that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
+Option 1: use your own Windows Server machine. If you have a machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
 
 Option 2: let us provide an Windows Server virtual machine that has the Chef tools installed for you. Just click the button below.
 
@@ -41,12 +41,14 @@ Option 2: let us provide an Windows Server virtual machine that has the Chef too
 
 ## Before you start
 
-You can use a text editor such as Notepad to write Chef code. But a programmer's text editor provides helpful features such as syntax highlighting and line numbering. If you don't have a preferred text editor, try [Atom][atom]. These PowerShell commands install the [Chocolately][chocolately] package manager, install the Atom package, and opens a file named <code class="file-path">hello.rb</code> in Atom.
+If you're using your own Windows Server machine, make sure you have Administrator privileges. Also, this tutorial assumes that the current user is **chef**. If you're using your own machine, either create the **chef** user as Administrator and logon as **chef** or change the paths you see to match your user name.
+
+You can use a text editor such as Notepad to write Chef code. But a programmer's text editor provides helpful features such as syntax highlighting and line numbering. If you don't have a preferred text editor, try [Atom][atom]. These PowerShell commands install the [Chocolately][chocolately] package manager, install the Atom package, and opens a file named <code class="file-path">test.txt</code> in Atom.
 
 ```ps
 $ iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 $ choco install Atom
-$ atom hello.rb
+$ atom test.txt
 ```
 
 ## 1. Set up your working directory
@@ -82,7 +84,7 @@ file 'C:\Users\chef\chef-repo\settings.ini' do
 end
 ```
 
-From your terminal window, run `chef-apply` to apply what you've written.
+From the command prompt, run the following `chef-apply` command to apply what you've written.
 
 ```ps
 # ~\chef-repo
@@ -182,7 +184,7 @@ Chef restored the original configuration. This is actually a really good thing b
 
 ## 5. Delete the INI file
 
-OK, you're done experimenting with the INI file, so let's clean up. From your working directory, create a new file named <code class="file-path">goodbye.rb</code> and save this content to it.
+OK, you're done experimenting with the INI file, so let's clean up. From your <code class="file-path">~\chef-repo</code> directory, create a new file named <code class="file-path">goodbye.rb</code> and save this content to it.
 
 ```ruby
 # goodbye.rb
@@ -204,7 +206,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 The output shows that <code class="file-path">settings.ini</code> is now gone, but let's prove it.
 
 ```ps
-# ~/chef-repo
+# ~\chef-repo
 $ Test-Path settings.ini
 False
 ```

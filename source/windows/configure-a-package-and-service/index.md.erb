@@ -19,7 +19,7 @@ Although you don't need prior knowledge about web servers, configuring one is a 
 
 Like the previous tutorial, you'll configure the server directly. You can continue with the Windows Server machine you used in the previous tutorial, but let's review the options.
 
-Option 1: use your own Windows Server machine. If you have a machine that meets the [system requirements](<%= chef_docs_url %>/chef_system_requirements.html) that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
+Option 1: use your own Windows Server machine. If you have a machine that you'd like to use, install the [Chef Development Kit](http://www.getchef.com/downloads/chef-dk/) on it now.
 
 Option 2: let us provide an Windows Server virtual machine that has the Chef tools installed for you. Just click the button below.
 
@@ -41,10 +41,10 @@ Option 2: let us provide an Windows Server virtual machine that has the Chef too
 
 ## 1. Install IIS
 
-Let's install IIS. From your working directory, add this recipe to a file named <code class="file-path">webserver.rb</code>.
+Let's install IIS. From your <code class="file-path">~\chef-repo</code> directory, add this recipe to a file named <code class="file-path">webserver.rb</code>.
 
 ```ruby
-# ~/chef-repo/webserver.rb
+# ~\chef-repo\webserver.rb
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
   guard_interpreter :powershell_script
@@ -57,7 +57,7 @@ We don't need to specify an action because `run` is the default.
 Now run `chef-apply` to apply the recipe.
 
 ```ps
-# ~/chef-repo
+# ~\chef-repo
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * powershell_script[Install IIS] action run
@@ -68,7 +68,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 Run the recipe a second time.
 
 ```ps
-# ~/chef-repo
+# ~\chef-repo
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * powershell_script[Install IIS] action run (skipped due to not_if)
@@ -81,7 +81,7 @@ This time, Chef does not reinstall IIS. That's because the `not_if` attribute sk
 Now let's start the IIS World Wide Web Publishing Service (W3SVC) and enable it when the server boots. Modify <code class="file-path">webserver.rb</code> to look like this.
 
 ```ruby
-# ~/chef-repo/webserver.rb
+# ~\chef-repo\webserver.rb
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
   guard_interpreter :powershell_script
@@ -98,7 +98,7 @@ This code uses a list to declare multiple actions.
 Now apply it.
 
 ```ps
-# ~/chef-repo
+# ~\chef-repo
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * powershell_script[Install IIS] action run (skipped due to not_if)
@@ -115,7 +115,7 @@ Let's spruce things up and add a custom home page.
 You already know how to configure a `file` resource; append one that configures the default home page, <code class="file-path">c:\inetpub\wwwroot\Default.htm</code>, to the end of <code class="file-path">webserver.rb</code>. The entire recipe now looks like this.
 
 ```ruby
-# ~/chef-repo/webserver.rb
+# ~\chef-repo\webserver.rb
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
   guard_interpreter :powershell_script
@@ -138,7 +138,7 @@ end
 Now apply it.
 
 ```ps
-# ~/chef-repo/
+# ~\chef-repo
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * powershell_script[Install IIS] action run (skipped due to not_if)
@@ -186,7 +186,7 @@ You also saw how to apply multiple actions. But how does Chef know what order to
 Let's take another quick look at our web server recipe.
 
 ```ruby
-# ~/chef-repo/webserver.rb
+# ~\chef-repo\webserver.rb
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
   guard_interpreter :powershell_script
