@@ -158,3 +158,6 @@ after_build do
     ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
   )
 end
+
+# Enable localization (i18n)
+activate :i18n
