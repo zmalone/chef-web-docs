@@ -28,7 +28,7 @@ $('.accordion').on('click', '.title a', function (event) {
 // problems in Foundation 5. This workaround uses jQuery to control the viewing
 // of sidebar sections and only shows "open" sections while a user is actively
 // in the section itself.
-$('#sidebar nav .accordion').ready(function() {
+$('.section-container.accordion').ready(function() {
   $('.section-container section .content').hide();
   $('.section-container section.active .content').show();
 });
