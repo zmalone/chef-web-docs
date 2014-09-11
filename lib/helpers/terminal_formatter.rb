@@ -3,13 +3,14 @@ module Middleman
     module Highlighter
 
       class TerminalFormatter
-        def initialize(options = {:prompt => "$", :title_prefix => "Terminal", :default_working_dir => "~/" })
+        def initialize(options = {:prompt => "$", :title_prefix => "Terminal", :window_style => "", :default_working_dir => "~/" })
           @prompt = options[:prompt]
           @title_prefix = options[:title_prefix]
+          @window_style = options[:window_style]
           @default_working_dir = options[:default_working_dir]
         end
 
-        def render(lexed_code, highlighter_options)
+        def render(lexed_code, highlighter_options, style_options = {})
           lexed_code, working_dir = find_working_dir(lexed_code)
           prompt_content = promptize(lexed_code)
           terminal_window prompt_content, @title_prefix + ": " + working_dir
@@ -92,7 +93,7 @@ module Middleman
         end
 
         def terminal_window(content,filepath)
-          %{<div class="window">
+          %{<div class="window #{@window_style}">
             <nav class="control-window">
               <div class="close">&times;</div>
               <div class="minimize"></div>
