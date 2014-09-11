@@ -4,6 +4,7 @@ order: 2
 layout: tutorial
 description: Learn what happens during a **chef-client** run and revise your Linux cookbook to run on multiple distros.
 keywords: 'chef-client, multi-platform, multiple platforms, cookbook'
+deprecated: true
 ---
 
 # Write for multiple platforms
@@ -14,7 +15,7 @@ But first we'll take a quick look at what happens during a **chef-client** run.
 
 ## What happens during a **chef-client** run?
 
-<%= partial '/legacy/tutorials/partials/what-happens-during-a-chef-client-run' %> 
+<%= partial '/legacy/tutorials/partials/what-happens-during-a-chef-client-run' %>
 
 **chef-client** takes action only when it needs to. Think of it as *test and repair*. Chef looks at the current state of each resource and applies action only when that resource is out of policy. Consider a policy that states that the **httpd** package must be installed. If the package is already installed, Chef takes no action. Otherwise it will bring the system into policy, perhaps by running **yum install httpd**. If something else later removes this package, Chef will repair the system during its next run.
 
@@ -23,7 +24,7 @@ After **chef-client** completes, you can also run a *notification handler* - a m
 You can get more technical details about the [chef-client run](<%= chef_docs_url %>/essentials_nodes_chef_run.html
 ) in the Chef documentation.
 
-## Configure Apache to work on multiple Linux distributions 
+## Configure Apache to work on multiple Linux distributions
 
 Here you'll write Ruby code to modify the Apache cookbook. You'll also practice creating a new cookbook and uploading it to the Chef server.
 
@@ -33,7 +34,7 @@ If you followed only the Windows Server track in the previous tutorial, you can 
 
 ## Step 1: Create the cookbook
 
-As a refresher, let's create a new cookbook for our combined recipe. 
+As a refresher, let's create a new cookbook for our combined recipe.
 
 From the **chef-repo** directory on your workstation, run the **knife** command to create a new cookbook.
 
@@ -47,23 +48,23 @@ Remember, everything is set up locally, and nothing's sent to the Chef server ye
 
 ## Step 2: Write the base Apache recipe
 
-From your text editor, open up the default recipe in the **apache** cookbook. 
+From your text editor, open up the default recipe in the **apache** cookbook.
 
 ```
 cookbooks/apache-tutorial-2/recipes/default.rb
 ```
 
-Add the recipe from the previous tutorial that runs on Ubuntu or Debian to create a starting point. 
+Add the recipe from the previous tutorial that runs on Ubuntu or Debian to create a starting point.
 
 ```ruby
 package 'apache2' do
   action :install
 end
- 
+
 service 'apache2' do
   action [ :enable, :start ]
 end
- 
+
 cookbook_file '/var/www/index.html' do
   source 'index.html'
   mode '0644'
@@ -83,7 +84,7 @@ service_name = 'apache2'
 document_root = '/var/www'
 ```
 
-## Step 4: Determine the running Linux distribution 
+## Step 4: Determine the running Linux distribution
 
 Add this code immediately following the variable definitions to reassign their values if the running Linux system is in the Red Hat family.
 
@@ -149,11 +150,11 @@ end
 package package_name do
   action :install
 end
- 
+
 service service_name do
   action [ :enable, :start ]
 end
- 
+
 cookbook_file "#{document_root}/index.html" do
   source 'index.html'
   mode '0644'
@@ -162,15 +163,15 @@ end
 
 ## Step 7: Add the file resource
 
-As you did in the previous tutorial, add the home page as a resource to your cookbook. 
+As you did in the previous tutorial, add the home page as a resource to your cookbook.
 
 Open index.html in your text editor.
 
-``` 
+```
 cookbooks/apache-tutorial-2/files/default/index.html
 ```
 
-And write out the homepage like this: 
+And write out the homepage like this:
 
 ```html
 <html>
@@ -190,7 +191,7 @@ knife cookbook upload apache-tutorial-2
 
 A copy of your cookbook is now on the Chef server.
 
-## Step 9: Create the run-list 
+## Step 9: Create the run-list
 
 Now update the run-list like you did in the previous tutorial.
 
@@ -206,7 +207,7 @@ Now drag the recipe from the **Available Recipes** box to the **Current Run List
 
 Run [chef-client](<%= chef_docs_url %>/essentials_chef_client.html) to get the latest cookbooks from the Chef server and bring your target node to its expected state.
 
-Remember, you have two options to do this. 
+Remember, you have two options to do this.
 
 **Option 1.** Run the **knife** command from your local workstation. Here's an example.
 
@@ -225,7 +226,7 @@ ssh chef@ec2-xx-xx-xx-xx.compute-1.amazonaws.com
 
 As **chef-client** runs, you'll see Linux configure itself to run Apache and copy your basic web page to the document root.
 
-## Step 11: Verify your home page 
+## Step 11: Verify your home page
 
 After the **chef-client** run completes, open a web browser from any computer and navigate to your test node. For example, if you're running on EC2, the URL might resemble:
 
@@ -237,8 +238,8 @@ You'll see **Hello, world!** in your browser, just as you did in the previous tu
 
 ## What next?
 
-Congratulations. You've used a node attribute to revise the Apache cookbook to run on multiple Linux distros. 
+Congratulations. You've used a node attribute to revise the Apache cookbook to run on multiple Linux distros.
 
 You should also have a basic sense of what happens during a **chef-client** run. The main takeaway is that you can run the **chef-client** command as often as you'd like because configuration changes are performed only when needed.
 
-Check back for more tutorials soon. In the meantime, check out the [Chef Fundamentals Webinar Series](/screencasts). 
+Check back for more tutorials soon. In the meantime, check out the [Chef Fundamentals Webinar Series](/screencasts).

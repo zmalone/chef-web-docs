@@ -6,6 +6,7 @@ video: '//www.youtube.com/embed/5bQ5_4AwiyY'
 image: 'recipes.png'
 description: 'An overview of the concept of recipes in Chef.'
 keywords: 'chef, recipe'
+deprecated: true
 ---
 
 A _recipe_ is a Chef configuration policy that describes resources and their desired state. A recipes is stored in a cookbook and describes everything that is required to configure part of a system. Recipes can:
