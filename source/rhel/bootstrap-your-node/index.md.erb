@@ -55,7 +55,7 @@ From your workstation, run this command to bootstrap your node. If you're workin
               <div class="deactivate"></div>
             </nav>
             <h1 class="titleInside">Terminal: ~/chef-repo</h1>
-            <div class="container" data-chef-lab-template data-type="ec2-rhel-fundamentals"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife bootstrap {{address}} --ssh-user {{user}} --ssh-password {{password}} --sudo --use-sudo-password --node-name node1 --run-list 'recipe[learn\_chef\_httpd]'</span></code></pre></td></tr></tbody></table></div></div>
+            <div class="container" data-chef-lab-template data-type="ec2-rhel-fundamentals"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife bootstrap {{address}} --ssh-user {{user}} --ssh-password '{{password}}' --sudo --use-sudo-password --node-name node1 --run-list 'recipe[learn\_chef\_httpd]'</span></code></pre></td></tr></tbody></table></div></div>
           </div>
 
 The optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's fully qualified domain name (FQDN) is the default. If you previously used the name `node1` to bootstrap a different node, you'll need to choose a different name.
@@ -68,7 +68,7 @@ First, your node was associated with your <%= t(:hosted_chef) %> account. To ver
 
 ![The bootstrapped node](rhel/management-console-node.png)
 
-You can also verify that the node successfully bootstrapped by running the `knife node` command.
+You can also verify that the node successfully bootstrapped by running the `knife node list` command.
 
 ```bash
 # ~/chef-repo
@@ -76,7 +76,23 @@ $ knife node list
 node1
 ```
 
-Second, your node did an initial check in with the Chef server and ran the web server cookbook. To verify this, open a web browser from your workstation and navigate to your web server.
+You can also use the `knife node show` command to view data about your node from the command line.
+
+```bash
+# ~/chef-repo
+$ knife node show node1
+Node Name:   node1
+Environment: _default
+FQDN:
+IP:          172.32.22.10
+Run List:    recipe[learn_chef_httpd]
+Roles:
+Recipes:     learn_chef_httpd, learn_chef_httpd::default
+Platform:    centos 6.5
+Tags:
+```
+
+The second thing that happened was that your node did an initial check in with the Chef server and ran the web server cookbook. To verify this, open a web browser from your workstation and navigate to your web server.
 
 ![The basic home page](misc/webserver-basic.png)
 
