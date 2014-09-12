@@ -65,7 +65,7 @@ From your workstation, run this command to bootstrap your node. If you're workin
               <div class="deactivate"></div>
             </nav>
             <h1 class="titleInside">Terminal: ~/chef-repo</h1>
-            <div class="container" data-chef-lab-template data-type="ec2-windows-fundamentals"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife bootstrap windows winrm {{address}} --winrm-user {{user}} --winrm-password {{password}} --node-name node1 --run-list 'recipe[learn\_chef\_iis]'</span></code></pre></td></tr></tbody></table></div></div>
+            <div class="container" data-chef-lab-template data-type="ec2-windows-fundamentals"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td><td class="code"><pre><code><span class="line command">knife bootstrap windows winrm {{address}} --winrm-user {{user}} --winrm-password '{{password}}' --node-name node1 --run-list 'recipe[learn\_chef\_iis]'</span></code></pre></td></tr></tbody></table></div></div>
           </div>
 
 [WINDOWS] This command uses Windows Remote Management (WinRM), a popular network protocol for connecting to Windows Server remotely. Although WinRM is how you typically connect to Windows, you can also bootstrap [using the Secure Shell (SSH) protocol](<%= chef_docs_url %>/plugin_knife_windows.html#bootstrap-windows-ssh), which is more typical of Linux-based systems.
@@ -80,7 +80,7 @@ First, your node was associated with your <%= t(:hosted_chef) %> account. To ver
 
 ![The bootstrapped node](windows/management-console-node.png)
 
-You can also verify that the node successfully bootstrapped by running the `knife node` command.
+You can also verify that the node successfully bootstrapped by running the `knife node list` command.
 
 ```bash
 # ~/chef-repo
@@ -88,7 +88,23 @@ $ knife node list
 node1
 ```
 
-Second, your node did an initial check in with the Chef server and ran the web server cookbook. To verify this, open a web browser from your workstation and navigate to your web server.
+You can also use the `knife node show` command to view data about your node from the command line.
+
+```bash
+# ~/chef-repo
+$ knife node show node1
+Node Name:   node1
+Environment: _default
+FQDN:        WIN-8LVQPQO00I4
+IP:          172.32.66.6
+Run List:    recipe[learn_chef_iis]
+Roles:
+Recipes:     learn_chef_iis, learn_chef_iis::default
+Platform:    windows 6.2.9200
+Tags:
+```
+
+The second thing that happened was that your node did an initial check in with the Chef server and ran the web server cookbook. To verify this, open a web browser from your workstation and navigate to your web server.
 
 ![The basic home page](misc/webserver-basic.png)
 
