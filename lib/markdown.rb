@@ -48,7 +48,7 @@ module ZurbFoundation
   def alerts
     content.gsub!(/<p>\[INFO\] (.+)<\/p>/)     { "<div class=\"alert-box\"><i class=\"fa fa-exclamation-triangle\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[SUCCESS\] (.+)<\/p>/)  { "<div class=\"alert-box success\"><i class=\"fa fa-thumbs-o-up\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box alert\"><i class=\"fa fa-warning\"></i>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box comment error\"><i class=\"fa fa-exclamation-triangle rediconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"fa fa-info-circle\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[DOCS\] (.+)<\/p>/)     { "<div class=\"alert-box docs\"><i class=\"fa fa-book\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-info-circle blueiconcolor\"></i>&nbsp; #{$1}</div>" }
