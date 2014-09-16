@@ -4,7 +4,7 @@ describe FeatureHelpers do
   subject(:helper) { Object.new.extend(FeatureHelpers) }
 
   before :each do
-    stub_const 'ENV', 'FEATURES' => 'a_feature'
+    stub_const 'ENV', 'FEATURES' => 'a_feature', 'PROVISIONER' => 'a_provisioner'
   end
 
   describe 'feature? method' do
@@ -37,4 +37,21 @@ describe FeatureHelpers do
       end
     end
   end
+
+  describe 'provisioner method' do
+    subject(:the_provisioner) { helper.provisioner }
+
+    context 'when PROVISIONER is not defined' do
+      it 'returns "cloudshare"' do
+        ENV.delete('PROVISIONER')
+        expect(the_provisioner).to eq('cloudshare')
+      end
+    end
+
+    context 'when FEATURES is malformed' do
+      it 'returns the specified provisioner' do
+        expect(the_provisioner).to eq('a_provisioner')
+      end
+    end
+  end  
 end
