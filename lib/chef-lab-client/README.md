@@ -5,7 +5,7 @@ Browser client for [Chef Lab](https://github.com/opscode/cheflab).
 ## Development
 
 * `npm install`: Install dependencies
-* `npm test`: Run the tests
+* `npm test`: Run the tests (but be sure to [install PhantomJS](http://phantomjs.org/download.html) first)
 * `npm run build`: Build the JavaScript file
 * `npm run watch`: Watch tests and build
 

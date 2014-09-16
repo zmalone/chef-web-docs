@@ -5,4 +5,8 @@ module FeatureHelpers
     @features[key.to_sym] || false
   end
 
+  def provisioner
+    ENV['PROVISIONER'] || 'cloudshare'
+  end
+
 end
