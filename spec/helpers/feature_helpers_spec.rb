@@ -48,7 +48,7 @@ describe FeatureHelpers do
       end
     end
 
-    context 'when FEATURES is malformed' do
+    context 'when PROVISIONER is defined' do
       it 'returns the specified provisioner' do
         expect(the_provisioner).to eq('a_provisioner')
       end
