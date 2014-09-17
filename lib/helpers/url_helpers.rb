@@ -46,6 +46,10 @@ module URLHelpers
     'https://manage.opscode.com'
   end
 
+  def chef_dk_url
+    "#{chef_downloads_url}/chef-dk/"
+  end
+
   def learn_chef_twitter_url
     'https://twitter.com/learnchef'
   end
