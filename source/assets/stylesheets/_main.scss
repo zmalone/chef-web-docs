@@ -7,6 +7,13 @@
 
   height: 92px;
   line-height: 92px;
+
+  .title-area {
+    height: 92px;
+    li.menu-icon {
+      margin-top: 4px;
+    }
+  }
 }
 
 #logo {
@@ -14,24 +21,37 @@
   height: 62px;
   line-height: 62px;
   margin-top: 8px;
+  margin-left: 15px;
   width: 215px;
 }
 
 #top-nav {
   @include inline-list;
-  font-family: $accent-font;
-  float: right;
-  font-size: 0.8em;
+  background: none; // Gets rid of Foundaton 5 styles
   line-height: 2.45em;
-  margin: 30px 20px 0 0;
-  text-transform: uppercase;
+  margin: 24px 20px 0 0;
   li {
+    background: none; // Gets rid of Foundaton 5 styles
     a {
+      background: none; // Gets rid of Foundaton 5 styles
       color: #fff;
+      font-family: $accent-font;
+      font-size: 0.8em;
+      text-transform: uppercase;
     }
 
     a:hover {
       color: $secondary-blue;
+    }
+  }
+}
+
+#social-nav {
+  @extend #top-nav;
+  margin-top: 27px;
+  li {
+    a {
+      font-size: 1.05em;
     }
   }
 }
@@ -78,17 +98,37 @@
   }
 }
 
-// At widths smaller than 788px, the navigation bar starts to stack its links.
-// The following styling hides the navigation bar at widths below 788px similarly to Foundation's '.hide-for-small'.
-// This should be fixed with the addition to the social-media-section and/or mobile-nav.
-@media (max-width: 787px) {
-  // For some reason the logo would shift up 1px after the navigation bar would hide.
+// Foundation 5's mobile design shifts the logo up 1px, so the following style
+// keeps it in the same position throughout any width.
+@media (max-width: 640px) {
   #logo {
-    margin-top: 13px;
+    margin-top: 9px;
+  }
+}
+
+// At widths smaller than 788px, the navigation bar starts to stack its links.
+// The following styling hides the navigation bar at widths below 788px similarly to Foundation's '.hide-for-small'
+// and instead shows the consolidated Menu icon.
+@media (max-width: 790px) and (min-width: 641px) {
+  #header {
+    ul.title-area {
+      width: 100%;
+      li {
+        // Foundation 5 shifting problem here as well, similar to #logo.
+        &.menu-icon {
+          margin-top: 6px;
+        }
+        display: list-item;
+      }
+    }
   }
 
   #top-nav {
     display: none;
+  }
+
+  #social-nav {
+    @extend #top-nav;
   }
 }
 
