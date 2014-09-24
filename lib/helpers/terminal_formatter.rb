@@ -48,18 +48,24 @@ module Middleman
           # process escape characters & split into lines
           lines = CGI.escapeHTML(buffer.strip).split("\n")
           # process each line
+          previous_line = { :was_command => false, :was_continuation => false } # keep track of line continuations
           lines.each do |line|
             if line.length > 1 && line[0] == '$'
               # begins with prompt, so push prompt character onto gutter and add the remaining
               # line to the lines of code
               gutters.push gutter(@prompt)
-              lines_of_code.push line_of_code(line.length > 2 ? line[2..-1] : "", true)
+              line = line.length > 2 ? line[2..-1] : ""
+              lines_of_code.push line_of_code(line, true)
+              previous_line[:was_continuation] = is_continuation?(line)
+              previous_line[:was_command] = true
             else
               # no gutter, so just push a space onto gutter and add the entire
               # line to the lines of code
               gutters.push gutter("&nbsp;")
               line = "&nbsp;" if line == "" # work-around fact that blank lines are eaten
-              lines_of_code.push line_of_code(line, false)
+              lines_of_code.push line_of_code(line, previous_line[:was_continuation])
+              previous_line[:was_continuation] = (previous_line[:was_command] || previous_line[:was_continuation]) && is_continuation?(line)
+              previous_line[:was_command] = false
             end
           end
 
@@ -69,6 +75,9 @@ module Middleman
           table += "</tr></table>"
         end
 
+        def is_continuation?(line)
+          line.strip.end_with? '\\'
+        end
 
         def command_character
           @prompt
