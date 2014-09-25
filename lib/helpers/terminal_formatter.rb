@@ -74,7 +74,9 @@ module Middleman
         end
 
         def is_continuation?(line)
-          line.strip.end_with? '\\'
+          # \ is Linux; ` is Windows PowerShell
+          line = line.strip
+          line.end_with?('\\') || line.end_with?('\`')
         end
 
         def command_character
