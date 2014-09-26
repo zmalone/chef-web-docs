@@ -29,18 +29,23 @@ Option 2: Let us provide a Windows Server virtual machine with the Chef tools in
 
 ## <i class="fa fa-tasks" style="margin-right:3px;"></i> Here's what you'll do
 
-  1. [Before you start](#beforeyoustart)
-  1. [Set up your working directory](#1setupyourworkingdirectory)
-  1. [Create the INI file](#2createtheinifile)
-  1. [Update the INI file's contents](#3updatetheinifile39scontents)
-  1. [Ensure the INI file's contents are not changed by anyone else](#4ensuretheinifile39scontentsarenotchangedbyanyoneelse)
-  1. [Delete the INI file](#5deletetheinifile)
+  1. [Ensure you have Administrator privileges](#1ensureyouhaveadministratorprivileges)
+  1. [Get a good text editor](#2getagoodtexteditor)
+  1. [Set up your working directory](#3setupyourworkingdirectory)
+  1. [Create the INI file](#4createtheinifile)
+  1. [Update the INI file's contents](#5updatetheinifile39scontents)
+  1. [Ensure the INI file's contents are not changed by anyone else](#6ensuretheinifile39scontentsarenotchangedbyanyoneelse)
+  1. [Delete the INI file](#7deletetheinifile)
 
 <hr>
 
-## Before you start
+## 1. Ensure you have Administrator privileges
 
-If you're using your own Windows Server machine, make sure you have Administrator privileges. Also, this lesson assumes that the current user is **chef**. If you're using your own machine, either create the **chef** user as Administrator and logon as **chef** or change the paths you see to match your user name.
+If you're using your own Windows Server machine, make sure you have Administrator privileges.
+
+Also, this lesson assumes that the current user is **Administrator**. If you're using your own machine, either sign in as **Administrator** or change the paths you see to match your user name.
+
+## 2. Get a good text editor
 
 You can use a text editor such as Notepad to write Chef code. But a programmer's text editor provides helpful features such as syntax highlighting and line numbering. If you don't have a preferred text editor, try [Atom][atom]. We preinstalled Atom on the virtual machine that we provide, but in case you're using your own machine, these PowerShell commands install the [Chocolately][chocolately] package manager, install the Atom package, and opens a file named <code class="file-path">test.txt</code> in Atom.
 
@@ -50,27 +55,27 @@ $ choco install Atom
 $ atom test.txt
 ```
 
-## 1. Set up your working directory
+## 3. Set up your working directory
 
 When working with Chef from Windows, we recommend that you use Windows PowerShell. Open it as Administrator.
 
-Create the <code class="file-path">chef-repo</code> directory under your home directory, <code class="file-path">C:\Users\chef</code>.
+Create the <code class="file-path">chef-repo</code> directory under your home directory, <code class="file-path">C:\Users\Administrator</code>.
 
 ```ps
-# C:\Users\chef
+# C:\Users\Administrator
 $ mkdir ~\chef-repo
 ```
 
-[WINDOWS] In PowerShell, <code class="file-path">~</code> represents the current user's home directory, for example <code class="file-path">C:\Users\chef</code>.
+[WINDOWS] In PowerShell, <code class="file-path">~</code> represents the current user's home directory, for example <code class="file-path">C:\Users\Administrator</code>.
 
 Now `cd` there.
 
 ```ps
-# C:\Users\chef
+# C:\Users\Administrator
 $ cd ~\chef-repo
 ```
 
-## 2. Create the INI file
+## 4. Create the INI file
 
 First, you need to create the file and set its initial contents. To keep things basic, let's configure the file in the working directory.
 
@@ -78,7 +83,7 @@ From your `~\chef-repo` directory, create a file named <code class="file-path">h
 
 ```ruby-Win32
 # ~\chef-repo\hello.rb
-file 'C:\Users\chef\chef-repo\settings.ini' do
+file 'C:\Users\Administrator\chef-repo\settings.ini' do
   content 'greeting=hello world'
 end
 ```
@@ -89,11 +94,11 @@ From the command prompt, run the following `chef-apply` command to apply what yo
 # ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:\Users\chef\chef-repo\settings.ini] action create
-    - create new file C:\Users\chef\chef-repo\settings.ini
-    - update content in file C:\Users\chef\chef-repo\settings.ini from none to 6823fa
-    --- C:\Users\chef\chef-repo\settings.ini    2014-08-16 01:04:33.000000000 +0000
-    +++ C:/Users/chef/AppData/Local/Temp/2/settings.ini20140816-2080-5hrzgl     2014-08-16 01:04:33.000000000 +0000
+  * file[C:\Users\Administrator\chef-repo\settings.ini] action create
+    - create new file C:\Users\Administrator\chef-repo\settings.ini
+    - update content in file C:\Users\Administrator\chef-repo\settings.ini from none to 6823fa
+    --- C:\Users\Administrator\chef-repo\settings.ini    2014-08-16 01:04:33.000000000 +0000
+    +++ C:/Users/ADMINI~1/AppData/Local/Temp/2/settings.ini20140816-2080-5hrzgl     2014-08-16 01:04:33.000000000 +0000
     @@ -1 +1,2 @@
     +greeting=hello world
 ```
@@ -116,14 +121,14 @@ Now, let's see now what happens when you run the same command again.
 # ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:\Users\chef\chef-repo\settings.ini] action create (up to date)
+  * file[C:\Users\Administrator\chef-repo\settings.ini] action create (up to date)
 ```
 
 This time you get a different response. This is because Chef does work only when it needs to.
 
 Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <code class="file-path">settings.ini</code> because it already exists and its contents didn't change.
 
-## 3. Update the INI file's contents
+## 5. Update the INI file's contents
 
 Now you're going to change the INI file.
 
@@ -131,7 +136,7 @@ Modify <code class="file-path">hello.rb</code> like this ('hello world' becomes 
 
 ```ruby-Win32
 # ~\chef-repo\hello.rb
-file 'C:\Users\chef\chef-repo\settings.ini' do
+file 'C:\Users\Administrator\chef-repo\settings.ini' do
   content 'greeting=hello chef'
 end
 ```
@@ -142,10 +147,10 @@ Run `chef-apply`.
 # ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:\Users\chef\chef-repo\settings.ini] action create
-    - update content in file C:\Users\chef\chef-repo\settings.ini from 6823fa to cfde92
-    --- C:\Users\chef\chef-repo\settings.ini    2014-08-12 21:27:13.000000000 +0000
-    +++ C:/Users/chef/AppData/Local/Temp/settings.ini20140812-3908-1ilgurd      2014-08-12 21:29:25.000000000 +0000
+  * file[C:\Users\Administrator\chef-repo\settings.ini] action create
+    - update content in file C:\Users\Administrator\chef-repo\settings.ini from 6823fa to cfde92
+    --- C:\Users\Administrator\chef-repo\settings.ini    2014-08-12 21:27:13.000000000 +0000
+    +++ C:/Users/ADMINI~1/AppData/Local/Temp/settings.ini20140812-3908-1ilgurd      2014-08-12 21:29:25.000000000 +0000
     @@ -1,2 +1,2 @@
     -greeting=hello world
     +greeting=hello chef
@@ -153,7 +158,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
 
-## 4. Ensure the INI file's contents are not changed by anyone else
+## 6. Ensure the INI file's contents are not changed by anyone else
 
 You need to make sure that no other process can change the INI file.
 
@@ -170,10 +175,10 @@ Now run `chef-apply`.
 # ~\chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:\Users\chef\chef-repo\settings.ini] action create
-    - update content in file C:\Users\chef\chef-repo\settings.ini from 49c070 to cfde92
-    --- C:\Users\chef\chef-repo\settings.ini    2014-08-12 21:32:38.000000000 +0000
-    +++ C:/Users/chef/AppData/Local/Temp/settings.ini20140812-1288-1ub7kv2      2014-08-12 21:32:52.000000000 +0000
+  * file[C:\Users\Administrator\chef-repo\settings.ini] action create
+    - update content in file C:\Users\Administrator\chef-repo\settings.ini from 49c070 to cfde92
+    --- C:\Users\Administrator\chef-repo\settings.ini    2014-08-12 21:32:38.000000000 +0000
+    +++ C:/Users/ADMINI~1/AppData/Local/Temp/settings.ini20140812-1288-1ub7kv2      2014-08-12 21:32:52.000000000 +0000
     @@ -1,2 +1,2 @@
     -greeting=hello robots
     +greeting=hello chef
@@ -181,13 +186,13 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resource matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
 
-## 5. Delete the INI file
+## 7. Delete the INI file
 
 OK, you're done experimenting with the INI file, so let's clean up. From your <code class="file-path">~\chef-repo</code> directory, create a new file named <code class="file-path">goodbye.rb</code> and save this content to it.
 
 ```ruby-Win32
 # goodbye.rb
-file 'C:\Users\chef\chef-repo\settings.ini' do
+file 'C:\Users\Administrator\chef-repo\settings.ini' do
   action :delete
 end
 ```
@@ -198,8 +203,8 @@ Now apply <code class="file-path">goodbye.rb</code> to delete the file.
 # ~\chef-repo
 $ chef-apply goodbye.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * file[C:\Users\chef\chef-repo\settings.ini] action delete
-    - delete file C:\Users\chef\chef-repo\settings.ini
+  * file[C:\Users\Administrator\chef-repo\settings.ini] action delete
+    - delete file C:\Users\Administrator\chef-repo\settings.ini
 ```
 
 The output shows that <code class="file-path">settings.ini</code> is now gone, but let's prove it.

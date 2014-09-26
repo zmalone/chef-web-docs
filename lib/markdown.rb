@@ -55,6 +55,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[SIDEBAR\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><i class=\"fa fa-comment blueiconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[INTERNAL\] (.+)<\/p>/)  { "<div class=\"alert-box internal\"><i class=\"fa fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[WINDOWS\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-windows blueiconcolor\"></i>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[LINUX\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-linux\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[ERROR\] (.+)<\/p>/)  { "<div class=\"alert-box error\"><i class=\"fa fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
 
   end
