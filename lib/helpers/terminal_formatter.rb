@@ -48,18 +48,22 @@ module Middleman
           # process escape characters & split into lines
           lines = CGI.escapeHTML(buffer.strip).split("\n")
           # process each line
+          in_command = false
           lines.each do |line|
             if line.length > 1 && line[0] == '$'
               # begins with prompt, so push prompt character onto gutter and add the remaining
               # line to the lines of code
               gutters.push gutter(@prompt)
-              lines_of_code.push line_of_code(line.length > 2 ? line[2..-1] : "", true)
+              line = line.length > 2 ? line[2..-1] : ""
+              lines_of_code.push line_of_code(line, true)
+              in_command = is_continuation?(line)
             else
               # no gutter, so just push a space onto gutter and add the entire
               # line to the lines of code
               gutters.push gutter("&nbsp;")
               line = "&nbsp;" if line == "" # work-around fact that blank lines are eaten
-              lines_of_code.push line_of_code(line, false)
+              lines_of_code.push line_of_code(line, in_command)
+              in_command = in_command && is_continuation?(line)
             end
           end
 
@@ -69,6 +73,11 @@ module Middleman
           table += "</tr></table>"
         end
 
+        def is_continuation?(line)
+          # \ is Linux; ` is Windows PowerShell
+          line = line.strip
+          line.end_with?('\\') || line.end_with?('\`')
+        end
 
         def command_character
           @prompt
