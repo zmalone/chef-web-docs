@@ -91,7 +91,7 @@ require 'lib/middleman_syntax'
 
 # Parse code blocks
 set :markdown_engine, :redcarpet
-set :markdown, fenced_code_blocks: true, smartypants: false
+set :markdown, fenced_code_blocks: true, smartypants: false, tables: true
 
 set :css_dir, 'assets/stylesheets'
 set :js_dir, 'assets/javascripts'
