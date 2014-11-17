@@ -11,6 +11,7 @@ gem 'redcarpet',            '~> 2.2.2'
 gem 'rb-fsevent',           '~> 0.9'
 gem 'slim',                 '~> 1.3.8'
 gem 'foundation-rails', require: false
+gem 'chef-web-core', git: 'git@github.com:opscode/chef-web-core'
 
 group :development, :test do
   gem 'aws-sdk' # For AWS data syncing

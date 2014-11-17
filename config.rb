@@ -1,3 +1,4 @@
+require 'chef/web/core/url_helpers'
 require 'lib/sitemap'
 require 'lib/compass'
 require 'lib/markdown'
@@ -13,12 +14,6 @@ begin
 rescue LoadError
   logger.debug 'Pry is missing and will not be loaded.'
 end
-
-###
-# Config
-###
-set :site_url, 'learn.getchef.com'
-set :canonical_protocol_and_hostname, "https://#{site_url}"
 
 ###
 # Compass
@@ -53,6 +48,7 @@ page '/error.html', directory_index: false
 
 # Methods defined in the helpers block are available in templates
 helpers do
+  include Chef::Web::Core::URLHelpers
   include DeployHelpers
   include FeatureHelpers
   include TabHelpers
