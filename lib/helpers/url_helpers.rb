@@ -7,23 +7,7 @@ module URLHelpers
   end
 
   def canonical_url(path)
-    URI.join(canonical_protocol_and_hostname, path).to_s
-  end
-
-  def chef_url
-    'http://www.getchef.com'
-  end
-
-  def chef_downloads_url
-    'https://downloads.getchef.com'
-  end
-
-  def chef_docs_url
-    'https://docs.getchef.com'
-  end
-
-  def chef_install_url
-    "#{chef_url}/chef/install/"
+    URI.join(learn_chef_url, path).to_s
   end
 
   def chef_lab_url
@@ -31,19 +15,11 @@ module URLHelpers
   end
 
   def chef_training_url
-    "#{chef_url}/training/"
+    chef_www_url('training/')
   end
 
   def ec_sign_up_url
-    "#{chef_url}/contact/on-premises/"
-  end
-
-  def hec_sign_up_url
-    "#{hec_manage_url}/signup"
-  end
-
-  def hec_manage_url
-    'https://manage.opscode.com'
+    chef_www_url('contact/on-premises/')
   end
 
   def chef_dk_url
@@ -52,9 +28,5 @@ module URLHelpers
 
   def learn_chef_twitter_url
     'https://twitter.com/learnchef'
-  end
-
-  def supermarket_url
-    'https://supermarket.getchef.com'
   end
 end
