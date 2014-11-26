@@ -4,5 +4,6 @@
 //= require section-links
 //= require sidebar
 //= require platform-window
+//= require answerdash
 
 $(document).foundation()
