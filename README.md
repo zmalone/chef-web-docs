@@ -16,7 +16,7 @@ Installation
 
 1. Bundle the projects:
 
-        $ bundle install
+        $ bundle install --without production
 
 1. Start the server:
 
