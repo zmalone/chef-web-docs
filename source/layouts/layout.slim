@@ -23,7 +23,7 @@ head
 
 
 body class=page_classes ng-app='chefLabClient'
-  nav#header.top-bar data-topbar="" role="navigation"
+  nav#header.top-bar.row data-topbar="" role="navigation"
     ul.title-area
       li.name
         h2
@@ -42,16 +42,18 @@ body class=page_classes ng-app='chefLabClient'
           i.fa.fa-twitter-square.fa-2x
     / hr
 
-  section.row
-    .medium-3.columns
-      #sidebar
-        = partial 'layouts/sidebar'
-
-    .medium-9.columns.content
+  section
+    - if data.page.type
+      - if data.page.type == "landing"
+        = partial 'layouts/section_header'
+    .content
       - if data.page.deprecated
         = partial 'layouts/deprecated'
       = yield
-      footer#footer.row
-        .large-12.columns.copyright
-          Copyright &copy; #{Time.now.year} Chef Software, Inc. All Rights Reserved.
+
+  footer#footer
+    .row
+      hr
+      .medium-12.columns.copyright
+        Copyright &copy; #{Time.now.year} Chef Software, Inc. All Rights Reserved.
   = partial 'layouts/js'
