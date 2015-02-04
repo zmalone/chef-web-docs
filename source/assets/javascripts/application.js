@@ -4,5 +4,6 @@
 //= require section-links
 //= require platform-window
 //= require answerdash
+//= require landing-tabs
 
 $(document).foundation();
