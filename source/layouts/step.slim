@@ -1,0 +1,27 @@
+= wrap_layout :layout do
+  section.row
+    .medium-9.columns
+      = partial "layouts/breadcrumbs"
+      h1
+        = current_page.data.title
+      div.box
+        = yield
+      - @next = current_page.siblings.select {|s| s.data.order == current_page.data.order + 1}.first
+      / If next page is nil, then next should be the start of the next module
+      - @pre_text = ''
+      - if @next.nil?
+        - @next = current_page.parent.parent.children.select {|s| s.data.order == current_page.parent.data.order + 1}.first
+        - @pre_text = 'Next: '
+      - unless @next.nil?
+        = link_to "#{@pre_text}#{@next.data.title} &raquo;", @next, class: 'button radius'
+    .medium-3.columns
+      - @pages = current_page.siblings
+      - @pages.insert current_page.data.order - 1, current_page
+      div.fixed_div style="background-color:none;"
+        ul.side-nav
+          - @pages.each do |p|
+            - if p == current_page
+              li style="border: 1px black solid; background-color: #ddd"
+                = link_to p.data.title, "#"
+            -else
+              li == link_to p.data.title, p

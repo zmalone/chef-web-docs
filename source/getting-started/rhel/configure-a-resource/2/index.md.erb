@@ -1,0 +1,87 @@
+---
+title: '2: Create the MOTD file'
+type: step
+order: 2
+layout: step
+description: TODO
+keywords: TODO
+---
+
+<!-- <ul class="breadcrumbs">
+  <li><a href="/">Home</a></li>
+  <li><a href="/getting-started/rhel/">Red Hat Enterprise Linux</a></li>
+  <li><a href="/getting-started/rhel/configure-a-resource/">Configure a Resource</a></li>
+  <li>2</li>
+</ul>
+
+<div style="border-radius: 5px; border: 1px solid #666; width: 300px; display:block; float:right; padding: 10px; margin: 20px;">
+   <div class="progress large-9 success round">
+      <span class="meter" style="width: 28%"></span>
+    </div>
+  <ul class="side-nav">
+    <li class="completed"><a href="/getting-started/rhel/configure-a-resource/1/">1: Set up your working directory &#x2713;</a></li>
+    <li class="current">2: Create the MOTD file</li>
+    <li><a href="/getting-started/rhel/configure-a-resource/3/">3: Update the MOTD file's contents</a></li>
+    <li><a href="/getting-started/rhel/configure-a-resource/4/">4: Ensure the MOTD file's contents are not changed by anyone else</a></li>
+    <li><a href="/getting-started/rhel/configure-a-resource/5/">5: Delete the MOTD file</a></li>
+    <li><a href="/getting-started/rhel/configure-a-resource/summary/">Summary</a></li>
+    <li><a href="/getting-started/rhel/configure-a-resource/exercises/">Exercises</a></li>
+  </ul>
+</div>
+
+# 2. Create the MOTD file -->
+
+First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
+
+From your <code class="file-path">~/chef-repo</code> directory, create a file named <code class="file-path">hello.rb</code>, add these contents, and then save the file.
+
+<%= partial 'layouts/editor_help' %>
+
+```ruby
+# ~/chef-repo/hello.rb
+file 'motd' do
+  content 'hello world'
+end
+```
+
+From your terminal window, run the following `chef-apply` command to apply what you've written.
+
+```bash
+# ~/chef-repo
+$ chef-apply hello.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+* file[motd] action create
+- create new file motd
+- update content in file motd from none to de031d
+--- motd        2014-05-13 14:52:54.025253948 -0700
++++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
+@@ -1 +1,2 @@
++hello world
+```
+
+The output tells us that a new file, <code class="file-path">motd</code>, was created.
+
+Now verify that the file was written. Run the `more` command, which prints to the console the file you give it.
+
+```bash
+# ~/chef-repo
+$ more motd
+hello world
+```
+
+## Run the command a second time
+
+Now, let's see now what happens when you run the same `chef-apply` command again.
+
+```bash
+# ~/chef-repo
+$ chef-apply hello.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+* file[motd] action create (up to date)
+```
+
+This time you get a different response. This is because Chef does work only when it needs to.
+
+Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <code class="file-path">motd</code> because it already exists and its contents didn't change.
+
+<!-- <%= link_to '3: Update the MOTD file\'s contents &rarr;', '/getting-started/rhel/configure-a-resource/3/', class: 'button radius' %> -->
