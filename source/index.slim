@@ -5,14 +5,33 @@ title: "Learn Chef"
 type: landing
 ---
 
-.medium-8.medium-centered.columns
-  ul.tabs data-tab=""
-    li.tab-title.active
-      = link_to "1. Pick What You Want To Learn", "#topics"
-    li.tab-title
-      = link_to "2. Pick Your Platform", "#platforms"
-  .tabs-content
-    #topics.content.active 
-      | Test
-    #platforms.content 
-      | TEST2
+.row
+  .landing-tab.landing-tab-active.medium-2.medium-offset-4.columns
+    h2 1
+    | Pick Your Topic
+  .landing-tab.medium-2.columns.end
+    h2 2
+    | Pick Your OS
+.row
+  .medium-10.medium-centered.columns
+    .landing-content#topics
+      - current_page.children.each do |child|
+        - if child.data.type
+          - if child.data.type == "topic"
+            .row
+              .small-10.small-centered.columns
+                = link_to child do
+                  .row.box
+                    h2 = child.data.title
+                    = child.data.description
+    .landing-content#platforms.hide
+      ul#platform-tabs
+        li = link_to "/rhel/" do
+          = image_tag "rhel/platform-logos/redhat.svg", width: 80, height: 80
+          | Red Hat Enterprise Linux
+        li = link_to "/windows/" do
+          = image_tag "rhel/platform-logos/windows.svg", width: 80, height: 80
+          | Windows
+        li = link_to "/ubuntu/" do
+          = image_tag "rhel/platform-logos/ubuntu.svg", width: 80, height: 80
+          | Ubuntu
