@@ -5,4 +5,4 @@
 //= require platform-window
 //= require answerdash
 
-$(document).foundation()
+$(document).foundation();
