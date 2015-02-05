@@ -1,10 +1,7 @@
 ---
-title: '2: Create the MOTD file'
-type: step
+title: '2. Create the MOTD file'
 order: 2
 layout: step
-description: TODO
-keywords: TODO
 ---
 First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
 
@@ -25,13 +22,13 @@ From your terminal window, run the following `chef-apply` command to apply what 
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-* file[motd] action create
-- create new file motd
-- update content in file motd from none to de031d
---- motd        2014-05-13 14:52:54.025253948 -0700
-+++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
-@@ -1 +1,2 @@
-+hello world
+  * file[motd] action create
+    - create new file motd
+    - update content in file motd from none to de031d
+    --- motd        2014-05-13 14:52:54.025253948 -0700
+    +++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
+    @@ -1 +1,2 @@
+    +hello world
 ```
 
 The output tells us that a new file, <code class="file-path">motd</code>, was created.
@@ -44,7 +41,7 @@ $ more motd
 hello world
 ```
 
-## Run the command a second time
+### Run the command a second time
 
 Now, let's see now what happens when you run the same `chef-apply` command again.
 
@@ -52,11 +49,9 @@ Now, let's see now what happens when you run the same `chef-apply` command again
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-* file[motd] action create (up to date)
+  * file[motd] action create (up to date)
 ```
 
 This time you get a different response. This is because Chef does work only when it needs to.
 
 Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <code class="file-path">motd</code> because it already exists and its contents didn't change.
-
-<!-- <%= link_to '3: Update the MOTD file\'s contents &rarr;', '/getting-started/rhel/configure-a-resource/3/', class: 'button radius' %> -->
