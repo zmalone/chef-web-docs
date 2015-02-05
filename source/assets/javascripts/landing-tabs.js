@@ -11,6 +11,7 @@ $("#topics .topic").on("click", function() {
 
 	// Get selected topic
 	var topic = this.id;
+	var info = "#" + topic;
 
 	// Setup handler for when #1 tab title is clicked
 	$("#topics-tab").on("click", function() {
@@ -21,11 +22,16 @@ $("#topics .topic").on("click", function() {
 		$("#platforms-tab").removeClass("landing-tab-active");
 		
 		// Clear data and elements
-		topic = "";
+		$(".landing-content#platforms " + info).hide();
 		$("ul#platform-tabs > li#rhel").hide();
 		$("ul#platform-tabs > li#windows").hide();
 		$("ul#platform-tabs > li#ubuntu").hide();
+		topic = "";
+		info = "";
 	});
+
+	// Show respective header and description
+	$(".landing-content#platforms " + info).show();
 
 	// Show respective OSs
 	if($.inArray(topic, rhelList) > -1) {
