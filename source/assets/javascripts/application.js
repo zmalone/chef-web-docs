@@ -4,6 +4,5 @@
 //= require platform-window
 //= require answerdash
 //= require landing-tabs
-//= require accordion
 
 $(document).foundation();
