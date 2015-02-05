@@ -6,12 +6,12 @@
       = yield
       - @next = current_page.siblings.select {|s| s.data.order == current_page.data.order + 1}.first
       / If next page is nil, then next should be the start of the next module
-      - @pre_text = ''
       - if @next.nil?
         - @next = current_page.parent.parent.children.select {|s| s.data.order == current_page.parent.data.order + 1}.first
-        - @pre_text = 'Next: '
-      - unless @next.nil?
-        = link_to "#{@pre_text}#{@next.data.title} &raquo;", @next, class: 'button radius'
+      - if @next.nil?
+        = link_to "Home &raquo;", "/", class: 'button radius'
+      - else
+        = link_to "#{@next.data.title} &raquo;", @next, class: 'button radius'
     .medium-3.columns
       - @pages = current_page.siblings
       - @pages.insert current_page.data.order - 1, current_page
