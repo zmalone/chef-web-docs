@@ -35,12 +35,18 @@ $("#topics .topic").on("click", function() {
 
 	// Show respective OSs
 	if($.inArray(topic, rhelList) > -1) {
-		$("ul#platform-tabs > li#rhel").show().css("display", "inline-block");
+		var rhel = $("ul#platform-tabs > li#rhel");
+		rhel.show().css("display", "inline-block");
+		rhel.children().first().attr("href", "/" + topic + "/rhel/");
 	}
 	if($.inArray(topic, windowsList) > -1) {
-		$("ul#platform-tabs > li#windows").show().css("display", "inline-block");
+		var windows = $("ul#platform-tabs > li#windows");
+		windows.show().css("display", "inline-block");
+		windows.children().first().attr("href", "/" + topic + "/windows/");
 	}
 	if($.inArray(topic, ubuntuList) > -1) {
-		$("ul#platform-tabs > li#ubuntu").show().css("display", "inline-block");
+		var ubuntu = $("ul#platform-tabs > li#ubuntu");
+		ubuntu.show().css("display", "inline-block");
+		ubuntu.children().first().attr("href", "/" + topic + "/ubuntu/");
 	}
 });
