@@ -1,4 +1,4 @@
-var rhelList = ["learn-the-basics", "manage", "tdi"];
+var rhelList = ["learn-the-basics", "manage", "local-development"];
 var windowsList = ["learn-the-basics", "manage"];
 var ubuntuList = ["learn-the-basics", "manage"];
 
@@ -20,7 +20,7 @@ $("#topics .topic").on("click", function() {
 		$(".landing-content#platforms").hide();
 		$("#topics-tab").addClass("landing-tab-active");
 		$("#platforms-tab").removeClass("landing-tab-active");
-		
+
 		// Clear data and elements
 		$(".landing-content#platforms " + info).hide();
 		$("ul#platform-tabs > li#rhel").hide();
