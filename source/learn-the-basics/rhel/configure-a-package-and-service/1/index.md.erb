@@ -1,0 +1,73 @@
+---
+title: '1. Install the Apache package'
+order: 1
+layout: step
+description: TODO
+keywords: TODO
+---
+Let's extend what you learned about file management in the [previous lesson](/learn-the-basics/rhel/configure-a-resource/) to manage the Apache HTTP Server package and its service. Like files, packages and services are also types of resources.
+
+Of course, you can set up one web server manually. But with Chef it'll be easier to manage your infrastructure as you scale, add complexity, and roll out new configuration policies.
+
+Although you don't need prior knowledge about web servers, configuring one is a great way to grow your Chef skills.
+
+## <i class="fa fa-linux" style="margin-right:3px;"></i> Get a Linux machine
+
+Like the previous lesson, you'll configure the server directly. You can continue with the Linux machine you used in the previous lesson, but let's review the options.
+
+Option 1: Use your own RHEL or CentOS machine. If you have a machine you'd like to use that meets the [system requirements](<%= chef_docs_url %>/chef_system_requirements.html), install the [Chef Development Kit](<%= chef_dk_url %>) on it now.
+
+Option 2: Let us provide a CentOS virtual machine with the Chef tools installed for you. Just click the button below.
+
+<%= partial 'layouts/provisioner', locals: { title: 'CentOS', type: 'rhel-localmode' } %>
+
+<sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:420px;">
+<span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, watch for:**</span><br>
+  <i class="fa fa-check"></i>&nbsp; how order affects a recipe's behavior.<br>
+  <i class="fa fa-check"></i>&nbsp; how to declare multiple actions.<br>
+  <i class="fa fa-check"></i>&nbsp; what problems arise.
+</sidebar>
+
+## <i class="fa fa-tasks" style="margin-right:3px;"></i> Here's what you'll do
+
+  1. [Install the Apache package](#1installtheapachepackage)
+  1. [Start and enable the Apache service](#2startandenabletheapacheservice)
+  1. [Add a home page](#3addahomepage)
+  1. [Enable inbound traffic to your web site](#4enableinboundtraffictoyourwebsite)
+  1. [Confirm your web site is running](#5confirmyourwebsiteisrunning)
+
+<hr />
+
+## 1. Install the Apache package
+
+Let's install the Apache package, **httpd**. From your <code class="file-path">~/chef-repo</code> directory, add this recipe to a file named <code class="file-path">webserver.rb</code>.
+
+```ruby
+# ~/chef-repo/webserver.rb
+package 'httpd'
+```
+
+We don't need to specify an action because `install` is the default.
+
+Now run `chef-apply` to apply the recipe.
+
+```bash
+# ~/chef-repo
+$ sudo chef-apply webserver.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * package[httpd] action install
+    - install version 2.2.15-31.el6.centos of package httpd
+```
+
+[COMMENT] `sudo` is required because this command installs a package and therefore must be run with root privileges. If you're running as root on your own machine, you can omit `sudo` from the command.
+
+Run the recipe a second time.
+
+```bash
+# ~/chef-repo
+$ sudo chef-apply webserver.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * package[httpd] action install (up to date)
+  ```
+
+You see that Chef does no work because there's nothing to do &ndash; the package is already installed.

@@ -1,0 +1,71 @@
+---
+title: "1. Create a cookbook"
+order: 1
+layout: step
+description: TODO
+keywords: TODO
+---
+[Last time](/learn-the-basics/rhel/configure-a-package-and-service/) you learned how to manage a package and a service by configuring a web server. You also added a basic web page. But there was one problem &ndash; although it helped you verify that your web server was properly configured, the code for your HTML page was embedded in the Chef recipe.
+
+Let's create a _cookbook_ to make our web server recipe easier to manage. A cookbook provides structure to your recipes and enables you to more easily reference external files, such as our web server's home page. In essence, a cookbook helps you stay organized.
+
+## <i class="fa fa-linux" style="margin-right:3px;"></i> Get a Linux machine
+
+Like the previous lessons, you'll configure the server directly. You can continue with the Linux machine you used in the previous lesson, but let's review the options.
+
+Option 1: Use your own RHEL or CentOS machine. If you have a machine you'd like to use that meets the [system requirements](<%= chef_docs_url %>/chef_system_requirements.html), install the [Chef Development Kit](<%= chef_dk_url %>) on it now.
+
+Option 2: Let us provide a CentOS virtual machine with the Chef tools installed for you. Just click the button below.
+
+<%= partial 'layouts/provisioner', locals: { title: 'CentOS', type: 'rhel-localmode' } %>
+
+<sidebar style="line-height:1.7; font-size:1.0em; margin-top:30px; max-width:440px;">
+<span style="line-height:2.0;"><i class="fa fa-search"></i>&nbsp;**As you read, think about:**</span><br>
+  <i class="fa fa-check"></i>&nbsp; how cookbooks are organized.<br>
+  <i class="fa fa-check"></i>&nbsp; why the run-list is important.<br>
+</sidebar>
+
+## <i class="fa fa-tasks" style="margin-right:3px;"></i> Here's what you'll do
+
+  1. [Create a cookbook](#1createacookbook)
+  1. [Create a template](#2createatemplate)
+  1. [Update the recipe to reference the HTML template](#3updatetherecipetoreferencethehtmltemplate)
+  1. [Run the cookbook](#4runthecookbook)
+
+<hr />
+
+## 1. Create a cookbook
+
+First, from your <code class="file-path">~/chef-repo</code> directory, create a <code class="file-path">cookbooks</code> directory and `cd` there.
+
+```bash
+# ~/chef-repo
+$ mkdir cookbooks
+$ cd cookbooks
+```
+
+Now run the `chef` command to generate a cookbook named **learn\_chef\_httpd**.
+
+```bash
+# ~/chef-repo/cookbooks
+$ chef generate cookbook learn_chef_httpd
+```
+
+Here's the directory structure that the command created.
+
+```bash
+# ~/chef-repo/cookbooks
+$ tree
+.
+└── learn_chef_httpd
+    ├── Berksfile
+    ├── chefignore
+    ├── metadata.rb
+    ├── README.md
+    └── recipes
+        └── default.rb
+
+2 directories, 5 files
+```
+
+Note the default recipe, named <code class="file-path">default.rb</code>. This is where we'll move our Apache recipe in a moment.
