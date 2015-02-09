@@ -1,6 +1,6 @@
-var rhelList = ["getting-started", "manage", "tdi"];
-var windowsList = ["getting-started", "manage"];
-var ubuntuList = ["getting-started", "manage"];
+var rhelList = ["learn-the-basics", "manage", "tdi"];
+var windowsList = ["learn-the-basics", "manage"];
+var ubuntuList = ["learn-the-basics", "manage"];
 
 $("#topics .topic").on("click", function() {
 	// Show and hide respective landing tabs
