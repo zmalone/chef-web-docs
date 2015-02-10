@@ -1,6 +1,6 @@
 var rhelList = ["learn-the-basics", "manage", "local-development"];
 var windowsList = ["learn-the-basics", "manage"];
-var ubuntuList = ["learn-the-basics", "manage"];
+var ubuntuList = ["learn-the-basics", "manage-a-node"];
 
 $("#topics .topic").on("click", function() {
 	// Show and hide respective landing tabs
