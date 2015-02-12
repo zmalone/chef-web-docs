@@ -1,5 +1,5 @@
-var rhelList = ["learn-the-basics", "manage", "local-development"];
-var windowsList = ["learn-the-basics", "manage"];
+var rhelList = ["learn-the-basics", "manage-a-node", "local-development"];
+var windowsList = ["learn-the-basics", "manage-a-node"];
 var ubuntuList = ["learn-the-basics", "manage-a-node"];
 
 $("#topics .topic").on("click", function() {
