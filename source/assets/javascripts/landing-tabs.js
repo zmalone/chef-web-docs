@@ -1,4 +1,4 @@
-var rhelList = ["learn-the-basics", "manage-a-node", "local-development"];
+var rhelList = ["learn-the-basics", "manage-a-node", "fundamentals-series"];
 var windowsList = ["learn-the-basics", "manage-a-node"];
 var ubuntuList = ["learn-the-basics", "manage-a-node"];
 
