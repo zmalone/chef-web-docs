@@ -4,7 +4,7 @@ module DeployHelpers
     case ENV['TRAVIS_BRANCH']
     when 'master', 'sandbox'
       ENV['PREPROD_AWS_ACCESS_KEY_ID']
-    when 'release'
+    when 'release', 'beta'
       ENV['PROD_AWS_ACCESS_KEY_ID']
     else
       ENV['AWS_ACCESS_KEY_ID']
@@ -15,7 +15,7 @@ module DeployHelpers
     case ENV['TRAVIS_BRANCH']
     when 'master', 'sandbox'
       ENV['PREPROD_AWS_SECRET_ACCESS_KEY']
-    when 'release'
+    when 'release', 'beta'
       ENV['PROD_AWS_SECRET_ACCESS_KEY']
     else
       ENV['AWS_SECRET_ACCESS_KEY']
@@ -30,6 +30,8 @@ module DeployHelpers
       ENV['PROD_AWS_S3_BUCKET']
     when 'sandbox'
       ENV['SANDBOX_AWS_S3_BUCKET']
+    when 'beta'
+      ENV['BETA_AWS_S3_BUCKET']
     else
       ENV['AWS_S3_BUCKET']
     end
@@ -38,7 +40,7 @@ module DeployHelpers
   # Is this a branch we're deploying?
   def deploy?
     (!ENV['TRAVIS_PULL_REQUEST'] || ENV['TRAVIS_PULL_REQUEST'] == 'false') &&
-      %w[ master release sandbox ].include?(ENV['TRAVIS_BRANCH'])
+      %w[ master release sandbox beta ].include?(ENV['TRAVIS_BRANCH'])
   end
 
   def preprod?
