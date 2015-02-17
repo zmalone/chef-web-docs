@@ -40,10 +40,22 @@ deploy:
     local-dir: build
     on:
       branch: sandbox
+  # Beta
+  - provider: s3
+    access_key_id: # chef-prod learn-chef IAM user
+      secure: "EQIbgGOlxHtkExVO/9kuMiZk65kyKfO/gBu/cvlISeMBtsN5/GmS3cKzcLeHU4LVqyViAIxzrJ88Ph2WrWUBrQhREhveJBkfzgTUZ2guGiKZS5W5rUpiaQ9Q/rstuEc1xyw+2EUrcNcskFMthYaXTCZ8mZjn150HCl4zyREEMVQ="
+    secret_access_key:
+      secure: "pmZTPeOJXFyxiRwK0CrQX6/iY9whTUIpurADleJ3Vnp7gRuLDbIwIWGKOg+UEh/aY3hMfakKo1+tkkmrT02g/6iGYdRUL54BiIrFubyF/1HU3xD4zrDV/KIsH604k0PQJRq7P1HwQ1iVyzgJIEl3e56lDe8fTi52RMyCvP5oi/c="
+    bucket: learn-beta.chef.io
+    skip_cleanup: true
+    local-dir: build
+    on:
+      branch: beta
 after_deploy: ./bin/invalidate-cloudfront
 env:
   global:
     - CLOUDFRONT_DISTRIBUTION_ID=E1WC83ND9PN8RY
+    - BETA_CLOUDFRONT_DISTRIBUTION_ID=EGS3PPTXWXN58
     # PREPROD_AWS_ACCESS_KEY_ID
     - secure: "KpcB5rdx3zgsXbojx0RW3sKRzXVO6rUILb/Uz25r2UuCvamRbnUyXnzGd2H/EkYE1DkMy59bZO3/6Sq0jQV//K9OrXDpkDVYGomr0jTsA8PxMCCGxwEobXGZ3yEqrJWVV0UfHZMIv736/CD2z/Zc7SJ/B++zYqeRoshcul9RJ98="
     # PREPROD_AWS_SECRET_ACCESS_KEY
@@ -56,5 +68,6 @@ env:
     - PROD_AWS_S3_BUCKET=learn.getchef.com
     - SANDBOX_AWS_S3_BUCKET=learn-sandbox.getchef.com
     - CHEF_LAB_URL=http://opscode-cheflab.herokuapp.com
+    - BETA_AWS_S3_BUCKET=learn-beta.chef.io
 script: bundle exec middleman build
 sudo: false # See http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
