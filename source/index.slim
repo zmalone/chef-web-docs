@@ -1,0 +1,50 @@
+---
+description: "Learn how treating your <i>infrastructure</i> as <i>code</i> with Chef simplifies the way you manage and automate your infrastructure, making it more maintainable, versionable, testable, and collaborative."
+layout: content
+title: "Learn Chef"
+type: landing
+---
+.row
+  .landing-tab.landing-tab-active.medium-2.medium-offset-4.columns#topics-tab
+    h2 1
+    | Choose a topic
+  .landing-tab.medium-2.columns.end#platforms-tab
+    h2 2
+    | Choose your platform
+hr
+.row style="min-height:500px;"
+  .medium-10.medium-centered.columns
+    .landing-content#topics
+      - current_page.children.each do |child|
+        - if child.data.type
+          - if child.data.type == "topic"
+            .row
+              .small-10.small-centered.columns
+                .row.box id="#{ child.data.name }" class=( child.data.tags && child.data.tags.include?("coming-soon") ? "coming-soon" : "topic")
+                  h2 = child.data.title
+                  - if child.data.time_to_complete
+                    div style="font-size:12px;margin-top:-22px;margin-bottom:10px;" == child.data.time_to_complete
+                  - if child.data.tags
+                    div style="margin-top:-16px;margin-bottom:10px;"
+                      = partial "layouts/add-tags", locals: { page: child }
+                  = child.data.description
+    .landing-content#platforms.hide
+      #learn-the-basics.hide
+        h2 Learn the Chef basics
+        | Choose the server platform that you work with most.
+      #manage-a-node.hide
+        h2 Learn to manage a node
+        | Choose the server platform that you work with most.
+      #fundamentals-series.hide
+        h2 Learn the Chef fundamentals with Nathen Harvey
+        | This video series focuses on Red Hat Enterprise Linux, but you can adapt it to other platforms.
+      ul#platform-tabs
+        li.hide#rhel = link_to "/rhel/" do
+          = image_tag "rhel/platform-logos/redhat.svg", width: 150, height: 150
+          | Red Hat Enterprise Linux
+        li.hide#windows = link_to "/windows/" do
+          = image_tag "rhel/platform-logos/windows.svg", width: 150, height: 150
+          | Windows Server
+        li.hide#ubuntu = link_to "/ubuntu/" do
+          = image_tag "rhel/platform-logos/ubuntu.svg", width: 150, height: 150
+          | Ubuntu

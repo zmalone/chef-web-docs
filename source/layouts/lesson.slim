@@ -1,0 +1,17 @@
+= wrap_layout :layout do
+  .topics
+    .row
+      = partial "layouts/breadcrumbs"
+      h1 == current_page.data.title
+      = yield
+      .small-10.small-centered.columns
+        - current_page.children.each do |child|
+          = link_to child do
+            .row.topic.valign-middle style="width:100%;"
+              .small-1.columns.valign-middle style="font-size: 36px;"
+                = "#{child.data["order"]}."
+              .small-11.columns.valign-middle
+                h2 = child.data["title"]
+                = child.data["description"]
+              /.small-2.columns.valign-middle
+              /  i.fa.fa-chevron-right.hide
