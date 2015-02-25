@@ -25,12 +25,7 @@ type: landing
                   div
                     = child.data.platform_intro
                 ul#platform-tabs
-                  li = link_to "/learn-the-basics/rhel/" do
-                    = image_tag "rhel/platform-logos/redhat.svg"
-                    | Red Hat Enterprise Linux
-                  li = link_to "learn-the-basics/windows/" do
-                    = image_tag "rhel/platform-logos/windows.svg"
-                    | Windows Server
-                  li = link_to "/learn-the-basics/ubuntu/" do
-                    = image_tag "rhel/platform-logos/ubuntu.svg"
-                    | Ubuntu
+                  - child.children.select{|p| p.data.platform}.each do |overview_page|
+                    li = link_to overview_page do
+                      = image_tag "rhel/platform-logos/#{overview_page.data.logo}"
+                      = overview_page.data.platform
