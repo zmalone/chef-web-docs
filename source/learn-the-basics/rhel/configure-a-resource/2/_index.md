@@ -17,13 +17,14 @@ From your terminal window, run the following `chef-apply` command to apply what 
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-* file[motd] action create
-- create new file motd
-- update content in file motd from none to de031d
---- motd        2014-05-13 14:52:54.025253948 -0700
-+++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
-@@ -1 +1,2 @@
-+hello world
+  * file[motd] action create
+    - create new file motd
+    - update content in file motd from none to b94d27
+    --- motd	2015-02-25 13:38:16.047114670 -0800
+    +++ ./.motd20150225-13770-mlbv6s	2015-02-25 13:38:16.047114670 -0800
+    @@ -1 +1,2 @@
+    +hello world
+    - restore selinux security context
 ```
 
 The output tells us that a new file, <code class="file-path">motd</code>, was created.
@@ -44,7 +45,7 @@ Now, let's see now what happens when you run the same `chef-apply` command again
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-* file[motd] action create (up to date)
+  * file[motd] action create (up to date)
 ```
 
 This time you get a different response. This is because Chef does work only when it needs to.

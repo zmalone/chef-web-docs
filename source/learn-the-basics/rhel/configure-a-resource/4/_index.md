@@ -15,13 +15,14 @@ Now run `chef-apply`.
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-* file[motd] action create
-- update content in file motd from 9b0c18 to b1522f
---- motd        2014-05-13 15:03:47.638770524 -0700
-+++ /tmp/.motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
-@@ -1,2 +1,2 @@
--hello robots
-+hello chef
+  * file[motd] action create
+    - update content in file motd from 548078 to c38c60
+    --- motd	2015-02-25 13:40:01.398787053 -0800
+    +++ ./.motd20150225-14278-1ulmqhz	2015-02-25 13:40:06.753787047 -0800
+    @@ -1,2 +1,2 @@
+    -hello robots
+    +hello chef
+    - restore selinux security context
 ```
 
 Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resource matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.

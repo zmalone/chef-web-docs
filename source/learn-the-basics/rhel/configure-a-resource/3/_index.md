@@ -7,7 +7,7 @@ Modify <code class="file-path">hello.rb</code> like this ('hello world' becomes 
 ```ruby
 # ~/chef-repo/hello.rb
 file 'motd' do
-content 'hello chef'
+  content 'hello chef'
 end
 ```
 
@@ -17,13 +17,14 @@ Run `chef-apply`.
 # ~/chef-repo
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-* file[motd] action create
-- update content in file motd from de031d to b1522f
---- motd        2014-05-13 14:52:54.025253948 -0700
-+++ /tmp/.motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
-@@ -1,2 +1,2 @@
--hello world
-+hello chef
+  * file[motd] action create
+    - update content in file motd from b94d27 to c38c60
+    --- motd	2015-02-25 13:38:16.047114670 -0800
+    +++ ./.motd20150225-14129-uig0oi	2015-02-25 13:39:31.566787086 -0800
+    @@ -1,2 +1,2 @@
+    -hello world
+    +hello chef
+    - restore selinux security context
 ```
 
 This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.

@@ -1,7 +1,7 @@
 ## 3. Run the cookbook on your node
 
 <div id="knife-intro" class="indent" data-type="windows-fundamentals" ng-non-bindable>
-Run <code>knife ssh</code> to run your cookbook on your node. Replace <code>{{address}}</code>, <code>{{user}}</code>, and <code>{{password}}</code> with your values.
+Run <code>knife winrm</code> to run your cookbook on your node. Replace <code>{{address}}</code>, <code>{{user}}</code>, and <code>{{password}}</code> with your values.
 </div>
 <p/>
 <div id="knife-command" class="window" ng-non-bindable>
@@ -15,7 +15,7 @@ Run <code>knife ssh</code> to run your cookbook on your node. Replace <code>{{ad
     <tbody>
       <tr>
         <td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td>
-        <td class="code"><pre><code><span class="line command">knife ssh {{address}} 'sudo chef-client' --manual-list --ssh-user {{user}} --ssh-password '{{password}}'</span></code></pre></td>
+        <td class="code"><pre><code><span class="line command">knife winrm {{address}} chef-client --manual-list --winrm-user {{user}} --winrm-password '{{password}}'</span></code></pre></td>
       </tr>
     </tbody></table></div></div>
 </div>
