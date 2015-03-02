@@ -6,7 +6,7 @@ On the local workstation copy of your `learn_chef_apache2` cookbook, change <cod
 <!-- ~/chef-repo/cookbooks/learn_chef_apache2/templates/default/index.html.erb -->
 <html>
   <body>
-    <h1>hello from <%%= node['fqdn'] %></h1>
+    <h1>hello from <%= node['fqdn'] %></h1>
   </body>
 </html>
 ```
