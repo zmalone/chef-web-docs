@@ -25,35 +25,35 @@ head
 
 
 body class=page_classes ng-app='chefLabClient'
-  nav#header.top-bar data-topbar="" role="navigation"
+  nav#header.top-bar.row data-topbar="" role="navigation"
     ul.title-area
       li.name
         h2
-          = link_to "/", id: "logo" do
-            = image_tag('logo-learnchef.svg')
       li.toggle-topbar.menu-icon
         = link_to "#" do
-          span Menu
+          span menu
     section.top-bar-section
-      ul#top-nav.left
-        li= link_to 'Chef Home', chef_www_url
+      ul#top-nav.left style="vertical-align:middle;"
+        li= link_to 'Home', "/"
         li= link_to 'Documentation', chef_docs_url
         li= link_to 'Training', chef_training_url
-      ul#social-nav.right
         li= link_to learn_chef_twitter_url do
           i.fa.fa-twitter-square.fa-2x
-    / hr
+      ul#social-nav.right
+        = link_to chef_www_url, id: "logo" do
+          = image_tag('logo-learnchef.svg')
 
-  section.row
-    .medium-3.columns
-      #sidebar
-        = partial 'layouts/sidebar'
-
-    .medium-9.columns.content
+  section
+    - if data.page.type
+      - if data.page.type == "landing"
+        = partial 'layouts/section_header'
+    .content
       - if data.page.deprecated
         = partial 'layouts/deprecated'
       = yield
-      footer#footer.row
-        .large-12.columns.copyright
-          Copyright &copy; #{Time.now.year} Chef Software, Inc. All Rights Reserved.
+
+  footer#footer
+    .row
+      .medium-12.columns.copyright
+        Copyright &copy; #{Time.now.year} Chef Software, Inc. All Rights Reserved.
   = partial 'layouts/js'

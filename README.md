@@ -1,7 +1,7 @@
 Learn Chef
 ==========
 
-[![Build Status](https://magnum.travis-ci.com/opscode/learn-chef.svg?token=mNqeWExVNwGqqWxVbw6y&branch=master)](https://magnum.travis-ci.com/opscode/learn-chef)
+[![Build Status](https://magnum.travis-ci.com/chef/learn-chef.svg?token=mNqeWExVNwGqqWxVbw6y&branch=master)](https://magnum.travis-ci.com/chef/learn-chef)
 
 Installation
 ------------
@@ -60,12 +60,12 @@ Contributing
 License and Authors
 -------------------
 
-- Author:: Isa Farnik (isa@getchef.com)
-- Author:: Nathen Harvey (nharvey@getchef.com)
-- Author:: Christian Nunciato (cnunciato@getchef.com)
+- Author:: Isa Farnik (isa@chef.io)
+- Author:: Nathen Harvey (nharvey@chef.io)
+- Author:: Christian Nunciato (cnunciato@chef.io)
 - Author:: Seth Vargo (sethvargo@gmail.com)
-- Author:: Thomas Petchel (tpetchel@getchef.com)
-- Author:: Nathan L Smith (smith@getchef.com)
+- Author:: Thomas Petchel (tpetchel@chef.io)
+- Author:: Nathan L Smith (smith@chef.io)
 
 Copyright (c) 2013-2014 Chef Software, Inc.
 
