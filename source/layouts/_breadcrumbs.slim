@@ -1,0 +1,12 @@
+/ Collect pages
+- @pages = []
+- @p = current_page
+- until @p.nil?
+  - @pages.unshift @p unless @p.data.ignore_breadcrumb
+  - @p = @p.parent
+
+/ Create breadcrumb navigation
+span
+  ul.breadcrumbs
+    - @pages.each do |page|
+      li class=(current_page == page ? "current" : nil) = link_to page.data.title, page
