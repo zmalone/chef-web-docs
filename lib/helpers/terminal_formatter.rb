@@ -55,14 +55,14 @@ module Middleman
               # line to the lines of code
               gutters.push gutter(@prompt)
               line = line.length > 2 ? line[2..-1] : ""
-              lines_of_code.push line_of_code(line, true)
+              lines_of_code.push line_of_code(line, true, false)
               in_command = is_continuation?(line)
             else
               # no gutter, so just push a space onto gutter and add the entire
               # line to the lines of code
               gutters.push gutter("&nbsp;")
               line = "&nbsp;" if line == "" # work-around fact that blank lines are eaten
-              lines_of_code.push line_of_code(line, in_command)
+              lines_of_code.push line_of_code(line, in_command, !in_command && line == "[...]")
               in_command = in_command && is_continuation?(line)
             end
           end
@@ -88,9 +88,11 @@ module Middleman
           "<span class='line-number'>#{gutter_value}</span>"
         end
 
-        def line_of_code(line,command)
+        def line_of_code(line,command,is_truncation)
           if command
             line_class = "command"
+          elsif is_truncation
+            line_class = "output truncated-output"
           else
             line_class = "output"
           end

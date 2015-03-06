@@ -47,7 +47,8 @@ module Middleman
 
       def self.formatters
         @formatters ||= begin
-          hash = { "ruby" => CodeFormatter.new,
+          hash = { "conf" => CodeFormatter.new,
+                   "ruby" => CodeFormatter.new,
                    "html" => CodeFormatter.new,
                    "bash" => TerminalFormatter.new,
                    "shell" => TerminalFormatter.new,
