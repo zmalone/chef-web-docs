@@ -6,37 +6,102 @@ logo: ubuntu.svg
 description: "TBD"
 order: 3
 ---
+**TODO LIST:**
+
+* Update link to https://supermarket.chef.io/become-a-contributor to what Nell's working on.
+* Throw some CSS into the app so make the table look nicer.
+* Rename 'myapp' to something better. (I like 'web_app' but we use the `web_app` resource from the `apache2` cookbook, which could be confusing.)
+* Give the customer scenario a better name, possibly think of a more compelling example.
+* Question: Do we want to show how to specify/pin the version of the cookbooks we use from Supermarket?
+* Will Apache serve a file named index.php before installing PHP? That would save us the cruft of having to deal with index.html and index.php separately.
+* Do a pass, including
+  * Verify initial `berks` commmand to get things set up.
+-- --
+
+In [Learn the basics](/learn-the-basics/ubuntu) and [Manage a node](/manage-a-node/ubuntu/), you learned how Chef works by configuring a web server and a custom home page. Let's extend what you learned by building a basic but complete web application on Ubuntu that uses a web server, a database, and scripting. Your web application will read customer records from a database and display them on a web page.
+
+[TODO: Show this so as not to bury the lead, or does it drop down the content below the fold too much?]
+
+![the resulting web page](/assets/images/ubuntu/webapp_result.png)
+
+An application that uses these components is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll work with each of these components in this tutorial.
+
+Setting up a LAMP stack is a great next step to building your Chef skills because it:
+
+* enables you to exercise the skills you've already learned.
+* introduces just enough complexity to demonstrate real-world Chef usage patterns.
+* uses off-the-shelf software that you're likely familiar with.
+
 After completing this lesson, you'll:
 
-* A
-* B
-* C
+* be able to use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
+* be more productive by using community cookbooks from Chef Supermarket to perform common tasks.
+* know how to use tools such as Berkshelf to resolve dependencies among your cookbooks.
 
-LAMP
+In this tutorial, you'll write Chef code from your workstation, upload your code to a Chef server, and have your Ubuntu node pull that code from the Chef server and run it.
 
-default['apache']['mpm'] = 'prefork'
+[SHOW IMAGE OF WORKSTATION, CHEF SERVER, AND NODE]
 
-Application Cookbook Pattern. An application cookbook contains the list of recipes needed to build your application or service.
+You'll get started by setting up your workstation, a Chef server, and a node to manage.
 
-One challenge we'll encounter is around _dependency management_.
+# Get set up
 
-Intro Supermarket
+To complete this tutorial, you'll need three things &dash; ChefDK installed on your workstation, an Ubuntu node to manage, and a hosted Chef account.
 
-[COMMENT] Remember, when using cookbooks from Chef Supermarket, always evaluate the code to ensure that it does exactly what you expect. It's a common practice to take a copy of a cookbook from Supermarket and modify it to suit your organization's specific requirements. If you find a way to improve a cookbook that others can benefit from, we hope you'll [UPDATE ME: become a contributor](https://supermarket.chef.io/become-a-contributor)!
+You likely have these set up already, but let's review them to make sure.
 
-...it could be a physical machine, cloud instance, or virtual machine &ndash; as long as it has a public IP address, you have root or `sudo` access, have traffic open to ports 22 and 80, and it meets the [system requirements].
+## 1. Install the Chef Development Kit on your workstation
 
-## Create Chef repo
+Your workstation is the computer from where you administer your network. It's also the place where you write your Chef code. Remember that although you'll be configuring an Ubuntu machine, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
+
+[COMMENT] It's common to use a virtual machine as your workstation. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites).
+
+Install Chef Development Kit (ChefDK) on your workstation now if you don't have it already.
+
+<a class='accent-button radius' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install ChefDK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+
+## 2. Get a node to manage
+
+Recall that a _node_ is any physical machine, cloud instance, or virtual machine that Chef manages.
+
+All you need right now is the ability to bring up a clean instance of Ubuntu 14.04. Your node should not be your workstation. Be sure that:
+
+* it has a public IP address.
+* it can be opened to public Internet traffic on ports 22 and 80.
+* it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
+* you have root or `sudo` access.
+
+[WARN] Software such as Apache is configured differently in various releases of Ubuntu. For learning purposes, we recommend that you use Ubuntu 14.04 as your node so that you can more easily verify your progress. However, if you're unable to use Ubuntu 14.04, other versions of Ubuntu can work with some modification.
+
+[TIP] If you're unable to bring up a node to manage, feel free to use another Ubuntu instance that we provide. <%= partial 'layouts/provisioner', locals: { title: 'Ubuntu', type: 'ubuntu-fundamentals' } %>
+
+## 3. Get a hosted Chef account
+
+You'll store your cookbooks on a Chef server so that your node can access them, and hosted Chef is the easiest way to work through this tutorial. We recommend you work through [Manage a node](/manage-a-node/ubuntu/) if you do not have a hosted Chef account that you can access from your workstation.
+
+[COMMENT] If your organization is [running its own Chef server](https://downloads.chef.io/chef-server/) and you know how to work with it, you can use that Chef server instead of setting up a hosted Chef account.  
+
+## 4. Create a Chef repository
+
+It's common to place your Chef code in what's called a Chef repository, or _Chef repo_. A [Chef repo](https://docs.chef.io/chef_repo.html) holds your cookbooks and other files you need to define your policy.
+
+If you don't already have a Chef repo set up, run the following command to create one.
 
 ```bash
 # ~
-$ chef generate repo chef-repo --policy-only
+$ chef generate repo ~/chef-repo --policy-only
 Compiling Cookbooks...
 Recipe: code_generator::repo
 [...]
 ```
 
-## Create cookbook
+[COMMENT] You can use a directory other than <code class="file-path">~/chef-repo</code>; just ensure that you have root or `sudo` access to that directory. Remember to adjust the paths we show as needed.
+
+## 5. Create a cookbook
+
+Recall that a cookbook provides structure to your Chef code. A cookbook contains things such as recipes and templates. We'll create one cookbook to describe our web application's configuration.
+
+Run the following `chef generate` command to create a cookbook named `myapp`.
 
 ```bash
 # ~/chef-repo
@@ -48,21 +113,21 @@ Recipe: code_generator::cookbook
 [...]
 ```
 
-## Initialize Berkshelf
-
-```bash
-$ hi
-```
-
 # Ensure the apt cache is up to date
 
-On Linux, it's a common requirement to ensure that the package manager cache (Ubuntu's built-in package manager is named `apt`) is updated before installing any other packages. This step synchronizes the system's package index to the latest list of what packages are available.
+Many projects require specific versions of Apache, MySQL, and other software packages they use. You might store these packages on your internal network or get them from a public package server.
 
-Writing a cookbook is an iterative process. You'll run it multiple times as you experiment, add features, fix problems, and so on. But you don't necessarily want to update the `apt` cache every time you run your cookbook because it can take some time to complete.
+Alternatively, you can use the latest packages. Typically, you'll want to ensure that the package manager cache (Ubuntu's built-in package manager is named `apt`) is updated before installing any other packages. This step synchronizes the system's package index to the latest list of what packages are available.
 
-That's where the [apt](https://supermarket.chef.io/cookbooks/apt) cookbook on Chef Supermarket comes in. The `apt` cookbook updates the `apt` cache only on the first run, and every 24 hours thereafter. You can modify these defaults if you need to.
+That's where the [apt](https://supermarket.chef.io/cookbooks/apt) cookbook on Chef Supermarket comes in. Remember that Chef Supermarket is a place for the community to share cookbooks. In [Manage a node](/manage-a-node/ubuntu/), you downloaded the Learn Chef Apache cookbook so you didn't have to type it in a second time. The `apt` cookbook on Chef Supermarket contains everything we need to keep the `apt` cache up-to-date.
+
+Writing a cookbook is an iterative process. You'll run it multiple times as you experiment, add features, fix problems, and so on. But you don't necessarily want to update the `apt` cache every time you run your cookbook because it can take some time to complete. The `apt` cookbook updates the `apt` cache only on the first run, and every 24 hours thereafter. You can modify these defaults if you need to.
+
+[COMMENT] Remember, when using cookbooks from Chef Supermarket, always evaluate the code to ensure that it does exactly what you expect. It's a common practice to download a cookbook from Supermarket and modify it to suit your organization's specific requirements. If you find a way to improve a cookbook that others can benefit from, we hope you'll [become a contributor](https://supermarket.chef.io/become-a-contributor)!
 
 ## 1. Reference the apt cookbook
+
+You don't need to download cookbooks from Chef Supermarket to use them. You'll learn how to automatically download cookbooks in a bit, but the first step is to reference the cookbooks you want to load.
 
 The way you load one cookbook from another is to reference it in your cookbook's metadata file, <code class="file-path">metadata.rb</code>. To use the `apt` cookbook, append the line `depends 'apt'` to <code class="file-path">~/chef-repo/cookbooks/myapp/metadata.rb</code>, making the entire file look like this.
 
@@ -83,6 +148,8 @@ depends 'apt'
 
 ## 2. Run the apt cookbook's default recipe
 
+For our web application project, we'll use what's called the _application cookbook pattern_. An application cookbook typically contains multiple recipes, and each recipe configures one part of the system. The default recipe, <code class="file-path">default.rb</code>, then lists these recipes in the order needed to build your application or service.
+
 The `apt` cookbook's default recipe does everything we need to ensure the `apt` cache is up to date. To run this recipe, add the following to your cookbook's default recipe, <code class="file-path">default.rb</code>.
 
 ```ruby
@@ -94,7 +161,7 @@ include_recipe 'apt::default'
 
 # Create an application user
 
-It's a common practice to run your applications and services under a user that has just enough access to modify the system, and not as the root user. So let's create a recipe that creates the `myapp` user, who belongs to the `myapp` group.
+It's a common practice to run your applications and services under a user that has just enough access to modify the system, and not as the root user. So let's create a recipe that creates the `myapp` user, who belongs to the `myapp` group. Later, we'll make the `myapp` user the owner of the content files for our web site.
 
 ## 1. Create the user recipe
 
@@ -110,7 +177,7 @@ Recipe: code_generator::recipe
 
 ## 2. Set the user's data attributes
 
-Now let's define the `myapp` user. To do so, we'll use the `group` and `user` resources. One way to define the `myapp` user is like this (don't add this code just yet.)
+Now let's define the `myapp` user. To do so, we'll use the built-in [group](https://docs.chef.io/resource_group.html) and [user](https://docs.chef.io/resource_user.html) resources. One way to define the `myapp` user is like this. Don't add this code just yet.
 
 ```ruby
 # ~/chef-repo/cookbooks/myapp/recipes/user.rb
@@ -125,11 +192,11 @@ end
 
 One problem with this approach is that if you ever want to change the user name or group, you'll have to do it in at least 3 places (in this recipe and any other recipes that reference these names).
 
-To keep things more manageable, it's a common practice to separate the logic of your recipe from its data and define that data in one place. To do that, we'll use attributes.
+To keep things more manageable, it's a common practice to separate the logic of your recipe from its data and define that data in one place. To do that, we'll define custom _node attributes_.
 
-### Create attributes file
+### Create the custom attributes file
 
-In [Manage a node](/manage-a-node/ubuntu/), you learned about some of the built-in node attributes that Chef provides, such as the node's IP address. You can also define your own custom attributes that are specific to your [problem].
+In [Manage a node](/manage-a-node/ubuntu/), you learned about some of the built-in node attributes that Chef provides, such as the node's IP address. You can also define your own custom attributes that are specific to your policy. Let's create an attributes file that will define all of the custom attributes for our web application cookbook.
 
 Run the following to create an attributes file named <code class="file-path">default.rb</code>.
 
@@ -145,6 +212,8 @@ Recipe: code_generator::attribute
     - update content in file cookbooks/myapp/attributes/default.rb from none to e3b0c4
     (diff output suppressed by config)
 ```
+
+This command added the <code class="file-path">default.rb</code> attribute file to the <code class="file-path">~/chef-repo/cookbooks/myapp/attributes</code> directory.
 
 Add the following to <code class="file-path">default.rb</code>.
 
@@ -171,7 +240,7 @@ end
 
 Note that we use `default['myapp']['user']` to define the attribute in the attributes file and `node['myapp']['user']` to reference it in the recipe.
 
-[COMMENT] One advantage to this approach is that you can now reuse this recipe in another cookbook &nbsp; all you need to do is override the `node['myapp']['user']` and `node['myapp']['user']` attributes in your cookbook.
+[COMMENT] One advantage to this approach is that you can now reuse this recipe in another cookbook &ndash; all you need to do is override the `node['myapp']['group']` and `node['myapp']['user']` attributes in your cookbook.
 
 ## 4. Set the user recipe to run
 
@@ -224,9 +293,9 @@ Recipe: code_generator::recipe
 [...]
 ```
 
-Because we're not yet set up to run PHP code, our initial home page will be a plain HTML file that serves as a placeholder. Earlier we set up a user, `myapp`, that will have access to the site's content. We'll configure the file so that the `myapp` has read and write access, and everyone else has read-only access.
+Because we're not yet set up to run PHP code, our initial home page will be a plain HTML file that serves as a placeholder. Earlier we set up a user, `myapp`, that will have access to the site's content. We'll configure the file so that the `myapp` user has read and write access, and everyone else has read-only access.
 
-The `apache2` cookbook's default recipe takes care of installing the package and configuring its service for us. For the second part, we'll use the `web_app` resource, which is a custom resource type that's provided by the `apache2` cookbook. For the third part, we'll use the `file` resource that you're already familiar with.
+The `apache2` cookbook's default recipe takes care of installing the Apache package and configuring its service for us. For the second part, we'll use the `web_app` resource, which is a custom resource type that's provided by the `apache2` cookbook. For the third part, we'll use the `file` resource that you're already familiar with to set up our home page.
 
 Earlier we discussed how it's a good practice to separate your logic from your data. But it's not a bad idea to start by combining your logic and your data to define the exact behavior that you want. Then you can go back and refactor it to be more reusable.
 
@@ -249,7 +318,7 @@ end
 
 # write a default home page
 file '/srv/apache/myapp/index.html' do
-  content 'This is a placeholder'
+  content '<html>This is a placeholder</html>'
   mode '0644'
   owner 'myapp'
   group 'myapp'
@@ -260,10 +329,10 @@ end
 
 To make this recipe more manageable and reusable, we can factor out these parts:
 
-* the name of the web app.
-* the name of the configuration file.
-* the location of the default home page.
-* the owner and group name of the home page.
+* the name of the web app &ndash; `myapp`.
+* the name of the configuration file &ndash; `myapp.conf`.
+* the location of the default home page &ndash; `/srv/apache/myapp/`.
+* the owner and group name of the home page &ndash; `myapp`.
 
 Let's go back to our attributes file, <code class="file-path">default.rb</code>, and create a few custom attributes to describe these parts.
 
@@ -282,7 +351,7 @@ default['myapp']['config'] = 'myapp.conf'
 default['apache']['docroot_dir'] = '/srv/apache/myapp'
 ```
 
-Now we have values to use in our recipe. Write out the recipe for our web server like this.
+Now we have values to use in our recipe. Now it's time to write out our recipe file. Modify <code class="file-path">webserver.rb</code>  like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/myapp/recipes/webserver.rb
@@ -301,7 +370,7 @@ end
 
 # write a default home page
 file "#{node['apache']['docroot_dir']}/index.html" do
-  content 'This is a placeholder'
+  content '<html>This is a placeholder</html>'
   mode '0644'
   owner node['myapp']['user']
   group node['myapp']['group']
@@ -312,7 +381,7 @@ end
 
 ## 4. Create the configuration file
 
-In our recipe we referenced our site's configuration file. Now we need to define it. We'll do that by creating a Chef template so we can provide placeholders that are filled in with our custom node attributes when the recipe runs.
+In our recipe we referenced our Apache site's configuration file. Now we need to create this configuration file. We'll do that by creating a Chef template so we can provide placeholders that are filled in with our custom node attributes when the recipe runs.
 
 First, run this command to create our template file, <code class="file-path">myapp.conf.erb</code>.
 
@@ -326,10 +395,12 @@ Recipe: code_generator::template
 [...]
 ```
 
+This command added the file <code class="file-path">myapp.conf.erb</code> template file to the <code class="file-path">~/chef-repo/myapp/templates/default</code> directory. Remember, the <code class="file-path">.erb</code> extension means that the file can hold placeholders that are filled in when the recipe runs. That's what makes the file a template.
+
 Add this to <code class="file-path">myapp.conf.erb</code>.
 
 ```conf
-# myface/templates/default/apache2.conf.erb
+# ~/chef-repo/myapp/templates/default/apache2.conf.erb
 
 # Managed by Chef for <%= node['hostname'] %>
 <VirtualHost *:80>
@@ -409,7 +480,7 @@ end
 
 # write a default home page
 file "#{node['apache']['docroot_dir']}/index.html" do
-  content 'This is a placeholder'
+  content '<html>This is a placeholder</html>'
   mode '0644'
   owner node['myapp']['user']
   group node['myapp']['group']
@@ -436,7 +507,9 @@ include_recipe 'myapp::webserver'
 
 ## Verify your configuration
 
-### 1. Upload your cookbook to the Chef server
+One challenge we'll encounter is around _dependency management_.
+
+### 1. book to the Chef server
 
 ```bash
 # ~/chef-repo/cookbooks/myapp
@@ -465,7 +538,7 @@ Your node can be a physical machine, virtual machine, or cloud instance, as long
 
 In production, we recommend using key-based authentication instead of a user name and password. But for learning purposes a user name and password work just fine.
 
-[TIP] If you're unable to bring up a node to bootstrap, feel free to use another Ubuntu instance that we provide. <%= partial 'layouts/provisioner', locals: { title: 'Ubuntu', type: 'ubuntu-fundamentals' } %>
+
 
 ### 3. Bootstrap your node
 
@@ -535,7 +608,7 @@ Verify that the home page is in the location we expect.
 ```bash
 # ~
 $ more /srv/apache/myapp/index.html
-This is a placeholder
+<html>This is a placeholder</html>
 ```
 
 Verify that the web page is being served and is accessible externally.
@@ -543,7 +616,7 @@ Verify that the web page is being served and is accessible externally.
 ```bash
 # ~
 $ curl 52.10.205.36
-This is a placeholder
+<html>This is a placeholder</html>
 ```
 
 # Configure MySQL
@@ -1299,7 +1372,7 @@ end
 
 # write a default home page
 file "#{node['apache']['docroot_dir']}/index.html" do
-  content 'This is a placeholder'
+  content '<html>This is a placeholder</html>'
   mode '0644'
   owner node['myapp']['user']
   group node['myapp']['group']
@@ -1498,7 +1571,7 @@ Remember, `{identity-file}` is your SSH identify file, for example <code class="
 ### Verify things
 
 There are a number of things we can do to verify that PHP was installed properly.
-![registration page](/assets/images/ubuntu/webapp_result.png)
+![the resulting web page](/assets/images/ubuntu/webapp_result.png)
 
 ## Summary
 
@@ -1509,3 +1582,5 @@ Credit: This tutorial was adapted from http://misheska.com/blog/2013/06/23/getti
 Exercises:
 
 Delete the seed file after using it (you don't have to guard this because ...)
+
+Examine the Apache file's configuration to see how the placeholders get filled in as the recipe runs.
