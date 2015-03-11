@@ -14,6 +14,8 @@ After completing this lesson, you'll:
 
 LAMP
 
+default['apache']['mpm'] = 'prefork'
+
 Application Cookbook Pattern. An application cookbook contains the list of recipes needed to build your application or service.
 
 One challenge we'll encounter is around _dependency management_.
@@ -232,7 +234,7 @@ Here's what our basic recipe might look like. Don't write any code yet &ndash; w
 
 ```ruby
 # ~/chef-repo/cookbooks/myapp/recipes/webserver.rb
-# install apache and configure its service
+# install Apache and configure its service
 include_recipe 'apache2::default'
 
 # create and enable our custom site
@@ -284,7 +286,7 @@ Now we have values to use in our recipe. Write out the recipe for our web server
 
 ```ruby
 # ~/chef-repo/cookbooks/myapp/recipes/webserver.rb
-# install apache and configure its service
+# install Apache and configure its service
 include_recipe 'apache2::default'
 
 # create and enable our custom site
@@ -331,26 +333,26 @@ Add this to <code class="file-path">myapp.conf.erb</code>.
 
 # Managed by Chef for <%= node['hostname'] %>
 <VirtualHost *:80>
-        ServerAdmin <%= node['apache']['contact'] %>
+  ServerAdmin <%= node['apache']['contact'] %>
 
-        DocumentRoot <%= node['apache']['docroot_dir'] %>
-        <Directory />
-                Options FollowSymLinks
-                AllowOverride None
-        </Directory>
-        <Directory <%= node['apache']['docroot_dir'] %>>
-                Options Indexes FollowSymLinks MultiViews
-                AllowOverride None
-                Order allow,deny
-                allow from all
-        </Directory>
+  DocumentRoot <%= node['apache']['docroot_dir'] %>
+  <Directory />
+          Options FollowSymLinks
+          AllowOverride None
+  </Directory>
+  <Directory <%= node['apache']['docroot_dir'] %>>
+          Options Indexes FollowSymLinks MultiViews
+          AllowOverride None
+          Order allow,deny
+          allow from all
+  </Directory>
 
-        ErrorLog <%= node['apache']['log_dir'] %>/error.log
+  ErrorLog <%= node['apache']['log_dir'] %>/error.log
 
-        LogLevel warn
+  LogLevel warn
 
-        CustomLog <%= node['apache']['log_dir'] %>/access.log combined
-        ServerSignature Off
+  CustomLog <%= node['apache']['log_dir'] %>/access.log combined
+  ServerSignature Off
 </VirtualHost>
 ```
 
@@ -392,7 +394,7 @@ Now edit <code class="file-path">webserver.rb</code> to use the `firewall_rule` 
 
 ```ruby
 # ~/chef-repo/cookbooks/myapp/recipes/webserver.rb
-# install apache and configure its service
+# install Apache and configure its service
 include_recipe 'apache2::default'
 
 # create and enable our custom site
@@ -432,24 +434,6 @@ include_recipe 'myapp::user'
 include_recipe 'myapp::webserver'
 ```
 
-### TEST
-
-### TEST
-
-```bash
-$ getent passwd myapp
-myapp:x:497:501::/home/myapp:/bin/bash
-```
-
-```
-sudo /sbin/service httpd status
-
-cat /srv/apache/myface/index.html"
-Welcome to MyFace!
-
-browser
-```
-
 ## Verify your configuration
 
 ### 1. Upload your cookbook to the Chef server
@@ -457,12 +441,12 @@ browser
 ```bash
 # ~/chef-repo/cookbooks/myapp
 $ berks upload
-Uploaded apache2 (3.0.1) to: 'https://api.opscode.com:443/organizations/tpetchel-mar15'
-Uploaded apt (2.6.1) to: 'https://api.opscode.com:443/organizations/tpetchel-mar15'
-Uploaded firewall (0.11.8) to: 'https://api.opscode.com:443/organizations/tpetchel-mar15'
-Uploaded iptables (0.14.1) to: 'https://api.opscode.com:443/organizations/tpetchel-mar15'
-Uploaded logrotate (1.8.0) to: 'https://api.opscode.com:443/organizations/tpetchel-mar15'
-Uploaded myapp (0.1.0) to: 'https://api.opscode.com:443/organizations/tpetchel-mar15'
+Uploaded apache2 (3.0.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded apt (2.6.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded firewall (0.11.8) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded iptables (0.14.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded logrotate (1.8.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded myapp (0.1.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
 
 ### 2. Get a node to bootstrap
@@ -489,7 +473,7 @@ Here are three options for bootstrapping your node.
 
 #### Option 1: Use a user name and password
 
-This is what we did in [Manage a node](/manage-a-node/ubuntu/). From your workstation, run this command to bootstrap your node. Replace <code>{{address}}</code> with your remote node's external address, <code>{{user}}</code> with your username, and <code>{{password}}</code> with your password.
+This is what we did in [Manage a node](/manage-a-node/ubuntu/). From your workstation, run this command to bootstrap your node. Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
 ```bash
 # ~/chef-repo
@@ -501,10 +485,10 @@ $ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo
 This option is common when bootstrapping Amazon EC2 instances, where you have an identify file, but not necessarily a user name and password.
 
 ```bash
-$ knife bootstrap 52.10.205.36 --ssh-user {{user}} --sudo --identity-file {{identity-file}}  --node-name web_app_ubuntu --run-list 'recipe[myapp]'
+$ knife bootstrap 52.10.205.36 --ssh-user {{user}} --sudo --identity-file {identity-file}  --node-name web_app_ubuntu --run-list 'recipe[myapp]'
 ```
 
-The `--identity-file` option specifies the SSH identity file used for authentication. Replace {{identity-file}} with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>
+The `--identity-file` option specifies the SSH identity file used for authentication. Replace `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>
 
 #### Option 3: Use an existing node
 
@@ -523,37 +507,350 @@ lamp1
 
 ### Verify things
 
+Fetch details for user `myapp`.
+
 ```bash
-$ yup
+# ~
+$ getent passwd myapp
+myapp:x:999:1001::/home/myapp:/bin/bash
 ```
 
-## Configure MySQL
+Verify that `myuser` owns the default home page.
+
+```bash
+$ stat -c "%U %G" /srv/apache/myapp/index.html
+myapp myapp
+```
+
+Verify the `apache2` service is running.
+
+```bash
+# ~
+$ sudo service apache2 status
+ * apache2 is running
+```
+
+Verify that the home page is in the location we expect.
+
+```bash
+# ~
+$ more /srv/apache/myapp/index.html
+This is a placeholder
+```
+
+Verify that the web page is being served and is accessible externally.
+
+```bash
+# ~
+$ curl 52.10.205.36
+This is a placeholder
+```
+
+# Configure MySQL
+
+Now let's configure MySQL. Here you'll install the MySQL server and client packages, start its service, create a database, and seed it with a table and some sample data.
+
+For this part, we'll use 3 cookbooks from Chef Supermarket &ndash; [mysql2\_chef\_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem), [mysql](https://supermarket.chef.io/cookbooks/mysql), and [database](https://supermarket.chef.io/cookbooks/database).
+
+The `mysql2_chef_gem` cookbook installs the `mysql2` Ruby gem that enables our Chef code to communicate with MySQL. A Ruby _gem_ is a library.
+
+The `mysql` cookbook enables us to configure the MySQL server and client packages.
+
+The `database` cookbook enables us to configure our MySQL database instance.
+
+## 1. Reference the cookbooks we'll use
+
+We'll load the database cookbooks just like we did the `apt` and `apache2` cookbooks. Append 3 `depends` statements to <code class="file-path">metadata.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/myapp/metadata.rb
+name             'myapp'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures myapp'
+long_description 'Installs/Configures myapp'
+version          '0.1.0'
+
 depends 'apt'
 depends 'apache2'
+depends 'firewall'
 depends 'mysql2_chef_gem'
-depends 'database'
 depends 'mysql'
+depends 'database'
 ```
 
+## 2. Create the database recipe
+
+First, create a recipe named <code class="file-path">database.rb</code> to hold our database configuration code.
+
 ```bash
-$ chef generate recipe myapp database
+# ~/chef-repo
+$ chef generate recipe cookbooks/myapp database
+Compiling Cookbooks...
+Recipe: code_generator::recipe
+  * directory[cookbooks/myapp/spec/unit/recipes] action create (up to date)
+  * cookbook_file[cookbooks/myapp/spec/spec_helper.rb] action create_if_missing (up to date)
+  * template[cookbooks/myapp/spec/unit/recipes/database_spec.rb] action create_if_missing
+    - create new file cookbooks/myapp/spec/unit/recipes/database_spec.rb
+    - update content in file cookbooks/myapp/spec/unit/recipes/database_spec.rb from none to 6027f9
+    (diff output suppressed by config)
+  * template[cookbooks/myapp/recipes/database.rb] action create
+    - create new file cookbooks/myapp/recipes/database.rb
+    - update content in file cookbooks/myapp/recipes/database.rb from none to 97f98b
+    (diff output suppressed by config)
 ```
+
+## 3. Install MySQL
+
+Now let's install the MySQL client and service packages. We'll also need to install the `mysql2` Ruby gem before we configure MySQL.
+
+Add the following to <code class="file-path">database.rb</code>.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+# Configure the mysql2 Ruby gem
+mysql2_chef_gem 'default' do
+  action :install
+end
+
+# Configure the MySQL client
+mysql_client 'default' do
+  action :create
+end
+
+# Configure the MySQL service
+mysql_service 'default' do
+  initial_root_password 'learnchef_mysql'
+  action [:create, :start]
+end
+```
+
+The `mysql2_chef_gem` resource comes from the `mysql2_chef_gem` cookbook. The other two resources &ndash; `mysql_client` and `mysql_service` &ndash; come from the `mysql` cookbook.
+
+### Refactor
+
+Here's an opportunity to make things more reusable by separating our policy from our data. The `initial_root_password` attribute in the `mysql_service` resource can be turned into a node attribute.
+
+Add a default node attribute to our attributes file, <code class="file-path">default.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/myapp/attributes/default.rb
-[...]
+default['myapp']['user'] = 'myapp'
+default['myapp']['group'] = 'myapp'
 
-default['mysql']['server_root_password'] = 'learnchef'
+default['myapp']['name'] = 'myapp'
+default['myapp']['config'] = 'myapp.conf'
 
+default['apache']['docroot_dir'] = '/srv/apache/myapp'
+
+default['mysql']['server_root_password'] = 'learnchef_mysql'
+```
+
+Now replace the password with the node attribute.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+# Configure the mysql2 Ruby gem
+mysql2_chef_gem 'default' do
+  action :install
+end
+
+# Configure the MySQL client
+mysql_client 'default' do
+  action :create
+end
+
+# Configure the MySQL service
+mysql_service 'default' do
+  initial_root_password node['mysql']['server_root_password']
+  action [:create, :start]
+end
+```
+
+[WARN] Hard-coding the password is fine for learning purposes. But in practice, you never want to store your password directly in a Chef recipe or attribute file. We'll show you a better way in a later tutorial.
+
+## 2. Create the database
+
+Now that we have MySQL configured, let's set up the database. We'll name our database `myapp`.
+
+Let's continue the pattern by directly stating the configuration we want, and then going back and factoring our data from our policy.
+
+To set up our database, we'll use the `mysql_database` resource, which comes from the `database` cookbook. The configuration code might look like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+# Create the database instance
+mysql_database 'myapp' do
+  connection({
+    :host => '127.0.0.1',
+    :username => 'root',
+    :password => 'learnchef_mysql'
+  })
+  action :create
+end
+```
+
+This code configures a database named `myapp`, specifies that user connections are allowed from IP address 127.0.0.1 (localhost), and states that the database's user name is root and provides its password (TODO: Wordy, also should 'root' be our user?)
+
+[WARN] Remember, we're using hard-coding passwords for learning, but it's not a recommended practice!
+
+### Refactor
+
+Let's factor our the data parts so that our recipe is more reusable. We'll factor out the database name and the connection info (host name, user name, and password).
+
+Append the following to your default attributes file, <code class="file-path">default.rb</code>.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/attributes/default.rb
+default['myapp']['database']['dbname'] = 'myapp'
 default['myapp']['database']['host'] = '127.0.0.1'
 default['myapp']['database']['username'] = 'root'
 default['myapp']['database']['password'] = node['mysql']['server_root_password']
 ```
 
-[COMMENT] In practice, you never want to store your password in a source file. We'll show you a better way in a later tutorial.
+The entire file looks like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/attributes/default.rb
+default['myapp']['user'] = 'myapp'
+default['myapp']['group'] = 'myapp'
+
+default['myapp']['name'] = 'myapp'
+default['myapp']['config'] = 'myapp.conf'
+
+default['apache']['docroot_dir'] = '/srv/apache/myapp'
+
+default['mysql']['server_root_password'] = 'learnchef_mysql'
+
+default['myapp']['database']['dbname'] = 'myapp'
+default['myapp']['database']['host'] = '127.0.0.1'
+default['myapp']['database']['username'] = 'root'
+default['myapp']['database']['password'] = node['mysql']['server_root_password']
+```
+
+Replace our hard-coded attribute values with our attributes, like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+# Create the database instance
+mysql_database node['myapp']['database']['dbname'] do
+  connection({
+    :host => node['myapp']['database']['host'],
+    :username => node['myapp']['database']['username'],
+    :password => node['myapp']['database']['password']
+  })
+  action :create
+end
+```
+
+<code class="file-path">database.rb</code> now looks like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+# Configure the mysql2 Ruby gem
+mysql2_chef_gem 'default' do
+  action :install
+end
+
+# Configure the MySQL client
+mysql_client 'default' do
+  action :create
+end
+
+# Configure the MySQL service
+mysql_service 'default' do
+  initial_root_password node['mysql']['server_root_password']
+  action [:create, :start]
+end
+
+# Create the database instance
+mysql_database node['myapp']['database']['dbname'] do
+  connection({
+    :host => node['myapp']['database']['host'],
+    :username => node['myapp']['database']['username'],
+    :password => node['myapp']['database']['password']
+  })
+  action :create
+end
+```
+
+## 3. Create a MySQL user
+
+Like we did for our default home page, let's assign a user to our database. That way, we'll have a user that has just enough permissions to modify the system. To do so we'll use the `mysql_database_user`, which comes from the `database` cookbook.
+
+Setting up a user named `myapp_db` might look like this. Don't write any code yet &ndash; just follow along.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+# Add a database user
+mysql_database_user 'myapp_db' do
+  connection(
+    :host => '127.0.0.1',
+    :username => 'root',
+    :password => 'learnchef_mysql'
+  )
+  password 'myapp_replaceme'
+  database_name 'myapp'
+  host '127.0.0.1'
+  action [:create, :grant]
+end
+```
+
+We already have most of the node attributes we'd need to make this more reusable. The new parts we'll need are the name of the database user and its password.
+
+### Refactor
+
+Append the following to your default attributes file, <code class="file-path">default.rb</code>.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/attributes/default.rb
+default['myapp']['database']['app']['username'] = 'myapp_db'
+default['myapp']['database']['app']['password'] = 'myapp_replaceme'
+```
+
+The entire file looks like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/attributes/default.rb
+default['myapp']['user'] = 'myapp'
+default['myapp']['group'] = 'myapp'
+
+default['myapp']['name'] = 'myapp'
+default['myapp']['config'] = 'myapp.conf'
+
+default['apache']['docroot_dir'] = '/srv/apache/myapp'
+
+default['mysql']['server_root_password'] = 'learnchef_mysql'
+
+default['myapp']['database']['dbname'] = 'myapp'
+default['myapp']['database']['host'] = '127.0.0.1'
+default['myapp']['database']['username'] = 'root'
+default['myapp']['database']['password'] = node['mysql']['server_root_password']
+
+default['myapp']['database']['app']['username'] = 'myapp_db'
+default['myapp']['database']['app']['password'] = 'myapp_replaceme'
+```
+
+Our resource now looks like this after apply our new node attributes.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/attributes/default.rb
+# Add a database user
+mysql_database_user node['myapp']['database']['app']['username'] do
+  connection(
+    :host => node['myapp']['database']['host'],
+    :username => node['myapp']['database']['username'],
+    :password => node['myapp']['database']['password']
+  )
+  password node['myapp']['database']['app']['password']
+  database_name node['myapp']['database']['dbname']
+  host node['myapp']['database']['host']
+  action [:create, :grant]
+end
+```
+
+Append this `mysql_database_user` resource to our database recipe, making the entire file look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/myapp/recipes/database.rb
@@ -581,6 +878,175 @@ mysql_database node['myapp']['database']['dbname'] do
   action :create
 end
 
+# Add a database user
+mysql_database_user node['myapp']['database']['app']['username'] do
+  connection(
+    :host => node['myapp']['database']['host'],
+    :username => node['myapp']['database']['username'],
+    :password => node['myapp']['database']['password']
+  )
+  password node['myapp']['database']['app']['password']
+  database_name node['myapp']['database']['dbname']
+  host node['myapp']['database']['host']
+  action [:create, :grant]
+end
+```
+
+## 4. Create a table and some sample data
+
+Now we have the database set up, along with a user to manage it. Now let's create a database table along with some sample data to test with.
+
+To do so, we'll create a MySQL script that defines the table and our sample data, and then invoke that script from our recipe.
+
+Start by running the following `chef generate` command to create a file that will hold our script.
+
+```bash
+# ~/chef-repo
+$ chef generate file cookbooks/myapp create-tables.sql
+Compiling Cookbooks...
+Recipe: code_generator::cookbook_file
+  * directory[cookbooks/myapp/files/default] action create
+    - create new directory cookbooks/myapp/files/default
+  * template[cookbooks/myapp/files/default/create-tables.sql] action create
+    - create new file cookbooks/myapp/files/default/create-tables.sql
+    - update content in file cookbooks/myapp/files/default/create-tables.sql from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+Now modify <code class="file-path">create-tables.sql</code> like this.
+
+TODO: Not putting the newline strips the word "CREATE" from the output
+
+```sql
+-- ~/chef-repo/cookbooks/myapp/files/default/create-tables.sql
+
+CREATE TABLE customers(
+  id CHAR (32) NOT NULL,
+  PRIMARY KEY(id),
+  first_name VARCHAR(64),
+  last_name VARCHAR(64),
+  email VARCHAR(64)
+);
+
+INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Jane', 'Smith', 'jane.smith@example.com' );
+INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'David', 'Richardson', 'drichards@example.com' );
+```
+
+We'll use the `cookbook_file` resource to copy our SQL script to a temporary directory. Don't write any code yet &ndash; just follow along.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+# Write schema seed file to filesystem
+cookbook_file '/tmp/create-tables.sql' do
+  source 'create-tables.sql'
+  owner 'root'
+  group 'root'
+  mode '0600'
+end
+```
+
+The `cookbook_file` resource is a built-in Chef resource that XXX.
+
+Then we'll use the `execute` resource to run the script, like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+# Seed the database with a table and test data
+execute 'initialize database' do
+  command "mysql -h 127.0.0.1 -u myapp_db -pmyapp_replaceme -D myapp < /tmp/create-tables.sql"
+  not_if  "mysql -h 127.0.0.1 -u myapp_db -pmyapp_replaceme -D myapp -e 'describe customers;'"
+end
+```
+
+No resource type exists that can execute a SQL script. That's why we use the `execute` resource. The `execute` resource enables you to run any arbitrary command.
+
+But remember that Chef takes a test and repair approach to how it keeps your servers in line with your policy. Therefore, you want to be able to run your cookbook as many times as you like and only update the system when necessary.
+
+The `not_if` attribute is an example of a [guard](https://docs.chef.io/resource_common.html#guards). A guard enables you to execute a resource based on a condition. In our case, we don't want to run the script if the `customers` table already exists.
+
+[COMMENT] Something about `only_if`...
+
+### Refactor
+
+Like we've done before, let's look at how we can factor out our data. In our `cookbook_file` resource, we specified the destination path for our SQL script. Let's create a node attribute to describe that.
+
+Append an attribute to your default attribute file, <code class="file-path">default.rb</code>, making the entire file look like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/attributes/default.rb
+default['myapp']['user'] = 'myapp'
+default['myapp']['group'] = 'myapp'
+
+default['myapp']['name'] = 'myapp'
+default['myapp']['config'] = 'myapp.conf'
+
+default['apache']['docroot_dir'] = '/srv/apache/myapp'
+
+default['mysql']['server_root_password'] = 'learnchef_mysql'
+
+default['myapp']['database']['dbname'] = 'myapp'
+default['myapp']['database']['host'] = '127.0.0.1'
+default['myapp']['database']['username'] = 'root'
+default['myapp']['database']['password'] = node['mysql']['server_root_password']
+
+default['myapp']['database']['app']['username'] = 'myapp_db'
+default['myapp']['database']['app']['password'] = 'myapp_replaceme'
+
+default['myapp']['database']['seed_file'] ='/tmp/create-tables.sql'
+```
+
+We can also factor out most parts of our `execute` resource, such as the host name, user name, and password. We already have node attributes to describe those, so we're all ready to add code to our recipe.
+
+Append the following to your database recipe.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+# Write schema seed file to filesystem
+cookbook_file node['myapp']['database']['seed_file'] do
+  source 'create-tables.sql'
+  owner 'root'
+  group 'root'
+  mode '0600'
+end
+
+# Seed the database with a table and test data
+execute 'initialize database' do
+  command "mysql -h #{node['myapp']['database']['host']} -u #{node['myapp']['database']['app']['username']} -p#{node['myapp']['database']['app']['password']} -D
+ #{node['myapp']['database']['dbname']} < #{node['myapp']['database']['seed_file']}"
+  not_if  "mysql -h #{node['myapp']['database']['host']} -u #{node['myapp']['database']['app']['username']} -p#{node['myapp']['database']['app']['password']} -D
+ #{node['myapp']['database']['dbname']} -e 'describe customers;'"
+end
+```
+
+The entire recipe looks like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/database.rb
+mysql2_chef_gem 'default' do
+  action :install
+end
+
+mysql_client 'default' do
+  action :create
+end
+
+# Configure MySQL service
+mysql_service 'default' do
+  initial_root_password 'learnchef'
+  action [:create, :start]
+end
+
+# Create the database instance
+mysql_database node['myapp']['database']['dbname'] do
+  connection({
+    :host => node['myapp']['database']['host'],
+    :username => node['myapp']['database']['username'],
+    :password => node['myapp']['database']['password']
+  })
+  action :create
+end
+
+# Add a database user
 mysql_database_user node['myapp']['database']['app']['username'] do
   connection(
     :host => node['myapp']['database']['host'],
@@ -595,103 +1061,125 @@ end
 
 # Write schema seed file to filesystem
 cookbook_file node['myapp']['database']['seed_file'] do
-  source 'myapp-create.sql'
+  source 'create-tables.sql'
   owner 'root'
   group 'root'
   mode '0600'
 end
 
-# Seed database with test data
+# Seed the database with a table and test data
 execute 'initialize database' do
-  command "mysql -h #{node['myapp']['database']['host']} -u #{node['myapp']['dat
-abase']['app']['username']} -p#{node['myapp']['database']['app']['password']} -D
- #{node['myapp']['database']['dbname']} < #{node['myapp']['database']['seed_file
-']}"
-  not_if  "mysql -h #{node['myapp']['database']['host']} -u #{node['myapp']['dat
-abase']['app']['username']} -p#{node['myapp']['database']['app']['password']} -D
- #{node['myapp']['database']['dbname']} -e 'describe customers;'"
+  command "mysql -h #{node['myapp']['database']['host']} -u #{node['myapp']['database']['app']['username']} -p#{node['myapp']['database']['app']['password']} -D #{node['myapp']['database']['dbname']} < #{node['myapp']['database']['seed_file']}"
+  not_if  "mysql -h #{node['myapp']['database']['host']} -u #{node['myapp']['database']['app']['username']} -p#{node['myapp']['database']['app']['password']} -D  #{node['myapp']['database']['dbname']} -e 'describe customers;'"
 end
 ```
 
-```bash
-# ~/chef-repo
-$ chef generate file cookbooks/myapp create-tables.sql
-Compiling Cookbooks...
-Recipe: code_generator::cookbook_file
-  * directory[cookbooks/myapp/files/default] action create
-    - create new directory cookbooks/myapp/files/default
-  * template[cookbooks/myapp/files/default/create-tables.sql] action create
-    - create new file cookbooks/myapp/files/default/create-tables.sql
-    - update content in file cookbooks/myapp/files/default/create-tables.sql from none to e3b0c4
-    (diff output suppressed by config)
-thomaspetchel@ubuntu:~/chef-repo$ chef generate file cookbooks/myapp create-test-data.sql
-Compiling Cookbooks...
-Recipe: code_generator::cookbook_file
-  * directory[cookbooks/myapp/files/default] action create (up to date)
-  * template[cookbooks/myapp/files/default/create-test-data.sql] action create
-    - create new file cookbooks/myapp/files/default/create-test-data.sql
-    - update content in file cookbooks/myapp/files/default/create-test-data.sql from none to e3b0c4
-    (diff output suppressed by config)
+## 5. Set the database recipe to run
+
+Append an `include_recipe` statement to your default recipe, <code class="file-path">default.rb</code>. The entire file will look like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/default.rb
+include_recipe 'apt::default'
+include_recipe 'myapp::user'
+include_recipe 'myapp::webserver'
+include_recipe 'myapp::database'
 ```
 
-```sql
-# ~/chef-repo/cookbooks/myapp/files/default/create-tables.sql
-CREATE TABLE customers(
- id CHAR (32) NOT NULL,
- PRIMARY KEY(id),
- first_name VARCHAR(64),
- last_name VARCHAR(64),
- email VARCHAR(64)
-);
-```
-
-```sql
-# ~/chef-repo/cookbooks/myapp/files/default/create-test-data.sql
-INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Jane', 'Smith', 'jane.smith@example.com' );
-INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'David', 'Richardson', 'drichards@example.com' );
-```
-
-```
-# Write schema seed file to filesystem
-cookbook_file node['myapp']['database']['seed_file'] do
-  source 'myapp-create.sql'
-  owner 'root'
-  group 'root'
-  mode '0600'
-end
-```
-
-## Test your configuration
-
-### Update Berkshelf
+## 6. Bump the version
 
 ```bash
-$ hi
+# ~/chef-repo/cookbooks/myapp/metadata.rb
+name             'myapp'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures myapp'
+long_description 'Installs/Configures myapp'
+version          '0.2.0'
 ```
 
-### Upload cookbooks to Chef server
+## Verify your configuration
+
+Let's upload your updated cookbook, run it on your bootstrapped node, and verify the result.
+
+### 1. Upload your cookbook to the Chef server
 
 ```bash
-$ hello
+# ~/chef-repo/cookbooks/myapp
+$ berks install
+Resolving cookbook dependencies...
+Fetching 'myapp' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Using apache2 (3.0.1)
+Using apt (2.6.1)
+Using chef-sugar (2.5.0)
+Using build-essential (2.1.3)
+Using database (4.0.3)
+Using firewall (0.11.8)
+Using iptables (0.14.1)
+Using mariadb (0.2.12)
+Using myapp (0.2.0) from source at .
+Using mysql (6.0.15)
+Using mysql2_chef_gem (1.0.1)
+Using openssl (4.0.0)
+Installing logrotate (1.9.0)
+Using postgresql (3.4.18)
+Using rbac (1.0.2)
+Using resource-control (0.1.1)
+Using smf (2.2.5)
+Using yum (3.5.3)
+Using yum-epel (0.6.0)
+Using yum-mysql-community (0.1.13)
 ```
 
-### Converge the node
+Notice that the `myapp` cookbook was uploaded because it's version changed.
 
 ```bash
-$ here's how
+# ~/chef-repo/cookbooks/myapp
+$ berks upload
+Skipping apache2 (3.0.1) (frozen)
+Skipping apt (2.6.1) (frozen)
+Uploaded build-essential (2.1.3) to: 'https://api.opscode.com:443/organizations/your-org-name'
+[...]
+Uploaded myapp (0.2.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
+[...]
 ```
 
-(if already bootstrapped, here's how to modify the run-list...)
+### Apply your cookbook
+
+It's time to apply what you've done so far to your node. After you configured Apache, you bootstrapped a node and ran your cookbooks. To update your node's configuration, let's run `knife ssh` to apply your updated cookbook.
+
+Choose the same option you did earlier when you bootstrapped your node.
+
+#### Option 1: Use a user name and password
+
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+
+```bash
+# ~/chef-repo/cookbooks/myapp
+$ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ssh-password '{password}'
+```
+
+#### Option 2: Use key-based authentication
+
+```bash
+# ~/chef-repo/cookbooks/myapp
+$ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --identity-file {identity-file}
+```
+
+Remember, `{identity-file}` is your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>
 
 ### Verify things
 
-Verify that the mysqld service is running on your vagrant guest by running the following command on Mac OS X/Linux:
+Verify that the MySQL service is running.
 
 ```bash
-$ sudo /sbin/service mysqld status
-mysqld (pid  8525) is running...
+$ sudo netstat -tap | grep mysql
+tcp        0      0 *:mysql                 *:*                     LISTEN      27856/mysqld
 ```
 
+<!-- TODO
 Also check that MySQL is enabled to start on boot on Mac OS X/Linux:
 
 ```bash
@@ -701,114 +1189,157 @@ mysqld         	0:off	1:off	2:on	3:on	4:on	5:on	6:off
 
 If the service is set to be activated at runlevels 3 and 5, then MySQL is enabled to run under full multi-user text mode and full multi-user graphical mode, which is exactly the desired behavior.
 
-Run mysqlshow on your vagrant guest to display database information, verifying that the myface database was created on Mac OS X/Linux:
+-->
+
+Run `mysqlshow` to display database information.
 
 ```bash
-mysqlshow -uroot -prootpass"
+$ mysqlshow -h 127.0.0.1 -uroot -plearnchef_mysql
 +--------------------+
 |     Databases      |
 +--------------------+
 | information_schema |
-| myface             |
+| myapp              |
 | mysql              |
-| test               |
+| performance_schema |
 +--------------------+
 ```
 
-Note that myface is listed as a database name - success!
+Note that `myapp` is listed as a database name - success!
 
-Check to see if the myface-app user is enabled as a local user by running the following mysql command on Mac OS X/Linux:
+Run the following `mysql` command to verify that user `myapp_db` user is enabled as a local user.
 
 ```bash
-mysql -uroot -prootpass -e "select user,host from mysql.user;"
-+------------+------------------+
-| user       | host             |
-+------------+------------------+
-| repl       | %                |
-| root       | 127.0.0.1        |
-|            | localhost        |
-| myface_app | localhost        |
-| root       | localhost        |
-|            | myface-berkshelf |
-+------------+------------------+
+$ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -e "select user,host from mysql.user;"
++----------+-----------+
+| user     | host      |
++----------+-----------+
+| root     | %         |
+| myapp_db | 127.0.0.1 |
++----------+-----------+
 ```
 
-As you can see above, the myface_app@localhost user exists, so our cookbook did what was expected.
+As you can see above, the myapp_db@127.0.0.1 user exists, so our cookbook did what was expected.
 
 Also check to see that the myface_app user only has rights on the myface databse on Mac OS X/Linux:
 
 ```bash
-mysql -uroot -prootpass -e "show grants for 'myface_app'@'localhost';"'
-Grants for myface_app@localhost
-GRANT USAGE ON *.* TO 'myface_app'@'localhost' IDENTIFIED BY PASSWORD '*90BA3AC0BFDE07AE334CA523CB27167AE33825B9'
-GRANT ALL PRIVILEGES ON `myface`.* TO 'myface_app'@'localhost'
+$ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -e "show grants for 'myapp_db'@'127.0.0.1';"
++-----------------------------------------------------------------------------------------------------------------+
+| Grants for myapp_db@127.0.0.1                                                                                   |
++-----------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'myapp_db'@'127.0.0.1' IDENTIFIED BY PASSWORD '*B28723EAECAD3130F237F666A671416DAED862F0' |
+| GRANT ALL PRIVILEGES ON `myapp`.* TO 'myapp_db'@'127.0.0.1'                                                     |
++-----------------------------------------------------------------------------------------------------------------+
 ```
 
 Run the following mysql command to dump the contents of the users table on Mac OS X/Linux:
 
 ```bash
-$ mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e "select id,user_name from users;"
-id                                  user_name
-216e03c2-ffe4-11e2-b1ad-080027c8	jtimberman
-216e0890-ffe4-11e2-b1ad-080027c8	someara
-216e0bce-ffe4-11e2-b1ad-080027c8	jwinsor
-216e0eda-ffe4-11e2-b1ad-080027c8	cjohnson
-216e11e6-ffe4-11e2-b1ad-080027c8	mbower
+$ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -Dmyapp -e "select id,first_name from customers;"
++----------------------------------+------------+
+| id                               | first_name |
++----------------------------------+------------+
+| 0f81375d-c74e-11e4-8216-02a60467 | Jane       |
+| 0f818a14-c74e-11e4-8216-02a60467 | David      |
++----------------------------------+------------+
 ```
 
-The output should look similar to what you see above - the data from the INSERT INTO statemens in the SQL script.
+The output should look similar to what you see above - the data from the INSERT INTO statements in the SQL script.
 
 ## Configure PHP
 
+In this part, you'll configure PHP and create a basic PHP app that reads the records from our MySQL database and displays them on the web page. You'll be working in the <code class="file-path">webserver.rb</code> recipe that you created when you set up Apache.
+
+We already did most of the ground work already &ndash; for example we've already set up a place to hold our custom site and we've opened up port 80 to incoming traffic.
+
+## 1. Reference the php cookbook
+
+For this part we'll need the [php](https://supermarket.chef.io/cookbooks/php) cookbook from Chef Supermarket.
+
+Append the line `depends 'php'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
+
 ```ruby
-# ~/chef-repo/cookbooks/myapp/attributes/default.rb
-default['myapp']['user'] = 'myapp'
-default['myapp']['group'] = 'myapp'
+# ~/chef-repo/cookbooks/myapp/metadata.rb
+name             'myapp'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures myapp'
+long_description 'Installs/Configures myapp'
+version          '0.2.0'
 
-default['apache']['default_site_enabled'] = true
-default['apache']['docroot_dir'] = '/srv/apache/myapp'
-default['apache']['mpm'] = 'prefork'
-
-default['myface']['user'] = 'myface'
-default['myface']['group'] = 'myface'
-default['myface']['name'] = 'myface'
-default['myface']['config'] = 'myface.conf'
-# default['myface']['document_root'] = '/srv/apache/myface'
+depends 'apt'
+depends 'apache2'
+depends 'firewall'
+depends 'mysql2_chef_gem'
+depends 'mysql'
+depends 'database'
+depends 'php'
 ```
+
+## 2. Install PHP
+
+Recall that our Apache recipe looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/myapp/recipes/webserver.rb
+# install Apache and configure its service
 include_recipe 'apache2::default'
+
+# create and enable our custom site
+web_app node['myapp']['name'] do
+  template "#{node['myapp']['config']}.erb"
+end
+
+# create document root
+directory node['apache']['docroot_dir'] do
+  recursive true
+end
+
+# write a default home page
+file "#{node['apache']['docroot_dir']}/index.html" do
+  content 'This is a placeholder'
+  mode '0644'
+  owner node['myapp']['user']
+  group node['myapp']['group']
+end
+
+# open port 80 to incoming traffic
+firewall_rule 'http' do
+  port 80
+  protocol :tcp
+  action :allow
+end
+```
+
+Now we're going to set up PHP. To do so, we'll first install the `mod_php5` module, which enables Apache to interpret PHP files. Then we'll install the `php5-mysql` package, which enables PHP code to connect to MySQL databases.
+
+In <code class="file-path">webserver.rb</code>, after the first line, add an `include_recipe` line to install the `mod_php5` Apache module and a `package` resource to install `php5-mysql`, making the start of the file look like this.
+
+```ruby
+# ~/chef-repo/cookbooks/myapp/recipes/webserver.rb
+# install Apache and configure its service
+include_recipe 'apache2::default'
+# install the mod_php5 Apache module
 include_recipe 'apache2::mod_php5'
 
+# install php5-mysql
 package 'php5-mysql' do
   action :install
   notifies :restart, 'service[apache2]'
 end
 
-# disable default site
-apache_site '000-default' do
-  enable false
-end
-
-web_app 'myapp' do
-  template 'apache2.conf.erb'
-  docroot node['myapp']['document_root']
-end
-
-# write site
-template "#{node['apache']['docroot_dir']}/index.php" do
-  source 'index.php.erb'
-  mode '0644'
-end
-```
-
-```ruby
-# ~/chef-repo/cookbooks/myapp/metadata.rb
 [...]
-depends 'php'
 ```
 
+Apache needs to be restarted to enable PHP to use the `php5-mysql` package. To do that, we use the `notifies` attribute. This [notifies attribute](https://docs.chef.io/resource_common.html#notifications) performs the `:restart` action on the `apache2` service. But it does so only when it needs to; that is, only when the `package` resource performs the `:install` action.
+
+## 3. Write the PHP application
+
+Now we need to replace our default home page, <code class="file-path">index.html</code> with a PHP script, which we'll name <code class="file-path">index.php</code>. The PHP script will read each record from our `customers` database table and display it on the page.
+
+First, run the following `chef generate` command to create a file to hold our PHP script.
 
 ```bash
 # ~/chef-repo
@@ -823,142 +1354,158 @@ Recipe: code_generator::template
     (diff output suppressed by config)
 ```
 
-```html
-# ~/chef-repo/cookbooks/myapp/templates/default/index.php.erb
-<?php echo "Hello PHP World, 2+2 is " . (2+2); ?>
-Text outside code block is printed normally to web page.
-<br>
+How let's write our PHP application. Add the following to <code class="file-path">index.php.erb</code>.
+
+```php
 <?php
-    /* database.php - Use mysql database from php
-     * (c) 200309 Tero.Karvinen <at-sign> iki.fi, adapted from php.net
-     * See http://iki.fi/karvinen Linux Apache MySQL PHP tutorial. */
+// ~/chef-repo/cookbooks/myapp/templates/default/index.php.erb
+$servername = "127.0.0.1";
+$username = "myapp_db";
+$password = "myapp_replaceme";
+$dbname = "myapp";
 
-    print "<%= node['myapp']['database']['app']['password'] %>";
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-    /* Connect to database */
-    $link = mysql_connect("127.0.0.1", "myapp_app", "<%= node['myapp']['database
-']['app']['password'] %>")
-        or die("Could not connect : " . mysql_error());
-    print "Connected successfully";
-    mysql_select_db("myapp") or die("Could not select database");
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-    /* Perform SQL query */
-    $query = "SELECT * FROM customers";
-    $result = mysql_query($query)
-	or die("Query failed : " . mysql_error());
+// Perform SQL query
+$sql = "SELECT * FROM customers";
+$result = $conn->query($sql);
 
-    /* Print results in HTML */
-    print "<table>\n";
-    while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
-        print "\t<tr>\n";
-        foreach ($line as $col_value) {
-            print "\t\t<td>$col_value</td>\n";
-        }
-        print "\t</tr>\n";
+if ($result->num_rows > 0) {
+    echo "<table>\n";
+    // Output data of each row
+    while($row = $result->fetch_assoc()) {
+      echo "\t<tr>\n";
+      foreach ($row as $col_value) {
+          print "\t\t<td>$col_value</td>\n";
+      }
+      echo "\t</tr>\n";
     }
-    print "</table>\n";
-    mysql_free_result($result);
+    echo "</table>";
+} else {
+    echo "0 results";
+}
 
-    /* Close connection */
-    mysql_close($link);
+// Close connection
+$conn->close();
 ?>
 ```
 
-```conf
-# myface/templates/default/apache2.conf.erb
-# Managed by Chef for <%= node['hostname'] %>
-<VirtualHost *:80>
-        ServerAdmin <%= node['apache']['contact'] %>
-
-        DocumentRoot <%= node['myface']['document_root'] %>
-        <Directory />
-                Options FollowSymLinks
-                AllowOverride None
-        </Directory>
-        <Directory <%= node['myface']['document_root'] %>>
-                Options Indexes FollowSymLinks MultiViews
-                AllowOverride None
-                Order allow,deny
-                allow from all
-        </Directory>
-
-        ErrorLog <%= node['apache']['log_dir'] %>/error.log
-
-        LogLevel warn
-
-        CustomLog <%= node['apache']['log_dir'] %>/access.log combined
-        ServerSignature Off
-</VirtualHost>
-```
-
--- --
+## 6. Bump the version
 
 ```bash
-mysql -uroot -plearnchef -h 127.0.0.1
+# ~/chef-repo/cookbooks/myapp/metadata.rb
+name             'myapp'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures myapp'
+long_description 'Installs/Configures myapp'
+version          '0.3.0'
 ```
+
+## Verify your configuration
+
+Let's upload your updated cookbook, run it on your bootstrapped node, and verify the result.
+
+### 1. Upload your cookbook to the Chef server
 
 ```bash
-$ mysqlshow -uroot -plearnchef -h 127.0.0.1
-+--------------------+
-|     Databases      |
-+--------------------+
-| information_schema |
-| myapp              |
-| mysql              |
-| performance_schema |
-+--------------------+
+# ~/chef-repo/cookbooks/myapp
+$ berks install
+Resolving cookbook dependencies...
+Fetching 'myapp' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Using apache2 (3.0.1)
+Using apt (2.6.1)
+Using build-essential (2.1.3)
+Using chef-sugar (2.5.0)
+Using database (4.0.3)
+Using iptables (0.14.1)
+Using logrotate (1.9.0)
+Using mariadb (0.2.12)
+Using firewall (0.11.8)
+Using myapp (0.3.0) from source at .
+Using mysql (6.0.15)
+Using mysql2_chef_gem (1.0.1)
+Using openssl (4.0.0)
+Using postgresql (3.4.18)
+Using rbac (1.0.2)
+Using resource-control (0.1.1)
+Using smf (2.2.5)
+Using yum (3.5.3)
+Using yum-epel (0.6.0)
+Using yum-mysql-community (0.1.13)
 ```
 
-```ruby
-mysql_database_user node['myapp']['database']['app']['username'] do
-  connection(
-    :host => node['myapp']['database']['host'],
-    :username => node['myapp']['database']['username'],
-    :password => node['myapp']['database']['password']
-  )
-  password node['myapp']['database']['app']['password']
-  database_name node['myapp']['database']['dbname']
-  host node['myapp']['database']['host']
-  action [:create, :grant]
-end
-```
+Notice that the `myapp` cookbook was uploaded because it's version changed.
 
 ```bash
-$ mysql -uroot -plearnchef -h 127.0.0.1 -e "show grants for 'myapp_app'@'127.0.0.1';"
-+------------------------------------------------------------------------------------------------------------------+
-| Grants for myapp_app@127.0.0.1                                                                                   |
-+------------------------------------------------------------------------------------------------------------------+
-| GRANT USAGE ON *.* TO 'myapp_app'@'127.0.0.1' IDENTIFIED BY PASSWORD '*1B438F10E5B3722EE485F67EAC843B1CA77E0543' |
-| GRANT ALL PRIVILEGES ON `myapp`.* TO 'myapp_app'@'127.0.0.1'                                                     |
-+------------------------------------------------------------------------------------------------------------------+
+# ~/chef-repo/cookbooks/myapp
+$ berks upload
+$ berks upload
+Skipping apache2 (3.0.1) (frozen)
+Skipping apt (2.6.1) (frozen)
+Skipping build-essential (2.1.3) (frozen)
+Skipping chef-sugar (2.5.0) (frozen)
+Skipping database (4.0.3) (frozen)
+Skipping firewall (0.11.8) (frozen)
+Skipping iptables (0.14.1) (frozen)
+Skipping logrotate (1.9.0) (frozen)
+Skipping mariadb (0.2.12) (frozen)
+Uploaded myapp (0.3.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Skipping mysql (6.0.15) (frozen)
+Skipping mysql2_chef_gem (1.0.1) (frozen)
+Skipping openssl (4.0.0) (frozen)
+Skipping postgresql (3.4.18) (frozen)
+Skipping rbac (1.0.2) (frozen)
+Skipping resource-control (0.1.1) (frozen)
+Skipping smf (2.2.5) (frozen)
+Skipping yum (3.5.3) (frozen)
+Skipping yum-epel (0.6.0) (frozen)
+Skipping yum-mysql-community (0.1.13) (frozen)
 ```
 
-# Managed by Chef for <%= node['hostname'] %>
-<VirtualHost *:80>
-        ServerAdmin <%= node['apache']['contact'] %>
+### Apply your cookbook
 
-        DocumentRoot <%= node['myapp']['document_root'] %>
-        <Directory />
-                Options FollowSymLinks
-                AllowOverride None
-        </Directory>
-        <Directory <%= node['myapp']['document_root'] %>>
-                Options Indexes FollowSymLinks MultiViews
-                AllowOverride None
-                Order allow,deny
-                allow from all
-        </Directory>
+It's time to apply what you've done so far to your node. After you configured Apache, you bootstrapped a node and ran your cookbooks. After you configured MySQL, you ran `knife ssh` to apply your updated cookbook. Let's do the same for {our work on the PHP part}.
 
-        ErrorLog <%= node['apache']['log_dir'] %>/error.log
+Here's a reminder of how ...
 
-        LogLevel warn
+#### Option 1: Use a user name and password
 
-        CustomLog <%= node['apache']['log_dir'] %>/access.log combined
-        ServerSignature Off
-</VirtualHost>
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+
+```bash
+# ~/chef-repo/cookbooks/myapp
+$ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ssh-password '{password}'
+```
+
+#### Option 2: Use key-based authentication
+
+```bash
+# ~/chef-repo/cookbooks/myapp
+$ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --identity-file {identity-file}
+```
+
+Remember, `{identity-file}` is your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>
+
+### Verify things
+
+There are a number of things we can do to verify that PHP was installed properly.
+![registration page](/assets/images/ubuntu/webapp_result.png)
 
 ## Summary
 
+Something about how you can reuse this (reference cookbook, replace attributes) - perhaps point to hierarchy of attribute precedence.
+
 Credit: This tutorial was adapted from http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/
 
-[iptables]: http://en.wikipedia.org/wiki/Iptables
+Exercises:
+
+Delete the seed file after using it (you don't have to guard this because ...)
