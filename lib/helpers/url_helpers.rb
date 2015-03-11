@@ -29,4 +29,8 @@ module URLHelpers
   def learn_chef_twitter_url
     'https://twitter.com/learnchef'
   end
+
+  def learn_chef_url
+    'https://learn.chef.io'
+  end
 end
