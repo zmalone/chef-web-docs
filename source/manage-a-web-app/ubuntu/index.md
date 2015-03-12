@@ -795,6 +795,8 @@ $ curl 52.10.205.36
 
 Great work! The `myapp` user and Apache are all set up. Now that we have confidence that things are working so far, we can now move on to setting up MySQL and PHP.
 
+You can now close your SSH session.
+
 # Configure MySQL
 
 Now let's configure MySQL. Here you'll install the MySQL server and client packages, start its service, create a database, and seed it with a table and some sample data.
@@ -1343,9 +1345,13 @@ include_recipe 'myapp::webserver'
 include_recipe 'myapp::database'
 ```
 
-## 6. Bump the version
+## 6. Increment the cookbook's version
 
-We're done writing our configuration code for the database portion of our app. Before we can upload our updated cookbook, we need to increment its version. Otherwise, the upload process won't detect that any changes were made. Plus, it's good to 
+We're done writing our configuration code for the database portion of our app. Before we can upload our updated cookbook, we need to increment its version. Otherwise, the upload process won't detect that any changes were made. Plus, it's best to ensure that every node receives the identical copy of a given cookbook version. Otherwise, two nodes might appear to be running the same cookbook version, but behave differently &ndash; and it would be difficult to track down why!
+
+Most Chef cookbooks follow the [semantic versioning](http://semver.org) scheme. Our cookbook is compatible with the previous version &ndash; we simply added functionality &ndash; so we'll bump the middle number.
+
+Modify the `version` field in <code class="file-path">metadata.rb</code> from '0.1.0' to '0.2.0', like this.
 
 ```bash
 # ~/chef-repo/cookbooks/myapp/metadata.rb
@@ -1360,9 +1366,31 @@ version          '0.2.0'
 
 # Run and confirm your database configuration
 
-Let's upload your updated cookbook, run it on your bootstrapped node, and verify the result.
+Let's upload version 0.2.0 of our web application cookbook and its dependencies, run it on our node, and verify that the database portion is configured as we expect.
 
-### 1. Upload your cookbook to the Chef server
+## 1. Add cookbook dependencies to your Berksfile
+
+First, you need to list your cookbook dependencies in your <code class="file-path">Berksfile</code>.
+
+Add the 3 database cookbooks that we depend on to your <code class="file-path">Berksfile</code>, making the entire file look like this.
+
+```conf
+# ~/chef-repo/cookbooks/myapp/Berksfile
+source "https://supermarket.chef.io"
+
+metadata
+
+cookbook 'apt'
+cookbook 'apache2'
+cookbook 'firewall'
+cookbook 'mysql2_chef_gem'
+cookbook 'mysql'
+cookbook 'database'
+```
+
+## 2. Use Berkshelf to install your dependencies
+
+Now run `berks install` to install the cookbooks on your workstation.
 
 ```bash
 # ~/chef-repo/cookbooks/myapp
@@ -1392,7 +1420,11 @@ Using yum-epel (0.6.0)
 Using yum-mysql-community (0.1.13)
 ```
 
-Notice that the `myapp` cookbook was uploaded because it's version changed.
+[TODO: Update output to match a clean machine]
+
+## 3. Use Berkshelf to upload the cookbooks to the Chef server
+
+Now run `berks upload` to upload everything to the Chef server.
 
 ```bash
 # ~/chef-repo/cookbooks/myapp
@@ -1405,13 +1437,19 @@ Uploaded myapp (0.2.0) to: 'https://api.opscode.com:443/organizations/your-org-n
 [...]
 ```
 
-### Apply your cookbook
+[TODO: Update output to match a clean machine]
 
-It's time to apply what you've done so far to your node. After you configured Apache, you bootstrapped a node and ran your cookbooks. To update your node's configuration, let's run `knife ssh` to apply your updated cookbook.
+Notice that the `myapp` cookbook was uploaded because it's version changed.
 
-Choose the same option you did earlier when you bootstrapped your node.
+## 4. Apply your cookbook
 
-#### Option 1: Use a user name and password
+When you bootstrapped your node, your node did an initial check-in to the Chef server and ran `chef-client` against the run-list.
+
+To update your node's configuration, let's run `knife ssh` to apply your updated cookbook.
+
+Choose the same option &ndash; either to use a user name and password or key-based authentication &ndash; that you did earlier when you bootstrapped your node.
+
+### Option 1: Use a user name and password
 
 Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
@@ -1420,39 +1458,42 @@ Replace `{address}` with your remote node's external address, `{user}` with your
 $ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ssh-password '{password}'
 ```
 
-#### Option 2: Use key-based authentication
+### Option 2: Use key-based authentication
+
+Replace `{address}` with your remote node's external address and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo/cookbooks/myapp
 $ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --identity-file {identity-file}
 ```
 
-Remember, `{identity-file}` is your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>
+## 5. Verify your node's configuration
 
-### Verify things
+Now log in to your node the same way you did before.
 
-Verify that the MySQL service is running.
+Next, we'll run a few commands to help verify that the node is in the expected state. This time, we'll verify that:
+
+* the MySQL service is running.
+* the `myapp` database exists.
+* `myapp_db` is enabled as a local database user.
+* `myapp_db` has rights only to the `myapp` database.
+* the `customers` database table exists and contains our sample data.
+
+### Verify that the MySQL service is running
 
 ```bash
 $ sudo netstat -tap | grep mysql
 tcp        0      0 *:mysql                 *:*                     LISTEN      27856/mysqld
 ```
 
-<!-- TODO
-Also check that MySQL is enabled to start on boot on Mac OS X/Linux:
+[TODO: Explain]
 
-```bash
-$ sudo /sbin/chkconfig --list | grep mysqld"
-mysqld         	0:off	1:off	2:on	3:on	4:on	5:on	6:off
-```
-
-If the service is set to be activated at runlevels 3 and 5, then MySQL is enabled to run under full multi-user text mode and full multi-user graphical mode, which is exactly the desired behavior.
-
--->
+### Verify that the myapp database exists
 
 Run `mysqlshow` to display database information.
 
 ```bash
+# ~
 $ mysqlshow -h 127.0.0.1 -uroot -plearnchef_mysql
 +--------------------+
 |     Databases      |
@@ -1464,9 +1505,11 @@ $ mysqlshow -h 127.0.0.1 -uroot -plearnchef_mysql
 +--------------------+
 ```
 
-Note that `myapp` is listed as a database name - success!
+`myapp` is listed as a database name.
 
-Run the following `mysql` command to verify that user `myapp_db` user is enabled as a local user.
+### Verify that myapp_db is enabled as a local database user
+
+Run the following `mysql` command.
 
 ```bash
 $ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -e "select user,host from mysql.user;"
@@ -1478,9 +1521,11 @@ $ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -e "select user,host from mysql.us
 +----------+-----------+
 ```
 
-As you can see above, the myapp_db@127.0.0.1 user exists, so our cookbook did what was expected.
+`myapp_db@127.0.0.1` exists, so our cookbook did what we expected.
 
-Also check to see that the myface_app user only has rights on the myface databse on Mac OS X/Linux:
+### Verify that myapp_db has rights only to the myapp database
+
+Run the following `mysql` command.
 
 ```bash
 $ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -e "show grants for 'myapp_db'@'127.0.0.1';"
@@ -1492,7 +1537,11 @@ $ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -e "show grants for 'myapp_db'@'12
 +-----------------------------------------------------------------------------------------------------------------+
 ```
 
-Run the following mysql command to dump the contents of the users table on Mac OS X/Linux:
+The result shows that `myapp_db` has rights just to the `myapp` database, just as we expect.
+
+### Verify the customers database table exists and contains our sample data
+
+Run the following `mysql` command.
 
 ```bash
 $ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -Dmyapp -e "select id,first_name from customers;"
@@ -1504,13 +1553,15 @@ $ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -Dmyapp -e "select id,first_name f
 +----------------------------------+------------+
 ```
 
-The output should look similar to what you see above - the data from the INSERT INTO statements in the SQL script.
+"Jane" and "David" match the first names that we provided in our SQL script.
 
-## Configure PHP
+Everything checks out! You can now close your SSH session.
 
-In this part, you'll configure PHP and create a basic PHP app that reads the records from our MySQL database and displays them on the web page. You'll be working in the <code class="file-path">webserver.rb</code> recipe that you created when you set up Apache.
+# Configure PHP
 
-We already did most of the ground work already &ndash; for example we've already set up a place to hold our custom site and we've opened up port 80 to incoming traffic.
+In this part, you'll configure PHP and create a basic PHP app that reads the records from your MySQL database and display them on the web page. You'll be working in the <code class="file-path">webserver.rb</code> recipe that you created when you set up Apache.
+
+You already did most of the ground work already &ndash; for example you've already set up a place to hold your custom site and you've opened up port 80 to incoming traffic.
 
 ## 1. Reference the php cookbook
 
@@ -1592,7 +1643,7 @@ end
 [...]
 ```
 
-Apache needs to be restarted to enable PHP to use the `php5-mysql` package. To do that, we use the `notifies` attribute. This [notifies attribute](https://docs.chef.io/resource_common.html#notifications) performs the `:restart` action on the `apache2` service. But it does so only when it needs to; that is, only when the `package` resource performs the `:install` action.
+Apache needs to be restarted to enable PHP to use the `php5-mysql` package. To do that, we use the [notifies attribute](https://docs.chef.io/resource_common.html#notifications). The `notifies` attribute performs the `:restart` action on the `apache2` service. But it does so only when it needs to; that is, only when the `package` resource actually performs the `:install` action.
 
 ## 3. Write the PHP application
 
@@ -1655,7 +1706,41 @@ $conn->close();
 ?>
 ```
 
-## 6. Bump the version
+## 4. Refactor the PHP application
+
+One final bit of refactoring we'll do is to modify the PHP script to use our custom node attributes.
+
+Our PHP script started like this.
+
+```php
+<?php
+// ~/chef-repo/cookbooks/myapp/templates/default/index.php.erb
+$servername = "127.0.0.1";
+$username = "myapp_db";
+$password = "myapp_replaceme";
+$dbname = "myapp";
+
+[...]
+```
+
+Replace the values of the variables with the appropriate node attributes, like this:
+
+```php
+<?php
+// ~/chef-repo/cookbooks/myapp/templates/default/index.php.erb
+$servername = "<%= node['myapp']['database']['host'] %>";
+$username = "<%= node['myapp']['database']['app']['username'] %>";
+$password = "<%= node['myapp']['database']['app']['password'] %>";
+$dbname = "<%= node['myapp']['database']['dbname'] %>";
+
+[...]
+```
+
+## 5. Increment the version
+
+Like before, we'll follow the semantic versioning scheme and increment our cookbook's version number.
+
+Modify the `version` field in <code class="file-path">metadata.rb</code> from '0.2.0' to '0.3.0', like this.
 
 ```bash
 # ~/chef-repo/cookbooks/myapp/metadata.rb
@@ -1668,11 +1753,34 @@ long_description 'Installs/Configures myapp'
 version          '0.3.0'
 ```
 
-## Verify your configuration
+# Run and confirm your PHP configuration
 
-Let's upload your updated cookbook, run it on your bootstrapped node, and verify the result.
+Let's upload version 0.3.0 of our web application cookbook and its dependencies, run it on our node, and verify that the final configuration is as we expect.
 
-### 1. Upload your cookbook to the Chef server
+## 1. Add cookbook dependencies to your Berksfile
+
+First, you need to list your cookbook dependencies in your <code class="file-path">Berksfile</code>.
+
+Add the PHP cookbook that we depend on to your <code class="file-path">Berksfile</code>, making the entire file look like this.
+
+```conf
+# ~/chef-repo/cookbooks/myapp/Berksfile
+source "https://supermarket.chef.io"
+
+metadata
+
+cookbook 'apt'
+cookbook 'apache2'
+cookbook 'firewall'
+cookbook 'mysql2_chef_gem'
+cookbook 'mysql'
+cookbook 'database'
+cookbook 'php'
+```
+
+## 2. Use Berkshelf to install your dependencies
+
+Now run `berks install` to install the cookbooks on your workstation.
 
 ```bash
 # ~/chef-repo/cookbooks/myapp
@@ -1702,11 +1810,14 @@ Using yum-epel (0.6.0)
 Using yum-mysql-community (0.1.13)
 ```
 
-Notice that the `myapp` cookbook was uploaded because it's version changed.
+[TODO: Update output to match a clean machine]
+
+## 3. Use Berkshelf to upload the cookbooks to the Chef server
+
+Now run `berks upload` to upload everything to the Chef server.
 
 ```bash
 # ~/chef-repo/cookbooks/myapp
-$ berks upload
 $ berks upload
 Skipping apache2 (3.0.1) (frozen)
 Skipping apt (2.6.1) (frozen)
@@ -1730,13 +1841,17 @@ Skipping yum-epel (0.6.0) (frozen)
 Skipping yum-mysql-community (0.1.13) (frozen)
 ```
 
-### Apply your cookbook
+[TODO: Update output to match a clean machine]
 
-It's time to apply what you've done so far to your node. After you configured Apache, you bootstrapped a node and ran your cookbooks. After you configured MySQL, you ran `knife ssh` to apply your updated cookbook. Let's do the same for {our work on the PHP part}.
+As before, notice that the `myapp` cookbook was uploaded because it's version changed.
 
-Here's a reminder of how ...
+## 4. Apply your cookbook
 
-#### Option 1: Use a user name and password
+Update your node's configuration by running `knife ssh` as you did before.
+
+Here's a reminder of how to do so.
+
+### Option 1: Use a user name and password
 
 Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
@@ -1745,19 +1860,24 @@ Replace `{address}` with your remote node's external address, `{user}` with your
 $ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ssh-password '{password}'
 ```
 
-#### Option 2: Use key-based authentication
+### Option 2: Use key-based authentication
+
+Replace `{address}` with your remote node's external address and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo/cookbooks/myapp
 $ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --identity-file {identity-file}
 ```
 
-Remember, `{identity-file}` is your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>
+## 5. Verify your node's configuration
 
-### Verify things
+In practice, you might log into your node and verify that PHP was installed properly. But let's skip ahead and browse to your web application from a browser on your workstation.
 
-There are a number of things we can do to verify that PHP was installed properly.
+Navigate to your site and you'll see this.
+
 ![the resulting web page](/assets/images/ubuntu/webapp_result.png)
+
+Wonderful! You've successfully configured an entire LAMP stack using Chef!
 
 ## Summary
 
