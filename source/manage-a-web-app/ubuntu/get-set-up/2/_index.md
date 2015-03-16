@@ -2,7 +2,7 @@
 
 Recall that a _node_ is any physical machine, cloud instance, or virtual machine that Chef manages.
 
-All you need right now is the ability to bring up a clean instance of Ubuntu 14.04 that will serve as your node. Your node should not be your workstation. Be sure that:
+All you need to do right now is bring up a clean instance of Ubuntu 14.04 that will serve as your node. Your node should not be your workstation. Be sure that:
 
 * it has a public IP address.
 * it can be opened to Internet traffic on ports 22 and 80.
