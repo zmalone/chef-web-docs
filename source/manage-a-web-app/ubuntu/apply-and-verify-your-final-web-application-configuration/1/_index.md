@@ -1,6 +1,6 @@
 ## 1. Increment the cookbook's version
 
-Like before, we'll follow the semantic versioning scheme and increment our cookbook's version number.
+Like before, we'll follow the Semantic Versioning scheme and increment our cookbook's version number.
 
 Modify the `version` field in <code class="file-path">metadata.rb</code> from '0.2.0' to '0.3.0', like this.
 

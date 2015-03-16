@@ -2,7 +2,7 @@
 
 To enable Berkshelf to upload our updated cookbook, we need to update its version in the metadata.
 
-Most Chef cookbooks follow the [semantic versioning](http://semver.org) scheme. Our cookbook is compatible with the previous version &ndash; we simply added functionality &ndash; so we'll bump the middle number.
+Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. Our cookbook is compatible with the previous version &ndash; we simply added functionality &ndash; so we'll bump the middle number.
 
 Modify the `version` field in <code class="file-path">metadata.rb</code> from '0.1.0' to '0.2.0', like this.
 
