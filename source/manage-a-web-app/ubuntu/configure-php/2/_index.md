@@ -22,7 +22,7 @@ Now, in <code class="file-path">webserver.rb</code>, find the `file` resource th
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# write a default home page
+# Write a default home page.
 file "#{node['apache']['docroot_dir']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
@@ -35,7 +35,7 @@ Replace that code with the following `template` resource.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# write a default home page
+# Write a default home page.
 template "#{node['apache']['docroot_dir']}/index.php" do
   source 'index.php.erb'
   mode '0644'

@@ -8,7 +8,7 @@ Setting up a user named `db_admin` might look like this. Don't write any code ye
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Add a database user
+# Add a database user.
 mysql_database_user 'db_admin' do
   connection(
     :host => '127.0.0.1',
@@ -61,7 +61,7 @@ Our resource now looks like this after we apply our new node attributes.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/attributes/default.rb
-# Add a database user
+# Add a database user.
 mysql_database_user node['web_application']['database']['app']['username'] do
   connection(
     :host => node['web_application']['database']['host'],
@@ -79,23 +79,23 @@ Append the `mysql_database_user` resource to our database recipe, making the ent
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Configure the mysql2 Ruby gem
+# Configure the mysql2 Ruby gem.
 mysql2_chef_gem 'default' do
   action :install
 end
 
-# Configure the MySQL client
+# Configure the MySQL client.
 mysql_client 'default' do
   action :create
 end
 
-# Configure MySQL service
+# Configure the MySQL service.
 mysql_service 'default' do
   initial_root_password 'learnchef'
   action [:create, :start]
 end
 
-# Create the database instance
+# Create the database instance.
 mysql_database node['web_application']['database']['dbname'] do
   connection({
     :host => node['web_application']['database']['host'],
@@ -105,7 +105,7 @@ mysql_database node['web_application']['database']['dbname'] do
   action :create
 end
 
-# Add a database user
+# Add a database user.
 mysql_database_user node['web_application']['database']['app']['username'] do
   connection(
     :host => node['web_application']['database']['host'],

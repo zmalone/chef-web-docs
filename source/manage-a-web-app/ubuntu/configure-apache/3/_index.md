@@ -28,20 +28,20 @@ Now we have values to use in our recipe. Now it's time to write out our recipe f
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# install Apache and configure its service
+# Install Apache and configure its service.
 include_recipe 'apache2::default'
 
-# create and enable our custom site
+# Create and enable our custom site.
 web_app node['web_application']['name'] do
   template "#{node['web_application']['config']}.erb"
 end
 
-# create the document root
+# Create the document root.
 directory node['apache']['docroot_dir'] do
   recursive true
 end
 
-# write a default home page
+# Write a default home page.
 file "#{node['apache']['docroot_dir']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'

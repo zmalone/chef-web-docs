@@ -6,17 +6,17 @@ Add the following to <code class="file-path">database.rb</code>.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Configure the mysql2 Ruby gem
+# Configure the mysql2 Ruby gem.
 mysql2_chef_gem 'default' do
   action :install
 end
 
-# Configure the MySQL client
+# Configure the MySQL client.
 mysql_client 'default' do
   action :create
 end
 
-# Configure the MySQL service
+# Configure the MySQL service.
 mysql_service 'default' do
   initial_root_password 'learnchef_mysql'
   action [:create, :start]
@@ -50,17 +50,17 @@ Now replace the password with the node attribute.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Configure the mysql2 Ruby gem
+# Configure the mysql2 Ruby gem.
 mysql2_chef_gem 'default' do
   action :install
 end
 
-# Configure the MySQL client
+# Configure the MySQL client.
 mysql_client 'default' do
   action :create
 end
 
-# Configure the MySQL service
+# Configure the MySQL service.
 mysql_service 'default' do
   initial_root_password node['mysql']['server_root_password']
   action [:create, :start]

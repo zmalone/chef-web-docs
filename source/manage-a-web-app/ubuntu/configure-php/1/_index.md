@@ -4,20 +4,20 @@ Recall that our Apache recipe looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# install Apache and configure its service
+# Install Apache and configure its service.
 include_recipe 'apache2::default'
 
-# create and enable our custom site
+# Create and enable our custom site.
 web_app node['web_application']['name'] do
   template "#{node['web_application']['config']}.erb"
 end
 
-# create the document root
+# Create the document root.
 directory node['apache']['docroot_dir'] do
   recursive true
 end
 
-# write a default home page
+# Write a default home page.
 file "#{node['apache']['docroot_dir']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
@@ -25,7 +25,7 @@ file "#{node['apache']['docroot_dir']}/index.php" do
   group node['web_application']['group']
 end
 
-# open port 80 to incoming traffic
+# Open port 80 to incoming traffic.
 firewall_rule 'http' do
   port 80
   protocol :tcp
@@ -37,7 +37,7 @@ The `apache2` cookbook defines the `mod_php5` resource, which configures Apache 
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# install the mod_php5 Apache module
+# Install the mod_php5 Apache module.
 include_recipe 'apache2::mod_php5'
 ```
 
@@ -45,7 +45,7 @@ Now append a `package` resource to install `php5-mysql`.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# install php5-mysql
+# Install php5-mysql.
 package 'php5-mysql' do
   action :install
   notifies :restart, 'service[apache2]'
@@ -56,20 +56,20 @@ The entire file looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# install Apache and configure its service
+# Install Apache and configure its service.
 include_recipe 'apache2::default'
 
-# create and enable our custom site
+# Create and enable our custom site.
 web_app node['web_application']['name'] do
   template "#{node['web_application']['config']}.erb"
 end
 
-# create the document root
+# Create the document root.
 directory node['apache']['docroot_dir'] do
   recursive true
 end
 
-# write a default home page
+# Write a default home page.
 file "#{node['apache']['docroot_dir']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
@@ -77,17 +77,17 @@ file "#{node['apache']['docroot_dir']}/index.php" do
   group node['web_application']['group']
 end
 
-# open port 80 to incoming traffic
+# Open port 80 to incoming traffic.
 firewall_rule 'http' do
   port 80
   protocol :tcp
   action :allow
 end
 
-# install the mod_php5 Apache module
+# Install the mod_php5 Apache module.
 include_recipe 'apache2::mod_php5'
 
-# install php5-mysql
+# Install php5-mysql.
 package 'php5-mysql' do
   action :install
   notifies :restart, 'service[apache2]'

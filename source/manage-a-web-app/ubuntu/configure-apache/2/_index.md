@@ -31,20 +31,20 @@ Here's what our basic recipe might look like. Don't write any code yet &ndash; w
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# install Apache and configure its service
+# Install Apache and configure its service.
 include_recipe 'apache2::default'
 
-# create and enable our custom site
+# Create and enable our custom site.
 web_app 'customers' do
   template 'customers.conf'
 end
 
-# create the document root
+# Create the document root.
 directory '/srv/apache/customers/' do
   recursive true
 end
 
-# write a default home page
+# Write a default home page.
 file '/srv/apache/customers/index.php' do
   content '<html>This is a placeholder</html>'
   mode '0644'

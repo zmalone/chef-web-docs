@@ -40,7 +40,7 @@ We'll use the built-in [cookbook_file](https://docs.chef.io/resource_cookbook_fi
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Write schema seed file to filesystem
+# Write schema seed file to filesystem.
 cookbook_file '/tmp/create-tables.sql' do
   source 'create-tables.sql'
   owner 'root'
@@ -55,7 +55,7 @@ Then we'll use the `execute` resource to run the script, like this (don't add th
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Seed the database with a table and test data
+# Seed the database with a table and test data.
 execute 'initialize database' do
   command "mysql -h 127.0.0.1 -u db_admin -pcustomers_password -D products < /tmp/create-tables.sql"
   not_if  "mysql -h 127.0.0.1 -u db_admin -pcustomers_password -D products -e 'describe customers;'"
@@ -105,7 +105,7 @@ Append the following to your database recipe.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Write schema seed file to filesystem
+# Write schema seed file to filesystem.
 cookbook_file node['web_application']['database']['seed_file'] do
   source 'create-tables.sql'
   owner 'root'
@@ -113,7 +113,7 @@ cookbook_file node['web_application']['database']['seed_file'] do
   mode '0600'
 end
 
-# Seed the database with a table and test data
+# Seed the database with a table and test data.
 execute 'initialize database' do
   command "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{node['web_application']['database']['app']['password']} -D #{node['web_application']['database']['dbname']} < #{node['web_application']['database']['seed_file']}"
   not_if  "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{node['web_application']['database']['app']['password']} -D #{node['web_application']['database']['dbname']} -e 'describe customers;'"
@@ -124,23 +124,23 @@ The entire recipe looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Configure the mysql2 Ruby gem
+# Configure the mysql2 Ruby gem.
 mysql2_chef_gem 'default' do
   action :install
 end
 
-# Configure the MySQL client
+# Configure the MySQL client.
 mysql_client 'default' do
   action :create
 end
 
-# Configure MySQL service
+# Configure the MySQL service.
 mysql_service 'default' do
   initial_root_password 'learnchef'
   action [:create, :start]
 end
 
-# Create the database instance
+# Create the database instance.
 mysql_database node['web_application']['database']['dbname'] do
   connection({
     :host => node['web_application']['database']['host'],
@@ -150,7 +150,7 @@ mysql_database node['web_application']['database']['dbname'] do
   action :create
 end
 
-# Add a database user
+# Add a database user.
 mysql_database_user node['web_application']['database']['app']['username'] do
   connection(
     :host => node['web_application']['database']['host'],
@@ -163,7 +163,7 @@ mysql_database_user node['web_application']['database']['app']['username'] do
   action [:create, :grant]
 end
 
-# Write schema seed file to filesystem
+# Write schema seed file to filesystem.
 cookbook_file node['web_application']['database']['seed_file'] do
   source 'create-tables.sql'
   owner 'root'
@@ -171,7 +171,7 @@ cookbook_file node['web_application']['database']['seed_file'] do
   mode '0600'
 end
 
-# Seed the database with a table and test data
+# Seed the database with a table and test data.
 execute 'initialize database' do
   command "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{node['web_application']['database']['app']['password']} -D #{node['web_application']['database']['dbname']} < #{node['web_application']['database']['seed_file']}"
   not_if  "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{node['web_application']['database']['app']['password']} -D #{node['web_application']['database']['dbname']} -e 'describe customers;'"
