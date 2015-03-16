@@ -1,21 +1,9 @@
-Something about how you can reuse this (reference cookbook, replace attributes) - perhaps point to hierarchy of attribute precedence.
+In this tutorial, you set up a basic yet complete LAMP stack that utilizes a web server, database, and scripting. You utilized many of the skills you already learned, such as how to write a cookbook, upload it to the Chef server, and run it multiple times on your bootstrapped node. But this scenario introduced just enough complexity to demonstrate many Chef usage patterns, such as how to use Berkshelf to manage cookbook dependencies.
 
-Credit: This tutorial was adapted from http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/
+You also now have a cookbook that you can reuse. Your individual recipes declare the _policy_ that you want to enforce, and your attributes define the _data_. You can now reference your `web_application` cookbook from another cookbook and override its attributes with the specific data you need.
 
-Put the final cookbook on GitHub or Supermarket
+Stay tuned for the next tutorial, where we'll show you how to scale your web application by distributing its functionality across multiple nodes. In the mean time, this is a great time to check out the [Chef Fundamentals Series](/fundamentals-series/), where Technical Community Director Nathen Harvey covers the fundamentals of using Chef in a 6-part video series.
 
-Exercises:
-
-Delete the seed file after using it (you don't have to guard this because ...)
-
-What is the latest version of the `haproxy` community cookbook?
-
-https://supermarket.chef.io/cookbooks/haproxy
-
-Modify your cookbook so that the `apt` cache is updated every 48 hours, instead of the default of 24 hours.
-
-Hint: In this tutorial, you relied a lot on node attributes. Is there a node attribute from the [apt cookbook](https://supermarket.chef.io/cookbooks/apt#attributes) that you can overwrite?
-
-['apt']['periodic_update_min_delay'] - minimum delay (in seconds) beetween two actual executions of apt-get update by the execute[apt-get-update-periodic] resource, default is '86400' (24 hours)
-
-Examine the Apache file's configuration to see how the placeholders get filled in as the recipe runs.
+<p style="font-size: 14px; font-style: italic;">
+This tutorial was adapted from <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting Started Writing Chef Cookbooks the Berkshelf Way</a>, by Mischa Taylor. It was updated for use with the ChefDK and the latest community cookbooks.
+</p>
