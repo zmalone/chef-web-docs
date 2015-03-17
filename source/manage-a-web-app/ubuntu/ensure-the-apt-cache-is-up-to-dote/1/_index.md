@@ -2,7 +2,7 @@
 
 You don't need to manually download cookbooks from Chef Supermarket to use them. You'll learn how to automatically download cookbooks in a bit, but the first step is to reference the cookbooks you want to load.
 
-The way you load one cookbook from another is to reference it in your cookbook's metadata file, <code class="file-path">metadata.rb</code>. To use the `apt` cookbook, append the line `depends 'apt', '~> 2.6.1'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
+The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, <code class="file-path">metadata.rb</code>. To use the `apt` cookbook, append the line `depends 'apt', '~> 2.6.1'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/metadata.rb
@@ -17,7 +17,7 @@ version          '0.1.0'
 depends 'apt', '~> 2.6.1'
 ```
 
-Here, we also specify the version of the `apt` cookbook we want to use. Specifying, or _pinning_, the cookbook version helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can verify and test that version before you deploy it to production. That way, you can adapt to the latest changes and functionality when you're ready.
+We also specify the version of the `apt` cookbook we want to use. Specifying, or _pinning_, the cookbook version helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production. That way, you can adopt the latest changes and functionality when you're ready.
 
 How did we know to specify version `2.6.1`? One way is by reading the latest version from the `apt` cookbook's [page](https://supermarket.chef.io/cookbooks/apt) on Supermarket.
 
