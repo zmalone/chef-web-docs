@@ -1,10 +1,10 @@
 ## 3. Bootstrap your node
 
-Now that you have a node to bootstrap running, it's time to bootstrap it.
+Now that you have a node running, it's time to bootstrap it.
 
 In [Manage a node](/manage-a-node/ubuntu/), we provided you with a virtual machine that uses a user name and password to authenticate. For learning purposes, this is just fine.
 
-In production, we recommend that you use key-based authentication instead of a user name and password because it can be more secure. This option is also common for learning purposes when you use Amazon EC2 instances because EC2 typically works using key-based authentication.
+In production, we recommend that you use key-based authentication instead of a user name and password because it can be more secure. This option is commonly used with Amazon EC2 instances because EC2 typically works using key-based authentication.
 
 Choose the option below that matches how you can authenticate and bootstrap your node.
 

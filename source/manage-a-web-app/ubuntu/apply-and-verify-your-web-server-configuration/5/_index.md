@@ -1,15 +1,15 @@
 ## 5. Verify your node's configuration
 
-Now let's log in to our node and run a few commands to help verify that the node is in the expected state. Specifically, we'll verify that the `web_admin` user is set up and that Apache is running and serves our home page.
+Now let's log in to your node and run a few commands to help verify that the node is in the expected state. Specifically, we'll verify that the `web_admin` user is set up and that Apache is running and serves your home page.
 
-First, log in to your node over SSH. If you're using a user name and password to authenticate, the command looks similar to this.
+First, log in to your node over SSH. If you're using a user name and password to authenticate, the command is similar to this.
 
 ```bash
 # ~/chef-repo
 $ ssh ubuntu@52.10.205.36
 ```
 
-If you're using key-based authentication, the command looks similar to this.
+If you're using key-based authentication, the command is similar to this.
 
 ```bash
 # ~/chef-repo
