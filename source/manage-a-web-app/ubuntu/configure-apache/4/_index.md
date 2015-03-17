@@ -1,8 +1,8 @@
 ## 4. Create the configuration file
 
-In our recipe we referenced our Apache site's configuration file. Now we need to create this configuration file. We'll do that by creating a Chef template so we can provide placeholders that are filled in with our custom node attributes when the recipe runs.
+In your recipe you referenced your Apache site's configuration file. Now we need to create this file. We'll do that by creating a Chef template so we can provide placeholders that are filled in with custom node attributes when the recipe runs.
 
-First, run this command to create our template file, <code class="file-path">customers.conf.erb</code>.
+First, run this command to create your template file, <code class="file-path">customers.conf.erb</code>.
 
 ```bash
 # ~/chef-repo
@@ -58,4 +58,4 @@ The configuration file uses these node attributes:
 | <code style="white-space:nowrap">node['web\_application']['docroot\_dir']</code> | `apache2` | the site's document root | <code class="file-path">/srv/apache/customers</code> |
 | <code style="white-space:nowrap">node['apache']['log_dir']</code>    | `apache2` | location for Apache logs | <code class="file-path">/var/log/apache2</code> |
 
-The configuration file uses the built-in or default values for each of these except for `node['web_application']['docroot_dir']`. We override from the default value of <code class="file-path">/var/www/html</code> to <code class="file-path">/srv/apache/customers</code> in our attributes file.
+The configuration file uses the built-in or default values for each of these except for `node['web_application']['docroot_dir']`. We override the default value of <code class="file-path">/var/www/html</code> with <code class="file-path">/srv/apache/customers</code> in your attributes file.
