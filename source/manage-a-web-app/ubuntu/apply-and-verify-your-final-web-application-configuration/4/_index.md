@@ -2,7 +2,7 @@
 
 Update your node's configuration by running `knife ssh` as you did before.
 
-Here's a reminder of how to do so.
+Here's a reminder of how to do this.
 
 ### Option 1: Use a user name and password
 
