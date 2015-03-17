@@ -1,6 +1,6 @@
 ## 1. Install PHP
 
-Recall that our Apache recipe looks like this.
+Recall that your Apache recipe looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb

@@ -1,6 +1,6 @@
 ## 4. Refactor the PHP application
 
-One final bit of refactoring we'll do is to modify the PHP script to use our custom node attributes.
+We'll do one final bit of refactoring to modify the PHP script to use custom node attributes.
 
 Find the part of the program that looks like this.
 
