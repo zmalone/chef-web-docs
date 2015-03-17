@@ -1,10 +1,10 @@
 ## 4. Create a database table and some sample data
 
-Now we have the database set up, along with a user to manage it. Now let's create a database table along with some sample data to test with.
+Now the database is set up, along with a user to manage it. Next, let's create a database table along with some sample data.
 
-To do so, we'll create a MySQL script that defines the table and our sample data, and then invoke that script from our recipe.
+We'll create a MySQL script that defines the table and our sample data, and then invoke that script from your recipe.
 
-Start by running the following `chef generate` command to create a file that will hold our script.
+Start by running the following `chef generate` command to create a file that will hold the script.
 
 ```bash
 # ~/chef-repo
@@ -36,7 +36,7 @@ INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Jan
 INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Dave', 'Richards', 'dave.richards@example.com' );
 ```
 
-We'll use the built-in [cookbook_file](https://docs.chef.io/resource_cookbook_file.html) resource to copy our SQL script to a temporary directory. Don't write any code yet &ndash; just follow along.
+We'll use the built-in [cookbook_file](https://docs.chef.io/resource_cookbook_file.html) resource to copy your SQL script to a temporary directory. Don't write any code yet &ndash; just follow along.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
@@ -51,7 +51,7 @@ end
 
 Previously, you used the `file` resource to set up a file. When you used the `file` resource, you specified the contents of the file directly in your recipe. The `cookbook_file` resource transfers an external file in your cookbook to a destination on your node.
 
-Then we'll use the `execute` resource to run the script, like this (don't add this code quite yet.)
+We'll use the `execute` resource to run the script, like this (don't add this code quite yet.)
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
@@ -64,7 +64,7 @@ end
 
 No resource type exists that can execute a SQL script. That's why we use the `execute` resource. The `execute` resource enables you to run any arbitrary command.
 
-But remember that Chef takes a test and repair approach to how it keeps your servers in line with your policy. Therefore, you want to be able to run your cookbook as many times as you like and only update the system when necessary.
+Remember that Chef takes a test and repair approach to how it keeps your servers in line with your policy. Therefore, you want to be able to run your cookbook as many times as you like and only update the system when necessary.
 
 The `not_if` attribute is an example of a [guard](https://docs.chef.io/resource_common.html#guards). A guard enables you to execute a resource based on a condition. In our case, we don't want to run the script if the `customers` table already exists.
 
@@ -72,7 +72,7 @@ The `not_if` attribute is an example of a [guard](https://docs.chef.io/resource_
 
 ### Refactor the database table creation
 
-Like we've done before, let's look at how we can factor out our data. In our `cookbook_file` resource, we specified the destination path for our SQL script. Let's create a node attribute to describe that.
+Like we've done before, let's look at how we can factor out the data. In your `cookbook_file` resource, we specified the destination path for your SQL script. Let's create a node attribute to describe it.
 
 Append an attribute to your default attribute file, <code class="file-path">default.rb</code>, making the entire file look like this.
 
@@ -99,7 +99,7 @@ default['web_application']['database']['app']['password'] = 'customers_password'
 default['web_application']['database']['seed_file'] ='/tmp/create-tables.sql'
 ```
 
-We can also factor out most parts of our `execute` resource, such as the host name, user name, and password. We already have node attributes to describe those, so we're all ready to add code to our recipe.
+We can also factor out most parts of your `execute` resource, such as the host name, user name, and password. We already have node attributes to describe those, so we're ready to add code to the recipe.
 
 Append the following to your database recipe.
 
