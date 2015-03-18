@@ -32,13 +32,13 @@ depends 'logrotate'
 # [...]
 ```
 
-To help unravel this dependency web &ndash; and remove the need for you to manually resolve cookbook dependencies &ndash; we're going to use [Berkshelf](http://berkshelf.com). Berkshelf can upload your cookbooks to the Chef server. While it does so, it retrieves the cookbooks that your cookbook depends on.
+To help unravel this dependency web &ndash; and remove the need for you to manually resolve cookbook dependencies &ndash; we're going to use [Berkshelf](http://berkshelf.com). Berkshelf uploads your cookbooks to the Chef server and retrieves the cookbooks that your cookbook depends on.
 
 Berkshelf comes with the ChefDK, so you don't have to install anything.
 
 When you created your cookbook, the `chef generate cookbook` command created a file named <code class="file-path">Berksfile</code> in the cookbook's root directory.
 
-For this project, you won't need to work directly with the <code class="file-path">Berksfile</code>. But you'll noticed that <code class="file-path">Berksfile</code> comes pre-configured to pull cookbooks from Chef Supermarket.
+For this project, you won't need to work directly with <code class="file-path">Berksfile</code>. But you'll notice that <code class="file-path">Berksfile</code> comes pre-configured to pull cookbooks from Chef Supermarket.
 
 ```bash
 # ~/chef-repo/cookbooks/web_application
@@ -79,7 +79,7 @@ apache2-3.0.1  apt-2.6.1  firewall-0.11.8  iptables-0.14.1  logrotate-1.9.0
 
 ### Use Berkshelf to upload the cookbooks to the Chef server
 
-Now we can upload our cookbooks to the Chef server.
+Now we can upload your cookbooks to the Chef server.
 
 Run `berks upload`.
 

@@ -29,9 +29,9 @@ The other two resources &ndash; `mysql_client` and `mysql_service` &ndash; come 
 
 ### Refactor the MySQL configuration
 
-Here's an opportunity to make things more reusable by separating our policy from our data. The `initial_root_password` attribute in the `mysql_service` resource can be turned into a node attribute.
+Here's an opportunity to make things more reusable by separating your policy from your data. The `initial_root_password` attribute in the `mysql_service` resource can be turned into a node attribute.
 
-Add a default node attribute to our attributes file, <code class="file-path">default.rb</code>, making the entire file look like this.
+Add a default node attribute to your attributes file, <code class="file-path">default.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/attributes/default.rb

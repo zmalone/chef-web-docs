@@ -1,8 +1,8 @@
 ## 2. Write the PHP application
 
-Now we need to update our default home page, <code class="file-path">index.php</code> to read each record from our `customers` database table and display it on the page.
+Now we need to update the default home page, <code class="file-path">index.php</code> to read each record from the `customers` database table and display it on the page.
 
-Currently, our cookbook uses the `file` resource to directly set the contents of <code class="file-path">index.php</code>. Let's convert that to use a `template` resource.
+Currently, your cookbook uses the `file` resource to directly set the contents of <code class="file-path">index.php</code>. Let's convert that to use a `template` resource.
 
 Run this `chef generate template` command to create a home page template.
 
@@ -44,7 +44,7 @@ template "#{node['apache']['docroot_dir']}/index.php" do
 end
 ```
 
-Now we can write our PHP program. Add this to <code class="file-path">index.php.erb</code>.
+Now we can write the PHP program. Add this to <code class="file-path">index.php.erb</code>.
 
 ```php
 <?php

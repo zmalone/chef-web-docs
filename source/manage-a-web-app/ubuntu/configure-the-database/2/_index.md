@@ -1,10 +1,10 @@
 ## 2. Create the database
 
-Now that we have MySQL configured, let's set up the database. We'll name our database `products`.
+Now that we have MySQL configured, let's set up the database. We'll name your database `products`.
 
-Let's continue the pattern by directly stating the configuration we want, and then going back and factoring our data from our policy.
+Let's continue the pattern we've learned of directly stating the configuration we want, and then going back and factoring our data from our policy.
 
-To set up our database, we'll use the `mysql_database` resource, which comes from the `database` cookbook. The configuration code might look like this.
+To set up your database, we'll use the `mysql_database` resource, which comes from the `database` cookbook. The configuration code might look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
@@ -23,13 +23,13 @@ This code:
 
 * configures a database named `products`.
 * specifies that user connections are allowed from IP address 127.0.0.1 (localhost).
-* gives ownership of the database to `root` and assigns its initial password.
+* gives ownership of the database to `root` and assigns the initial password.
 
-[WARN] Remember, we're using hard-coding passwords for learning, but it's not a recommended practice!
+[WARN] Remember, we're using hard-coded passwords for learning, but it's not a recommended practice!
 
 ### Refactor the database configuration
 
-Let's factor our the data parts so that our recipe is more reusable. We'll factor out the database name and the connection info (host name, user name, and password).
+Let's factor your data so that your recipe is more reusable. We'll factor out the database name and the connection info (host name, user name, and password).
 
 Append the following to your default attributes file, <code class="file-path">default.rb</code>.
 
@@ -61,7 +61,7 @@ default['web_application']['database']['username'] = 'root'
 default['web_application']['database']['password'] = node['mysql']['server_root_password']
 ```
 
-Replace our hard-coded values with our custom attributes, like this.
+Replace your hard-coded values with your custom attributes, like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb

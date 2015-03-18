@@ -27,7 +27,7 @@ Uploaded yum-epel (0.6.0) to: 'https://api.opscode.com:443/organizations/your-or
 Uploaded yum-mysql-community (0.1.14) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
 
-One advantage to pinning to specific cookbook versions is that Berkshelf can skip the upload process for cookbooks versions that already exist on the Chef server. However, you'll notice that our `web_application` was skipped as well!
+One advantage to pinning to specific cookbook versions is that Berkshelf can skip the upload process for cookbook versions that already exist on the Chef server. However, you'll notice that your `web_application` was skipped as well!
 
 ```bash
 # ~/chef-repo/cookbooks/web_application

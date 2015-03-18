@@ -1,6 +1,6 @@
 ## 2. Create the database recipe
 
-Create a recipe named <code class="file-path">database.rb</code> to hold our database configuration code.
+Create a recipe named <code class="file-path">database.rb</code> to hold your database configuration code.
 
 ```bash
 # ~/chef-repo

@@ -8,7 +8,7 @@ Next, we'll run a few commands to help verify that the node is in the expected s
 * the `products` database exists.
 * `db_admin` is enabled as a local database user.
 * `db_admin` has rights only to the `products` database.
-* the `customers` database table exists and contains our sample data.
+* the `customers` database table exists and contains the sample data.
 
 ### Verify that the MySQL service is running
 
@@ -70,9 +70,9 @@ $ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -e "show grants for 'db_admin'@'12
 +-----------------------------------------------------------------------------------------------------------------+
 ```
 
-The result shows that `db_admin` has rights just to the `products` database, just as we expect.
+The result shows that `db_admin` has rights only to the `products` database, just as we expect.
 
-### Verify the customers database table exists and contains our sample data
+### Verify the customers database table exists and contains the sample data
 
 Run the following `mysql` command.
 
@@ -86,6 +86,6 @@ $ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -Dproducts -e "select id,first_nam
 +----------------------------------+------------+
 ```
 
-"Jane" and "Dave" match the first names that we provided in our SQL script.
+"Jane" and "Dave" match the first names that we provided in your SQL script.
 
 Everything checks out! You can now close your SSH session.

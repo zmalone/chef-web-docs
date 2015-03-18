@@ -1,8 +1,8 @@
 ## 3. Create a MySQL database user
 
-Like we did for our Apache site's default home page, let's assign a user to our database. That way, we'll have a user that has just enough permissions to modify the system.
+Like we did for your Apache site's default home page, let's assign a user to your database who has just enough permissions to modify the system.
 
-When we created the Apache user, we did so in two separate steps. First, we used the `user` resource to create the user. Then we specified this user as the `owner` attribute for the home page. However, for our database, the `database` cookbook provides the `mysql_database_user` resource that does everything for us.
+We created the Apache user in two separate steps. First, we used the `user` resource to create the user. Then we used the `owner` attribute to specify this user as the owner of the home page. However, for our database, the `database` cookbook provides the `mysql_database_user` resource that does everything for us.
 
 Setting up a user named `db_admin` might look like this. Don't write any code yet &ndash; just follow along.
 
@@ -22,7 +22,7 @@ mysql_database_user 'db_admin' do
 end
 ```
 
-We already have most of the node attributes we'd need to make this more reusable. The new parts we'll need are the name of the database user and its password.
+We already have most of the node attributes we need to make this more reusable. We also need the name of the database user and the password.
 
 ### Refactor the MySQL database user configuration
 
@@ -57,7 +57,7 @@ default['web_application']['database']['app']['username'] = 'db_admin'
 default['web_application']['database']['app']['password'] = 'customers_password'
 ```
 
-Our resource now looks like this after we apply our new node attributes.
+Your resource now looks like this after we apply your new node attributes.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/attributes/default.rb
@@ -75,7 +75,7 @@ mysql_database_user node['web_application']['database']['app']['username'] do
 end
 ```
 
-Append the `mysql_database_user` resource to our database recipe, making the entire file look like this.
+Append the `mysql_database_user` resource to your database recipe, making the entire file look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
