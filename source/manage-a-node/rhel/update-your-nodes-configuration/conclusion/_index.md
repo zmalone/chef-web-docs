@@ -9,6 +9,6 @@ In the meantime, here are some things you can try.
 
 If you run into trouble:
 
-* email us at <a href="mailto:learnchef@<%= chef_domain %>?subject=Feedback on Learn Chef">learnchef@<%= chef_domain %></a>.
+* email us at <a href="mailto:learnchef@chef.io?subject=Feedback on Learn Chef">learnchef@chef.io</a>.
 * ask for help at [#chef](irc://irc.freenode.net/chef) on IRC.
 * connect directly with one of our engineers during weekly [office hours](https://www.chef.io/contact/office-hours-registration/).
