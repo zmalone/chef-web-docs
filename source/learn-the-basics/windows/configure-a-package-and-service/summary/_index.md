@@ -17,7 +17,7 @@ powershell_script 'Install IIS' do
 end
 
 service 'w3svc' do
-  action [:start, :enable]
+  action [:enable, :start]
 end
 
 file 'c:\inetpub\wwwroot\Default.htm' do
@@ -31,9 +31,9 @@ end
 
 The resources are applied in the order they are specified in the recipe. So here IIS is installed, then the W3SVC service is configured, and finally the home page is set. If any resource is already in the desired state, Chef simply moves on to the next one.
 
-The same idea applies to the action list `[:start, :enable]` for configuring the W3SVC service. The service is started before it is enabled when the server boots.
+The same idea applies to the action list `[:enable, :start]` for configuring the W3SVC service. The service is enabled when the server boots before it's started.
 
-It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the W3SVC service before the package is even installed.
+It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the W3SVC service before IIS is even installed.
 
 A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't start then we don't want to enable it.
 

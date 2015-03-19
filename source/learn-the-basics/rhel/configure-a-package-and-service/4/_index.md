@@ -9,7 +9,7 @@ Append a `service` resource to <code class="file-path">webserver.rb</code>, maki
 package 'httpd'
 
 service 'httpd' do
-  action [:start, :enable]
+  action [:enable, :start]
 end
 
 file '/var/www/html/index.html' do
@@ -31,8 +31,8 @@ Now apply it.
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install (up to date)
-  * service[httpd] action start (up to date)
   * service[httpd] action enable (up to date)
+  * service[httpd] action start (up to date)  
   * file[/var/www/html/index.html] action create (up to date)
   * service[iptables] action stop
     - stop service service[iptables]

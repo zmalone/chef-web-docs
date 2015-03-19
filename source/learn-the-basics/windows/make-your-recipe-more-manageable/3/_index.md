@@ -11,7 +11,7 @@ powershell_script 'Install IIS' do
 end
 
 service 'w3svc' do
-  action [:start, :enable]
+  action [:enable, :start]
 end
 
 template 'c:\inetpub\wwwroot\Default.htm' do
