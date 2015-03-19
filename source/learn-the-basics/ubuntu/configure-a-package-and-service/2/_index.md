@@ -1,13 +1,13 @@
 ## 2. Start and enable the Apache service
 
-Now let's start the Apache service and enable it when the server boots. Modify <code class="file-path">webserver.rb</code> to look like this.
+Now let's enable the Apache service when the server boots and start it. Modify <code class="file-path">webserver.rb</code> to look like this.
 
 ```ruby
 # ~/chef-repo/webserver.rb
 package 'apache2'
 
 service 'apache2' do
-  action [:start, :enable]
+  action [:enable, :start]
 end
 ```
 
@@ -20,8 +20,8 @@ Now apply it.
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[apache2] action install (up to date)
-  * service[apache2] action start (up to date)
   * service[apache2] action enable (up to date)
+  * service[apache2] action start (up to date)  
 ```
 
 The package is already installed, so there's nothing to do. Similarly, the service is already started and enabled. On some Linux distros, Apache is not started or enabled as it is installed. With Chef, this is easy to verify.

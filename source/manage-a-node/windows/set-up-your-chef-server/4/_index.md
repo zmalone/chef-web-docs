@@ -5,6 +5,6 @@ Now upload the Learn Chef IIS cookbook to your Chef server. Run this command fro
 ```bash
 # ~/chef-repo
 $ knife cookbook upload learn_chef_iis
-Uploading learn_chef_iis        [0.1.0]
+Uploading learn_chef_iis        [0.2.0]
 Uploaded 1 cookbook.
 ```

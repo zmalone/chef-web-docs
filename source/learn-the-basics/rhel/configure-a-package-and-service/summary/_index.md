@@ -13,7 +13,7 @@ Let's take another quick look at our web server recipe.
 package 'httpd'
 
 service 'httpd' do
-  action [:start, :enable]
+  action [:enable, :start]
 end
 
 file '/var/www/html/index.html' do
@@ -31,7 +31,7 @@ end
 
 The resources are applied in the order they are specified in the recipe. So here the package is installed, then the service is configured, and finally the home page is set and the `iptables` service is stopped. If any resource is already in the desired state, Chef simply moves on to the next one.
 
-The same idea applies to the action list `[:start, :enable]` for configuring the service. The service is started before it is enabled when the server boots.
+The same idea applies to the action list `[:enable, :start]` for configuring the service. The service is enabled when the server boots and then it's started.
 
 It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the Apache service before the package is even installed.
 

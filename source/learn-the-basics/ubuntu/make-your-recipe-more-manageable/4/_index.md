@@ -14,8 +14,8 @@ Compiling Cookbooks...
 Converging 3 resources
 Recipe: learn_chef_apache2::default
   * package[apache2] action install (up to date)
-  * service[apache2] action start (up to date)
   * service[apache2] action enable (up to date)
+  * service[apache2] action start (up to date)
   * template[/var/www/html/index.html] action create
     - update content in file /var/www/html/index.html from 2914aa to ef4ffd
     (no diff)

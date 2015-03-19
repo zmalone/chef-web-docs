@@ -14,8 +14,8 @@ Compiling Cookbooks...
 Converging 3 resources
 Recipe: learn_chef_iis::default
   * powershell_script[Install IIS] action run (skipped due to not_if)
-  * service[w3svc] action start (up to date)
   * service[w3svc] action enable (up to date)
+  * service[w3svc] action start (up to date)
   * template[c:\inetpub\wwwroot\Default.htm] action create
     - update content in file c:\inetpub\wwwroot\Default.htm from 2914aa to 100c2f
     (no diff)

@@ -11,7 +11,7 @@ You already know how to configure a `file` resource; append one that configures 
 package 'apache2'
 
 service 'apache2' do
-  action [:start, :enable]
+  action [:enable, :start]
 end
 
 file '/var/www/html/index.html' do
@@ -32,8 +32,8 @@ Now apply it.
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[apache2] action install (up to date)
-  * service[apache2] action start (up to date)
   * service[apache2] action enable (up to date)
+  * service[apache2] action start (up to date)
   * file[/var/www/html/index.html] action create
     - update content in file /var/www/html/index.html from 94850c to 2914aa
     --- /var/www/html/index.html	2014-08-05 21:26:03.638403000 +0000

@@ -15,7 +15,7 @@ powershell_script 'Install IIS' do
 end
 
 service 'w3svc' do
-  action [:start, :enable]
+  action [:enable, :start]
 end
 
 file 'c:\inetpub\wwwroot\Default.htm' do
@@ -34,8 +34,8 @@ Now apply it.
 $ chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * powershell_script[Install IIS] action run (skipped due to not_if)
-  * service[w3svc] action start (up to date)
   * service[w3svc] action enable (up to date)
+  * service[w3svc] action start (up to date)
   * file[c:\inetpub\wwwroot\Default.htm] action create
     - create new file c:\inetpub\wwwroot\Default.htm
     - update content in file c:\inetpub\wwwroot\Default.htm from none to 2914aa
