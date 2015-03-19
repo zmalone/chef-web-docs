@@ -13,7 +13,7 @@ user 'web_admin' do
 end
 ```
 
-One problem with this approach is that if you ever want to change the user name or group, you'll have to do it in at least 3 places &ndash; in this recipe and any other recipes that reference those names.
+One problem with this approach is that if you ever want to change the user name or group, you'll have to do it in this recipe and any other recipes that reference those names.
 
 To keep things more manageable, it's a common practice to separate the logic of your recipe from its data and define that data in another place. To do that, we'll define custom _node attributes_.
 
