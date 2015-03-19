@@ -11,7 +11,7 @@ You already know how to configure a `file` resource; append one that configures 
 package 'httpd'
 
 service 'httpd' do
-  action [:start, :enable]
+  action [:enable, :start]
 end
 
 file '/var/www/html/index.html' do
@@ -30,8 +30,8 @@ Now apply it.
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * package[httpd] action install (up to date)
-  * service[httpd] action start (up to date)
   * service[httpd] action enable (up to date)
+  * service[httpd] action start (up to date)  
   * file[/var/www/html/index.html] action create
     - create new file /var/www/html/index.html
     - update content in file /var/www/html/index.html from none to b8b8af
