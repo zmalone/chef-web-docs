@@ -5,6 +5,6 @@ Now upload the Learn Chef Apache cookbook to your Chef server. Run this command 
 ```bash
 # ~/chef-repo
 $ knife cookbook upload learn_chef_httpd
-Uploading learn_chef_httpd    [0.1.0]
+Uploading learn_chef_httpd    [0.2.0]
 Uploaded 1 cookbook.
 ```
