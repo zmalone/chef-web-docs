@@ -14,4 +14,4 @@ $ curl localhost
 
 Optionally, from a web browser on another machine, navigate to your server. You'll see something like this.
 
-![The basic home page](misc/webserver-basic.png)
+![The basic home page](misc/webserver-basic-remote.png)

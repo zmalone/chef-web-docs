@@ -32,4 +32,6 @@ Tags:
 
 The second thing that happened was that your node did an initial check in with the Chef server and ran the Apache cookbook. To verify this, open a web browser from your workstation and navigate to your web server.
 
-![The basic home page](misc/webserver-basic.png)
+![The basic home page](misc/webserver-basic-remote.png)
+
+[WARN] The IP address that's returned by the `knife node show` command is often the node's _internal_ IP address. Make sure you're using your node's public IP address or host name.
