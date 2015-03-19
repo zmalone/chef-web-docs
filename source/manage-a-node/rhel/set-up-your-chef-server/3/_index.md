@@ -9,9 +9,9 @@ From your <code class="file-path">~/chef-repo</code> directory, run these comman
 ```bash
 # ~/chef-repo
 $ knife cookbook site download learn_chef_httpd
-Downloading learn_chef_httpd from the cookbooks site at version 0.1.0 to /home/chef/chef-repo/learn_chef_httpd-0.1.0.tar.gz
-Cookbook saved: /home/chef/chef-repo/learn_chef_httpd-0.1.0.tar.gz
-$ tar -zxvf learn_chef_httpd-0.1.0.tar.gz -C cookbooks
+Downloading learn_chef_httpd from the cookbooks site at version 0.2.0 to /home/chef/chef-repo/learn_chef_httpd-0.2.0.tar.gz
+Cookbook saved: /home/chef/chef-repo/learn_chef_httpd-0.2.0.tar.gz
+$ tar -zxvf learn_chef_httpd-0.2.0.tar.gz -C cookbooks
 learn_chef_httpd/
 learn_chef_httpd/.kitchen.yml
 learn_chef_httpd/Berksfile
