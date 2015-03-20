@@ -19,7 +19,6 @@ Uploaded mysql2_chef_gem (1.0.1) to: 'https://api.opscode.com:443/organizations/
 Uploaded openssl (4.0.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded postgresql (3.4.18) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded rbac (1.0.2) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Uploaded resource-control (0.1.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded smf (2.2.5) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Skipping web_application (0.1.0) (frozen)
 Uploaded yum (3.5.3) to: 'https://api.opscode.com:443/organizations/your-org-name'

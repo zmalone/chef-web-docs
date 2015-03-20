@@ -1,6 +1,6 @@
 ## 3. Increment the cookbook's version
 
-To enable Berkshelf to upload the updated cookbook, we need to update its version in the metadata.
+To enable Berkshelf to upload the updated `web_application` cookbook, we need to update its version in the metadata.
 
 Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. Your cookbook is compatible with the previous version &ndash; we simply added functionality &ndash; so we'll bump the middle number.
 
@@ -46,7 +46,6 @@ Using mysql2_chef_gem (1.0.1)
 Using openssl (4.0.0)
 Using postgresql (3.4.18)
 Using rbac (1.0.2)
-Using resource-control (0.1.1)
 Using smf (2.2.5)
 Using web_application (0.2.0) from source at .
 Using yum (3.5.3)

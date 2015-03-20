@@ -22,7 +22,6 @@ Using mysql2_chef_gem (1.0.1)
 Using openssl (4.0.0)
 Using postgresql (3.4.18)
 Using rbac (1.0.2)
-Using resource-control (0.1.1)
 Using smf (2.2.5)
 Using web_application (0.3.0) from source at .
 Using yum (3.5.3)
