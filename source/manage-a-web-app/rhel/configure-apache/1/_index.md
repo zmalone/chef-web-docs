@@ -2,7 +2,7 @@
 
 You don't need to manually download cookbooks from Chef Supermarket to use them. You'll learn how to automatically download cookbooks in a bit, but the first step is to reference the cookbooks you want to load.
 
-The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, metadata.rb. To use the apache2 cookbook, append the line depends 'apache2', '~> 3.0.1' to metadata.rb, making the entire file look like this.
+The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, metadata.rb. To use the apache2 cookbook, append the line `depends 'apache2', '~> 3.0.1'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/metadata.rb
