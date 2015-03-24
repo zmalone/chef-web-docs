@@ -17,12 +17,12 @@ Recipe: code_generator::template
     (diff output suppressed by config)
 ```
 
-This command added the template file <code class="file-path">customers.conf.erb</code> to the <code class="file-path">~/chef-repo/web_application/templates/default</code> directory. Remember, the <code class="file-path">.erb</code> extension means that the file can hold placeholders that are filled in when the recipe runs. That's what makes the file a template.
+This command added the template file <code class="file-path">customers.conf.erb</code> to the <code class="file-path">~/chef-repo/cookbooks/web_application/templates/default</code> directory. Remember, the <code class="file-path">.erb</code> extension means that the file can hold placeholders that are filled in when the recipe runs. That's what makes the file a template.
 
 Add this to <code class="file-path">customers.conf.erb</code>.
 
 ```conf
-# ~/chef-repo/web_application/templates/default/customers.conf.erb
+# ~/chef-repo/cookbooks/web_application/templates/default/customers.conf.erb
 
 # Managed by Chef for <%= node['hostname'] %>
 <VirtualHost *:80>
@@ -55,7 +55,7 @@ The configuration file uses these node attributes:
 |---------------------------------------------------------------------:|-----------|-------------|---------------|
 | <code style="white-space:nowrap">node['hostname']</code>             | built-in  | the node's host name. | N/A |
 | <code style="white-space:nowrap">node['apache']['contact']</code>    | `apache2` | value for the `ServerAdmin` directive. | ops@example.com |
-| <code style="white-space:nowrap">node['web\_application']['docroot\_dir']</code> | `apache2` | the site's document root | <code class="file-path">/srv/apache/customers</code> |
+| <code style="white-space:nowrap">node['apache']['docroot\_dir']</code> | `apache2` | the site's document root | <code class="file-path">/srv/apache/customers</code> |
 | <code style="white-space:nowrap">node['apache']['log_dir']</code>    | `apache2` | location for Apache logs | <code class="file-path">/var/log/apache2</code> |
 
-The configuration file uses the built-in or default values for each of these except for `node['web_application']['docroot_dir']`. We override the default value of <code class="file-path">/var/www/html</code> with <code class="file-path">/srv/apache/customers</code> in your attributes file.
+The configuration file uses the built-in or default values for each of these except for `node['apache']['docroot_dir']`. We override the default value of <code class="file-path">/var/www/html</code> with <code class="file-path">/srv/apache/customers</code> in your attributes file.

@@ -15,7 +15,7 @@ You've seen this setup in [Manage a node](/manage-a-node/ubuntu/). There, you up
 
 In this tutorial, the node will host the web application, which reads customer records from a database and displays the results on a web page. By the end, you'll have a web application that looks like this:
 
-![the resulting web page](/assets/images/ubuntu/webapp_result.png)
+![the resulting web page](/assets/images/misc/webapp_result.png)
 
 A Linux web application configuration that uses a database and scripting is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll work with all of these components in this tutorial.
 

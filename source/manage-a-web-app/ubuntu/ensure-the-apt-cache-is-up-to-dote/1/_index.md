@@ -21,7 +21,7 @@ We also specify the version of the `apt` cookbook we want to use. Specifying, or
 
 How did we know to specify version `2.6.1`? One way is by reading the latest version from the `apt` cookbook's [page](https://supermarket.chef.io/cookbooks/apt) on Supermarket.
 
-![The apt cookbook version](misc/supermarket_cookbook_version.png)
+![The apt cookbook version](misc/supermarket_apt_version.png)
 
 Another way to get version information is through the `knife cookbook site show` command. The following command retrieves information for the `apt` cookbook and searches the result for the latest version.
 
