@@ -40,12 +40,12 @@ The `apache2` cookbook defines the `mod_php5` resource, which configures Apache 
 include_recipe 'apache2::mod_php5'
 ```
 
-Now append a `package` resource to install `php5-mysql`.
+Now append a `package` resource to install `php-mysql`.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# Install php5-mysql.
-package 'php5-mysql' do
+# Install php-mysql.
+package 'php-mysql' do
   action :install
   notifies :restart, 'service[apache2]'
 end
@@ -83,11 +83,11 @@ iptables_rule 'firewall_http'
 # Install the mod_php5 Apache module.
 include_recipe 'apache2::mod_php5'
 
-# Install php5-mysql.
-package 'php5-mysql' do
+# Install php-mysql.
+package 'php-mysql' do
   action :install
   notifies :restart, 'service[apache2]'
 end
 ```
 
-Apache needs to be restarted to enable PHP to use the `php5-mysql` package. To do that, we use the [notifies](https://docs.chef.io/resource_common.html#notifications) attribute. The `notifies` attribute performs the `:restart` action on the `apache2` service. But it does so only when it needs to; that is, only when the `package` resource actually performs the `:install` action.
+Apache needs to be restarted to enable PHP to use the `php-mysql` package. To do that, we use the [notifies](https://docs.chef.io/resource_common.html#notifications) attribute. The `notifies` attribute performs the `:restart` action on the `apache2` service. But it does so only when it needs to; that is, only when the `package` resource actually performs the `:install` action.
