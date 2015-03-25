@@ -47,8 +47,11 @@ module Middleman
 
       def self.formatters
         @formatters ||= begin
-          hash = { "ruby" => CodeFormatter.new,
+          hash = { "conf" => CodeFormatter.new,
+                   "ruby" => CodeFormatter.new,
                    "html" => CodeFormatter.new,
+                   "sql" => CodeFormatter.new,
+                   "php" => CodeFormatter.new({:token_offset => 2, :strip_offset => 0}),
                    "bash" => TerminalFormatter.new,
                    "shell" => TerminalFormatter.new,
                    "ps" => TerminalFormatter.new({:prompt => "PS >", :title_prefix => "Windows PowerShell", :window_style => "Win32", :default_working_dir => "~\\"})

@@ -2,20 +2,25 @@ module Middleman
   module Syntax
     module Highlighter
       class CodeFormatter
+        def initialize(options = {:token_offset => 0, :strip_offset => 1})
+          @token_offset = options[:token_offset];
+          @strip_offset = options[:strip_offset];
+        end
+
         def render(lexed_code, highlighter_options, style_options = {})
           highlighter_options.merge!(:line_numbers => true)
-          lexed_code, filepath, has_filepath = extract_filepath_if_present(lexed_code)
+          lexed_code, filepath, has_filepath = extract_filepath_if_present(@token_offset, lexed_code)
           formatter = Rouge::Formatters::HTML.new(highlighter_options)
-          inner_content = pygments_wrap formatter.format(has_filepath ? lexed_code[1..-1] : lexed_code).strip, highlighter_options[:css_class]
+          inner_content = pygments_wrap formatter.format(has_filepath ? lexed_code[@strip_offset..-1] : lexed_code).strip, highlighter_options[:css_class]
           source_window inner_content, 'Editor: ' + filepath, style_options[:window_style]
         end
 
-        def extract_filepath_if_present(lexed_code)
-          first_token_type, first_token_content = lexed_code.first
+        def extract_filepath_if_present(token_offset, lexed_code)
+          token_type, token_content = lexed_code.take(token_offset + 1).last
 
-          if comment_token?(first_token_type)
+          if comment_token?(token_type)
             # Bad that I am specifying the comment to strip ... this does not port
-            [ remove_comment(lexed_code), create_title_from_comment(first_token_content), true ]
+            [ remove_comment(token_offset, lexed_code), create_title_from_comment(token_content), true ]
           else
             [ lexed_code, default_filename, false ]
           end
@@ -26,18 +31,23 @@ module Middleman
           token.name == :Comment || token.parent.name == :Comment
         end
 
-        def remove_comment(lexed_code)
-          lexed_code.to_a[1..-1]
+        def remove_comment(token_offset, lexed_code)
+          a = lexed_code.to_a
+          a.delete_at(token_offset)
+          a
         end
 
         # TODO: Currently this will only remove comments that look like:
-        #   ruby single line comment or an HTML comment.
         #
         #   # path/to/filename.rb
         #   OR
         #   <!-- path/to/filename.erb -->
+        #   OR
+        #   -- path/to/filename.sql
+        #   OR
+        #   // path/to/filename.php
         def create_title_from_comment(content)
-          content.gsub(/^\s*(?:#|<!--)\s*/,"").gsub(/\s*-->\s*$/,"")
+          content.gsub(/^\s*(?:#|<!--|--|\/\/)\s*/,"").gsub(/\s*-->\s*$/,"")
         end
 
         def default_filename

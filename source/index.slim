@@ -12,11 +12,11 @@ type: landing
           .small-10.small-centered.columns
             div.box id="#{ child.data.name }" class="topic"
               h2 = child.data.title
-              - if child.data.time_to_complete
-                div style="font-size:12px;margin-top:-22px;margin-bottom:10px;" == child.data.time_to_complete
               - if child.data.tags
                 div style="margin-top:-16px;margin-bottom:10px;"
                   = partial "layouts/add-tags", locals: { page: child }
+              - if child.data.time_to_complete
+                div style="font-size:12px;margin-top:-10px;margin-bottom:10px;" == child.data.time_to_complete
               = child.data.description
               - if child.data.platform_intro
                 br
@@ -29,3 +29,6 @@ type: landing
                     li style="border-width; 2px; border 1px solid black;" = link_to overview_page do
                       = image_tag "rhel/platform-logos/#{overview_page.data.logo}"
                       p = "#{overview_page.data.platform}&nbsp;&nbsp;<i class='fa fa-angle-double-right'></i>"
+              - if child.data.coming_soon
+                .coming-soon
+                  = "Coming soon: #{child.data.coming_soon.join(', ')}"
