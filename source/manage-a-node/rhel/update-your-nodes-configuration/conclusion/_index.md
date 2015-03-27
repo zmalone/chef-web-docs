@@ -1,14 +1,5 @@
-That's all we have for now. Please check back soon for more!
+That's it for this tutorial. You can continue to experiment with the virtual machine that we provided for this lesson. When you're done you can close the connection &ndash; we'll no longer be using that virtual machine.
 
-In the meantime, here are some things you can try.
+You can also explore the [Chef management console](https://manage.chef.io). See what info's available for your nodes and what else you can do.
 
-* If you bootstrapped using one of our test servers, try configuring a spare server of your own.
-* Explore the [Chef management console](https://manage.chef.io). See what info's available for your nodes and what else you can do.
-* Try writing a cookbook to install and configure a piece of software you use. Check out the [Chef Supermarket](https://supermarket.chef.io/) to see if there's already an existing cookbook for that, and compare what the differences are.
-* After you get the hang of Chef's basic commands, check out the [documentation](https://docs.chef.io) to go deeper.
-
-If you run into trouble:
-
-* email us at <a href="mailto:learnchef@chef.io?subject=Feedback on Learn Chef">learnchef@chef.io</a>.
-* ask for help at [#chef](irc://irc.freenode.net/chef) on IRC.
-* connect directly with one of our engineers during weekly [office hours](https://www.chef.io/contact/office-hours-registration/).
+In the next tutorial, [Learn to manage a basic web application](/manage-a-web-app/rhel/), you'll use the skills you've just learned to build a basic but complete web application that uses a web server, a database, and scripting. You'll learn how to leverage cookbooks that are written by the Chef community and resolve cookbook dependencies to create cookbooks that are more reusable.
