@@ -138,7 +138,7 @@ end
 
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password 'learnchef'
+  initial_root_password node['mysql']['server_root_password']
   action [:create, :start]
 end
 
