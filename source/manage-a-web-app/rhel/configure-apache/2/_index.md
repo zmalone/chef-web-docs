@@ -37,7 +37,7 @@ include_recipe 'apache2::default'
 
 # Create and enable our custom site.
 web_app 'customers' do
-  template 'customers.conf'
+  template 'customers.conf.erb'
 end
 
 # Create the document root.
