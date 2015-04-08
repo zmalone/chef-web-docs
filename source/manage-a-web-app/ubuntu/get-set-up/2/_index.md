@@ -4,8 +4,8 @@ Recall that a _node_ is any physical machine, cloud instance, or virtual machine
 
 All you need to do right now is bring up a clean instance of Ubuntu 14.04 that will serve as your node. Your node should not be your workstation. Be sure that:
 
-* it has a public IP address.
-* it can be opened to Internet traffic on ports 22 and 80.
+* its IP address is accessible from your network.
+* it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
 * it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
 * you have root or `sudo` access.
 
