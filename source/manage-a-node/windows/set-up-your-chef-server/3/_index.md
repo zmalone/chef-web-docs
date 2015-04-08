@@ -4,10 +4,10 @@ In [Learn the Chef basics](/learn-the-basics/windows/), you wrote a cookbook tha
 
 But the virtual machine you used earlier is likely gone! Instead of having you type in the cookbook again, let's get a copy from Chef Supermarket instead. [Chef Supermarket](https://supermarket.chef.io/) is a place for the community to share cookbooks. Chef Supermarket contains the Learn Chef IIS cookbook for you to download.
 
-From your <code class="file-path">~/chef-repo</code> directory, run these commands to download the cookbook from Chef Supermarket and extract it.
+From your <code class="file-path">~\chef-repo</code> directory, run these commands to download the cookbook from Chef Supermarket and extract it.
 
 ```bash
-# ~/chef-repo
+# ~\chef-repo
 $ knife cookbook site download learn_chef_iis
 Downloading learn_chef_iis from the cookbooks site at version 0.2.0 to C:/Users/chef/chef-repo/learn_chef_iis-
 0.2.0.tar.gz
