@@ -6,7 +6,7 @@ Chef provides ways to provision a node and bootstrap it all in one step &ndash; 
 
 Remember, your node can be any physical machine, virtual machine, or cloud instance, as long as:
 
-* it has a public IP address.
-* it can be opened to Internet traffic on ports 22 and 80.
+* its IP address is accessible from your network.
+* it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
 * it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
 * you have root or `sudo` access.

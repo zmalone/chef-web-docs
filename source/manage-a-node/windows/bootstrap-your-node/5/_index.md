@@ -9,7 +9,7 @@ First, your node was associated with your hosted Chef account. To verify this, n
 You can also verify that the node successfully bootstrapped by running the `knife node list` command.
 
 ```bash
-# ~/chef-repo
+# ~\chef-repo
 $ knife node list
 node1
 ```
@@ -17,7 +17,7 @@ node1
 You can use the `knife node show` command to view data about your node.
 
 ```bash
-# ~/chef-repo
+# ~\chef-repo
 $ knife node show node1
 Node Name:   node1
 Environment: _default

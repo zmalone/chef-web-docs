@@ -27,7 +27,7 @@ Running handlers complete
 Chef Client finished, 1/5 resources updated in 5.902863207 seconds
 ```
 
-[COMMENT] You ran `chef-apply` to run a single recipe from the command line. `chef-client` is what you use to run a cookbook.
+[COMMENT] You ran `chef-apply` to run a single recipe from the command line. `chef-client` is what you use to run a cookbook. Specifically, the run-list you supply to `chef-client` contains the individual recipes from your cookbook that you want to apply.<br><br>In this example, `recipe[learn_chef_httpd]` is the same as specifying `recipe[learn_chef_httpd::default]`, meaning we want to run the `learn_chef_httpd` cookbook's default recipe, <code class="file-path">default.rb</code>.
 
 Run `curl` again or refresh your web browser to confirm that your web page is still available.
 
