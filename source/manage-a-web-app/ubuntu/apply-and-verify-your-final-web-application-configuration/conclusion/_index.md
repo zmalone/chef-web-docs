@@ -2,6 +2,8 @@ In this tutorial, you set up a basic yet complete LAMP stack that includes a web
 
 You now have a cookbook that you can reuse. Your individual recipes declare the _policy_ that you want to enforce, and your attributes define the _data_. You can reference your `web_application` cookbook from another cookbook and override its attributes with the specific data you need.
 
+[GITHUB] Get the final version of the `web_application` cookbook <a href="https://github.com/learnchef/learn-chef/tree/master/cookbooks/manage-a-web-app/ubuntu/chef-repo" target="_blank">on GitHub</a>.
+
 Stay tuned for the next tutorial, where we'll show you how to scale your web application by distributing its functionality across multiple nodes. While you're waiting, this is a great time to check out the [Chef Fundamentals Series](/fundamentals-series/), where Technical Community Director Nathen Harvey covers the fundamentals of using Chef in a 6-part video series.
 
 <p style="font-size: 14px; font-style: italic;">
