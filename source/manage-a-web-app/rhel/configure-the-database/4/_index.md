@@ -144,11 +144,11 @@ end
 
 # Create the database instance.
 mysql_database node['web_application']['database']['dbname'] do
-  connection({
+  connection(
     :host => node['web_application']['database']['host'],
     :username => node['web_application']['database']['username'],
     :password => node['web_application']['database']['password']
-  })
+  )
   action :create
 end
 

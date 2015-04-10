@@ -10,11 +10,11 @@ To set up your database, we'll use the `mysql_database` resource, which comes fr
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
 # Create the database instance.
 mysql_database 'products' do
-  connection({
+  connection(
     :host => '127.0.0.1',
     :username => 'root',
     :password => 'learnchef_mysql'
-  })
+  )
   action :create
 end
 ```
@@ -67,11 +67,11 @@ Replace your hard-coded values with your custom attributes, like this.
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
 # Create the database instance.
 mysql_database node['web_application']['database']['dbname'] do
-  connection({
+  connection(
     :host => node['web_application']['database']['host'],
     :username => node['web_application']['database']['username'],
     :password => node['web_application']['database']['password']
-  })
+  )
   action :create
 end
 ```
@@ -98,11 +98,11 @@ end
 
 # Create the database instance.
 mysql_database node['web_application']['database']['dbname'] do
-  connection({
+  connection(
     :host => node['web_application']['database']['host'],
     :username => node['web_application']['database']['username'],
     :password => node['web_application']['database']['password']
-  })
+  )
   action :create
 end
 ```
