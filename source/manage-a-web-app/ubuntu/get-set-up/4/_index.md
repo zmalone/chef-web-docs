@@ -2,7 +2,9 @@
 
 It's common to place your Chef code in what's called a Chef repository, or _Chef repo_. A [Chef repo](https://docs.chef.io/chef_repo.html) holds your cookbooks and other files you need to define your policy.
 
-If you don't already have a Chef repo set up, run the following command to create one.
+Most users maintain their Chef code in a central code repository such as Git. For now, you'll just maintain the code locally on your workstation. Later, you'll upload the code from your local Chef repository to your Chef server.
+
+If you don't already have a Chef repo set up on your workstation, run the following command to create one.
 
 ```bash
 # ~
