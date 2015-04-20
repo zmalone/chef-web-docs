@@ -60,7 +60,7 @@ default['web_application']['database']['app']['password'] = 'customers_password'
 Your resource now looks like this after we apply your new node attributes.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/attributes/default.rb
+# ~/chef-repo/cookbooks/web_application/recipes/database.rb
 # Add a database user.
 mysql_database_user node['web_application']['database']['app']['username'] do
   connection(
