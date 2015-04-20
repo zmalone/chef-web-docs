@@ -1,0 +1,27 @@
+## 2. Get a node to bootstrap
+
+In [Manage a node](/manage-a-node/windows/), you bootstrapped a node that we provided. Now it's time to bootstrap an Windows Server 14.04 node that you own to give you experience working with your own infrastructure.
+
+Chef provides ways to provision a node and bootstrap it all in one step &ndash; we'll cover this in a later tutorial. For learning purposes, it's best to start by bringing up your own node manually and bootstrapping it separately.
+
+Remember, your node can be any physical machine, virtual machine, or cloud instance, as long as:
+
+* its IP address is accessible from your network.
+* it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
+* it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
+* you have root or `sudo` access.
+
+```ps
+winrm quickconfig -q
+winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="300"}'
+winrm set winrm/config '@{MaxTimeoutms="1800000"}'
+winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+winrm set winrm/config/service/auth '@{Basic="true"}'
+
+netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow
+netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
+
+net stop winrm
+sc.exe config winrm start=auto
+net start winrm
+```
