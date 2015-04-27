@@ -50,6 +50,7 @@ module Middleman
           hash = { "conf" => CodeFormatter.new,
                    "ruby" => CodeFormatter.new,
                    "html" => CodeFormatter.new,
+                   "ini" => CodeFormatter.new,
                    "sql" => CodeFormatter.new,
                    "php" => CodeFormatter.new({:token_offset => 2, :strip_offset => 0}),
                    "bash" => TerminalFormatter.new,

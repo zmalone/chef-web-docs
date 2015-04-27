@@ -1,25 +1,5 @@
 ## 1. Reference the windows cookbook
 
-The first step is to install IIS...
-
-In LEARN THE BASICS, you used the `powershell_script` resource, like this.
-
-```ruby
-# ~\chef-repo\webserver.rb
-powershell_script 'Install IIS' do
-  code 'Add-WindowsFeature Web-Server'
-  guard_interpreter :powershell_script
-  not_if "(Get-WindowsFeature -Name Web-Server).Installed"
-end
-```
-
-An easier way to XXX is through the
-That's where the [windows](https://supermarket.chef.io/cookbooks/windows) cookbook on Chef Supermarket. The `windows` cookbook contains the `windows_feature` resource, which XXX.
-
-Remember that Chef Supermarket is a place for the community to share cookbooks. In [Manage a node](/manage-a-node/windows/), you downloaded the Learn Chef Apache cookbook so you didn't have to type it in a second time. The `windows` cookbook on Chef Supermarket contains everything you need to XXX.
-
-[COMMENT] Remember, when using cookbooks from Chef Supermarket, always evaluate the code to ensure that it does exactly what you expect. It's a common practice to download a cookbook from Supermarket and modify it to suit your organization's specific requirements. If you find a way to improve a cookbook that others can benefit from, we hope you'll [become a contributor](https://supermarket.chef.io/become-a-contributor)!
-
 You don't need to manually download cookbooks from Chef Supermarket to use them. You'll learn how to automatically download cookbooks in a bit, but the first step is to reference the cookbooks you want to load.
 
 The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, <code class="file-path">metadata.rb</code>. To use the `windows` cookbook, append the line `depends 'windows', '~> 1.36.6'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
