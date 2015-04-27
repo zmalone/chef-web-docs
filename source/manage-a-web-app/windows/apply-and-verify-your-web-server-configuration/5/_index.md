@@ -4,6 +4,8 @@ Now let's log in to your node and run a few commands to help verify that the nod
 
 First, log in to your node over SSH. If you're using a user name and password to authenticate, the command is similar to this.
 
+TODO: Talk about both loggin in directly and WinRM remote...
+
 ```bash
 # ~/chef-repo
 $ ssh windows@52.10.205.36
@@ -26,35 +28,25 @@ Now that we're logged in, we'll verify that:
 * the home page is in the location we expect.
 * the home page is being served and is accessible externally.
 
-### Fetch details for user web_admin
+### Confirm that the default web site is installed and started
 
-```bash
-# ~
-$ getent passwd web_admin
-web_admin:x:999:1001::/home/web_admin:/bin/bash
+```ps
+# C:\Windows\System32\inetsrv
+$ appcmd.exe list sites
+SITE "Default Web Site" (id:1,bindings:http/*:80:,state:Started)
 ```
 
-### Verify that web_admin owns the default home page
+### Verify that ASP.NET is installed
 
-```bash
-$ stat -c "%U %G" /srv/apache/customers/index.php
-web_admin web_admin
-```
+```ps
+PS C:\Users\Administrator> Get-WindowsFeature -Name *ASP*
 
-### Verify that the apache2 service is running
-
-```bash
-# ~
-$ sudo service apache2 status
- * apache2 is running
-```
-
-### Verify that the home page is in the location we expect
-
-```bash
-# ~
-$ more /srv/apache/customers/index.php
-<html>This is a placeholder</html>
+Display Name                                            Name                       Install State
+------------                                            ----                       -------------
+            [ ] ASP                                     Web-ASP                        Available
+            [ ] ASP.NET 3.5                             Web-Asp-Net                    Available
+            [X] ASP.NET 4.5                             Web-Asp-Net45                  Installed
+    [X] ASP.NET 4.5                                     NET-Framework-45-ASPNET        Installed
 ```
 
 ### Verify that the web page is being served and is accessible externally
@@ -72,24 +64,52 @@ From your workstation, verify that your web site is accessible. Either navigate 
 
 **Mac OS and Linux:**
 
-```bash
+```ps
 # ~
-$ curl 52.10.205.36
-<html>This is a placeholder</html>
+$ curl -I 52.10.205.36
+HTTP/1.1 200 OK
+Content-Length: 701
+Content-Type: text/html
+Last-Modified: Fri, 24 Apr 2015 20:40:47 GMT
+Accept-Ranges: bytes
+ETag: "be0c2f1ce7ed01:0"
+Server: Microsoft-IIS/8.5
+X-Powered-By: ASP.NET
+Date: Fri, 24 Apr 2015 21:04:03 GMT
 ```
 
 **Windows:**
 
 ```ps
 # ~
-$ (Invoke-WebRequest 52.10.205.36).RawContent
-HTTP/1.1 200 OK
-Accept-Ranges: bytes
-Content-Length: 34
-Date: Fri, 13 Mar 2015 19:13:30 GMT
-ETag: "22-51130067de9ed"
-Last-Modified: Fri, 13 Mar 2015 18:54:08 GMT
-Server: Apache
+$ Invoke-WebRequest 52.10.205.36
 
-<html>This is a placeholder</html>
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                    <html xmlns="http://www.w3.org/1999/xhtml">
+                    <head>
+                    <meta http-equiv="Content-Type" cont...
+RawContent        : HTTP/1.1 200 OK
+                    Accept-Ranges: bytes
+                    Content-Length: 701
+                    Content-Type: text/html
+                    Date: Fri, 24 Apr 2015 21:02:13 GMT
+                    ETag: "be0c2f1ce7ed01:0"
+                    Last-Modified: Fri, 24 Apr 2015 20:40:47 GMT
+                    Server...
+Forms             : {}
+Headers           : {[Accept-Ranges, bytes], [Content-Length, 701], [Content-Type, text/html], [Date, Fri, 24 Apr 2015
+                    21:02:13 GMT]...}
+Images            : {@{innerHTML=; innerText=; outerHTML=<IMG alt=IIS src="iis-85.png" width=960 height=600>;
+                    outerText=; tagName=IMG; alt=IIS; src=iis-85.png; width=960; height=600}}
+InputFields       : {}
+Links             : {@{innerHTML=<IMG alt=IIS src="iis-85.png" width=960 height=600>; innerText=; outerHTML=<A
+                    href="http://go.microsoft.com/fwlink/?linkid=66138&amp;clcid=0x409"><IMG alt=IIS src="iis-85.png"
+                    width=960 height=600></A>; outerText=; tagName=A;
+                    href=http://go.microsoft.com/fwlink/?linkid=66138&amp;clcid=0x409}}
+ParsedHtml        : System.__ComObject
+RawContentLength  : 701
 ```

@@ -1,11 +1,26 @@
 ---
-title: 'Configure IIS'
-order: 4
+title: 'Configure IIS and ASP.NET'
+order: 2
 layout: lesson
 sections: [1, 2, 3, 4, 5]
 next: {heading: Next, partial: next}
 time_to_complete: 25 minutes
 ---
-Now let's configure Apache. Here you'll install the Apache package, start its service, create and enable our custom site, and create a default home page for our site.
+Let's start by ensuring that Internet Information Services (IIS) is installed and that it's configured to run ASP.NET applications.
 
-In [Learn the basics](/learn-the-basics/windows) and [Manage a node](/manage-a-node/windows/), you wrote a basic Apache cookbook from scratch. For this project, we want to leverage additional Apache features such as virtual hosting, which would take some effort to set up. So let's use the [apache2](https://supermarket.chef.io/cookbooks/apache2) cookbook from Chef Supermarket so we don't have to reinvent the wheel.
+In [Learn the basics](/learn-the-basics/windows/) and [Manage a node](/manage-a-node/windows/), you wrote a basic IIS cookbook from scratch. You used the `powershell_script` resource, like this.
+
+```ruby
+# ~\chef-repo\webserver.rb
+powershell_script 'Install IIS' do
+  code 'Add-WindowsFeature Web-Server'
+  guard_interpreter :powershell_script
+  not_if "(Get-WindowsFeature -Name Web-Server).Installed"
+end
+```
+
+For this project, we'll use the [windows](https://supermarket.chef.io/cookbooks/windows) cookbook from Chef Supermarket. The `windows` cookbook provides a number of custom Chef resources that perform common tasks on Windows. Specifically, we'll use the `windows_feature` to work with Windows roles and features.
+
+Remember that Chef Supermarket is a place for the community to share cookbooks. In [Manage a node](/manage-a-node/windows/), you downloaded the Learn Chef IIS cookbook so you didn't have to type it in a second time. The `windows` cookbook on Chef Supermarket works in a similar way &ndash; it contains reusable components so that you don't have to reinvent the wheel.
+
+[COMMENT] Remember, when using cookbooks from Chef Supermarket, always evaluate the code to ensure that it does exactly what you expect. It's a common practice to download a cookbook from Supermarket and modify it to suit your organization's specific requirements. If you find a way to improve a cookbook that others can benefit from, we hope you'll [become a contributor](https://supermarket.chef.io/become-a-contributor)!

@@ -1,11 +1,7 @@
-## 1. Download the Microsoft SQL Server installer
+## 1. Download the installer to a shared location on your network
 
-What you'll install
+Download `Express 64BIT\SQLEXPR_x64_ENU.exe` from the Microsoft Download Center to a [shared location](https://technet.microsoft.com/en-us/library/cc770880.aspx) on your network that your node can access.
 
-Where to download it from
+<a class='accent-button radius' href='http://www.microsoft.com/en-us/download/details.aspx?id=42299' target='_blank'>Go to the Microsoft Download Center&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
-Where to download it to
-
-Pointer to how to make it sharable
-
-Write down network path
+[COMMENT] If you don't have a shared location available, you can create a share on your Windows Server node and download the installer to that location.
