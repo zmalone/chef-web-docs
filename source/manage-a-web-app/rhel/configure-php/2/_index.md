@@ -68,7 +68,7 @@ Now we can write the PHP program. Add this to <code class="file-path">index.php.
 <?php
 $servername = "127.0.0.1";
 $username = "db_admin";
-$password = "customers_password";
+$password = "database_password";
 $dbname = "products";
 
 // Create connection

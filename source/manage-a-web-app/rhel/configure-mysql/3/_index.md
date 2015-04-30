@@ -1,35 +1,34 @@
-## 3. Install MySQL
+## 3. Create an encrypted data bag item for the MySQL root password
 
-Now let's install the MySQL client and service packages. We'll also need to install the `mysql2` Ruby gem before we configure MySQL.
+Before we install MySQL, let's create an encrypted data bag item to hold the initial root password. We'll add code that decrypts this password in the `database` recipe in the next step.
 
-Add the following to <code class="file-path">database.rb</code>.
+First create a file named <code class="file-path">sql\_server\_root\_password.json</code> in the <code class="file-path">data\_bags/passwords</code> directory and add these contents.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Configure the mysql2 Ruby gem.
-mysql2_chef_gem 'default' do
-  action :install
-end
-
-# Configure the MySQL client.
-mysql_client 'default' do
-  action :create
-end
-
-# Configure the MySQL service.
-mysql_service 'default' do
-  initial_root_password 'learnchef_mysql'
-  action [:create, :start]
-end
+# ~/chef-repo/data_bags/passwords/sql_server_root_password.json
+{
+  "id": "sql_server_root_password",
+  "password": "learnchef_mysql"
+}
 ```
 
-The `mysql2_chef_gem` resource comes from the `mysql2_chef_gem` cookbook.
+Now run this command to encrypt the data bag item and upload it to the Chef server.
 
-The other two resources &ndash; `mysql_client` and `mysql_service` &ndash; come from the `mysql` cookbook.
+```bash
+# ~/chef-repo
+$ knife data bag from file passwords sql_server_root_password.json --secret-file /tmp/encrypted_data_bag_secret
+Updated data_bag_item[passwords::sql_server_root_password]
+```
 
-### Refactor the MySQL configuration
+Verify that you can successfully decrypt the data bag item.
 
-Here's an opportunity to make things more reusable by separating your policy from your data. The `initial_root_password` attribute in the `mysql_service` resource can be turned into a node attribute.
+```bash
+$ knife data bag show passwords sql_server_root_password --secret-file /tmp/encrypted_data_bag_secret
+id:       sql_server_root_password
+password: learnchef_mysql
+```
+
+Let's also set a node attribute that points to the location of the secret key file on your node. The `database` recipe will need this path name to perform the decryption.
 
 Add a default node attribute to your attributes file, <code class="file-path">default.rb</code>, making the entire file look like this.
 
@@ -45,28 +44,7 @@ default['apache']['docroot_dir'] = '/srv/apache/customers'
 
 default['iptables']['install_rules'] = false
 
-default['mysql']['server_root_password'] = 'learnchef_mysql'
+default['web_application']['passwords']['secret_path'] = '/etc/chef/encrypted_data_bag_secret'
 ```
 
-Now replace the password with the node attribute.
-
-```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/database.rb
-# Configure the mysql2 Ruby gem.
-mysql2_chef_gem 'default' do
-  action :install
-end
-
-# Configure the MySQL client.
-mysql_client 'default' do
-  action :create
-end
-
-# Configure the MySQL service.
-mysql_service 'default' do
-  initial_root_password node['mysql']['server_root_password']
-  action [:create, :start]
-end
-```
-
-[WARN] Hard-coding the password is fine for learning purposes. But in practice, you never want to store your password directly in a Chef recipe or attribute file. We'll show you a better way in a later tutorial.
+<code class="file-path">etc/chef/encrypted\_data\_bag\_secret</code> is the location on your node where you copied your secret file to in the previous lesson.

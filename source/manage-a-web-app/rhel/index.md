@@ -29,6 +29,7 @@ After completing this lesson, you'll:
 
 * be able to use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
 * be more productive by using community cookbooks from Chef Supermarket to perform common tasks.
+* be able to use encrypted data bags to protect sensitive data.
 * know how to use tools such as Berkshelf to resolve dependencies among your cookbooks.
 
 You'll get started by setting up your workstation, a Chef server, and a node to manage.
