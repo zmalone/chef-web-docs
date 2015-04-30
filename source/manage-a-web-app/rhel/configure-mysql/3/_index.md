@@ -47,4 +47,4 @@ default['iptables']['install_rules'] = false
 default['web_application']['passwords']['secret_path'] = '/etc/chef/encrypted_data_bag_secret'
 ```
 
-<code class="file-path">etc/chef/encrypted\_data\_bag\_secret</code> is the location on your node where you copied your secret file to in the previous lesson.
+<code class="file-path">/etc/chef/encrypted\_data\_bag\_secret</code> is the location on your node where you copied your secret file to in the previous lesson.

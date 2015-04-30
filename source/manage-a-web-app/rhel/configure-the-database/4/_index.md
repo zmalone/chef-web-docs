@@ -65,7 +65,7 @@ mysql_database_user node['web_application']['database']['app']['username'] do
   connection(
     :host => node['web_application']['database']['host'],
     :username => node['web_application']['database']['username'],
-    :password => node['web_application']['database']['password']
+    :password => root_password_data_bag_item['password']
   )
   password 'database_password'
   database_name node['web_application']['database']['dbname']
