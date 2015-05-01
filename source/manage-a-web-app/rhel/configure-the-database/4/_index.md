@@ -57,8 +57,8 @@ We'll use the `execute` resource to run the script, like this (don't add this co
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
 # Seed the database with a table and test data.
 execute 'initialize database' do
-  command "mysql -h 127.0.0.1 -u db_admin -pcustomers_password -D products < /tmp/create-tables.sql"
-  not_if  "mysql -h 127.0.0.1 -u db_admin -pcustomers_password -D products -e 'describe customers;'"
+  command "mysql -h 127.0.0.1 -u db_admin -pdatabase_password -D products < /tmp/create-tables.sql"
+  not_if  "mysql -h 127.0.0.1 -u db_admin -pdatabase_password -D products -e 'describe customers;'"
 end
 ```
 
@@ -88,20 +88,18 @@ default['apache']['docroot_dir'] = '/srv/apache/customers'
 
 default['iptables']['install_rules'] = false
 
-default['mysql']['server_root_password'] = 'learnchef_mysql'
+default['web_application']['passwords']['secret_path'] = '/tmp/encrypted_data_bag_secret'
 
 default['web_application']['database']['dbname'] = 'products'
 default['web_application']['database']['host'] = '127.0.0.1'
 default['web_application']['database']['username'] = 'root'
-default['web_application']['database']['password'] = node['mysql']['server_root_password']
 
 default['web_application']['database']['app']['username'] = 'db_admin'
-default['web_application']['database']['app']['password'] = 'customers_password'
 
 default['web_application']['database']['seed_file'] ='/tmp/create-tables.sql'
 ```
 
-We can also factor out most parts of your `execute` resource, such as the host name, user name, and password. We already have node attributes to describe those, so we're ready to add code to the recipe.
+We can also factor out most parts of your `execute` resource, such as the host name, user name, and password. We already have the node attributes and data bag items to describe those, so we're ready to add code to the recipe.
 
 Append the following to your database recipe.
 
@@ -117,8 +115,8 @@ end
 
 # Seed the database with a table and test data.
 execute 'initialize database' do
-  command "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{node['web_application']['database']['app']['password']} -D #{node['web_application']['database']['dbname']} < #{node['web_application']['database']['seed_file']}"
-  not_if  "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{node['web_application']['database']['app']['password']} -D #{node['web_application']['database']['dbname']} -e 'describe customers;'"
+  command "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{user_password_data_bag_item['password']} -D #{node['web_application']['database']['dbname']} < #{node['web_application']['database']['seed_file']}"
+  not_if  "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{user_password_data_bag_item['password']} -D #{node['web_application']['database']['dbname']} -e 'describe customers;'"
 end
 ```
 
@@ -136,9 +134,13 @@ mysql_client 'default' do
   action :create
 end
 
+# Load the secrets file and the encrypted data bag item that holds the root password.
+password_secret = Chef::EncryptedDataBagItem.load_secret("#{node['web_application']['passwords']['secret_path']}")
+root_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'sql_server_root_password', password_secret)
+
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password node['mysql']['server_root_password']
+  initial_root_password root_password_data_bag_item['password']
   action [:create, :start]
 end
 
@@ -147,19 +149,22 @@ mysql_database node['web_application']['database']['dbname'] do
   connection(
     :host => node['web_application']['database']['host'],
     :username => node['web_application']['database']['username'],
-    :password => node['web_application']['database']['password']
+    :password => root_password_data_bag_item['password']
   )
   action :create
 end
+
+# Load the encrypted data bag item that holds the database user's password.
+user_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'db_admin', password_secret)
 
 # Add a database user.
 mysql_database_user node['web_application']['database']['app']['username'] do
   connection(
     :host => node['web_application']['database']['host'],
     :username => node['web_application']['database']['username'],
-    :password => node['web_application']['database']['password']
+    :password => root_password_data_bag_item['password']
   )
-  password node['web_application']['database']['app']['password']
+  password user_password_data_bag_item['password']
   database_name node['web_application']['database']['dbname']
   host node['web_application']['database']['host']
   action [:create, :grant]
@@ -175,7 +180,7 @@ end
 
 # Seed the database with a table and test data.
 execute 'initialize database' do
-  command "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{node['web_application']['database']['app']['password']} -D #{node['web_application']['database']['dbname']} < #{node['web_application']['database']['seed_file']}"
-  not_if  "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{node['web_application']['database']['app']['password']} -D #{node['web_application']['database']['dbname']} -e 'describe customers;'"
+  command "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{user_password_data_bag_item['password']} -D #{node['web_application']['database']['dbname']} < #{node['web_application']['database']['seed_file']}"
+  not_if  "mysql -h #{node['web_application']['database']['host']} -u #{node['web_application']['database']['app']['username']} -p#{user_password_data_bag_item['password']} -D #{node['web_application']['database']['dbname']} -e 'describe customers;'"
 end
 ```

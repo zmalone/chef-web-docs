@@ -15,7 +15,7 @@ mysql_database_user 'db_admin' do
     :username => 'root',
     :password => 'learnchef_mysql'
   )
-  password 'customers_password'
+  password 'database_password'
   database_name 'products'
   host '127.0.0.1'
   action [:create, :grant]
@@ -31,7 +31,6 @@ Append the following to your default attributes file, <code class="file-path">de
 ```ruby
 # ~/chef-repo/cookbooks/web_application/attributes/default.rb
 default['web_application']['database']['app']['username'] = 'db_admin'
-default['web_application']['database']['app']['password'] = 'customers_password'
 ```
 
 The entire file looks like this.
@@ -46,15 +45,15 @@ default['web_application']['config'] = 'customers.conf'
 
 default['apache']['docroot_dir'] = '/srv/apache/customers'
 
-default['mysql']['server_root_password'] = 'learnchef_mysql'
+default['iptables']['install_rules'] = false
+
+default['web_application']['passwords']['secret_path'] = '/tmp/encrypted_data_bag_secret'
 
 default['web_application']['database']['dbname'] = 'products'
 default['web_application']['database']['host'] = '127.0.0.1'
 default['web_application']['database']['username'] = 'root'
-default['web_application']['database']['password'] = node['mysql']['server_root_password']
 
 default['web_application']['database']['app']['username'] = 'db_admin'
-default['web_application']['database']['app']['password'] = 'customers_password'
 ```
 
 Your resource now looks like this after we apply your new node attributes.
@@ -66,9 +65,30 @@ mysql_database_user node['web_application']['database']['app']['username'] do
   connection(
     :host => node['web_application']['database']['host'],
     :username => node['web_application']['database']['username'],
-    :password => node['web_application']['database']['password']
+    :password => root_password_data_bag_item['password']
   )
-  password node['web_application']['database']['app']['password']
+  password 'database_password'
+  database_name node['web_application']['database']['dbname']
+  host node['web_application']['database']['host']
+  action [:create, :grant]
+end
+```
+
+The final thing to do is the replace the hard-coded database password with the value in our encrypted data bag.
+
+```ruby
+# ~/chef-repo/cookbooks/web_application/recipes/database.rb
+# Load the encrypted data bag item that holds the database user's password.
+user_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'db_admin', password_secret)
+
+# Add a database user.
+mysql_database_user node['web_application']['database']['app']['username'] do
+  connection(
+    :host => node['web_application']['database']['host'],
+    :username => node['web_application']['database']['username'],
+    :password => root_password_data_bag_item['password']
+  )
+  password user_password_data_bag_item['password']
   database_name node['web_application']['database']['dbname']
   host node['web_application']['database']['host']
   action [:create, :grant]
@@ -89,9 +109,13 @@ mysql_client 'default' do
   action :create
 end
 
+# Load the secrets file and the encrypted data bag item that holds the root password.
+password_secret = Chef::EncryptedDataBagItem.load_secret("#{node['web_application']['passwords']['secret_path']}")
+root_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'sql_server_root_password', password_secret)
+
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password node['mysql']['server_root_password']
+  initial_root_password root_password_data_bag_item['password']
   action [:create, :start]
 end
 
@@ -100,19 +124,22 @@ mysql_database node['web_application']['database']['dbname'] do
   connection(
     :host => node['web_application']['database']['host'],
     :username => node['web_application']['database']['username'],
-    :password => node['web_application']['database']['password']
+    :password => root_password_data_bag_item['password']
   )
   action :create
 end
+
+# Load the encrypted data bag item that holds the database user's password.
+user_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'db_admin', password_secret)
 
 # Add a database user.
 mysql_database_user node['web_application']['database']['app']['username'] do
   connection(
     :host => node['web_application']['database']['host'],
     :username => node['web_application']['database']['username'],
-    :password => node['web_application']['database']['password']
+    :password => root_password_data_bag_item['password']
   )
-  password node['web_application']['database']['app']['password']
+  password user_password_data_bag_item['password']
   database_name node['web_application']['database']['dbname']
   host node['web_application']['database']['host']
   action [:create, :grant]

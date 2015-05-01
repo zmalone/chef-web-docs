@@ -1,6 +1,6 @@
 ## 1. Create the user recipe
 
-First, create a recipe to define the `web_admin` user and group.
+First, create a recipe named `user`.
 
 ```bash
 # ~/chef-repo
