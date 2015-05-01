@@ -6,7 +6,7 @@ In this step you'll copy the secret key to the <code class="file-path">/tmp</cod
 
 Perform the steps that match your workstation setup.
 
-### From a Linux or MacOS workstation
+### From a Linux or Mac OS workstation
 
 The `scp` command securely copies files from one computer to another.
 

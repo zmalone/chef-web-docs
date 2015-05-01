@@ -18,7 +18,7 @@ Every data bag item has an `id` field that identifies it. `"password": "learnche
 
 Now run this command to encrypt the data bag item and upload it to the Chef server. The `--secret-file` argument specifies the location of your secret key file that's used to perform the encryption.
 
-**Mac OS and Linux:**
+### From a Linux or Mac OS workstation
 
 ```bash
 # ~/chef-repo
@@ -26,7 +26,7 @@ $ knife data bag from file passwords sql_server_root_password.json --secret-file
 Updated data_bag_item[passwords::sql_server_root_password]
 ```
 
-**Windows:**
+### From a Windows workstation
 
 ```ps
 # ~\chef-repo

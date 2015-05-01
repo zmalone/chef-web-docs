@@ -21,7 +21,7 @@ The data comes back encrypted because you did not specify a secret key to decryp
 
 Run the same command again, but this time specify the `--secret-file` argument like you did when you encrypted the data bag item.
 
-**Mac OS and Linux:**
+### From a Linux or Mac OS workstation
 
 ```bash
 # ~/chef-repo
@@ -30,7 +30,7 @@ id:       sql_server_root_password
 password: learnchef_mysql
 ```
 
-**Windows:**
+### From a Windows workstation
 
 ```ps
 # ~\chef-repo

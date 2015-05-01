@@ -4,7 +4,7 @@ Encrypting a data bag item requires a secret key. A common way to generate this 
 
 Run the command that matches your workstation setup.
 
-### From a Linux or MacOS workstation
+### From a Linux or Mac OS workstation
 
 ```bash
 # ~/chef-repo

@@ -105,6 +105,10 @@ mysql_client 'default' do
   action :create
 end
 
+# Load the secrets file and the encrypted data bag item that holds the root password.
+password_secret = Chef::EncryptedDataBagItem.load_secret("#{node['web_application']['passwords']['secret_path']}")
+root_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'sql_server_root_password', password_secret)
+
 # Configure the MySQL service.
 mysql_service 'default' do
   initial_root_password root_password_data_bag_item['password']

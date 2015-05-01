@@ -45,7 +45,7 @@ default['web_application']['config'] = 'customers.conf'
 
 default['apache']['docroot_dir'] = '/srv/apache/customers'
 
-default['mysql']['server_root_password'] = 'learnchef_mysql'
+default['web_application']['passwords']['secret_path'] = '/tmp/encrypted_data_bag_secret'
 
 default['web_application']['database']['dbname'] = 'products'
 default['web_application']['database']['host'] = '127.0.0.1'

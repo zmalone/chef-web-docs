@@ -70,7 +70,7 @@ Connection to 52.10.205.36 closed.
 
 From your workstation, verify that your web site is accessible. Either navigate to your site from a web browser, or run one of the following commands:
 
-**Mac OS and Linux:**
+### From a Linux or Mac OS workstation
 
 ```bash
 # ~
@@ -78,7 +78,7 @@ $ curl 52.10.205.36
 <html>This is a placeholder</html>
 ```
 
-**Windows:**
+### From a Windows workstation
 
 ```ps
 # ~

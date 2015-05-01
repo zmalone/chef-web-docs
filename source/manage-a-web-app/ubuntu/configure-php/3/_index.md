@@ -1,7 +1,5 @@
 ## 3. Refactor the PHP application
 
-We'll do one final bit of refactoring to modify the PHP script to use custom node attributes.
-
 We'll do one final bit of refactoring to modify the PHP script to use custom node attributes and the encrypted database password.
 
 First, we need to make the database password available to the PHP template.
@@ -33,7 +31,7 @@ end
 
 [RUBY] The [variables](https://docs.chef.io/resource_template.html#variables) attribute is a [Hash](http://ruby-doc.org/core-2.1.1/Hash.html) of values.
 
-Find the part of the program that looks like this.
+In <code class="file-path">index.php.erb</code>, find the part of the PHP program that looks like this.
 
 ```php
 <?php

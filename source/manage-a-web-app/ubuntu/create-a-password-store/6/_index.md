@@ -16,7 +16,7 @@ Create a file named <code class="file-path">db\_admin.json</code> in the <code c
 
 Now run the following commands to encrypt the data bag item, upload it to the Chef server, and verify that you can successfully retrieve and decrypt the data back again.
 
-**Mac OS and Linux:**
+### From a Linux or Mac OS workstation
 
 ```bash
 # ~/chef-repo
@@ -27,7 +27,7 @@ id:       db_admin
 password: database_password
 ```
 
-**Windows:**
+### From a Windows workstation
 
 ```ps
 # ~\chef-repo

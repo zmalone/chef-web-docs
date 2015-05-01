@@ -6,7 +6,7 @@ In this step, you'll create a directory for your `passwords` data bag and create
 
 First, create a directory to hold your data bag.
 
-### From a Linux or MacOS workstation
+### From a Linux or Mac OS workstation
 
 ```bash
 # ~/chef-repo
