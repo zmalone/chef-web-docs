@@ -99,7 +99,7 @@ default['web_application']['database']['app']['username'] = 'db_admin'
 default['web_application']['database']['seed_file'] ='/tmp/create-tables.sql'
 ```
 
-We can also factor out most parts of your `execute` resource, such as the host name, user name, and password. We already have node attributes and data bag items to describe those, so we're ready to add code to the recipe.
+We can also factor out most parts of your `execute` resource, such as the host name, user name, and password. We already have the node attributes and data bag items to describe those, so we're ready to add code to the recipe.
 
 Append the following to your database recipe.
 

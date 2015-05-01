@@ -8,7 +8,7 @@ If you don't already have a Chef repo set up on your workstation, run the follow
 
 ```bash
 # ~
-$ chef generate repo ~/chef-repo --policy-only
+$ chef generate repo ~/chef-repo
 Compiling Cookbooks...
 Recipe: code_generator::repo
 [...]

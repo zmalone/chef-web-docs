@@ -74,7 +74,7 @@ mysql_database_user node['web_application']['database']['app']['username'] do
 end
 ```
 
-The final thing to do is the replace the hard-coded password with the value in our encrypted data bag.
+The final thing to do is the replace the hard-coded database password with the value in our encrypted data bag.
 
 ```ruby
 # ~/chef-repo/cookbooks/web_application/recipes/database.rb
