@@ -31,7 +31,7 @@ end
 
 [RUBY] The [variables](https://docs.chef.io/resource_template.html#variables) attribute is a [Hash](http://ruby-doc.org/core-2.1.1/Hash.html) of values.
 
-Find the part of the program that looks like this.
+In <code class="file-path">index.php.erb</code>, find the part of the PHP program that looks like this.
 
 ```php
 <?php

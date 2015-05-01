@@ -8,12 +8,16 @@ If you don't already have a Chef repo set up on your workstation, run the follow
 
 ```bash
 # ~
-$ chef generate repo ~/chef-repo --policy-only
+$ chef generate repo ~/chef-repo
 Compiling Cookbooks...
 Recipe: code_generator::repo
+Compiling Cookbooks...
+Recipe: code_generator::repo
+  * directory[/home/user/chef-repo] action create
+    - create new directory /home/user/chef-repo
 [...]
-    - create new file /home/user/chef-repo/cookbooks/README.md
-    - update content in file /home/user/chef-repo/cookbooks/README.md from none to 5b0411
+    - create new file /home/user/chef-repo/.gitignore
+    - update content in file /home/user/chef-repo/.gitignore from none to 3523c4
     (diff output suppressed by config)
 ```
 
