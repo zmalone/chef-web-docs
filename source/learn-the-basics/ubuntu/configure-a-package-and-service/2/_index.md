@@ -7,11 +7,14 @@ Now let's enable the Apache service when the server boots and start it. Modify <
 package 'apache2'
 
 service 'apache2' do
+  supports :status => true
   action [:enable, :start]
 end
 ```
 
 This code declares multiple actions.
+
+[LINUX] Ubuntu 14.04 provides two init systems. The `supports :status => true` part tells Chef that the `apache2` init script supports the `status` message. This information helps Chef use the appropriate strategy to determine if the `apache2` service is running. If you're interested, read [this blog post](https://www.chef.io/blog/2014/09/18/chef-where-is-my-ubuntu-14-04-service-support/) for more information.
 
 Now apply it.
 
