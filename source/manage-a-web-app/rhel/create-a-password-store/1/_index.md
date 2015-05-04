@@ -1,4 +1,4 @@
-## 1. Generate your secret key
+## 1. Generate a key to encrypt data bag items
 
 Encrypting a data bag item requires a secret key. A common way to generate this key is to create a large random number and write it to a text file.
 
