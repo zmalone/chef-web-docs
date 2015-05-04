@@ -1,6 +1,6 @@
-## 6. Create a data bag item for the database password
+## 6. Put the customer database password in the data bag
 
-Now let's follow the same process to create an encrypted data bag item to hold the password for our database instance.
+Now let's follow the same process to create an encrypted data bag item to hold the password for our web app's customer database.
 
 Create a file named <code class="file-path">db\_admin.json</code> in the <code class="file-path">data\_bags/passwords</code> directory and add these contents.
 
