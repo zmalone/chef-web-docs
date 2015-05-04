@@ -1,6 +1,6 @@
-## 4. Create a data bag item for the MySQL root password
+## 4. Put the MySQL root password in the data bag
 
-Now let's create an encrypted data bag item to hold the MySQL root password.
+To securely store the MySQL root password in the data bag, we need to create an encrypted data bag item.
 
 Data bag items are stored as files. Create a file named <code class="file-path">sql\_server\_root\_password.json</code> in the <code class="file-path">data\_bags/passwords</code> directory and add these contents.
 

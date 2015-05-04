@@ -1,4 +1,4 @@
-## 3. Create the data bag
+## 3. Create a data bag to hold your passwords
 
 All data bags are stored in your Chef repo's <code class="file-path">data\_bags</code> directory. Each data bag is typically stored in a subdirectory of <code class="file-path">data\_bags</code>. `knife` understands this directory structure so you don't need to enter the full path when working with data bags from the command line.
 
