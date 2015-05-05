@@ -1,4 +1,4 @@
-## 7. Create a node attribute for your secret file's location
+## 7. Store the location of the data bag key file
 
 Let's also set a node attribute that points to the location of the secret key file on your node. The `database` recipe will need this path name to perform the decryption.
 

@@ -1,8 +1,8 @@
-## 2. Copy the secret key to your node
+## 2. Create a file on your node for the data bag key
 
-Your node will need the secret key when it decrypts your data bags later in this tutorial. Let's prepare your node now.
+Your node will need the data bag key when it accesses your data bag later in this tutorial. Let's prepare your node now.
 
-In this step you'll copy the secret key to the <code class="file-path">/tmp</code> directory on your node. You can copy the secret file to any location that you have access to if you require it to exist in a different location.
+In this step you'll copy the data bag key to the <code class="file-path">/tmp</code> directory on your node. You can copy the key file to any location that you have access to if you require it to exist in a different location.
 
 Perform the steps that match your workstation setup.
 
