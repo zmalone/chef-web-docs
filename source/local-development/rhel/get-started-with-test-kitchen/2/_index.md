@@ -1,0 +1,59 @@
+## 2. Set up the Test Kitchen configuration file
+
+Now we need to tell Test Kitchen a bit about the environment we want to run our cookbook in.
+
+When you use the `chef generate cookbook` command to create a cookbook, Chef creates a file named <code class="file-path">.kitchen.yml</code> in the root directory of your cookbook. <code class="file-path">.kitchen.yml</code> defines what's needed to run Test Kitchen, including which virtualization provider to use, how to run Chef, and what platforms to run your code on.
+
+The default <code class="file-path">.kitchen.yml</code> file looks like this.
+
+```ruby
+# ~/motd/.kitchen.yml
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: ubuntu-12.04
+  - name: centos-6.5
+
+suites:
+  - name: default
+    run_list:
+      - recipe[motd::default]
+    attributes:
+```
+
+[COMMENT] On Linux and Mac OS, <code class="file-path">.kitchen.yml</code> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
+
+Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only CentOS, modify <code class="file-path">~/motd/.kitchen.yml</code> like this. (Be sure to replace `centos-6.5` with `centos-6.6`.)
+
+```ruby
+# ~/motd/.kitchen.yml
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: centos-6.6
+
+suites:
+  - name: default
+    run_list:
+      - recipe[motd::default]
+    attributes:
+```
+
+Here's how the file breaks down.
+
+* **driver** specifies the software component that's responsible for creating the machine. We're using Vagrant.
+* **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This will allow us to work with node attributes and data bags.
+* **platforms** lists the target operating systems. We're targeting just one &ndash; CentOS 6.6.
+* **suites** specifies what cookbooks to run. This is where we provide the run-list, which recall defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `motd` cookbook's default recipe.
+
+[COMMENT] When Test Kitchen runs, it downloads the base virtual machine image, called a _box_, if the image does not already exist locally. Test Kitchen can [infer the location](https://github.com/test-kitchen/kitchen-vagrant#-default-configuration) for a set number of common configurations. The Test Kitchen [documentation](https://github.com/test-kitchen/kitchen-vagrant#-configuration) explains in detail about how to provide the box name, download URL, and other configuration parameters.
