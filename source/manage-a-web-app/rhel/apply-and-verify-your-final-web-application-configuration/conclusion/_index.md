@@ -4,7 +4,7 @@ You now have a cookbook that you can reuse. Your individual recipes declare the 
 
 [GITHUB] Get the final version of the `web_application` cookbook [on GitHub](https://github.com/learn-chef/manage-a-web-app-rhel).
 
-Stay tuned for the next tutorial, where we'll show you how to scale your web application by distributing its functionality across multiple nodes. While you're waiting, this is a great time to check out the [Chef Fundamentals Series](/fundamentals-series/), where Technical Community Director Nathen Harvey covers the fundamentals of using Chef in a 6-part video series.
+In the next tutorial, [Learn to develop your infrastructure code locally](/local-development/rhel/), you'll learn how to speed up the development cycle by using Test Kitchen to configure your web application on a virtual machine.
 
 <p style="font-size: 14px; font-style: italic;">
 This tutorial was adapted from <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting Started Writing Chef Cookbooks the Berkshelf Way</a>, by Mischa Taylor. It was updated for use with the ChefDK and the latest community cookbooks.
