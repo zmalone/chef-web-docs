@@ -2,6 +2,8 @@
 
 We're all done with our virtual machine, so now run the `kitchen destroy` command to delete it.
 
+<img src="/assets/images/misc/local_dev_workflow5.png" style="box-shadow: none;" alt=""/>
+
 ```bash
 # ~/motd
 $ kitchen destroy
@@ -12,7 +14,7 @@ $ kitchen destroy
 -----> Kitchen is finished. (0m4.06s)
 ```
 
-Run `kitchen list` and you'll see that the machine is back at the `Last Action` column shows that the virtual machine no longer exists.
+Run `kitchen list` and you'll see that the `Last Action` column shows that the virtual machine no longer exists.
 
 ```bash
 # ~/motd

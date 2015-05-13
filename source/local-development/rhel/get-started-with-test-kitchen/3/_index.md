@@ -1,6 +1,8 @@
 ## 3. Create the Test Kitchen instance
 
-Now you'll provision a virtual machine to serve as your test environment.
+Now you'll provision a virtual machine to serve as your test environment. This is the `kitchen create` step in our workflow.
+
+<img src="/assets/images/misc/local_dev_workflow1.png" style="box-shadow: none;" alt=""/>
 
 We often call the set of virtual environments that's created by Test Kitchen simply a _kitchen_. Run `kitchen list` to see what's in the kitchen.
 

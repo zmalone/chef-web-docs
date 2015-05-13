@@ -41,6 +41,9 @@ provisioner:
 
 platforms:
   - name: centos-6.6
+    driver:
+      customize:
+        memory: 256
 
 suites:
   - name: default
@@ -49,11 +52,13 @@ suites:
     attributes:
 ```
 
+This configuration also specifies that the virtual machine should have 256 MB of memory available to it.
+
 Here's how the file breaks down.
 
-* **driver** specifies the software component that's responsible for creating the machine. We're using Vagrant.
-* **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This will allow us to work with node attributes and data bags.
-* **platforms** lists the target operating systems. We're targeting just one &ndash; CentOS 6.6.
-* **suites** specifies what cookbooks to run. This is where we provide the run-list, which recall defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `motd` cookbook's default recipe.
+* **driver** specifies the software that creates the machine. We're using Vagrant.
+* **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and data bags.
+* **platforms** specifies the target operating systems. We're targeting just one &ndash; CentOS 6.6.
+* **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `motd` cookbook's default recipe.
 
 [COMMENT] When Test Kitchen runs, it downloads the base virtual machine image, called a _box_, if the image does not already exist locally. Test Kitchen can [infer the location](https://github.com/test-kitchen/kitchen-vagrant#-default-configuration) for a set number of common configurations. The Test Kitchen [documentation](https://github.com/test-kitchen/kitchen-vagrant#-configuration) explains in detail about how to provide the box name, download URL, and other configuration parameters.

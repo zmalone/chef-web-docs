@@ -2,6 +2,8 @@
 
 Now run `kitchen converge` to apply the cookbook to the CentOS virtual machine.
 
+<img src="/assets/images/misc/local_dev_workflow2.png" style="box-shadow: none;" alt=""/>
+
 ```bash
 # ~/motd
 $ kitchen converge
@@ -22,22 +24,22 @@ $ kitchen converge
        Converging 1 resources
        Recipe: motd::default
 
-           - update content in file /etc/motd from e3b0c4 to 0803f9
+           - update content in file /etc/motd from e3b0c4 to 578467
            --- /etc/motd	2010-01-12 13:28:22.000000000 +0000
-           +++ /tmp/chef-rendered-template20150508-1296-14xwj48	2015-05-08 20:37:56.578854818 +0000
+           +++ /tmp/chef-rendered-template20150513-2331-ecq0cq	2015-05-13 19:19:09.405673021 +0000
            @@ -1 +1,6 @@
-           +Welcome to localhost on localhost.
            +
-           +This server is running centos 6.6.
-           +
+           +hostname:  default-centos-66
+           +fqdn:      default-centos-66
+           +memory:    244120kB
 
-
+           - restore selinux security context
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 1/1 resources updated in 5.545554269 seconds
-       Finished converging <default-centos-66> (10m25.47s).
------> Kitchen is finished. (10m26.07s)
+       Chef Client finished, 1/1 resources updated in 9.814841645 seconds
+       Finished converging <default-centos-66> (11m51.96s).
+-----> Kitchen is finished. (11m52.42s)
 ```
 
 [TIP] When you see the word _converge_, think _test and repair_.
@@ -77,7 +79,7 @@ $ kitchen converge
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-centos-66>
        Starting Chef Client, version 12.3.0
-       [2015-05-08T21:22:36+00:00] WARN: Child with name 'dna.json' found in multiple directories: /tmp/kitchen/dna.json and /tmp/kitchen/dna.json
+       [2015-05-13T19:23:29+00:00] WARN: Child with name 'dna.json' found in multiple directories: /tmp/kitchen/dna.json and /tmp/kitchen/dna.json
        resolving cookbooks for run list: ["motd::default"]
        Synchronizing Cookbooks:
          - motd
@@ -88,9 +90,9 @@ $ kitchen converge
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 0/1 resources updated in 3.165132809 seconds
-       Finished converging <default-centos-66> (0m7.74s).
------> Kitchen is finished. (0m8.63s)
+       Chef Client finished, 0/1 resources updated in 2.740175698 seconds
+       Finished converging <default-centos-66> (0m12.16s).
+-----> Kitchen is finished. (0m12.75s)
 ```
 
-This run was faster not only because the instance already had the Chef tools installed, but also because it was already in the desired state, so Chef had to do no work.
+This run was faster &ndash; 12.75 seconds compared to almost 12 minutes &ndash; not only because the instance already had the Chef tools installed, but also because it was already in the desired state, so Chef had to do no work.

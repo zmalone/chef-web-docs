@@ -16,7 +16,7 @@ Recipe: code_generator::cookbook
     (diff output suppressed by config)
 ```
 
-[COMMENT] For learning purposes, we'll build a basic MOTD cookbook ourselves. The [motd](https://supermarket.chef.io/cookbooks/motd)  and [motd-tail](https://github.com/opscode-cookbooks/motd-tail) cookbooks on Chef Supermarket provides a more robust solution.
+[COMMENT] For learning purposes, we'll build a basic MOTD cookbook ourselves. The [motd](https://supermarket.chef.io/cookbooks/motd)  and cookbook on Chef Supermarket provides a more robust solution.
 
 ### Create the MOTD template
 
@@ -24,25 +24,26 @@ We'll use a template to dynamically add information about the virtual machine to
 
 ```bash
 # ~
-$ chef generate template motd server_info
+$ chef generate template motd server-info
 Compiling Cookbooks...
 Recipe: code_generator::template
   * directory[./motd/templates/default] action create
     - create new directory ./motd/templates/default
-  * template[./motd/templates/default/server_info.erb] action create
-    - create new file ./motd/templates/default/server_info.erb
-    - update content in file ./motd/templates/default/server_info.erb from none to e3b0c4
+  * template[./motd/templates/default/server-info.erb] action create
+    - create new file ./motd/templates/default/server-info.erb
+    - update content in file ./motd/templates/default/server-info.erb from none to e3b0c4
     (diff output suppressed by config)
 ```
 
-Now add these contents to <code class="file-path">server_info.erb</code>.
+Now add these contents to <code class="file-path">server-info.erb</code>.
 
-```ruby
-# ~/motd/templates/default/server_info.erb
-Welcome to <%= node['hostname'] %> on <%= node['fqdn'] %>.
+```conf
+# ~/motd/templates/default/server-info.erb
 
-This server is running <%= node['platform'] %> <%= node['platform_version'] %>.
-It has <%= node['memory']['total'] %> RAM and <%= node['cpu']['total'] %> CPUs.
+hostname:  <%= node['hostname'] %>
+fqdn:      <%= node['fqdn'] %>
+memory:    <%= node['memory']['total'] %>
+cpu count: <%= node['cpu']['total'] %>
 ```
 
 ### Write the default recipe
@@ -54,7 +55,7 @@ Write out the default recipe like this.
 ```ruby
 # ~/motd/recipes/default.rb
 template '/etc/motd' do
-  source 'server_info.erb'
+  source 'server-info.erb'
   mode '0644'
 end
 ```
