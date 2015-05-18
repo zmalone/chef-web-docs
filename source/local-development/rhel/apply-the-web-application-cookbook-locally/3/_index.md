@@ -22,7 +22,7 @@ $ kitchen converge
 [...]
        Recipe: iptables::default
 
-s           - execute /usr/sbin/rebuild-iptables
+            - execute /usr/sbin/rebuild-iptables
 
        Running handlers:
        Running handlers complete
@@ -34,9 +34,19 @@ s           - execute /usr/sbin/rebuild-iptables
 
 Verify that the process completed with no errors.
 
+### From a Linux or Mac OS workstation
+
 ```bash
 # ~/motd
 $ echo $?
+0
+```
+
+### From a Windows workstation
+
+```ps
+# ~/motd
+$ echo $LastExitCode
 0
 ```
 

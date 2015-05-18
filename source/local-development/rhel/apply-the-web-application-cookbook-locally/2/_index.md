@@ -37,4 +37,6 @@ suites:
           secret_path: '/tmp/kitchen/encrypted_data_bag_secret'
 ```
 
+[WINDOWS] On a Windows workstation, set `encrypted_data_bag_secret_key_path` to <code clas="file-path">C:\temp\encrypted\_data\_bag\_secret</code>.
+
 Test Kitchen appends the <code class="file-path">kitchen</code> subdirectory to the `encrypted_data_bag_secret_key_path` path you specify, making the destination path <code class="file-path">/tmp/kitchen/encrypted\_data\_bag\_secret</code> on the virtual machine. Therefore, we need to override the `node[web_application][passwords][secret_path]` node attribute to point to the new location of the secret file on the virtual machine.
