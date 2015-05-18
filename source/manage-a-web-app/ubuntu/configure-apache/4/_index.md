@@ -6,23 +6,23 @@ First, run this command to create your template file, <code class="file-path">cu
 
 ```bash
 # ~/chef-repo
-$ chef generate template cookbooks/web_application customers.conf
+$ chef generate template cookbooks/awesome_customers customers.conf
 Compiling Cookbooks...
 Recipe: code_generator::template
-  * directory[cookbooks/web_application/templates/default] action create
-    - create new directory cookbooks/web_application/templates/default
-  * template[cookbooks/web_application/templates/default/customers.conf.erb] action create
-    - create new file cookbooks/web_application/templates/default/customers.conf.erb
-    - update content in file cookbooks/web_application/templates/default/customers.conf.erb from none to e3b0c4
+  * directory[cookbooks/awesome_customers/templates/default] action create
+    - create new directory cookbooks/awesome_customers/templates/default
+  * template[cookbooks/awesome_customers/templates/default/customers.conf.erb] action create
+    - create new file cookbooks/awesome_customers/templates/default/customers.conf.erb
+    - update content in file cookbooks/awesome_customers/templates/default/customers.conf.erb from none to e3b0c4
     (diff output suppressed by config)
 ```
 
-This command added the template file <code class="file-path">customers.conf.erb</code> to the <code class="file-path">~/chef-repo/cookbooks/web_application/templates/default</code> directory. Remember, the <code class="file-path">.erb</code> extension means that the file can hold placeholders that are filled in when the recipe runs. That's what makes the file a template.
+This command added the template file <code class="file-path">customers.conf.erb</code> to the <code class="file-path">~/chef-repo/cookbooks/awesome_customers/templates/default</code> directory. Remember, the <code class="file-path">.erb</code> extension means that the file can hold placeholders that are filled in when the recipe runs. That's what makes the file a template.
 
 Add this to <code class="file-path">customers.conf.erb</code>.
 
 ```conf
-# ~/chef-repo/cookbooks/web_application/templates/default/customers.conf.erb
+# ~/chef-repo/cookbooks/awesome_customers/templates/default/customers.conf.erb
 
 # Managed by Chef for <%= node['hostname'] %>
 <VirtualHost *:80>

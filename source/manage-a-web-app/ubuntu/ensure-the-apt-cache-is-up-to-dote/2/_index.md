@@ -5,7 +5,7 @@ For our web application project, we'll use what's called the _application cookbo
 The `apt` cookbook's default recipe does everything we need to ensure the `apt` cache is up to date. To run this recipe, add the following to your cookbook's default recipe, <code class="file-path">default.rb</code>.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/default.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/default.rb
 include_recipe 'apt::default'
 ```
 

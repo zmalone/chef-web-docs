@@ -1,12 +1,12 @@
-## 1. Get the web_application cookbook
+## 1. Get the awesome_customers cookbook
 
-You can skip this step if you already have the `web_application` cookbook on your workstation.
+You can skip this step if you already have the `awesome_customers` cookbook on your workstation.
 
 ### Option 1: Download the zip file from GitHub
 
-Download the `web_application` project as a zip file from GitHub and extract it to the <code class="file-path">~/manage-a-web-app-rhel</code> directory on your workstation.
+Download the `awesome_customers` project as a zip file from GitHub and extract it to the <code class="file-path">~/manage-a-web-app-rhel</code> directory on your workstation.
 
-<a class='accent-button radius' href='https://github.com/learn-chef/manage-a-web-app-rhel' target='_blank'>Download the web_application project&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+<a class='accent-button radius' href='https://github.com/learn-chef/manage-a-web-app-rhel' target='_blank'>Download the awesome_customers project&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
 ![Download a zip file from GitHub](tutorials/github-zip.png)
 

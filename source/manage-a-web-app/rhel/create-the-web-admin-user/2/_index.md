@@ -3,7 +3,7 @@
 Now let's define the `web_admin` user. To do this, we'll use the built-in [group](https://docs.chef.io/resource_group.html) and [user](https://docs.chef.io/resource_user.html) resources. One way to define the `web_admin` user is like this. Don't add this code just yet.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/user.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/user.rb
 group 'web_admin'
 
 user 'web_admin' do
@@ -25,23 +25,23 @@ Run the following to create an attributes file named <code class="file-path">def
 
 ```bash
 # ~/chef-repo
-$ chef generate attribute cookbooks/web_application default
+$ chef generate attribute cookbooks/awesome_customers default
 Compiling Cookbooks...
 Recipe: code_generator::attribute
-  * directory[cookbooks/web_application/attributes] action create
-    - create new directory cookbooks/web_application/attributes
-  * template[cookbooks/web_application/attributes/default.rb] action create
-    - create new file cookbooks/web_application/attributes/default.rb
-    - update content in file cookbooks/web_application/attributes/default.rb from none to e3b0c4
+  * directory[cookbooks/awesome_customers/attributes] action create
+    - create new directory cookbooks/awesome_customers/attributes
+  * template[cookbooks/awesome_customers/attributes/default.rb] action create
+    - create new file cookbooks/awesome_customers/attributes/default.rb
+    - update content in file cookbooks/awesome_customers/attributes/default.rb from none to e3b0c4
     (diff output suppressed by config)
 ```
 
-This command added the <code class="file-path">default.rb</code> attribute file to the <code class="file-path">~/chef-repo/cookbooks/web_application/attributes</code> directory.
+This command added the <code class="file-path">default.rb</code> attribute file to the <code class="file-path">~/chef-repo/cookbooks/awesome_customers/attributes</code> directory.
 
 Add the following to <code class="file-path">default.rb</code>.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/attributes/default.rb
-default['web_application']['user'] = 'web_admin'
-default['web_application']['group'] = 'web_admin'
+# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
+default['awesome_customers']['user'] = 'web_admin'
+default['awesome_customers']['group'] = 'web_admin'
 ```

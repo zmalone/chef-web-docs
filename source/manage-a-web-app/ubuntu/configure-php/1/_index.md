@@ -3,13 +3,13 @@
 Recall that your Apache recipe looks like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 # Install Apache and configure its service.
 include_recipe 'apache2::default'
 
 # Create and enable our custom site.
-web_app node['web_application']['name'] do
-  template "#{node['web_application']['config']}.erb"
+web_app node['awesome_customers']['name'] do
+  template "#{node['awesome_customers']['config']}.erb"
 end
 
 # Create the document root.
@@ -21,8 +21,8 @@ end
 file "#{node['apache']['docroot_dir']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
-  owner node['web_application']['user']
-  group node['web_application']['group']
+  owner node['awesome_customers']['user']
+  group node['awesome_customers']['group']
 end
 
 # Open port 80 to incoming traffic.
@@ -36,7 +36,7 @@ end
 The `apache2` cookbook defines the `mod_php5` resource, which configures Apache to work with PHP scripts. In <code class="file-path">webserver.rb</code>, append an `include_recipe` line to install the `mod_php5` Apache module.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 # Install the mod_php5 Apache module.
 include_recipe 'apache2::mod_php5'
 ```
@@ -44,7 +44,7 @@ include_recipe 'apache2::mod_php5'
 Now append a `package` resource to install `php5-mysql`.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 # Install php5-mysql.
 package 'php5-mysql' do
   action :install
@@ -55,13 +55,13 @@ end
 The entire file looks like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 # Install Apache and configure its service.
 include_recipe 'apache2::default'
 
 # Create and enable our custom site.
-web_app node['web_application']['name'] do
-  template "#{node['web_application']['config']}.erb"
+web_app node['awesome_customers']['name'] do
+  template "#{node['awesome_customers']['config']}.erb"
 end
 
 # Create the document root.
@@ -73,8 +73,8 @@ end
 file "#{node['apache']['docroot_dir']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
-  owner node['web_application']['user']
-  group node['web_application']['group']
+  owner node['awesome_customers']['user']
+  group node['awesome_customers']['group']
 end
 
 # Open port 80 to incoming traffic.
