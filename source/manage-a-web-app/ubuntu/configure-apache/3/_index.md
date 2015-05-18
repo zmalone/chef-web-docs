@@ -14,12 +14,12 @@ We've already defined the user name and group for your site's content. The `apac
 Modify <code class="file-path">default.rb</code> like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/attributes/default.rb
-default['web_application']['user'] = 'web_admin'
-default['web_application']['group'] = 'web_admin'
+# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
+default['awesome_customers']['user'] = 'web_admin'
+default['awesome_customers']['group'] = 'web_admin'
 
-default['web_application']['name'] = 'customers'
-default['web_application']['config'] = 'customers.conf'
+default['awesome_customers']['name'] = 'customers'
+default['awesome_customers']['config'] = 'customers.conf'
 
 default['apache']['docroot_dir'] = '/srv/apache/customers'
 ```
@@ -27,13 +27,13 @@ default['apache']['docroot_dir'] = '/srv/apache/customers'
 Now we have values to use in our recipe. It's time to write out our recipe file. Modify <code class="file-path">webserver.rb</code>  like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 # Install Apache and configure its service.
 include_recipe 'apache2::default'
 
 # Create and enable our custom site.
-web_app node['web_application']['name'] do
-  template "#{node['web_application']['config']}.erb"
+web_app node['awesome_customers']['name'] do
+  template "#{node['awesome_customers']['config']}.erb"
 end
 
 # Create the document root.
@@ -45,8 +45,8 @@ end
 file "#{node['apache']['docroot_dir']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
-  owner node['web_application']['user']
-  group node['web_application']['group']
+  owner node['awesome_customers']['user']
+  group node['awesome_customers']['group']
 end
 ```
 

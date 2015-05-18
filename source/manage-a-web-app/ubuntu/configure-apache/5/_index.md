@@ -7,13 +7,13 @@ The easiest way to set a firewall rule is to use the [firewall](https://supermar
 First, modify <code class="file-path">metadata.rb</code> to load the `firewall` cookbook.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/metadata.rb
-name             'web_application'
+# ~/chef-repo/cookbooks/awesome_customers/metadata.rb
+name             'awesome_customers'
 maintainer       'The Authors'
 maintainer_email 'you@example.com'
 license          'all_rights'
-description      'Installs/Configures web_application'
-long_description 'Installs/Configures web_application'
+description      'Installs/Configures awesome_customers'
+long_description 'Installs/Configures awesome_customers'
 version          '0.1.0'
 
 depends 'apt', '~> 2.6.1'
@@ -24,13 +24,13 @@ depends 'firewall', '~> 0.11.8'
 Now edit <code class="file-path">webserver.rb</code> to use the `firewall_rule` resource, which is provided by the `firewall` cookbook, to open port 80 to incoming traffic.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 # Install Apache and configure its service.
 include_recipe 'apache2::default'
 
 # Create and enable your custom site.
-web_app node['web_application']['name'] do
-  template "#{node['web_application']['config']}.erb"
+web_app node['awesome_customers']['name'] do
+  template "#{node['awesome_customers']['config']}.erb"
 end
 
 # Create the document root.
@@ -42,8 +42,8 @@ end
 file "#{node['apache']['docroot_dir']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
-  owner node['web_application']['user']
-  group node['web_application']['group']
+  owner node['awesome_customers']['user']
+  group node['awesome_customers']['group']
 end
 
 # Open port 80 to incoming traffic.

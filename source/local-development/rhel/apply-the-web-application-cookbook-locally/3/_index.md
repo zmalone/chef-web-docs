@@ -1,11 +1,11 @@
-## 3. Apply the web_application cookbook to your Test Kitchen instance
+## 3. Apply the awesome_customers cookbook to your Test Kitchen instance
 
 In the previous lesson, you created the virtual machine and applied your cookbook to it in separate steps. As a shortcut, you can just run `kitchen converge` and Test Kitchen will create the virtual machine if it does not exist.
 
 First, run `kitchen list` to verify that the instance does not yet exist.
 
 ```bash
-# ~/manage-a-web-app-rhel/chef-repo/cookbooks/web_application
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ kitchen list
 Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-66  Vagrant  ChefZero     Busser    Ssh        <Not Created>

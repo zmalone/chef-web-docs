@@ -5,7 +5,7 @@ Now let's install the MySQL client and service packages. We'll also need to inst
 Add the following to <code class="file-path">database.rb</code>.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/database.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 # Configure the mysql2 Ruby gem.
 mysql2_chef_gem 'default' do
   action :install
@@ -17,7 +17,7 @@ mysql_client 'default' do
 end
 
 # Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret("#{node['web_application']['passwords']['secret_path']}")
+password_secret = Chef::EncryptedDataBagItem.load_secret("#{node['awesome_customers']['passwords']['secret_path']}")
 root_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'sql_server_root_password', password_secret)
 
 # Configure the MySQL service.

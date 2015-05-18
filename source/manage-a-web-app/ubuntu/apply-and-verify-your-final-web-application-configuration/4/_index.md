@@ -9,7 +9,7 @@ Here's a reminder of how to do this.
 Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ssh-password '{password}'
 ```
 
@@ -18,7 +18,7 @@ $ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ssh-p
 Replace `{address}` with your remote node's external address and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --identity-file {identity-file}
 ```
 

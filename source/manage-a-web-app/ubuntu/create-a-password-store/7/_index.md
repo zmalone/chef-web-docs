@@ -5,16 +5,16 @@ Let's also set a node attribute that points to the location of the secret key fi
 Add a default node attribute to your attributes file, <code class="file-path">default.rb</code>, making the entire file look like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/attributes/default.rb
-default['web_application']['user'] = 'web_admin'
-default['web_application']['group'] = 'web_admin'
+# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
+default['awesome_customers']['user'] = 'web_admin'
+default['awesome_customers']['group'] = 'web_admin'
 
-default['web_application']['name'] = 'customers'
-default['web_application']['config'] = 'customers.conf'
+default['awesome_customers']['name'] = 'customers'
+default['awesome_customers']['config'] = 'customers.conf'
 
 default['apache']['docroot_dir'] = '/srv/apache/customers'
 
-default['web_application']['passwords']['secret_path'] = '/tmp/encrypted_data_bag_secret'
+default['awesome_customers']['passwords']['secret_path'] = '/tmp/encrypted_data_bag_secret'
 ```
 
 <code class="file-path">/tmp/encrypted\_data\_bag\_secret</code> is the location of the secret file on your node.

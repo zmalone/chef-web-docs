@@ -3,15 +3,15 @@
 Initially, you ran `berks install` to install the cookbooks on your workstation. This time run `berks update` to install the cookbooks that you do not yet have.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ berks update
 Resolving cookbook dependencies...
-Fetching 'web_application' from source at .
+Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
 Using apache2 (3.0.1)
 Installing build-essential (2.2.0)
 Installing database (4.0.3)
-Using web_application (0.1.0) from source at .
+Using awesome_customers (0.1.0) from source at .
 Using apt (2.6.1)
 Installing chef-sugar (3.0.1)
 Using firewall (0.11.8)

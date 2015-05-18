@@ -12,13 +12,13 @@ The first step is to create the recipe file, <code class="file-path">webserver.r
 
 ```bash
 # ~/chef-repo
-$ chef generate recipe cookbooks/web_application webserver
+$ chef generate recipe cookbooks/awesome_customers webserver
 Compiling Cookbooks...
 Recipe: code_generator::recipe
 [...]
-  * template[cookbooks/web_application/recipes/webserver.rb] action create
-    - create new file cookbooks/web_application/recipes/webserver.rb
-    - update content in file cookbooks/web_application/recipes/webserver.rb from none to bc6813
+  * template[cookbooks/awesome_customers/recipes/webserver.rb] action create
+    - create new file cookbooks/awesome_customers/recipes/webserver.rb
+    - update content in file cookbooks/awesome_customers/recipes/webserver.rb from none to bc6813
     (diff output suppressed by config)
 ```
 
@@ -31,7 +31,7 @@ Earlier, we discussed how it's a good practice to separate your logic from your 
 Here's what our basic recipe might look like. Don't write any code yet &ndash; we'll do that shortly.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 # Install Apache and configure its service.
 include_recipe 'apache2::default'
 
@@ -53,5 +53,3 @@ file '/srv/apache/customers/index.php' do
   group 'web_admin'
 end
 ```
-
-[COMMENT] Don't confuse the name of the `web_app` resource for the name of our `web_application` cookbook.
