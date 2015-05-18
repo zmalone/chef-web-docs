@@ -46,9 +46,19 @@ $ kitchen converge
 
 In previous tutorials, you ran `chef-client` manually to apply your cookbooks. Test Kitchen runs `chef-client` for you. When the `chef-client` run completes successfully, Test Kitchen exits with exit code `0`. Run the following to check the exit code.
 
+### From a Linux or Mac OS workstation
+
 ```bash
 # ~/motd
 $ echo $?
+0
+```
+
+### From a Windows workstation
+
+```ps
+# ~/motd
+$ echo $LastExitCode
 0
 ```
 

@@ -16,8 +16,6 @@ The basic process you followed was to:
 1. Log on to your node and manually verify that it's configured as you expect.
 1. Repeat the process.
 
-[DIAGRAM WILL GO HERE]
-
 Say you want to quickly experiment with a new feature, or you make a mistake and have to repeat the process? It can take some time to tear down your existing node, provision and bootstrap a new one, upload your cookbooks, and run `chef-client`. How can we speed up this cycle and shorten the development process?
 
 One answer is [Test Kitchen](http://kitchen.ci). Test Kitchen is a tool that runs your infrastructure code in an isolated environment that resembles your production environment. With Test Kitchen, you continue to write your Chef code from your workstation, but instead of uploading your code to the Chef server and applying it to a node, Test Kitchen applies your code to a temporary environment, such as a virtual machine on your workstation or a cloud or container instance. Doing so enables you to iterate faster and correct mistakes earlier in the process. Only after you've written and verified your configuration code do you need to upload your cookbooks to the Chef server, bootstrap your node, and run `chef-client` on your node.
@@ -34,8 +32,8 @@ Recall that the `web_application` cookbook configures a basic web application th
 
 After completing this lesson, you'll:
 
-* know how to use Test Kitchen, along with VirtualBox and Vagrant, to apply your cookbooks locally on temporary instances.
-* be able to assign an IP address in the private address space to your instance.
+* know how to use Test Kitchen to apply your cookbooks locally on temporary instances.
+* be able to set up basic network settings for your instance, such as its IP address.
 * understand how to transfer your data bags and secret key file from your workstation to your instance.
 
-You'll get started by setting up VirtualBox and Vagrant on your workstation.
+You'll get started by setting up ChefDK and the virtualization tools on your workstation.

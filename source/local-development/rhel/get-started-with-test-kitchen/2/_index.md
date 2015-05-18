@@ -62,3 +62,5 @@ Here's how the file breaks down.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `motd` cookbook's default recipe.
 
 [COMMENT] When Test Kitchen runs, it downloads the base virtual machine image, called a _box_, if the image does not already exist locally. Test Kitchen can [infer the location](https://github.com/test-kitchen/kitchen-vagrant#-default-configuration) for a set number of common configurations. The Test Kitchen [documentation](https://github.com/test-kitchen/kitchen-vagrant#-configuration) explains in detail about how to provide the box name, download URL, and other configuration parameters.
+
+[DOCS] The [Chef documentation](http://docs.chef.io/config_yml_kitchen.html) explains the structure of the <code class="file-path">.kitchen.yml</code> file in greater detail, and also explains more about the available settings.
