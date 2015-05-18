@@ -16,7 +16,7 @@ If you're using key-based authentication, the command is similar to this.
 $ ssh -i ~/.ssh/my.pem ubuntu@52.10.205.36
 ```
 
-[WINDOWS] Mac OS and most Linux distributions come with an SSH client. On Windows, [PuTTY](http://www.putty.org) is a popular SSH client for logging into Linux machines.
+[WINDOWS] Mac OS and most Linux distributions come with an SSH client. On Windows, [PuTTY](http://www.putty.org) is a popular SSH client for connecting to Linux machines.
 
 Now that we're logged in, we'll verify that:
 

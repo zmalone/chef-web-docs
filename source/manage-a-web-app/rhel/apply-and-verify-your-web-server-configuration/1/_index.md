@@ -3,13 +3,13 @@
 Recall that <code class="file-path">metadata.rb</code> references the cookbooks your cookbook depends on.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/metadata.rb
-name             'web_application'
+# ~/chef-repo/cookbooks/awesome_customers/metadata.rb
+name             'awesome_customers'
 maintainer       'The Authors'
 maintainer_email 'you@example.com'
 license          'all_rights'
-description      'Installs/Configures web_application'
-long_description 'Installs/Configures web_application'
+description      'Installs/Configures awesome_customers'
+long_description 'Installs/Configures awesome_customers'
 version          '0.1.0'
 
 depends 'apache2', '~> 3.0.1'
@@ -41,7 +41,7 @@ When you created your cookbook, the `chef generate cookbook` command created a f
 For this project, you won't need to work directly with <code class="file-path">Berksfile</code>. But you'll notice that <code class="file-path">Berksfile</code> comes pre-configured to pull cookbooks from Chef Supermarket.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ more Berksfile
 source "https://supermarket.chef.io"
 
@@ -57,16 +57,16 @@ The next step is to have Berkshelf resolve your dependencies by downloading all 
 Run `berks install`.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ berks install
 Resolving cookbook dependencies...
-Fetching 'web_application' from source at .
+Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
 Installing apache2 (3.0.1)
 Installing iptables (0.14.1)
 Installing logrotate (1.9.1)
 Installing selinux (0.9.0)
-Using web_application (0.1.0) from source at .
+Using awesome_customers (0.1.0) from source at .
 ```
 
 Berkshelf installs dependent cookbooks to the <code class="file-path">~/.berkshelf/cookbooks</code> directory so that they can be shared among all of your cookbooks.
@@ -83,13 +83,13 @@ Now we can upload your cookbooks to the Chef server.
 Run `berks upload`.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ berks upload
 Uploaded apache2 (3.0.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded iptables (0.14.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded logrotate (1.9.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded selinux (0.9.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Uploaded web_application (0.1.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded awesome_customers (0.1.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
 
 ### Verify that the upload process succeeded
@@ -97,13 +97,13 @@ Uploaded web_application (0.1.0) to: 'https://api.opscode.com:443/organizations/
 To prove that the cookbooks uploaded successfully, run `knife cookbook list`.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ knife cookbook list
-apache2           3.0.1
-iptables          0.14.1
-logrotate         1.9.1
-selinux           0.9.0
-web_application   0.1.0
+apache2             3.0.1
+iptables            0.14.1
+logrotate           1.9.1
+selinux             0.9.0
+awesome_customers   0.1.0
 ```
 
 Congratulations. Chef server now contains everything you need to run `chef-client` on your node.

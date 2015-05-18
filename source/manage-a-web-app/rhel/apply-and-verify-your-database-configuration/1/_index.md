@@ -3,10 +3,10 @@
 Initially, you ran `berks install` to install the cookbooks on your workstation. This time run `berks update` to install the cookbooks that you do not yet have.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ berks update
 Resolving cookbook dependencies...
-Fetching 'web_application' from source at .
+Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
 Using apache2 (3.0.1)
 Installing build-essential (2.2.1)
@@ -23,7 +23,7 @@ Installing postgresql (3.4.18)
 Installing rbac (1.0.2)
 Using selinux (0.9.0)
 Installing smf (2.2.6)
-Using web_application (0.1.0) from source at .
+Using awesome_customers (0.1.0) from source at .
 Installing yum (3.5.3)
 Installing yum-epel (0.6.0)
 Installing yum-mysql-community (0.1.14)

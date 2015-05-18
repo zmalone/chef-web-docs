@@ -17,7 +17,7 @@ $ openssl rand -base64 512 | tr -d '\r\n' > /tmp/encrypted_data_bag_secret
 # ~\chef-repo
 $ $key = New-Object byte[](512)
 $ $rng = [System.Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($key)
-$ [Convert]::ToBase64String($key) | Out-File "C:\temp\encrypted_data_bag_secret"
+$ [Convert]::ToBase64String($key) | Out-File "C:\temp\encrypted_data_bag_secret" -encoding "UTF8"
 $ [array]::Clear($key, 0, $key.Length)
 ```
 

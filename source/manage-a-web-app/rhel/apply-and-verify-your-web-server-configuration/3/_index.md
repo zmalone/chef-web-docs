@@ -14,10 +14,10 @@ This is what we did in [Manage a node](/manage-a-node/rhel/). From your workstat
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name web_app_rhel --run-list 'recipe[web_application]'
+$ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name web_app_rhel --run-list 'recipe[awesome_customers]'
 ```
 
-You'll see lots of output as your node installs `chef-client` and runs the `web_application` cookbook.
+You'll see lots of output as your node installs `chef-client` and runs the `awesome_customers` cookbook.
 
 ### Option 2: Use key-based authentication
 
@@ -25,10 +25,10 @@ From your workstation, run this command to bootstrap your node. Replace `{addres
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name web_app_rhel --run-list 'recipe[web_application]'
+$ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name web_app_rhel --run-list 'recipe[awesome_customers]'
 ```
 
-You'll see lots of output as your node installs `chef-client` and runs the `web_application` cookbook.
+You'll see lots of output as your node installs `chef-client` and runs the `awesome_customers` cookbook.
 
 <a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
 
