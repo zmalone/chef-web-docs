@@ -55,7 +55,7 @@ module Middleman
         end
 
         def pygments_wrap(content,css_class)
-          "<div class='#{css_class}'><pre>#{content}</pre></div>"
+          "<div class='#{css_class}'><pre class='code_wrapper'>#{content}</pre></div>"
         end
 
         def source_window(content,filepath,window_style)
