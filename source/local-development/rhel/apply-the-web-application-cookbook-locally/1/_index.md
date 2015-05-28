@@ -64,7 +64,7 @@ Now modify <code class="file-path">~/manage-a-web-app-rhel/chef-repo/data\_bags/
 }
 ```
 
-First, encrypt your MySQL password locally.
+Finally, encrypt your MySQL and database passwords locally.
 
 ### From a Linux or Mac OS workstation
 
