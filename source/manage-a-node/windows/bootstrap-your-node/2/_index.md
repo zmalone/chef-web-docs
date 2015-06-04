@@ -10,7 +10,7 @@ Now, gather this information about your machine:
 If you're using the virtual machine that we provide, here's how to get these details.
 
 1. Click **More details**.
-![more details](/assets/images/quickstart/nodes/cloud-share/centos-more-details.png)
+![more details](/assets/images/quickstart/nodes/cloud-share/windows-more-details.png)
 1. Write down the **External Address** for the VM and click **show password** to display the user's password.
-![show password](/assets/images/quickstart/nodes/cloud-share/centos-show-password.png)
+![show password](/assets/images/quickstart/nodes/cloud-share/windows-show-password.png)
 1. Write down the **Username** and **Password** that are displayed.
