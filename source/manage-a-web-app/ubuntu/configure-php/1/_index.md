@@ -33,7 +33,7 @@ firewall_rule 'http' do
 end
 ```
 
-The `apache2` cookbook defines the `mod_php5` resource, which configures Apache to work with PHP scripts. In <code class="file-path">webserver.rb</code>, append an `include_recipe` line to install the `mod_php5` Apache module.
+The `httpd` cookbook defines the `mod_php5` resource, which configures Apache to work with PHP scripts. In <code class="file-path">webserver.rb</code>, append an `include_recipe` line to install the `mod_php5` Apache module.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb

@@ -17,7 +17,7 @@ long_description 'Installs/Configures awesome_customers'
 version          '0.1.0'
 
 depends 'apt', '~> 2.6.1'
-depends 'apache2', '~> 3.0.1'
+depends 'httpd', '~> 0.2.14'
 depends 'firewall', '~> 0.11.8'
 ```
 
@@ -25,21 +25,26 @@ Now edit <code class="file-path">webserver.rb</code> to use the `firewall_rule` 
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-# Install Apache and configure its service.
-include_recipe 'apache2::default'
-
-# Create and enable your custom site.
-web_app node['awesome_customers']['name'] do
-  template "#{node['awesome_customers']['config']}.erb"
+# Install Apache and start the service.
+httpd_service 'customers' do
+  mpm 'prefork'
+  action [:create, :start]
 end
 
-# Create the document root.
-directory node['apache']['docroot_dir'] do
+# Add the site configuration.
+httpd_config 'customers' do
+  instance 'customers'
+  source 'customers.conf.erb'
+  notifies :restart, 'httpd_service[customers]'
+end
+
+# Create the document root directory.
+directory node['awesome_customers']['document_root'] do
   recursive true
 end
 
-# Write a default home page.
-file "#{node['apache']['docroot_dir']}/index.php" do
+# Write the home page.
+file "#{node['awesome_customers']['document_root']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
   owner node['awesome_customers']['user']
