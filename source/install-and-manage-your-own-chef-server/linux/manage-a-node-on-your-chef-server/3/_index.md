@@ -1,7 +1,71 @@
-## 4. Bootstrap your node
+## 3. Bootstrap your node
+
+Now let's bootstrap your node and apply the `hello_chef_server` cookbook.
+
+Follow the steps in one of the sections below to bootstrap either a Linux or a Windows Server node to your Chef server.
+
+### Bootstrap a Linux node
+
+Choose the option below that matches how you can authenticate and bootstrap your node.
+
+### Option 1: Use a user name and password
+
+This is what we did in [Learn to manage a node](/manage-a-node/ubuntu/). From your workstation, run this command to bootstrap your node. Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+
+```bash
+# ~/chef-repo
+$ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name node1 --run-list 'recipe[hello_chef_server]'
+```
+
+You'll see lots of output as your node installs `chef-client` and runs the `hello_chef_server` cookbook.
+
+### Option 2: Use key-based authentication
+
+From your workstation, run this command to bootstrap your node. Replace `{address}` with your remote node's external address, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+
+```bash
+# ~/chef-repo
+$ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name node1 --run-list 'recipe[hello_chef_server]'
+```
+
+You'll see lots of output as your node installs `chef-client` and runs the `hello_chef_server` cookbook.
+
+<a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
+
+<div id="knife-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <h3 id="modalTitle">If the operation times out or fails, here are some things to try</h3>
+  <ul>
+    <li>Ensure that your environment is active before you run <code>knife</code>. For example, CloudShare instances suspend after a period of inactivity. <img class="border" src="/assets/images/ubuntu/cloudshare-suspend.png"></img></li>
+    <li>Ensure that you run <code>knife</code> commands from your <code class="file-path">chef-repo</code> directory or one of its sub-directories.</li>
+    <li>Ensure you have a <code class="file-path">chef-repo/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and two <code class="file-path">.pem</code> files. If you don't, <a href="/manage-a-node/ubuntu/set-up-your-chef-server/#2installthestarterkit" target="_blank">install the Starter Kit</a>.</li>
+    <li>Ensure that your node's IP address is accessible from your network.</li>
+    <li>Ensure the user name you provide has root or <code>sudo</code> access on the node.</li>
+    <li>Ensure your workstation has outbound access (including firewall) on these ports:
+      <ul>
+        <li>22 (SSH)</li>
+        <li>80 (HTTP)</li>
+        <li>443 (HTTPS)</li>
+      </ul>
+    </li>
+    <li>Ensure your node has inbound access (including firewall) on these ports:
+      <ul>
+        <li>22 (SSH)</li>
+      </ul>
+    </li>
+    <li>Ensure your node has outbound access (including firewall) on these ports:
+      <ul>
+        <li>443 (HTTPS)</li>
+      </ul>
+    </li>
+  </ul>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+
+### Bootstrap a Windows Server node
 
 <div class="indent" id="bootstrap-intro" data-type="windows-fundamentals" ng-non-bindable>
-From your workstation, run this command to bootstrap your node. Replace <code>{{address}}</code> with your remote node's external address, <code>{{user}}</code> with your username, and <code>{{password}}</code> with your password.
+From your workstation, run this command to bootstrap your node. Replace <code>{address}</code> with your remote node's external address, <code>{user}</code> with your username, and <code>{password}</code> with your password.
 </div>
 <p/>
 <div id="bootstrap-command" class="window" ng-non-bindable>
@@ -15,20 +79,16 @@ From your workstation, run this command to bootstrap your node. Replace <code>{{
     <tbody>
       <tr>
         <td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td>
-        <td class="code"><pre><code><span class="line command">knife bootstrap windows winrm {{address}} --winrm-user {{user}} --winrm-password '{{password}}' --node-name node1 --run-list 'recipe[learn\_chef\_iis]'</span></code></pre></td>
+        <td class="code"><pre><code><span class="line command">knife bootstrap windows winrm {address} --winrm-user {user} --winrm-password '{password}' --node-name node1 --run-list 'recipe[hello\_chef\_server]'</span></code></pre></td>
       </tr>
     </tbody></table></div></div>
 </div>
 
-[COMMENT] This is a long command &ndash; use the scrollbar to see the entire thing.
-
 [WINDOWS] This command uses Windows Remote Management (WinRM), a popular network protocol for connecting to Windows Server remotely. Although WinRM is how you typically connect to Windows, you can also bootstrap [using the Secure Shell (SSH) protocol](https://docs.chef.io/plugin_knife_windows.html#bootstrap-windows-ssh), which is more typical of Linux-based systems.
 
-The optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's FQDN is the default. If you previously used the name `node1` to bootstrap a different node, you'll need to choose a different name or remove the previous node.
+<a class="help-button radius" href="#" data-reveal-id="knife-help-modal-windows">Need help troubleshooting?</a>
 
-<a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
-
-<div id="knife-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+<div id="knife-help-modal-windows" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">If the operation times out or fails, here are some things to try</h3>
   <ul>
     <li>Ensure that your environment is active before you run <code>knife</code>. For example, CloudShare instances suspend after a period of inactivity. <img class="border" src="/assets/images/windows/cloudshare-suspend.png"></img></li>

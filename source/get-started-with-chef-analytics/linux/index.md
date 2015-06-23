@@ -1,35 +1,40 @@
 ---
 title: 'Get started with Chef analytics'
 layout: lesson-overview
-platform: Ubuntu
-logo: ubuntu.svg
+platform: Get started with Chef Analytics
+logo: chef-analytics.svg
 order: 3
 ---
-In [Learn the basics](/learn-the-basics/ubuntu) and [Manage a node](/manage-a-node/ubuntu/), you learned how Chef works by configuring a web server and a custom home page. Let's extend this by building a basic but complete web application on Ubuntu that uses a web server, a database, and scripting.
+[INTRO BLURB ABOUT ANALYTICS]
 
-In this tutorial, you'll write Chef code from your workstation, upload your code to a Chef server, and have your Ubuntu node pull that code from the Chef server and apply it.
+<img src="/assets/images/networks/analytics.png" style="width: 100%; box-shadow: none;" alt="Your workstation, a Chef server, and nodes" />
 
-<img src="/assets/images/networks/workstation-server-node.png" style="width: 100%; box-shadow: none;" alt="Your workstation, a Chef server, and nodes" />
+* Chef server and Chef Analytics run on Ubuntu and Red Hat Enterprise Linux or CentOS.
+* Your node, or the server that you want to manage with Chef, can run any of the UNIX, Linux or Windows operating systems [that Chef supports](https://docs.chef.io/supported_platforms.html).
+* Your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
 
-You've seen this setup in [Manage a node](/manage-a-node/ubuntu/). There, you uploaded your cookbook to the Chef server from your workstation. To apply your cookbook to your node, you ran the `knife ssh` command, which created an SSH connection from your workstation to your node and ran `chef-client` on your node. When your node ran `chef-client`, it pulled the latest cookbooks from the Chef server.
+In this tutorial, you'll set up Chef Analytics to email you when your node completes a `chef-client` run.
 
-In this tutorial, the node will host the web application, which reads customer records from a database and displays the results on a web page. By the end, you'll have a web application that looks like this:
-
-![the resulting web page](/assets/images/misc/webapp_result.png)
-
-A Linux web application configuration that uses a database and scripting is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll work with all of these components in this tutorial.
-
-Setting up a LAMP stack is a great next step to building your Chef skills because it:
-
-* enables you to exercise the skills you've already learned.
-* introduces just enough complexity to demonstrate real-world Chef usage patterns.
-* uses off-the-shelf software that you probably already know.
+![Adding a new rule](chef-analytics/notification-email.png)
 
 After completing this lesson, you'll:
 
-* be able to use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
+* be able to set up and work with a Chef server in your own infrastructure.
+* be able to set up a Chef reporting server.
+* be able to set up a Chef
 * be more productive by using community cookbooks from Chef Supermarket to perform common tasks.
 * be able to use encrypted data bags to protect sensitive data.
 * know how to use tools such as Berkshelf to resolve dependencies among your cookbooks.
 
-You'll get started by setting up your workstation, a Chef server, and a node to manage.
+You'll need X systems to complete this tutorial &ndash; your workstation, a server to run Chef server, a server to run Chef Analytics, and a node to manage. We'll review the system requirements in the following lesson.
+
+For this tutorial, you'll need four computers, all accessible from the same network.
+
+* Your workstation
+* A server to run Chef server
+* A server to run Chef Analytics
+* A node to manage
+
+[COMMENT] Chef server and Chef Analytics must exist on separate systems due to the heavy processing requirements of Chef Analytics.
+
+Let's get started by setting up your workstation and setting up the servers you'll need.

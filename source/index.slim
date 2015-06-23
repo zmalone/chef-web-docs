@@ -5,30 +5,8 @@ title: "Learn Chef"
 type: landing
 ---
 #topics
-  - current_page.children.each do |child|
-    - if child.data.type
-      - if child.data.type == "topic"
-        .row
-          .small-10.small-centered.columns
-            div.box id="#{ child.data.name }" class="topic"
-              h2 = child.data.title
-              - if child.data.tags
-                div style="margin-top:-16px;margin-bottom:10px;"
-                  = partial "layouts/add-tags", locals: { tags: child.data.tags }
-              - if child.data.time_to_complete
-                div style="font-size:12px;margin-top:-10px;margin-bottom:10px;" == child.data.time_to_complete
-              = child.data.description
-              - if child.data.platform_intro
-                br
-                br
-                center
-                  div
-                    = child.data.platform_intro
-                ul#platform-tabs
-                  - child.children.select{|p| p.data.platform}.each do |overview_page|
-                    li style="border-width; 2px; border 1px solid black;" = link_to overview_page do
-                      = image_tag "rhel/platform-logos/#{overview_page.data.logo}"
-                      p = "#{overview_page.data.platform}&nbsp;&nbsp;<i class='fa fa-angle-double-right'></i>"
-              - if child.data.coming_soon
-                .coming-soon
-                  = "Coming soon: #{child.data.coming_soon.join(', ')}"
+  - @topic_pages = current_page.children.select{|topic| topic.data.type && topic.data.type == "topic"}
+  - [{:category => 'a', :header => 'Get started with Chef in the server environment you work with most'},
+     {:category => 'b', :header => 'Manage your own Chef server and access additional features'}].each do |options|
+    = partial 'layouts/tutorial-section', locals: { header: options[:header], topics: @topic_pages.select{|topic| topic.data.category == options[:category]} }
+    hr
