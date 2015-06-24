@@ -81,10 +81,7 @@ Append an attribute to your default attribute file, <code class="file-path">defa
 default['awesome_customers']['user'] = 'web_admin'
 default['awesome_customers']['group'] = 'web_admin'
 
-default['awesome_customers']['name'] = 'customers'
-default['awesome_customers']['config'] = 'customers.conf'
-
-default['apache']['docroot_dir'] = '/srv/apache/customers'
+default['awesome_customers']['document_root'] = '/var/www/customers/public_html'
 
 default['awesome_customers']['passwords']['secret_path'] = '/tmp/encrypted_data_bag_secret'
 
@@ -153,7 +150,7 @@ mysql_database node['awesome_customers']['database']['dbname'] do
 end
 
 # Load the encrypted data bag item that holds the database user's password.
-user_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'db_admin', password_secret)
+user_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'db_admin_password', password_secret)
 
 # Add a database user.
 mysql_database_user node['awesome_customers']['database']['app']['username'] do

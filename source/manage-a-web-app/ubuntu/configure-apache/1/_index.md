@@ -1,4 +1,4 @@
-## 1. Reference the apache2 cookbook
+## 1. Reference the httpd cookbook
 
 We'll load the `httpd` cookbook just like we did the `apt` cookbook. Append the line `depends 'httpd', '~> 0.2.14'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
 

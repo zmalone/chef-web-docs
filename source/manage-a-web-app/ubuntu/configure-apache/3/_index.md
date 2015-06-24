@@ -1,6 +1,6 @@
 ## 3. Refactor the webserver recipe
 
-For this project, let's say that the location of the home page &ndash; <code class="file-path">/srv/apache/customers</code> &ndash; and its owner &ndash; `web_admin` &ndash; might change. To make this recipe more manageable, let's factor out those parts into custom node attributes.
+For this project, let's say that the location of the home page &ndash; <code class="file-path">/var/www/customers/public_html</code> &ndash; and its owner &ndash; `web_admin` &ndash; might change. To make this recipe more manageable, let's factor out those parts into custom node attributes.
 
 To do so, you'll go back to your attributes file, <code class="file-path">default.rb</code>, and create a few custom attributes to describe these parts.
 

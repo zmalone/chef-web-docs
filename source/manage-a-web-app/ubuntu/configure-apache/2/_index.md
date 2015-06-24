@@ -6,7 +6,7 @@ Remember, our goals for configuring Apache are to:
 * create and enable our custom site.
 * create a default home page for our site.
 
-We'll call our custom site `customers`, and we'll store it in the <code class="file-path">/srv/apache/customers/</code> directory.
+We'll call our custom site `customers`, and we'll store it in the <code class="file-path">/var/www/customers/public_html/</code> directory.
 
 The first step is to create the recipe file, <code class="file-path">webserver.rb</code>. Run the following command to generate it.
 
@@ -59,4 +59,6 @@ file '/var/www/customers/public_html/index.php' do
 end
 ```
 
-[COMMENT] Hi
+The `httpd_service` resource supports multiple simultaneous Apache instances that you can identify and manage. The name `customers` will produce a service named `apache2-customers`.
+
+[COMMENT] PHP [must be run](http://www.php.net/manual/en/faq.installation.php#faq.installation.apache2) in a single-threaded [Multi-Processing Module](http://httpd.apache.org/docs/2.2/mpm.html), or MPM. Therefore, we set the `mpm` attribute to use the [prefork](http://httpd.apache.org/docs/2.2/mod/prefork.html) module.
