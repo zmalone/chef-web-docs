@@ -1,6 +1,6 @@
 ## 4. Create the configuration file
 
-In your recipe you referenced your Apache site's configuration file. Now we need to create this file. We'll do that by creating a Chef template so we can provide placeholders that are filled in with custom node attributes when the recipe runs.
+In your recipe you used the `httpd_config` resource to reference your Apache site's configuration file. Now we need to create this file. We'll do that by creating a Chef template so we can provide placeholders that are filled in with custom node attributes when the recipe runs.
 
 First, run this command to create your template file, <code class="file-path">customers.conf.erb</code>.
 
@@ -21,41 +21,37 @@ This command added the template file <code class="file-path">customers.conf.erb<
 
 Add this to <code class="file-path">customers.conf.erb</code>.
 
-```conf
+```ruby
 # ~/chef-repo/cookbooks/awesome_customers/templates/default/customers.conf.erb
-
-# Managed by Chef for <%= node['hostname'] %>
 <VirtualHost *:80>
-  ServerAdmin <%= node['apache']['contact'] %>
+  ServerName <%= node['hostname'] %>
+  ServerAdmin 'ops@example.com'
 
-  DocumentRoot <%= node['apache']['docroot_dir'] %>
+  DocumentRoot <%= node['awesome_customers']['document_root'] %>
   <Directory />
           Options FollowSymLinks
           AllowOverride None
   </Directory>
-  <Directory <%= node['apache']['docroot_dir'] %>>
+  <Directory <%= node['awesome_customers']['document_root'] %> >
           Options Indexes FollowSymLinks MultiViews
           AllowOverride None
           Order allow,deny
           allow from all
   </Directory>
 
-  ErrorLog <%= node['apache']['log_dir'] %>/error.log
+  ErrorLog /var/log/apache2/error.log
 
   LogLevel warn
 
-  CustomLog <%= node['apache']['log_dir'] %>/access.log combined
+  CustomLog /var/log/apache2/access.log combined
   ServerSignature Off
+
+  AddType application/x-httpd-php .php
+  AddType application/x-httpd-php-source .phps
+  DirectoryIndex index.php index.html
 </VirtualHost>
 ```
 
-The configuration file uses these node attributes:
+The configuration file uses two node attributes &ndash; `node['hostname']` and `node['awesome_customers']['document_root']`.
 
-| Attribute                                                            | Source    | Description | Value |
-|---------------------------------------------------------------------:|-----------|-------------|---------------|
-| <code style="white-space:nowrap">node['hostname']</code>             | built-in  | the node's host name. | N/A |
-| <code style="white-space:nowrap">node['apache']['contact']</code>    | `apache2` | value for the `ServerAdmin` directive. | ops@example.com |
-| <code style="white-space:nowrap">node['apache']['docroot\_dir']</code> | `apache2` | the site's document root | <code class="file-path">/srv/apache/customers</code> |
-| <code style="white-space:nowrap">node['apache']['log_dir']</code>    | `apache2` | location for Apache logs | <code class="file-path">/var/log/apache2</code> |
-
-The configuration file uses the built-in or default values for each of these except for `node['apache']['docroot_dir']`. We override the default value of <code class="file-path">/var/www/html</code> with <code class="file-path">/srv/apache/customers</code> in your attributes file.
+`node['hostname']` is a built-in node attribute that defines the node's host name. This node attribute gets set during the initial bootstrap process. `node['awesome_customers']['document_root']` defines the site's document root, and is the node attribute that you used in the previous step to set up the home page.
