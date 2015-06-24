@@ -19,7 +19,7 @@ If your system running Chef server does not have access to its public address th
 ```ruby
 # /etc/opscode/chef-server.rb
 server_name = '{chef-server-fqdn}'
-api_fqdn = server_name
+api_fqdn server_name
 bookshelf['vip'] = server_name
 nginx['url'] = "https://#{server_name}"
 nginx['server_name'] = server_name
@@ -142,33 +142,7 @@ cookbook_path            ["#{current_dir}/../cookbooks"]
 
 [COMMENT] When you set up a hosted Chef account, we had you download the Starter Kit and extract it to your <code class="file-path">~/chef-repo/.chef</code> directory. When you created the <code class="file-path">~/chef-repo/.chef</code> directory and added to it your two RSA keys and your <code class="file-path">knife.rb</code> configuration file, you essentially recreated this process by hand!
 
-### Test the connection to Chef server
-
-From your workstation, run `knife client list` to verify that you can authenticate commands to the Chef server.
-
-```bash
-# ~/chef-repo
-$ knife client list
-learnchef-validator
-```
-
-<a class="help-button radius" href="#" data-reveal-id="chef-server-connect-help-modal">I got an error!</a>
-
-<div id="chef-server-connect-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-  <h3 id="modalTitle">If you get an error, verify that:</h3>
-  <ul>
-    <li>you can access https://{chef-server-fqdn}:443 from a web browser.</li>
-    <li>you are running <code>knife</code> from the <code class="file-path">~/chef-repo</code> directory or a sub-directory.</li>
-    <li>your <code class="file-path">~/chef-repo/.chef</code> directory contains two <code class="file-path">.pem</code> files and a <code class="file-path">knife.rb</code> file.</li>
-    <li>your <code class="file-path">.pem</code> files are user-readable only.</li>
-    <li>your Chef server meets the <a href="https://docs.chef.io/install_server_pre.html">prerequisites</a>.</li>
-  </ul>
-  <p>If you're unable to resolve the error, let us know in the forum at the bottom of this page or sign up for weekly <a href="https://www.chef.io/contact/office-hours-registration/">office hours</a>.
-  </p>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-</div>
-
-### Download the certificate
+### Download the SSL certificate
 
 Nodes communicate with the Chef server through a web service that's hosted on your Chef server. Communication occurs over an SSL connection (port 443), and Chef server uses a [X.509 digital certificate](https://en.wikipedia.org/wiki/X.509) to verify its authenticity.
 
@@ -198,3 +172,29 @@ Successfully verified certificates from `ec2-52-27-41-27.us-west-2.compute.amazo
 ```
 
 [COMMENT] By default, Chef Server uses a self-signed certificate, which is fine for getting started or for creating test servers. In production, we recommend that you use a [certificate signed by a root Certificate Authority (CA)](https://osxdominion.wordpress.com/2015/02/25/configuring-chef-server-12-to-use-trusted-ssl-certs/).
+
+### Test the connection to Chef server
+
+From your workstation, run `knife client list` to verify that you can authenticate commands to the Chef server.
+
+```bash
+# ~/chef-repo
+$ knife client list
+learnchef-validator
+```
+
+<a class="help-button radius" href="#" data-reveal-id="chef-server-connect-help-modal">I got an error!</a>
+
+<div id="chef-server-connect-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <h3 id="modalTitle">If you get an error, verify that:</h3>
+  <ul>
+    <li>you can access https://{chef-server-fqdn}:443 from a web browser.</li>
+    <li>you are running <code>knife</code> from the <code class="file-path">~/chef-repo</code> directory or a sub-directory.</li>
+    <li>your <code class="file-path">~/chef-repo/.chef</code> directory contains two <code class="file-path">.pem</code> files and a <code class="file-path">knife.rb</code> file.</li>
+    <li>your <code class="file-path">.pem</code> files are user-readable only.</li>
+    <li>your Chef server meets the <a href="https://docs.chef.io/install_server_pre.html">prerequisites</a>.</li>
+  </ul>
+  <p>If you're unable to resolve the error, let us know in the forum at the bottom of this page or sign up for weekly <a href="https://www.chef.io/contact/office-hours-registration/">office hours</a>.
+  </p>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
