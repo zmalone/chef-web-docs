@@ -13,7 +13,7 @@ long_description 'Installs/Configures awesome_customers'
 version          '0.1.0'
 
 depends 'apt', '~> 2.6.1'
-depends 'apache2', '~> 3.0.1'
+depends 'httpd', '~> 0.2.14'
 depends 'firewall', '~> 0.11.8'
 ```
 
@@ -21,15 +21,16 @@ These cookbooks need to exist on the Chef server so that the node can access the
 
 You could download each cookbook from Chef Supermarket and then upload it the Chef server, but there's one minor complication &ndash; each cookbook you depend on might depend on one or more other cookbooks. And those cookbooks in turn might depend on others.
 
-For example, if you [look at the apache2 cookbook](https://github.com/svanzoest-cookbooks/apache2/blob/master/metadata.rb), you'll see in its <code class="file-path">metadata.rb</code> file that it depends on the `iptables` and `logrotate` cookbooks.
+For example, if you [look at the firewall cookbook](https://github.com/opscode-cookbooks/firewall/blob/master/metadata.rb), you'll see in its <code class="file-path">metadata.rb</code> file that it depends on the `poise` cookbook.
 
 ```ruby
 # metadata.rb
-name 'apache2'
 # [...]
-depends 'iptables'
-depends 'logrotate'
-# [...]
+supports 'ubuntu'
+supports 'redhat'
+supports 'centos'
+
+depends 'poise', '~> 2.0'
 ```
 
 To help unravel this dependency web &ndash; and remove the need for you to manually resolve cookbook dependencies &ndash; we're going to use [Berkshelf](http://berkshelf.com). Berkshelf uploads your cookbooks to the Chef server and retrieves the cookbooks that your cookbook depends on.
@@ -62,11 +63,9 @@ $ berks install
 Resolving cookbook dependencies...
 Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
-Installing apache2 (3.0.1)
 Installing apt (2.6.1)
 Installing firewall (0.11.8)
-Installing iptables (0.14.1)
-Installing logrotate (1.9.0)
+Installing httpd (0.2.14)
 Using awesome_customers (0.1.0) from source at .
 ```
 
@@ -74,7 +73,7 @@ Berkshelf installs dependent cookbooks to the <code class="file-path">~/.berkshe
 
 ```bash
 $ ls ~/.berkshelf/cookbooks/
-apache2-3.0.1  apt-2.6.1  firewall-0.11.8  iptables-0.14.1  logrotate-1.9.0
+apt-2.6.1       firewall-0.11.8 httpd-0.2.14
 ```
 
 ### Use Berkshelf to upload the cookbooks to the Chef server
@@ -86,12 +85,10 @@ Run `berks upload`.
 ```bash
 # ~/chef-repo/cookbooks/awesome_customers
 $ berks upload
-Uploaded apache2 (3.0.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded apt (2.6.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Uploaded firewall (0.11.8) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Uploaded iptables (0.14.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Uploaded logrotate (1.9.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded awesome_customers (0.1.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded firewall (0.11.8) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded httpd (0.2.14) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
 
 ### Verify that the upload process succeeded
@@ -101,12 +98,10 @@ To prove that the cookbooks uploaded successfully, run `knife cookbook list`.
 ```bash
 # ~/chef-repo/cookbooks/awesome_customers
 $ knife cookbook list
-apache2             3.0.1
 apt                 2.6.1
-firewall            0.11.8
-iptables            0.14.1
-logrotate           1.9.0
 awesome_customers   0.1.0
+firewall            0.11.8
+httpd               0.2.14
 ```
 
 Congratulations. Chef server now contains everything you need to run `chef-client` on your node.

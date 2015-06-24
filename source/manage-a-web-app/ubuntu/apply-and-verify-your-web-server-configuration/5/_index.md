@@ -22,7 +22,7 @@ Now that we're logged in, we'll verify that:
 
 * the user `web_admin` exists.
 * `web_admin` owns the default home page.
-* the `apache2` service is running.
+* the `apache2-customers` service is running.
 * the home page is in the location we expect.
 * the home page is being served and is accessible externally.
 
@@ -37,7 +37,7 @@ web_admin:x:999:1001::/home/web_admin:/bin/bash
 ### Verify that web_admin owns the default home page
 
 ```bash
-$ stat -c "%U %G" /srv/apache/customers/index.php
+$ stat -c "%U %G" /var/www/customers/public_html/index.php
 web_admin web_admin
 ```
 
@@ -45,7 +45,7 @@ web_admin web_admin
 
 ```bash
 # ~
-$ sudo service apache2 status
+$ sudo service apache2-customers status
  * apache2 is running
 ```
 
@@ -53,7 +53,7 @@ $ sudo service apache2 status
 
 ```bash
 # ~
-$ more /srv/apache/customers/index.php
+$ more /var/www/customers/public_html/index.php
 <html>This is a placeholder</html>
 ```
 
