@@ -21,7 +21,7 @@ This command added the template file <code class="file-path">customers.conf.erb<
 
 Add this to <code class="file-path">customers.conf.erb</code>.
 
-```conf
+```ruby
 # ~/chef-repo/cookbooks/awesome_customers/templates/default/customers.conf.erb
 <VirtualHost *:80>
   ServerName <%= node['hostname'] %>
