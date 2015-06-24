@@ -1,1 +1,3 @@
-Now that you're all set up, let's ensure that your node's package manager is set up to retrieve the latest software packages.
+In this tutorial, you installed and configured Chef Analytics and wrote your first rule. Although your rule is basic, it demonstrates the power of the rules language and notifications. You can learn more about [common tasks](https://docs.chef.io/analytics_webui_tasks.html) and find [additional examples](https://docs.chef.io/analytics_rules.html#examples) in the Chef documentation.
+
+[FEEDBACK] There's more to come, including how to through verify your organization's compliance using Chef Analytics's audit mode. In the meantime, tell us what you think so far, and what else you'd like to see in the future.

@@ -1,12 +1,7 @@
-## 2. Get a node to manage
+## 2. Prepare your system to run Chef Analytics
 
-Recall that a _node_ is any physical machine, cloud instance, or virtual machine that Chef manages.
+Review and perform the [prerequisites](https://docs.chef.io/install_analytics.html#prerequisites) for running Chef Analytics. Chef server runs on Red Hat Enterprise Linux, CentOS, Oracle Linux, and Ubuntu.
 
-All you need to do right now is bring up a clean instance of Ubuntu 14.04 that will serve as your node. Your node should not be your workstation. Be sure that:
+[COMMENT] Each prerequisite step is important. Pay special attention to any requirements that are specific to CentOS, Red Hat Enterprise Linux, and Ubuntu.
 
-* its IP address is accessible from your network.
-* it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
-* it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
-* you have root or `sudo` access.
-
-[WARN] Software such as Apache is configured differently in various releases of Ubuntu. For learning purposes, we recommend that you use Ubuntu 14.04 as your node so that you can more easily verify your progress. However, if you're unable to use Ubuntu 14.04, other versions of Ubuntu can work with some modification.
+You'll have the option to configure a mail server on your Chef Analytics system. Be sure that you open a port through your firewall to allow outbound mail traffic (typically port 25.)
