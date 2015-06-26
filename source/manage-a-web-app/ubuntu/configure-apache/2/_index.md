@@ -6,7 +6,7 @@ Remember, our goals for configuring Apache are to:
 * create and enable our custom site.
 * create a default home page for our site.
 
-We'll call our custom site `customers`, and we'll store it in the <code class="file-path">/var/www/customers/public_html/</code> directory.
+We'll call our custom site `customers`, and we'll store it in the <code class="file-path">/var/www/customers/public_html</code> directory.
 
 The first step is to create the recipe file, <code class="file-path">webserver.rb</code>. Run the following command to generate it.
 

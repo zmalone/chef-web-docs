@@ -10,7 +10,7 @@ Uploaded apt (2.7.0) to: 'https://api.opscode.com:443/organizations/your-org-nam
 Uploaded build-essential (2.2.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded chef-sugar (3.0.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded database (4.0.3) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Skipping iptables (0.14.1) (frozen)
+Skipping iptables (1.0.0) (frozen)
 Skipping logrotate (1.9.1) (frozen)
 Uploaded mariadb (0.3.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded mysql (6.0.18) to: 'https://api.opscode.com:443/organizations/your-org-name'

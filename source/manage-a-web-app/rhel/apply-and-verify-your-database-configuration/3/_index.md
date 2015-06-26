@@ -17,8 +17,8 @@ long_description 'Installs/Configures awesome_customers'
 version          '0.2.0'
 
 depends 'apache2', '~> 3.0.1'
-depends 'iptables', '~> 0.14.1'
 depends 'selinux', '~> 0.9.0'
+depends 'iptables', '~> 1.0.0'
 depends 'mysql2_chef_gem', '~> 1.0.1'
 depends 'mysql', '~> 6.0.17'
 depends 'database', '~> 4.0.3'
@@ -37,7 +37,7 @@ Using apt (2.7.0)
 Using chef-sugar (3.0.1)
 Using build-essential (2.2.1)
 Using database (4.0.3)
-Using iptables (0.14.1)
+Using iptables (1.0.0)
 Using logrotate (1.9.1)
 Using mariadb (0.3.0)
 Using mysql (6.0.18)

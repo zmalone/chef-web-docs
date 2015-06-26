@@ -37,7 +37,7 @@ web_admin:x:498:500::/home/web_admin:/bin/bash
 ### Verify that web_admin owns the default home page
 
 ```bash
-$ stat -c "%U %G" /srv/apache/customers/index.php
+$ stat -c "%U %G" /var/www/customers/public_html/index.php
 web_admin web_admin
 ```
 
@@ -53,7 +53,7 @@ httpd (pid  2487) is running...
 
 ```bash
 # ~
-$ more /srv/apache/customers/index.php
+$ more /var/www/customers/public_html/index.php
 <html>This is a placeholder</html>
 ```
 
