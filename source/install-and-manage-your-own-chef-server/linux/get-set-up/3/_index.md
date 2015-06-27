@@ -22,12 +22,12 @@ Use the following checklists to help ensure that your node is ready for use with
 <div id="knife-help-modal-windows" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">To prepare your Windows Server node, ensure that:</h3>
   <ul>
-    <li>the <a href="/manage-a-node/windows/bootstrap-your-node/#3installtheknifewindowsplugin" target="_blank">knife windows plugin</a> is installed on your workstation.</li>
+    <li>the knife windows plugin <a href="/manage-a-node/windows/bootstrap-your-node/#3installtheknifewindowsplugin" target="_blank">is installed</a> on your workstation.</li>
     <li>your node's IP address is accessible from your network.</li>
     <li>you have Administrator access on the node.</li>
     <li>your node has inbound access (including firewall) on ports 5985 and 5986 (WinRM).</li>
     <li>your node has outbound access (including firewall) on port 443 (HTTPS).</li>
-    <li>your node is <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">configured to accept outside WinRM connections.</a> Most commonly, you'll need to run these commands on your Windows Server node (from a command prompt and not PowerShell) before you bootstrap it.<p></p>
+    <li>your node <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">is configured</a> to accept outside WinRM connections. Most commonly, you'll need to run these commands on your Windows Server node (from a command prompt and not PowerShell) before you bootstrap it.<p></p>
     <div class="window Win32">
             <nav class="control-window">
               <div class="close">&times;</div>

@@ -56,7 +56,7 @@ The optional `--node-name` argument uniquely identifies the node with the Chef s
         <li>443 (HTTPS)</li>
       </ul>
     </li>
-    <li>Ensure your node is <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">configured to accept outside WinRM connections.</a> Most commonly, you'll need to run these commands on your Windows Server node (from a command prompt and not PowerShell) before you bootstrap it.<p></p>
+    <li>Ensure your node <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">is configured</a> to accept outside WinRM connections. Most commonly, you'll need to run these commands on your Windows Server node (from a command prompt and not PowerShell) before you bootstrap it.<p></p>
     <div class="window Win32">
             <nav class="control-window">
               <div class="close">&times;</div>
