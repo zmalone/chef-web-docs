@@ -2,6 +2,16 @@
 
 Click the button to get the Chef server package for your version of Red Hat Enterprise Linux/CentOS or Ubuntu.
 
-[TIP] If your Chef server is running without a user interface, you can create an SSH session to your server from your workstation, copy the download link from your browser and paste it into a `wget` or `curl` command in your SSH session.
+<a class='accent-button radius' href='https://downloads.chef.io/chef-server/' target='_blank'>Download Chef server&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
-<a class='accent-button radius' href='https://downloads.chef.io/chef-server/' target='_blank'>Install Chef server&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+It's likely that you're viewing this web page from your workstation, and that your Chef server machine is running without a user interface. The easiest way to get the download link from your workstation to your Chef server is to locate and copy the link you need, and then paste it into a `wget` command through an SSH session to your Chef server machine.
+
+Here's an example of how to download and install Chef server on Red Hat Enterprise Linux 6 or CentOS 6.
+
+```bash
+$ yum install wget -y
+$ wget https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.1.0-1.el6.x86_64.rpm
+$ yum install chef-server-core-12.1.0-1.el6.x86_64.rpm -y
+```
+
+After you install the Chef server package, you must configure the Chef server. The configuration process runs `chef-client` locally to apply the changes to the system. Having a separate configuration step gives you the chance to make any additional changes. Next, you'll modify the Chef server configuration file before you configure and start the server.

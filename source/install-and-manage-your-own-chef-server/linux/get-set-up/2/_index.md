@@ -1,4 +1,4 @@
-## 2. Create a Chef repository
+## 2. Create a Chef repository on your workstation
 
 It's common to place your Chef code in what's called a Chef repository, or _Chef repo_. A [Chef repo](https://docs.chef.io/chef_repo.html) holds your cookbooks and other files you need to define your policy.
 
