@@ -23,7 +23,7 @@ $ knife ssh {address} 'more /var/chef/cache/hello.txt' --manual-list --ssh-user 
 
 ### Confirm the result on a Windows Server node
 
-From your Windows Server node, the following to write <code class="file-path">hello.txt</code> to the console.
+From your Windows Server node, run this to write <code class="file-path">hello.txt</code> to the console.
 
 ```ps
 $ Get-Content C:\chef\cache\hello.txt
