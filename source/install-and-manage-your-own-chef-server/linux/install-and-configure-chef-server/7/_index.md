@@ -18,7 +18,7 @@ verify the authenticity of these certificates after downloading.
 Adding certificate for ec2-52-25-239-111.us-west-2.compute.amazonaws.com in /home/user/chef-repo/.chef/trusted_certs/ec2-52-25-239-111_us-west-2_compute_amazonaws_com.crt
 ```
 
-[COMMENT] If the command fails, verify that you have port 443 (HTTPS) open to incoming traffic.
+[COMMENT] If the command fails, verify that you have port 443 (HTTPS) open to incoming traffic on the Chef server.
 
 Now run `knife ssl check` to verify that the certificate was properly retrieved and can be used to authenticate calls to the Chef server.
 
