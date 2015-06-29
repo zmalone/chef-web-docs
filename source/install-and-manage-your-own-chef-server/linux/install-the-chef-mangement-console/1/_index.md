@@ -15,11 +15,11 @@ Synchronizing Cookbooks:
   - runit
   - apt
 Compiling Cookbooks...
-Converging 14 resources
+Converging 3 resources
 [...]
 Running handlers:
 -- Installed Add-On Package: opscode-manage
   - #<Class:0x00000003d075e8>::AddonInstallHandler
 Running handlers complete
-Chef Client finished, 12/15 resources updated in 51.529171977 seconds
+Chef Client finished, 7/7 resources updated in 51.529171977 seconds
 ```

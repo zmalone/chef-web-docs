@@ -15,16 +15,6 @@ Add theses environment variables to <code class="file-path">~/.bash_profile</cod
 | `$CHEF_SERVER_FULL_ORG_NAME`    | your organization's full name | `Learn Chef`, `Web development team` |
 | `$CHEF_SERVER_SHORT_ORG_NAME`   | abbreviated nickname for your organization | `learnchef`, `webdev` |
 
-```shell
-# ~/.bash_profile
-export CHEF_SERVER_ADMIN=admin
-export CHEF_SERVER_ADMIN_FIRST_NAME=Joe
-export CHEF_SERVER_ADMIN_LAST_NAME=Smith
-export CHEF_SERVER_ADMIN_EMAIL=joe.smith@example.com
-export CHEF_SERVER_FULL_ORG_NAME=Learn Chef
-export CHEF_SERVER_SHORT_ORG_NAME=learnchef
-```
-
 <a class="help-button radius" href="#" data-reveal-id="set-admin-org-help-modal">Show me how!</a>
 
 <div id="set-admin-org-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
@@ -46,7 +36,7 @@ export CHEF_SERVER_SHORT_ORG_NAME=learnchef
 <span class="nb">export </span><span class="nv">CHEF_SERVER_ADMIN_FIRST_NAME</span><span class="o">=</span>Joe
 <span class="nb">export </span><span class="nv">CHEF_SERVER_ADMIN_LAST_NAME</span><span class="o">=</span>Smith
 <span class="nb">export </span><span class="nv">CHEF_SERVER_ADMIN_EMAIL</span><span class="o">=</span>joe.smith@example.com
-<span class="nb">export </span><span class="nv">CHEF_SERVER_FULL_ORG_NAME</span><span class="o">=</span>Learn Chef
+<span class="nb">export </span><span class="nv">CHEF_SERVER_FULL_ORG_NAME</span><span class="o">=</span>&quot;Learn Chef&quot;
 <span class="nb">export </span><span class="nv">CHEF_SERVER_SHORT_ORG_NAME</span><span class="o">=</span>learnchef<span class="w">
 </span></pre></td></tr></tbody></table></pre></div></div></div></div>
 <p>Then restart <code>bash</code> and confirm that your environment variable was properly written.</p>

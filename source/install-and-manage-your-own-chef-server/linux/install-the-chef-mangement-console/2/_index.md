@@ -1,6 +1,6 @@
 ## 2. Reconfigure Chef server
 
-The install process downloaded and installed the management console package. After you install a feature, you must reconfigure the Chef server and the feature.
+The install process downloaded and installed the management console package. After you install a feature, you must reconfigure the Chef server and the feature. Having a separate configuration step gives you the chance to make any additional changes.
 
 Run the following to reconfigure Chef server.
 
@@ -19,7 +19,7 @@ Compiling Cookbooks...
 [...]
 Running handlers:
 Running handlers complete
-Chef Client finished, 19/350 resources updated in 33.839620088 seconds
+Chef Client finished, 32/356 resources updated in 44.876068853 seconds
 opscode Reconfigured!
 ```
 
