@@ -41,12 +41,12 @@ $ stat -c "%U %G" /var/www/customers/public_html/index.php
 web_admin web_admin
 ```
 
-### Verify that the httpd service is running
+### Verify that the httpd-customers service is running
 
 ```bash
 # ~
-$ sudo service httpd status
-httpd (pid  2487) is running...
+$ sudo service httpd-customers status
+httpd-customers (pid  2335) is running...
 ```
 
 ### Verify that the home page is in the location we expect

@@ -16,7 +16,7 @@ description      'Installs/Configures awesome_customers'
 long_description 'Installs/Configures awesome_customers'
 version          '0.2.0'
 
-depends 'apache2', '~> 3.0.1'
+depends 'httpd', '~> 0.2.18'
 depends 'selinux', '~> 0.9.0'
 depends 'iptables', '~> 1.0.0'
 depends 'mysql2_chef_gem', '~> 1.0.1'
@@ -32,23 +32,22 @@ $ berks update
 Resolving cookbook dependencies...
 Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
-Using apache2 (3.0.1)
 Using apt (2.7.0)
-Using chef-sugar (3.0.1)
-Using build-essential (2.2.1)
-Using database (4.0.3)
-Using iptables (1.0.0)
-Using logrotate (1.9.1)
-Using mariadb (0.3.0)
-Using mysql (6.0.18)
-Using mysql2_chef_gem (1.0.1)
-Using openssl (4.0.0)
-Using postgresql (3.4.18)
-Using rbac (1.0.2)
-Using selinux (0.9.0)
-Using smf (2.2.6)
+Using build-essential (2.2.3)
+Using database (4.0.6)
 Using awesome_customers (0.2.0) from source at .
-Using yum (3.5.3)
-Using yum-epel (0.6.0)
-Using yum-mysql-community (0.1.14)
+Using httpd (0.2.18)
+Using mariadb (0.3.0)
+Using mysql (6.0.24)
+Using chef-sugar (3.1.1)
+Using iptables (1.0.0)
+Using mysql2_chef_gem (1.0.2)
+Using postgresql (3.4.16)
+Using selinux (0.9.0)
+Using yum (3.6.1)
+Using rbac (1.0.3)
+Using smf (2.2.7)
+Using yum-epel (0.6.2)
+Using yum-mysql-community (0.1.17)
+Using openssl (4.2.0)
 ```

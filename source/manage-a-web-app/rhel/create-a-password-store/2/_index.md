@@ -14,7 +14,7 @@ If you're using a user-name and password to connect to your node, run the follow
 
 ```bash
 # ~/chef-repo
-$ scp /tmp/encrypted_data_bag_secret root@52.10.205.36:/tmp
+$ scp /tmp/encrypted_data_bag_secret root@52.10.205.36:/etc/chef
 encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
 ```
 
@@ -22,7 +22,7 @@ If you're using key-based encryption, the command looks similar to this.
 
 ```bash
 # ~/chef-repo
-$ scp -i ~/.ssh/my.pem /tmp/encrypted_data_bag_secret root@52.10.205.36:/tmp
+$ scp -i ~/.ssh/my.pem /tmp/encrypted_data_bag_secret root@52.10.205.36:/etc/chef
 encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
 ```
 

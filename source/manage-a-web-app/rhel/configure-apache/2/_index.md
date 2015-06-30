@@ -50,7 +50,7 @@ directory '/var/www/customers/public_html' do
   recursive true
 end
 
-# Write a default home page.
+# Write the home page.
 file '/var/www/customers/public_html/index.php' do
   content '<html>This is a placeholder</html>'
   mode '0644'
@@ -59,6 +59,6 @@ file '/var/www/customers/public_html/index.php' do
 end
 ```
 
-The `httpd_service` resource supports multiple simultaneous Apache instances that you can identify and manage. The name `customers` will produce a service named `apache2-customers`.
+The `httpd_service` resource supports multiple simultaneous Apache instances that you can identify and manage. The name `customers` will produce a service named `httpd-customers`.
 
 [COMMENT] PHP [must be run](http://www.php.net/manual/en/faq.installation.php#faq.installation.apache2) in a single-threaded [Multi-Processing Module](http://httpd.apache.org/docs/2.2/mpm.html), or MPM. Therefore, we set the `mpm` attribute to use the [prefork](http://httpd.apache.org/docs/2.2/mod/prefork.html) module.

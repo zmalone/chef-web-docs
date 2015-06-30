@@ -12,7 +12,7 @@ description      'Installs/Configures awesome_customers'
 long_description 'Installs/Configures awesome_customers'
 version          '0.1.0'
 
-depends 'httpd', '~> 0.2.14'
+depends 'httpd', '~> 0.2.18'
 depends 'selinux', '~> 0.9.0'
 depends 'iptables', '~> 1.0.0'
 ```
@@ -63,7 +63,7 @@ Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
 Using awesome_customers (0.1.0) from source at .
 Installing iptables (1.0.0)
-Installing httpd (0.2.14)
+Installing httpd (0.2.18)
 Installing selinux (0.9.0)
 ```
 
@@ -71,7 +71,7 @@ Berkshelf installs dependent cookbooks to the <code class="file-path">~/.berkshe
 
 ```bash
 $ ls ~/.berkshelf/cookbooks/
-httpd-0.2.14    iptables-1.0.0 selinux-0.9.0
+httpd-0.2.18    iptables-1.0.0 selinux-0.9.0
 ```
 
 ### Use Berkshelf to upload the cookbooks to the Chef server
@@ -84,7 +84,7 @@ Run `berks upload`.
 # ~/chef-repo/cookbooks/awesome_customers
 $ berks upload
 Uploaded awesome_customers (0.1.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Uploaded httpd (0.2.14) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded httpd (0.2.18) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded iptables (1.0.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded selinux (0.9.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
@@ -97,7 +97,7 @@ To prove that the cookbooks uploaded successfully, run `knife cookbook list`.
 # ~/chef-repo/cookbooks/awesome_customers
 $ knife cookbook list
 awesome_customers   0.1.0
-httpd               0.2.14
+httpd               0.2.18
 iptables            1.0.0
 selinux             0.9.0
 ```

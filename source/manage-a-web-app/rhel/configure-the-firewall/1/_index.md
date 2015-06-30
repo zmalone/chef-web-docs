@@ -12,6 +12,6 @@ description      'Installs/Configures awesome_customers'
 long_description 'Installs/Configures awesome_customers'
 version          '0.1.0'
 
-depends 'httpd', '~> 0.2.14'
+depends 'httpd', '~> 0.2.18'
 depends 'iptables', '~> 1.0.0'
 ```
