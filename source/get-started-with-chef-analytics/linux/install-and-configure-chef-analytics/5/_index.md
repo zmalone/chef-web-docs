@@ -1,19 +1,45 @@
-## 5. Sign in to Analytics server
+## 5. Configure Chef Analytics
 
-From your web browser, navigate to the URL for your Chef Analytics server. Click the **Start Analytics** button and you'll be temporarily redirected to your Chef server logon page.
+From your Chef Analytics server, create the file <code class="file-path">/etc/opscode-analytics/opscode-analytics.rb</code> and add the following to it. Replace `{analytics-fqdn}` with the hostname of your Chef Analytics system.
 
-![The Chef Analytics sign-in page](chef-analytics/sign-in.png)
+```ruby
+# /etc/opscode-analytics/opscode-analytics.rb
+analytics_fqdn '{analytics-fqdn}'
+topology 'standalone'
+```
 
-Sign in with the administrator user name and password that you used when you set up your Chef server.
+Now run the following command to verify that Chef Analytics has all the files it needs.
 
-![The Chef Manage sign-in page](chef-server/sign-in.png)
+```bash
+# ~
+$ sudo opscode-analytics-ctl preflight-check
 
-Click **Yes** to authorize Chef Analytics to use your Chef account.
+[SUCCESS] Preflight check successful!
+```
 
-![Authorize Chef Analytics to use your Chef account](chef-analytics/authorize.png)
+If there are any errors in the preflight check, correct them before moving to the next step.
 
-On the home page you'll see an event timeline. This timeline is a rolling list of events that are happening in your infrastructure &ndash; machines that are checking in to Chef server, users updating cookbooks, and so on.
+Reconfigure Chef Analytics to use the updated configuration settings.
 
-![The Chef Analytics home page](chef-analytics/home-page.png)
+```bash
+# ~
+$ sudo opscode-analytics-ctl reconfigure
+Starting Chef Client, version 11.18.0
+Compiling Cookbooks...
+Recipe: opscode-analytics::default
+  * directory[/etc/opscode-analytics] action create
+    - change owner from '999' to 'root'
+    - change group from '999' to 'root'
+Generating RSA private key, 2048 bit long modulus
+[...]
+Recipe: opscode-analytics::alaska
+  * runit_service[alaska] action restart
+    - restart service runit_service[alaska]
+  * execute[restart_alaska_log_service] action run
+    - execute /opt/opscode-analytics/embedded/bin/sv restart /opt/opscode-analytics/sv/alaska/log
 
-In the next step, you'll run `chef-client` on your node and watch an event appear on the timeline.
+Running handlers:
+Running handlers complete
+Chef Client finished, 282/302 resources updated in 112.87384101 seconds
+opscode-analytics Reconfigured!
+```
