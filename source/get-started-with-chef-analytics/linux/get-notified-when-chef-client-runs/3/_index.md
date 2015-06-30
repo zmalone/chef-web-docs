@@ -43,7 +43,7 @@ rules 'email_me_every_converge'
 end
 ```
 
-This rule matches `run_converge`, which means it is processed when `chef-client` runs on a node. The `when true` part means that the rule is always processed. The `then` part activates the `send_email` notification that you created in the previous step. The second part of the `notify` statement is the message body. `{{ message.run.node_name }}` is replaced with the name of the node when the email message is created.
+This rule matches `run_converge`, which means it is processed when `chef-client` runs on a node. The `when true` part means that the rule is always processed. The `then` part activates the `send_email` notification that you created in the previous step. The second part of the `notify` statement is the message body. <code ng-non-bindable>{{ message.run.node_name }}</code> is replaced with the name of the node when the email message is created.
 
 Click **Save** and you are brought back to the list of rules.
 

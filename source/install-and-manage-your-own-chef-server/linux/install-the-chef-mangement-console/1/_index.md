@@ -1,5 +1,12 @@
 ## 1. Install the management console
 
+You use the following format to install Chef server features.
+
+```bash
+# ~
+$ chef-server-ctl install <feature-name> (options)
+```
+
 Run the following to install the Chef management console.
 
 ```bash

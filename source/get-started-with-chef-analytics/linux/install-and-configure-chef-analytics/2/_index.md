@@ -1,6 +1,6 @@
 ## 2. Connect your Chef server to Chef Analytics
 
-Now you need to provide some information about your Chef Analytics system to your Chef server. In this step, you'll continue to work from your Chef server.
+Now you need to provide some information about your Chef Analytics server to your Chef server. In this step, you'll continue to work from your Chef server.
 
 First, stop your Chef server.
 
@@ -22,23 +22,23 @@ ok: down: rabbitmq: 1s, normally up
 ok: down: redis_lb: 0s, normally up
 ```
 
-From your Chef server, add the FQDN for the Chef server and the Chef analytics server to <code class="file-path">/etc/opscode/chef-server.rb</code>. Replace `{fqdn-chef-server}` with your Chef server's FQDN and `{fqdn-analytics}` with your Chef Analytics server's FQDN. For `redirect_uri`, the ending slash is required.
+From your Chef server, add the FQDN for the Chef server and the Chef analytics server to <code class="file-path">/etc/opscode/chef-server.rb</code>. Replace `{chef-server-fqdn}` with your Chef server's FQDN and `{analytics-fqdn}` with your Chef Analytics server's FQDN. For `redirect_uri`, the ending slash is required.
 
 ```ruby
 # /etc/opscode/chef-server.rb
 oc_id['applications'] = {
   'analytics' => {
-    'api_fqdn' => '{fqdn-chef-server}', # Chef server
-    'redirect_uri' => 'https://{fqdn-analytics}/' # Chef Analytics
+    'api_fqdn' => '{chef-server-fqdn}', # Chef server
+    'redirect_uri' => 'https://{analytics-fqdn}/' # Chef Analytics
   }
 }
 ```
 
-Also, add the following to <code class="file-path">/etc/opscode/chef-server.rb</code> to enable remote access to RabbitMQ on the Chef server. Replace `{ip-chef-server}` with your Chef server's public IP address (not its hostname.)
+Also, add the following to <code class="file-path">/etc/opscode/chef-server.rb</code> to enable remote access to RabbitMQ on the Chef server. Replace `{chef-server-ip-address}` with your Chef server's public IP address (not its hostname.)
 
 ```ruby
 # /etc/opscode/chef-server.rb
-rabbitmq['vip'] = '{ip-chef-server}'
+rabbitmq['vip'] = '{chef-server-ip-address}'
 rabbitmq['node_ip_address'] = '0.0.0.0'
 ```
 
