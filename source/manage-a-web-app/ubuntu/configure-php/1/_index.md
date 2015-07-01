@@ -55,7 +55,7 @@ Now append a `package` resource to install `php5-mysql`.
 # Install php5-mysql.
 package 'php5-mysql' do
   action :install
-  notifies :restart, 'service[apache2]'
+  notifies :restart, 'httpd_service[customers]'
 end
 ```
 

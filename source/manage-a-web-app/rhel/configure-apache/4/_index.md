@@ -39,11 +39,11 @@ Add this to <code class="file-path">customers.conf.erb</code>.
           allow from all
   </Directory>
 
-  ErrorLog /var/log/apache2/error.log
+  ErrorLog /var/log/httpd/error.log
 
   LogLevel warn
 
-  CustomLog /var/log/apache2/access.log combined
+  CustomLog /var/log/httpd/access.log combined
   ServerSignature Off
 
   AddType application/x-httpd-php .php

@@ -25,6 +25,7 @@ Now edit <code class="file-path">webserver.rb</code> to use the `firewall_rule` 
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+# Install Apache and start the service.
 httpd_service 'customers' do
   mpm 'prefork'
   action [:create, :start]

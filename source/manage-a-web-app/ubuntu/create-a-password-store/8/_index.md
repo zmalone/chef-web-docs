@@ -42,7 +42,7 @@ Now encrypt your database password.
 ```bash
 # ~/chef-repo
 $ knife data bag from file passwords db_admin_password.json --secret-file /tmp/encrypted_data_bag_secret --local-mode
-Updated data_bag_item[passwords::db_admin]
+Updated data_bag_item[passwords::db_admin_password]
 ```
 
 ### From a Windows workstation
@@ -50,7 +50,7 @@ Updated data_bag_item[passwords::db_admin]
 ```ps
 # ~\chef-repo
 $ knife data bag from file passwords db_admin_password.json --secret-file C:\temp\encrypted_data_bag_secret --local-mode
-Updated data_bag_item[passwords::db_admin]
+Updated data_bag_item[passwords::db_admin_password]
 ```
 
 Your data bag items are now encrypted locally, and are safe to commit to source control.
