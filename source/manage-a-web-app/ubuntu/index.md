@@ -5,13 +5,13 @@ platform: Ubuntu
 logo: ubuntu.svg
 order: 3
 ---
-In [Learn the basics](/learn-the-basics/ubuntu) and [Manage a node](/manage-a-node/ubuntu/), you learned how Chef works by configuring a web server and a custom home page. Let's extend this by building a basic but complete web application on Ubuntu that uses a web server, a database, and scripting.
+In [Learn the basics](/learn-the-basics/ubuntu) and [Learn to manage a node](/manage-a-node/ubuntu/), you learned how Chef works by configuring a web server and a custom home page. Let's extend this by building a basic but complete web application on Ubuntu that uses a web server, a database, and scripting.
 
 In this tutorial, you'll write Chef code from your workstation, upload your code to a Chef server, and have your Ubuntu node pull that code from the Chef server and apply it.
 
 <img src="/assets/images/networks/workstation-server-node.png" style="width: 100%; box-shadow: none;" alt="Your workstation, a Chef server, and nodes" />
 
-You've seen this setup in [Manage a node](/manage-a-node/ubuntu/). There, you uploaded your cookbook to the Chef server from your workstation. To apply your cookbook to your node, you ran the `knife ssh` command, which created an SSH connection from your workstation to your node and ran `chef-client` on your node. When your node ran `chef-client`, it pulled the latest cookbooks from the Chef server.
+You've seen this setup in [Learn to manage a node](/manage-a-node/ubuntu/). There, you uploaded your cookbook to the Chef server from your workstation. To apply your cookbook to your node, you ran the `knife ssh` command, which created an SSH connection from your workstation to your node and ran `chef-client` on your node. When your node ran `chef-client`, it pulled the latest cookbooks from the Chef server.
 
 In this tutorial, the node will host the web application, which reads customer records from a database and displays the results on a web page. By the end, you'll have a web application that looks like this:
 

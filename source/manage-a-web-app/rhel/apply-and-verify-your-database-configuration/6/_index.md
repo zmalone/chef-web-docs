@@ -48,8 +48,9 @@ $ mysql -h 127.0.0.1 -uroot -plearnchef_mysql -e "select user,host from mysql.us
 +----------+-----------+
 | user     | host      |
 +----------+-----------+
-| root     | %         |
 | db_admin | 127.0.0.1 |
+| root     | 127.0.0.1 |
+| root     | localhost |
 +----------+-----------+
 ```
 

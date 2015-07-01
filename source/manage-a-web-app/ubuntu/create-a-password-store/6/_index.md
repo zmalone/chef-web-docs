@@ -21,9 +21,9 @@ Now run the following commands to encrypt the data bag item, upload it to the Ch
 ```bash
 # ~/chef-repo
 $ knife data bag from file passwords db_admin_password.json --secret-file /tmp/encrypted_data_bag_secret
-Updated data_bag_item[passwords::db_admin]
-$ knife data bag show passwords db_admin --secret-file /tmp/encrypted_data_bag_secret
-id:       db_admin
+Updated data_bag_item[passwords::db_admin_password]
+$ knife data bag show passwords db_admin_password --secret-file /tmp/encrypted_data_bag_secret
+id:       db_admin_password
 password: database_password
 ```
 
@@ -32,8 +32,8 @@ password: database_password
 ```ps
 # ~\chef-repo
 $ knife data bag from file passwords db_admin_password.json --secret-file C:\temp\encrypted_data_bag_secret
-Updated data_bag_item[passwords::db_admin]
-$ knife data bag show passwords db_admin --secret-file C:\temp\encrypted_data_bag_secret
-id:       db_admin
+Updated data_bag_item[passwords::db_admin_password]
+$ knife data bag show passwords db_admin_password --secret-file C:\temp\encrypted_data_bag_secret
+id:       db_admin_password
 password: database_password
 ```

@@ -1,6 +1,6 @@
 ## 1. Install PHP
 
-Recall that your Apache recipe looks like this.
+Recall that your `webserver` recipe looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
@@ -55,7 +55,7 @@ Now append a `package` resource to install `php5-mysql`.
 # Install php5-mysql.
 package 'php5-mysql' do
   action :install
-  notifies :restart, 'service[apache2]'
+  notifies :restart, 'httpd_service[customers]'
 end
 ```
 

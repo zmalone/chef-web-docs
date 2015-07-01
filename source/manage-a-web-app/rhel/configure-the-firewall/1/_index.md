@@ -1,6 +1,6 @@
-## 1. Reference the selinux cookbook
+## 1. Reference the iptables cookbook
 
-To use the `selinux` cookbook, append the line `depends 'selinux', '~> 0.9.0'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
+First, modify <code class="file-path">metadata.rb</code> to load the `iptables` cookbook.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/metadata.rb
@@ -14,4 +14,5 @@ version          '0.1.0'
 
 depends 'httpd', '~> 0.2.18'
 depends 'selinux', '~> 0.9.0'
+depends 'iptables', '~> 1.0.0'
 ```

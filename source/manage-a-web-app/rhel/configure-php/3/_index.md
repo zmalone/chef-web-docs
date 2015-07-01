@@ -10,15 +10,15 @@ In <code class="file-path">webserver.rb</code>, before the `template` resource f
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 # Load the secrets file and the encrypted data bag item that holds the database password.
 password_secret = Chef::EncryptedDataBagItem.load_secret("#{node['awesome_customers']['passwords']['secret_path']}")
-user_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'db_admin', password_secret)
+user_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'db_admin_password', password_secret)
 ```
 
 Now modify the `template` resource that follows to pass the decrypted database password to the template.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-# Write a default home page.
-template "#{node['apache']['docroot_dir']}/index.php" do
+# Write the home page.
+template "#{node['awesome_customers']['document_root']}/index.php" do
   source 'index.php.erb'
   mode '0644'
   owner node['awesome_customers']['user']
