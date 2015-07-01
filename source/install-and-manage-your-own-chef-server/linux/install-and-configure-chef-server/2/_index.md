@@ -1,8 +1,8 @@
 ## 2. Write the Chef server configuration file
 
-The [Chef server configuration file](https://docs.chef.io/config_rb_server.html), <code class="file-path">/etc/opscode/chef-server.rb</code>, contains additional Chef server settings.
+After you install the Chef server package, you must configure the Chef server. The configuration process runs `chef-client` locally to apply the changes to the system. Having a separate configuration step gives you the chance to make any additional changes.
 
-Chef server uses the default behavior if you can leave this file empty, but let's add a few options to ensure that Chef server is configured with a hostname that's accessible to the rest of your network.
+The [Chef server configuration file](https://docs.chef.io/config_rb_server.html), <code class="file-path">/etc/opscode/chef-server.rb</code>, contains additional Chef server settings. If you leave this file empty, Chef server uses the default behavior, but let's add a few options to ensure that Chef server is configured with a hostname that's accessible to the rest of your network.
 
 [COMMENT] This step is especially important in cloud environments such as Amazon EC2, where each instance is assigned a hostname on the private network and the firewall routes traffic between the private network and the public Internet. This step ensures that the Chef server uses the public hostname that's accessible from outside the firewall.
 
