@@ -5,7 +5,7 @@ platform: Ubuntu
 logo: ubuntu.svg
 order: 1
 ---
-In [Manage a web application](/manage-a-web-app/ubuntu), you built a basic but complete web application on Ubuntu that uses a web server, a database, and scripting.
+In [Learn to manage a web application](/manage-a-web-app/ubuntu), you built a basic but complete web application on Ubuntu that uses a web server, a database, and scripting.
 
 The basic process you followed was to:
 

@@ -22,7 +22,7 @@ Last login: Wed Jul  1 16:00:58 2015 from 10.0.2.2
 
 The MOTD appears as expected and displays the information about your instance.
 
-If you don't see the system info appear in the MOTD, then the system may not yet have updated it. In this case, run the following to print the updated MOTD to the console.
+If you don't see the system info appear in the MOTD, then the system may not yet have updated it. In this case, run the following from your Test Kitchen instance to print the updated MOTD to the console.
 
 ```bash
 $ run-parts /etc/update-motd.d

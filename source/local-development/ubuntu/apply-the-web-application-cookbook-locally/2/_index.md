@@ -11,7 +11,7 @@ In addition to configuring Test Kitchen to create an Ubuntu 14.04 virtual machin
 Edit your `awesome_customers` cookbook's <code class="file-path">.kitchen.yml</code> file like this.
 
 ```ruby
-# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/.kitchen.yml
+# ~/manage-a-web-app-ubuntu/chef-repo/cookbooks/awesome_customers/.kitchen.yml
 ---
 driver:
   name: vagrant
@@ -22,7 +22,7 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: centos-14.04
+  - name: ubuntu-14.04
 
 suites:
   - name: default
@@ -30,6 +30,7 @@ suites:
     run_list:
       - recipe[awesome_customers::default]
     provisioner:
+      # On a Windows workstation, set to C:\temp\encrypted_data_bag_secret.
       encrypted_data_bag_secret_key_path: /tmp/encrypted_data_bag_secret
     attributes:
       awesome_customers:

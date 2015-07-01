@@ -14,7 +14,7 @@ default-centos-66  Vagrant  ChefZero     Busser    Ssh        <Not Created>
 Now run `kitchen converge` to apply the cookbook to the CentOS virtual machine.
 
 ```bash
-# ~/motd
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ kitchen converge
 -----> Starting Kitchen (v1.4.0)
 -----> Creating <default-centos-66>...
@@ -37,7 +37,7 @@ Verify that the process completed with no errors.
 ### From a Linux or Mac OS workstation
 
 ```bash
-# ~/motd
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ echo $?
 0
 ```
@@ -45,7 +45,7 @@ $ echo $?
 ### From a Windows workstation
 
 ```ps
-# ~/motd
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ echo $LastExitCode
 0
 ```

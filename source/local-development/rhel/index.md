@@ -5,7 +5,7 @@ platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
 ---
-In [Manage a web application](/manage-a-web-app/rhel), you built a basic but complete web application on Red Hat Enterprise Linux or CentOS that uses a web server, a database, and scripting.
+In [Learn to manage a web application](/manage-a-web-app/rhel), you built a basic but complete web application on Red Hat Enterprise Linux or CentOS that uses a web server, a database, and scripting.
 
 The basic process you followed was to:
 
