@@ -1,5 +1,5 @@
 ---
-title: 'Learn to install and manage your own Chef Server'
+title: 'Learn to install and manage your own Chef server'
 layout: lesson-overview
 platform: 'Get started with Chef server'
 logo: chef-server.svg
@@ -14,7 +14,7 @@ In [Learn to manage a node](/manage-a-node/ubuntu/), you learned how to write a 
 Working with hosted Chef is a great way to get started, and in the long run can minimize the cost of maintaining a Chef server. But you might want to maintain a Chef server on your own infrastructure if you:
 
 * require Chef to run behind a firewall.
-* want access to features that require a Chef server that you maintain, such as:
+* want access to features that require an on premises Chef server, such as:
   * [Chef Manage](http://docs.chef.io/manage.html)
   * [Reporting](http://docs.chef.io/reporting.html)
   * [Push Jobs](http://docs.chef.io/push_jobs.html)
@@ -28,7 +28,7 @@ In this tutorial, you'll install and configure a Chef server as part of your own
 After completing this lesson, you'll:
 
 * be able to install Chef server, customize its configuration, and prepare your workstation to remotely manage nodes.
+* learn to upload a cookbook to your Chef server, bootstrap a node, and apply that cookbook to your node.
 * know how to install the Chef management console and other Chef server features.
-* experience the process of uploading a cookbook to your Chef server, bootstrapping a node, and applying that cookbook to your node.
 
 You'll get started by setting up your workstation and performing prerequisite tasks for your Chef server.

@@ -1,8 +1,8 @@
 ## 4. Prepare a system to run Chef server
 
-First, bring up a system to run Chef server. Chef server runs on Red Hat Enterprise Linux, CentOS, Oracle Linux, and Ubuntu. See the [system requirements](https://docs.chef.io/install_server_pre.html) to learn about which operating system versions Chef server supports.
+First, bring up a system to run Chef server. Chef server runs on Red Hat Enterprise Linux, CentOS, Oracle Linux, and Ubuntu. See the [supported platforms](https://docs.chef.io/install_server_pre.html#supported-platforms) to learn about which operating system versions Chef server supports.
 
-Then from your Chef server, review and perform the [system requirements](https://docs.chef.io/install_server_pre.html). Each prerequisite step, including the amount of memory you need and which ports you need to open, is important. Pay special attention to any requirements that are specific to CentOS, Red Hat Enterprise Linux, and Ubuntu.
+Then review the [hardware and software system requirements](https://docs.chef.io/install_server_pre.html#hardware-software). Each prerequisite step, including the amount of memory you need and which ports you need to open, is important. Pay special attention to any requirements that are specific to CentOS, Red Hat Enterprise Linux, and Ubuntu.
 
 The system requirements provide complete details on how to prepare your system for Chef server, but these checklists provide the minimum amount required to get a Chef server up and running.
 
