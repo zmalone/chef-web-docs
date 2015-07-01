@@ -2,12 +2,12 @@
 
 Now let's follow the same process to create an encrypted data bag item to hold the password for our web app's customer database.
 
-Create a file named <code class="file-path">db\_admin.json</code> in the <code class="file-path">data\_bags/passwords</code> directory and add these contents.
+Create a file named <code class="file-path">db\_admin\_password.json</code> in the <code class="file-path">data\_bags/passwords</code> directory and add these contents.
 
 ```ruby
-# ~/chef-repo/data_bags/passwords/db_admin.json
+# ~/chef-repo/data_bags/passwords/db_admin_password.json
 {
-  "id": "db_admin",
+  "id": "db_admin_password",
   "password": "database_password"
 }
 ```
@@ -20,10 +20,10 @@ Now run the following commands to encrypt the data bag item, upload it to the Ch
 
 ```bash
 # ~/chef-repo
-$ knife data bag from file passwords db_admin.json --secret-file /tmp/encrypted_data_bag_secret
-Updated data_bag_item[passwords::db_admin]
-$ knife data bag show passwords db_admin --secret-file /tmp/encrypted_data_bag_secret
-id:       db_admin
+$ knife data bag from file passwords db_admin_password.json --secret-file /tmp/encrypted_data_bag_secret
+Updated data_bag_item[passwords::db_admin_password]
+$ knife data bag show passwords db_admin_password --secret-file /tmp/encrypted_data_bag_secret
+id:       db_admin_password
 password: database_password
 ```
 
@@ -31,9 +31,9 @@ password: database_password
 
 ```ps
 # ~\chef-repo
-$ knife data bag from file passwords db_admin.json --secret-file C:\temp\encrypted_data_bag_secret
-Updated data_bag_item[passwords::db_admin]
-$ knife data bag show passwords db_admin --secret-file C:\temp\encrypted_data_bag_secret
-id:       db_admin
+$ knife data bag from file passwords db_admin_password.json --secret-file C:\temp\encrypted_data_bag_secret
+Updated data_bag_item[passwords::db_admin_password]
+$ knife data bag show passwords db_admin_password --secret-file C:\temp\encrypted_data_bag_secret
+id:       db_admin_password
 password: database_password
 ```
