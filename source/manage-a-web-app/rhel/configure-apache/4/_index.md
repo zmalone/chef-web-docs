@@ -43,7 +43,7 @@ Add this to <code class="file-path">customers.conf.erb</code>.
 
   LogLevel warn
 
-  CustomLog /var/log/apache2/access.log combined
+  CustomLog /var/log/httpd/access.log combined
   ServerSignature Off
 
   AddType application/x-httpd-php .php
