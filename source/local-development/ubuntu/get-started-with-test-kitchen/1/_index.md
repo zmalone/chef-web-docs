@@ -41,23 +41,24 @@ Now add this to <code class="file-path">server-info.erb</code>.
 
 ```conf
 # ~/motd/templates/default/server-info.erb
+#!/bin/sh
 
-hostname:  <%= node['hostname'] %>
-fqdn:      <%= node['fqdn'] %>
-memory:    <%= node['memory']['total'] %>
-cpu count: <%= node['cpu']['total'] %>
+printf "\nhostname:  <%= node['hostname'] %>"
+printf "\nfqdn:      <%= node['fqdn'] %>"
+printf "\nmemory:    <%= node['memory']['total'] %>"
+printf "\ncpu count: <%= node['cpu']['total'] %>\n"
 ```
 
 ### Write the default recipe
 
-The default recipe, <code class="file-path">default.rb</code>, fills in the template parameters and writes the resulting file to <code class="file-path">/etc/motd</code>.
+The default recipe, <code class="file-path">default.rb</code>, fills in the template parameters and writes the resulting file to <code class="file-path">/etc/update-motd.d/98-server-info</code>.
 
 Write out the default recipe like this.
 
 ```ruby
 # ~/motd/recipes/default.rb
-template '/etc/motd' do
+template '/etc/update-motd.d/98-server-info' do
   source 'server-info.erb'
-  mode '0644'
+  mode '0755'
 end
 ```
