@@ -11,7 +11,7 @@ default['awesome_customers']['group'] = 'web_admin'
 
 default['awesome_customers']['document_root'] = '/var/www/customers/public_html'
 
-default['awesome_customers']['passwords']['secret_path'] = '/tmp/encrypted_data_bag_secret'
+default['awesome_customers']['passwords']['secret_path'] = '/etc/chef/encrypted_data_bag_secret'
 ```
 
-<code class="file-path">/tmp/encrypted\_data\_bag\_secret</code> is the location of the secret file on your node.
+<code class="file-path">/etc/chef/encrypted\_data\_bag\_secret</code> is the location of the secret file on your node.

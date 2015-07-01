@@ -39,7 +39,7 @@ Add this to <code class="file-path">customers.conf.erb</code>.
           allow from all
   </Directory>
 
-  ErrorLog /var/log/apache2/error.log
+  ErrorLog /var/log/httpd/error.log
 
   LogLevel warn
 
