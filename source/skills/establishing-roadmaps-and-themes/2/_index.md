@@ -10,6 +10,9 @@ Some features customers need are so basic, they're taken for granted. However, i
 
 The next set of features to include are those that customers notice. They're happy if the features work and unhappy if they don't.
 
-However, to make customers truly love your product, include "delighters." Customers don't expect to see these features, and are delighted when they are a part of the product.
+However, to make customers truly love your product, include _delighters_. Customers don't expect to see these features, and are delighted when they are a part of the product.
 
 Finally, remember that the best way to create a great roadmap is to get feedback from a wide variety of people within your company as well as a broad range of customers.
+
+<br/>
+_This article discusses the relationship between DevOps and Lean principles. It is based on Adam Jacob's talk, [Chef Style DevOps Kungfu](https://www.youtube.com/watch?v=_DEToXsgrPc), delivered at ChefConf 2015._

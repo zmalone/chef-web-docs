@@ -16,5 +16,8 @@ Access to knowledge is a leading indicatior of social progress. The goal isn't t
 ### Freedom
 Freedom is the power to act or speak or think without hindrance or restraint. DevOps empowers people to act. DevOps  means that you trust the people in your organization, no matter what their job, and give them the freedom to do what they know best.
 
-### People over Products
+### People over products
 A final marker of DevOps practitioners is that they put people over products and companies. DevOps practitioners, when they talk about what they're doing and why they're doing it, talk about people before they talk about the company or the products the company makes. DevOps practice prioritizes the human beings who are doing the work.
+
+<br/>
+_This article discusses the relationship between DevOps and Lean principles. It is based on Adam Jacob's talk, [Chef Style DevOps Kungfu](https://www.youtube.com/watch?v=_DEToXsgrPc), delivered at ChefConf 2015._
