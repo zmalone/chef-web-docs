@@ -1,18 +1,17 @@
----
-title: 'Chef fundamentals series part 4: Common configuration data with data bags'
-nav_title: 'Part 4: Common configuration data with data bags'
-order: 4
-description: "In this lesson you'll learn how to use data bags to create data-driven recipes."
-keywords: training, videos, screencasts
-category: 'fundamentals-series'
-layout: skills-topic
-sections: [1, 2, 3, 4]
-icon: video.png
----
-After viewing this video you will be able to:
+## Prework
 
-* use data bags for data-driven recipes.
-* use multiple recipes for a node's run-list.
+Before viewing this video you should watch and complete the labs for the following modules.
+
+* [Part 1: Overview of Chef][spring-fund-week-1]
+* [Part 2: Node setup, resources, and recipes][spring-fund-week-2]
+* [Part 2 homework: the chef-client application][week2-homework]
+* [Part 3: Working with the node object and roles][spring-fund-week-3]
+
+During this video we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/9bidpd-LiNw" frameborder="0" allowfullscreen></iframe>
+
+
 
 [spring-fund-week-1]: /skills/fundamentals-series-week-1
 [spring-fund-week-2]: /skills/fundamentals-series-week-2

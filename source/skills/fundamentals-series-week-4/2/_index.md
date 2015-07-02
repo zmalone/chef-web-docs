@@ -1,18 +1,7 @@
----
-title: 'Chef fundamentals series part 4: Common configuration data with data bags'
-nav_title: 'Part 4: Common configuration data with data bags'
-order: 4
-description: "In this lesson you'll learn how to use data bags to create data-driven recipes."
-keywords: training, videos, screencasts
-category: 'fundamentals-series'
-layout: skills-topic
-sections: [1, 2, 3, 4]
-icon: video.png
----
-After viewing this video you will be able to:
+## Video
 
-* use data bags for data-driven recipes.
-* use multiple recipes for a node's run-list.
+<iframe width="560" height="315" src="//www.youtube.com/embed/fS_yrFNSL9w" frameborder="0" allowfullscreen></iframe>
+
 
 [spring-fund-week-1]: /skills/fundamentals-series-week-1
 [spring-fund-week-2]: /skills/fundamentals-series-week-2
