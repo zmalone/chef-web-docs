@@ -4,7 +4,7 @@ order: 3
 description: Third in a series of videos covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-icon: fa-film
+icon: video.png
 ---
 # Node object and Chef roles
 

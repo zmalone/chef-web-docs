@@ -4,7 +4,7 @@ order: 6
 description: Sixth in a series of videos covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-icon: fa-film
+icon: video.png
 ---
 # Community cookbooks and further resources
 

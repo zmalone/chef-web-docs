@@ -4,7 +4,7 @@ order: 4
 description: Fourth in a series of videos covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-icon: fa-film
+icon: video.png
 ---
 # Common configuration data with data bags
 

@@ -4,7 +4,7 @@ order: 5
 description: Fifth in a series of videos covering the fundamentals of Chef.
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-icon: fa-film
+icon: video.png
 ---
 # Environments and knife-ec2
 
