@@ -1,8 +1,10 @@
 ---
-title: 'Part 3: Node object and Chef roles'
+title: '3: Node object and Chef roles'
 order: 3
 description: Third in a series of videos covering the fundamentals of Chef.
 keywords: training, videos, screencasts
+category: 'fundamentals-series'
+icon: fa-film
 ---
 # Node object and Chef roles
 
@@ -50,13 +52,13 @@ Before viewing this video you should watch and complete the labs for the followi
 
 Thank you for participating in our Chef Fundamentals series. What did you think? How can we improve? Please [complete this short survey][survey] and let us know!
 
-[spring-fund-week-1]: /fundamentals-series/week-1
-[spring-fund-week-2]: /fundamentals-series/week-2
-[week2-homework]: /fundamentals-series/week-2/#homework
-[spring-fund-week-3]: /fundamentals-series/week-3
-[spring-fund-week-4]: /fundamentals-series/week-4
-[spring-fund-week-5]: /fundamentals-series/week-5
-[spring-fund-week-6]: /fundamentals-series/week-6
-[chef-lab]: /fundamentals-series/chef-lab
+[spring-fund-week-1]: /skills/fundamentals-series-week-1
+[spring-fund-week-2]: /skills/fundamentals-series-week-2
+[week2-homework]: /skills/fundamentals-series-week-2/#homework
+[spring-fund-week-3]: /skills/fundamentals-series-week-3
+[spring-fund-week-4]: /skills/fundamentals-series-week-4
+[spring-fund-week-5]: /skills/fundamentals-series-week-5
+[spring-fund-week-6]: /skills/fundamentals-series-week-6
+[chef-lab]: /skills/fundamentals-series-chef-lab
 [discussion-forum]: https://groups.google.com/d/forum/learnchef-fundamentals-webinar
 [survey]: http://evocalize.com/consumer/survey/chef/springwebinar-3

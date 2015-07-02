@@ -1,8 +1,10 @@
 ---
-title: 'Part 1: Overview of Chef'
+title: '1: Overview of Chef'
 order: 1
 description: First in a series of webinars covering the fundamentals of Chef.  Provides an overview of Chef, workstation setup, and signing up for hosted Chef.
 keywords: training, videos, screencasts
+category: 'fundamentals-series'
+icon: fa-film
 ---
 
 # Overview of Chef
@@ -42,12 +44,12 @@ After viewing this video you will be able to:
 
 Thank you for participating in our Chef Fundamentals series. What did you think? How can we improve? Please [complete this short survey][survey] and let us know!
 
-[spring-fund-week-1]: /fundamentals-series/week-1
-[spring-fund-week-2]: /fundamentals-series/week-2
-[spring-fund-week-3]: /fundamentals-series/week-3
-[spring-fund-week-4]: /fundamentals-series/week-4
-[spring-fund-week-5]: /fundamentals-series/week-5
-[spring-fund-week-6]: /fundamentals-series/week-6
-[chef-lab]: /fundamentals-series/chef-lab
+[spring-fund-week-1]: /skills/fundamentals-series-week-1
+[spring-fund-week-2]: /skills/fundamentals-series-week-2
+[spring-fund-week-3]: /skills/fundamentals-series-week-3
+[spring-fund-week-4]: /skills/fundamentals-series-week-4
+[spring-fund-week-5]: /skills/fundamentals-series-week-5
+[spring-fund-week-6]: /skills/fundamentals-series-week-6
+[chef-lab]: /skills/fundamentals-series-chef-lab
 [discussion-forum]: https://groups.google.com/d/forum/learnchef-fundamentals-webinar
 [survey]: http://evocalize.com/consumer/survey/chef/springwebinar-1
