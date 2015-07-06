@@ -39,7 +39,7 @@ Recipe: code_generator::template
 
 Now add this to <code class="file-path">server-info.erb</code>.
 
-```conf
+```shell
 # ~/motd/templates/default/server-info.erb
 #!/bin/sh
 
