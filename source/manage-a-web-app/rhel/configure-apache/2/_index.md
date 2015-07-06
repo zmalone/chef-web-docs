@@ -35,7 +35,7 @@ Write out <code class="file-path">webserver.rb</code> like this.
 # Install Apache and start the service.
 httpd_service 'customers' do
   mpm 'prefork'
-  action :create
+  action [:create, :start]
 end
 
 # Add the site configuration.

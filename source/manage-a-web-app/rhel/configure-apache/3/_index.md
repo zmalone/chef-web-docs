@@ -23,7 +23,7 @@ Now we have values to use in our recipe. It's time to write out our recipe file.
 # Install Apache and start the service.
 httpd_service 'customers' do
   mpm 'prefork'
-  action :create
+  action [:create, :start]
 end
 
 # Add the site configuration.
