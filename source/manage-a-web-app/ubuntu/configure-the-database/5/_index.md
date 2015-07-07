@@ -6,6 +6,7 @@ Append an `include_recipe` statement to your default recipe, <code class="file-p
 # ~/chef-repo/cookbooks/awesome_customers/recipes/default.rb
 include_recipe 'apt::default'
 include_recipe 'awesome_customers::user'
+include_recipe 'firewall::default'
 include_recipe 'awesome_customers::webserver'
 include_recipe 'awesome_customers::database'
 ```

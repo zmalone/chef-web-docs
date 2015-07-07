@@ -13,7 +13,7 @@ Installing build-essential (2.2.3)
 Installing chef-sugar (3.1.1)
 Installing database (4.0.6)
 Using awesome_customers (0.1.0) from source at .
-Using firewall (0.11.8)
+Using firewall (1.5.0)
 Using httpd (0.2.14)
 Installing mariadb (0.3.0)
 Installing mysql (6.0.23)
