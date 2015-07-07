@@ -1,0 +1,118 @@
+---
+title: 'ChefSpec TBD'
+order: 3
+keywords: TODO
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 30 minutes
+---
+So far, you can use Serverspec to verify that your cookbook does what you expect. To do so, you applied your cookbook and ran your tests using Test Kitchen.
+
+But to further speed up the feedback cycle, wouldn't it be great if you could validate your Chef code _before_ you run it?
+
+With ChefSpec, you can simulate the execution of your resources on your node.  ChefSpec is the fastest way to test resources and is a great way to validate the correctness of your work, even before you set up a server or virtual machine to test on.
+
+https://micgo.net/serverspec-guard-and-test-kitchen-testing-servers-like-a-boss/
+
+If you recall from my earlier post, ChefSpec tests are run in memory on your local workstation. No actual convergence takes place. This makes them extremely fast and excellent for unit testing your cookbook code, however it's not a complete validation of a fully configured system.
+
+```bash
+# PATH
+$ tree spec
+spec
+├── spec_helper.rb
+└── unit
+    └── recipes
+        ├── default_spec.rb
+        ├── greeting_spec.rb
+        └── users_spec.rb
+```
+
+The default spec verifies that the `chef-client` run completed successfully.
+
+```ruby
+# PATH
+require 'spec_helper'
+
+describe 'hello_testing::default' do
+  context 'When all attributes are default, on an unspecified platform' do
+    let(:chef_run) do
+      runner = ChefSpec::ServerRunner.new
+      runner.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      chef_run # This should not raise an error
+    end
+  end
+end
+```
+
+## Test the users recipe
+
+```ruby
+# users_spec.rb
+require 'spec_helper'
+
+describe 'hello_testing::users' do
+  context 'When all attributes are default, on an unspecified platform' do
+    let(:chef_run) do
+      runner = ChefSpec::ServerRunner.new
+      runner.converge(described_recipe)
+    end
+
+    it 'creates the admins group' do
+      expect(chef_run).to create_group('admins')
+    end
+
+    it 'creates the users' do
+      %w(maria james).each do |user_name|
+        expect(chef_run).to create_user(user_name).with(group: 'admins')
+      end
+    end
+  end
+end
+```
+
+```bash
+# PATH
+$ chef exec rspec spec/unit/recipes/*.rb
+....
+
+Finished in 0.69906 seconds (files took 4.17 seconds to load)
+4 examples, 0 failures
+```
+
+## Test the greeting recipe
+
+```ruby
+# PATH
+require 'spec_helper'
+
+describe 'hello_testing::greeting' do
+  context 'When all attributes are default, on an unspecified platform' do
+    let(:chef_run) do
+      runner = ChefSpec::ServerRunner.new
+      runner.converge(described_recipe)
+    end
+
+    it 'creates the /etc/chef directory' do
+      expect(chef_run).to create_directory('/etc/chef')
+    end
+
+    it 'creates /etc/chef/hello_testing.txt' do
+      expect(chef_run).to create_file('/etc/chef/hello_testing.txt').with(owner: 'maria', mode: '0644').with_content(/Hello/)
+    end
+  end
+end
+```
+
+```bash
+# PATH
+$ chef exec rspec spec/unit/recipes/*.rb
+.....
+
+Finished in 0.8663 seconds (files took 5.22 seconds to load)
+5 examples, 0 failures
+```
