@@ -14,7 +14,7 @@ version          '0.1.0'
 
 depends 'apt', '~> 2.6.1'
 depends 'httpd', '~> 0.2.14'
-depends 'firewall', '~> 0.11.8'
+depends 'firewall', '~> 1.5.0'
 ```
 
 These cookbooks need to exist on the Chef server so that the node can access them when it runs `chef-client`.
@@ -64,7 +64,7 @@ Resolving cookbook dependencies...
 Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
 Installing apt (2.6.1)
-Installing firewall (0.11.8)
+Installing firewall (1.5.0)
 Installing httpd (0.2.14)
 Using awesome_customers (0.1.0) from source at .
 ```
@@ -73,7 +73,7 @@ Berkshelf installs dependent cookbooks to the <code class="file-path">~/.berkshe
 
 ```bash
 $ ls ~/.berkshelf/cookbooks/
-apt-2.6.1       firewall-0.11.8 httpd-0.2.14
+apt-2.6.1       firewall-1.5.0 httpd-0.2.14
 ```
 
 ### Use Berkshelf to upload the cookbooks to the Chef server
@@ -87,7 +87,7 @@ Run `berks upload`.
 $ berks upload
 Uploaded apt (2.6.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded awesome_customers (0.1.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Uploaded firewall (0.11.8) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded firewall (1.5.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded httpd (0.2.14) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
 
@@ -100,7 +100,7 @@ To prove that the cookbooks uploaded successfully, run `knife cookbook list`.
 $ knife cookbook list
 apt                 2.6.1
 awesome_customers   0.1.0
-firewall            0.11.8
+firewall            1.5.0
 httpd               0.2.14
 ```
 

@@ -18,7 +18,7 @@ version          '0.2.0'
 
 depends 'apt', '~> 2.6.1'
 depends 'httpd', '~> 0.2.14'
-depends 'firewall', '~> 0.11.8'
+depends 'firewall', '~> 1.5.0'
 depends 'mysql2_chef_gem', '~> 1.0.1'
 depends 'mysql', '~> 6.0.17'
 depends 'database', '~> 4.0.3'
@@ -37,7 +37,7 @@ Using awesome_customers (0.2.0) from source at .
 Using build-essential (2.2.3)
 Using chef-sugar (3.1.1)
 Using database (4.0.6)
-Using firewall (0.11.8)
+Using firewall (1.5.0)
 Using httpd (0.2.14)
 Using mariadb (0.3.0)
 Using mysql (6.0.23)
