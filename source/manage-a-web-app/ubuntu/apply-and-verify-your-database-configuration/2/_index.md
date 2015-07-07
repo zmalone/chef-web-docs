@@ -10,7 +10,7 @@ Skipping awesome_customers (0.1.0) (frozen)
 Uploaded build-essential (2.2.3) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded chef-sugar (3.1.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded database (4.0.6) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Skipping firewall (0.11.8) (frozen)
+Skipping firewall (1.5.0) (frozen)
 Skipping httpd (0.2.14) (frozen)
 Uploaded mariadb (0.3.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded mysql (6.0.23) to: 'https://api.opscode.com:443/organizations/your-org-name'
