@@ -1,0 +1,95 @@
+---
+title: 'Test the awesome_customers cookbook'
+order: 4
+keywords: TODO
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 30 minutes
+---
+Define what a matcher is.
+
+https://github.com/chef-cookbooks/httpd/blob/dc951d170c3051742782f58a2e651cba1917994a/libraries/matchers.rb
+
+https://github.com/opscode-cookbooks/firewall/blob/7d37d91d48d31906cf0306b2bcabba01d67fda0d/libraries/matchers.rb
+
+## Create ChefSpec tests
+
+FOCUS - only on web server portion of the cookbook
+
+```ruby
+# PATH
+require 'spec_helper'
+
+describe 'awesome_customers::webserver' do
+
+  context 'When all attributes are default, on an unspecified platform' do
+
+    let(:chef_run) do
+      runner = ChefSpec::ServerRunner.new
+      runner.node.set['awesome_customers']['document_root'] = '/var/www/customers/public_html'
+      runner.node.set['awesome_customers']['user'] = 'user'
+      runner.node.set['awesome_customers']['group'] = 'group'
+      runner.node.set['awesome_customers']['passwords']['secret_path'] = '/etc/chef/encrypted_data_bag_secret'
+      runner.converge(described_recipe)
+    end
+
+    let(:file_like_object) { double('file like object') }
+    let(:secret_path) { '/etc/chef/encrypted_data_bag_secret' }
+    let(:secret) { 'secret' }
+
+    before do
+      allow(File).to receive(:exist?).and_call_original
+      allow(File).to receive(:exist?).with(secret_path).and_return('true')
+
+      allow(IO).to receive(:read).and_call_original
+      allow(IO).to receive(:read).with(secret_path).and_return(secret)
+
+      allow(Chef::EncryptedDataBagItem).to receive(:load).with('passwords', 'db_admin_password', secret).and_return({
+        'password' => 'some_password'
+      })
+    end
+
+    it 'creates httpd_service[customers]' do
+      expect(chef_run).to create_httpd_service('customers')
+        .with(
+          mpm: 'prefork',
+          listen_ports: ['80']
+        )
+    end
+
+    it 'creates the configuration file' do
+      expect(chef_run).to create_httpd_config('customers')
+    end
+
+    it 'creates the custom home page' do
+      expect(chef_run).to create_template('/var/www/customers/public_html/index.php')
+        .with(
+          mode: '0644',
+          owner: 'user',
+          group: 'group'
+        )
+    end
+
+    it 'enables the firewall' do
+      expect(chef_run).to enable_firewall('ufw')
+    end
+
+    it 'allows rule http' do
+      expect(chef_run).to allow_firewall_rule('http').with(port: 80, protocol: :tcp)
+    end
+
+    it 'installs the mod_php5 Apache module' do
+      expect(chef_run).to create_httpd_module('php5')
+    end
+
+    it 'installs package php5-mysql' do
+      expect(chef_run).to install_package('php5-mysql')
+    end
+  end
+end
+```
+
+## Create Serverspec tests
+
+Again, focus on web server portion
