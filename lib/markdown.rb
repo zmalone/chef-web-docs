@@ -57,13 +57,13 @@ module ZurbFoundation
     content.gsub!(/<p>\[WINDOWS\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-windows blueiconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[LINUX\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-linux\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[ERROR\] (.+)<\/p>/)  { "<div class=\"alert-box error\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[RUBY\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><img class=\"alert-box-icon\" src=\"http://upload.wikimedia.org/wikipedia/commons/7/73/Ruby_logo.svg\" title=\"By Yukihiro Matsumoto, Ruby Visual Identity Team (http://rubyidentity.org/ (archive)) [CC BY-SA 2.5 (http://creativecommons.org/licenses/by-sa/2.5)], via Wikimedia Commons\"></img>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[RUBY\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><img class=\"alert-box-icon-small\" src=\"http://upload.wikimedia.org/wikipedia/commons/7/73/Ruby_logo.svg\" title=\"By Yukihiro Matsumoto, Ruby Visual Identity Team (http://rubyidentity.org/ (archive)) [CC BY-SA 2.5 (http://creativecommons.org/licenses/by-sa/2.5)], via Wikimedia Commons\"></img>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[TIP\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-thumbs-o-up tip-icon\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[GITHUB\] (.+)<\/p>/)  { "<div class=\"alert-box github\"><i class=\"fa fa-2x fa-github\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[FEEDBACK\] (.+)<\/p>/)  { "<div class=\"alert-box feedback\"><i class=\"fa fa-2x fa-comment-o\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[HEADLINE\] (.+)<\/p>/)  { "<div class=\"alert-box headline\">#{$1}</div>" }
     content.gsub!(/<p>\[QUOTE\] (.+)<\/p>/)  { "<div class=\"alert-box quote\"><i class=\"fa fa-quote-left\"></i>&nbsp;<i>#{$1}</i>&nbsp;<i class=\"fa fa-quote-right\"></i></div>" }
-
+    content.gsub!(/<p>\[AWS\] (.+)<\/p>/)  { "<div class=\"alert-box aws\"><img class=\"alert-box-icon-large\" src=\"/assets/images/partner/AWS-Cloud.svg\"></img>&nbsp; #{$1}</div>" }
   end
 
 

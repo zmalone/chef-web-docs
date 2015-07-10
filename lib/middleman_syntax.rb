@@ -53,8 +53,9 @@ module Middleman
                    "sql" => CodeFormatter.new,
                    "php" => CodeFormatter.new({:token_offset => 2, :strip_offset => 0}),
                    "bash" => TerminalFormatter.new,
-                   "shell" => TerminalFormatter.new,
-                   "ps" => TerminalFormatter.new({:prompt => "PS >", :title_prefix => "Windows PowerShell", :window_style => "Win32", :default_working_dir => "~\\"})
+                   "shell" => CodeFormatter.new,
+                   "ps" => TerminalFormatter.new({:prompt => "PS >", :title_prefix => "Windows PowerShell", :window_style => "Win32", :default_working_dir => "~"}),
+                   "cmd" => TerminalFormatter.new({:prompt => ">", :title_prefix => "Command Prompt", :window_style => "Win32", :default_working_dir => "~"})
                  }
 
           hash.default = DefaultFormatter.new

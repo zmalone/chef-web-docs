@@ -59,7 +59,7 @@ module Middleman
         end
 
         def source_window(content,filepath,window_style)
-          %{<div class="window #{window_style}">
+          %{<div class="window #{window_style}" ng-non-bindable>
               <nav class="control-window">
                 <div class="close">&times;</div>
                 <div class="minimize"></div>
