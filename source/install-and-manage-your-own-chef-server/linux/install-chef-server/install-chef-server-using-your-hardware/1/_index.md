@@ -9,7 +9,7 @@ The system requirements provide complete details on how to prepare your system f
 <a class="help-button radius" href="#" data-reveal-id="chef-server-el-prep-help-modal">Checklist for Red Hat Enterprise Linux</a> <a class="help-button radius" href="#" data-reveal-id="chef-server-ubuntu-prep-help-modal">Checklist for Ubuntu</a>
 
 <div id="chef-server-el-prep-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-  <h3 id="modalTitle">Ensure that your Red Hat Enterprise Linux system:</h3>
+  <h3 id="modalTitle">To prepare your Red Hat Enterprise Linux system, ensure that:</h3>
   <ul>
     <li>has 4GB total memory.</li>
     <li>has a hostname that can be accessed from your workstation and nodes.</li>

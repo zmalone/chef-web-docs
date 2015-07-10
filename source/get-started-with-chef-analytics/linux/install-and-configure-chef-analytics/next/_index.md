@@ -1,1 +1,1 @@
-As your infrastructure grows, it can become difficult to inspect individual events like this by hand. Rather, you might want to be alerted about events you care about most. In the next lesson, you'll set up Chef Analytics to email you when a `chef-client` run completes on your node.
+As your infrastructure grows, it can become difficult to inspect individual events by hand. Rather, you might want to be alerted about events you care about most. In the next lesson, you'll set up Chef Analytics to email you when a `chef-client` run completes on your node.

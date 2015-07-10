@@ -1,34 +1,55 @@
-## 7. Create the hello\_chef\_server cookbook
+## 7. Run chef-client on your node
 
-Now let's create a basic cookbook and upload it to your Chef server.
+Now let's run the `hello_chef_server` cookbook on the node that you bootstrapped in the previous tutorial, [Learn to install and manage your own Chef Server](/install-and-manage-your-own-chef-server/linux/).
 
-From the <code class="file-path">~/chef-repo</code> directory your workstation, run the following command to create the `hello_chef_server` cookbook.
+<a class="help-button radius" href="#" data-reveal-id="chef-client-cheat-help-modal">Remind me how!</a>
 
-```bash
-# ~/chef-repo
-$ chef generate cookbook cookbooks/hello_chef_server
-Compiling Cookbooks...
-Recipe: code_generator::cookbook
-  * directory[/home/user/chef-repo/cookbooks/hello_chef_server] action create
-    - create new directory /home/user/chef-repo/cookbooks/hello_chef_server
-  * template[/home/user/chef-repo/cookbooks/hello_chef_server/metadata.rb] action create_if_missing
-    - create new file /home/user/chef-repo/cookbooks/hello_chef_server/metadata.rb
-    - update content in file /home/user/chef-repo/cookbooks/hello_chef_server/metadata.rb from none to d531e8
-    (diff output suppressed by config)
-[...]
-  * execute[initialize-git] action run
-    - execute git init .
-  * cookbook_file[/home/user/chef-repo/cookbooks/hello_chef_server/.gitignore] action create
-    - create new file /home/user/chef-repo/cookbooks/hello_chef_server/.gitignore
-    - update content in file /home/user/chef-repo/cookbooks/hello_chef_server/.gitignore from none to dd37b2
-    (diff output suppressed by config)
-```
+<div id="chef-client-cheat-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <h3 id="modalTitle">Here are some of the common ways to run chef-client on your node from your workstation</h3>
+  <h4>Linux node: user name and password</h4>
+  <p>Replace <code>{address}</code> with your remote node&#39;s external address, <code>{user}</code> with your username, and <code>{password}</code> with your password.</p>
+<div class="window ">
+            <nav class="control-window">
+              <div class="close">&times;</div>
+              <div class="minimize"></div>
+              <div class="deactivate"></div>
+            </nav>
+            <h1 class="titleInside">Terminal: ~/chef-repo</h1>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ssh-password '{password}'</span></code></pre></td></tr></table></div></div>
+          </div>
+  <h4>Linux node: key-based authentication</h4>
+  <p>Replace <code>{address}</code> with your remote node&#39;s external address and <code>{identity-file}</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.</p>
+<div class="window ">
+            <nav class="control-window">
+              <div class="close">&times;</div>
+              <div class="minimize"></div>
+              <div class="deactivate"></div>
+            </nav>
+            <h1 class="titleInside">Terminal: ~/chef-repo</h1>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --identity-file {identity-file}</span></code></pre></td></tr></table></div></div>
+            </div>
+  <h4>Windows Server node</h4>
+  <p>
+Replace <code>{address}</code>, <code>{user}</code>, and <code>{password}</code> with your values.
+</p>
+<div id="knife-command" class="window" ng-non-bindable>
+  <nav class="control-window">
+    <div class="close">&times;</div>
+    <div class="minimize"></div>
+    <div class="deactivate"></div>
+  </nav>
+  <h1 class="titleInside">Terminal: ~/chef-repo</h1>
+  <div class="container" data-type="windows-fundamentals"><div class="terminal"><table>
+    <tbody>
+      <tr>
+        <td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td>
+        <td class="code"><pre><code><span class="line command">knife winrm {address} chef-client --manual-list --winrm-user {user} --winrm-password &#39;{password}&#39;</span></code></pre></td>
+      </tr>
+    </tbody></table></div></div>
+</div>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
 
-Now write out your default recipe, <code class="file-path">default.rb</code>, like this. This recipe writes the file <code class="file-path">hello.txt</code> to the directory that Chef sets up for temporary files and data. This recipe works on both Linux and Windows Server.
+Now go back to the Chef Analytics home page in your web browser. You'll see an entry for your `chef-client` run on the **Timeline** tab.
 
-```ruby
-# ~/chef-repo/cookbooks/hello_chef_server/recipes/default.rb
-file "#{Chef::Config[:file_cache_path]}/hello.txt" do
-  content 'Hello, Chef server!'
-end
-```
+![The Chef Analytics timeline](chef-analytics/timeline.png)

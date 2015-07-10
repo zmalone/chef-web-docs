@@ -42,7 +42,7 @@ rabbitmq['vip'] = '{chef-server-ip-address}'
 rabbitmq['node_ip_address'] = '0.0.0.0'
 ```
 
-If you're using the Chef server AMI, your completed <code class="file-path">/etc/opscode/chef-server.rb</code> file will look similar to this:
+Your completed <code class="file-path">/etc/opscode/chef-server.rb</code> file will look similar to this:
 
 ```ruby
 # /etc/opscode/chef-server.rb

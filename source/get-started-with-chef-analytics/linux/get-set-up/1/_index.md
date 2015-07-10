@@ -8,9 +8,7 @@ If you don't already have a Chef server that you can configure to work with Chef
 
 After completing this tutorial, you'll have:
 
-* the Chef development tools installed on your workstation
-* a Chef server running in your infrastructure
-* the `hello_chef_server` cookbook on your Chef server
-* a bootstrapped Linux or Windows Server node containing the `hello_chef_server` cookbook in its run-list
-
-The Chef server uses RabbitMQ for messaging. To connect Chef server to Chef Analytics, you'll also need to open port 5672 (for RabbitMQ) for inbound traffic on your Chef server. 
+* the Chef development tools installed on your workstation.
+* a Chef server running in your infrastructure.
+* the `hello_chef_server` cookbook on your Chef server.
+* a bootstrapped Linux or Windows Server node containing the `hello_chef_server` cookbook in its run-list.
