@@ -1,25 +1,32 @@
-## 8. Test the connection to Chef server
+## 8. Download the Chef server's SSL certificate
 
-From your workstation, run `knife client list` to verify that you can authenticate commands to the Chef server.
+Nodes communicate with the Chef server through a web service that's hosted on your Chef server. Communication occurs over an SSL connection (port 443), and Chef server uses a [X.509 digital certificate](https://en.wikipedia.org/wiki/X.509) to verify its authenticity.
+
+During the bootstrap process, `knife` copies the certificate from your workstation to the node. In order to do that, you must first retrieve a copy of the certificate on your workstation.
+
+Run the `knife ssl fetch` command from your workstation to retrieve a copy of the certificate.
 
 ```bash
 # ~/chef-repo
-$ knife client list
-learnchef-validator
+$ knife ssl fetch
+WARNING: Certificates from ec2-52-25-239-111.us-west-2.compute.amazonaws.com will be fetched and placed in your trusted_cert
+directory (/home/user/chef-repo/.chef/trusted_certs).
+
+Knife has no means to verify these are the correct certificates. You should
+verify the authenticity of these certificates after downloading.
+
+Adding certificate for ec2-52-25-239-111.us-west-2.compute.amazonaws.com in /home/user/chef-repo/.chef/trusted_certs/ec2-52-25-239-111_us-west-2_compute_amazonaws_com.crt
 ```
 
-<a class="help-button radius" href="#" data-reveal-id="chef-server-connect-help-modal">I got an error!</a>
+[COMMENT] If the command fails, verify that you have port 443 (HTTPS) open to incoming traffic on the Chef server.
 
-<div id="chef-server-connect-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-  <h3 id="modalTitle">If you get an error, verify that:</h3>
-  <ul>
-    <li>you can access the public hostname of your Chef server over an HTTPS connection from a web browser, for example, <br/>&nbsp;&nbsp;&nbsp;&nbsp;https://ec2-52-25-201-190.us-west-2.compute.amazonaws.com:443<br/>If you can't connect, ensure that port 443 is open to incoming traffic on your Chef server.</li>
-    <li>you are running <code>knife</code> from the <code class="file-path">~/chef-repo</code> directory or a sub-directory.</li>
-    <li>your <code class="file-path">~/chef-repo/.chef</code> directory contains your RSA key (a <code class="file-path">.pem</code> file) and a <code class="file-path">knife.rb</code> file.</li>
-    <li>your RSA key is user-readable only.</li>
-    <li>your Chef server meets the <a href="https://docs.chef.io/install_server_pre.html">prerequisites</a>.</li>
-  </ul>
-  <p>If you're unable to resolve the error, let us know in the forum at the bottom of this page or sign up for weekly <a href="https://www.chef.io/contact/office-hours-registration/">office hours</a>.
-  </p>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-</div>
+Now run `knife ssl check` to verify that the certificate was properly retrieved and can be used to authenticate calls to the Chef server.
+
+```bash
+# ~/chef-repo
+$ knife ssl check
+Connecting to host ec2-52-27-41-27.us-west-2.compute.amazonaws.com:443
+Successfully verified certificates from `ec2-52-27-41-27.us-west-2.compute.amazonaws.com'
+```
+
+[COMMENT] By default, Chef Server uses a self-signed certificate, which is fine for getting started or for creating test servers. In production, we recommend that you use a [certificate signed by a root Certificate Authority (CA)](https://osxdominion.wordpress.com/2015/02/25/configuring-chef-server-12-to-use-trusted-ssl-certs/).

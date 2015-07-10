@@ -1,168 +1,47 @@
-## 6. Copy the RSA key to your workstation and generate your knife configuration file
+## 6. Create the administrator account and an organization
 
-Now you need to generate the configuration file, <code class="file-path">knife.rb</code>, that enables `knife` to authenticate commands with the Chef server. You also need to copy the RSA key (the <code class="file-path">.pem</code> file) that you created in the previous step to enable `knife` to authenticate calls to the Chef server. This authentication process ensures that the Chef server responds only to requests made by trusted users.
+Now you need to create an administrator account and an organization, similar to what you did when you signed up for hosted Chef.
 
-### Option 1: Download the Starter Kit
+You'll need some information that you'll use in later steps, so jot down the following details about yourself and your organization. You'll replace these values in the commands that follow.
 
-We recommend this method if you're using the Chef management console.
+| Item                 | Description |    Examples |
+|-----------------------------------:|-------------|----------|
+| `{admin-username}`   | user name for the administrator account | `jsmith`, `admin` |
+| `{admin-first-name}` | administrator's first name | `Joe` |
+| `{admin-last-name}`  | administrator's last name | `Smith` |
+| `{admin-email}`      | administrator's email address | `joe.smith@example.com` |
+| `{full-org-name}`    | your organization's full name | `Learn Chef`, `Web development team` |
+| `{short-org-name}`   | abbreviated nickname for your organization | `learnchef`, `webdev` |
 
-The easiest way to set up your `knife` configuration file and get a copy of your <code class="file-path">.pem</code> file is to download the Starter Kit from your Chef server. This is the same process you followed when you signed up for hosted Chef.
+You'll also need a password for your administrator account, so also make note of that somewhere safe.
 
-From your workstation,
+### Create the admin account
 
-1. From a web browser, navigate to your Chef server's hostname.
-1. Sign in using the username and password you entered in the previous step.
-1. From the **Administration** tab, select your organization.
-1. Select **Starter Kit** from the menu on the left.
-1. Click the **Download Starter Kit** button.
-1. Click **Proceed**. Save the file <code class="file-path">chef-starter.zip</code> to your computer.
-1. Extract <code class="file-path">chef-starter.zip</code> to your <code class="file-path">~/chef-repo</code> directory.
-
-Now verify that the <code class="file-path">~/chef-repo/.chef</code> directory on your workstation contains knife configuration file and your RSA key.
-
-TODO: VERIFY output
+From your Chef server, run the following command to create the administrator account. Replace `{admin-username}`, `{admin-first-name}`, `{admin-last-name}`, `{admin-email}`, and `{admin-password}` with your values.
 
 ```bash
-# ~/chef-repo
-$ ls ~/chef-repo/.chef
-admin.pem knife.rb
+$ sudo chef-server-ctl user-create {admin-username} {admin-first-name} {admin-last-name} {admin-email} {admin-password} --filename {admin-username}.pem
 ```
 
-### Option 2: Copy the RSA key and generate the knife configuration file manually
-
-If you're not using the management console, here's now to set things up manually.
-
-First, from your Chef server, run `pwd` to verify the current directory.
+The command generates an RSA private key (<code class="file-path">.pem</code> file) that enables you enables you to run `knife` commands against the Chef server as an authenticated user. You'll copy this file to your workstation in the next step. For now, verify that this private key was written to the current directory on your Chef server.
 
 ```bash
-# ~/root
-$ pwd
-/root
-```
-
-Then verify that your <code class="file-path">.pem</code> file is in that directory.
-
-```bash
-# ~/root
 $ ls *.pem
 admin.pem
 ```
 
-Note the full path to the <code class="file-path">.pem</code> file. In this example, it's <code class="file-path">~/root/admin.pem</code>.
+### Create an organization
 
-Now you need to copy the RSA key that you just created from your Chef server to your workstation.  
+The Chef server uses role-based access control (RBAC) to restrict access to objects such as users, nodes, data bags, cookbooks, and so on. An _organization_ groups related objects to ensure authorized access to those objects.
 
-First, from your workstation, create a <code class="file-path">.chef</code> directory in your <code class="file-path">~/chef-repo</code> directory.
-
-```bash
-# ~/chef-repo
-$ mkdir .chef
-```
-
-Now copy your key from your Chef server to the <code class="file-path">.chef</code> directory on your workstation.
-
-<a class="help-button radius" href="#" data-reveal-id="copy-scp-help-modal">Show me how!</a>
-
-<div id="copy-scp-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-<h3>To copy the files from your Chef server to your workstation</h3>
-<p>First, run <code>pwd</code> from your Chef server to verify the current directory.</p>
-<div class="window ">
-            <nav class="control-window">
-              <div class="close">&times;</div>
-              <div class="minimize"></div>
-              <div class="deactivate"></div>
-            </nav>
-            <h1 class="titleInside">Terminal: ~</h1>
-            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span><span class='line-number'>&nbsp;</span></pre></td><td class='code'><pre><code><span class='line command'>pwd</span><span class='line output'>/root</span></code></pre></td></tr></table></div></div>
-          </div>
-<p>Now run the command that corresponds to your workstation setup and how you connect to your Chef server. Replace <code class="file-path">/root</code> with the output of the <code>pwd</code> command you just ran if needed.</p>
-<h4><a class="section-link" name="connectfromamacosorlinuxworkstation" href="#connectfromamacosorlinuxworkstation">&#167;</a>Copy the file from the Chef server to a Mac OS or Linux workstation</h4>
-
-<p>Here&#39;s an example of how to use the built-in <code>scp</code> command using a user name and password.</p>
-<div class="window ">
-            <nav class="control-window">
-              <div class="close">&times;</div>
-              <div class="minimize"></div>
-              <div class="deactivate"></div>
-            </nav>
-            <h1 class="titleInside">Terminal: ~</h1>
-            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span></pre></td><td class='code'><pre><code><span class='line command'>scp root@52.25.201.190:/root/admin.pem .chef/admin.pem</span><span class='line output'>root@52.25.201.190's password: ********</span><span class='line output'>admin.pem                                     100% 1674     1.6KB/s   00:00</span></code></pre></td></tr></table></div></div>
-          </div>
-<p>If you&#39;re using key-based authentication to connect to your Chef server, the command is similar to this.</p>
-<div class="window ">
-            <nav class="control-window">
-              <div class="close">&times;</div>
-              <div class="minimize"></div>
-              <div class="deactivate"></div>
-            </nav>
-            <h1 class="titleInside">Terminal: ~/chef-repo</h1>
-            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>scp -i ~/.ssh/my.pem root@52.25.201.190:/root/admin.pem .chef/admin.pem</span><span class='line output'>admin.pem                                     100% 1674     1.6KB/s   00:00</span></code></pre></td></tr></table></div></div>
-          </div>
-<h4><a class="section-link" name="connectfromawindowsworkstation" href="#connectfromawindowsworkstation">&#167;</a>Copy the file from your Chef server to a Windows workstation</h4>
-
-<p>On Windows, you&#39;ll need to install a program that can securely copy files from Linux. The <a href="http://the.earth.li/~sgtatham/putty/0.60/htmldoc/Chapter5.html">PuTTY User Manual</a> shows how to use the <code>pscp</code> utility to securely copy a file from Linux to Windows.</p>
-<p>Here's an example that uses <code>pscp</code> to copy the file from the Chef server to your Windows workstation using a user name and password.</p>
-<div class="window Win32">
-            <nav class="control-window">
-              <div class="close">&times;</div>
-              <div class="minimize"></div>
-              <div class="deactivate"></div>
-            </nav>
-            <h1 class="titleInside">Windows PowerShell: ~</h1>
-            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>PS ></span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span></pre></td><td class='code'><pre><code><span class='line command'>. &quot;C:\Program Files (x86)\PuTTY\pscp.exe&quot; root@52.25.201.190:/root/admin.pem .chef/admin.pem</span><span class='line output'>root@52.25.201.190's password: ********</span><span class='line output'>admin.pem                 | 1 kB |   1.6 kB/s | ETA: 00:00:00 | 100%</span></code></pre></td></tr></table></div></div>
-          </div>
-<p>Here&#39;s an example that uses <code>pscp</code> and key-based authentication.</p>
-<div class="window Win32">
-            <nav class="control-window">
-              <div class="close">&times;</div>
-              <div class="minimize"></div>
-              <div class="deactivate"></div>
-            </nav>
-            <h1 class="titleInside">Windows PowerShell: ~</h1>
-            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>PS ></span><span class='line-number'>&nbsp;</span></pre></td><td class='code'><pre><code><span class='line command'>. &quot;C:\Program Files (x86)\PuTTY\pscp.exe&quot; -i 'C:\Users\User\.ssh\admin.ppk' root@52.25.201.190:/root/admin.pem .chef/admin.pem</span><span class='line output'>admin.pem                 | 1 kB |   1.6 kB/s | ETA: 00:00:00 | 100%</span></code></pre></td></tr></table></div></div>
-          </div>
-<p>If your Linux machine uses key-based authentication, you&#39;ll need to <a href="http://the.earth.li/~sgtatham/putty/0.64/htmldoc/Chapter8.html#pubkey">convert your private key</a> to a format PuTTY can use.</p>
-<p>If you're using Amazon EC2 to host your node, the <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/putty.html">AWS documentation</a> can help get you started.
-</p>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-</div>
-
-Now verify that the <code class="file-path">~/chef-repo/.chef</code> directory on your workstation contains your RSA key.
+Run this command to create your initial organization, replacing `{short-org-name}`, `{full-org-name}` and `{admin-username}` with your values.
 
 ```bash
-# ~/chef-repo
-$ ls ~/chef-repo/.chef
-admin.pem
+$ sudo chef-server-ctl org-create {short-org-name} "{full-org-name}" --association {admin-username}
 ```
 
-[TIP] Once you verify that a copy of your RSA key exists on your workstation, you can safely delete it from your Chef server if you don't want other users to access it.
+When the organization is created, Chef server generates a shared RSA private key that enables a node to validate itself when it communicates with the Chef server for the first time. This RSA key is different than the key Chef server created when you added the administrator account.
 
-Next, to generate your knife configuration file, create <code class="file-path">~/.chef-repo/.chef/knife.rb</code> on your workstation like this, replacing `{admin-username}`, `{chef-server-fqdn}`, and `{short-org-name}` with your values. Do not modify `{current_dir}`.
+During the bootstrap process, `knife` copies this private key from the Chef server to the node. After the node performs the initial validation, it then retrieves a new key that only it can use.
 
-```ruby
-# ~/.chef-repo/.chef/knife.rb
-current_dir = File.dirname(__FILE__)
-log_level                :info
-log_location             STDOUT
-node_name                '{admin-username}'
-client_key               "#{current_dir}/{admin-username}.pem"
-chef_server_url          'https://{chef-server-fqdn}/organizations/{short-org-name}'
-cache_type               'BasicFile'
-cache_options( :path => "#{ENV['HOME']}/.chef/checksums" )
-cookbook_path            ["#{current_dir}/../cookbooks"]"
-```
-
-Here's an example of what your completed <code class="file-path">knife.rb</code> file will look like.
-
-```ruby
-# ~/.chef-repo/.chef/knife.rb
-current_dir = File.dirname(__FILE__)
-log_level                :info
-log_location             STDOUT
-node_name                'admin'
-client_key               "#{current_dir}/admin.pem"
-chef_server_url          'https://ec2-52-25-201-190.us-west-2.compute.amazonaws.com/organizations/learnchef'
-cache_type               'BasicFile'
-cache_options( :path => "#{ENV['HOME']}/.chef/checksums" )
-cookbook_path            ["#{current_dir}/../cookbooks"]
-```
+[COMMENT] You always create the initial administrator account and organization directly from the Chef server on the command line. Later, you can add additional users [on the command line](https://docs.chef.io/server_orgs.html) or [through the Chef management console](https://docs.chef.io/manage.html#admin).

@@ -1,29 +1,36 @@
-## 1. Install Chef server
+## 1. Prepare a system to run Chef server
 
-Click the button to get the Chef server package for your version of Red Hat Enterprise Linux/CentOS or Ubuntu.
+First, bring up a system to run Chef server. Chef server runs on Red Hat Enterprise Linux, CentOS, Oracle Linux, and Ubuntu. See the [supported platforms](https://docs.chef.io/install_server_pre.html#supported-platforms) to learn about which operating system versions Chef server supports.
 
-<a class='accent-button radius' href='https://downloads.chef.io/chef-server/' target='_blank'>Download Chef server&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+Then review the [hardware and software system requirements](https://docs.chef.io/install_server_pre.html#hardware-software). Each requirement, including the amount of memory you need and which ports you need to open, is important. Pay special attention to any requirements that are specific to CentOS, Red Hat Enterprise Linux, and Ubuntu.
 
-It's likely that you're viewing this web page from your workstation, and that your Chef server is running without a graphical user interface. The easiest way to get the download link from your workstation to your Chef server is to locate and copy the link you need, and then paste it into a `wget` command through an SSH session to your Chef server.
+The system requirements provide complete details on how to prepare your system for Chef server, but these checklists provide the minimum amount required to get a Chef server up and running.
 
-Here's an example of how to download and install Chef server on Red Hat Enterprise Linux or CentOS. Be sure to replace the package URL with the version you get from the download page.
+<a class="help-button radius" href="#" data-reveal-id="chef-server-el-prep-help-modal">Checklist for Red Hat Enterprise Linux</a> <a class="help-button radius" href="#" data-reveal-id="chef-server-ubuntu-prep-help-modal">Checklist for Ubuntu</a>
 
-```bash
-$ sudo yum install wget -y
-$ wget https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.1.0-1.el6.x86_64.rpm
-$ sudo yum install chef-server-core-12.1.0-1.el6.x86_64.rpm -y
-```
+<div id="chef-server-el-prep-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <h3 id="modalTitle">Ensure that your Red Hat Enterprise Linux system:</h3>
+  <ul>
+    <li>has 4GB total memory.</li>
+    <li>has a hostname that can be accessed from your workstation and nodes.</li>
+    <li>is connected to NTP.</li>
+    <li>has <a href="http://docs.chef.io/install_server_pre.html#apache-qpid">Apache Qpid</a> disabled.</li>
+    <li>provides inbound access (including firewall) on port 443 (HTTPS).</li>
+    <li>has <a href="http://docs.chef.io/install_server_pre.html#selinux">SELinux</a> disabled or set to permissive mode.</li>
+  </ul>
+  <p>You may also want to open port 22 (SSH) so you can configure Chef server from your workstation. Also, we recommend that you run <code>yum update</code> to update your local package cache.</p>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
 
-Here's a similar example for Ubuntu.
-
-```bash
-$ sudo apt-get install wget -y
-$ wget https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.1.0-1.el6.x86_64.DEB
-$ sudo dpkg -i install chef-server-core-12.1.0-1.el6.x86_64.DEB
-```
-
-#### Install a text editor on your Chef server
-
-You'll need to edit a few configuration files, so ensure you have a text editor that you're comfortable working with installed on your Chef server. If you don't have a preferred editor, we recommend `vim`. This [interactive Vim tutorial](http://www.openvim.com/tutorial.html) can help you get oriented to the commands you'll need to create, edit, and save a file.
-
-Next, you'll modify the Chef server configuration file before you configure and start the server.
+<div id="chef-server-ubuntu-prep-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <h3 id="modalTitle">To prepare your Ubuntu system, ensure that:</h3>
+  <ul>
+    <li>has 4GB total memory.</li>
+    <li>has a hostname that can be accessed from your workstation and nodes.</li>
+    <li>is connected to NTP.</li>
+    <li>provides inbound access (including firewall) on port 443 (HTTPS).</li>
+    <li>has <a href="http://docs.chef.io/install_server_pre.html#apparmor">AppArmor</a> disabled or set to complaining mode.</li>
+  </ul>
+  <p>You may also want to open port 22 (SSH) so you can configure Chef server from your workstation. Also, we recommend that you run <code>apt-get update</code> to update your local package cache.</p>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
