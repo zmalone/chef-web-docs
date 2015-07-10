@@ -1,6 +1,6 @@
 ## 3. Write the Chef server configuration file
 
-After you install the Chef server package, you must configure the Chef server. The configuration process runs `chef-client` locally to apply the changes to the system. Having a separate configuration step gives you the chance to make any additional changes.
+After you install the Chef server package, you must configure the Chef server. The configuration process runs `chef-client` locally to apply the changes to the system. Having a separate configuration step gives you the chance to make any additional changes before you start the server.
 
 The [Chef server configuration file](https://docs.chef.io/config_rb_server.html), <code class="file-path">/etc/opscode/chef-server.rb</code>, contains additional Chef server settings. If you leave this file empty, Chef server uses the default behavior, but let's add a few options to ensure that Chef server is configured with a hostname that's accessible to the rest of your network.
 
@@ -10,7 +10,7 @@ First, get the fully-qualified domain name (FQDN) for your Chef server that's ac
 
 ```ruby
 # /etc/opscode/chef-server.rb
-server_name = {chef-server-fqdn}
+server_name = "{chef-server-fqdn}"
 api_fqdn server_name
 bookshelf['vip'] = server_name
 nginx['url'] = "https://#{server_name}"

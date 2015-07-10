@@ -6,9 +6,7 @@ The management console is the web-based interface into Chef server. You may not 
 
 The management console and reporting features also install prerequisites that [Chef Analytics](http://docs.chef.io/analytics.html) and other features require.
 
-Chef Analytics requires the  and [reporting](https://docs.chef.io/install_reporting.html) features to be installed on your Chef server.
-
-Run these commands on your Chef server to install the Chef management console.
+Run these commands on your Chef server to install the management console.
 
 ```bash
 $ sudo chef-server-ctl install opscode-manage
