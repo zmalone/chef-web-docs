@@ -1,1 +1,1 @@
-Next, you'll install and configure the Chef management console, a commonly-used Chef server feature.
+Next, you'll bootstrap a node to your Chef server and apply a basic cookbook.
