@@ -1,15 +1,71 @@
-## 3. Install Chef Analytics on its own server
+## 3. Copy the configuration files to your Chef Analytics server
 
-Click the button to get the Chef Analytics package for Red Hat Enterprise Linux, CentOS or Ubuntu.
+When you prepared your Chef server to work with Chef Analytics, the Chef server generated files that Chef Analytics needs. In this step, you'll copy these files to your Chef Analytics server and configure Chef Analytics to work with your Chef server.
 
-<a class='accent-button radius' href='https://downloads.chef.io/analytics/' target='_blank'>Install Chef Analytics&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+First, you need to copy the files in the <code class="file-path">/etc/opscode-analytics</code> directory from your Chef server to your Chef Analytics server. The way you do this depends on how you access your servers. For example, if you're using key-based authentication, then you might not be able to connect directly from one server to the other.
 
-It's likely that you're viewing this web page from your workstation, and that your Chef Analytics server is running without a  graphical user interface. The easiest way to get the download link from your workstation to your Chef server is to locate and copy the link you need, and then paste it into a `wget` command through an SSH session to your Chef Analytics server.
+One way to copy the files is to:
 
-Here's an example of how to download and install Chef Analytics on Red Hat Enterprise Linux 6 or CentOS 6.
+1. Archive the <code class="file-path">/etc/opscode-analytics</code> directory into a single <code class="file-path">.tar</code> file on your Chef server.
+1. Run `scp` or another secure copy utility to copy the <code class="file-path">.tar</code> archive to your workstation.
+1. Extract the archive from your workstation to your Chef Analytics server.
 
-```bash
-$ yum install wget -y
-$ wget https://web-dl.packagecloud.io/chef/stable/packages/el/6/opscode-analytics-1.1.3-1.el6.x86_64.rpm
-$ yum install opscode-analytics-1.1.3-1.el6.x86_64.rpm -y
-```
+<a class="help-button radius" href="#" data-reveal-id="transfer-files-help-modal">Show me how!</a>
+
+<div id="transfer-files-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <h3><a class="section-link" name="tocopythefilesfromchefservertochefanalytics" href="#tocopythefilesfromchefservertochefanalytics">&#167;</a>To copy the files from Chef server to Chef Analytics</h3>
+
+<p>Choose the steps that match your workstation setup and how you connect to your servers. These steps are performed from your workstation.</p>
+
+<h4><a class="section-link" name="copythefilesfromamacosorlinuxworkstation" href="#copythefilesfromamacosorlinuxworkstation">&#167;</a>Copy the files from a Mac OS or Linux workstation</h4>
+
+<p>Here&#39;s how to copy the files using a user name and password. Replace <code>{user}</code>, <code>{chef-server-ip-address}</code>, and <code>{analytics-ip-address}</code> with your values.</p>
+<div class="window ">
+            <nav class="control-window">
+              <div class="close">&times;</div>
+              <div class="minimize"></div>
+              <div class="deactivate"></div>
+            </nav>
+            <h1 class="titleInside">Terminal: ~</h1>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>$</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>$</span><span class='line-number'>&nbsp;</span></pre></td><td class='code'><pre><code><span class='line command'>ssh -t {user}@{chef-server-ip-address} sudo tar -czvf /tmp/opscode-analytics.tar /etc/opscode-analytics</span><span class='line output'>{user}@{chef-server-ip-address}'s password: ********</span><span class='line output'>tar: Removing leading `/' from member names</span><span class='line output'>/etc/opscode-analytics/</span><span class='line output'>/etc/opscode-analytics/webui_priv.pem</span><span class='line output'>/etc/opscode-analytics/actions-source.json</span><span class='line command'>scp -p {user}@{chef-server-ip-address}:/tmp/opscode-analytics.tar /tmp</span><span class='line output'>{user}@{chef-server-ip-address}'s password: ********</span><span class='line output'>opscode-analytics.tar                         100% 1975     1.9KB/s   00:00</span><span class='line command'>cat /tmp/opscode-analytics.tar | ssh  {user}@{analytics-ip-address} sudo tar -xzf - -C /</span><span class='line output'>{user}@{analytics-ip-address}'s password: ********</span></code></pre></td></tr></table></div></div>
+          </div>
+<p>Here&#39;s how to copy the files using key-based authentication. Replace <code>{identity-file}</code>, <code>{user}</code>, <code>{chef-server-ip-address}</code>, and <code>{analytics-ip-address}</code> with your values.</p>
+<div class="window ">
+            <nav class="control-window">
+              <div class="close">&times;</div>
+              <div class="minimize"></div>
+              <div class="deactivate"></div>
+            </nav>
+            <h1 class="titleInside">Terminal: ~</h1>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>$</span><span class='line-number'>&nbsp;</span><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>ssh -t -i {identity-file} {user}@{chef-server-ip-address} sudo tar -czvf /tmp/opscode-analytics.tar /etc/opscode-analytics</span><span class='line output'>tar: Removing leading `/' from member names</span><span class='line output'>/etc/opscode-analytics/</span><span class='line output'>/etc/opscode-analytics/webui_priv.pem</span><span class='line output'>/etc/opscode-analytics/actions-source.json</span><span class='line command'>scp -p -i {identity-file} {user}@{chef-server-ip-address}:/tmp/opscode-analytics.tar /tmp</span><span class='line output'>opscode-analytics.tar                         100% 1975     1.9KB/s   00:00</span><span class='line command'>cat /tmp/opscode-analytics.tar | ssh -i {identity-file} {user}@{analytics-ip-address} sudo tar -xzf - -C /</span></code></pre></td></tr></table></div></div>
+          </div>
+<h4><a class="section-link" name="copythefilesfromawindowsworkstation" href="#copythefilesfromawindowsworkstation">&#167;</a>Copy the files from a Windows workstation</h4>
+
+<p>Mac OS and most Linux distributions come with an SSH client and secure copy utility. On Windows, you&#39;ll need to install them. <a href="http://www.putty.org">PuTTY</a> is a popular SSH client for connecting to Linux machines, and comes with a secure copy utility. <a href="http://winscp.net">WinSCP</a> is another popular option for securely copying files. If you&#39;re using Amazon EC2 to host your node, the <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/putty.html">AWS documentation</a> can also help get you started.</p>
+
+<p>Here&#39;s how to use PuTTY&#39;s <a href="http://the.earth.li/~sgtatham/putty/0.53b/htmldoc/Chapter7.html#7">Plink</a> and <a href="http://the.earth.li/~sgtatham/putty/0.53b/htmldoc/Chapter5.html">PSCP</a> utilities to copy the files using a user name and password. Replace <code>{user}</code>, <code>{chef-server-ip-address}</code>, and <code>{analytics-ip-address}</code> with your values.</p>
+<div class="window Win32">
+            <nav class="control-window">
+              <div class="close">&times;</div>
+              <div class="minimize"></div>
+              <div class="deactivate"></div>
+            </nav>
+            <h1 class="titleInside">Windows PowerShell: ~</h1>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>PS ></span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>PS ></span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>PS ></span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>PS ></span><span class='line-number'>&nbsp;</span></pre></td><td class='code'><pre><code><span class='line command'>&amp; plink.exe -t {user}@{chef-server-ip-address} sudo tar -czvf /tmp/opscode-analytics.tar /etc/opscode-analytics</span><span class='line output'>{user}@{chef-server-ip-address}'s password: ********</span><span class='line output'>tar: Removing leading `/' from member names</span><span class='line output'>/etc/opscode-analytics/</span><span class='line output'>/etc/opscode-analytics/actions-source.json</span><span class='line output'>/etc/opscode-analytics/webui_priv.pem</span><span class='line command'>&amp; pscp.exe -p {user}@{chef-server-ip-address}:/tmp/opscode-analytics.tar C:\temp</span><span class='line output'>{user}@{chef-server-ip-address}'s password: ********</span><span class='line output'>opscode-analytics.tar     | 1 kB |   1.9 kB/s | ETA: 00:00:00 | 100%</span><span class='line command'>&amp; pscp.exe -p C:\temp\opscode-analytics.tar  {user}@{analytics-ip-address}:/tmp</span><span class='line output'>{user}@{chef-server-ip-address}'s password: ********</span><span class='line output'>opscode-analytics.tar     | 1 kB |   1.9 kB/s | ETA: 00:00:00 | 100%</span><span class='line command'>&amp; plink.exe {user}@{analytics-ip-address} 'tar -xzf /tmp/opscode-analytics.tar -C /'</span><span class='line output'>{user}@{chef-server-ip-address}'s password: ********</span></code></pre></td></tr></table></div></div>
+          </div>
+<p>Here&#39;s the same operation, but using key-based authentication. Replace <code>{identity-file}</code>, <code>{user}</code>, <code>{chef-server-ip-address}</code>, and <code>{analytics-ip-address}</code> with your values.</p>
+<div class="window Win32">
+            <nav class="control-window">
+              <div class="close">&times;</div>
+              <div class="minimize"></div>
+              <div class="deactivate"></div>
+            </nav>
+            <h1 class="titleInside">Windows PowerShell: ~</h1>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>PS ></span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>PS ></span><span class='line-number'>&nbsp;</span><span class='line-number'>PS ></span><span class='line-number'>&nbsp;</span><span class='line-number'>PS ></span></pre></td><td class='code'><pre><code><span class='line command'>&amp; plink.exe -t -i '{identity-file}' {user}@{chef-server-ip-address} sudo tar -czvf /tmp/opscode-analytics.tar /etc/opscode-analytics</span><span class='line output'>tar: Removing leading `/' from member names</span><span class='line output'>/etc/opscode-analytics/</span><span class='line output'>/etc/opscode-analytics/actions-source.json</span><span class='line output'>/etc/opscode-analytics/webui_priv.pem</span><span class='line command'>&amp; pscp.exe -p -i '{identity-file}' {user}@{chef-server-ip-address}:/tmp/opscode-analytics.tar C:\temp</span><span class='line output'>opscode-analytics.tar     | 1 kB |   1.9 kB/s | ETA: 00:00:00 | 100%</span><span class='line command'>&amp; pscp.exe -p -i '{identity-file}' C:\temp\opscode-analytics.tar {user}@{analytics-ip-address}:/tmp</span><span class='line output'>opscode-analytics.tar     | 1 kB |   1.9 kB/s | ETA: 00:00:00 | 100%</span><span class='line command'>&amp; plink.exe -i '{identity-file}' {user}@{analytics-ip-address} 'tar -xzf /tmp/opscode-analytics.tar -C /'</span></code></pre></td></tr></table></div></div>
+          </div>
+<div class="alert-box comment"><i class="fa fa-2x fa-info-circle blueiconcolor"></i>&nbsp; These examples assume that the path to the PuTTY utilities are on your system path, for example<br/><code>set PATH=C:\Program Files (x86)\PuTTY;%PATH%</code>.</div>
+
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+Next you'll switch over to your Chef Analytics server.

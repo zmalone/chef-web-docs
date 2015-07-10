@@ -1,96 +1,26 @@
-## 1. Set up reporting on the Chef server
+## 3. Install Chef Analytics on its own server
 
-Chef Analytics requires the [reporting](https://docs.chef.io/install_reporting.html) feature to be installed on your Chef server.
+Click the button to get the Chef Analytics package for Red Hat Enterprise Linux, CentOS or Ubuntu.
 
-Chef reporting tracks what happens when `chef-client` runs on your nodes. Chef server uses this information to build reports.
+<a class='accent-button radius' href='https://downloads.chef.io/analytics/' target='_blank'>Install Chef Analytics&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
-You install Chef reporting just like the Chef management console and other Chef server features. First, you run the `chef-server-ctl install` command to install the feature. Then you run commands to configure and activate the feature.
+It's likely that you're viewing this web page from your workstation, and that your Chef Analytics server is running without a graphical user interface. The easiest way to get the download link from your workstation to your Chef server is to locate and copy the link you need, and then paste it into a `wget` command through an SSH session to your Chef Analytics server.
 
-From your Chef server, run the following to install Chef reporting.
-
-```bash
-# ~
-$ sudo chef-server-ctl install opscode-reporting
-tarting Chef Client, version 12.4.0.rc.2
-resolving cookbooks for run list: ["private-chef::add_ons_wrapper"]
-Synchronizing Cookbooks:
-  - yum
-  - packagecloud
-  - private-chef
-  - runit
-  - apt
-  - enterprise
-Compiling Cookbooks...
-Converging 14 resources
-[...]
-Running handlers:
--- Installed Add-On Package: opscode-reporting
-  - #<Class:0x0000000424cc10>::AddonInstallHandler
-Running handlers complete
-Chef Client finished, 2/10 resources updated in 31.148619997 seconds
-```
-
-Now reconfigure Chef server.
+Here's an example of how to download and install Chef Analytics on Red Hat Enterprise Linux or CentOS. Be sure to replace the package URL with the latest one from the download page.
 
 ```bash
-# ~
-$ sudo chef-server-ctl reconfigure
-Starting Chef Client, version 12.4.0.rc.2
-resolving cookbooks for run list: ["private-chef::default"]
-Synchronizing Cookbooks:
-  - yum
-  - packagecloud
-  - runit
-  - enterprise
-  - apt
-  - private-chef
-Compiling Cookbooks...
-[...]
-Recipe: private-chef::default
-  * file[/etc/opscode/chef-server-running.json] action create (up to date)
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 32/390 resources updated in 35.212935898 seconds
-opscode Reconfigured!
+$ sudo yum install wget -y
+$ wget https://web-dl.packagecloud.io/chef/stable/packages/el/6/opscode-analytics-1.1.3-1.el6.x86_64.rpm
+$ sudo yum install opscode-analytics-1.1.3-1.el6.x86_64.rpm -y
 ```
 
-Reconfigure Chef reporting.
+And here's an example for Ubuntu.
 
 ```bash
-# ~
-$ sudo opscode-reporting-ctl reconfigure
-[...]
-Starting Chef Client, version 11.12.2
-resolving cookbooks for run list: ["opscode-reporting::default"]
-Synchronizing Cookbooks:
-  - opscode-reporting
-  - enterprise
-  - runit
-  - build-essential
-  - yum
-Compiling Cookbooks...
-[...]
-Running handlers:
-Running handlers complete
-
-Chef Client finished, 43/48 resources updated in 25.032896707 seconds
-opscode-reporting Reconfigured!
+$ sudo apt-get install wget -y
+$ wget https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/trusty/opscode-analytics_1.1.4-1_amd64.deb
+$ sudo pkg -i opscode-analytics_1.1.4-1_amd64.deb
 ```
 
-Finally, verify the installation.
 
-```bash
-# ~
-$ sudo opscode-reporting-ctl test
-Configuring logging...
-Creating platform...
-Configured URL: https://ip-172-31-13-105.us-west-2.compute.internal
-Creating org pedant-testorg-21264
-Starting Pedant Run: 2015-06-16 17:47:06 UTC
-setting up rspec config for #<Pedant::ReportingPlatform:0x00000001097d78>
-Configuring RSpec for Multi-Tenant Tests
-[...]
-Finished in 2 minutes 37.5 seconds
-222 examples, 0 failures, 4 pending
-```
+While you wait for the package to download and install, you can proceed to the next step, where you'll provide some information about your Chef Analytics server to your Chef server.

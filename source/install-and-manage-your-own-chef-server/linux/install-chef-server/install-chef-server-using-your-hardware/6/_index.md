@@ -1,11 +1,54 @@
-## 5. Copy the RSA key to your workstation
+## 6. Copy the RSA key to your workstation and generate your knife configuration file
 
-First, run `pwd` from your Chef server to verify the current directory.
+Now you need to generate the configuration file, <code class="file-path">knife.rb</code>, that enables `knife` to authenticate commands with the Chef server. You also need to copy the RSA key (the <code class="file-path">.pem</code> file) that you created in the previous step to enable `knife` to authenticate calls to the Chef server. This authentication process ensures that the Chef server responds only to requests made by trusted users.
+
+### Option 1: Download the Starter Kit
+
+We recommend this method if you're using the Chef management console.
+
+The easiest way to set up your `knife` configuration file and get a copy of your <code class="file-path">.pem</code> file is to download the Starter Kit from your Chef server. This is the same process you followed when you signed up for hosted Chef.
+
+From your workstation,
+
+1. From a web browser, navigate to your Chef server's hostname.
+1. Sign in using the username and password you entered in the previous step.
+1. From the **Administration** tab, select your organization.
+1. Select **Starter Kit** from the menu on the left.
+1. Click the **Download Starter Kit** button.
+1. Click **Proceed**. Save the file <code class="file-path">chef-starter.zip</code> to your computer.
+1. Extract <code class="file-path">chef-starter.zip</code> to your <code class="file-path">~/chef-repo</code> directory.
+
+Now verify that the <code class="file-path">~/chef-repo/.chef</code> directory on your workstation contains knife configuration file and your RSA key.
+
+TODO: VERIFY output
 
 ```bash
+# ~/chef-repo
+$ ls ~/chef-repo/.chef
+admin.pem knife.rb
+```
+
+### Option 2: Copy the RSA key and generate the knife configuration file manually
+
+If you're not using the management console, here's now to set things up manually.
+
+First, from your Chef server, run `pwd` to verify the current directory.
+
+```bash
+# ~/root
 $ pwd
 /root
 ```
+
+Then verify that your <code class="file-path">.pem</code> file is in that directory.
+
+```bash
+# ~/root
+$ ls *.pem
+admin.pem
+```
+
+Note the full path to the <code class="file-path">.pem</code> file. In this example, it's <code class="file-path">~/root/admin.pem</code>.
 
 Now you need to copy the RSA key that you just created from your Chef server to your workstation.  
 
@@ -93,3 +136,33 @@ admin.pem
 ```
 
 [TIP] Once you verify that a copy of your RSA key exists on your workstation, you can safely delete it from your Chef server if you don't want other users to access it.
+
+Next, to generate your knife configuration file, create <code class="file-path">~/.chef-repo/.chef/knife.rb</code> on your workstation like this, replacing `{admin-username}`, `{chef-server-fqdn}`, and `{short-org-name}` with your values. Do not modify `{current_dir}`.
+
+```ruby
+# ~/.chef-repo/.chef/knife.rb
+current_dir = File.dirname(__FILE__)
+log_level                :info
+log_location             STDOUT
+node_name                '{admin-username}'
+client_key               "#{current_dir}/{admin-username}.pem"
+chef_server_url          'https://{chef-server-fqdn}/organizations/{short-org-name}'
+cache_type               'BasicFile'
+cache_options( :path => "#{ENV['HOME']}/.chef/checksums" )
+cookbook_path            ["#{current_dir}/../cookbooks"]"
+```
+
+Here's an example of what your completed <code class="file-path">knife.rb</code> file will look like.
+
+```ruby
+# ~/.chef-repo/.chef/knife.rb
+current_dir = File.dirname(__FILE__)
+log_level                :info
+log_location             STDOUT
+node_name                'admin'
+client_key               "#{current_dir}/admin.pem"
+chef_server_url          'https://ec2-52-25-201-190.us-west-2.compute.amazonaws.com/organizations/learnchef'
+cache_type               'BasicFile'
+cache_options( :path => "#{ENV['HOME']}/.chef/checksums" )
+cookbook_path            ["#{current_dir}/../cookbooks"]
+```

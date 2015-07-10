@@ -1,26 +1,19 @@
-## 6. Verify your Chef Analytics configuration
+## 6. Sign in to Analytics server
 
-Finally, verify your Chef Analytics configuration.
+From your web browser, navigate to the URL for your Chef Analytics server. Click the **Start Analytics** button and you'll be temporarily redirected to your Chef server logon page.
 
-```bash
-# ~
-$ opscode-analytics-ctl test
-Running with options:
+![The Chef Analytics sign-in page](chef-analytics/sign-in.png)
 
-{:config_file=>"/opt/opscode-analytics/embedded/service/analytics-test/config.rb", :smoke_tests_only=>true}
+Sign in with the administrator user name and password that you used when you set up your Chef server.
 
-Running tests from the following directory:
-/opt/opscode-analytics/embedded/service/analytics-test/spec/integration
+![The Chef Manage sign-in page](chef-server/sign-in.png)
 
-Randomized with seed 48629
+Click **Yes** to authorize Chef Analytics to use your Chef account.
 
+![Authorize Chef Analytics to use your Chef account](chef-analytics/authorize.png)
 
-basic server state check
-  is running
+On the home page you'll see an event timeline. This timeline is a rolling list of events that are happening in your infrastructure &ndash; machines that are checking in to Chef server, users updating cookbooks, and so on.
 
-Finished in 0.05267 seconds
-1 example, 0 failures
+![The Chef Analytics home page](chef-analytics/home-page.png)
 
-Randomized with seed 48629
-
-```
+In the next step, you'll run `chef-client` on your node and watch an event appear on the timeline.

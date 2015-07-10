@@ -1,19 +1,34 @@
-## 7. Sign in to Analytics server
+## 7. Create the hello\_chef\_server cookbook
 
-From your web browser, navigate to the URL for your Chef Analytics server. Click the **Start Analytics** button and you'll be temporarily redirected to your Chef server logon page.
+Now let's create a basic cookbook and upload it to your Chef server.
 
-![The Chef Analytics sign-in page](chef-analytics/sign-in.png)
+From the <code class="file-path">~/chef-repo</code> directory your workstation, run the following command to create the `hello_chef_server` cookbook.
 
-Sign in with the administrator user name and password that you used when you set up your Chef server.
+```bash
+# ~/chef-repo
+$ chef generate cookbook cookbooks/hello_chef_server
+Compiling Cookbooks...
+Recipe: code_generator::cookbook
+  * directory[/home/user/chef-repo/cookbooks/hello_chef_server] action create
+    - create new directory /home/user/chef-repo/cookbooks/hello_chef_server
+  * template[/home/user/chef-repo/cookbooks/hello_chef_server/metadata.rb] action create_if_missing
+    - create new file /home/user/chef-repo/cookbooks/hello_chef_server/metadata.rb
+    - update content in file /home/user/chef-repo/cookbooks/hello_chef_server/metadata.rb from none to d531e8
+    (diff output suppressed by config)
+[...]
+  * execute[initialize-git] action run
+    - execute git init .
+  * cookbook_file[/home/user/chef-repo/cookbooks/hello_chef_server/.gitignore] action create
+    - create new file /home/user/chef-repo/cookbooks/hello_chef_server/.gitignore
+    - update content in file /home/user/chef-repo/cookbooks/hello_chef_server/.gitignore from none to dd37b2
+    (diff output suppressed by config)
+```
 
-![The Chef Manage sign-in page](chef-server/sign-in.png)
+Now write out your default recipe, <code class="file-path">default.rb</code>, like this. This recipe writes the file <code class="file-path">hello.txt</code> to the directory that Chef sets up for temporary files and data. This recipe works on both Linux and Windows Server.
 
-Click **Yes** to authorize Chef Analytics to use your Chef account.
-
-![Authorize Chef Analytics to use your Chef account](chef-analytics/authorize.png)
-
-On the home page you'll see an event timeline. This timeline is a rolling list of events that are happening in your infrastructure &ndash; machines that are checking in to Chef server, users updating cookbooks, and so on.
-
-![The Chef Analytics home page](chef-analytics/home-page.png)
-
-In the next step, you'll run `chef-client` on your node and watch an event appear on the timeline.
+```ruby
+# ~/chef-repo/cookbooks/hello_chef_server/recipes/default.rb
+file "#{Chef::Config[:file_cache_path]}/hello.txt" do
+  content 'Hello, Chef server!'
+end
+```

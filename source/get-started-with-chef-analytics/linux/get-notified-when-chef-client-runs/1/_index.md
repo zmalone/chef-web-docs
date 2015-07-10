@@ -9,13 +9,13 @@ If you want to set up a basic mail server, run the command for the operating sys
 #### Red Hat Enterprise Linux and CentOS
 
 ```bash
-$ sudo yum install mailx
+$ sudo yum install mailx -y
 ```
 
 #### Ubuntu
 
 ```bash
-$ sudo apt-get install mailutils
+$ sudo apt-get install mailutils -y
 ```
 
 From the configuration screen that appears, choose **Internet Site**. You can leave the other settings at their default values.

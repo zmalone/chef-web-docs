@@ -1,4 +1,4 @@
-## 4. Create the administrator account and an organization
+## 5. Create the administrator account and an organization
 
 Now you need to create an administrator account and an organization, similar to what you did when you signed up for hosted Chef.
 
@@ -42,6 +42,6 @@ $ sudo chef-server-ctl org-create {short-org-name} "{full-org-name}" --associati
 
 When the organization is created, Chef server generates a shared RSA private key that enables a node to validate itself when it communicates with the Chef server for the first time. This RSA key is different than the key Chef server created when you added the administrator account.
 
-During the bootstrap process, `knife` copies this private key from the Chef server to the node. After the node performs the initial validation, it then retrieves a new key that only it can use. 
+During the bootstrap process, `knife` copies this private key from the Chef server to the node. After the node performs the initial validation, it then retrieves a new key that only it can use.
 
 [COMMENT] You always create the initial administrator account and organization directly from the Chef server on the command line. Later, you can add additional users [on the command line](https://docs.chef.io/server_orgs.html) or [through the Chef management console](https://docs.chef.io/manage.html#admin).
