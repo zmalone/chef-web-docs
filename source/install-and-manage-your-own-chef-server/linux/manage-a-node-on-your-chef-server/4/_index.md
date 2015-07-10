@@ -29,3 +29,5 @@ From your Windows Server node, run this to write <code class="file-path">hello.t
 $ Get-Content C:\chef\cache\hello.txt
 Hello, Chef server!
 ```
+
+Congratulations! You've successfully configured your own Chef server and can use it to bootstrap and mangage your nodes.
