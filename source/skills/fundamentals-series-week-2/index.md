@@ -22,6 +22,6 @@ After viewing this video you will be able to:
 * explain what a run-list is, and how to set it for a node via `knife`.
 * explain the output of a `chef-client` run.
 
-During this video we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.  You may [launch your lab environment][chef-lab] as part of the video.
+During this video we will use the [Chef training lab][chef-lab] to launch a virtual machine that will be managed by Chef.  You may [launch your lab environment][chef-lab] as part of the video.
 
 [chef-lab]: /skills/fundamentals-series-chef-lab

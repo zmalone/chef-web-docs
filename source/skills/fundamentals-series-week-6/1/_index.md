@@ -9,7 +9,7 @@ Before viewing this video you should watch and complete the labs for the followi
 * [Part 4: Common configuration data with data bags][spring-fund-week-4]
 * [Part 5: Environments and knife-ec2][spring-fund-week-5]
 
-During this video we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.
+During this video we will use the [Chef training lab][chef-lab] to launch a virtual machine that will be managed by Chef.
 
 <iframe width="560" height="315" src="//www.youtube.com/embed/9bidpd-LiNw" frameborder="0" allowfullscreen></iframe>
 

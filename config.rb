@@ -177,14 +177,14 @@ redirect '/tutorials/create-your-first-cookbook/', '/'
 redirect '/tutorials/write-for-multiple-platforms', '/'
 
 redirect '/fundamentals-series/chef-lab', '/skills/fundamentals-series-chef-lab/'
-redirect '/fundamentals-series/week-1', '/skills/fundamentals-series-part-1/'
-redirect '/fundamentals-series/week-2', '/skills/fundamentals-series-part-2/'
-redirect '/fundamentals-series/week-3', '/skills/fundamentals-series-part-3/'
-redirect '/fundamentals-series/week-4', '/skills/fundamentals-series-part-4/'
-redirect '/fundamentals-series/week-5', '/skills/fundamentals-series-part-5/'
-redirect '/fundamentals-series/week-6', '/skills/fundamentals-series-part-6/'
-redirect 'fundamentals-series/', '/skills/fundamentals-series-part-1/'
-redirect 'fundamentals-series/rhel', '/skills/fundamentals-series-part-1/'
+redirect '/fundamentals-series/week-1', '/skills/fundamentals-series-week-1/'
+redirect '/fundamentals-series/week-2', '/skills/fundamentals-series-week-2/'
+redirect '/fundamentals-series/week-3', '/skills/fundamentals-series-week-3/'
+redirect '/fundamentals-series/week-4', '/skills/fundamentals-series-week-4/'
+redirect '/fundamentals-series/week-5', '/skills/fundamentals-series-week-5/'
+redirect '/fundamentals-series/week-6', '/skills/fundamentals-series-week-6/'
+redirect '/fundamentals-series/', '/skills/fundamentals-series-week-1/'
+redirect '/fundamentals-series/rhel', '/skills/fundamentals-series-week-1/'
 
 # Build-specific configuration
 configure :build do
