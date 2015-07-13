@@ -22,7 +22,7 @@ After viewing this video you will be able to:
 * discuss the role JSON DSL.
 * explain how merge order affects the precedence hierarchy.
 
-During this video we will use the [Chef Training Lab][chef-lab] to launch a virtual machine that will be managed by Chef.
+During this video we will use the [Chef training lab][chef-lab] to launch a virtual machine that will be managed by Chef.
 
 [spring-fund-week-1]: /skills/fundamentals-series-week-1
 [spring-fund-week-2]: /skills/fundamentals-series-week-2
