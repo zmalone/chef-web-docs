@@ -114,7 +114,6 @@ root_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'sql_
 mysql_service 'default' do
   initial_root_password root_password_data_bag_item['password']
   action [:create, :start]
-  provider Chef::Provider::MysqlService::Sysvinit
 end
 
 # Create the database instance.
