@@ -1,4 +1,4 @@
-## 3. Install Chef Analytics on its own server
+## 1. Install Chef Analytics on its own server
 
 Click the button to get the Chef Analytics package for Red Hat Enterprise Linux, CentOS or Ubuntu.
 
