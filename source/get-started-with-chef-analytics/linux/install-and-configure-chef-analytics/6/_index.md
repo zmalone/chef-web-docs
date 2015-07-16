@@ -6,7 +6,7 @@ From your web browser, navigate to the URL for your Chef Analytics server. Click
 
 Sign in with the administrator user name and password that you used when you set up your Chef server.
 
-![The Chef Manage sign-in page](chef-server/sign-in.png)
+![The Chef Manage sign-in page](chef-analytics/sign-in-redirect.png)
 
 Click **Yes** to authorize Chef Analytics to use your Chef account.
 
