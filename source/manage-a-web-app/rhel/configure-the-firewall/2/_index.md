@@ -27,7 +27,7 @@ Recipe: code_generator::template
 Now add the corresponding `iptables` rules for SSH and HTTP to the template files you just created.
 
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers/templates/default/sshd_http.erb
+# ~/chef-repo/cookbooks/awesome_customers/templates/default/firewall_sshd.erb
 # Port 22 for SSH
 -A FWR -p tcp -m tcp --dport 22 -j ACCEPT
 ```
