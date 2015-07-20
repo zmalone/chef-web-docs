@@ -1,155 +1,109 @@
-## 4. Write a recipe that fails the audit test
+## 4. Create the webserver cookbook
+
+Now let's create and apply a second cookbook that configures Apache and adds a few web pages.
+
+First, from your <code class="file-path">~/chef-repo</code> directory, create the `webserver` cookbook.
 
 ```bash
-# ~/chef-repo/cookbooks/basic_audit
-$ chef generate recipe enable_ftp
-Compiling Cookbooks...
-Recipe: code_generator::recipe
-  * directory[/home/user/chef-repo/cookbooks/basic_audit/spec/unit/recipes] action create (up to date)
-  * cookbook_file[/home/user/chef-repo/cookbooks/basic_audit/spec/spec_helper.rb] action create_if_missing (up to date)
-  * template[/home/user/chef-repo/cookbooks/basic_audit/spec/unit/recipes/enable_ftp_spec.rb] action create_if_missing
-    - create new file /home/user/chef-repo/cookbooks/basic_audit/spec/unit/recipes/enable_ftp_spec.rb
-    - update content in file /home/user/chef-repo/cookbooks/basic_audit/spec/unit/recipes/enable_ftp_spec.rb from none to 36ae09
-    (diff output suppressed by config)
-  * template[/home/user/chef-repo/cookbooks/basic_audit/recipes/enable_ftp.rb] action create
-    - create new file /home/user/chef-repo/cookbooks/basic_audit/recipes/enable_ftp.rb
-    - update content in file /home/user/chef-repo/cookbooks/basic_audit/recipes/enable_ftp.rb from none to ef7d04
-    (diff output suppressed by config)
+# ~/chef-repo
+$ chef generate cookbook cookbooks/webserver
 ```
+
+Now add this code to the `webserver` cookbook's default recipe.
 
 ```ruby
-# ~/chef-repo/cookbooks/basic_audit/metadata.rb
-name 'basic_audit'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
-license 'all_rights'
-description 'Installs/Configures basic_audit'
-long_description 'Installs/Configures basic_audit'
-version '0.1.0'
+# ~/chef-repo/cookbooks/webserver/recipes/default.rb
+package 'apache2'
 
-depends 'firewall', '~> 1.5.0'
-```
-
-```bash
-# ~/chef-repo/cookbooks/basic_audit
-$ chef generate attribute default
-Compiling Cookbooks...
-Recipe: code_generator::attribute
-  * directory[/home/user/chef-repo/cookbooks/basic_audit/attributes] action create
-    - create new directory /home/user/chef-repo/cookbooks/basic_audit/attributes
-  * template[/home/user/chef-repo/cookbooks/basic_audit/attributes/default.rb] action create
-    - create new file /home/user/chef-repo/cookbooks/basic_audit/attributes/default.rb
-    - update content in file /home/user/chef-repo/cookbooks/basic_audit/attributes/default.rb from none to e3b0c4
-    (diff output suppressed by config)
-```
-
-```ruby
-# ~/chef-repo/cookbooks/basic_audit/attributes/default.rb
-default['firewall']['allow_ssh'] = true
-```
-
-```ruby
-# ~/chef-repo/cookbooks/basic_audit/recipes/enable_ftp.rb
-package 'vsftpd' do
-  action :install
-end
-
-# Enable and start the vsftpd service.
-service 'vsftpd' do
+# Enable and start the Apache2 service.
+service 'apache2' do
   action [:enable, :start]
 end
 
-# Open port 21 to incoming traffic.
-firewall_rule 'open_ftp' do
-  port 21
-  protocol :tcp
-  action :allow
+# Create the pages directory under the document root directory.
+directory '/var/www/html/pages'
+
+# Add files to the site.
+%w(index.html pages/page1.html pages/page2.html).each do |web_file|
+  file File.join('/var/www/html', web_file) do
+    content "<html>This is #{web_file}.</html>"
+  end
 end
 ```
 
+This recipe configures Apache and writes a few files for it to serve.
+
+[COMMENT] For simplicity, we use the built-in `package` and `service` resources to configure Apache. A more robust solution might use the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket.
+
+Now use Test Kitchen apply the `webserver` cookbook locally. This instance is different than the one you used to apply the `audit` cookbook. Start by adding this to your webserver's <code class="file-path">.kitchen.yml</code> file.
+
 ```ruby
-# ~/chef-repo/cookbooks/basic_audit/.kitchen.yml
+# ~/chef-repo/cookbooks/webserver/.kitchen.yml
 ---
 driver:
   name: vagrant
 
 provisioner:
   name: chef_zero
-  client_rb:
-    audit_mode: :enabled
 
 platforms:
   - name: ubuntu-14.04
 
 suites:
-  - name: successful_audit
+  - name: default
     run_list:
-      - recipe[basic_audit::audit]
-    attributes:
-  - name: failed_audit
-    run_list:
-      - recipe[firewall::default]
-      - recipe[basic_audit::enable_ftp]
-      - recipe[basic_audit::audit]
+      - recipe[webserver::default]
     attributes:
 ```
 
-```bash
-# ~/chef-repo/cookbooks/basic_audit
-$ kitchen list
-Instance                      Driver   Provisioner  Verifier  Transport  Last Action
-successful-audit-ubuntu-1404  Vagrant  ChefZero     Busser    Ssh        Converged
-failed-audit-ubuntu-1404      Vagrant  ChefZero     Busser    Ssh        <Not Created>
-```
+Run `kitchen converge` to create the instance and apply the web server configuration.
 
 ```bash
-# ~/chef-repo/cookbooks/basic_audit
-$ kitchen converge failed-audit-ubuntu-1404
+# ~/chef-repo/cookbooks/audit
+$ kitchen converge
 -----> Starting Kitchen (v1.4.0)
------> Creating <failed-audit-ubuntu-1404>...
+-----> Creating <default-ubuntu-1404>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'opscode-ubuntu-14.04'...
 [...]
-       Finished in 0.14046 seconds (files took 0.3286 seconds to load)
-       2 examples, 2 failures
+         * file[/var/www/html/pages/page2.html] action create
+           - create new file /var/www/html/pages/page2.html
+           - update content in file /var/www/html/pages/page2.html from none to 633678
+           --- /var/www/html/pages/page2.html	2015-07-20 17:02:15.598607059 +0000
+           +++ /var/www/html/pages/.page2.html20150720-5228-f4wcgj	2015-07-20 17:02:15.598607059 +0000
+           @@ -1 +1,2 @@
+           +<html>This is pages/page2.html.</html>
 
-       Failed examples:
-
-       rspec /tmp/kitchen/cache/cookbooks/basic_audit/recipes/audit.rb[1:1:1] # Validate services Ensure FTP access is not permitted is not running the vsftpd service
-       rspec /tmp/kitchen/cache/cookbooks/basic_audit/recipes/audit.rb[1:1:2] # Validate services Ensure FTP access is not permitted is not listening on port 21
-
-       Audit phase exception:
-         Audit phase found failures - 2/2 controls failed
-
-         Running handlers:
-         Running handlers complete
-         Chef Client finished, 4/9 resources updated in 16.708693355 seconds
-           0/2 controls succeeded
-       [2015-07-14T14:55:54+00:00] FATAL: Stacktrace dumped to /tmp/kitchen/cache/chef-stacktrace.out
-       [2015-07-14T14:55:54+00:00] ERROR: Found 1 errors, they are stored in the backtrace
-       [2015-07-14T14:55:55+00:00] FATAL: Chef::Exceptions::ChildConvergeError: Chef run process exited unsuccessfully (exit code 1)
-[...]
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 5/7 resources updated in 17.932843906 seconds
+       Finished converging <default-ubuntu-1404> (6m2.23s).
+-----> Kitchen is finished. (7m44.96s)
 ```
 
-You'll see this in the output...
+Now run `kitchen login` to log into your instance.
 
 ```bash
- Starting audit phase
+# ~/chef-repo/cookbooks/audit
+$ kitchen login
+Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-24-generic x86_64)
 
- Validate services
-   Ensure FTP access is not permitted
-     is not running the vsftpd service (FAILED - 1)
-     is not listening on port 21 (FAILED - 2)
-
- Failures:
-
-   1) Validate services Ensure FTP access is not permitted is not running the vsftpd service
-      Failure/Error: expect(service('vsftpd')).to_not be_running
- expected Service "vsftpd" not to be running
-      # /tmp/kitchen/cache/cookbooks/basic_audit/recipes/audit.rb:9:in `block (3 levels) in from_file'
-
-   2) Validate services Ensure FTP access is not permitted is not listening on port 21
-      Failure/Error: expect(port(21)).to_not be_listening
- expected Port "21" not to be listening
-      # /tmp/kitchen/cache/cookbooks/basic_audit/recipes/audit.rb:14:in `block (3 levels) in from_file'
+ * Documentation:  https://help.ubuntu.com/
+Last login: Mon Jul 20 17:04:47 2015 from 10.0.2.2
 ```
+
+From your instance, run a few commands to verify that your web server is correctly set up.
+
+```bash
+$ ls /var/www/**/*
+/var/www/html/index.html
+
+/var/www/html/pages:
+page1.html  page2.html
+$ wget -qO- localhost | more
+<html>This is index.html.</html>
+$ wget -qO- localhost/pages/page1.html | more
+<html>This is pages/page1.html.</html>
+```
+
+If you're the web site developer or system administrator, this configuration can look completely reasonable &ndash; it does everything you need it to do. Now let's see what happens when we audit the web server configuration.

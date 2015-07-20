@@ -1,42 +1,26 @@
-## 5. Write a recipe that fixes the audit
+## 5. Audit your web server configuration
 
-```bash
-# ~/chef-repo/cookbooks/basic_audit
-$ chef generate recipe disable_ftp
-Compiling Cookbooks...
-Recipe: code_generator::recipe
-  * directory[/home/user/chef-repo/cookbooks/basic_audit/spec/unit/recipes] action create (up to date)
-  * cookbook_file[/home/user/chef-repo/cookbooks/basic_audit/spec/spec_helper.rb] action create_if_missing (up to date)
-  * template[/home/user/chef-repo/cookbooks/basic_audit/spec/unit/recipes/disable_ftp_spec.rb] action create_if_missing
-    - create new file /home/user/chef-repo/cookbooks/basic_audit/spec/unit/recipes/disable_ftp_spec.rb
-    - update content in file /home/user/chef-repo/cookbooks/basic_audit/spec/unit/recipes/disable_ftp_spec.rb from none to 36ae09
-    (diff output suppressed by config)
-  * template[/home/user/chef-repo/cookbooks/basic_audit/recipes/disable_ftp.rb] action create
-    - create new file /home/user/chef-repo/cookbooks/basic_audit/recipes/disable_ftp.rb
-    - update content in file /home/user/chef-repo/cookbooks/basic_audit/recipes/disable_ftp.rb from none to ef7d04
-    (diff output suppressed by config)
-```
+Now let's apply both the `webserver` and `audit` cookbooks to the same Test Kitchen instance.
+
+In previous steps, you applied the `audit` and `webserver` cookbooks on separate Test Kitchen instances. Let's set things up so that you can run them both from the same instance. Here you'll apply the `audit` cookbook from the Test Kitchen instance for your `webserver` cookbook.
+
+Test Kitchen uses [Berkshelf](http://berkshelf.com) to resolve dependencies among cookbooks (if you haven't gone through the _Learn to manage a basic web application_ tutorial, you can [read](http://localhost:4567/manage-a-web-app/ubuntu/apply-and-verify-your-web-server-configuration#1uploadyourcookbooktothechefserver) a bit how Berkshelf works.) Berkshelf resolves dependencies that come from a remote source, such as Chef Supermarket, or from your local system.
+
+To run the `audit` cookbook from your `webserver` cookbook, modify your `webserver` cookbook's <code class="file-path">Berksfile</code> to point to the `audit` cookbook's relative location, like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/basic_audit/recipes/disable_ftp.rb
-service 'vsftpd' do
-  action [:stop, :disable]
-end
+# ~/chef-repo/cookbooks/webserver/Berksfile
+source 'https://supermarket.chef.io'
 
-package 'vsftpd' do
-  action :remove
-end
+metadata
 
-# Close port 21 to incoming traffic.
-firewall_rule 'close_ftp' do
-  port 21
-  protocol :tcp
-  action :reject
-end
+cookbook 'audit', path: '../audit'
 ```
 
+Now modify your `webserver` cookbook's <code class="file-path">.kitchen.yml</code> file like this. This configuration sets the `audit_mode` to `:enabled` so that `chef-client` runs both the web server configuration code and the audit tests.
+
 ```ruby
-# ~/chef-repo/cookbooks/basic_audit/.kitchen.yml
+# ~/chef-repo/cookbooks/webserver/.kitchen.yml
 ---
 driver:
   name: vagrant
@@ -50,49 +34,69 @@ platforms:
   - name: ubuntu-14.04
 
 suites:
-  - name: successful_audit
+  - name: default
     run_list:
-      - recipe[firewall::default]
-      - recipe[basic_audit::disable_ftp]
-      - recipe[basic_audit::audit]
-    attributes:
-  - name: failed_audit
-    run_list:
-      - recipe[firewall::default]
-      - recipe[basic_audit::enable_ftp]
-      - recipe[basic_audit::audit]
+      - recipe[webserver::default]
+      - recipe[audit::default]
     attributes:
 ```
 
+This configuration also adds the `audit` cookbook's default recipe to the run-list. The order is important because it ensures that the configuration changes are made before the audit tests are run.
+
+Now run `kitchen converge` from the `webserver` cookbook's directory.
+
 ```bash
-# ~/chef-repo/cookbooks/basic_audit
-$ kitchen converge successful-audit-ubuntu-1404
+# ~/chef-repo/cookbooks/webserver
+$ kitchen converge
 -----> Starting Kitchen (v1.4.0)
------> Creating <successful-audit-ubuntu-1404>...
-       Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'opscode-ubuntu-14.04'...
+-----> Converging <default-ubuntu-1404>...
+       Preparing files for transfer
 [...]
-       Recipe: basic_audit::disable_ftp
-         * service[vsftpd] action stop (up to date)
-         * service[vsftpd] action disable (up to date)
-         * apt_package[vsftpd] action remove (up to date)
+         4) Validate web services Ensure no web files are owned by the root user is not owned by the root user
+            Failure/Error: expect(file(web_file)).to_not be_owned_by('root')
+       expected `File "/var/www/html/pages/page1.html".owned_by?("root")` to return false, got true
+            # /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb:11:in `block (4 levels) in from_file'
 
-           - firewall_rule[close_ftp] in proto tcp to any port 21 from any
-       Starting audit phase
+       Finished in 0.13301 seconds (files took 0.37363 seconds to load)
+       4 examples, 4 failures
 
-       Validate services
-         Ensure FTP access is not permitted
-           is not running the vsftpd service
-           is not listening on port 21
+       Failed examples:
 
-       Finished in 0.15042 seconds (files took 0.31122 seconds to load)
-       2 examples, 0 failures
-       Auditing complete
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:4] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
+
+       Audit phase exception:
+         Audit phase found failures - 4/4 controls failed
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 4/10 resources updated in 9.54583463 seconds
-         2/2 controls succeeded
-       Finished converging <successful-audit-ubuntu-1404> (3m56.65s).
------> Kitchen is finished. (5m59.32s)
+       Chef Client finished, 0/7 resources updated in 6.862077521 seconds
+         0/4 controls succeeded
+       [2015-07-20T17:57:30+00:00] FATAL: Stacktrace dumped to /tmp/kitchen/cache/chef-stacktrace.out
+       [2015-07-20T17:57:30+00:00] ERROR: Found 1 errors, they are stored in the backtrace
+       [2015-07-20T17:57:31+00:00] FATAL: Chef::Exceptions::ChildConvergeError: Chef run process exited unsuccessfully (exit code 1)
+>>>>>> Converge failed on instance <default-ubuntu-1404>.
+>>>>>> Please see .kitchen/logs/default-ubuntu-1404.log for more details
+>>>>>> ------Exception-------
+>>>>>> Class: Kitchen::ActionFailed
+>>>>>> Message: SSH exited (1) for command: [sh -c '
+
+sudo -E /opt/chef/bin/chef-client --local-mode --config /tmp/kitchen/client.rb --log_level auto --force-formatter --no-color --json-attributes /tmp/kitchen/dna.json --chef-zero-port 8889
+']
+>>>>>> ----------------------
 ```
+
+Although the web server was successfully configured, the `chef-client` run failed because the audit failed. You can look through the error log to see for which files the audit failed.
+
+```bash
+# ~/chef-repo/cookbooks/webserver
+$ less .kitchen/logs/default-ubuntu-1404.log | grep 'got true'
+I, [2015-07-20T13:57:28.698116 #22441]  INFO -- default-ubuntu-1404: expected `File "/var/www/html/index.html".owned_by?("root")` to return false, got true
+I, [2015-07-20T13:57:28.698184 #22441]  INFO -- default-ubuntu-1404: expected `File "/var/www/html/pages".owned_by?("root")` to return false, got true
+I, [2015-07-20T13:57:28.698256 #22441]  INFO -- default-ubuntu-1404: expected `File "/var/www/html/pages/page2.html".owned_by?("root")` to return false, got true
+I, [2015-07-20T13:57:28.698366 #22441]  INFO -- default-ubuntu-1404: expected `File "/var/www/html/pages/page1.html".owned_by?("root")` to return false, got true
+```
+
+The next step is to revise the `webserver` cookbook to incorporate our audit policy and verify that the system meets compliance.
