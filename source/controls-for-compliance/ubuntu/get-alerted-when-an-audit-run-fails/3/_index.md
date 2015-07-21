@@ -1,21 +1,20 @@
-## 3. Write the rule
+## 3. Add rules that trigger an alert when an audit fails
+
+Copy steps from other tutorial.
+
+Name it 'Validate web services'.
+
+ Add this code.
 
 ```ruby
-rules "Ensure FTP access is not permitted"
+rules 'Validate web services'
   rule on run_control
   when
-    name = "is not running the vsftpd service" and
-    status != "success"
+    name = 'is not owned by the root user' and status != 'success'
   then
-    alert:error("FTP is running on node \"{{ message.run.node_name }}\"")
-  end
-
-  rule on run_control
-  when
-    name = "is not listening on port 21" and
-    status != "success"
-  then
-    alert:error("Port 21 is open on node \"{{ message.run.node_name }}\"")
+    alert:error('Run control group "{{ message.name }}" failed on {{ message.run.node_name }}.')
   end
 end
 ```
+
+Click **Save**.
