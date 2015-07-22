@@ -1,30 +1,85 @@
 ## 2. Apply the webserver cookbook to a node
 
-### Option 1: Bootstrap a new Ubuntu 14.04 node
+Next, let's apply the `webserver` cookbook to your node.
 
-Choose the option below that matches how you can authenticate and bootstrap your node.
+If you already have an Ubuntu 14.04 node that's bootstrapped to your Chef server, you can continue to use it by updating its run-list to include the `webserver` and `audit` cookbooks (option 1.)
+
+If you don't have an Ubuntu 14.04 node, follow option 2.
+
+### Option 1: Update the run-list on an existing node and run chef-client
+
+From your workstation, run the following command to set the run-list to contain only the `webserver` and `audit` cookbooks. Replace `webserver1` with your node's name.
+
+```bash
+# ~/chef-repo
+$ knife node run_list set webserver1 'recipe[webserver::default], recipe[audit::default]'
+webserver1:
+  run_list:
+    recipe[webserver::default]
+    recipe[audit::default]
+```
+
+When running `knife` from Windows PowerShell, surround the string with triple single quotes (''' '''), like this.
+
+```ps
+# ~/chef-repo
+$ knife node run_list set webserver1 '''recipe[webserver::default], recipe[audit::default]'''
+webserver1:
+  run_list:
+    recipe[webserver::default]
+    recipe[audit::default]
+```
+
+Now run `chef-client` on your node. We want to run only the `webserver` cookbook, so we use the `--audit-mode disabled` option to disable the `audit` cookbook (`disabled` is also the default).
+
+Choose the option that matches how you connect to your Ubuntu node.
+
+#### Option 1a: Use a user name and password
+
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+
+```bash
+# ~/chef-repo
+$ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --ssh-password '{password}'
+```
+
+#### Option 1b: Use key-based authentication
+
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+
+```bash
+# ~/chef-repo
+$ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --identity-file {identity-file}
+```
+
+### Option 2: Bootstrap a new Ubuntu 14.04 node
+
+First, prepare a clean Ubuntu 14.04 instance to bootstrap. Be sure that:
+
+* its IP address is accessible from your network.
+* it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
+* it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
+* you have root or `sudo` access.
+
+Now bootstrap your node. Choose the option below that matches how you can authenticate and bootstrap your node.
 
 #### Option a: Use a user name and password
 
-From your workstation, run this command to bootstrap your node. Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
 ```bash
 # ~/chef-repo
 $ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name webserver1 --run-list 'recipe[webserver::default], recipe[audit::default]'
 ```
 
-You'll see lots of output as your node installs `chef-client` and runs the `webserver` cookbook.
-
 #### Option b: Use key-based authentication
 
-From your workstation, run this command to bootstrap your node. Replace `{address}` with your remote node's external address, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace `{address}` with your remote node's external address, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
 $ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name webserver1 --run-list 'recipe[webserver::default], recipe[audit::default]'
 ```
-
-You'll see lots of output as your node installs `chef-client` and runs the `webserver` cookbook.
 
 <a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
 
@@ -57,36 +112,14 @@ You'll see lots of output as your node installs `chef-client` and runs the `webs
   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
 </div>
 
-### Option 2: Update the run-list on an existing node
+### View the events in the Timeline view
 
-If you already have an Ubuntu 14.04 instance...
+Now log on to the web interface for your Chef Analytics server. From the **Timeline** tab, you'll see the recent activity on your node.
 
-```bash
-# ~/chef-repo
-$ knife node run_list set webserver1 'recipe[webserver::default], recipe[audit::default]'
-webserver1:
-  run_list:
-    recipe[webserver::default]
-    recipe[audit::default]
-```
+Here's what the events look like when you bootstrap a node.
 
-When running `knife` from Windows PowerShell, surround the string with triple single quotes (''' '''), like this.
+![The bootstrap event in the Timeline tab](chef-analytics/compliance-bootstrap-timeline.png)
 
-```ps
-# ~/chef-repo
-$ knife node run_list set webserver1 '''recipe[webserver::default], recipe[audit::default]'''
-webserver1:
-  run_list:
-    recipe[webserver::default]
-    recipe[audit::default]
-```
-
-### View the bootstrap event in the Timeline view
-
-After you bootstrap
-
-![The boostrap event in the Timeline tab](chef-analytics/compliance-bootstrap-timeline.png)
-
-From the **Nodes** tab, you'll see that the `chef-client` run that was performed during the bootstrap process succeeded.
+From the **Nodes** tab, you'll see that the `chef-client` run also succeeded.
 
 ![The converge event in the Nodes tab](chef-analytics/compliance-bootstrap-nodes.png)
