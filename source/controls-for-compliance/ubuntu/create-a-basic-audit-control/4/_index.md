@@ -13,6 +13,7 @@ Now add this code to the `webserver` cookbook's default recipe.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
+# Install the Apache2 package.
 package 'apache2'
 
 # Enable and start the Apache2 service.

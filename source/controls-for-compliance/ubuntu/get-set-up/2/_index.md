@@ -1,36 +1,16 @@
-## 2. Prepare your system to run Chef Analytics
+## 2. Set up your workstation, Chef server, a node to manage, and Chef Analytics
 
-Review and perform the [prerequisites](https://docs.chef.io/install_analytics.html#prerequisites) for running Chef Analytics. Chef server runs on Red Hat Enterprise Linux, CentOS, Oracle Linux, and Ubuntu.
+The second part of this tutorial uses your own Chef server, an Ubuntu 14.04 node to manage, and Chef Analytics server that are part of your infrastructure.
 
-The system requirements for Chef Analytics are similar to that for running Chef server. [Use these checklists](/install-and-manage-your-own-chef-server/linux/get-set-up/#4prepareasystemtorunchefserver) to help verify you have everything you need. Also keep in mind these additional requirements:
+If you don't already have a Chef server and Chef Analytics set up, follow this Learn Chef tutorial before you continue.
 
-<a class="help-button radius" href="#" data-reveal-id="chef-server-el-prep-help-modal">Checklist for Red Hat Enterprise Linux</a> <a class="help-button radius" href="#" data-reveal-id="chef-server-ubuntu-prep-help-modal">Checklist for Ubuntu</a>
+<a class='accent-button radius' href='/get-started-with-chef-analytics/linux/' target='_blank'>Get started with Chef Analytics&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
-<div id="chef-server-el-prep-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-  <h3 id="modalTitle">To prepare your Red Hat Enterprise Linux system, ensure that:</h3>
-  <ul>
-    <li>has 8GB total memory.</li>
-    <li>has a hostname that can be accessed from your workstation and nodes.</li>
-    <li>is connected to NTP.</li>
-    <li>has <a href="http://docs.chef.io/install_server_pre.html#apache-qpid">Apache Qpid</a> disabled.</li>
-    <li>provides inbound access (including firewall) on port 443 (HTTPS).</li>
-    <li>provides outbound access (including firewall) on ports 25 (SMTP) and 5672 (for RabbitMQ).</li>
-    <li>has <a href="http://docs.chef.io/install_server_pre.html#selinux">SELinux</a> disabled or set to permissive mode.</li>
-  </ul>
-  <p>You may also want to open port 22 (SSH) so you can configure Chef Analytics from your workstation.</p>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-</div>
+After completing this tutorial, you'll have:
 
-<div id="chef-server-ubuntu-prep-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-  <h3 id="modalTitle">To prepare your Ubuntu system, ensure that:</h3>
-  <ul>
-    <li>has 8GB total memory.</li>
-    <li>has a hostname that can be accessed from your workstation and nodes.</li>
-    <li>is connected to NTP.</li>
-    <li>provides inbound access (including firewall) on port 443 (HTTPS).</li>
-    <li>provides outbound access (including firewall) on ports 25 (SMTP) and 5672 (for RabbitMQ).</li>
-    <li>has <a href="http://docs.chef.io/install_server_pre.html#apparmor">AppArmor</a> disabled or set to complaining mode.</li>
-  </ul>
-  <p>You may also want to open port 22 (SSH) so you can configure Chef Analytics from your workstation. Also, we recommend that you run <code>apt-get update</code> to update your local package cache.</p>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-</div>
+* the Chef development tools installed on your workstation.
+* a Chef server running in your infrastructure.
+* an Ubuntu 14.04 node to manage.
+* a Chef Analytics server running in your infrastructure.
+
+[COMMENT] In the _Get started with Chef Analytics_ tutorial, you'll have the option to choose which operating system to run on your node. We recommend that you use Ubuntu 14.04 so that you have a node that's already set up to use in this tutorial.

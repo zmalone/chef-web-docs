@@ -7,12 +7,13 @@ In the previous step, we saw that three files and one directory failed audit.
 * <code class="file-path">/var/www/html/pages/page1.html</code>
 * <code class="file-path">/var/www/html/pages/page2.html</code>
 
-In practice, you would work with your team and the audit team to determine the best course of action. Here, we'll resolve these failures by creating a user named `web_admin` assign that user as the owner of the web files.
+In practice, you would work with your team and the audit team to determine the best course of action. Here, we'll resolve these failures by creating a user named `web_admin` and assign that user as the owner of the web files.
 
 Modify your `webserver` cookbook's default recipe like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
+# Install the Apache2 package.
 package 'apache2'
 
 # Enable and start the Apache2 service.

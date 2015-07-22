@@ -61,6 +61,7 @@ firewall_rule 'http' do
   action :allow
 end
 
+# Install the Apache2 package.
 package 'apache2'
 
 # Enable and start the Apache2 service.
