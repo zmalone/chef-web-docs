@@ -1,18 +1,18 @@
 ## 7. Resolve the audit failure
 
-Now let's resolve the audit failure. We'll start by writing code to configure UFW on the node. Then we'll verify the fix locally. Finally, we'll upload our updated `webserver` to the Chef server and run `chef-client` on our node.
+Now let's resolve the audit failure. We'll start by writing code to configure UFW on the node. Then we'll verify the fix locally. Finally, we'll upload our updated `webserver` to the Chef server and run `chef-client` on our node and verify that the audit passes.
 
 ### Update the webserver cookbook
 
-To ensure that the firewall is enabled and activated, we'll use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook, similar to what we did in the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/configure-apache#5enableinboundtraffictoyourwebsite) tutorial. To summarize the steps:
+To ensure that the firewall is enabled, running, and activated, we'll use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook from Chef Supermarket, similar to what we did in the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/configure-apache#5enableinboundtraffictoyourwebsite) tutorial. To summarize the steps:
 
-1. Reference the `firewall` cookbook.
-1. Set the node attribute to allow inbound SSH access (port 22)
-1. Run the `firewall` cookbook's default recipe and Enable inbound HTTP access (port 80)
+1. Reference the `firewall` cookbook in your `webserver` cookbook's metadata.
+1. Set the node attribute to allow inbound SSH access (port 22.)
+1. Run the `firewall` cookbook's default recipe and enable inbound HTTP access (port 80.)
 
 #### Reference the firewall cookbook
 
-ALSO UPDATE VERSION
+In your `webserver` cookbook's <code class="file-path">metadata.rb</code> file, add a `depends` line to add a reference to the `firewall` cookbook.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/metadata.rb
@@ -22,12 +22,16 @@ maintainer_email 'you@example.com'
 license 'all_rights'
 description 'Installs/Configures webserver'
 long_description 'Installs/Configures webserver'
-version '0.2.0'
+version '0.1.0'
 
 depends 'firewall', '~> 1.5.0'
 ```
 
 #### Set the node attribute to allow inbound SSH access
+
+It's important to enable inbound SSH access so that you can run `chef-client` from the `knife ssh` command on your workstation. The `firewall` cookbook provides a node attribute that does this automatically for you.
+
+First, run this command to generate an attributes file for the `webserver` cookbook.
 
 ```bash
 # ~/chef-repo
@@ -42,6 +46,8 @@ Recipe: code_generator::attribute
     (diff output suppressed by config)
 ```
 
+Now add this to your `webserver` cookbook's default attributes file, <code class="file-path">default.rb</code>.
+
 ```ruby
 # ~/chef-repo/cookbooks/webserver/attributes/default.rb
 default['firewall']['allow_ssh'] = true
@@ -49,7 +55,9 @@ default['firewall']['allow_ssh'] = true
 
 #### Run the firewall cookbook's default recipe and enable inbound HTTP access
 
-Add `include_recipe` and `firewall_rule` resource, like this...
+Now let's run the `firewall` cookbook's default recipe to enable and activate UFW and enable SSH access, and also configure the firewall to allow inbound HTTP access.
+
+Add the following `include_recipe` line and a `firewall_rule` resource to the beginning of your `webserver` cookbook's default recipe, making the entire file look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
@@ -94,9 +102,30 @@ end
 end
 ```
 
+#### Increment the webserver cookbook's version
+
+Also increment the `webserver` cookbook's version, similar to what you did for the `audit` cookbook.
+
+Modify your `webserver` cookbook's <code class="file-path">metadata.rb</code> file like this.
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/metadata.rb
+name 'webserver'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures webserver'
+long_description 'Installs/Configures webserver'
+version '0.2.0'
+
+depends 'firewall', '~> 1.5.0'
+```
+
 ### Verify the fix locally
 
-Recommended practice to test it locally.
+Before we upload the revised `webserver` cookbook to the Chef server, let's follow the recommended practice of verifying that the changes succeed locally on a Test Kitchen instance.
+
+From your workstation, run `kitchen converge` to apply your `webserver` cookbook.
 
 ```bash
 # ~/chef-repo/cookbooks/webserver
@@ -129,13 +158,13 @@ $ kitchen converge
 -----> Kitchen is finished. (9m50.22s)
 ```
 
-You see that.... Now we have confidence that the change will work on our node.
+You'll see from the output that all audit rules &ndash; ensuring that no web content is owned by `root` and ensuring that UFW is configured and activated &ndash; now pass. This gives us confidence that the change will work on our node.
 
 ### Upload the webserver cookbook to the Chef server
 
-Because the `webserver` cookbook has a dependency on a cookbook from Chef Supermarket, let's use Berkshelf (LINK) to automatically resolve and upload the dependent cookbooks, like you did in (OTHER TUTORIAL).
+Because the `webserver` cookbook has a dependency on the `firewall` cookbook from Chef Supermarket, let's use [Berkshelf](http://berkshelf.com) to automatically resolve and upload the dependent cookbooks, like you did in the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/apply-and-verify-your-web-server-configuration/) tutorial.
 
-- Berks install
+First, run `berks install` to download all dependent cookbooks from Chef Supermarket to your workstation.
 
 ```bash
 # ~/chef-repo/cookbooks/webserver
@@ -150,7 +179,7 @@ Using poise (2.2.3)
 Using webserver (0.2.0) from source at .
 ```
 
-- Berks upload
+Now run the following `berks upload` command to upload your cookbooks to the Chef server.
 
 ```bash
 # ~/chef-repo/cookbooks/webserver
@@ -161,20 +190,33 @@ Uploaded poise (2.2.3) to: 'https://your-chef-server:443/organizations/your-org-
 Uploaded webserver (0.2.0) to: 'https://your-chef-server:443/organizations/your-org-name'
 ```
 
-[COMMENT] The `--no-ssl-verify` flag bypasses SSL verification. You need this because Chef server by default uses a self-signed certificate. In production, you can configure Chef server [to use a trusted SSL certificate](https://osxdominion.wordpress.com/2015/02/25/configuring-chef-server-12-to-use-trusted-ssl-certs/). We're working to make Berkshelf's default behavior easier to use and more secure.
+[COMMENT] The `--no-ssl-verify` flag bypasses SSL verification. You need this because on-premises Chef server by default uses a self-signed certificate. In production, you can configure Chef server [to use a trusted SSL certificate](https://osxdominion.wordpress.com/2015/02/25/configuring-chef-server-12-to-use-trusted-ssl-certs/). We're working to make Berkshelf's default behavior easier to use and more secure.
 
 ### Run chef-client on your node
 
 From your workstation, run `chef-client` with audit mode enabled so that both the `webserver` and `audit` cookbooks are run.
 
-[SHOW BOTH]
+Choose the option that matches how you connect to your Ubuntu node.
+
+### Option 1: Use a user name and password
+
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+
+```bash
+# ~/chef-repo
+$ knife ssh {address} 'sudo chef-client --audit-mode enabled' --manual-list --ssh-user {user} --ssh-password '{password}'
+```
+
+### Option 2: Use key-based authentication
+
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
 $ knife ssh {address} 'sudo chef-client --audit-mode enabled' --manual-list --ssh-user {user} --identity-file {identity-file}
 ```
 
-As with your Test Kitchen instance, you'll see that
+As with your Test Kitchen instance, you'll see that the `webserver` cookbook updates your configuration and that all audit tests pass.
 
 ```bash
 # ~/chef-repo
@@ -200,14 +242,14 @@ As with your Test Kitchen instance, you'll see that
 52.27.87.170   5/5 controls succeeded
 ```
 
-knife ssh 52.27.87.170 'sudo chef-client --audit-mode enabled' --manual-list --ssh-user ubuntu --identity-file ~/.ssh/tpetchel.pem
+### Verify that the audit passed from Chef Analytics
 
-### Verify that the audit passed from the web interface
+From the Chef Analytics web interface, verify that no new alerts appear on the **Alerts** tab.
 
-From the **Alerts** tab, verify that no alert was raised ...
+![No new alert appears on the Alerts tab](chef-analytics/compliance-alert-success.png)
 
-![The success ASDSDADA in the Nodes tab](chef-analytics/compliance-alert-success.png)
+Now navigate to the **Nodes** tab. You'll see that the node's status is now green &ndash; which tells us that the previous `chef-client` run succeeded and passed the audit.
 
-The node's status is now green &ndash; which tells us that the previous `chef-client` run succeeded.
+![The Nodes tab shows that the audit run succeeded](chef-analytics/compliance-node-success.png)
 
-![The success ASDSDADA in the Nodes tab](chef-analytics/compliance-node-success.png)
+Congratulations! Your infrastructure now complies with your audit rules. And you have automated tests that allow you to repeat the process as often as you need.

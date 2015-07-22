@@ -34,7 +34,7 @@ Now run `chef-client` on your node. We want to run only the `webserver` cookbook
 
 Choose the option that matches how you connect to your Ubuntu node.
 
-#### Option 1a: Use a user name and password
+#### Option a: Use a user name and password
 
 Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
@@ -43,7 +43,7 @@ Replace `{address}` with your remote node's external address, `{user}` with your
 $ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --ssh-password '{password}'
 ```
 
-#### Option 1b: Use key-based authentication
+#### Option b: Use key-based authentication
 
 Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
@@ -62,6 +62,8 @@ First, prepare a clean Ubuntu 14.04 instance to bootstrap. Be sure that:
 * you have root or `sudo` access.
 
 Now bootstrap your node. Choose the option below that matches how you can authenticate and bootstrap your node.
+
+[COMMENT] Although you set both the `audit` and `webserver` cookbooks' default recipe as part of the run-list, only the infrastructure code, not the audit code, is run during the bootstrap process. You'll run the audit code in a later step.
 
 #### Option a: Use a user name and password
 

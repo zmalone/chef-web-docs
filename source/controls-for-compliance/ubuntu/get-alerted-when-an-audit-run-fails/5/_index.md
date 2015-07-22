@@ -29,24 +29,37 @@ control_group 'Validate network configuration and firewalls' do
 end
 ```
 
-Now run this `knife cookbook upload` command to upload the `audit` cookbook to your Chef server.
+It's a recommended practice to update your cookbook's version to ensure that a given set of functionality is tied to a given version.
+
+Update the `version` field of your `audit` cookbook's <code class="file-path">metadata.rb</code> file to `0.2.0`, making the entire file look like this.
+
+```ruby
+# ~/chef-repo/cookbooks/audit/metadata.rb
+name 'audit'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures audit'
+long_description 'Installs/Configures audit'
+version '0.2.0'
+```
+
+Now run this `knife cookbook upload` command to upload the revised `audit` cookbook to your Chef server.
 
 ```bash
 # ~/chef-client
 $ knife cookbook upload audit
-Uploading audit          [0.1.0]
+Uploading audit          [0.2.0]
 Uploaded 1 cookbook.
 ```
 
 ### Add the Chef Analytics rule
 
-Now we need to add the corresponding rule to Chef Analytics to monitor for this audit rule.
+Now we need to add the corresponding rule to Chef Analytics to monitor for this audit rule to fail. The process is similar to how you added the first rule.
 
-[COPY STEPS]
+First navigate to the Chef Analytics interface from your web browser. From the **Rules** tab, click **+** to create a new rule. From the rule editor, click `New Rule Group 1` and rename it to `Validate network configuration and firewalls`.
 
-(Fix other so that Rules Name is group name and rules name is control name)
-
-Name it "Validate network configuration and firewalls".
+Now add the following code to define your rule.
 
 ```ruby
 rules 'Ensure the firewall is active'

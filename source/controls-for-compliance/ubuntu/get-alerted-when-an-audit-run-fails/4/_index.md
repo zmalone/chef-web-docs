@@ -1,13 +1,32 @@
 ## 4. Run the audit cookbook
 
-Now let's run the `audit` cookbook on your node and verify that the alert doesn't trigger.
+Now let's run the `audit` cookbook on your node. You already verified that the audit passes when you ran it through Test Kitchen, so let's verify that the alert doesn't trigger.
 
-[BOTH WAYS, EXPLAIN WHAT TO REPLACE]
+Because you already applied the `webserver` cookbook to your node, this time you'll specify the `--audit-mode audit-only` option to run only the audit code on your node.
+
+Choose the option that matches how you connect to your Ubuntu node.
+
+### Option 1: Use a user name and password
+
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+
+```bash
+# ~/chef-repo
+$ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --ssh-password '{password}'
+```
+
+### Option 2: Use key-based authentication
+
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
 $ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --identity-file {identity-file}
 ```
+
+### Verify that the alert didn't trigger
+
+You'll see from the output of your `chef-client` run that the audit tests pass. From the **Alerts** tab on the Chef Analytics web interface, verify that no alerts appear.
 
 ![A successful audit run](chef-analytics/complaince-clean-run.png)
 

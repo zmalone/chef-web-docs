@@ -1,9 +1,10 @@
-In this tutorial, you installed and configured Chef Analytics and wrote your first rule. Although your rule is basic, it demonstrates the power of the rules language and notifications. You can learn more about [common tasks](https://docs.chef.io/analytics_webui_tasks.html) and find [additional examples](https://docs.chef.io/analytics_rules.html#examples) in the Chef documentation.
+In this tutorial, you used Chef's audit mode to apply audit controls to your infrastructure. You can run your  tests as often as you need and can resolve issues more quickly than through manual testing.
 
-[FEEDBACK] There's more to come, including how to through verify your organization's compliance using Chef's [audit mode](https://docs.chef.io/analytics.html#audit-mode). In the meantime, tell us what you think so far, and what else you'd like to see in the future.
+Chef Analytics gives you a view into what's happening in your infrastructure. You can write rules, alerts, and notifications to contact the right people and services when an audit failure occurs anywhere in your network.
 
+By starting with Test Kitchen to verify your work locally, you have increased confidence that your changes will work in production.
 
-In this tutorial, you worked with the Chef Analytics web interface to view the state of your Chef server and to create rules and notifications. You can also use the `knife` plugin, [knife-analtyics](https://github.com/chef/knife-analytics), to perform common tasks from the command line. You can run this command to install `knife-analtyics`.
+In this tutorial, you worked with the Chef Analytics web interface to view the state of your Chef server and to create rules and notifications. You can also use the `knife` plugin [knife-analtyics](https://github.com/chef/knife-analytics) to perform view alerts and perform other common tasks from the command line. To get started, run this command to install `knife-analtyics` on your workstation.
 
 ```bash
 # ~/chef-repo
@@ -15,4 +16,6 @@ Successfully installed knife-analytics-0.2.1
 2 gems installed
 ```
 
-http://complianceatvelocity.com/
+[GITHUB] Get the code for this tutorial [on GitHub](https://github.com/learn-chef/controls-for-compliance-ubuntu).
+
+Learn more about building a high velocity, highly compliant organization at [complianceatvelocity.com](http://complianceatvelocity.com/).

@@ -1,12 +1,30 @@
-## 6. Watch the audit failure
+## 6. Run the audit and watch it fail
+
+From your workstation, run `chef-client` with audit mode enabled a second time.
+
+Choose the option that matches how you connect to your Ubuntu node.
+
+### Option 1: Use a user name and password
+
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+
+```bash
+# ~/chef-repo
+$ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --ssh-password '{password}'
+```
+
+### Option 2: Use key-based authentication
+
+Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
 $ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --identity-file {identity-file}
 ```
-knife ssh 52.27.87.170 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user ubuntu --identity-file ~/.ssh/tpetchel.pem
 
-You'll see from the output that
+### See the failure from the output
+
+You'll see from the output that although UFW is enabled and running, its status is inactive. This causes the audit run to fail.
 
 ```bash
 # ~/chef-repo
@@ -28,10 +46,10 @@ You'll see from the output that
 [...]
 ```
 
-From the **Alert** tab, ...
+Navigate to the **Alerts** tab, and you'll see that the alert was triggered during the `chef-client` run.
 
 ![The failure in the Alert tab](chef-analytics/compliance-alert-failure.png)
 
-You'll also see ...
+From the **Nodes** tab, you'll also see that your node's status is orange, which indicates that the audit run failed.
 
 ![The failure in the Nodes tab](chef-analytics/compliance-node-failure.png)
