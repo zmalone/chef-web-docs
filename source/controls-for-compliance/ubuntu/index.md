@@ -22,7 +22,7 @@ You can run audit mode alone or you can use it along with Chef Analytics. In [Ge
 
 <img src="/assets/images/networks/analytics.png" style="width: 100%; box-shadow: none;" alt="Your workstation, Chef server, Chef Analytics, and nodes" />
 
-In this tutorial, you'll first use audit mode to discover an infrastructure change that, while appearing well-intentioned and functional, actually violates your compliance policy. Then you'll connect your audit and infrastructure code to Chef Analytics. Next, you'll write an additional control that highlights the need to repair existing infrastructure and you'll also have Chef Analytics issue a notification when the audit fails.
+In this tutorial, you'll first use audit mode to discover an infrastructure change that, while appearing well-intentioned and functional, actually violates your compliance policy. Then you'll connect your audit and infrastructure code to Chef Analytics. Next, you'll write an additional control that highlights the need to repair existing infrastructure and you'll also have Chef Analytics issue a alert when the audit fails.
 
 After completing this lesson, you'll be able to:
 
