@@ -1,5 +1,5 @@
 ---
-title: 'Implement controls for compliance on Ubuntu'
+title: 'Audit an Ubuntu node for compliance'
 layout: lesson-overview
 platform: 'Ubuntu'
 logo: ubuntu.svg
