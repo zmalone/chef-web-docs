@@ -35,7 +35,7 @@ depends 'poise', '~> 2.0'
 
 To help unravel this dependency web &ndash; and remove the need for you to manually resolve cookbook dependencies &ndash; we're going to use [Berkshelf](http://berkshelf.com). Berkshelf uploads your cookbooks to the Chef server and retrieves the cookbooks that your cookbook depends on.
 
-Berkshelf comes with the ChefDK, so you don't have to install anything.
+Berkshelf comes with the Chef DK, so you don't have to install anything.
 
 When you created your cookbook, the `chef generate cookbook` command created a file named <code class="file-path">Berksfile</code> in the cookbook's root directory.
 

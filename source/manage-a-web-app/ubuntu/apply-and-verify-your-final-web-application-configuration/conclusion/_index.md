@@ -8,5 +8,5 @@ In the next tutorial, [Learn to develop your infrastructure code locally](/local
 
 
 <p style="font-size: 14px; font-style: italic;">
-This tutorial was adapted from <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting Started Writing Chef Cookbooks the Berkshelf Way</a>, by Mischa Taylor. It was updated for use with the ChefDK and the latest community cookbooks.
+This tutorial was adapted from <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting Started Writing Chef Cookbooks the Berkshelf Way</a>, by Mischa Taylor. It was updated for use with the Chef DK and the latest community cookbooks.
 </p>

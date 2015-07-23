@@ -38,4 +38,4 @@ After completing this lesson, you'll:
 * be able to set up basic network settings for your instance, such as its IP address.
 * understand how to transfer your data bags and secret key file from your workstation to your instance.
 
-You'll get started by setting up ChefDK and the virtualization tools on your workstation.
+You'll get started by setting up Chef DK and the virtualization tools on your workstation.

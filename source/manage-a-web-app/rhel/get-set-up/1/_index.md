@@ -4,6 +4,6 @@ You administer your network with your workstation. Your workstation is also wher
 
 [COMMENT] It's common to use a virtual machine as your workstation. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites).
 
-Install ChefDK on your workstation now if you haven't already.
+Install Chef DK on your workstation now if you haven't already.
 
-<a class='accent-button radius' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install ChefDK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+<a class='accent-button radius' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
