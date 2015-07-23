@@ -6,20 +6,20 @@ Click the button to get the Chef server package for your version of Red Hat Ente
 
 It's likely that you're viewing this web page from your workstation, and that your Chef server is running without a graphical user interface. The easiest way to get the download link from your workstation to your Chef server is to locate and copy the link you need, and then paste it into a `wget` command through an SSH session to your Chef server.
 
-Here's an example of how to download and install Chef server on Red Hat Enterprise Linux or CentOS. Be sure to replace the package URL with the version you get from the download page.
+Here's an example of how to download and install Chef server on Red Hat Enterprise Linux or CentOS. Replace `PACKAGE_URL` and `PACKAGE_NAME` with the latest one from the download page.
 
 ```bash
 $ sudo yum install wget -y
-$ wget https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.1.0-1.el6.x86_64.rpm
-$ sudo yum install chef-server-core-12.1.0-1.el6.x86_64.rpm -y
+$ wget PACKAGE_URL
+$ sudo rpm -Uvh PACKAGE_NAME
 ```
 
-Here's a similar example for Ubuntu.
+And here's an example for Ubuntu.
 
 ```bash
 $ sudo apt-get install wget -y
-$ wget https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/trusty/chef-server-core_12.1.0-1_amd64.deb
-$ sudo dpkg -i chef-server-core_12.1.0-1_amd64.deb
+$ wget PACKAGE_URL
+$ sudo dpkg -i PACKAGE_NAME
 ```
 
 ### Install a text editor on your Chef server
