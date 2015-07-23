@@ -1,4 +1,4 @@
-## 1. Set up your workstation, Chef server, a node to manage, and Chef Analytics
+## 1. Set up your workstation, Chef server, and a node to manage 
 
 The first part of this tutorial uses Test Kitchen to apply your audit and infrastructure code on a local virtual machine.
 

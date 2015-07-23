@@ -1,6 +1,6 @@
 ## 6. Update your web server configuration to meet compliance
 
-In the previous step, we saw that three files and one directory failed audit.
+In the previous step, we saw that three files and one directory failed the audit.
 
 * <code class="file-path">/var/www/html/index.html</code>
 * <code class="file-path">/var/www/html/pages</code>
@@ -46,7 +46,7 @@ end
 end
 ```
 
-This code creates the `web_admin` user and group and assigns it as the owner of both the <code class="file-path">/var/www/html/pages</code> directory and the web files.
+This code creates the `web_admin` user and group and assigns the user as the owner of both the <code class="file-path">/var/www/html/pages</code> directory and the web files.
 
 Now run `kitchen converge` to apply the changes and run your audit tests.
 
@@ -96,4 +96,4 @@ $ kitchen converge
 
 [COMMENT] As your infrastructure code grows in complexity, you can temporarily set `audit_mode` in your <code class="file-path">.kitchen.yml</code> to `:disabled` to disable audit tests so that you can first verify that your configuration code works. Then you can enable audit mode to ensure that the working configuraiton also passes audit.
 
-Congratulations. The ownership of your web content changes from `root` to `web_admin` and your audit tests now pass!
+Congratulations. The ownership of your web content changed from `root` to `web_admin` and your audit tests now pass!

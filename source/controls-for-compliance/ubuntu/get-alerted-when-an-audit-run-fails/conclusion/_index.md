@@ -1,10 +1,10 @@
-In this tutorial, you used Chef's audit mode to apply audit controls to your infrastructure. You can run your  tests as often as you need and can resolve issues more quickly than through manual testing.
+In this tutorial, you used Chef's audit mode to apply audit controls to your infrastructure. With audit mode, you can run your  tests as often as you need and can resolve issues more quickly than through manual testing.
 
 Chef Analytics gives you a view into what's happening in your infrastructure. You can write rules, alerts, and notifications to contact the right people and services when an audit failure occurs anywhere in your network.
 
 By starting with Test Kitchen to verify your work locally, you have increased confidence that your changes will work in production.
 
-In this tutorial, you worked with the Chef Analytics web interface to view the state of your Chef server and to create rules and notifications. You can also use the `knife` plugin [knife-analtyics](https://github.com/chef/knife-analytics) to perform view alerts and perform other common tasks from the command line. To get started, run this command to install `knife-analtyics` on your workstation.
+In this tutorial, you worked with the Chef Analytics web interface to view the state of your Chef server and to create rules that trigger when an audit fails. You can also use the `knife` plugin [knife-analtyics](https://github.com/chef/knife-analytics) to view alerts and perform other common tasks from the command line. To get started, run this command to install `knife-analtyics` on your workstation.
 
 ```bash
 # ~/chef-repo

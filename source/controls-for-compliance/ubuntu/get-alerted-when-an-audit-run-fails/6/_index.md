@@ -46,7 +46,7 @@ You'll see from the output that although UFW is enabled and running, its status 
 [...]
 ```
 
-Navigate to the **Alerts** tab, and you'll see that the alert was triggered during the `chef-client` run.
+On the Chef Analytics server, navigate to the **Alerts** tab, and you'll see that the alert was triggered during the `chef-client` run.
 
 ![The failure in the Alert tab](chef-analytics/compliance-alert-failure.png)
 

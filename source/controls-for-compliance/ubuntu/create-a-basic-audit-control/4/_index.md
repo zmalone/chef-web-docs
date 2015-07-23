@@ -36,7 +36,7 @@ This recipe configures Apache and writes a few files for it to serve.
 
 [COMMENT] For simplicity, we use the built-in `package` and `service` resources to configure Apache. A more robust solution might use the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket.
 
-Now use Test Kitchen apply the `webserver` cookbook locally. This instance is different than the one you used to apply the `audit` cookbook. Start by adding this to your webserver's <code class="file-path">.kitchen.yml</code> file.
+Now use Test Kitchen to apply the `webserver` cookbook locally. This instance is different than the one you used to apply the `audit` cookbook. Start by adding this to your webserver's <code class="file-path">.kitchen.yml</code> file.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/.kitchen.yml
