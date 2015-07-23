@@ -1,6 +1,6 @@
-## 5. Add a new audit rule
+## 5. Add a new control
 
-Now let's add a new audit rule that verifies that Ubuntu's default firewall, [UFW](https://help.ubuntu.com/community/UFW), or Uncomplicated Firewall, is enabled on every node.
+Now let's add a new control that verifies that Ubuntu's default firewall, [UFW](https://help.ubuntu.com/community/UFW), or Uncomplicated Firewall, is enabled on every node.
 
 ### Add the control to the audit cookbook
 
@@ -55,7 +55,7 @@ Uploaded 1 cookbook.
 
 ### Add the Chef Analytics rule
 
-Now we need to add the corresponding rule to Chef Analytics to monitor for this audit rule to fail. The process is similar to how you added the first rule.
+Now we need to add a corresponding rule to Chef Analytics that will trigger when this control fails. The process is similar to how you added the first rule.
 
 First navigate to the Chef Analytics interface from your web browser. From the **Rules** tab, click **+** to create a new rule. From the rule editor, click `New Rule Group 1` and rename it to `Validate network configuration and firewalls`.
 

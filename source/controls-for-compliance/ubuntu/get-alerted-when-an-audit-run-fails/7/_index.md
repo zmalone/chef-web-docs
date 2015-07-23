@@ -55,7 +55,7 @@ default['firewall']['allow_ssh'] = true
 
 #### Run the firewall cookbook's default recipe and enable inbound HTTP access
 
-Now let's run the `firewall` cookbook's default recipe to enable and activate UFW and enable SSH access, and also configure the firewall to allow inbound HTTP access.
+Now let's run the `firewall` cookbook's default recipe to enable and activate UFW, enable SSH access, and also configure the firewall to allow inbound HTTP access.
 
 Add the following `include_recipe` line and a `firewall_rule` resource to the beginning of your `webserver` cookbook's default recipe, making the entire file look like this.
 
@@ -158,7 +158,7 @@ $ kitchen converge
 -----> Kitchen is finished. (9m50.22s)
 ```
 
-You'll see from the output that all audit rules &ndash; ensuring that no web content is owned by `root` and ensuring that UFW is configured and activated &ndash; now pass. This gives us confidence that the change will work on our node.
+You'll see from the output that all controls &ndash; the one that ensures that no web content is owned by `root` and the one that ensures that UFW is configured and activated &ndash; now pass. This gives us confidence that the change will work on our node.
 
 ### Upload the webserver cookbook to the Chef server
 
@@ -252,4 +252,4 @@ Now navigate to the **Nodes** tab. You'll see that the node's status is now gree
 
 ![The Nodes tab shows that the audit run succeeded](chef-analytics/compliance-node-success.png)
 
-Congratulations! Your infrastructure now complies with your audit rules. And you have automated tests that allow you to repeat the process as often as you need.
+Congratulations! Your infrastructure now meets your compliance requirements. In addition, you can now consistently and easily test for compliance as often as you need to because the tests are automated.
