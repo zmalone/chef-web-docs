@@ -30,8 +30,8 @@ Run `kitchen list` to verify that the instance has not yet been created.
 ```bash
 # ~/chef-repo/cookbooks/audit
 $ kitchen list
-Instance             Driver   Provisioner  Verifier  Transport  Last Action
-default-ubuntu-1404  Vagrant  ChefZero     Busser    Ssh        <Not Created>
+Instance           Driver   Provisioner  Verifier  Transport  Last Action
+default-centos-65  Vagrant  ChefZero     Busser    Ssh        <Not Created>
 ```
 
 Now run `kitchen converge` to create the instance and apply your audit control.
@@ -40,22 +40,24 @@ Now run `kitchen converge` to create the instance and apply your audit control.
 # ~/chef-repo/cookbooks/audit
 $ kitchen converge
 -----> Starting Kitchen (v1.4.0)
------> Creating <default-ubuntu-1404>...
+-----> Creating <default-centos-65>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'opscode-centos-6.5'...
 [...]
-       Converging 0 resources
+       Synchronizing Cookbooks:
+         - audit
+       Compiling Cookbooks...
        Starting audit phase
 
-       Finished in 0.00018 seconds (files took 0.24698 seconds to load)
+       Finished in 0.00049 seconds (files took 0.25448 seconds to load)
        0 examples, 0 failures
        Auditing complete
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 0/0 resources updated in 6.352620924 seconds
-       Finished converging <default-ubuntu-1404> (0m46.27s).
------> Kitchen is finished. (2m26.50s)
+       Chef Client finished, 0/0 resources updated in 1.485519342 seconds
+       Finished converging <default-centos-65> (0m43.35s).
+-----> Kitchen is finished. (3m48.94s)
 ```
 
 We haven't yet configured Apache or added any web files, so there are no files to test. But this is a good first step to verifying that the control is correctly set up.

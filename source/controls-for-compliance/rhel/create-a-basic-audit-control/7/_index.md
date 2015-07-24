@@ -6,22 +6,22 @@ You can experiment more with your Test Kitchen instances if you'd like. After yo
 # ~/chef-repo/cookbooks/audit
 $ kitchen destroy
 -----> Starting Kitchen (v1.4.0)
------> Destroying <default-ubuntu-1404>...
+-----> Destroying <default-centos-65>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-ubuntu-1404> destroyed.
-       Finished destroying <default-ubuntu-1404> (0m3.59s).
------> Kitchen is finished. (0m4.37s)
+       Vagrant instance <default-centos-65> destroyed.
+       Finished destroying <default-centos-65> (0m3.29s).
+-----> Kitchen is finished. (0m3.75s)
 ```
 
 ```bash
 # ~/chef-repo/cookbooks/webserver
 $ kitchen destroy
 -----> Starting Kitchen (v1.4.0)
------> Destroying <default-ubuntu-1404>...
+-----> Destroying <default-centos-65>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-ubuntu-1404> destroyed.
-       Finished destroying <default-ubuntu-1404> (0m3.53s).
------> Kitchen is finished. (0m4.28s)
+       Vagrant instance <default-centos-65> destroyed.
+       Finished destroying <default-centos-65> (0m3.71s).
+-----> Kitchen is finished. (0m4.41s)
 ```
