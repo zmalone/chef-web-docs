@@ -1,5 +1,5 @@
 ---
-title: 'Learn to develop your infrastructure code locally on Ubuntu'
+title: 'Learn to develop your Ubuntu infrastructure code locally'
 layout: lesson-overview
 platform: Ubuntu
 logo: ubuntu.svg

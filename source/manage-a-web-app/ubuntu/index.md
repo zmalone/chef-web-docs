@@ -1,5 +1,5 @@
 ---
-title: 'Learn to manage a basic web application on Ubuntu'
+title: 'Learn to manage a basic Ubuntu web application'
 layout: lesson-overview
 platform: Ubuntu
 logo: ubuntu.svg
