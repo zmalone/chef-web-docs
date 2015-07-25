@@ -29,8 +29,8 @@ Run <code>knife winrm</code> to run your cookbook on your node. Replace <code>{{
   <ul>
     <li>Ensure that your environment is active before you run <code>knife</code>. For example, CloudShare instances suspend after a period of inactivity. <img class="border" src="/assets/images/windows/cloudshare-suspend.png"></img></li>
     <li>Ensure that you run <code>knife</code> commands from your <code class="file-path">chef-repo</code> directory or one of its sub-directories.</li>
-    <li>Ensure you have a <code class="file-path">chef-repo\.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and two <code class="file-path">.pem</code> files. If you don't, <a href="/manage-a-node/windows/set-up-your-chef-server/#2installthestarterkit" target="_blank">install the Starter Kit</a>.</li>
-    <li>Ensure that you have the <a href="/manage-a-node/windows/bootstrap-your-node/#3installtheknifewindowsplugin" target="_blank">knife windows plugin</a> installed.</li>
+    <li>Ensure you have a <code class="file-path">chef-repo\.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and two <code class="file-path">.pem</code> files. If you don't, <a href="/manage-a-node/windows/set-up-your-chef-server#step2" target="_blank">install the Starter Kit</a>.</li>
+    <li>Ensure that you have the <a href="/manage-a-node/windows/bootstrap-your-node#step3" target="_blank">knife windows plugin</a> installed.</li>
     <li>Ensure that your node's IP address is accessible from your network.</li>
     <li>Ensure the user name you provide has Administrator access on the node.</li>
     <li>Ensure your workstation has outbound access (including firewall) on these ports:
