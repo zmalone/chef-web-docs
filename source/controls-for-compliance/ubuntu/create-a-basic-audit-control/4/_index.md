@@ -60,7 +60,7 @@ suites:
 Run `kitchen converge` to create the instance and apply the web server configuration.
 
 ```bash
-# ~/chef-repo/cookbooks/audit
+# ~/chef-repo/cookbooks/webserver
 $ kitchen converge
 -----> Starting Kitchen (v1.4.0)
 -----> Creating <default-ubuntu-1404>...
@@ -85,7 +85,7 @@ $ kitchen converge
 Now run `kitchen login` to log into your instance.
 
 ```bash
-# ~/chef-repo/cookbooks/audit
+# ~/chef-repo/cookbooks/webserver
 $ kitchen login
 Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-24-generic x86_64)
 
@@ -105,6 +105,14 @@ $ wget -qO- localhost | more
 <html>This is index.html.</html>
 $ wget -qO- localhost/pages/page1.html | more
 <html>This is pages/page1.html.</html>
+```
+
+Exit your Test Kitchen instance.
+
+```bash
+$ exit
+logout
+Connection to 127.0.0.1 closed.
 ```
 
 If you're the web site developer or system administrator, this configuration can look completely reasonable &ndash; it does everything you need it to do. Now let's see what happens when we audit the web server configuration.

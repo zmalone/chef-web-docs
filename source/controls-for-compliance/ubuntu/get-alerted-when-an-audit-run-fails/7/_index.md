@@ -160,6 +160,22 @@ $ kitchen converge
 
 You'll see from the output that all controls &ndash; the one that verifies that no web content is owned by `root` and the one that verifies that UFW is configured and activated &ndash; now pass. This gives us confidence that the change will work on our node.
 
+Now that you've verified the fix locally, you can destroy your Test Kitchen instance.
+
+```bash
+# ~/chef-repo/cookbooks/webserver
+$ kitchen destroy
+-----> Starting Kitchen (v1.4.0)
+-----> Destroying <default-ubuntu-1404>...
+       ==> default: Forcing shutdown of VM...
+       ==> default: Destroying VM and associated drives...
+       Vagrant instance <default-ubuntu-1404> destroyed.
+       Finished destroying <default-ubuntu-1404> (0m3.28s).
+-----> Kitchen is finished. (0m3.89s)
+```
+
+[COMMENT] When developing a configuration change, whether it's with Chef or something else, it can be difficult to get it right the first time. For example, you might unintentionally configure the system to disable all inbound traffic, including over SSH, completely. That's where Test Kitchen really helps &ndash; if you place the system in an unrepairable state, you simply destroy the instance and try something else. Only after you're confident that your change works as you expect do you move your configuration code to the next step in the pipeline.
+
 ### Upload the webserver cookbook to the Chef server
 
 Because the `webserver` cookbook has a dependency on the `firewall` cookbook from Chef Supermarket, let's use [Berkshelf](http://berkshelf.com) to automatically resolve and upload the dependent cookbooks, like you did in the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/apply-and-verify-your-web-server-configuration/) tutorial.
