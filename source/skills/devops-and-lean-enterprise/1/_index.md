@@ -2,7 +2,7 @@
 
 Here are some Lean principles that you will want to incorporate into your DevOps practice, if you're not already doing them.
 
-* **Eliminate waste**. In the spirit of constant improvement, always look for ways to eliminate waste. (In Lean, waste is called [_muda_](https://en.wikipedia.org/wiki/Muda_(Japanese_term)), which is a Japanese word. Many Lean concepts began at Toyota.) Constantly evaluate your process and ask yourself, "What am I doing that I don't need to do?"
+* **Eliminate waste**. In the spirit of constant improvement, always look for ways to eliminate waste. (In Lean, waste is called [_muda_](https://en.wikipedia.org/wiki/Muda_\(Japanese_term\)), which is a Japanese word. Many Lean concepts began at Toyota.) Constantly evaluate your process and ask yourself, "What am I doing that I don't need to do?"
 * **Prefer pull systems to push systems**. A pull system is driven by customer need as opposed to a push system, which uses top-down planning. Align your process and resources with market demand.
 * **Practice [_kaizen_](https://en.wikipedia.org/wiki/Kaizen), or continuous improvement.** DevOps practitioners are always examing their process and trying to make it better.
 * **Practice [_kaikaku_](https://en.wikipedia.org/wiki/Kaikaku)**. Kaikaku means _radical change_. There are times when continuous improvement (kaizen) isn't enough and you need disruption.
