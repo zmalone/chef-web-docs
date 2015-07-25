@@ -158,7 +158,7 @@ $ kitchen converge
 -----> Kitchen is finished. (9m50.22s)
 ```
 
-You'll see from the output that all controls &ndash; the one that ensures that no web content is owned by `root` and the one that ensures that UFW is configured and activated &ndash; now pass. This gives us confidence that the change will work on our node.
+You'll see from the output that all controls &ndash; the one that verifies that no web content is owned by `root` and the one that verifies that UFW is configured and activated &ndash; now pass. This gives us confidence that the change will work on our node.
 
 ### Upload the webserver cookbook to the Chef server
 

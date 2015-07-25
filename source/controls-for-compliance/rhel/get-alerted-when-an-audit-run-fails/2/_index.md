@@ -2,7 +2,7 @@
 
 Next, let's apply the `webserver` cookbook to your node.
 
-If you already have a Red Hat Enterprise Linux or CentOS 6.5 node that's bootstrapped to your Chef server, you can continue to use it by updating its run-list to include the `webserver` and `audit` cookbooks (option 1.)
+If you already have a Red Hat Enterprise Linux 6.5 or CentOS 6.5 node that's bootstrapped to your Chef server, you can continue to use it by updating its run-list to include the `webserver` and `audit` cookbooks (option 1.)
 
 If you don't have a Red Hat Enterprise Linux or CentOS node, follow option 2.
 
@@ -52,9 +52,9 @@ Replace `{address}` with your remote node's external address, `{user}` with your
 $ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --identity-file {identity-file}
 ```
 
-### Option 2: Bootstrap a new Red Hat Enterprise Linux or CentOS 6.5 node
+### Option 2: Bootstrap a new Red Hat Enterprise Linux 6.5 or CentOS 6.5 node
 
-First, prepare a clean a Red Hat Enterprise Linux or CentOS 6.5 instance to bootstrap. Be sure that:
+First, prepare a clean Red Hat Enterprise Linux 6.5 or CentOS 6.5 instance to bootstrap. Be sure that:
 
 * its IP address is accessible from your network.
 * it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).

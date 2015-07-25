@@ -16,6 +16,6 @@ Successfully installed knife-analytics-0.2.1
 2 gems installed
 ```
 
-[GITHUB] Get the code for this tutorial [on GitHub](https://github.com/learn-chef/controls-for-compliance-ubuntu).
+[GITHUB] Get the code for this tutorial [on GitHub](https://github.com/learn-chef/controls-for-compliance-rhel).
 
 Learn more about building a high velocity, highly compliant organization at [complianceatvelocity.com](http://complianceatvelocity.com/).

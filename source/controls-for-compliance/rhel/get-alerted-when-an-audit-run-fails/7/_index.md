@@ -1,18 +1,18 @@
 ## 7. Resolve the audit failure
 
-Now let's resolve the audit failure. We'll start by writing code to configure UFW on the node. Then we'll verify the fix locally. Finally, we'll upload our updated `webserver` to the Chef server and run `chef-client` on our node and verify that the audit passes.
+Now let's resolve the audit failure. We'll start by writing code to configure `iptables` on the node. Then we'll verify the fix locally. Finally, we'll upload our updated `webserver` to the Chef server and run `chef-client` on our node and verify that the audit passes.
 
 ### Update the webserver cookbook
 
-To ensure that the firewall is enabled, running, and activated, we'll use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook from Chef Supermarket, similar to what we did in the [Learn to manage a basic web application](/manage-a-web-app/rhel/configure-apache#5enableinboundtraffictoyourwebsite) tutorial. To summarize the steps:
+To ensure that the firewall is enabled, running, and activated, we'll use the [iptables](https://supermarket.chef.io/cookbooks/iptables) cookbook from Chef Supermarket, similar to what we did in the [Learn to manage a basic web application](/manage-a-web-app/rhel/configure-the-firewall/) tutorial. To summarize the steps:
 
-1. Reference the `firewall` cookbook in your `webserver` cookbook's metadata.
-1. Set the node attribute to allow inbound SSH access (port 22.)
-1. Run the `firewall` cookbook's default recipe and enable inbound HTTP access (port 80.)
+1. Reference the `iptables` cookbook in your `webserver` cookbook's metadata.
+1. Create a template that defines the firewall rules.
+1. From the `webserver` cookbook, apply the `iptables` cookbook's default recipe and the firewall rules.
 
-#### Reference the firewall cookbook
+#### Reference the iptables cookbook
 
-In your `webserver` cookbook's <code class="file-path">metadata.rb</code> file, add a `depends` line to add a reference to the `firewall` cookbook.
+In your `webserver` cookbook's <code class="file-path">metadata.rb</code> file, add a `depends` line to add a reference to the `iptables` cookbook.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/metadata.rb
@@ -24,56 +24,90 @@ description 'Installs/Configures webserver'
 long_description 'Installs/Configures webserver'
 version '0.1.0'
 
-depends 'firewall', '~> 1.5.0'
+depends 'iptables', '~> 1.0.0'
 ```
 
-#### Set the node attribute to allow inbound SSH access
+#### Create a template that defines the firewall rules
 
-It's important to enable inbound SSH access so that you can run `chef-client` from the `knife ssh` command on your workstation. The `firewall` cookbook provides a node attribute that does this automatically for you.
+Given our new compliance requirements, we want the following firewall configuration.
 
-First, run this command to generate an attributes file for the `webserver` cookbook.
+* The `iptables` service must be enabled.
+* The `iptables` service must be running.
+* The firewall must permit new and established SSH connections over port 22.
+* The firewall must permit new and established HTTP connections over port 80.
+* The firewall must reject all other connections.
+
+The compliance rules don't state a preference for how established connections should be handled, so we'll also allow established connections through the firewall.
+
+The `iptables` cookbook's default recipe ensures that the service is enabled and running. To use the `iptables` cookbook to apply the firewall rules, you first create a template that defines the firewall rules. Then you use the `iptables_rule` resource, which the `iptables` cookbook provides, to apply those rules.
+
+Let's start by defining the rules. From your workstation, run the following command to create a template that will hold our firewall rules.
 
 ```bash
 # ~/chef-repo
-$ chef generate attribute cookbooks/webserver default
+$ chef generate template cookbooks/webserver firewall
 Compiling Cookbooks...
-Recipe: code_generator::attribute
-  * directory[cookbooks/webserver/attributes] action create
-    - create new directory cookbooks/webserver/attributes
-  * template[cookbooks/webserver/attributes/default.rb] action create
-    - create new file cookbooks/webserver/attributes/default.rb
-    - update content in file cookbooks/webserver/attributes/default.rb from none to e3b0c4
+Recipe: code_generator::template
+  * directory[cookbooks/webserver/templates/default] action create
+    - create new directory cookbooks/webserver/templates/default
+  * template[cookbooks/webserver/templates/default/firewall.erb] action create
+    - create new file cookbooks/webserver/templates/default/firewall.erb
+    - update content in file cookbooks/webserver/templates/default/firewall.erb from none to e3b0c4
     (diff output suppressed by config)
 ```
 
-Now add this to your `webserver` cookbook's default attributes file, <code class="file-path">default.rb</code>.
+[COMMENT] In practice, you might create a separate template for each concern, for example, one template might define the default rule chain policy, and another might define the policy for SSH connections. Doing so allows you to apply a different set of configurations to each of your nodes. In this lesson, we'll add all of the rules to the same template.
+
+Now add the corresponding `iptables` rules to <code class="file-path">firewall.erb</code>.
 
 ```ruby
-# ~/chef-repo/cookbooks/webserver/attributes/default.rb
-default['firewall']['allow_ssh'] = true
+# ~/chef-repo/cookbooks/webserver/templates/default/firewall.erb
+# Delete all chains.
+-F
+
+# Allow established connections.
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# Set the default chain policy.
+-P INPUT DROP
+-P OUTPUT ACCEPT
+-P FORWARD DROP
+
+# Allow inbound traffic on port 22 for SSH.
+-A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW -j ACCEPT
+
+# Allow inbound traffic on port 80 for HTTP.
+-A INPUT -i eth0 -p tcp --dport 80 -m state --state NEW -j ACCEPT
 ```
 
-#### Run the firewall cookbook's default recipe and enable inbound HTTP access
+#### Run the iptables cookbook's default recipe and apply the firewall rules
 
-Now let's run the `firewall` cookbook's default recipe to enable and activate UFW, enable SSH access, and also configure the firewall to allow inbound HTTP access.
+In practice, you might add your firewall configuration code to a separate cookbook or recipe. But for this lesson, let's add the code to the `webserver` cookbook's default recipe.
 
-Add the following `include_recipe` line and a `firewall_rule` resource to the beginning of your `webserver` cookbook's default recipe, making the entire file look like this.
+Add the following code to the beginning of your `webserver` cookbook's default recipe.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
-include_recipe 'firewall::default'
-# Open port 80 to incoming traffic.
-firewall_rule 'http' do
-  port 80
-  protocol :tcp
-  action :allow
-end
+include_recipe 'iptables::default'
+
+# Apply firewall rules.
+iptables_rule 'firewall'
+```
+
+The entire file looks like this.
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/recipes/default.rb
+include_recipe 'iptables::default'
+
+# Apply firewall rules.
+iptables_rule 'firewall'
 
 # Install the Apache2 package.
-package 'apache2'
+package 'httpd'
 
 # Enable and start the Apache2 service.
-service 'apache2' do
+service 'httpd' do
   action [:enable, :start]
 end
 
@@ -118,7 +152,7 @@ description 'Installs/Configures webserver'
 long_description 'Installs/Configures webserver'
 version '0.2.0'
 
-depends 'firewall', '~> 1.5.0'
+depends 'iptables', '~> 1.0.0'
 ```
 
 ### Verify the fix locally
@@ -131,10 +165,12 @@ From your workstation, run `kitchen converge` to apply your `webserver` cookbook
 # ~/chef-repo/cookbooks/webserver
 $ kitchen converge
 -----> Starting Kitchen (v1.4.0)
------> Creating <default-ubuntu-1404>...
+-----> Creating <default-centos-65>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'opscode-centos-6.5'...
 [...]
+       Starting audit phase
+
        Validate web services
          Ensure no web files are owned by the root user
            is not owned by the root user
@@ -144,25 +180,46 @@ $ kitchen converge
 
        Validate network configuration and firewalls
          Ensure the firewall is active
-           has the firewall active
+           enables the iptables service
+           has iptables running
+           accepts SSH connections
+           accepts HTTP connections
+           rejects all other connections
+           permits all outbound traffic
 
-       Finished in 0.25212 seconds (files took 0.38234 seconds to load)
-       5 examples, 0 failures
+       Finished in 0.21124 seconds (files took 0.23629 seconds to load)
+       10 examples, 0 failures
        Auditing complete
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 11/16 resources updated in 24.76562148 seconds
-         5/5 controls succeeded
-       Finished converging <default-ubuntu-1404> (8m10.00s).
+       Chef Client finished, 0/14 resources updated in 2.678261508 seconds
+         10/10 controls succeeded
+       Finished converging <default-centos-65> (8m10.00s).
 -----> Kitchen is finished. (9m50.22s)
 ```
 
-You'll see from the output that all controls &ndash; the one that ensures that no web content is owned by `root` and the one that ensures that UFW is configured and activated &ndash; now pass. This gives us confidence that the change will work on our node.
+You'll see from the output that all controls &ndash; the one that verifies that no web content is owned by `root` and the one that verifies that the firewall is configured &ndash; now pass. This gives us confidence that the change will work on our node.
+
+Now that you've verified the fix locally, you can destroy your Test Kitchen instance.
+
+```bash
+# ~/chef-repo/cookbooks/webserver
+$ kitchen destroy
+-----> Starting Kitchen (v1.4.0)
+-----> Destroying <default-centos-65>...
+       ==> default: Forcing shutdown of VM...
+       ==> default: Destroying VM and associated drives...
+       Vagrant instance <default-centos-65> destroyed.
+       Finished destroying <default-centos-65> (0m3.62s).
+-----> Kitchen is finished. (0m4.41s)
+```
+
+[COMMENT] When developing a configuration change, whether it's with Chef or something else, it can be difficult to get it right the first time. For example, you might unintentionally configure the system to disable all inbound traffic, including over SSH, completely. That's where Test Kitchen really helps &ndash; if you place the system in an unrepairable state, you simply destroy the instance and try something else. Only after you're confident that your change works as you expect do you move your configuration code to the next step in the pipeline.
 
 ### Upload the webserver cookbook to the Chef server
 
-Because the `webserver` cookbook has a dependency on the `firewall` cookbook from Chef Supermarket, let's use [Berkshelf](http://berkshelf.com) to automatically resolve and upload the dependent cookbooks, like you did in the [Learn to manage a basic web application](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration/) tutorial.
+Because the `webserver` cookbook has a dependency on the `iptables` cookbook from Chef Supermarket, let's use [Berkshelf](http://berkshelf.com) to automatically resolve and upload the dependent cookbooks, like you did in the [Learn to manage a basic web application](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration/) tutorial.
 
 First, run `berks install` to download all dependent cookbooks from Chef Supermarket to your workstation.
 
@@ -174,8 +231,7 @@ Fetching 'audit' from source at ../audit
 Fetching 'webserver' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
 Using audit (0.2.0) from source at ../audit
-Using firewall (1.5.2)
-Using poise (2.2.3)
+Installing iptables (1.0.0)
 Using webserver (0.2.0) from source at .
 ```
 
@@ -184,9 +240,8 @@ Now run the following `berks upload` command to upload your cookbooks to the Che
 ```bash
 # ~/chef-repo/cookbooks/webserver
 $ berks upload --no-ssl-verify
-Skipping audit (0.2.0) (frozen)
-Uploaded firewall (1.5.2) to: 'https://your-chef-server:443/organizations/your-org-name'
-Uploaded poise (2.2.3) to: 'https://your-chef-server:443/organizations/your-org-name'
+Uploaded audit (0.2.0) to: 'https://your-chef-server:443/organizations/your-org-name'
+Uploaded iptables (1.0.0) to: 'https://your-chef-server:443/organizations/your-org-name'
 Uploaded webserver (0.2.0) to: 'https://your-chef-server:443/organizations/your-org-name'
 ```
 
@@ -221,25 +276,30 @@ As with your Test Kitchen instance, you'll see that the `webserver` cookbook upd
 ```bash
 # ~/chef-repo
 [...]
-52.27.87.170 Validate web services
-52.27.87.170   Ensure no web files are owned by the root user
-52.27.87.170     is not owned by the root user
-52.27.87.170     is not owned by the root user
-52.27.87.170     is not owned by the root user
-52.27.87.170     is not owned by the root user
-52.27.87.170
-52.27.87.170 Validate network configuration and firewalls
-52.27.87.170   Ensure the firewall is active
-52.27.87.170     has the firewall active
-52.27.87.170
-52.27.87.170 Finished in 0.21516 seconds (files took 0.25117 seconds to load)
-52.27.87.170 5 examples, 0 failures
-52.27.87.170 Auditing complete
-52.27.87.170
-52.27.87.170 Running handlers:
-52.27.87.170 Running handlers complete
-52.27.87.170 Chef Client finished, 4/16 resources updated in 3.945835128 seconds
-52.27.87.170   5/5 controls succeeded
+52.27.18.148 Validate web services
+52.27.18.148   Ensure no web files are owned by the root user
+52.27.18.148     is not owned by the root user
+52.27.18.148     is not owned by the root user
+52.27.18.148     is not owned by the root user
+52.27.18.148     is not owned by the root user
+52.27.18.148
+52.27.18.148 Validate network configuration and firewalls
+52.27.18.148   Ensure the firewall is active
+52.27.18.148     enables the iptables service
+52.27.18.148     has iptables running
+52.27.18.148     accepts SSH connections
+52.27.18.148     accepts HTTP connections
+52.27.18.148     rejects all other connections
+52.27.18.148     permits all outbound traffic
+52.27.18.148
+52.27.18.148 Finished in 1.51 seconds (files took 0.57014 seconds to load)
+52.27.18.148 10 examples, 0 failures
+52.27.18.148 Auditing complete
+52.27.18.148
+52.27.18.148 Running handlers:
+52.27.18.148 Running handlers complete
+52.27.18.148 Chef Client finished, 5/15 resources updated in 11.06361729 seconds
+52.27.18.148   10/10 controls succeeded
 ```
 
 ### Verify that the audit passed from Chef Analytics

@@ -24,31 +24,38 @@ $ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list -
 
 ### See the failure from the output
 
-You'll see from the output that although UFW is enabled and running, its status is inactive. This causes the audit run to fail.
+You'll see from the output that although `iptables` is enabled, running, and permits outbound traffic, it doesn't have the expected rules for inbound connections. This causes the audit run to fail.
 
 ```bash
 # ~/chef-repo
 [...]
-52.27.87.170 Validate network configuration and firewalls
-52.27.87.170   Ensure the firewall is active
-52.27.87.170     has the firewall active (FAILED - 1)
-52.27.87.170
-52.27.87.170 Failures:
-52.27.87.170
-52.27.87.170   1) Validate network configuration and firewalls Ensure the firewall is active has the firewall active
-52.27.87.170      Failure/Error: expect(command('ufw status').stdout).to match(/Status: active/)
-52.27.87.170        expected "Status: inactive\n" to match /Status: active/
-52.27.87.170        Diff:
-52.27.87.170        @@ -1,2 +1,2 @@
-52.27.87.170        -/Status: active/
-52.27.87.170        +Status: inactive
-52.27.87.170      # /var/chef/cache/cookbooks/audit/recipes/default.rb:21:in `block (3 levels) in from_file'
+52.27.18.148 Validate web services
+52.27.18.148   Ensure no web files are owned by the root user
+52.27.18.148     is not owned by the root user
+52.27.18.148     is not owned by the root user
+52.27.18.148     is not owned by the root user
+52.27.18.148     is not owned by the root user
+52.27.18.148
+52.27.18.148 Validate network configuration and firewalls
+52.27.18.148   Ensure the firewall is active
+52.27.18.148     enables the iptables service
+52.27.18.148     has iptables running
+52.27.18.148     accepts SSH connections (FAILED - 1)
+52.27.18.148     accepts HTTP connections (FAILED - 2)
+52.27.18.148     rejects all other connections (FAILED - 3)
+52.27.18.148     permits all outbound traffic
+52.27.18.148
+2.27.18.148 Failures:
+52.27.18.148
+52.27.18.148   1) Validate network configuration and firewalls Ensure the firewall is active accepts SSH connections
+52.27.18.148      Failure/Error: expect(iptables).to have_rule('-A INPUT -i eth0 -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT')
+52.27.18.148        expected iptables to have rule "-A INPUT -i eth0 -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT"
 [...]
 ```
 
-On the Chef Analytics server, navigate to the **Alerts** tab, and you'll see that the alert was triggered during the `chef-client` run.
+On the Chef Analytics server, navigate to the **Alerts** tab, and you'll see that three alerts were triggered during the `chef-client` run.
 
-![The failure in the Alert tab](chef-analytics/compliance-alert-failure.png)
+![The failure in the Alert tab](chef-analytics/compliance-alert-failure-iptables.png)
 
 From the **Nodes** tab, you'll also see that your node's status is orange, which indicates that the audit run failed.
 
