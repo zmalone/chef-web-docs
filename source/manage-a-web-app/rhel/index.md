@@ -1,5 +1,5 @@
 ---
-title: 'Learn to manage a basic web application on Red Hat Enterprise Linux'
+title: 'Learn to manage a basic Red Hat Enterprise Linux web application'
 layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg

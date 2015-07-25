@@ -1,5 +1,5 @@
 ---
-title: 'Learn to develop your infrastructure code locally on Red Hat Enterprise Linux'
+title: 'Learn to develop your Red Hat Enterprise Linux infrastructure code locally'
 layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg
