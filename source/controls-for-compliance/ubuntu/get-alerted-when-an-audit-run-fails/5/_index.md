@@ -4,7 +4,7 @@ Now let's add a new control that verifies that Ubuntu's default firewall, [UFW](
 
 ### Add the control to the audit cookbook
 
-From your workstation, add a second `control_group` to your `audit` cookbook's default recipe that verfies that UFW is enabled, making the entire recipe look like this.
+From your workstation, add a second `control_group` to your `audit` cookbook's default recipe that verifies that UFW is enabled, making the entire recipe look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/audit/recipes/default.rb
@@ -47,7 +47,7 @@ version '0.2.0'
 Now run this `knife cookbook upload` command to upload the revised `audit` cookbook to your Chef server.
 
 ```bash
-# ~/chef-client
+# ~/chef-repo
 $ knife cookbook upload audit
 Uploading audit          [0.2.0]
 Uploaded 1 cookbook.
