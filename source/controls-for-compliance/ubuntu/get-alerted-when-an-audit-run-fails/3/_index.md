@@ -6,7 +6,7 @@ You access the alert history through the Chef Analytics web interface. Like a no
 
 Let's write a rule that's triggered when your audit control, which verifies that web content is not owned by the `root` user, fails.
 
-Recall that your audit rule looks like this.
+Recall that your control looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/audit/recipes/default.rb

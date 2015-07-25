@@ -2,7 +2,7 @@
 
 Let's say that your organization's internal audit policy states that no web file can be owned by the `root` user. Let's add an audit control that tests for this.
 
-There are multiple ways to organize your audit code. You can create one recipe for each platform that you manage, as is done in the [audit-cis](https://supermarket.chef.io/cookbooks/audit-cis) cookbook on Chef Supermarket. Or you might create one recipe for each category you need to verify &ndash; security, services, network configuration, and so on. For now, you'll add the audit code to the default recipe.
+There are multiple ways to organize your audit code. You can create one recipe for each platform that you manage, as is done in the [audit-cis](https://supermarket.chef.io/cookbooks/audit-cis) cookbook on Chef Supermarket. Alternatively, you might create one recipe for each category you need to verify &ndash; security, services, network configuration, and so on. For now, you'll add the audit code to the default recipe.
 
 Add the following code to your default recipe, <code class="file-path">default.rb</code>.
 

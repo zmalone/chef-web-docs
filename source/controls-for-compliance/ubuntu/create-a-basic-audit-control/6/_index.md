@@ -51,7 +51,7 @@ This code creates the `web_admin` user and group and assigns the user as the own
 Now run `kitchen converge` to apply the changes and run your audit tests.
 
 ```bash
-# ~/chef-repo/cookbooks/audit
+# ~/chef-repo/cookbooks/webserver
 $ kitchen converge
 -----> Starting Kitchen (v1.4.0)
 -----> Converging <default-ubuntu-1404>...
