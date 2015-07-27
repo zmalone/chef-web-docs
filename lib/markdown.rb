@@ -64,6 +64,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[HEADLINE\] (.+)<\/p>/)  { "<div class=\"alert-box headline\">#{$1}</div>" }
     content.gsub!(/<p>\[QUOTE\] (.+)<\/p>/)  { "<div class=\"alert-box quote\"><i class=\"fa fa-quote-left\"></i>&nbsp;<i>#{$1}</i>&nbsp;<i class=\"fa fa-quote-right\"></i></div>" }
     content.gsub!(/<p>\[AWS\] (.+)<\/p>/)  { "<div class=\"alert-box aws\"><img class=\"alert-box-icon-large\" src=\"/assets/images/partner/AWS-Cloud.svg\"></img>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[CLOUD\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-cloud blueiconcolor\"></i>&nbsp; #{$1}</div>" }
   end
 
 
