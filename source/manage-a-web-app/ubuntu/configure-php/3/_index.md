@@ -9,7 +9,7 @@ In <code class="file-path">webserver.rb</code>, before the `template` resource f
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 # Load the secrets file and the encrypted data bag item that holds the database password.
-password_secret = Chef::EncryptedDataBagItem.load_secret("#{node['awesome_customers']['passwords']['secret_path']}")
+password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers']['passwords']['secret_path'])
 user_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'db_admin_password', password_secret)
 ```
 
