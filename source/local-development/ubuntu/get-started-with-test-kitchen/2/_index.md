@@ -28,7 +28,7 @@ suites:
 
 [COMMENT] On Linux and Mac OS, <code class="file-path">.kitchen.yml</code> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
-Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and an Ubuntu virtual machine. Since we want only Ubuntu, modify <code class="file-path">~/motd/.kitchen.yml</code> like this. (Be sure to replace `ubuntu-12.04` with `ubuntu-14.04`.)
+Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only Ubuntu, modify <code class="file-path">~/motd/.kitchen.yml</code> like this. (Be sure to replace `ubuntu-12.04` with `ubuntu-14.04`.)
 
 ```ruby
 # ~/motd/.kitchen.yml
