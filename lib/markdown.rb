@@ -79,7 +79,7 @@ module ZurbFoundation
       step = m.nil? ? nil : "step#{m['step']}"
       s += "<a name=\"#{step}\" href=\"##{step}\"></a>" unless step.nil?
       # create a second anchor for the long form and link it to the step anchor if it exists; otherwise, link to the long form
-      s + "<h#{size}><a class=\"section-link\" name=\"#{escaped}\" href=\"##{step || escaped}\"><i class=\"fa fa-angle-right\"></i></a>#{old}</h#{size}>"
+      s + "<h#{size}>#{old}<a class=\"section-link\" name=\"#{escaped}\" href=\"##{step || escaped}\"><i class=\"fa fa-link\"></i></a></h#{size}>"
     end
   end
 
