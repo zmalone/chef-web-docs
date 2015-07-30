@@ -1,0 +1,94 @@
+## 6. Update your web server configuration to meet compliance
+
+In the previous step, we saw that three files and one directory failed the audit.
+
+* <code class="file-path">/var/www/html/index.html</code>
+* <code class="file-path">/var/www/html/pages</code>
+* <code class="file-path">/var/www/html/pages/page1.html</code>
+* <code class="file-path">/var/www/html/pages/page2.html</code>
+
+In practice, you would work with your team and the audit team to determine the best course of action. Here, we'll resolve these failures by creating a user named `web_admin` and assign that user as the owner of the web files.
+
+Modify the part of your `webserver` cookbook's default recipe that manages the files to assign the owner to the built-in `IIS-IUSRS` group, like this.
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/recipes/default.rb
+# Add files to the site.
+%w(Default.htm pages/Page1.htm pages/Page2.htm).each do |web_file|
+  file File.join('c:/inetpub/wwwroot', web_file) do
+    content "<html>This is #{web_file}.</html>"
+    owner 'IIS_IUSRS'
+  end
+end
+```
+
+The entire recipe now looks like this.
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/recipes/default.rb
+# Install IIS.
+powershell_script 'Install IIS' do
+  code 'Add-WindowsFeature Web-Server'
+  guard_interpreter :powershell_script
+  not_if "(Get-WindowsFeature -Name Web-Server).Installed"
+end
+
+# Enable and start W3SVC.
+service 'w3svc' do
+  action [:enable, :start]
+end
+
+# Remove the default IIS start page.
+file 'c:/inetpub/wwwroot/iisstart.htm' do
+  action :delete
+end
+
+# Create the pages directory under the  Web application root directory.
+directory 'c:/inetpub/wwwroot/pages'
+
+# Add files to the site.
+%w(Default.htm pages/Page1.htm pages/Page2.htm).each do |web_file|
+  file File.join('c:/inetpub/wwwroot', web_file) do
+    content "<html>This is #{web_file}.</html>"
+    owner 'IIS_IUSRS'
+  end
+end
+```
+
+This code creates the `web_admin` user and group and assigns the user as the owner of both the <code class="file-path">/var/www/html/pages</code> directory and the web files.
+
+Now run `kitchen converge` to apply the changes and run your audit tests.
+
+```bash
+# ~/chef-repo/cookbooks/webserver
+$ kitchen converge
+-----> Starting Kitchen (v1.4.0)
+-----> Converging <default-windows-2012r2>...
+       Preparing files for transfer
+[...]
+         * file[c:/inetpub/wwwroot/pages/Page1.htm] action create
+           - change owner
+[...]
+       Starting audit phase
+
+       Validate web services
+         Ensure no web files are owned by the Administrators group
+           c:/inetpub/wwwroot/Default.htm is not owned by Administrators
+           c:/inetpub/wwwroot/pages/Page1.htm is not owned by Administrators
+           c:/inetpub/wwwroot/pages/Page2.htm is not owned by Administrators
+
+       Finished in 1.42 seconds (files took 1.11 seconds to load)
+       3 examples, 0 failures
+       Auditing complete
+
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 3/7 resources updated in 40.483174 seconds
+         3/3 controls succeeded
+       Finished converging <default-windows-2012r2> (0m48.19s).
+-----> Kitchen is finished. (0m50.18s)
+```
+
+[COMMENT] As your infrastructure code grows in complexity, you can temporarily set `audit_mode` in your <code class="file-path">.kitchen.yml</code> to `:disabled` to disable audit tests so that you can first verify that your configuration code works. Then you can enable audit mode to ensure that the working configuration also passes audit.
+
+Congratulations. The ownership of your web content changed from `Administrators` to `IIS_IUSRS` and your audit tests now pass!

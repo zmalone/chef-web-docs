@@ -93,6 +93,6 @@ $ kitchen converge
 -----> Kitchen is finished. (0m5.95s)
 ```
 
-[COMMENT] As your infrastructure code grows in complexity, you can temporarily set `audit_mode` in your <code class="file-path">.kitchen.yml</code> to `:disabled` to disable audit tests so that you can first verify that your configuration code works. Then you can enable audit mode to ensure that the working configuraiton also passes audit.
+[COMMENT] As your infrastructure code grows in complexity, you can temporarily set `audit_mode` in your <code class="file-path">.kitchen.yml</code> to `:disabled` to disable audit tests so that you can first verify that your configuration code works. Then you can enable audit mode to ensure that the working configuration also passes audit.
 
 Congratulations. The ownership of your web content changed from `root` to `web_admin` and your audit tests now pass!
