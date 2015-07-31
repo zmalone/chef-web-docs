@@ -15,42 +15,23 @@ From your workstation, add a second `control_group` to your `audit` cookbook's d
 ```ruby
 # ~/chef-repo/cookbooks/audit/recipes/default.rb
 control_group 'Validate web services' do
-  control 'Ensure no web files are owned by the root user' do
-    Dir.glob('/var/www/html/**/*') {|web_file|
-      it 'is not owned by the root user' do
-        expect(file(web_file)).to_not be_owned_by('root')
+  control 'Ensure no web files are owned by the Administrators group' do
+    Dir.glob('c:/inetpub/wwwroot/**/*.htm') {|web_file|
+      it "#{web_file} must not be owned by Administrators" do
+        expect(command("(Get-ChildItem #{web_file} | Get-Acl).Owner").stdout).to_not match(/Administrators$/)
       end
     }
   end
 end
 
 control_group 'Validate network configuration and firewalls' do
-  control 'Ensure the firewall is active' do
-    it 'enables the iptables service' do
-      expect(service('iptables')).to be_enabled
+  %w(ICMPv4 ICMPv6).each { |icmp_version|
+    control "Ensure the firewall blocks public #{icmp_version} Echo Request messages" do
+      it 'has at least one rule that blocks access' do
+        expect(command("$(Get-NetFirewallRule | Where-Object {($_.DisplayName -eq \"File and Printer Sharing (Echo Request - #{icmp_version}-In)\") -and ($_.Group -eq \"File and Printer Sharing\") -and ($_.Profile -eq \"Public\") -and ($_.Enabled -eq \"True\") -and ($_.Action -eq \"Block\")}).Count -gt 0").stdout).to match(/True/)
+      end
     end
-
-    it 'has iptables running' do
-      expect(service('iptables')).to be_running
-    end
-
-    it 'accepts SSH connections' do
-      expect(iptables).to have_rule('-A INPUT -i eth0 -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT')
-    end
-
-    it 'accepts HTTP connections' do
-      expect(iptables).to have_rule('-A INPUT -i eth0 -p tcp -m tcp --dport 80 -m state --state NEW -j ACCEPT')
-    end
-
-    it 'rejects all other connections' do
-      expect(iptables).to have_rule('-P INPUT DROP')
-      expect(iptables).to have_rule('-P FORWARD DROP')
-    end
-
-    it 'permits all outbound traffic' do
-      expect(iptables).to have_rule('-P OUTPUT ACCEPT')
-    end
-  end
+  }
 end
 ```
 
@@ -87,40 +68,12 @@ First navigate to the Chef Analytics interface from your web browser. From the *
 Now add the following code to define your rule.
 
 ```ruby
-rules 'Ensure the firewall is active'
+rules 'Ensure the firewall blocks public Echo Request messages'
   rule on run_control
   when
-    (name = 'enables the iptables service' or name = 'has iptables running') and status != 'success'
+    name = 'has at least one rule that blocks access' and status != 'success'
   then
     alert:error('Run control group "{{ message.name }}" failed on {{ message.run.node_name }}.')
-  end
-
-  rule on run_control
-  when
-    name = 'accepts SSH connections' and status != 'success'
-  then
-    alert:error('iptables does not allow SSH connections on {{ message.run.node_name }}.')
-  end
-
-  rule on run_control
-  when
-    name = 'accepts HTTP connections' and status != 'success'
-  then
-    alert:error('iptables does not allow HTTP connections on {{ message.run.node_name }}.')
-  end
-
-  rule on run_control
-  when
-    name = 'rejects all other connections' and status != 'success'
-  then
-    alert:error('iptables does not reject all other connections on {{ message.run.node_name }}.')
-  end
-
-  rule on run_control
-  when
-    name = 'permits all outbound traffic' and status != 'success'
-  then
-    alert:error('iptables does not permit all outbound traffic on {{ message.run.node_name }}.')
   end
 end
 ```

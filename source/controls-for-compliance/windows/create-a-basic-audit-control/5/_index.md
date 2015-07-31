@@ -52,7 +52,7 @@ $ kitchen converge
 -----> Converging <default-windows-2012r2>...
        Preparing files for transfer
 [...]
-         3) Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page2.htm is not owned by Administrators
+         3) Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators
             Failure/Error: expect(command("(Get-ChildItem #{web_file} | Get-Acl).Owner").stdout).to_not match(/Administrators$/)
        expected "BUILTIN\\Administrators\n" not to match /Administrators$/
        Diff:
@@ -66,9 +66,9 @@ $ kitchen converge
 
        Failed examples:
 
-       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/Default.htm is not owned by Administrators
-       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page1.htm is not owned by Administrators
-       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page2.htm is not owned by Administrators
+       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/Default.htm must not be owned by Administrators
+       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page1.htm must not be owned by Administrators
+       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators
 
        Audit phase exception:
          Audit phase found failures - 3/3 controls failed
@@ -87,9 +87,9 @@ Although the web server was successfully configured, the audit run failed. You'l
 [...]
        Failed examples:
 
-       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/Default.htm is not owned by Administrators
-       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page1.htm is not owned by Administrators
-       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page2.htm is not owned by Administrators
+       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/Default.htm must not be owned by Administrators
+       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page1.htm must not be owned by Administrators
+       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators
 [...]
 ```
 

@@ -4,17 +4,17 @@ In [Get started with Chef Analytics](/get-started-with-chef-analytics/linux/), y
 
 You access the alert history through the Chef Analytics web interface. Like a notification, an alert is raised from a rule. You can generate an alert and a notification from the same rule.
 
-Let's write a rule that's triggered when your audit control, which verifies that web content is not owned by the `root` user, fails.
+Let's write a rule that's triggered when your audit control, which verifies that web content must not be owned by the `root` user, fails.
 
 Recall that your control looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/audit/recipes/default.rb
 control_group 'Validate web services' do
-  control 'Ensure no web files are owned by the root user' do
-    Dir.glob('/var/www/html/**/*') {|web_file|
-      it 'is not owned by the root user' do
-        expect(file(web_file)).to_not be_owned_by('root')
+  control 'Ensure no web files are owned by the Administrators group' do
+    Dir.glob('c:/inetpub/wwwroot/**/*.htm') {|web_file|
+      it "#{web_file} must not be owned by Administrators" do
+        expect(command("(Get-ChildItem #{web_file} | Get-Acl).Owner").stdout).to_not match(/Administrators$/)
       end
     }
   end
@@ -29,12 +29,14 @@ Now add the following code to define your rule.
 rules 'Validate web services'
   rule on run_control
   when
-    name = 'is not owned by the root user' and status != 'success'
+    name =~ 'is not owned by Administrators$' and status != 'success'
   then
     alert:error('Run control group "{{ message.name }}" failed on {{ message.run.node_name }}.')
   end
 end
 ```
+
+[DISCUSS AND LINK TO REGEXP - docs and that other site]
 
 The [run_control](https://docs.chef.io/analytics_rules.html#run-control) message states a rule for a single audit. The `name` part of the `when` block corresponds to the name of the `it` block in your audit control. The rule triggers only when the status of the control is not `success`.
 

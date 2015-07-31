@@ -12,7 +12,7 @@ From your workstation, run the following command to set the run-list to contain 
 
 ```bash
 # ~/chef-repo
-$ knife node run_list set webserver1 'recipe[webserver::default], recipe[audit::default]'
+$ knife node run_list set webserver1 'recipe[webserver::default],recipe[audit::default]'
 webserver1:
   run_list:
     recipe[webserver::default]
@@ -23,7 +23,7 @@ When running `knife` from Windows PowerShell, surround the string with triple si
 
 ```ps
 # ~/chef-repo
-$ knife node run_list set webserver1 '''recipe[webserver::default], recipe[audit::default]'''
+$ knife node run_list set webserver1 '''recipe[webserver::default],recipe[audit::default]'''
 webserver1:
   run_list:
     recipe[webserver::default]
@@ -54,14 +54,14 @@ $ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --s
 
 ### Option 2: Bootstrap a new Red Hat Enterprise Linux 6.5 or CentOS 6.5 node
 
-First, prepare a clean Red Hat Enterprise Linux 6.5 or CentOS 6.5 instance to bootstrap. Be sure that:
+First, prepare a clean Windows Server 2012 R2 instance to bootstrap. Be sure that:
 
 * its IP address is accessible from your network.
 * it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
 * it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
 * you have root or `sudo` access.
 
-Now bootstrap your node. Choose the option below that matches how you can authenticate and bootstrap your node.
+Now bootstrap your node.
 
 [COMMENT] Although you set both the `audit` and `webserver` cookbooks' default recipe as part of the run-list, only the infrastructure code, not the audit code, is run during the bootstrap process. You'll run the audit code in a later step.
 
@@ -71,16 +71,7 @@ Replace `{address}` with your remote node's external address, `{user}` with your
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name webserver1 --run-list 'recipe[webserver::default], recipe[audit::default]'
-```
-
-#### Option b: Use key-based authentication
-
-Replace `{address}` with your remote node's external address, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
-
-```bash
-# ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name webserver1 --run-list 'recipe[webserver::default], recipe[audit::default]'
+$ knife bootstrap windows winrm {address} --winrm-user {user} --winrm-password '{password}' --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
 
 <a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>

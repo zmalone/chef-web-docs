@@ -1,86 +1,29 @@
 ## 7. Resolve the audit failure
 
-Now let's resolve the audit failure. We'll start by writing code to configure `iptables` on the node. Then we'll verify the fix locally. Finally, we'll upload our updated `webserver` to the Chef server and run `chef-client` on our node and verify that the audit passes.
+Now let's resolve the audit failure. We'll start by writing code to configure the firewall on the node. Then we'll verify the fix locally. Finally, we'll upload our updated `webserver` to the Chef server and run `chef-client` on our node and verify that the audit passes.
 
 ### Update the webserver cookbook
 
-To ensure that the firewall is enabled, running, and activated, we'll use the [iptables](https://supermarket.chef.io/cookbooks/iptables) cookbook from Chef Supermarket, similar to what we did in the [Learn to manage a basic web application](/manage-a-web-app/rhel/configure-the-firewall/) tutorial. To summarize the steps:
+To ensure that the firewall rules are is enabled and running, we'll use the same `powershell_script` resource that we used to configure IIS.
 
-1. Reference the `iptables` cookbook in your `webserver` cookbook's metadata.
-1. Create a template that defines the firewall rules.
-1. From the `webserver` cookbook, apply the `iptables` cookbook's default recipe and the firewall rules.
-
-#### Reference the iptables cookbook
-
-In your `webserver` cookbook's <code class="file-path">metadata.rb</code> file, add a `depends` line to add a reference to the `iptables` cookbook.
+Recall that the control that XXX looks like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/webserver/metadata.rb
-name 'webserver'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
-license 'all_rights'
-description 'Installs/Configures webserver'
-long_description 'Installs/Configures webserver'
-version '0.1.0'
-
-depends 'iptables', '~> 1.0.0'
+# ~/chef-repo/cookbooks/audit/recipes/default.rb
+control_group 'Validate network configuration and firewalls' do
+  %w(ICMPv4 ICMPv6).each { |icmp_version|
+    control "Ensure the firewall blocks public #{icmp_version} Echo Request messages" do
+      it 'has at least one rule that blocks access' do
+        expect(command("$(Get-NetFirewallRule | Where-Object {($_.DisplayName -eq \"File and Printer Sharing (Echo Request - #{icmp_version}-In)\") -and ($_.Group -eq \"File and Printer Sharing\") -and ($_.Profile -eq \"Public\") -and ($_.Enabled -eq \"True\") -and ($_.Action -eq \"Block\")}).Count -gt 0").stdout).to match(/True/)
+      end
+    end
+  }
+end
 ```
 
-#### Create a template that defines the firewall rules
+We can use the logic for the control as a guide for writing the infrastructure code that's required to configure the firewall.
 
-Given our new compliance requirements, we want the following firewall configuration.
-
-* The `iptables` service must be enabled.
-* The `iptables` service must be running.
-* The firewall must permit new and established SSH connections over port 22.
-* The firewall must permit new and established HTTP connections over port 80.
-* The firewall must reject all other connections.
-
-The compliance rules don't state a preference for how established connections should be handled, so we'll also allow established connections through the firewall.
-
-The `iptables` cookbook's default recipe ensures that the service is enabled and running. To use the `iptables` cookbook to apply the firewall rules, you first create a template that defines the firewall rules. Then you use the `iptables_rule` resource, which the `iptables` cookbook provides, to apply those rules.
-
-Let's start by defining the rules. From your workstation, run the following command to create a template that will hold our firewall rules.
-
-```bash
-# ~/chef-repo
-$ chef generate template cookbooks/webserver firewall
-Compiling Cookbooks...
-Recipe: code_generator::template
-  * directory[cookbooks/webserver/templates/default] action create
-    - create new directory cookbooks/webserver/templates/default
-  * template[cookbooks/webserver/templates/default/firewall.erb] action create
-    - create new file cookbooks/webserver/templates/default/firewall.erb
-    - update content in file cookbooks/webserver/templates/default/firewall.erb from none to e3b0c4
-    (diff output suppressed by config)
-```
-
-[COMMENT] In practice, you might create a separate template for each concern, for example, one template might define the default rule chain policy, and another might define the policy for SSH connections. Doing so allows you to apply a different set of configurations to each of your nodes. In this lesson, we'll add all of the rules to the same template.
-
-Now add the corresponding `iptables` rules to <code class="file-path">firewall.erb</code>.
-
-```ruby
-# ~/chef-repo/cookbooks/webserver/templates/default/firewall.erb
-# Delete all chains.
--F
-
-# Allow established connections.
--A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-
-# Set the default chain policy.
--P INPUT DROP
--P OUTPUT ACCEPT
--P FORWARD DROP
-
-# Allow inbound traffic on port 22 for SSH.
--A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW -j ACCEPT
-
-# Allow inbound traffic on port 80 for HTTP.
--A INPUT -i eth0 -p tcp --dport 80 -m state --state NEW -j ACCEPT
-```
-
-#### Run the iptables cookbook's default recipe and apply the firewall rules
+#### Apply the firewall rules
 
 In practice, you might add your firewall configuration code to a separate cookbook or recipe. But for this lesson, let's add the code to the `webserver` cookbook's default recipe.
 
@@ -88,50 +31,54 @@ Add the following code to the beginning of your `webserver` cookbook's default r
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
-include_recipe 'iptables::default'
-
-# Apply firewall rules.
-iptables_rule 'firewall'
+# Block ICMPv4 and ICMPv6 Echo Request messages.
+%w(ICMPv4 ICMPv6).each { |icmp_version|
+  powershell_script "Block #{icmp_version} Echo Request messages" do
+    code "New-NetFirewallRule -DisplayName \"File and Printer Sharing (Echo Request - #{icmp_version}-In)\" -Group \"File and Printer Sharing\" -Profile Public -Enabled True -Action Block"
+    guard_interpreter :powershell_script
+    not_if "$(Get-NetFirewallRule | Where-Object {($_.DisplayName -eq \"File and Printer Sharing (Echo Request - #{icmp_version}-In)\") -and ($_.Group -eq \"File and Printer Sharing\") -and ($_.Profile -eq \"Public\") -and ($_.Enabled -eq \"True\") -and ($_.Action -eq \"Block\")}).Count -gt 0"
+  end
+}
 ```
 
 The entire file looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
-include_recipe 'iptables::default'
+# Block ICMPv4 and ICMPv6 Echo Request messages.
+%w(ICMPv4 ICMPv6).each { |icmp_version|
+  powershell_script "Block #{icmp_version} Echo Request messages" do
+    code "New-NetFirewallRule -DisplayName \"File and Printer Sharing (Echo Request - #{icmp_version}-In)\" -Group \"File and Printer Sharing\" -Profile Public -Enabled True -Action Block"
+    guard_interpreter :powershell_script
+    not_if "$(Get-NetFirewallRule | Where-Object {($_.DisplayName -eq \"File and Printer Sharing (Echo Request - #{icmp_version}-In)\") -and ($_.Group -eq \"File and Printer Sharing\") -and ($_.Profile -eq \"Public\") -and ($_.Enabled -eq \"True\") -and ($_.Action -eq \"Block\")}).Count -gt 0"
+  end
+}
 
-# Apply firewall rules.
-iptables_rule 'firewall'
+# Install IIS.
+powershell_script 'Install IIS' do
+  code 'Add-WindowsFeature Web-Server'
+  guard_interpreter :powershell_script
+  not_if '(Get-WindowsFeature -Name Web-Server).Installed'
+end
 
-# Install the Apache2 package.
-package 'httpd'
-
-# Enable and start the Apache2 service.
-service 'httpd' do
+# Enable and start W3SVC.
+service 'w3svc' do
   action [:enable, :start]
 end
 
-# Create the web_admin user and group.
-group 'web_admin'
-
-user 'web_admin' do
-  group 'web_admin'
-  system true
-  shell '/bin/bash'
+# Remove the default IIS start page.
+file 'c:/inetpub/wwwroot/iisstart.htm' do
+  action :delete
 end
 
-# Create the pages directory under the document root directory.
-directory '/var/www/html/pages' do
-  group 'web_admin'
-  user 'web_admin'
-end
+# Create the pages directory under the  Web application root directory.
+directory 'c:/inetpub/wwwroot/pages'
 
 # Add files to the site.
-%w(index.html pages/page1.html pages/page2.html).each do |web_file|
-  file File.join('/var/www/html', web_file) do
+%w(Default.htm pages/Page1.htm pages/Page2.htm).each do |web_file|
+  file File.join('c:/inetpub/wwwroot', web_file) do
     content "<html>This is #{web_file}.</html>"
-    group 'web_admin'
-    user 'web_admin'
+    owner 'IIS_IUSRS'
   end
 end
 ```
@@ -151,8 +98,6 @@ license 'all_rights'
 description 'Installs/Configures webserver'
 long_description 'Installs/Configures webserver'
 version '0.2.0'
-
-depends 'iptables', '~> 1.0.0'
 ```
 
 ### Verify the fix locally
@@ -165,30 +110,26 @@ From your workstation, run `kitchen converge` to apply your `webserver` cookbook
 # ~/chef-repo/cookbooks/webserver
 $ kitchen converge
 -----> Starting Kitchen (v1.4.0)
------> Creating <default-centos-65>...
+-----> Creating <default-windows-2012r2>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'opscode-centos-6.5'...
+       ==> default: Importing base box 'windows-2012r2'...
 [...]
        Starting audit phase
 
        Validate web services
-         Ensure no web files are owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
+         Ensure no web files are owned by the Administrators group
+           c:/inetpub/wwwroot/Default.htm must not be owned by Administrators
+           c:/inetpub/wwwroot/pages/Page1.htm must not be owned by Administrators
+           c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators
 
        Validate network configuration and firewalls
-         Ensure the firewall is active
-           enables the iptables service
-           has iptables running
-           accepts SSH connections
-           accepts HTTP connections
-           rejects all other connections
-           permits all outbound traffic
+         Ensure the firewall blocks public ICMPv4 Echo Request messages
+           has at least one rule that blocks access
+         Ensure the firewall blocks public ICMPv6 Echo Request messages
+           has at least one rule that blocks access
 
-       Finished in 0.21124 seconds (files took 0.23629 seconds to load)
-       10 examples, 0 failures
+       Finished in 4.83 seconds (files took 1.14 seconds to load)
+       5 examples, 0 failures
        Auditing complete
 
        Running handlers:
@@ -278,10 +219,10 @@ As with your Test Kitchen instance, you'll see that the `webserver` cookbook upd
 [...]
 52.27.18.148 Validate web services
 52.27.18.148   Ensure no web files are owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
+52.27.18.148     must not be owned by the root user
+52.27.18.148     must not be owned by the root user
+52.27.18.148     must not be owned by the root user
+52.27.18.148     must not be owned by the root user
 52.27.18.148
 52.27.18.148 Validate network configuration and firewalls
 52.27.18.148   Ensure the firewall is active

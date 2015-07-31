@@ -2,24 +2,11 @@
 
 From your workstation, run `chef-client` with audit mode enabled a second time.
 
-Choose the option that matches how you connect to your Red Hat Enterprise Linux or CentOS node.
-
-### Option 1: Use a user name and password
-
 Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --ssh-password '{password}'
-```
-
-### Option 2: Use key-based authentication
-
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
-
-```bash
-# ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --identity-file {identity-file}
+$ knife winrm {address} 'chef-client --audit-mode audit-only' --manual-list --winrm-user {user} --winrm-password '{password}'
 ```
 
 ### See the failure from the output
@@ -29,33 +16,30 @@ You'll see from the output that although `iptables` is enabled, running, and per
 ```bash
 # ~/chef-repo
 [...]
-52.27.18.148 Validate web services
-52.27.18.148   Ensure no web files are owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148
-52.27.18.148 Validate network configuration and firewalls
-52.27.18.148   Ensure the firewall is active
-52.27.18.148     enables the iptables service
-52.27.18.148     has iptables running
-52.27.18.148     accepts SSH connections (FAILED - 1)
-52.27.18.148     accepts HTTP connections (FAILED - 2)
-52.27.18.148     rejects all other connections (FAILED - 3)
-52.27.18.148     permits all outbound traffic
-52.27.18.148
-2.27.18.148 Failures:
-52.27.18.148
-52.27.18.148   1) Validate network configuration and firewalls Ensure the firewall is active accepts SSH connections
-52.27.18.148      Failure/Error: expect(iptables).to have_rule('-A INPUT -i eth0 -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT')
-52.27.18.148        expected iptables to have rule "-A INPUT -i eth0 -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT"
+54.68.228.148 [2015-07-31T14:10:00+00:00] INFO: Validate web services
+54.68.228.148 [2015-07-31T14:10:00+00:00] INFO:   Ensure no web files are owned by the Administrators group
+54.68.228.148 [2015-07-31T14:10:02+00:00] INFO:     c:/inetpub/wwwroot/Default.htm must not be owned by Administrators
+54.68.228.148 [2015-07-31T14:10:02+00:00] INFO:     c:/inetpub/wwwroot/pages/Page1.htm must not be owned by Administrators
+54.68.228.148 [2015-07-31T14:10:03+00:00] INFO:     c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators
+54.68.228.148 [2015-07-31T14:10:03+00:00] INFO:
+54.68.228.148 [2015-07-31T14:10:03+00:00] INFO: Validate network configuration and firewalls
+54.68.228.148 [2015-07-31T14:10:03+00:00] INFO:   Ensure the firewall blocks public ICMPv4 Echo Request messages
+54.68.228.148 [2015-07-31T14:10:05+00:00] INFO:     has at least one rule that blocks access (FAILED - 1)
+54.68.228.148 [2015-07-31T14:10:05+00:00] INFO:   Ensure the firewall blocks public ICMPv6 Echo Request messages
+54.68.228.148 [2015-07-31T14:10:06+00:00] INFO:     has at least one rule that blocks access (FAILED - 2)
+54.68.228.148 [2015-07-31T14:10:06+00:00] INFO: Successfully executed all `control_group` blocks and contained examples
+54.68.228.148 [2015-07-31T14:10:06+00:00] INFO:
+54.68.228.148 Failures:
+54.68.228.148
+54.68.228.148   1) Validate network configuration and firewalls Ensure the firewall blocks public ICMPv4 Echo Request messages has at least one rule that blocks access
+54.68.228.148      Failure/Error: expect(command("$(Get-NetFirewallRule | Where-Object {($_.DisplayName -eq \"File and Printer Sharing (Echo Request - #{icmp_version}-In)\") -and ($_.Group -eq \"File and Printer Sharing\") -and ($_.Profile -eq \"Public\") -and ($_.Enabled -eq \"True\") -and ($_.Action -eq \"Block\")}).Count -gt 0").stdout).to match(/True/)
+54.68.228.148        expected "False\n" to match /True/
 [...]
 ```
 
 On the Chef Analytics server, navigate to the **Alerts** tab, and you'll see that three alerts were triggered during the `chef-client` run.
 
-![The failure in the Alert tab](chef-analytics/compliance-alert-failure-iptables.png)
+![The failure in the Alert tab](chef-analytics/compliance-alert-failure-icmp.png)
 
 From the **Nodes** tab, you'll also see that your node's status is orange, which indicates that the audit run failed.
 

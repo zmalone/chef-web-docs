@@ -73,9 +73,9 @@ $ kitchen converge
 
        Validate web services
          Ensure no web files are owned by the Administrators group
-           c:/inetpub/wwwroot/Default.htm is not owned by Administrators
-           c:/inetpub/wwwroot/pages/Page1.htm is not owned by Administrators
-           c:/inetpub/wwwroot/pages/Page2.htm is not owned by Administrators
+           c:/inetpub/wwwroot/Default.htm must not be owned by Administrators
+           c:/inetpub/wwwroot/pages/Page1.htm must not be owned by Administrators
+           c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators
 
        Finished in 1.42 seconds (files took 1.11 seconds to load)
        3 examples, 0 failures

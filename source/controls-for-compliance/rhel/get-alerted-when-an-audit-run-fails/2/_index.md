@@ -12,7 +12,7 @@ From your workstation, run the following command to set the run-list to contain 
 
 ```bash
 # ~/chef-repo
-$ knife node run_list set webserver1 'recipe[webserver::default], recipe[audit::default]'
+$ knife node run_list set webserver1 'recipe[webserver::default],recipe[audit::default]'
 webserver1:
   run_list:
     recipe[webserver::default]
@@ -23,7 +23,7 @@ When running `knife` from Windows PowerShell, surround the string with triple si
 
 ```ps
 # ~/chef-repo
-$ knife node run_list set webserver1 '''recipe[webserver::default], recipe[audit::default]'''
+$ knife node run_list set webserver1 '''recipe[webserver::default],recipe[audit::default]'''
 webserver1:
   run_list:
     recipe[webserver::default]
@@ -71,7 +71,7 @@ Replace `{address}` with your remote node's external address, `{user}` with your
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name webserver1 --run-list 'recipe[webserver::default], recipe[audit::default]'
+$ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
 
 #### Option b: Use key-based authentication
@@ -80,7 +80,7 @@ Replace `{address}` with your remote node's external address, and `{identity-fil
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name webserver1 --run-list 'recipe[webserver::default], recipe[audit::default]'
+$ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
 
 <a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
