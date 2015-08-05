@@ -1,6 +1,6 @@
 ## 4. Create the webserver cookbook
 
-Now let's create and apply a second cookbook that configures Apache and adds a few web pages.
+Now let's create and apply a second cookbook that configures IIS and adds a few web pages.
 
 First, from your <code class="file-path">~/chef-repo</code> directory, create the `webserver` cookbook.
 
@@ -17,7 +17,7 @@ Now add this code to the `webserver` cookbook's default recipe.
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
   guard_interpreter :powershell_script
-  not_if "(Get-WindowsFeature -Name Web-Server).Installed"
+  not_if '(Get-WindowsFeature -Name Web-Server).Installed'
 end
 
 # Enable and start W3SVC.
@@ -36,9 +36,9 @@ directory 'c:\inetpub\wwwroot\pages'
 end
 ```
 
-This recipe configures Apache and writes a few files for it to serve.
+This recipe configures IIS and writes a few files for it to serve.
 
-[COMMENT] For simplicity, we use the built-in `package` and `service` resources to configure Apache. A more robust solution might use the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket.
+[COMMENT] For simplicity, we use the built-in `powershell_script` and `service` resources to configure IIS. A more robust solution might use the [iis](https://supermarket.chef.io/cookbooks/iis) cookbook from Chef Supermarket.
 
 Now use Test Kitchen to apply the `webserver` cookbook locally. This instance is different than the one you used to apply the `audit` cookbook. Start by adding this to your webserver's <code class="file-path">.kitchen.yml</code> file.
 
@@ -84,9 +84,9 @@ $ kitchen converge
 -----> Kitchen is finished. (7m51.92s)
 ```
 
-Now login to your Windows Server instance through the VirtualBox window that appeared during the `kitchen converge` run. Login as the `Vagrant` user; the password is `vagrant`.
+Now login to your Windows Server instance through the VirtualBox window that appeared during the `kitchen converge` run. Login as either the `Administrator` or `Vagrant` user; the password for both accounts is `vagrant`.
 
-From your instance, open a Microsoft PowerShell instance, run a few commands to verify that your web server is correctly set up.
+From your instance, open a Microsoft PowerShell instance and run a few commands to verify that your web server is correctly set up.
 
 ```ps
 $  ls C:\inetpub\wwwroot\**\*

@@ -1,6 +1,6 @@
 ## 3. Apply the recipe to a Test Kitchen instance
 
-Now let's apply the audit control to a CentOS virtual machine. First, modify your `audit` cookbook's <code class="file-path">.kitchen.yml</code> file to look like this.
+Now let's apply the audit control to a Windows Server virtual machine. First, modify your `audit` cookbook's <code class="file-path">.kitchen.yml</code> file to look like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/audit/.kitchen.yml
@@ -10,6 +10,8 @@ driver:
 
 provisioner:
   name: chef_zero
+  client_rb:
+    audit_mode: :audit_only
 
 platforms:
   - name: windows-2012r2
@@ -19,7 +21,6 @@ suites:
     run_list:
       - recipe[audit::default]
     attributes:
-
 ```
 
 The `audit_mode: :audit_only` part tells `chef-client` to run only your audit controls, and not apply any other resources that appear in the run-list. We specify `:audit_only` because this cookbook's role is only to verify your compliance policy. You can specify `:enabled` to apply both your configuration code and your audit controls or `:disabled` to run only your configuration code.
@@ -35,7 +36,7 @@ default-windows-2012r2  Vagrant  ChefZero     Busser    Winrm      <Not Created>
 
 Now run `kitchen converge` to create the instance and apply your audit control.
 
-[COMMENT] A VirtualBox window will appear when you run `kitchen converge`. For now, you don't need to interact with that window.
+[COMMENT] A VirtualBox window that contains your Windows Server instance appears when you run `kitchen converge`. For now, you don't need to interact with that window.
 
 ```bash
 # ~/chef-repo/cookbooks/audit
@@ -62,16 +63,3 @@ $ kitchen converge
 ```
 
 We haven't yet configured IIS or added any web files, so there are no files to test. But this is a good first step to verifying that the control is correctly set up.
-
-DESTROY?
-
-```bash
-$ kitchen destroy
------> Starting Kitchen (v1.4.0)
------> Destroying <default-windows-2012r2>...
-       ==> default: Forcing shutdown of VM...
-       ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-windows-2012r2> destroyed.
-       Finished destroying <default-windows-2012r2> (0m4.71s).
------> Kitchen is finished. (0m6.69s)
-```

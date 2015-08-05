@@ -1,15 +1,14 @@
 ## 6. Update your web server configuration to meet compliance
 
-In the previous step, we saw that three files and one directory failed the audit.
+In the previous step, we saw that three files failed the audit.
 
-* <code class="file-path">/var/www/html/index.html</code>
-* <code class="file-path">/var/www/html/pages</code>
-* <code class="file-path">/var/www/html/pages/page1.html</code>
-* <code class="file-path">/var/www/html/pages/page2.html</code>
+* <code class="file-path">c:/inetpub/wwwroot/Default.htm</code>
+* <code class="file-path">c:/inetpub/wwwroot/pages/Page1.htm</code>
+* <code class="file-path">c:/inetpub/wwwroot/pages/Page2.htm</code>
 
-In practice, you would work with your team and the audit team to determine the best course of action. Here, we'll resolve these failures by creating a user named `web_admin` and assign that user as the owner of the web files.
+In practice, you would work with your team and the audit team to determine the best course of action. Here, we'll resolve these failures by assigning the built-in `IIS_IUSRS` group as the owner of the web files.
 
-Modify the part of your `webserver` cookbook's default recipe that manages the files to assign the owner to the built-in `IIS-IUSRS` group, like this.
+Modify the part of your `webserver` cookbook's default recipe that manages the files to assign the owner to the `IIS_IUSRS` group, like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
@@ -30,7 +29,7 @@ The entire recipe now looks like this.
 powershell_script 'Install IIS' do
   code 'Add-WindowsFeature Web-Server'
   guard_interpreter :powershell_script
-  not_if "(Get-WindowsFeature -Name Web-Server).Installed"
+  not_if '(Get-WindowsFeature -Name Web-Server).Installed'
 end
 
 # Enable and start W3SVC.
@@ -54,8 +53,6 @@ directory 'c:/inetpub/wwwroot/pages'
   end
 end
 ```
-
-This code creates the `web_admin` user and group and assigns the user as the owner of both the <code class="file-path">/var/www/html/pages</code> directory and the web files.
 
 Now run `kitchen converge` to apply the changes and run your audit tests.
 

@@ -2,9 +2,9 @@
 
 Next, let's apply the `webserver` cookbook to your node.
 
-If you already have a Red Hat Enterprise Linux 6.5 or CentOS 6.5 node that's bootstrapped to your Chef server, you can continue to use it by updating its run-list to include the `webserver` and `audit` cookbooks (option 1.)
+If you already have a Windows Server node that's bootstrapped to your Chef server, you can continue to use it by updating its run-list to include the `webserver` and `audit` cookbooks (option 1.)
 
-If you don't have a Red Hat Enterprise Linux or CentOS node, follow option 2.
+If you don't have a Windows Server node, follow option 2.
 
 ### Option 1: Update the run-list on an existing node and run chef-client
 
@@ -32,10 +32,6 @@ webserver1:
 
 Now run `chef-client` on your node. We want to run only the `webserver` cookbook, so we use the `--audit-mode disabled` option to disable the `audit` cookbook (`disabled` is also the default).
 
-Choose the option that matches how you connect to your Red Hat Enterprise Linux or CentOS node.
-
-#### Option a: Use a user name and password
-
 Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
 ```bash
@@ -43,16 +39,7 @@ Replace `{address}` with your remote node's external address, `{user}` with your
 $ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --ssh-password '{password}'
 ```
 
-#### Option b: Use key-based authentication
-
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
-
-```bash
-# ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --identity-file {identity-file}
-```
-
-### Option 2: Bootstrap a new Red Hat Enterprise Linux 6.5 or CentOS 6.5 node
+### Option 2: Bootstrap a new Windows Server node
 
 First, prepare a clean Windows Server 2012 R2 instance to bootstrap. Be sure that:
 
