@@ -36,23 +36,40 @@ Replace `{address}` with your remote node's external address, `{user}` with your
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --ssh-password '{password}'
+$ knife winrm {address} 'chef-client --audit-mode disabled' --manual-list --winrm-user {user} --winrm-password '{password}'
 ```
 
 ### Option 2: Bootstrap a new Windows Server node
 
-First, prepare a clean Windows Server 2012 R2 instance to bootstrap. Be sure that:
+First, prepare a clean Windows Server 2012 R2 instance to bootstrap. Use the following checklist to verify that your instance is ready to use with Chef.
 
-* its IP address is accessible from your network.
-* it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
-* it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
-* you have root or `sudo` access.
+<a class="help-button radius" href="#" data-reveal-id="knife-help-modal-windows">Checklist for Windows Server nodes</a>
+
+<div id="knife-help-modal-windows" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <h3 id="modalTitle">To prepare your Windows Server node, ensure that:</h3>
+  <ul>
+    <li>the knife windows plugin <a href="/manage-a-node/windows/bootstrap-your-node#step3" target="_blank">is installed</a> on your workstation.</li>
+    <li>your node's IP address is accessible from your network.</li>
+    <li>you have Administrator access on the node.</li>
+    <li>your node has inbound access (including firewall) on ports 5985 and 5986 (WinRM).</li>
+    <li>your node has outbound access (including firewall) on port 443 (HTTPS).</li>
+    <li>your node <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">is configured</a> to accept outside WinRM connections. Most commonly, you'll need to run these commands on your Windows Server node (from a command prompt and not PowerShell) before you bootstrap it.<p></p>
+    <div class="window Win32">
+            <nav class="control-window">
+              <div class="close">&times;</div>
+              <div class="minimize"></div>
+              <div class="deactivate"></div>
+            </nav>
+            <h1 class="titleInside">Command Prompt: ~</h1>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>&nbsp;</span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>&nbsp;</span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span></pre></td><td class='code'><pre><code><span class='line command'>winrm quickconfig -q</span><span class='line command'>winrm set winrm/config/winrs @{MaxMemoryPerShellMB=&quot;300&quot;}</span><span class='line command'>winrm set winrm/config @{MaxTimeoutms=&quot;1800000&quot;}</span><span class='line command'>winrm set winrm/config/service @{AllowUnencrypted=&quot;true&quot;}</span><span class='line command'>winrm set winrm/config/service/auth @{Basic=&quot;true&quot;}</span><span class='line output'>&nbsp;</span><span class='line command'>netsh advfirewall firewall add rule name=&quot;WinRM 5985&quot; protocol=TCP dir=in localport=5985 action=allow</span><span class='line command'>netsh advfirewall firewall add rule name=&quot;WinRM 5986&quot; protocol=TCP dir=in localport=5986 action=allow</span><span class='line output'>&nbsp;</span><span class='line command'>net stop winrm</span><span class='line command'>sc config winrm start= auto</span><span class='line command'>net start winrm</span></code></pre></td></tr></table></div></div>
+    </li>
+  </ul>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
 
 Now bootstrap your node.
 
 [COMMENT] Although you set both the `audit` and `webserver` cookbooks' default recipe as part of the run-list, only the infrastructure code, not the audit code, is run during the bootstrap process. You'll run the audit code in a later step.
-
-#### Option a: Use a user name and password
 
 Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
@@ -60,37 +77,6 @@ Replace `{address}` with your remote node's external address, `{user}` with your
 # ~/chef-repo
 $ knife bootstrap windows winrm {address} --winrm-user {user} --winrm-password '{password}' --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
-
-<a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
-
-<div id="knife-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-  <h3 id="modalTitle">If the operation times out or fails, here are some things to try</h3>
-  <ul>
-    <li>Ensure that your environment is active before you run <code>knife</code>. For example, CloudShare instances suspend after a period of inactivity. <img class="border" src="/assets/images/rhel/cloudshare-suspend.png"></img></li>
-    <li>Ensure that you run <code>knife</code> commands from your <code class="file-path">chef-repo</code> directory or one of its sub-directories.</li>
-    <li>Ensure you have a <code class="file-path">chef-repo/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and two <code class="file-path">.pem</code> files. If you don't, <a href="/manage-a-node/rhel/set-up-your-chef-server#step2" target="_blank">install the Starter Kit</a>.</li>
-    <li>Ensure that your node's IP address is accessible from your network.</li>
-    <li>Ensure the user name you provide has root or <code>sudo</code> access on the node.</li>
-    <li>Ensure your workstation has outbound access (including firewall) on these ports:
-      <ul>
-        <li>22 (SSH)</li>
-        <li>80 (HTTP)</li>
-        <li>443 (HTTPS)</li>
-      </ul>
-    </li>
-    <li>Ensure your node has inbound access (including firewall) on these ports:
-      <ul>
-        <li>22 (SSH)</li>
-      </ul>
-    </li>
-    <li>Ensure your node has outbound access (including firewall) on these ports:
-      <ul>
-        <li>443 (HTTPS)</li>
-      </ul>
-    </li>
-  </ul>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-</div>
 
 ### View the events in the Timeline view
 
