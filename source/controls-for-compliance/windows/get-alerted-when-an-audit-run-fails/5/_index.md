@@ -25,13 +25,22 @@ control_group 'Validate web services' do
 end
 
 control_group 'Validate network configuration and firewalls' do
-  %w(ICMPv4 ICMPv6).each { |icmp_version|
-    control "Ensure the firewall blocks public #{icmp_version} Echo Request messages" do
-      it 'has at least one rule that blocks access' do
-        expect(command("$(Get-NetFirewallRule | Where-Object {($_.DisplayName -eq \"File and Printer Sharing (Echo Request - #{icmp_version}-In)\") -and ($_.Group -eq \"File and Printer Sharing\") -and ($_.Profile -eq \"Public\") -and ($_.Enabled -eq \"True\") -and ($_.Action -eq \"Block\")}).Count -gt 0").stdout).to match(/True/)
-      end
+  control 'Ensure the firewall blocks public ICMPv4 Echo Request messages' do
+    it 'has at least one rule that blocks access' do
+      expect(command(<<-EOH
+        (Get-NetFirewallPortFilter -Protocol ICMPv4 |
+        Where-Object { $_.IcmpType -eq 8 } |
+        Get-NetFirewallRule |
+        Where-Object {
+          ($_.Profile -eq "Public") -and
+          ($_.Direction -eq "Inbound") -and
+          ($_.Enabled -eq "True") -and
+          ($_.Action -eq "Block") } |
+        Measure-Object).Count -gt 0
+        EOH
+      ).stdout).to match(/True/)
     end
-  }
+  end
 end
 ```
 

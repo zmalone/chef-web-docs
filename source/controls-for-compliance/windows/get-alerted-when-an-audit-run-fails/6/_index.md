@@ -16,24 +16,28 @@ You'll see from the output that although `iptables` is enabled, running, and per
 ```bash
 # ~/chef-repo
 [...]
-54.68.228.148 [2015-07-31T14:10:00+00:00] INFO: Validate web services
-54.68.228.148 [2015-07-31T14:10:00+00:00] INFO:   Ensure no web files are owned by the Administrators group
-54.68.228.148 [2015-07-31T14:10:02+00:00] INFO:     c:/inetpub/wwwroot/Default.htm must not be owned by Administrators
-54.68.228.148 [2015-07-31T14:10:02+00:00] INFO:     c:/inetpub/wwwroot/pages/Page1.htm must not be owned by Administrators
-54.68.228.148 [2015-07-31T14:10:03+00:00] INFO:     c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators
-54.68.228.148 [2015-07-31T14:10:03+00:00] INFO:
-54.68.228.148 [2015-07-31T14:10:03+00:00] INFO: Validate network configuration and firewalls
-54.68.228.148 [2015-07-31T14:10:03+00:00] INFO:   Ensure the firewall blocks public ICMPv4 Echo Request messages
-54.68.228.148 [2015-07-31T14:10:05+00:00] INFO:     has at least one rule that blocks access (FAILED - 1)
-54.68.228.148 [2015-07-31T14:10:05+00:00] INFO:   Ensure the firewall blocks public ICMPv6 Echo Request messages
-54.68.228.148 [2015-07-31T14:10:06+00:00] INFO:     has at least one rule that blocks access (FAILED - 2)
-54.68.228.148 [2015-07-31T14:10:06+00:00] INFO: Successfully executed all `control_group` blocks and contained examples
-54.68.228.148 [2015-07-31T14:10:06+00:00] INFO:
+54.68.228.148 [2015-08-04T19:33:02+00:00] INFO: Starting audit phase
+54.68.228.148 [2015-08-04T19:33:03+00:00] INFO:
+54.68.228.148 [2015-08-04T19:33:03+00:00] INFO: Validate web services
+54.68.228.148 [2015-08-04T19:33:03+00:00] INFO:   Ensure no web files are owned by the Administrators group
+54.68.228.148 [2015-08-04T19:33:03+00:00] INFO:     c:/inetpub/wwwroot/Default.htm must not be owned by Administrators
+54.68.228.148 [2015-08-04T19:33:03+00:00] INFO:     c:/inetpub/wwwroot/pages/Page1.htm must not be owned by Administrators
+54.68.228.148 [2015-08-04T19:33:04+00:00] INFO:     c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators
+54.68.228.148 [2015-08-04T19:33:04+00:00] INFO:
+54.68.228.148 [2015-08-04T19:33:04+00:00] INFO: Validate network configuration and firewalls
+54.68.228.148 [2015-08-04T19:33:04+00:00] INFO:   Ensure the firewall blocks public ICMPv4 Echo Request messages
+54.68.228.148 [2015-08-04T19:33:05+00:00] INFO:     has at least one rule that blocks access (FAILED - 1)
+54.68.228.148 [2015-08-04T19:33:05+00:00] INFO: Successfully executed all `control_group` blocks and contained examples
+54.68.228.148 [2015-08-04T19:33:05+00:00] INFO:
 54.68.228.148 Failures:
 54.68.228.148
 54.68.228.148   1) Validate network configuration and firewalls Ensure the firewall blocks public ICMPv4 Echo Request messages has at least one rule that blocks access
-54.68.228.148      Failure/Error: expect(command("$(Get-NetFirewallRule | Where-Object {($_.DisplayName -eq \"File and Printer Sharing (Echo Request - #{icmp_version}-In)\") -and ($_.Group -eq \"File and Printer Sharing\") -and ($_.Profile -eq \"Public\") -and ($_.Enabled -eq \"True\") -and ($_.Action -eq \"Block\")}).Count -gt 0").stdout).to match(/True/)
+54.68.228.148      Failure/Error: expect(command(<<-EOH
 54.68.228.148        expected "False\n" to match /True/
+54.68.228.148        Diff:
+54.68.228.148        @@ -1,2 +1,2 @@
+54.68.228.148        -/True/
+54.68.228.148        +False
 [...]
 ```
 

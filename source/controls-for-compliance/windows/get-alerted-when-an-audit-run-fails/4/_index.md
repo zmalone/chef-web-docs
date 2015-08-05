@@ -17,4 +17,4 @@ You'll see from the output of your `chef-client` run that the audit tests pass. 
 
 ![A successful audit run](chef-analytics/complaince-clean-run.png)
 
-[TIP] Your audit and operations teams can create a [scheduled task](https://technet.microsoft.com/en-us/library/Cc748993.aspx) to run `chef-client` automatically at regular intervals. For example, the audit team might configure the command `chef-client --audit-mode audit-only` to run just the `audit` cookbook every 24 hours, and the operations team might configure the command `chef-client --audit-mode disabled` to run the `webserver` cookbook every 30 minutes or some other interval.
+[TIP] Your audit and operations teams can create a [scheduled task](https://getchef.zendesk.com/hc/en-us/articles/205233360) to run `chef-client` automatically at regular intervals. For example, the audit team might configure the command `chef-client --audit-mode audit-only` to run just the `audit` cookbook every 24 hours, and the operations team might configure the command `chef-client --audit-mode disabled` to run the `webserver` cookbook every 30 minutes or some other interval.
