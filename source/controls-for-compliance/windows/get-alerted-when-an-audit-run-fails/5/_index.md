@@ -1,12 +1,8 @@
 ## 5. Add a new control
 
-Now let's add a new control that verifies the state of the firewall. Specifically, we want to verify that:
+Now let's add a new control that verifies the state of the firewall. Specifically, we want to verify that the firewall blocks ping requests from outside the domain. [Ping](https://en.wikipedia.org/wiki/Ping_(networking_utility\)) operates by sending Internet Control Message Protocol (ICMP) echo request packets to the target host and waiting for an ICMP echo reply.
 
-* the `iptables` service is enabled.
-* the `iptables` service is running.
-* the firewall permits incoming SSH connections over port 22.
-* the firewall permits incoming HTTP connections over port 80.
-* the firewall rejects all other connections.
+A complete audit check might verify that ping requests are blocked for both ICMPv4 and ICMPv6 protocols. We'll focus on just  ICMPv4 for now.
 
 ### Add the control to the audit cookbook
 
@@ -43,6 +39,12 @@ control_group 'Validate network configuration and firewalls' do
   end
 end
 ```
+
+In the first control that you wrote, you used a string to define the PowerShell command to run. This command is more complex, so we use a [here document](https://en.wikibooks.org/wiki/Ruby_Programming/Here_documents), or _heredoc_, to make the command easier to read and maintain. Heredocs enable you to express multiple lines of text &ndash; in this case our PowerShell code &ndash; more naturally. The `<<-EOH` part declares the start of the heredoc, and the `EOH` part ends, or terminates, it.
+
+The PowerShell code checks whether there is at least one enabled rule that blocks public ICMPv4 Echo Request messages. [This blog post](http://blogs.technet.com/b/heyscriptingguy/archive/2012/11/13/use-powershell-to-create-new-windows-firewall-rules.aspx) is a good introduction to how PowerShell works with the Windows firewall.
+
+It's important that we verify that only Echo Request messages are blocked. Echo request messages are type 8 [for the ICMPv4 protocol](http://www.faqs.org/rfcs/rfc792.html).
 
 It's a recommended practice to update your cookbook's version to ensure that a given set of functionality is tied to a given version.
 

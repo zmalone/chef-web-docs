@@ -2,13 +2,17 @@
 
 Now let's resolve the audit failure. We'll start by writing code to configure the firewall on the node. Then we'll verify the fix locally. Finally, we'll upload our updated `webserver` to the Chef server and run `chef-client` on our node and verify that the audit passes.
 
-[TODO: Describe the scenario in more depth - show screenshot of mmc or powershell output.]
+To illustrate the state of the firewall, you would see from the **Windows Firewall with Advanced Security** Microsoft Management Console (MMC) snap-in that by default a firewall rule exists that allows inbound ICMPv4 traffic.
+
+![Allowing inbound ICMPv4 traffic](chef-analytics/windows-firewall-allow-ping.png)
+
+For now, our goal is to ensure that this rule remains enabled, but blocks public Echo Request messages. A complete solution might also create a new firewall rule if the existing rule was deleted.
 
 ### Update the webserver cookbook
 
 To ensure that the firewall rules are is enabled and running, we'll use the same `powershell_script` resource that we used to configure IIS.
 
-Recall that the control that XXX looks like this.
+Recall that the control that checks the state of the firewall looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/audit/recipes/default.rb
@@ -68,7 +72,11 @@ powershell_script 'Block ICMPv4 Echo Request messages' do
 end
 ```
 
-The entire file looks like this.
+The `code` part of the resource defines the PowerShell command to run to place the firewall in the desired state. The command finds all firewall rules that allow public inbound ICMPv4 traffic and sets them to block Echo Request messages.
+
+The `not_if` part ensures that the `powershell_script` resource is applied only when it needs to be. It uses the same code as the audit control to check whether any firewall rules that need to be changed exist.
+
+The entire recipe looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
@@ -128,7 +136,7 @@ end
 
 #### Increment the webserver cookbook's version
 
-Also increment the `webserver` cookbook's version, similar to what you did for the `audit` cookbook.
+Increment the `webserver` cookbook's version, similar to what you did for the `audit` cookbook.
 
 Modify your `webserver` cookbook's <code class="file-path">metadata.rb</code> file like this.
 
@@ -181,9 +189,11 @@ $ kitchen converge
 -----> Kitchen is finished. (9m50.22s)
 ```
 
-You'll see from the output that all controls &ndash; the one that verifies that no web content is owned by `root` and the one that verifies that the firewall is configured &ndash; now pass. This gives us confidence that the change will work on our node.
+You'll see from the output that all controls &ndash; the one that verifies that no web content is owned by the `Administrators` group and the one that verifies that the firewall is configured correctly &ndash; now pass. This gives us confidence that the change will work on our node.
 
-[TODO: Show screenshot of mmc or powershell output where the fix is applied.]
+From the Microsoft Management Console, you would see that the firewall rule now blocks inbound ICMPv4 traffic.
+
+![Blocking inbound ICMPv4 traffic](chef-analytics/windows-firewall-block-ping.png)
 
 Now that you've verified the fix locally, you can destroy your Test Kitchen instance.
 
@@ -198,7 +208,7 @@ Now that you've verified the fix locally, you can destroy your Test Kitchen inst
 -----> Kitchen is finished. (0m6.86s)
 ```
 
-[COMMENT] When developing a configuration change, whether it's with Chef or something else, it can be difficult to get it right the first time. For example, you might unintentionally configure the system to disable all inbound traffic, including over SSH, completely. That's where Test Kitchen really helps &ndash; if you place the system in an unrepairable state, you simply destroy the instance and try something else. Only after you're confident that your change works as you expect do you move your configuration code to the next step in the pipeline.
+[COMMENT] When developing a configuration change, whether it's with Chef or something else, it can be difficult to get it right the first time. For example, you might unintentionally configure the system to disable all inbound traffic completely. That's where Test Kitchen really helps &ndash; if you place the system in an unrepairable state, you simply destroy the instance and try something else. Only after you're confident that your change works as you expect do you move your configuration code to the next step in the pipeline.
 
 ### Upload the webserver cookbook to the Chef server
 

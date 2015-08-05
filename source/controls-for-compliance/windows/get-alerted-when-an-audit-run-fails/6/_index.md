@@ -11,7 +11,7 @@ $ knife winrm {address} 'chef-client --audit-mode audit-only' --manual-list --wi
 
 ### See the failure from the output
 
-You'll see from the output that although `iptables` is enabled, running, and permits outbound traffic, it doesn't have the expected rules for inbound connections. This causes the audit run to fail.
+You'll see from the output that the audit run fails because there are no firewall rules defined that block public ICMPv4 traffic. The PowerShell command returns `False`, while the audit test expects `True`.
 
 ```bash
 # ~/chef-repo
