@@ -1,11 +1,11 @@
 ---
 title: 'How to be a secure Chef'
-description: 'While DevOps was born in the world of software, it embraces many aspects of Lean, which began as a way of streamlining manufacturing processes.'
+description: 'Learn how a secure workflow can help you deliver your applications and services securely without losing speed.'
 order: 2
 category: 'planning-and-practices'
 layout: skills-topic
 sections: [1, 2]
-icon: devops-and-lean-enterprise.png
+icon: security.png
 ---
 This article has suggestions for securing the Chef server, the Chef client, and the workstation where you run Chef DK and `knife` commands. It includes best practices for you to follow and links to Chef documentation and to other sites where you can read about each topic in more detail.
 
