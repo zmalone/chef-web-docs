@@ -36,6 +36,8 @@ rules 'Validate web services'
 end
 ```
 
+http://rubular.com
+
 [DISCUSS AND LINK TO REGEXP - docs and that other site]
 
 The [run_control](https://docs.chef.io/analytics_rules.html#run-control) message states a rule for a single audit. The `name` part of the `when` block corresponds to the name of the `it` block in your audit control. The rule triggers only when the status of the control is not `success`.

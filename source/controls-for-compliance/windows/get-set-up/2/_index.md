@@ -1,6 +1,6 @@
-## 2. Set up your workstation, Chef server, a node to manage, and Chef Analytics
+## 2. Set up Chef server, a node to manage, and Chef Analytics
 
-The second part of this tutorial uses your own Chef server, a Red Hat Enterprise Linux or CentOS node, and a Chef Analytics server that runs in your infrastructure.
+The second part of this tutorial uses your own Chef server, a Windows Server node, and a Chef Analytics server that runs in your infrastructure.
 
 If you don't already have a Chef server and Chef Analytics set up, follow this Learn Chef tutorial before you continue.
 
@@ -8,9 +8,8 @@ If you don't already have a Chef server and Chef Analytics set up, follow this L
 
 After completing this tutorial, you'll have:
 
-* the Chef development tools installed on your workstation.
 * a Chef server running in your infrastructure.
-* a Red Hat Enterprise Linux 6.5 or CentOS 6.5 node to manage.
+* a Windows Server 2012 R2 node to manage.
 * a Chef Analytics server running in your infrastructure.
 
-[COMMENT] In the _Get started with Chef Analytics_ tutorial, you'll have the option to choose which operating system to run on your node. We recommend that you use Red Hat Enterprise Linux 6.5 or CentOS 6.5 so that you have a node that's already set up to use in this tutorial.
+[COMMENT] In the _Get started with Chef Analytics_ tutorial, you'll have the option to choose which operating system to run on your node. We recommend that you use Windows Server 2012 R2 so that you have a node that's already set up to use in this tutorial.
