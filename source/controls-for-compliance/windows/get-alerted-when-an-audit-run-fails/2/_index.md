@@ -69,7 +69,7 @@ First, prepare a clean Windows Server 2012 R2 instance to bootstrap. Use the fol
 
 Now bootstrap your node.
 
-[COMMENT] Although you set both the `audit` and `webserver` cookbooks' default recipe as part of the run-list, only the infrastructure code, not the audit code, is run during the bootstrap process. You'll run the audit code in a later step.
+[COMMENT] Although you set both the `audit` and `webserver` cookbooks' default recipes as part of the run-list, only the infrastructure code, not the audit code, is run during the bootstrap process. You'll run the audit code in a later step.
 
 Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
 
