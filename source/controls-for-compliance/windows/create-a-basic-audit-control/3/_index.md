@@ -1,6 +1,8 @@
 ## 3. Apply the recipe to a Test Kitchen instance
 
-Now let's apply the audit control to a Windows Server virtual machine. First, modify your `audit` cookbook's <code class="file-path">.kitchen.yml</code> file to look like this.
+Now let's apply the audit control to a Windows Server virtual machine. First, modify your `audit` cookbook's <code class="file-path">.kitchen.yml</code> file to look like one of the following, depending on which Test Kitchen driver you're using.
+
+### If you're using the Vagrant driver
 
 ```ruby
 # ~/chef-repo/cookbooks/audit/.kitchen.yml
@@ -23,6 +25,42 @@ suites:
     attributes:
 ```
 
+### If you're using the EC2 driver
+
+Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
+
+```ruby
+# ~/chef-repo/cookbooks/audit/.kitchen.yml
+---
+driver:
+  name: ec2
+  aws_ssh_key_id: learnchef
+  region: us-west-2
+  availability_zone: a
+  subnet_id: subnet-eacb348f
+  image_id: ami-c3b3b1f3
+  security_group_ids: ['sg-2d3b3b48']
+  retryable_tries: 120
+
+transport:
+  ssh_key: /Users/learnchef/.ssh/learnchef.pem
+
+provisioner:
+  name: chef_zero
+  client_rb:
+    audit_mode: :enabled
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[webserver::default]
+      - recipe[audit::default]
+    attributes:
+```
+
 The `audit_mode: :audit_only` part tells `chef-client` to run only your audit controls, and not apply any other resources that appear in the run-list. We specify `:audit_only` because this cookbook's role is only to verify your compliance policy. You can specify `:enabled` to apply both your configuration code and your audit controls or `:disabled` to run only your configuration code.
 
 Run `kitchen list` to verify that the instance has not yet been created.
@@ -34,9 +72,11 @@ Instance                Driver   Provisioner  Verifier  Transport  Last Action
 default-windows-2012r2  Vagrant  ChefZero     Busser    Winrm      <Not Created>
 ```
 
+[COMMENT] If you're using the EC2 driver, the `Driver` column reads `Ec2`.
+
 Now run `kitchen converge` to create the instance and apply your audit control.
 
-[COMMENT] A VirtualBox window that contains your Windows Server instance appears when you run `kitchen converge`. For now, you don't need to interact with that window.
+[COMMENT] If you're using the Vagrant driver, a VirtualBox window that contains your Windows Server instance appears when you run `kitchen converge`. For now, you don't need to interact with that window.
 
 ```bash
 # ~/chef-repo/cookbooks/audit
@@ -63,3 +103,5 @@ $ kitchen converge
 ```
 
 We haven't yet configured IIS or added any web files, so there are no files to test. But this is a good first step to verifying that the control is correctly set up.
+
+[TIP] We'll show you how to later, but if at any point you need to destroy your instance, run `kitchen destroy`. You can run `kitchen converge` again at a later time to pick up where you left off. This is especially important when using the EC2 driver for Test Kitchen, as you are billed hourly for any machine resources that you use.
