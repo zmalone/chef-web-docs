@@ -1,57 +1,6 @@
-## 1. Set up your workstation
+## 5. Build a Windows Server 2012 R2 Vagrant box
 
-### Install the Chef development kit on your workstation
-
-Install Chef DK on your workstation now if you haven't already. Chef DK comes with Test Kitchen, so there's nothing additional to set up.
-
-<a class='accent-button radius' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
-
-### Install VirtualBox
-
-Next, install VirtualBox. VirtualBox is software that manages your virtual machine instances.
-
-<a class='accent-button radius' href='https://www.virtualbox.org/wiki/Downloads' target='_blank'>Install VirtualBox&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
-
-Then run the following command to verify that VirtualBox is installed.
-
-```bash
-# ~
-$ VBoxManage --version
-4.3.26r98988
-```
-
-[WINDOWS] By default, VirtualBox is installed to <code class="file-path">C:\Program Files\Oracle\VirtualBox</code> on Windows. However, this path is not added to the `PATH` environment variable. Either `cd` to this directory or add it to your `PATH` before you run `VBoxManage`.
-
-### Install Vagrant
-
-Next, install Vagrant. Vagrant is software that Test Kitchen can use to communicate with VirtualBox and configure aspects of the virtual machine such as available memory, host name, and network settings.
-
-<a class='accent-button radius' href='https://www.vagrantup.com/downloads.html' target='_blank'>Install Vagrant&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
-
-Then run the following to verify that Vagrant is installed.
-
-```bash
-# ~
-$ vagrant --version
-Vagrant 1.7.2
-```
-
-### Install the vagrant-winrm plugin
-
-Test Kitchen uses the [vagrant-winrm](https://github.com/criteo/vagrant-winrm) Vagrant plugin to enable the host machine to connect to Windows instances over the WinRM protocol.
-
-Install the plugin like this.
-
-```bash
-# ~
-$ vagrant plugin install vagrant-winrm
-Installing the 'vagrant-winrm' plugin. This can take a few minutes...
-Installed the plugin 'vagrant-winrm (0.7.0)'!
-```
-
-### Build a Windows Server 2012 R2 Vagrant box
-
-Test Kitchen works with virtualization and cloud providers to create temporary instances to test your infrastructure code. We often call the software that connects Test Kitchen to the provider a _driver_. In this tutorial, you'll use the Vagrant driver to manage virtual machines on your workstation. When Vagrant creates a virtual machine instance, it loads an image, or _box_, which captures a snapshot of the operating system in a preconfigured state.
+When Vagrant creates a virtual machine instance, it loads an image, or _box_, which captures a snapshot of the operating system in a preconfigured state.
 
 For some operating systems, Test Kitchen can automatically download a Vagrant box for you. It's also common to build your own box if you need it to contain certain software or security updates. Because of the way Windows Server 2012 R2 is licensed, we can't provide you with a preconfigured box. Here, you'll use the evaluation version of Windows Server 2012 R2 to build your own box.
 
@@ -160,8 +109,6 @@ Build 'virtualbox-iso' finished.
 
 If you downloaded the ISO image to a directory other than <code class="file-path">/iso</code> or <code class="file-path">C:\iso</code>, [modify vbox-2012r2.json](https://github.com/mwrock/packer-templates/blob/8b4e62a014a571666a4534458426ff397932b330/vbox-2012r2.json#L49) to point to your path.
 
-[COMMENT] This process applies all Windows updates and makes the image as small as possible. It can take several hours to complete. While you wait, you can complete the remaining steps on this page to set up Chef server, Chef Analytics, and a node to manage.
-
 #### Register the box with your local Vagrant catalog
 
 After the Packer process finishes, confirm that <code class="file-path">windows2012r2min-virtualbox.box</code> exists in your <code class="file-path">packer-templates</code> directory.
@@ -189,15 +136,3 @@ Now confirm that the box is successfully registered.
 $ vagrant box list
 windows-2012r2       (virtualbox, 0)
 ```
-
-### (Optional) Learn about Test Kitchen
-
-The first part of this tutorial uses Test Kitchen to apply your audit and infrastructure code on a local virtual machine.
-
-If you're not familiar with Test Kitchen, follow this Learn Chef tutorial to get set up with the tools and learn how Test Kitchen works.
-
-We have one version of the tutorial that shows you how to work with a Red Hat Enterprise Linux or CentOS virtual machine and another version that uses Ubuntu. Either will teach you what you need to know to use Test Kitchen in this tutorial. We'll have a version for Windows Server available soon.
-
-<a class='accent-button radius' href='/local-development/rhel/' target='_blank'>Learn to develop your infrastructure code locally (Red Hat Enterprise Linux)&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
-
-<a class='accent-button radius' href='/local-development/ubuntu/' target='_blank'>Learn to develop your infrastructure code locally (Ubuntu)&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
