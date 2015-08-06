@@ -58,7 +58,7 @@ For some operating systems, Test Kitchen can automatically download a Vagrant bo
 In this part, you'll perform these steps.
 
 1. Download the evaluation version of Windows Server 2012 R2.
-1. Install [Packer](https://packer.io/) on your workstation.
+1. Install [Packer](https://packer.io/) on your workstation. You'll use Packer to create a Windows Server machine image.
 1. Get the [packer-templates](https://github.com/mwrock/packer-templates) project from GitHub.
 1. Run the Packer template to generate a Vagrant box.
 1. Register the box with your local Vagrant catalog.
@@ -160,7 +160,7 @@ Build 'virtualbox-iso' finished.
 
 If you downloaded the ISO image to a directory other than <code class="file-path">/iso</code> or <code class="file-path">C:\iso</code>, [modify vbox-2012r2.json](https://github.com/mwrock/packer-templates/blob/8b4e62a014a571666a4534458426ff397932b330/vbox-2012r2.json#L49) to point to your path.
 
-[COMMENT] This process applies all Windows updates and makes the image as small as possible, and can take several hours to complete. While you wait, you can complete the remaining steps on this page to set up Chef server, Chef Analytics, and a node to manage.
+[COMMENT] This process applies all Windows updates and makes the image as small as possible. It can take several hours to complete. While you wait, you can complete the remaining steps on this page to set up Chef server, Chef Analytics, and a node to manage.
 
 #### Register the box with your local Vagrant catalog
 
@@ -196,7 +196,7 @@ The first part of this tutorial uses Test Kitchen to apply your audit and infras
 
 If you're not familiar with Test Kitchen, follow this Learn Chef tutorial to get set up with the tools and learn how Test Kitchen works.
 
-We have one version of the tutorial that shows you how to work with a Red Hat Enterprise Linux or CentOS virtual machine and another version that uses Ubuntu. We'll have a version for Windows Server available soon.
+We have one version of the tutorial that shows you how to work with a Red Hat Enterprise Linux or CentOS virtual machine and another version that uses Ubuntu. Either will teach you what you need to know to use Test Kitchen in this tutorial. We'll have a version for Windows Server available soon.
 
 <a class='accent-button radius' href='/local-development/rhel/' target='_blank'>Learn to develop your infrastructure code locally (Red Hat Enterprise Linux)&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 

@@ -40,7 +40,7 @@ The [run_control](https://docs.chef.io/analytics_rules.html#run-control) message
 
 The `it` part of your control has a different name for each file that you're testing. Therefore, we use a [regular expression](https://docs.chef.io/analytics_rules.html#regular-expressions) to match the pattern for how the `it` blocks are named. The `=~` operator sets up the comparison as a regular expression and the `Administrators$` part says that the string to match must end with "Administrators".
 
-[TIP] [Rabular](http://rubular.com) is a handy way to test out your regular expressions.
+[TIP] [Rubular](http://rubular.com) is a handy way to test out your regular expressions.
 
 The [alert:error](https://docs.chef.io/analytics_rules.html#alert-level) part adds the alert to Chef Analytics. In our case, we want the alert to signal an error condition. You can also use `alert:warn` and `alert:info` to signal other types of conditions.
 

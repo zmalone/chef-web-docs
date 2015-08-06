@@ -1,7 +1,7 @@
 ---
 title: 'Audit a Windows Server node for compliance'
 layout: lesson-overview
-platform: 'Windows Server'
+#platform: 'Windows Server'
 logo: windows.svg
 order: 3
 ---

@@ -10,7 +10,7 @@ For now, our goal is to ensure that this rule remains enabled, but blocks public
 
 ### Update the webserver cookbook
 
-To ensure that the firewall rules are is enabled and running, we'll use the same `powershell_script` resource that we used to configure IIS.
+To ensure that the firewall rules are enabled and running, we'll use the same `powershell_script` resource that we used to configure IIS.
 
 Recall that the control that checks the state of the firewall looks like this.
 
