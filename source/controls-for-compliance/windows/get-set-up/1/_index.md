@@ -1,6 +1,6 @@
 ## 1. Set up your Test Kitchen environment for local development
 
-Test Kitchen works with virtualization and cloud providers to create temporary instances to test your infrastructure code. We often call the software that connects Test Kitchen to the provider a _driver_. Popular drivers are listed [here](https://docs.chef.io/kitchen.html#drivers).
+Test Kitchen works with virtualization and cloud providers to create temporary instances to test your infrastructure code. We often call the software that connects Test Kitchen to the provider a _driver_.
 
 In this tutorial, you'll have the option to use either the Vagrant or Amazon EC2 driver to manage temporary virtual machines.
 

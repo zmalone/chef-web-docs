@@ -19,11 +19,49 @@ cookbook 'audit', path: '../audit'
 
 Now modify your `webserver` cookbook's <code class="file-path">.kitchen.yml</code> file like this. This configuration sets the `audit_mode` to `:enabled` so that `chef-client` runs both the web server configuration code and the audit tests.
 
+### If you're using the Vagrant driver
+
 ```ruby
 # ~/chef-repo/cookbooks/webserver/.kitchen.yml
 ---
 driver:
   name: vagrant
+
+provisioner:
+  name: chef_zero
+  client_rb:
+    audit_mode: :enabled
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[webserver::default]
+      - recipe[audit::default]
+    attributes:
+```
+
+### If you're using the EC2 driver
+
+Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/.kitchen.yml
+---
+driver:
+  name: ec2
+  aws_ssh_key_id: learnchef
+  region: us-west-2
+  availability_zone: a
+  subnet_id: subnet-eacb348f
+  image_id: ami-c3b3b1f3
+  security_group_ids: ['sg-2d3b3b48']
+  retryable_tries: 120
+
+transport:
+  ssh_key: /Users/learnchef/.ssh/learnchef.pem
 
 provisioner:
   name: chef_zero

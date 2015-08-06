@@ -42,11 +42,46 @@ This recipe configures IIS and writes a few files for it to serve.
 
 Now use Test Kitchen to apply the `webserver` cookbook locally. This instance is different than the one you used to apply the `audit` cookbook. Start by adding this code to your `webserver` cookbook's <code class="file-path">.kitchen.yml</code> file.
 
+### If you're using the Vagrant driver
+
 ```ruby
 # ~/chef-repo/cookbooks/webserver/.kitchen.yml
 ---
 driver:
   name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[webserver::default]
+    attributes:
+```
+
+### If you're using the EC2 driver
+
+Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/.kitchen.yml
+---
+driver:
+  name: ec2
+  aws_ssh_key_id: learnchef
+  region: us-west-2
+  availability_zone: a
+  subnet_id: subnet-eacb348f
+  image_id: ami-c3b3b1f3
+  security_group_ids: ['sg-2d3b3b48']
+  retryable_tries: 120
+
+transport:
+  ssh_key: /Users/learnchef/.ssh/learnchef.pem
 
 provisioner:
   name: chef_zero
@@ -84,7 +119,19 @@ $ kitchen converge
 -----> Kitchen is finished. (7m51.92s)
 ```
 
-Now login to your Windows Server instance through the VirtualBox window that appeared during the `kitchen converge` run. Login as either the `Administrator` or `Vagrant` user; the password for both accounts is `vagrant`.
+Now login to your Windows Server instance.
+
+If you're using the Vagrant driver, login through the VirtualBox window that appeared during the `kitchen converge` run. Login as either the `Administrator` or `Vagrant` user; the password for both accounts is `vagrant`.
+
+If you're using the EC2 driver, first run `kitchen diagnose` to get the password for the Administrator account and then run `kitchen login` to launch an RDP connection to your Windows Server instance.
+
+```bash
+# ~/chef-repo/cookbooks/webserver
+$ kitchen diagnose | grep password:
+      password: QkXR4KWCgc
+      password:
+$ kitchen login
+```
 
 From your instance, open a Microsoft PowerShell instance and run a few commands to verify that your web server is correctly set up.
 
