@@ -19,16 +19,7 @@ webserver1:
     recipe[audit::default]
 ```
 
-When running `knife` from Windows PowerShell, surround the string with triple single quotes (''' '''), like this.
-
-```ps
-# ~/chef-repo
-$ knife node run_list set webserver1 '''recipe[webserver::default],recipe[audit::default]'''
-webserver1:
-  run_list:
-    recipe[webserver::default]
-    recipe[audit::default]
-```
+[WINDOWS] When running `knife` on Windows, consider [activating the chef PowerShell module](http://docs.chef.io/release_notes.html#import-module-chef) to make it easier to use strings from the command line.
 
 Now run `chef-client` on your node. We want to run only the `webserver` cookbook, so we use the `--audit-mode disabled` option to disable the `audit` cookbook (`disabled` is also the default).
 
