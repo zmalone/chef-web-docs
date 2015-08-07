@@ -70,17 +70,13 @@ $ kitchen converge
            - change owner from 'root' to 'web_admin'
            - change group from 'root' to 'web_admin'
        Starting audit phase
-       /var/www/html/index.html
-       /var/www/html/pages
-       /var/www/html/pages/page2.html
-       /var/www/html/pages/page1.html
 
        Validate web services
          Ensure no web files are owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
+           /var/www/html/index.html is not owned by the root user
+           /var/www/html/pages is not owned by the root user
+           /var/www/html/pages/page2.html is not owned by the root user
+           /var/www/html/pages/page1.html is not owned by the root user
 
        Finished in 0.13176 seconds (files took 0.22858 seconds to load)
        4 examples, 0 failures

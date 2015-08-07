@@ -52,51 +52,46 @@ $ kitchen converge
 -----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
 [...]
-         4) Validate web services Ensure no web files are owned by the root user is not owned by the root user
+         4) Validate web services Ensure no web files are owned by the root user /var/www/html/pages/page1.html is not owned by the root user
             Failure/Error: expect(file(web_file)).to_not be_owned_by('root')
        expected `File "/var/www/html/pages/page1.html".owned_by?("root")` to return false, got true
-            # /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb:11:in `block (4 levels) in from_file'
+            # /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb:10:in `block (4 levels) in from_file'
 
-       Finished in 0.13301 seconds (files took 0.37363 seconds to load)
+       Finished in 0.15757 seconds (files took 0.36164 seconds to load)
        4 examples, 4 failures
 
        Failed examples:
 
-       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
-       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
-       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
-       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:4] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1] # Validate web services Ensure no web files are owned by the root user /var/www/html/index.html is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages/page2.html is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:4] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages/page1.html is not owned by the root user
 
-       Audit phase exception:
+
          Audit phase found failures - 4/4 controls failed
 
-       Running handlers:
-       Running handlers complete
-       Chef Client finished, 0/7 resources updated in 6.862077521 seconds
-         0/4 controls succeeded
-       [2015-07-20T17:57:30+00:00] FATAL: Stacktrace dumped to /tmp/kitchen/cache/chef-stacktrace.out
-       [2015-07-20T17:57:30+00:00] ERROR: Found 1 errors, they are stored in the backtrace
-       [2015-07-20T17:57:31+00:00] FATAL: Chef::Exceptions::ChildConvergeError: Chef run process exited unsuccessfully (exit code 1)
->>>>>> Converge failed on instance <default-ubuntu-1404>.
->>>>>> Please see .kitchen/logs/default-ubuntu-1404.log for more details
->>>>>> ------Exception-------
->>>>>> Class: Kitchen::ActionFailed
->>>>>> Message: SSH exited (1) for command: [sh -c '
-
-sudo -E /opt/chef/bin/chef-client --local-mode --config /tmp/kitchen/client.rb --log_level auto --force-formatter --no-color --json-attributes /tmp/kitchen/dna.json --chef-zero-port 8889
-']
->>>>>> ----------------------
+         Running handlers:
+         Running handlers complete
+         Chef Client finished, 5/7 resources updated in 9.06130736 seconds
+           0/4 controls succeeded
+       [2015-08-07T15:43:11+00:00] FATAL: Stacktrace dumped to /tmp/kitchen/cache/chef-stacktrace.out
+       [2015-08-07T15:43:11+00:00] ERROR: Found 1 errors, they are stored in the backtrace
+       [2015-08-07T15:43:12+00:00] FATAL: Chef::Exceptions::ChildConvergeError: Chef run process exited unsuccessfully (exit code 1)
+[...]
 ```
 
-Although the web server was successfully configured, the `chef-client` run failed because the audit failed. You can look through the error log to see which files failed the audit.
+Although the web server was successfully configured, the audit run failed. You'll see from the output that the <code class="file-path">/var/www/html/pages</code> directory and our three web files caused the audit run to fail.
 
 ```bash
 # ~/chef-repo/cookbooks/webserver
-$ less .kitchen/logs/default-ubuntu-1404.log | grep 'got true'
-I, [2015-07-20T13:57:28.698116 #22441]  INFO -- default-ubuntu-1404: expected `File "/var/www/html/index.html".owned_by?("root")` to return false, got true
-I, [2015-07-20T13:57:28.698184 #22441]  INFO -- default-ubuntu-1404: expected `File "/var/www/html/pages".owned_by?("root")` to return false, got true
-I, [2015-07-20T13:57:28.698256 #22441]  INFO -- default-ubuntu-1404: expected `File "/var/www/html/pages/page2.html".owned_by?("root")` to return false, got true
-I, [2015-07-20T13:57:28.698366 #22441]  INFO -- default-ubuntu-1404: expected `File "/var/www/html/pages/page1.html".owned_by?("root")` to return false, got true
+[...]
+       Failed examples:
+
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1] # Validate web services Ensure no web files are owned by the root user /var/www/html/index.html is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages/page2.html is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:4] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages/page1.html is not owned by the root user
+[...]
 ```
 
 The next step is to revise the `webserver` cookbook to incorporate our audit policy and verify that the system meets compliance.
