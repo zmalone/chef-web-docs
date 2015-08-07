@@ -103,10 +103,10 @@ include_recipe 'iptables::default'
 # Apply firewall rules.
 iptables_rule 'firewall'
 
-# Install the Apache2 package.
+# Install the httpd package.
 package 'httpd'
 
-# Enable and start the Apache2 service.
+# Enable and start the httpd service.
 service 'httpd' do
   action [:enable, :start]
 end
