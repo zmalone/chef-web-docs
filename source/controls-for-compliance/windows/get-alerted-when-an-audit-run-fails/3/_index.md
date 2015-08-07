@@ -4,7 +4,7 @@ In [Get started with Chef Analytics](/get-started-with-chef-analytics/linux/), y
 
 You access the alert history through the Chef Analytics web interface. Like a notification, an alert is raised from a rule. You can generate an alert and a notification from the same rule.
 
-Let's write a rule that's triggered when your audit control, which verifies that web content must not be owned by the `root` user, fails.
+Let's write a rule that's triggered when your audit control, which verifies that web content must not be owned by the `Administrators` group, fails.
 
 Recall that your control looks like this.
 
