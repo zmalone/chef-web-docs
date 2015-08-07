@@ -30,4 +30,6 @@ After completing this lesson, you'll be able to:
 * verify and resolve audit failures.
 * use Chef Analytics to create alerts that signal when your infrastructure falls out of compliance.
 
+[GITHUB] The final code for this tutorial is available [on GitHub](https://github.com/learn-chef/controls-for-compliance-rhel).
+
 Let's get started by ensuring you're all set up.

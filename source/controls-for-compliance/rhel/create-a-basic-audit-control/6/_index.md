@@ -76,10 +76,10 @@ $ kitchen converge
 
        Validate web services
          Ensure no web files are owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
+           /var/www/html/pages is not owned by the root user
+           /var/www/html/pages/page2.html is not owned by the root user
+           /var/www/html/pages/page1.html is not owned by the root user
+           /var/www/html/index.html is not owned by the root user
 
        Finished in 0.13817 seconds (files took 0.25295 seconds to load)
        4 examples, 0 failures

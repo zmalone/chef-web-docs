@@ -53,7 +53,21 @@ If you're unable to allow outbound traffic on all ports, ensure that you have a 
 
 ### Get the AMI ID for Windows Server 2012 R2 in your region
 
-Get the AMI ID for Windows Server 2012 R2 for your region, for example, `ami-c3b3b1f3`. One way to do that is from the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00KQOWEPO/ref=dtl_recsim_B00KQOWCAQ_B00KQOWEPO_1).
+Get the AMI ID for Windows Server 2012 R2 for your region, for example, `ami-850adbee` for the US East (N. Virginia) region.
+
+| Region                    | Code        | ID |
+|--------------------------:|-------------|----|
+| Asia Pacific (Tokyo)      | ap-northeast-1 | ami-be9520be |
+| Asia Pacific (Singapore)  | ap-southeast-1 | ami-fa9093a8 |
+| Asia Pacific (Sydney)     | ap-southeast-2 | ami-d52c6aef |
+| EU (Frankfurt)            | eu-central-1 | ami-de4540c3 |
+| EU (Ireland)              | eu-west-1 | ami-da357cad |
+| South America (Sao Paulo) | sa-east-1 | ami-43f8775e |
+| US East (N. Virginia)     | us-east-1 | ami-850adbee |
+| US West (N. California)   | us-west-1 | ami-77ee1c33 |
+| US West (Oregon)          | us-west-2 | ami-a5b3b195 |
+
+You can also get the ID from the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00KQOWEPO/ref=dtl_recsim_B00KQOWCAQ_B00KQOWEPO_1).
 
 ### Prepare your key pair file
 

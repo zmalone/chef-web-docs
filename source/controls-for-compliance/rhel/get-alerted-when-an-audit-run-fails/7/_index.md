@@ -173,10 +173,10 @@ $ kitchen converge
 
        Validate web services
          Ensure no web files are owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
+           /var/www/html/pages is not owned by the root user
+           /var/www/html/pages/page2.html is not owned by the root user
+           /var/www/html/pages/page1.html is not owned by the root user
+           /var/www/html/index.html is not owned by the root user
 
        Validate network configuration and firewalls
          Ensure the firewall is active
@@ -278,10 +278,10 @@ As with your Test Kitchen instance, you'll see that the `webserver` cookbook upd
 [...]
 52.27.18.148 Validate web services
 52.27.18.148   Ensure no web files are owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
+52.27.18.148     /var/www/html/pages is not owned by the root user
+52.27.18.148     /var/www/html/pages/page2.html is not owned by the root user
+52.27.18.148     /var/www/html/pages/page1.html is not owned by the root user
+52.27.18.148     /var/www/html/index.html is not owned by the root user
 52.27.18.148
 52.27.18.148 Validate network configuration and firewalls
 52.27.18.148   Ensure the firewall is active
