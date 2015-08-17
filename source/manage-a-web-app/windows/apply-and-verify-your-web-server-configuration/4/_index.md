@@ -8,4 +8,4 @@ $ knife node list | grep web_app_windows
 web_app_windows
 ```
 
-Great! Your node is now associated with your Chef server and it ran the `web_application` cookbook. Now we can verify that its configuration matches what we expect.
+Great! Your node is now associated with your Chef server and it ran the `awesome_customers` cookbook. Now we can verify that its configuration matches what we expect.

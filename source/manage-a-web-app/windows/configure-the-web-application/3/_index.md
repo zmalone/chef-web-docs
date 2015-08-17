@@ -6,7 +6,7 @@ Find the part of the program that looks like this.
 
 ```php
 <?php
-// ~/chef-repo/cookbooks/web_application/templates/default/index.php.erb
+// ~/chef-repo/cookbooks/awesome_customers/templates/default/index.php.erb
 $servername = "127.0.0.1";
 $username = "db_admin";
 $password = "customers_password";
@@ -19,11 +19,11 @@ Replace the values of the variables with the appropriate node attributes, like t
 
 ```php
 <?php
-// ~/chef-repo/cookbooks/web_application/templates/default/index.php.erb
-$servername = "<%= node['web_application']['database']['host'] %>";
-$username = "<%= node['web_application']['database']['app']['username'] %>";
-$password = "<%= node['web_application']['database']['app']['password'] %>";
-$dbname = "<%= node['web_application']['database']['dbname'] %>";
+// ~/chef-repo/cookbooks/awesome_customers/templates/default/index.php.erb
+$servername = "<%= node['awesome_customers']['database']['host'] %>";
+$username = "<%= node['awesome_customers']['database']['app']['username'] %>";
+$password = "<%= node['awesome_customers']['database']['app']['password'] %>";
+$dbname = "<%= node['awesome_customers']['database']['dbname'] %>";
 
 // [...]
 ```

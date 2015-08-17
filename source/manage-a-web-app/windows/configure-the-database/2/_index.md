@@ -7,7 +7,7 @@ Let's continue the pattern we've learned of directly stating the configuration w
 To set up your database, we'll use the `mysql_database` resource, which comes from the `database` cookbook. The configuration code might look like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/database.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 # Create the database instance.
 mysql_database 'products' do
   connection(
@@ -34,43 +34,43 @@ Let's factor your data so that your recipe is more reusable. We'll factor out th
 Append the following to your default attributes file, <code class="file-path">default.rb</code>.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/attributes/default.rb
-default['web_application']['database']['dbname'] = 'products'
-default['web_application']['database']['host'] = '127.0.0.1'
-default['web_application']['database']['username'] = 'root'
-default['web_application']['database']['password'] = node['mysql']['server_root_password']
+# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
+default['awesome_customers']['database']['dbname'] = 'products'
+default['awesome_customers']['database']['host'] = '127.0.0.1'
+default['awesome_customers']['database']['username'] = 'root'
+default['awesome_customers']['database']['password'] = node['mysql']['server_root_password']
 ```
 
 The entire file looks like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/attributes/default.rb
-default['web_application']['user'] = 'web_admin'
-default['web_application']['group'] = 'web_admin'
+# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
+default['awesome_customers']['user'] = 'web_admin'
+default['awesome_customers']['group'] = 'web_admin'
 
-default['web_application']['name'] = 'customers'
-default['web_application']['config'] = 'customers.conf'
+default['awesome_customers']['name'] = 'customers'
+default['awesome_customers']['config'] = 'customers.conf'
 
 default['apache']['docroot_dir'] = '/srv/apache/customers'
 
 default['mysql']['server_root_password'] = 'learnchef_mysql'
 
-default['web_application']['database']['dbname'] = 'products'
-default['web_application']['database']['host'] = '127.0.0.1'
-default['web_application']['database']['username'] = 'root'
-default['web_application']['database']['password'] = node['mysql']['server_root_password']
+default['awesome_customers']['database']['dbname'] = 'products'
+default['awesome_customers']['database']['host'] = '127.0.0.1'
+default['awesome_customers']['database']['username'] = 'root'
+default['awesome_customers']['database']['password'] = node['mysql']['server_root_password']
 ```
 
 Replace your hard-coded values with your custom attributes, like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/database.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 # Create the database instance.
-mysql_database node['web_application']['database']['dbname'] do
+mysql_database node['awesome_customers']['database']['dbname'] do
   connection(
-    :host => node['web_application']['database']['host'],
-    :username => node['web_application']['database']['username'],
-    :password => node['web_application']['database']['password']
+    :host => node['awesome_customers']['database']['host'],
+    :username => node['awesome_customers']['database']['username'],
+    :password => node['awesome_customers']['database']['password']
   )
   action :create
 end
@@ -79,7 +79,7 @@ end
 <code class="file-path">database.rb</code> now looks like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/database.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 # Configure the mysql2 Ruby gem.
 mysql2_chef_gem 'default' do
   action :install
@@ -97,11 +97,11 @@ mysql_service 'default' do
 end
 
 # Create the database instance.
-mysql_database node['web_application']['database']['dbname'] do
+mysql_database node['awesome_customers']['database']['dbname'] do
   connection(
-    :host => node['web_application']['database']['host'],
-    :username => node['web_application']['database']['username'],
-    :password => node['web_application']['database']['password']
+    :host => node['awesome_customers']['database']['host'],
+    :username => node['awesome_customers']['database']['username'],
+    :password => node['awesome_customers']['database']['password']
   )
   action :create
 end

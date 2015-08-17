@@ -1,6 +1,6 @@
 ## 2. Get a node to bootstrap
 
-In [Manage a node](/manage-a-node/windows/), you bootstrapped a node that we provided. Now it's time to bootstrap an Windows Server 14.04 node that you own to give you experience working with your own infrastructure.
+In [Manage a node](/manage-a-node/windows/), you bootstrapped a node that we provided. Now it's time to bootstrap a Windows Server 14.04 node that you own to give you experience working with your own infrastructure.
 
 Chef provides ways to provision a node and bootstrap it all in one step &ndash; we'll cover this in a later tutorial. For learning purposes, it's best to start by bringing up your own node manually and bootstrapping it separately.
 

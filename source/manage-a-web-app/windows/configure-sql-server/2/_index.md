@@ -58,14 +58,14 @@ To make the cookbook more reusable, let's create a template that will be filled 
 
 ```bash
 # ~/chef-repo
-$ chef generate template cookbooks/web_application ConfigurationFile.ini
+$ chef generate template cookbooks/awesome_customers ConfigurationFile.ini
 ```
 
 ### Create the attributes file
 
 ```bash
 # ~/chef-repo
-$ chef generate attribute cookbooks/web_application
+$ chef generate attribute cookbooks/awesome_customers
 ```
 
 
@@ -74,17 +74,17 @@ Create a recipe named <code class="file-path">database.rb</code> to hold your da
 
 ```bash
 # ~/chef-repo
-$ chef generate recipe cookbooks/web_application database
+$ chef generate recipe cookbooks/awesome_customers database
 Compiling Cookbooks...
 Recipe: code_generator::recipe
-  * directory[cookbooks/web_application/spec/unit/recipes] action create (up to date)
-  * cookbook_file[cookbooks/web_application/spec/spec_helper.rb] action create_if_missing (up to date)
-  * template[cookbooks/web_application/spec/unit/recipes/database_spec.rb] action create_if_missing
-    - create new file cookbooks/web_application/spec/unit/recipes/database_spec.rb
-    - update content in file cookbooks/web_application/spec/unit/recipes/database_spec.rb from none to 6027f9
+  * directory[cookbooks/awesome_customers/spec/unit/recipes] action create (up to date)
+  * cookbook_file[cookbooks/awesome_customers/spec/spec_helper.rb] action create_if_missing (up to date)
+  * template[cookbooks/awesome_customers/spec/unit/recipes/database_spec.rb] action create_if_missing
+    - create new file cookbooks/awesome_customers/spec/unit/recipes/database_spec.rb
+    - update content in file cookbooks/awesome_customers/spec/unit/recipes/database_spec.rb from none to 6027f9
     (diff output suppressed by config)
-  * template[cookbooks/web_application/recipes/database.rb] action create
-    - create new file cookbooks/web_application/recipes/database.rb
-    - update content in file cookbooks/web_application/recipes/database.rb from none to 97f98b
+  * template[cookbooks/awesome_customers/recipes/database.rb] action create
+    - create new file cookbooks/awesome_customers/recipes/database.rb
+    - update content in file cookbooks/awesome_customers/recipes/database.rb from none to 97f98b
     (diff output suppressed by config)
 ```
