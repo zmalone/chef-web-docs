@@ -8,46 +8,46 @@ Run this `chef generate template` command to create a home page template.
 
 ```bash
 # ~/chef-repo
-$ chef generate template cookbooks/web_application index.php
+$ chef generate template cookbooks/awesome_customers index.php
 Compiling Cookbooks...
 Recipe: code_generator::template
-  * directory[cookbooks/web_application/templates/default] action create (up to date)
-  * template[cookbooks/web_application/templates/default/index.php.erb] action create
-    - create new file cookbooks/web_application/templates/default/index.php.erb
-    - update content in file cookbooks/web_application/templates/default/index.php.erb from none to e3b0c4
+  * directory[cookbooks/awesome_customers/templates/default] action create (up to date)
+  * template[cookbooks/awesome_customers/templates/default/index.php.erb] action create
+    - create new file cookbooks/awesome_customers/templates/default/index.php.erb
+    - update content in file cookbooks/awesome_customers/templates/default/index.php.erb from none to e3b0c4
     (diff output suppressed by config)
 ```
 
 Now, in <code class="file-path">webserver.rb</code>, find the `file` resource that sets up the home page.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# Write a default home page.
-file "#{node['apache']['docroot_dir']}/index.php" do
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+# Write the home page.
+file "#{node['awesome_customers']['document_root']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
-  owner node['web_application']['user']
-  group node['web_application']['group']
+  owner node['awesome_customers']['user']
+  group node['awesome_customers']['group']
 end
 ```
 
 Replace that code with the following `template` resource.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# Write a default home page.
-template "#{node['apache']['docroot_dir']}/index.php" do
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+# Write the home page.
+template "#{node['awesome_customers']['document_root']}/index.php" do
   source 'index.php.erb'
   mode '0644'
-  owner node['web_application']['user']
-  group node['web_application']['group']
+  owner node['awesome_customers']['user']
+  group node['awesome_customers']['group']
 end
 ```
 
 Now we can write the PHP program. Add this to <code class="file-path">index.php.erb</code>.
 
 ```html
-<!-- ~/chef-repo/cookbooks/web_application/templates/default/index.php.erb -->
+<!-- ~/chef-repo/cookbooks/awesome_customers/templates/default/index.php.erb -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,7 +68,7 @@ Now we can write the PHP program. Add this to <code class="file-path">index.php.
 <?php
 $servername = "127.0.0.1";
 $username = "db_admin";
-$password = "customers_password";
+$password = "database_password";
 $dbname = "products";
 
 // Create connection

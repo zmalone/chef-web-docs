@@ -1,52 +1,49 @@
 ## 3. Refactor the webserver recipe
 
-To make this recipe more manageable and reusable, we can factor out these parts:
+For this project, let's say that the location of the home page &ndash; <code class="file-path">/var/www/customers/public_html</code> &ndash; and its owner &ndash; `web_admin` &ndash; might change. To make this recipe more manageable, let's factor out those parts into custom node attributes.
 
-* the name of the web app &ndash; `customers`.
-* the name of the configuration file &ndash; `customers.conf`.
-* the location of the default home page &ndash; `/srv/apache/customers/`.
-* the owner and group name of the home page &ndash; `web_admin`.
+To do so, you'll go back to your attributes file, <code class="file-path">default.rb</code>, and create a few custom attributes to describe these parts.
 
-Let's go back to your attributes file, <code class="file-path">default.rb</code>, and create a few custom attributes to describe these parts.
-
-We've already defined the user name and group for your site's content. The `apache2` cookbook defines an attribute named `node['apache']['docroot_dir']` that describes the document root, so all we have to do is override it. We'll need to also define our site's name and the name of its configuration file.
+We've already defined the user name and group for your site's content. Let's add another node attribute that defines the path to the document root.
 
 Modify <code class="file-path">default.rb</code> like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/attributes/default.rb
-default['web_application']['user'] = 'web_admin'
-default['web_application']['group'] = 'web_admin'
+# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
+default['awesome_customers']['user'] = 'web_admin'
+default['awesome_customers']['group'] = 'web_admin'
 
-default['web_application']['name'] = 'customers'
-default['web_application']['config'] = 'customers.conf'
-
-default['apache']['docroot_dir'] = '/srv/apache/customers'
+default['awesome_customers']['document_root'] = '/var/www/customers/public_html'
 ```
 
 Now we have values to use in our recipe. It's time to write out our recipe file. Modify <code class="file-path">webserver.rb</code>  like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/webserver.rb
-# Install Apache and configure its service.
-include_recipe 'apache2::default'
-
-# Create and enable our custom site.
-web_app node['web_application']['name'] do
-  template "#{node['web_application']['config']}.erb"
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+# Install Apache and start the service.
+httpd_service 'customers' do
+  mpm 'prefork'
+  action [:create, :start]
 end
 
-# Create the document root.
-directory node['apache']['docroot_dir'] do
+# Add the site configuration.
+httpd_config 'customers' do
+  instance 'customers'
+  source 'customers.conf.erb'
+  notifies :restart, 'httpd_service[customers]'
+end
+
+# Create the document root directory.
+directory node['awesome_customers']['document_root'] do
   recursive true
 end
 
-# Write a default home page.
-file "#{node['apache']['docroot_dir']}/index.php" do
+# Write the home page.
+file "#{node['awesome_customers']['document_root']}/index.php" do
   content '<html>This is a placeholder</html>'
   mode '0644'
-  owner node['web_application']['user']
-  group node['web_application']['group']
+  owner node['awesome_customers']['user']
+  group node['awesome_customers']['group']
 end
 ```
 

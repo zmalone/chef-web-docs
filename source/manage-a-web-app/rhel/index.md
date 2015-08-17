@@ -1,17 +1,17 @@
 ---
-title: 'Learn to manage a basic web application on Red Hat Enterprise Linux'
+title: 'Learn to manage a basic Red Hat Enterprise Linux web application'
 layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
 ---
-In [Learn the basics](/learn-the-basics/rhel) and [Manage a node](/manage-a-node/rhel/), you learned how Chef works by configuring a web server and a custom home page. Let's extend this by building a basic but complete web application on Red Hat Enterprise Linux or CentOS that uses a web server, a database, and scripting.
+In [Learn the basics](/learn-the-basics/rhel) and [Learn to manage a node](/manage-a-node/rhel/), you learned how Chef works by configuring a web server and a custom home page. Let's extend this by building a basic but complete web application on Red Hat Enterprise Linux or CentOS that uses a web server, a database, and scripting.
 
 In this tutorial, you'll write Chef code from your workstation, upload your code to a Chef server, and have your Red Hat Enterprise Linux or CentOS node pull that code from the Chef server and apply it.
 
 <img src="/assets/images/networks/workstation-server-node.png" style="width: 100%; box-shadow: none;" alt="Your workstation, a Chef server, and nodes" />
 
-You've seen this setup in [Manage a node](/manage-a-node/rhel/). There, you uploaded your cookbook to the Chef server from your workstation. To apply your cookbook to your node, you ran the `knife ssh` command, which created an SSH connection from your workstation to your node and ran `chef-client` on your node. When your node ran `chef-client`, it pulled the latest cookbooks from the Chef server.
+You've seen this setup in [Learn to manage a node](/manage-a-node/rhel/). There, you uploaded your cookbook to the Chef server from your workstation. To apply your cookbook to your node, you ran the `knife ssh` command, which created an SSH connection from your workstation to your node and ran `chef-client` on your node. When your node ran `chef-client`, it pulled the latest cookbooks from the Chef server.
 
 In this tutorial, the node will host the web application, which reads customer records from a database and displays the results on a web page. By the end, you'll have a web application that looks like this:
 
@@ -29,6 +29,7 @@ After completing this lesson, you'll:
 
 * be able to use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
 * be more productive by using community cookbooks from Chef Supermarket to perform common tasks.
+* be able to use encrypted data bags to protect sensitive data.
 * know how to use tools such as Berkshelf to resolve dependencies among your cookbooks.
 
 You'll get started by setting up your workstation, a Chef server, and a node to manage.

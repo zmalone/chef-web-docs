@@ -6,9 +6,9 @@ Now you need to download some files that enable you to securely communicate with
 
 From your workstation,
 
-1. Navigate to the [Chef management console](https://manage.chef.io/organizations/).
-1. Select your organization.
-1. Select **Starter Kit** from the menu.
+1. Navigate to the [Chef management console](https://manage.chef.io/).
+1. From the **Administration** tab, select your organization.
+1. Select **Starter Kit** from the menu on the left.
 1. Click the **Download Starter Kit** button.
 1. Click **Proceed**. Save the file <code class="file-path">chef-starter.zip</code> to your computer.
 1. Create the <code class="file-path">~\chef-repo</code> directory if it does not exist and extract <code class="file-path">chef-starter.zip</code> to that location.

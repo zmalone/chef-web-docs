@@ -22,6 +22,17 @@
       margin-top: 10px;
       padding: 8px;
     }
+    p.skills-topic {
+      @include button;
+      @include radius;
+      margin-top: 10px;
+      padding: 8px;
+      background-color:#888;
+      border-color:#670066;
+    }
+    p.skills-topic:hover, p.skills-topic:focus {
+      background-color: #666;
+    }
 
     img {
       box-shadow: none;
@@ -31,6 +42,15 @@
       height: 100px;
       filter: alpha(opacity=60);
       opacity: .6;
+      &:hover {
+        opacity: 1;
+        filter: alpha(opacity=100);
+        @include transition(all 0.1s ease);
+      }
+    }
+    img.skills-icon {
+      filter: alpha(opacity=80);
+      opacity: .8;
       &:hover {
         opacity: 1;
         filter: alpha(opacity=100);
@@ -47,6 +67,21 @@
         border: none;
       }
     }
+  }
+
+  > li {
+    float: none;
+  }
+}
+
+.button-list {
+  list-style: none;
+  margin: 12px 0 0;
+
+  li {
+    margin: 6px 25px;
+    vertical-align: top;
+    display: inline-block;
   }
 
   > li {
@@ -78,15 +113,16 @@
 
 // Section linking
 a.section-link {
-  margin-left: -0.75em;
-  color: #dddddd;
+  margin-left: 0.35em;
+  color: $box-background;
   font-size: 80%;
-  padding-right: 0.25em;
   vertical-align: top;
-  visibility: hidden;
 
+  &:focus {
+    outline-style: none; // don't place box around links
+  }
   &:hover {
-    color: $primary-orange;
+    color: $primary-blue;
   }
 }
 
@@ -132,7 +168,7 @@ ul#top-nav {
 }
 
 .section-header {
-  background: transparent url('http://www.chef.io/images/hero-configuration-management.jpg');-webkit-background-clip: border-box;
+  background: transparent url('//www.chef.io/images/hero-configuration-management.jpg');-webkit-background-clip: border-box;
   background-attachment: scroll;
   background-clip: border-box;
   background-size: cover;
@@ -250,7 +286,7 @@ ul.tabs {
 }
 
 .box {
-  background-color: #fff;
+  background-color: $box-background;
   border: solid 1px lighten($secondary-gray, 30%);
   margin-bottom: 25px;
   padding: 15px;//0.9375rem 1.875rem;
@@ -406,10 +442,17 @@ ul#social-nav.right {
   padding-bottom: 12px;
 }
 
-img.alert-box-icon {
+img.alert-box-icon-small {
   box-shadow: none;
   display: inline-block;
   height: 15px;
+  margin: 0px;
+}
+
+img.alert-box-icon-large {
+  box-shadow: none;
+  display: inline-block;
+  height: 35px;
   margin: 0px;
 }
 
@@ -440,6 +483,29 @@ img.alert-box-icon {
    }
  }
 
+ .aws {
+    @include alert(
+      $bg: lighten($secondary-blue, 25%),
+      $radius: false
+    );
+  }
+ .aws {
+    color: #555;
+    font-size: 95%;
+    border-style: none;
+    border-left: solid 2px lighten($primary-gray, 25%);
+    line-height: 1.6;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+
+    &.error {
+      border-left: solid 2px darken(red, 25%);
+
+      i {
+        color: darken(red, 25%);
+      }
+    }
+  }
+
 table {
   border: none;
   background: none;
@@ -457,8 +523,48 @@ img[alt="haproxy cookbook version"] {
   width: 50%;
 }
 
+table.icon-description {
+  width: 100%;
+  img {
+    margin: 0.5em;
+  }
+  th {
+    padding: 1px;
+  }
+  td {
+    padding: 1px;
+    font-family: $main-font;
+    font-size: $base-font-size;
+    color: $body-font-color;
+    line-height: 1.6;
+  }
+}
+
 // Force embedded SurveyMonkey surveys to take 100%k width.
 #sm_e_s {
   width: 100%;
   display: block;
+}
+
+quote {
+  @include alert(
+    $bg: $quote-color,
+    $radius: false
+  );
+}
+.quote {
+  color: inherit;
+  font-size: 95%;
+  border-style: none;
+  border-left: solid 2px lighten($primary-gray, 25%);
+  line-height: 1.6;
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+
+  &.error {
+    border-left: solid 2px darken(red, 25%);
+
+    i {
+      color: darken(red, 25%);
+    }
+  }
 }

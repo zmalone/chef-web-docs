@@ -1,11 +1,13 @@
-## 4. Use Berkshelf to upload the web_application cookbook
+## 4. Use Berkshelf to upload the awesome_customers cookbook
 
-Because we know that only `web_application` needs to be uploaded to the Chef server, we can add it as an argument to the `berks upload` command. Run it like this.
+Because we know that only `awesome_customers` needs to be uploaded to the Chef server, we can add it as an argument to the `berks upload` command. Run it like this.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
-$ berks upload web_application
-Uploaded web_application (0.2.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
+# ~/chef-repo/cookbooks/awesome_customers
+$ berks upload awesome_customers
+Uploaded awesome_customers (0.2.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
 
-The `web_application` cookbook was uploaded because its version has changed.
+[COMMENT] Remember to pass the `--no-ssl-verify` flag or set up a trusted SSL certificate if you're working with your own on-premises Chef server.
+
+The `awesome_customers` cookbook was uploaded because its version has changed.

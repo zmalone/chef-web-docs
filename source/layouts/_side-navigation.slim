@@ -1,0 +1,20 @@
+- if current_page.parent.data.layout == "lesson-options"
+  - @pages = current_page.parent.siblings.insert current_page.parent.data.order - 1, current_page.parent
+- else
+  - @pages = current_page.siblings.insert current_page.data.order - 1, current_page
+div style="background-color:none;"
+  ul.side-nav.box
+    - @pages.each do |p|
+      - if p == current_page
+        li class="side-nav-active"
+          = link_to p.data.title, "#"
+      - else
+        li == link_to p.data.title, p
+      - if p.data.layout == "lesson-options"
+        ul
+          - p.children.each do |p2|
+            - if p2 == current_page
+              li class="side-nav-active"
+                = link_to p2.data.title, "#"
+            - else
+              li == link_to p2.data.title, p2

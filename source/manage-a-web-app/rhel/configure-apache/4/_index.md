@@ -6,56 +6,52 @@ First, run this command to create your template file, <code class="file-path">cu
 
 ```bash
 # ~/chef-repo
-$ chef generate template cookbooks/web_application customers.conf
+$ chef generate template cookbooks/awesome_customers customers.conf
 Compiling Cookbooks...
 Recipe: code_generator::template
-  * directory[cookbooks/web_application/templates/default] action create
-    - create new directory cookbooks/web_application/templates/default
-  * template[cookbooks/web_application/templates/default/customers.conf.erb] action create
-    - create new file cookbooks/web_application/templates/default/customers.conf.erb
-    - update content in file cookbooks/web_application/templates/default/customers.conf.erb from none to e3b0c4
+  * directory[cookbooks/awesome_customers/templates/default] action create
+    - create new directory cookbooks/awesome_customers/templates/default
+  * template[cookbooks/awesome_customers/templates/default/customers.conf.erb] action create
+    - create new file cookbooks/awesome_customers/templates/default/customers.conf.erb
+    - update content in file cookbooks/awesome_customers/templates/default/customers.conf.erb from none to e3b0c4
     (diff output suppressed by config)
 ```
 
-This command added the template file <code class="file-path">customers.conf.erb</code> to the <code class="file-path">~/chef-repo/cookbooks/web_application/templates/default</code> directory. Remember, the <code class="file-path">.erb</code> extension means that the file can hold placeholders that are filled in when the recipe runs. That's what makes the file a template.
+This command added the template file <code class="file-path">customers.conf.erb</code> to the <code class="file-path">~/chef-repo/cookbooks/awesome_customers/templates/default</code> directory. Remember, the <code class="file-path">.erb</code> extension means that the file can hold placeholders that are filled in when the recipe runs. That's what makes the file a template.
 
 Add this to <code class="file-path">customers.conf.erb</code>.
 
-```conf
-# ~/chef-repo/cookbooks/web_application/templates/default/customers.conf.erb
-
-# Managed by Chef for <%= node['hostname'] %>
+```ruby
+# ~/chef-repo/cookbooks/awesome_customers/templates/default/customers.conf.erb
 <VirtualHost *:80>
-  ServerAdmin <%= node['apache']['contact'] %>
+  ServerName <%= node['hostname'] %>
+  ServerAdmin 'ops@example.com'
 
-  DocumentRoot <%= node['apache']['docroot_dir'] %>
+  DocumentRoot <%= node['awesome_customers']['document_root'] %>
   <Directory />
           Options FollowSymLinks
           AllowOverride None
   </Directory>
-  <Directory <%= node['apache']['docroot_dir'] %>>
+  <Directory <%= node['awesome_customers']['document_root'] %> >
           Options Indexes FollowSymLinks MultiViews
           AllowOverride None
           Order allow,deny
           allow from all
   </Directory>
 
-  ErrorLog <%= node['apache']['log_dir'] %>/error.log
+  ErrorLog /var/log/httpd/error.log
 
   LogLevel warn
 
-  CustomLog <%= node['apache']['log_dir'] %>/access.log combined
+  CustomLog /var/log/httpd/access.log combined
   ServerSignature Off
+
+  AddType application/x-httpd-php .php
+  AddType application/x-httpd-php-source .phps
+  DirectoryIndex index.php index.html
 </VirtualHost>
 ```
 
-The configuration file uses these node attributes:
+The configuration file uses two node attributes &ndash; `node['hostname']` and `node['awesome_customers']['document_root']`.
 
-| Attribute                                                            | Source    | Description | Value |
-|---------------------------------------------------------------------:|-----------|-------------|---------------|
-| <code style="white-space:nowrap">node['hostname']</code>             | built-in  | the node's host name. | N/A |
-| <code style="white-space:nowrap">node['apache']['contact']</code>    | `apache2` | value for the `ServerAdmin` directive. | ops@example.com |
-| <code style="white-space:nowrap">node['apache']['docroot\_dir']</code> | `apache2` | the site's document root | <code class="file-path">/srv/apache/customers</code> |
-| <code style="white-space:nowrap">node['apache']['log_dir']</code>    | `apache2` | location for Apache logs | <code class="file-path">/var/log/httpd</code> |
-
-The configuration file uses the built-in or default values for each of these except for `node['apache']['docroot_dir']`. We override the default value of <code class="file-path">/var/www/html</code> with <code class="file-path">/srv/apache/customers</code> in your attributes file.
+`node['hostname']` is a built-in node attribute that defines the node's host name. This node attribute gets set during the initial bootstrap process. `node['awesome_customers']['document_root']` defines the site's document root, and is the node attribute that you used in the previous step to set up the home page.
