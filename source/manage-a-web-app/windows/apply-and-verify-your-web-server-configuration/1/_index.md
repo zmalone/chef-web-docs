@@ -1,12 +1,12 @@
 ```bash
-$ chef generate template cookbooks/web_application ConfigurationFile.ini
+$ chef generate template cookbooks/awesome_customers ConfigurationFile.ini
 Compiling Cookbooks...
 Recipe: code_generator::template
-  * directory[cookbooks/web_application/templates/default] action create
-    - create new directory cookbooks/web_application/templates/default
-  * template[cookbooks/web_application/templates/default/ConfigurationFile.ini.erb] action create
-    - create new file cookbooks/web_application/templates/default/ConfigurationFile.ini.erb
-    - update content in file cookbooks/web_application/templates/default/ConfigurationFile.ini.erb from none to e3b0c4
+  * directory[cookbooks/awesome_customers/templates/default] action create
+    - create new directory cookbooks/awesome_customers/templates/default
+  * template[cookbooks/awesome_customers/templates/default/ConfigurationFile.ini.erb] action create
+    - create new file cookbooks/awesome_customers/templates/default/ConfigurationFile.ini.erb
+    - update content in file cookbooks/awesome_customers/templates/default/ConfigurationFile.ini.erb from none to e3b0c4
     (diff output suppressed by config)
 ```
 
@@ -15,13 +15,13 @@ Recipe: code_generator::template
 Recall that <code class="file-path">metadata.rb</code> references the cookbooks your cookbook depends on.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/metadata.rb
-name             'web_application'
+# ~/chef-repo/cookbooks/awesome_customers/metadata.rb
+name             'awesome_customers'
 maintainer       'The Authors'
 maintainer_email 'you@example.com'
 license          'all_rights'
-description      'Installs/Configures web_application'
-long_description 'Installs/Configures web_application'
+description      'Installs/Configures awesome_customers'
+long_description 'Installs/Configures awesome_customers'
 version          '0.1.0'
 
 depends 'apt', '~> 2.6.1'
@@ -53,7 +53,7 @@ When you created your cookbook, the `chef generate cookbook` command created a f
 For this project, you won't need to work directly with <code class="file-path">Berksfile</code>. But you'll notice that <code class="file-path">Berksfile</code> comes pre-configured to pull cookbooks from Chef Supermarket.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ more Berksfile
 source "https://supermarket.chef.io"
 
@@ -69,14 +69,14 @@ The next step is to have Berkshelf resolve your dependencies by downloading all 
 Run `berks install`.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ berks install
 Resolving cookbook dependencies...
-Fetching 'web_application' from source at .
+Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
 Installing chef_handler (1.1.6)
 Installing windows (1.36.6)
-Using web_application (0.1.0) from source at .
+Using awesome_customers (0.1.0) from source at .
 ```
 
 Berkshelf installs dependent cookbooks to the <code class="file-path">~/.berkshelf/cookbooks</code> directory so that they can be shared among all of your cookbooks.
@@ -93,14 +93,14 @@ Now we can upload your cookbooks to the Chef server.
 Run `berks upload`.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ berks upload
 Uploaded chef_handler (1.1.6) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Uploaded web_application (0.1.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
+Uploaded awesome_customers (0.1.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded windows (1.36.6) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
 
-knife bootstrap windows winrm 54.191.20.45 --winrm-user Administrator --winrm-password '*B4NPD!TSkG' --node-name node_wisa_1 --run-list 'recipe[web_application]'
+knife bootstrap windows winrm 54.191.20.45 --winrm-user Administrator --winrm-password '*B4NPD!TSkG' --node-name node_wisa_1 --run-list 'recipe[awesome_customers]'
 
 knife winrm 54.191.20.45  chef-client --manual-list --winrm-user Administrator --winrm-password '*B4NPD!TSkG'
 
@@ -109,14 +109,14 @@ knife winrm 54.191.20.45  chef-client --manual-list --winrm-user Administrator -
 To prove that the cookbooks uploaded successfully, run `knife cookbook list`.
 
 ```bash
-# ~/chef-repo/cookbooks/web_application
+# ~/chef-repo/cookbooks/awesome_customers
 $ knife cookbook list
 apache2           3.0.1
 apt               2.6.1
 firewall          0.11.8
 iptables          0.14.1
 logrotate         1.9.0
-web_application   0.1.0
+awesome_customers   0.1.0
 ```
 
 Congratulations. Chef server now contains everything you need to run `chef-client` on your node.

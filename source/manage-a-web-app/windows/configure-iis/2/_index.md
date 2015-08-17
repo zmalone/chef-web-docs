@@ -1,20 +1,33 @@
-## 2. Create the webserver recipe
+## 2. Enable the IIS role
 
-Remember, our goals for this part are to:
+Here's how you might use PowerShell DSC to enable the IIS role.
 
-* install IIS.
-* set up IIS to run ASP.NET applications.
-
-The first step is to create the recipe file, <code class="file-path">webserver.rb</code>. Run the following command to generate it.
-
-```bash
-# ~/chef-repo
-$ chef generate recipe cookbooks/web_application webserver
-Compiling Cookbooks...
-Recipe: code_generator::recipe
-[...]
-  * template[cookbooks/web_application/recipes/webserver.rb] action create
-    - create new file cookbooks/web_application/recipes/webserver.rb
-    - update content in file cookbooks/web_application/recipes/webserver.rb from none to bc6813
-    (diff output suppressed by config)
+```powershell
+WindowsFeature InstallWebServer
+{
+  Name = "Web-Server"
+  Ensure = "Present"
+}
 ```
+
+To incorporate this DSC code in your Chef recipe, you use the [dsc_script](https://docs.chef.io/resource_dsc_script.html) resource.
+
+Add the following to your `webserver` recipe.
+
+```ruby
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+# Enable the IIS role.
+dsc_script 'Web-Server' do
+  code <<-EOH
+  WindowsFeature InstallWebServer
+  {
+    Name = "Web-Server"
+    Ensure = "Present"
+  }
+  EOH
+end
+```
+
+The `code` attribute defines the code for the DSC configuration script. We use what's called a [here document](https://en.wikibooks.org/wiki/Ruby_Programming/Here_documents), or _heredoc_, to express multiple lines of text &ndash; in this case our PowerShell code &ndash; more naturally. The `<<-EOH` part declares the start of the heredoc, and the `EOH` part ends, or terminates, it.
+
+[COMMENT] The advantage to using `dsc_script` over `powershell_script` is that you don't have to provide a guard (a `not_if` or `only_if` attribute) to ensure that the configuration is applied only when needed &ndash; PowerShell DSC takes care of that for you. `powershell_script` is still useful for systems that don't support DSC or when you have PowerShell code that you've already written and tested.

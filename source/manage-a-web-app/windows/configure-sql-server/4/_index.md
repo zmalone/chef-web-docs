@@ -5,7 +5,7 @@ Now let's install the MySQL client and service packages. We'll also need to inst
 Add the following to <code class="file-path">database.rb</code>.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/database.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 # Configure the mysql2 Ruby gem.
 mysql2_chef_gem 'default' do
   action :install
@@ -34,12 +34,12 @@ Here's an opportunity to make things more reusable by separating your policy fro
 Add a default node attribute to your attributes file, <code class="file-path">default.rb</code>, making the entire file look like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/attributes/default.rb
-default['web_application']['user'] = 'web_admin'
-default['web_application']['group'] = 'web_admin'
+# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
+default['awesome_customers']['user'] = 'web_admin'
+default['awesome_customers']['group'] = 'web_admin'
 
-default['web_application']['name'] = 'customers'
-default['web_application']['config'] = 'customers.conf'
+default['awesome_customers']['name'] = 'customers'
+default['awesome_customers']['config'] = 'customers.conf'
 
 default['apache']['docroot_dir'] = '/srv/apache/customers'
 
@@ -49,7 +49,7 @@ default['mysql']['server_root_password'] = 'learnchef_mysql'
 Now replace the password with the node attribute.
 
 ```ruby
-# ~/chef-repo/cookbooks/web_application/recipes/database.rb
+# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 # Configure the mysql2 Ruby gem.
 mysql2_chef_gem 'default' do
   action :install

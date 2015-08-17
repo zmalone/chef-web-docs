@@ -1,1 +1,1 @@
-Next, you'll upload your `web_application` cookbook to the Chef server and apply it to your node. Then you'll log into your node and run a few commands to verify that the database portion is configured as we expect.
+Next, you'll upload your `awesome_customers` cookbook to the Chef server and apply it to your node. Then you'll log into your node and run a few commands to verify that the database portion is configured as we expect.

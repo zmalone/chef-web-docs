@@ -1,5 +1,5 @@
 ---
-title: 'Learn to manage a basic web application on Windows Server'
+title: 'Learn to manage a basic Windows Server web application'
 layout: lesson-overview
 platform: Windows Server
 logo: windows.svg
@@ -17,9 +17,9 @@ In this tutorial, the node will host the web application, which reads customer r
 
 ![the resulting web page](/assets/images/misc/webapp_result.png)
 
-A Linux web application configuration that uses a database and scripting is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll work with all of these components in this tutorial.
+A web application configuration that uses a database and scripting is commonly called a _LAMP stack_. The LAMP  acronym comes from Linux and stands for Linux, Apache, MySQL, and PHP. On Windows, such a configuration is also commonly called a _WISA stack_, which stands for Windows, IIS, SQL Server, and ASP.NET. Both terms can be used when referring to the Windows configuration. You'll work with all of the WISA components in this tutorial.
 
-Setting up a LAMP stack is a great next step to building your Chef skills because it:
+Setting up a LAMP, or WISA, stack is a great next step to building your Chef skills because it:
 
 * enables you to exercise the skills you've already learned.
 * introduces just enough complexity to demonstrate real-world Chef usage patterns.
@@ -28,6 +28,7 @@ Setting up a LAMP stack is a great next step to building your Chef skills becaus
 After completing this lesson, you'll:
 
 * be able to use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
+* know how to incorporate PowerShell DSC in your Chef recipes.
 * be more productive by using community cookbooks from Chef Supermarket to perform common tasks.
 * know how to use tools such as Berkshelf to resolve dependencies among your cookbooks.
 

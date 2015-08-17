@@ -1,6 +1,6 @@
 ## 1. Install the Chef Development Kit on your workstation
 
-You administer your network with your workstation. Your workstation is also where you write your Chef code. Remember that although you'll be configuring an Windows Server machine, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
+You administer your network with your workstation. Your workstation is also where you write your Chef code. Remember that although you'll be configuring a Windows Server machine, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
 
 [COMMENT] It's common to use a virtual machine as your workstation. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites).
 
