@@ -3,7 +3,7 @@ title: 'Audit an Ubuntu node for compliance'
 layout: lesson-overview
 platform: 'Ubuntu'
 logo: ubuntu.svg
-order: 2
+order: 3
 ---
 Whether you must comply with regulatory frameworks such as PCI, HIPAA, or Dodd-Frank, or you have internal company standards you must meet, adhering to your compliance policies helps you deliver safe, secure applications and services.
 
