@@ -1,108 +1,34 @@
-## 2. Create the database
+## 2. Add commands to the SQL script file
 
-Now that we have MySQL configured, let's set up the database. We'll name your database `products`.
+Now let's add commands to the script file that perform the following tasks:
 
-Let's continue the pattern we've learned of directly stating the configuration we want, and then going back and factoring our data from our policy.
+1. Create a database named `learnchef`.
+1. Create a table named `customers` in the `learnchef` database.
+1. Add sample data to the `customers` table.
 
-To set up your database, we'll use the `mysql_database` resource, which comes from the `database` cookbook. The configuration code might look like this.
+Add the following to your <code class="file-path">create-database.sql</code> file.
 
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
-# Create the database instance.
-mysql_database 'products' do
-  connection(
-    :host => '127.0.0.1',
-    :username => 'root',
-    :password => 'learnchef_mysql'
-  )
-  action :create
-end
-```
+```sql
+-- ~/chef-repo/cookbooks/awesome_customers/files/default/create-database.sql
 
-This code:
-
-* configures a database named `products`.
-* specifies that user connections are allowed from IP address 127.0.0.1 (localhost).
-* gives ownership of the database to `root` and assigns the initial password.
-
-[WARN] Remember, we're using hard-coded passwords for learning, but it's not a recommended practice!
-
-### Refactor the database configuration
-
-Let's factor your data so that your recipe is more reusable. We'll factor out the database name and the connection info (host name, user name, and password).
-
-Append the following to your default attributes file, <code class="file-path">default.rb</code>.
-
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
-default['awesome_customers']['database']['dbname'] = 'products'
-default['awesome_customers']['database']['host'] = '127.0.0.1'
-default['awesome_customers']['database']['username'] = 'root'
-default['awesome_customers']['database']['password'] = node['mysql']['server_root_password']
-```
-
-The entire file looks like this.
-
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
-default['awesome_customers']['user'] = 'web_admin'
-default['awesome_customers']['group'] = 'web_admin'
-
-default['awesome_customers']['name'] = 'customers'
-default['awesome_customers']['config'] = 'customers.conf'
-
-default['apache']['docroot_dir'] = '/srv/apache/customers'
-
-default['mysql']['server_root_password'] = 'learnchef_mysql'
-
-default['awesome_customers']['database']['dbname'] = 'products'
-default['awesome_customers']['database']['host'] = '127.0.0.1'
-default['awesome_customers']['database']['username'] = 'root'
-default['awesome_customers']['database']['password'] = node['mysql']['server_root_password']
-```
-
-Replace your hard-coded values with your custom attributes, like this.
-
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
-# Create the database instance.
-mysql_database node['awesome_customers']['database']['dbname'] do
-  connection(
-    :host => node['awesome_customers']['database']['host'],
-    :username => node['awesome_customers']['database']['username'],
-    :password => node['awesome_customers']['database']['password']
-  )
-  action :create
-end
-```
-
-<code class="file-path">database.rb</code> now looks like this.
-
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
-# Configure the mysql2 Ruby gem.
-mysql2_chef_gem 'default' do
-  action :install
-end
-
-# Configure the MySQL client.
-mysql_client 'default' do
-  action :create
-end
-
-# Configure the MySQL service.
-mysql_service 'default' do
-  initial_root_password node['mysql']['server_root_password']
-  action [:create, :start]
-end
-
-# Create the database instance.
-mysql_database node['awesome_customers']['database']['dbname'] do
-  connection(
-    :host => node['awesome_customers']['database']['host'],
-    :username => node['awesome_customers']['database']['username'],
-    :password => node['awesome_customers']['database']['password']
-  )
-  action :create
-end
+USE master;
+GO
+-- Create the learnchef database.
+CREATE DATABASE learnchef;
+GO
+USE learnchef;
+GO
+-- Create the customers table.
+CREATE TABLE customers(
+  id uniqueidentifier NOT NULL DEFAULT newid(),
+  PRIMARY KEY(id),
+  first_name VARCHAR(64),
+  last_name VARCHAR(64),
+  email VARCHAR(64)
+);
+GO
+-- Add sample data to the table.
+INSERT INTO customers(id, first_name, last_name, email) VALUES(newid(), 'Jane', 'Smith', 'jane.smith@example.com');
+INSERT INTO customers(id, first_name, last_name, email) VALUES(newid(), 'Dave', 'Richards', 'dave.richards@example.com');
+GO
 ```
