@@ -1,21 +1,20 @@
-## 1. Reference the database cookbook
+## 1. Create the create-database.sql SQL script file
 
-Like you did before, append a `depends` statement for the `database` cookbook to <code class="file-path">metadata.rb</code>, making the entire file look like this.
+Let's start by creating a script file named <code class="file-path">create-database.sql</code>.
 
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/metadata.rb
-name             'awesome_customers'
-maintainer       'The Authors'
-maintainer_email 'you@example.com'
-license          'all_rights'
-description      'Installs/Configures awesome_customers'
-long_description 'Installs/Configures awesome_customers'
-version          '0.1.0'
+Run the following command to create an empty file in our cookbook.
 
-depends 'apt', '~> 2.6.1'
-depends 'apache2', '~> 3.0.1'
-depends 'firewall', '~> 0.11.8'
-depends 'mysql2_chef_gem', '~> 1.0.1'
-depends 'mysql', '~> 6.0.17'
-depends 'database', '~> 4.0.3'
+```bash
+# ~/chef-repo
+$ chef generate file cookbooks/awesome_customers create-database.sql
+Compiling Cookbooks...
+Recipe: code_generator::cookbook_file
+  * directory[cookbooks/awesome_customers/files/default] action create
+    - create new directory cookbooks/awesome_customers/files/default
+  * template[cookbooks/awesome_customers/files/default/create-database.sql] action create
+    - create new file cookbooks/awesome_customers/files/default/create-database.sql
+    - update content in file cookbooks/awesome_customers/files/default/create-database.sql from none to e3b0c4
+    (diff output suppressed by config)
 ```
+
+This command added the <code class="file-path">create-database.sql</code> file to the <code class="file-path">~/chef-repo/cookbooks/awesome_customers/files/default</code> directory.

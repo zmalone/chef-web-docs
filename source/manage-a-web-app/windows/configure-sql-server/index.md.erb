@@ -7,14 +7,31 @@ sections: [1, 2, 3]
 next: {heading: Next, partial: next}
 time_to_complete: 15 minutes
 ---
-Now let's configure Microsoft SQL Server. For this tutorial, we'll use Microsoft SQL Server Express 2014.
+Now let's configure Microsoft SQL Server. For this tutorial, we'll use Microsoft SQL Server Express 2012.
 
-A common way to install SQL Server is to first manually download the installer to a location on your network. Then from the computer you want to install SQL Server on, you mount the network location as a drive and run the installer.
+In the previous lesson, you used PowerShell DSC to enable the IIS role.
 
-Because we require an unattended installation, that is, one that uses automation, we'll run the installer in quiet mode and provide a configuration file that lists our required configuration parameters.
+```ruby
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+# Enable the IIS role.
+dsc_script 'Web-Server' do
+  code <<-EOH
+  WindowsFeature InstallWebServer
+  {
+    Name = "Web-Server"
+    Ensure = "Present"
+  }
+  EOH
+end
+```
 
-1. Download installer to a shared location on your network
-2. Create a configuration file
-3. Mount the shared network location
-4. Run the installer
-5. Unmount the shared network location
+To configure SQL Server, we want to download the installer and run it from a Chef recipe. Although it's possible to [use PowerShell DSC to configure SQL Server](http://www.colinsalmcorner.com/post/install-and-configure-sql-server-using-powershell-dsc
+), let's use the [sql_server](https://supermarket.chef.io/cookbooks/sql_server) cookbook from Chef Supermarket.
+
+Remember that Chef Supermarket is a place for the community to share cookbooks. In [Learn to manage a Windows Server node](/manage-a-node/windows/), you downloaded the Learn Chef IIS cookbook so you didn't have to type it in a second time. The `sql_server` cookbook on Chef Supermarket works in a similar way &ndash; it contains reusable components so that you don't have to reinvent the wheel.
+
+The `sql_server` cookbook works by downloading the SQL Server installer to a temporary location. Then it runs the installer in quiet mode by [providing a configuration file](https://technet.microsoft.com/en-us/library/Dd239405\(v=SQL.110\).aspx) that lists the required configuration options. The cookbook uses the template mechanism that you worked with in the previous tutorial to build the configuration file. You'll learn in this lesson how to use node attributes to customize the contents of the configuration file when the cookbook runs.
+
+The `sql_server` cookbook implements Chef's _test and repair_ model by downloading the installer only if it doesn't already exist and by running the installer only if SQL Server isn't installed.
+
+[COMMENT] Keep in mind that for now your goal is to learn how Chef works. It's OK if you don't understand every detail of how the community cookbooks work because you're working in a safe environment. As you gain expereince, you'll want to evaluate the code and documentation to ensure that the cookbooks you get from Chef Supermarket do exactly what you expect before you apply them to your production environment.

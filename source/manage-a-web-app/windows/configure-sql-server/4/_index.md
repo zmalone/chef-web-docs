@@ -1,70 +1,13 @@
 ## 3. Install MySQL
 
-Now let's install the MySQL client and service packages. We'll also need to install the `mysql2` Ruby gem before we configure MySQL.
+Now that we've referenced the `sql_server` cookbook from our cookbook's metadata and set up the node attributes we need to override, we're ready to install SQL Server.
+
+The `sql_server` cookbook provides a recipe named `server` that does everything for us. So all we need to do is run that recipe from our `database` recipe.
 
 Add the following to <code class="file-path">database.rb</code>.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
-# Configure the mysql2 Ruby gem.
-mysql2_chef_gem 'default' do
-  action :install
-end
-
-# Configure the MySQL client.
-mysql_client 'default' do
-  action :create
-end
-
-# Configure the MySQL service.
-mysql_service 'default' do
-  initial_root_password 'learnchef_mysql'
-  action [:create, :start]
-end
+# Install SQL Server.
+include_recipe 'sql_server::server'
 ```
-
-The `mysql2_chef_gem` resource comes from the `mysql2_chef_gem` cookbook.
-
-The other two resources &ndash; `mysql_client` and `mysql_service` &ndash; come from the `mysql` cookbook.
-
-### Refactor the MySQL configuration
-
-Here's an opportunity to make things more reusable by separating your policy from your data. The `initial_root_password` attribute in the `mysql_service` resource can be turned into a node attribute.
-
-Add a default node attribute to your attributes file, <code class="file-path">default.rb</code>, making the entire file look like this.
-
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/attributes/default.rb
-default['awesome_customers']['user'] = 'web_admin'
-default['awesome_customers']['group'] = 'web_admin'
-
-default['awesome_customers']['name'] = 'customers'
-default['awesome_customers']['config'] = 'customers.conf'
-
-default['apache']['docroot_dir'] = '/srv/apache/customers'
-
-default['mysql']['server_root_password'] = 'learnchef_mysql'
-```
-
-Now replace the password with the node attribute.
-
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
-# Configure the mysql2 Ruby gem.
-mysql2_chef_gem 'default' do
-  action :install
-end
-
-# Configure the MySQL client.
-mysql_client 'default' do
-  action :create
-end
-
-# Configure the MySQL service.
-mysql_service 'default' do
-  initial_root_password node['mysql']['server_root_password']
-  action [:create, :start]
-end
-```
-
-[WARN] Hard-coding the password is fine for learning purposes. But in practice, you never want to store your password directly in a Chef recipe or attribute file. We'll show you a better way in a later tutorial.

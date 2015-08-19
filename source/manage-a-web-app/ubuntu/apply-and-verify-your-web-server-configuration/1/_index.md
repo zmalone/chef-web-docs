@@ -33,7 +33,7 @@ supports 'centos'
 depends 'poise', '~> 2.0'
 ```
 
-To help unravel this dependency web &ndash; and remove the need for you to manually resolve cookbook dependencies &ndash; we're going to use [Berkshelf](http://berkshelf.com). Berkshelf uploads your cookbooks to the Chef server and retrieves the cookbooks that your cookbook depends on.
+To help unravel this dependency web &ndash; and remove the need for you to manually resolve cookbook dependencies &ndash; we're going to use [Berkshelf](http://berkshelf.com) instead of running the `knife cookbook upload` command. Berkshelf uploads your cookbooks to the Chef server and retrieves the cookbooks that your cookbook depends on.
 
 Berkshelf comes with the Chef DK, so you don't have to install anything.
 

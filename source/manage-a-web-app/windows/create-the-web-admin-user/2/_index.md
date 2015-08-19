@@ -19,7 +19,7 @@ To keep things more manageable, it's a common practice to separate the logic of 
 
 ### Create the custom attributes file
 
-In [Manage a node](/manage-a-node/windows/), you learned about some of the built-in node attributes that Chef provides, such as the node's IP address. You can also define your own custom attributes that are specific to your policy. Let's create an attributes file that will define all of the custom attributes for your web application cookbook.
+In [Learn to manage a Windows Server node](/manage-a-node/windows/), you learned about some of the built-in node attributes that Chef provides, such as the node's IP address. You can also define your own custom attributes that are specific to your policy. Let's create an attributes file that will define all of the custom attributes for your web application cookbook.
 
 Run the following to create an attributes file named <code class="file-path">default.rb</code>.
 
