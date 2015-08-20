@@ -5,7 +5,7 @@ platform: Windows Server
 logo: windows.svg
 order: 2
 ---
-In [Learn the basics](/learn-the-basics/windows) and [Learn to manage a Windows Server node](/manage-a-node/windows/), you learned how Chef works by configuring a web server and a custom home page. Let's extend this by building a basic but complete web application on Windows Server that uses a web server, a database, and scripting.
+In [Learn the Chef basics on Windows Server](/learn-the-basics/windows) and [Learn to manage a Windows Server node](/manage-a-node/windows/), you learned how Chef works by configuring a web server and a custom home page. Let's extend this by building a basic but complete web application on Windows Server that uses a web server, a database, and scripting.
 
 In this tutorial, you'll write Chef code from your workstation, upload your code to a Chef server, and have your Windows Server node pull that code from the Chef server and apply it.
 

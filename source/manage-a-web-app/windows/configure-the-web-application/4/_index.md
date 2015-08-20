@@ -1,12 +1,14 @@
-## 4. Grant access to the IIS_IUSRS group to query the customers table
+## 4. Grant the Customers application access to the customer data
 
-[How adding app pool creates user in the IIS_IUSRS group.] Therefore, the Customers web app runs as `IIS_IUSRS\Products`. We need to grant access for this user to query the `customers` table in the `learnchef` database.
+Applications that run in the `Products` application pool run under `IIS APPPOOL\Products`. We need to grant this user with query access to the `customers` table in the `learnchef` database.
 
 We'll follow the same process that we used to create the `learnchef` database, the `customers` table, and add some sample data.
 
-1. Create a SQL file that's part of the cookbook that contains SQL commands to grant access.
-1. Copy that file to the Chef cache.
-1. Use the `powershell_script` resource to execute the SQL script.
+1. Create a file that's part of the cookbook that contains SQL commands to grant access.
+1. In the `database` recipe, copy that file to the Chef cache.
+1. In the `database` recipe, use the `powershell_script` resource to execute the SQL script.
+
+### Create the grant-access.sql file
 
 Let's start by creating a script file named <code class="file-path">grant-access.sql</code>.
 
@@ -27,6 +29,10 @@ Recipe: code_generator::cookbook_file
 
 This command added the <code class="file-path">grant-access.sql</code> file to the <code class="file-path">~/chef-repo/cookbooks/awesome_customers/files/default</code> directory.
 
+### Add SQL commands to grant-access.sql
+
+Add the following code to <code class="file-path">grant-access.sql</code> to grant query access to the `IIS APPPOOL\Products` user.
+
 ```sql
 -- ~/chef-repo/cookbooks/awesome_customers/files/default/grant-access.sql
 
@@ -45,11 +51,14 @@ GRANT SELECT ON customers TO [IIS APPPOOL\Products]
 GO
 ```
 
+## Execute the SQL script from your database recipe
+
+
 Append the following code to your `database` recipe, <code class="file-path">database.rb</code>.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
-# Run a SQL file that grants database access to IIS_IUSRS.
+# Run a SQL file that grants database access to IIS APPPOOL\Products.
 # Start by creating a path to the SQL file in the Chef cache.
 grant_access_script_path = win_friendly_path(File.join(Chef::Config[:file_cache_path], 'grant-access.sql'))
 
@@ -58,8 +67,8 @@ cookbook_file grant_access_script_path do
   source 'grant-access.sql'
 end
 
-# 
-powershell_script 'Grant SQL access to IIS_IUSRS' do
+#
+powershell_script 'Grant SQL access to IIS APPPOOL\Products' do
   code <<-EOH
     Import-Module "#{sqlps_module_path}"
     Invoke-Sqlcmd -InputFile #{grant_access_script_path}

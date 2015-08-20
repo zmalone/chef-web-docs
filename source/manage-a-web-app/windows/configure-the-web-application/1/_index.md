@@ -1,6 +1,6 @@
 ## 1. Disable the default IIS web site
 
-We don't need the default web site that comes with IIS, so let's disable it.
+We don't need the default web site that comes with IIS, so let's remove it.
 
 An easy way to do so is to use the [iis](https://supermarket.chef.io/cookbooks/iis) cookbook from Chef Supermarket. The `iis` cookbook defines resources that help you manage IIS, which we'll use later.
 

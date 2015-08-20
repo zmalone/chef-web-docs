@@ -1,14 +1,5 @@
 ## 3. Run the SQL script file
 
-[TODO] Add this and talk about it. Also add the Import statement.
-
-```
-program_files_path = ENV['programfiles(x86)'] || ENV['programfiles']
-sqlps_module_path = ::File.join(program_files_path, 'Microsoft SQL Server\110\Tools\PowerShell\Modules\SQLPS')
-```
-
-----------
-
 Now let's add code to our `database` recipe that copies <code class="file-path">create-database.sql</code> from the cookbook to a working directory and applies it.
 
 Recall that so far <code class="file-path">database.rb</code> looks like this.
@@ -65,15 +56,34 @@ The `create_database_script_path` is the full path to the SQL script file, for e
 
 Now that the file is copied to your Chef cache directory, you can run it. We'll use the `powershell_script` resource to run the PowerShell [Invoke-Sqlcmd](https://msdn.microsoft.com/en-us/library/cc281720\(v=sql.110\).aspx) cmdlet to execute the script.
 
+When we run the `Invoke-Sqlcmd` cmdlet, we need to ensure that the `SQLPS` module is loaded. Let's create a variable that contains the full path to the module so we can reuse it.
+
+Append this code to your `database` recipe.
+
+```ruby
+# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
+# Get the full path to the SQLPS module.
+program_files_path = ENV['programfiles(x86)'] || ENV['programfiles']
+sqlps_module_path = ::File.join(program_files_path, 'Microsoft SQL Server\110\Tools\PowerShell\Modules\SQLPS')
+```
+
+The location of `SQLPS` module varies between 32 and 64-bit versions of Windows Server. We can use the system's environment variables to get the correct path. When the `%programfiles(x86)%` environment variable exists, we can use it to get the full path to the <code class="file-path">Program Files (x86)</code> directory (typically <code class="file-path">C:\Program Files (x86)</code>). Otherwise, we can use the `%programfiles%` environment variable to get the full path to the <code class="file-path">Program Files</code> directory.
+
+The Ruby [ENV](http://ruby-doc.org/core-2.2.0/ENV.html) class reads environment variables. This code assigns the full path to the <code class="file-path">Program Files (x86)</code> directory if the `%programfiles(x86)%` environment variable exists or the <code class="file-path">Program Files</code> directory if the `%programfiles(x86)%` environment variable doesn't exist.
+
+Now append this code to run the SQL script.
+
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 # Run the SQL file only if the 'learnchef' database has not yet been created.
 powershell_script 'Initialize database' do
   code <<-EOH
+    Import-Module "#{sqlps_module_path}"
     Invoke-Sqlcmd -InputFile #{create_database_script_path}
   EOH
   guard_interpreter :powershell_script
   only_if <<-EOH
+    Import-Module "#{sqlps_module_path}"
     (Invoke-Sqlcmd -Query "SELECT COUNT(*) AS Count FROM sys.databases WHERE name = 'learnchef'").Count -eq 0
   EOH
 end
@@ -125,22 +135,28 @@ Your entire `database` recipe looks like this.
 # Install SQL Server.
 include_recipe 'sql_server::server'
 
-# Run a .sql file that creates the database, a database table, and adds sample table rows.
+# Run a SQL file that creates the database, a database table, and adds sample table rows.
 # Start by creating a path to the SQL file in the Chef cache.
 create_database_script_path = win_friendly_path(File.join(Chef::Config[:file_cache_path], 'create-database.sql'))
 
 # Copy the SQL file from the cookbook to the Chef cache.
-file create_database_script_path do
+cookbook_file create_database_script_path do
   source 'create-database.sql'
 end
+
+# Get the full path to the SQLPS module.
+program_files_path = ENV['programfiles(x86)'] || ENV['programfiles']
+sqlps_module_path = ::File.join(program_files_path, 'Microsoft SQL Server\110\Tools\PowerShell\Modules\SQLPS')
 
 # Run the SQL file only if the 'learnchef' database has not yet been created.
 powershell_script 'Initialize database' do
   code <<-EOH
+    Import-Module "#{sqlps_module_path}"
     Invoke-Sqlcmd -InputFile #{create_database_script_path}
   EOH
   guard_interpreter :powershell_script
   only_if <<-EOH
+    Import-Module "#{sqlps_module_path}"
     (Invoke-Sqlcmd -Query "SELECT COUNT(*) AS Count FROM sys.databases WHERE name = 'learnchef'").Count -eq 0
   EOH
 end
