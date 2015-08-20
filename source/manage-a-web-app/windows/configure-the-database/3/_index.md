@@ -1,5 +1,14 @@
 ## 3. Run the SQL script file
 
+[TODO] Add this and talk about it. Also add the Import statement.
+
+```
+program_files_path = ENV['programfiles(x86)'] || ENV['programfiles']
+sqlps_module_path = ::File.join(program_files_path, 'Microsoft SQL Server\110\Tools\PowerShell\Modules\SQLPS')
+```
+
+----------
+
 Now let's add code to our `database` recipe that copies <code class="file-path">create-database.sql</code> from the cookbook to a working directory and applies it.
 
 Recall that so far <code class="file-path">database.rb</code> looks like this.

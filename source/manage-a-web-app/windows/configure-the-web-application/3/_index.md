@@ -1,29 +1,40 @@
-## 3. Refactor the PHP application
+## 3. Create an IIS app pool, app, and site [to run your web application on]
 
-We'll do one final bit of refactoring to modify the PHP script to use custom node attributes.
+[TODO: Intro app pool, site, app more clearly]
 
-Find the part of the program that looks like this.
+Now that we've set up the Customers web app [to be downloaded and installed], let's create an [app pool, site, and app]
 
-```php
-<?php
-// ~/chef-repo/cookbooks/awesome_customers/templates/default/index.php.erb
-$servername = "127.0.0.1";
-$username = "db_admin";
-$password = "customers_password";
-$dbname = "products";
+Append the following code to your `webserver` recipe.
 
-// [...]
-```
+```ruby
+# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+# Create the Products app pool.
+iis_pool 'Products' do
+  runtime_version '4.0'
+  action :add
+end
 
-Replace the values of the variables with the appropriate node attributes, like this:
+# Create the site directory and give IIS_IUSRS read rights.
+directory site_directory do
+  rights :read, 'IIS_IUSRS'
+  recursive true
+  action :create
+end
 
-```php
-<?php
-// ~/chef-repo/cookbooks/awesome_customers/templates/default/index.php.erb
-$servername = "<%= node['awesome_customers']['database']['host'] %>";
-$username = "<%= node['awesome_customers']['database']['app']['username'] %>";
-$password = "<%= node['awesome_customers']['database']['app']['password'] %>";
-$dbname = "<%= node['awesome_customers']['database']['dbname'] %>";
+# Create the Customers site.
+iis_site 'Customers' do
+  protocol :http
+  port 80
+  path site_directory
+  application_pool 'Products'
+  action [:add, :start]
+end
 
-// [...]
+# Create the Customers app.
+iis_app 'Customers' do
+  application_pool 'Products'
+  path '/Products'
+  physical_path app_directory
+  action :add
+end
 ```

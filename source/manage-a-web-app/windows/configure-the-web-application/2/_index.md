@@ -1,106 +1,36 @@
-## 2. Write the PHP application
+## 2. Download an unpack a prebuilt version of the ASP.NET Customers web app
 
-Now we need to update the default home page, <code class="file-path">index.php</code> to read each record from the `customers` database table and display it on the page.
+Now let's write code to download the Customers web app and unpack it in the [IIS directory].
 
-Currently, your cookbook uses the `file` resource to directly set the contents of <code class="file-path">index.php</code>. Let's convert that to use a `template` resource.
+ASP.NET projects typically go through a build process that generates the files and .NET assemblies that [perform the logic.] In practice, you might have a build process that runs when either manually or automatically when code is committed to the app's source code repository. When the build succeeds, you might then have a second process that runs your Chef cookbooks to deploy the updated app to your test or production environment.
 
-Run this `chef generate template` command to create a home page template.
+For learning purposes, we've [provided a prebuilt version](https://github.com/learn-chef/manage-a-web-app-windows/releases/tag/v0.1.0) of the Customers web app on GitHub that your `awesome_customers` cookbook can download and install.
 
-```bash
-# ~/chef-repo
-$ chef generate template cookbooks/awesome_customers index.php
-Compiling Cookbooks...
-Recipe: code_generator::template
-  * directory[cookbooks/awesome_customers/templates/default] action create (up to date)
-  * template[cookbooks/awesome_customers/templates/default/index.php.erb] action create
-    - create new file cookbooks/awesome_customers/templates/default/index.php.erb
-    - update content in file cookbooks/awesome_customers/templates/default/index.php.erb from none to e3b0c4
-    (diff output suppressed by config)
-```
+We're going to reference the directories that hold the Customers app and site locations multiple times, so let's create variables that we can reuse.
 
-Now, in <code class="file-path">webserver.rb</code>, find the `file` resource that sets up the home page.
+Append the following to <code class="file-path">webserver.rb</code>.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-# Write a default home page.
-file "#{node['apache']['docroot_dir']}/index.php" do
-  content '<html>This is a placeholder</html>'
-  mode '0644'
-  owner node['awesome_customers']['user']
-  group node['awesome_customers']['group']
-end
+# Define the local app and site locations.
+app_directory = 'C:\inetpub\apps\Customers'
+site_directory = 'C:\inetpub\sites\Customers'
 ```
 
-Replace that code with the following `template` resource.
+To download and unzip the prebuilt application, we'll use the `windows_zipfile` resource that's provided by the [windows](https://supermarket.chef.io/cookbooks/windows) cookbook. We don't need to add the `windows` cookbook to our metadata file because the `sql_server` cookbook already depends on the `windows` cookbook and loads it for us.
+
+Append the following to <code class="file-path">webserver.rb</code>.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-# Write a default home page.
-template "#{node['apache']['docroot_dir']}/index.php" do
-  source 'index.php.erb'
-  mode '0644'
-  owner node['awesome_customers']['user']
-  group node['awesome_customers']['group']
+# Download the built Customers application and unzip it to the app directory.
+windows_zipfile app_directory do
+  source 'https://github.com/learn-chef/manage-a-web-app-windows/releases/download/v0.1.0/Customers.zip'
+  action :unzip
+  not_if { ::File.exists?(app_directory) }
 end
 ```
 
-Now we can write the PHP program. Add this to <code class="file-path">index.php.erb</code>.
+The `not_if` part of the resource ensures that the zip file is unpacked only when the destination directory doesn't exist.
 
-```html
-<!-- ~/chef-repo/cookbooks/awesome_customers/templates/default/index.php.erb -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Customers</title>
-    <style>
-      table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-        font-family: sans-serif;
-        padding: 5px;
-      }
-      table tr:nth-child(even) td {
-        background-color: #95c7ea;
-      }
-    </style>
-</head>
-<body>
-<?php
-$servername = "127.0.0.1";
-$username = "db_admin";
-$password = "customers_password";
-$dbname = "products";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Perform SQL query
-$sql = "SELECT * FROM customers";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    echo "<table>\n";
-    // Output data of each row
-    while($row = $result->fetch_assoc()) {
-      echo "\t<tr>\n";
-      foreach ($row as $col_value) {
-          print "\t\t<td>$col_value</td>\n";
-      }
-      echo "\t</tr>\n";
-    }
-    echo "</table>";
-} else {
-    echo "0 results";
-}
-
-// Close connection
-$conn->close();
-?>
-</body>
-</html>
-```
+[COMMENT] You can find the source code for the Customers app [on GitHub](https://github.com/learn-chef/manage-a-web-app-windows/tree/master/app). If you want to experiment with it, build it by XXX, and then copy it to a location on your network that your node can access.
