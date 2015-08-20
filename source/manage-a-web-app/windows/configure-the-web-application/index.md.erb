@@ -7,15 +7,29 @@ sections: [1, 2, 3, 4]
 next: {heading: Next, partial: next}
 time_to_complete: 25 minutes
 ---
-In this part, you'll configure the web app that reads the records from your SQL Server database and displays them on the web page.
+In this part, you'll configure the Customers web application. This application reads the records from your SQL Server database and displays them on the web page.
 
-Specifically, you'll perform these tasks:
+IIS uses the concepts of _web sites_, _applications_, and _application pools_ to define how sites are configured.
 
-1. Disable the default IIS web site.
-1. Download an unpack a prebuilt version of the ASP.NET Customers web app.
-1. Create an IIS app pool, app, and site [to run your web application on].
-1. Grant access to the IIS_IUSRS group to query the `customers` table in the `learnchef` database.
+A _web site_ defines the site's security model, network configuration (such as the protocol and port number), and location on disk.
+
+An _application_ contains your site's content, which includes HTML and other static content, and code that runs on the server each time a page is accessed. The Customers web application consists of:
+
+* a configuration (.config) file, which includes the connection string to the `learnchef` database.
+* a .dll that contains the compiled ASP.NET code that runs when the page is accessed.
+* an .aspx file that contains the markup (HTML and CSS code) that defines the appearance of the web page and additional markup that calls into the .dll to retrieve the customer data from the database..
+
+Each time the page is accessed, the server _renders_, or generates, the result in the form of standard HTML and CSS that sends the result to the user.
+
+An _application pool_ runs one or more applications. It's an isolation model that helps make applications run more safely and securely. For example, applications in one application pool cannot access data from an application running in another application pool. If an application in one appliction pool crashes or must be restarted, applications in other pools can continue to run unaffected.
+
+In this lesson, you'll:
+
+1. Remove the default IIS web site.
+1. Download a prebuilt version of the ASP.NET Customers web app as a .zip file and extract it.
+1. Create an IIS application pool, application, and web site that runs the Customers application.
+1. Grant the Customers application access to the customer data in the `learnchef` database.
 
 You'll be working in the <code class="file-path">webserver.rb</code> and <code class="file-path">database.rb</code> recipes that you created earlier.
 
-You've done most of the ground work &ndash; for example you've already set up IIS, ASP.NET, and a SQL Server database. We'll start by XxX.
+You've done most of the ground work &ndash; for example you've already set up IIS, ASP.NET, and a SQL Server database. We'll start by removing the default IIS site.

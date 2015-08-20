@@ -1,6 +1,6 @@
 ## 6. Verify your node's configuration
 
-You're probably anxious to see the working Customers application. From a browser on your workstation, navigate to your site's <code class="file-path">/Products/Customers.aspx</code> page, for example, <code class="file-path">http://54.186.5.41/Products/Customers.aspx</code>.
+You're probably excited to see the working Customers application. From a browser on your workstation, navigate to your site's <code class="file-path">/Products/Customers.aspx</code> page, for example, <code class="file-path">http://54.186.5.41/Products/Customers.aspx</code>.
 
 You'll see this.
 
@@ -12,9 +12,9 @@ To help you understand how your node was configured, let's run a few additional 
 
 Start by connecting to your Windows Server node.
 
-### Verify that the app pool, Web site, and app exist [TODO]
+### Verify that the IIS application pool, web site, and application exist
 
-Run this [Get-WebAppPoolState](https://technet.microsoft.com/en-us/library/ee807832.aspx) cmdlet to get the state of the Products application pool.
+Run this [Get-WebAppPoolState](https://technet.microsoft.com/en-us/library/ee807832.aspx) cmdlet to get the state of the `Products` application pool.
 
 ```ps
 $ Get-WebAppPoolState -Name Products
@@ -24,7 +24,7 @@ Value
 Started
 ```
 
-Now run this [Get-WebSite](https://technet.microsoft.com/en-us/library/ee790588.aspx) PowerShell cmdlet to get the state of the Customers Web site.
+Now run this [Get-WebSite](https://technet.microsoft.com/en-us/library/ee790588.aspx) PowerShell cmdlet to get the state of the `Customers` web site.
 
 ```ps
 $ Get-Website -Name Customers
@@ -34,7 +34,7 @@ Name             ID   State      Physical Path                  Bindings
 Customers        1    Started    C:\inetpub\sites\Customers     http *:80:
 ```
 
-Finally, run this [Get-WebApplication](https://technet.microsoft.com/en-us/library/ee790554.aspx) cmdlet to get the state of the Customers Web app.
+Finally, run this [Get-WebApplication](https://technet.microsoft.com/en-us/library/ee790554.aspx) cmdlet to get the state of the `Customers` web app.
 
 ```ps
 $ Get-WebApplication -Name Products
