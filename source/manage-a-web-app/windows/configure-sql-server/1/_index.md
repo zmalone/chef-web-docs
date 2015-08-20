@@ -4,7 +4,6 @@ You don't need to manually download cookbooks from Chef Supermarket to use them.
 
 The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, <code class="file-path">metadata.rb</code>. To use the `sql_server` cookbook, append the line `depends 'sql_server', '~> 2.4.0'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
 
-
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/metadata.rb
 name             'awesome_customers'

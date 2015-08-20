@@ -1,97 +1,44 @@
-## 1. Install PHP
+## 1. Disable the default IIS web site
 
-Recall that your Apache recipe looks like this.
+We don't need the default web site that comes with IIS, so let's disable it.
+
+An easy way to do so is to use the [iis](https://supermarket.chef.io/cookbooks/iis) cookbook from Chef Supermarket. The `iis` cookbook defines resources that help you manage IIS, which we'll use later.
+
+We'll load the `iis` cookbook just like we did the `sql_server` cookbook. Append a `depends` statement to <code class="file-path">metadata.rb</code>, making the entire file look like this.
+
+```ruby
+# ~/chef-repo/cookbooks/awesome_customers/metadata.rb
+name             'awesome_customers'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures awesome_customers'
+long_description 'Installs/Configures awesome_customers'
+version          '0.2.0'
+
+depends 'sql_server', '~> 2.4.0'
+depends 'iis', '~> 4.1.1'
+```
+
+Now let's remove the default site. The `iis` cookbook provides a recipe named `remove_default_site` that does this for us. All you need to do is include this recipe in your cookbook.
+
+Append the following code to <code class="file-path">webserver.rb</code>.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-# Install Apache and configure its service.
-include_recipe 'apache2::default'
-
-# Create and enable our custom site.
-web_app node['awesome_customers']['name'] do
-  template "#{node['awesome_customers']['config']}.erb"
-end
-
-# Create the document root.
-directory node['apache']['docroot_dir'] do
-  recursive true
-end
-
-# Write a default home page.
-file "#{node['apache']['docroot_dir']}/index.php" do
-  content '<html>This is a placeholder</html>'
-  mode '0644'
-  owner node['awesome_customers']['user']
-  group node['awesome_customers']['group']
-end
-
-# Open port 80 to incoming traffic.
-firewall_rule 'http' do
-  port 80
-  protocol :tcp
-  action :allow
-end
+# Remove the default web site.
+include_recipe 'iis::remove_default_site'
 ```
 
-The `apache2` cookbook defines the `mod_php5` resource, which configures Apache to work with PHP scripts. In <code class="file-path">webserver.rb</code>, append an `include_recipe` line to install the `mod_php5` Apache module.
+This recipe uses the `iis_site` and `iis_pool` resources that the `iis` cookbook defines to stop and delete the default web site and app pool.
 
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-# Install the mod_php5 Apache module.
-include_recipe 'apache2::mod_php5'
-```
+# remove_default_site.rb
+iis_site 'Default Web Site' do
+  action [:stop, :delete]
+end
 
-Now append a `package` resource to install `php5-mysql`.
-
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-# Install php5-mysql.
-package 'php5-mysql' do
-  action :install
-  notifies :restart, 'service[apache2]'
+iis_pool 'DefaultAppPool' do
+  action [:stop, :delete]
 end
 ```
-
-The entire file looks like this.
-
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-# Install Apache and configure its service.
-include_recipe 'apache2::default'
-
-# Create and enable our custom site.
-web_app node['awesome_customers']['name'] do
-  template "#{node['awesome_customers']['config']}.erb"
-end
-
-# Create the document root.
-directory node['apache']['docroot_dir'] do
-  recursive true
-end
-
-# Write a default home page.
-file "#{node['apache']['docroot_dir']}/index.php" do
-  content '<html>This is a placeholder</html>'
-  mode '0644'
-  owner node['awesome_customers']['user']
-  group node['awesome_customers']['group']
-end
-
-# Open port 80 to incoming traffic.
-firewall_rule 'http' do
-  port 80
-  protocol :tcp
-  action :allow
-end
-
-# Install the mod_php5 Apache module.
-include_recipe 'apache2::mod_php5'
-
-# Install php5-mysql.
-package 'php5-mysql' do
-  action :install
-  notifies :restart, 'service[apache2]'
-end
-```
-
-Apache needs to be restarted to enable PHP to use the `php5-mysql` package. To do that, we use the [notifies](https://docs.chef.io/resource_common.html#notifications) attribute. The `notifies` attribute performs the `:restart` action on the `apache2` service. But it does so only when it needs to; that is, only when the `package` resource actually performs the `:install` action.
