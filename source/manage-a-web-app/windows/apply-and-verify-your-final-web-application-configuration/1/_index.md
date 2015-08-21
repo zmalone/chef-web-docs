@@ -1,4 +1,4 @@
-## 1. Use Berkshelf to update your dependencies
+## 1. Use Berkshelf to install your dependencies
 
 Initially, you ran `berks install` to install the cookbooks on your workstation. Because you added a new dependency to your cookbook &ndash; the `iis` cookbook &ndash; run `berks install` again to install it and any of its dependencies.
 

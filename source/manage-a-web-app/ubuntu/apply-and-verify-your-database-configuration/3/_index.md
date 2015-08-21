@@ -24,11 +24,11 @@ depends 'mysql', '~> 6.0.17'
 depends 'database', '~> 4.0.3'
 ```
 
-We need to run `berks update` one more time to update the dependency tree.
+We need to run `berks install` one more time to update the dependency tree.
 
 ```bash
 # ~/chef-repo/cookbooks/awesome_customers
-$ berks update
+$ berks install
 Resolving cookbook dependencies...
 Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
