@@ -21,7 +21,7 @@ The `runtime_version` attribute specifies that the application pool uses the .NE
 
 ### Create the web site
 
-To add the web site, we'll use the `iis` cookbook's `iis_site` resource. By default, ASP.NET applications run under a user in the `IIS_ISERS` group, so we also need to provide read rights to that group.
+To add the web site, we'll use the `iis` cookbook's `iis_site` resource. By default, ASP.NET applications run under a user in the `IIS_IUSRS` group, so we also need to provide read rights to that group.
 
 We want the web site to be accessible over HTTP on port 80 and run in the `Products` application pool. The `iis_site` resource provides attributes that define those settings.
 

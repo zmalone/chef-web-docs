@@ -24,20 +24,22 @@ Value
 Started
 ```
 
-Now run this [Get-WebSite](https://technet.microsoft.com/en-us/library/ee790588.aspx) PowerShell cmdlet to get the state of the `Customers` web site.
+Now run the [Get-WebSite](https://technet.microsoft.com/en-us/library/ee790588.aspx) cmdlet to list the available sites.
 
 ```ps
-$ Get-Website -Name Customers
+$ Get-Website
 
 Name             ID   State      Physical Path                  Bindings
 ----             --   -----      -------------                  --------
 Customers        1    Started    C:\inetpub\sites\Customers     http *:80:
 ```
 
-Finally, run this [Get-WebApplication](https://technet.microsoft.com/en-us/library/ee790554.aspx) cmdlet to get the state of the `Customers` web app.
+You'll see that the `Customers` site is available, and that the `Default Web Site` is no longer available.
+
+Finally, run the [Get-WebApplication](https://technet.microsoft.com/en-us/library/ee790554.aspx) cmdlet to get the state of each web app.
 
 ```ps
-$ Get-WebApplication -Name Products
+$ Get-WebApplication
 
 Name             Application pool   Protocols    Physical Path
 ----             ----------------   ---------    -------------
