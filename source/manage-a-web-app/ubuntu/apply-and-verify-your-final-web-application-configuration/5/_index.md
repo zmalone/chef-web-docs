@@ -7,3 +7,5 @@ Navigate to your site and you'll see this.
 ![the resulting web page](/assets/images/misc/webapp_result.png)
 
 Wonderful! You've successfully configured an entire LAMP stack using Chef!
+
+You can experiment more with your web application or try the exercises that follow. When you're done, you can [clean up](/manage-a-web-app/ubuntu/get-set-up#cleaningupyourenvironment) your workstation and Chef server if you like.
