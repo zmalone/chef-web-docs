@@ -63,13 +63,12 @@ Append this code to your `database` recipe.
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 # Get the full path to the SQLPS module.
-program_files_path = ENV['programfiles(x86)'] || ENV['programfiles']
-sqlps_module_path = ::File.join(program_files_path, 'Microsoft SQL Server\110\Tools\PowerShell\Modules\SQLPS')
+sqlps_module_path = ::File.join(ENV['programfiles(x86)'], 'Microsoft SQL Server\110\Tools\PowerShell\Modules\SQLPS')
 ```
 
-The location of `SQLPS` module varies between 32 and 64-bit versions of Windows Server. We can use the system's environment variables to get the correct path. When the `%programfiles(x86)%` environment variable exists, we can use it to get the full path to the <code class="file-path">Program Files (x86)</code> directory (typically <code class="file-path">C:\Program Files (x86)</code>). Otherwise, we can use the `%programfiles%` environment variable to get the full path to the <code class="file-path">Program Files</code> directory.
+We can use the system's environment variables to get the correct path to the <code class="file-path">Program Files (x86)</code> directory (typically <code class="file-path">C:\Program Files (x86)</code>).
 
-The Ruby [ENV](http://ruby-doc.org/core-2.2.0/ENV.html) class reads environment variables. This code assigns the full path to the <code class="file-path">Program Files (x86)</code> directory if the `%programfiles(x86)%` environment variable exists or the <code class="file-path">Program Files</code> directory if the `%programfiles(x86)%` environment variable doesn't exist.
+The Ruby [ENV](http://ruby-doc.org/core-2.2.0/ENV.html) class reads environment variables. This code joins the full path to the <code class="file-path">Program Files (x86)</code> directory to the fixed  path to the `SQLPS` module.
 
 Now append this code to run the SQL script.
 
@@ -145,7 +144,6 @@ cookbook_file create_database_script_path do
 end
 
 # Get the full path to the SQLPS module.
-program_files_path = ENV['programfiles(x86)'] || ENV['programfiles']
 sqlps_module_path = ::File.join(program_files_path, 'Microsoft SQL Server\110\Tools\PowerShell\Modules\SQLPS')
 
 # Run the SQL file only if the 'learnchef' database has not yet been created.
