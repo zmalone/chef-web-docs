@@ -22,7 +22,7 @@ Append this to <code class="file-path">database.rb</code>.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
-# Run a .sql file that creates the database, a database table, and adds sample table rows.
+# Run a SQL file that creates the database, a database table, and adds sample table rows.
 # Start by creating a path to the SQL file in the Chef cache.
 create_database_script_path = win_friendly_path(File.join(Chef::Config[:file_cache_path], 'create-database.sql'))
 ```
@@ -40,7 +40,7 @@ The [windows](https://supermarket.chef.io/cookbooks/windows) cookbook provides `
 
 ### Copy the SQL script from the cookbook to the Chef cache
 
-Append the following `cookbook_file` resource to your `database` recipe to copy the SQL script file from your cookbook to path you just defined.
+Append the following `cookbook_file` resource to your `database` recipe to copy the SQL script file from your cookbook to the path you just defined.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb

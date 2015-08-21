@@ -39,7 +39,7 @@ Earlier, we listed the functionality we need to override. Here are the `sql_serv
 | Attribute                              | Default value       | New value       |
 |---------------------------------------:|---------------------|-----------------|
 | `default['sql_server']['accept_eula']`    | `false`             | `true`          |
-| `default['sql_server']['version']`        | `2008`              | `'2012'`        |
+| `default['sql_server']['version']`        | `'2008'`            | `'2012'`        |
 | `default['sql_server']['instance_name']`  | `'SQLEXPRESS'`      | `'MSSQLSERVER'` |
 | `default['sql_server']['update_enabled']` | `true`              | `false`         |
 

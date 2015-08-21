@@ -15,7 +15,7 @@ All you need to do right now is bring up a clean instance of Windows Server 2012
     <li>your node has inbound access (including firewall) on ports 5985 and 5986 (WinRM).</li>
     <li>your node has inbound access (including firewall) on port 3389 (RDP).</li>
     <li>your node has outbound access (including firewall) on port 443 (HTTPS).</li>
-    <li>your node <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">is configured</a> to accept outside WinRM connections. Most commonly, you'll need to run these commands on your Windows Server node (from a command prompt and not PowerShell) before you bootstrap it.<p></p>
+    <li>your node <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">is configured</a> to accept outside WinRM connections. Most commonly, you'll need to run these commands on your Windows Server node from PowerShell before you bootstrap it.<p></p>
     <div class="window Win32">
             <nav class="control-window">
               <div class="close">&times;</div>
@@ -28,5 +28,7 @@ All you need to do right now is bring up a clean instance of Windows Server 2012
   </ul>
   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
 </div>
+
+[WARN] Ensure that your Windows Server system meets the [system requirements](https://msdn.microsoft.com/en-us/library/ms143506\(v=sql.110\).aspx) for running SQL Server 2012 Express.
 
 [WARN] Software such as IIS and Microsoft SQL Server are configured differently in various releases of Windows Server. For learning purposes, we recommend that you use Windows Server 2012 R2 as your node so that you can more easily verify your progress. However, if you're unable to use Windows Server 2012 R2, other versions of Windows Server can work with some modification.

@@ -8,7 +8,7 @@ Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. 
 
 Your cookbook's version is stored in its metadata file. Modify the `version` field in <code class="file-path">metadata.rb</code> from '0.1.0' to '0.2.0', like this.
 
-```bash
+```ruby
 # ~/chef-repo/cookbooks/awesome_customers/metadata.rb
 name             'awesome_customers'
 maintainer       'The Authors'

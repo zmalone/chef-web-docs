@@ -6,7 +6,7 @@ Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. 
 
 Modify the `version` field in <code class="file-path">metadata.rb</code> from '0.2.0' to '0.3.0', like this.
 
-```bash
+```ruby
 # ~/chef-repo/cookbooks/awesome_customers/metadata.rb
 name             'awesome_customers'
 maintainer       'The Authors'
@@ -20,11 +20,11 @@ depends 'sql_server', '~> 2.4.0'
 depends 'iis', '~> 4.1.1'
 ```
 
-We need to run `berks update` one more time to update the dependency tree.
+We need to run `berks install` one more time to update the dependency tree.
 
 ```bash
 # ~/chef-repo/cookbooks/awesome_customers
-$ berks update
+$ berks install
 Resolving cookbook dependencies...
 Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
