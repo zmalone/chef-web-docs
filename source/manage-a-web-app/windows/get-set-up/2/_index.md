@@ -29,6 +29,12 @@ All you need to do right now is bring up a clean instance of Windows Server 2012
   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
 </div>
 
+You must also set PowerShell's execution policy to `RemoteSigned` so that SQL Server can run scripts during installation. Run this from PowerShell on your node.
+
+```ps
+$ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+```
+
 [WARN] Ensure that your Windows Server system meets the [system requirements](https://msdn.microsoft.com/en-us/library/ms143506\(v=sql.110\).aspx) for running SQL Server 2012 Express.
 
 [WARN] Software such as IIS and Microsoft SQL Server are configured differently in various releases of Windows Server. For learning purposes, we recommend that you use Windows Server 2012 R2 as your node so that you can more easily verify your progress. However, if you're unable to use Windows Server 2012 R2, other versions of Windows Server can work with some modification.
