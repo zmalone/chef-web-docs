@@ -123,7 +123,7 @@ INSERT INTO customers(id, first_name, last_name, email) VALUES(newid(), 'Dave', 
 GO
 ```
 
-Our `only_if` guard tests only when the `learnchef` database doesn't exist; it doesn't cover the case where the `customers` table or the sample data doesn't exist. This is fine for learning purposes. In practice, you would need to decide how granular your scripts and your tests need to be. For example, you might break this script into three separate scripts &ndash; one to create the database, one to create the table, and one to create the sample data &ndash; if there is a chance that one component might be removed by some other process.
+Our `only_if` guard tests only when the `learnchef` database doesn't exist; it doesn't cover the case where the `customers` table or the sample data doesn't exist. This is fine for learning purposes. In practice, you would need to decide how granular your scripts and your tests need to be. For example, you might break this script into three separate scripts &ndash; one to create the database, one to create the table, and one to create the sample data &ndash; if there is a chance that one component might be changed or removed by some other process.
 
 <hr>
 

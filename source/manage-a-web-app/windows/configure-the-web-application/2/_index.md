@@ -2,7 +2,7 @@
 
 Now let's write code to download the Customers web application and extract it to the <code class="file-path">C:\inetpub</code> directory, which is commonly used to store web applications.
 
-ASP.NET applications are commonly built into a _web deployment package_, which contains your site's static content &ndash; such as HTML, CSS, and image files &ndash; and server-side code. In practice, you might manually build the package and copy the result to a staging area. Or you might have an automated process that builds and stages the package when code is checked in to source control. You might then have a second process &ndash; either manual or automated &ndash; that runs your Chef cookbooks to deploy the updated application to your test or production environment when the build succeeds.
+ASP.NET applications are often built into a _web deployment package_, which contains your site's static content &ndash; such as HTML, CSS, images, and other media &ndash; and server-side code. In practice, you might manually build the package and copy the result to a staging area. Or you might have an automated process that builds and stages the package when code is checked in to source control. You might then have a second process &ndash; either manual or automated &ndash; that runs your Chef cookbooks to deploy the updated application to your test or production environment when the build succeeds.
 
 For learning purposes, we've [provided a prebuilt version](https://github.com/learn-chef/manage-a-web-app-windows/releases/tag/v0.1.0) of the Customers web application on GitHub so you don't have to build it yourself.
 

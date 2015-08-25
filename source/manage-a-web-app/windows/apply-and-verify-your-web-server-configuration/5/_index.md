@@ -47,7 +47,7 @@ From the IIS Management Console, select **Sites** from the **Connections** pane.
 
 ![the default site through the IIS Management Console](/assets/images/misc/iis_manager_default_site.png)
 
-You can also verify this from the command line. Run the [Get-WebSite](https://technet.microsoft.com/en-us/library/ee790588.aspx) cmdlet to list the available sites.
+You can also verify this from the command line. Run the [Get-Website](https://technet.microsoft.com/en-us/library/ee807832.aspx) cmdlet to list the available sites.
 
 ```ps
 # ~

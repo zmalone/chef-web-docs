@@ -1,12 +1,17 @@
 ## 3. Verify your node's configuration
 
-Now connect to your node the same way you did before &ndash; either directly or over Remote Desktop.
-
-Next, we'll run a few commands to help verify that the node is in the expected state. This time, we'll verify that:
+Let's run a few commands to help verify that the node is in the expected state. This time, we'll verify that:
 
 * the SQL Server service is running.
 * the `learnchef` database exists.
 * the `customers` database table exists and contains the sample data.
+
+From a PowerShell session on your node, run these commands to set up PowerShell to manage SQL Server.
+
+```ps
+$ Set-ExecutionPolicy RemoteSigned
+$ Import-Module SQLPS
+```
 
 ### Verify that the SQL Server service is running
 

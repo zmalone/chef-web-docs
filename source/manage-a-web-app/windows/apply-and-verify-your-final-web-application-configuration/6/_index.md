@@ -14,7 +14,7 @@ Start by connecting to your Windows Server node.
 
 ### Verify that the IIS application pool, web site, and application exist
 
-Run this [Get-WebAppPoolState](https://technet.microsoft.com/en-us/library/ee807832.aspx) cmdlet to get the state of the `Products` application pool.
+Run this [Get-WebAppPoolState](https://technet.microsoft.com/en-us/library/Ee790588.aspx) cmdlet to get the state of the `Products` application pool.
 
 ```ps
 $ Get-WebAppPoolState -Name Products
@@ -24,7 +24,7 @@ Value
 Started
 ```
 
-Now run the [Get-WebSite](https://technet.microsoft.com/en-us/library/ee790588.aspx) cmdlet to list the available sites.
+Now run the [Get-Website](https://technet.microsoft.com/en-us/library/ee807832.aspx) cmdlet to list the available sites.
 
 ```ps
 $ Get-Website
@@ -63,4 +63,19 @@ Action      : Select
 Column      : (All+New)
 ```
 
-You can also verify the state of your node by browsing the <code class="file-path">C:\inetpub</code> directory and from the IIS Management Console. When you're done, you can close your connection.
+You can also verify the state of your node by browsing the <code class="file-path">C:\inetpub</code> directory and from the IIS Management Console. The <code class="file-path">C:\inetpub\apps</code> directory contains the web app and looks like this.
+
+```ps
+$ tree /F C:\inetpub\apps
+Folder PATH listing
+Volume serial number is EE57-417A
+C:\INETPUB\APPS
+└───Customers
+    │   Customers.aspx
+    │   Web.config
+    │
+    └───bin
+            Customers.dll
+```
+
+When you're done, you can close your connection.
