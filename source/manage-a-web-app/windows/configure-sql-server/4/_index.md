@@ -1,4 +1,4 @@
-## 3. Install MySQL
+## 4. Install MySQL
 
 Now that we've referenced the `sql_server` cookbook from our cookbook's metadata and set up the node attributes we need to override, we're ready to install SQL Server.
 
