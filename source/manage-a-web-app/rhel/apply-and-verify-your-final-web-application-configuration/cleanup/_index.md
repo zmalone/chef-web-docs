@@ -1,12 +1,12 @@
-## Cleaning up your environment
+## How to clean up your environment
 
 Perform these steps if you want to clean up your workstation or your Chef server after you complete tutorial or you want to repeat the tutorial from the beginning.
 
 ### Remove the cookbooks from the Chef server
 
-Run the `knife cookbook list` command to list the cookbooks that exist on your Chef server.
+From your workstation, run the `knife cookbook list` command to list the cookbooks that exist on your Chef server.
 
-Then run  `knife cookbook delete <cookbook-name>` to delete any cookbooks you no longer want.
+Then run `knife cookbook delete <cookbook-name>` to delete any cookbooks you no longer want.
 
 The [bulk delete](https://docs.chef.io/knife_cookbook.html#bulk-delete) option is an easy way to remove multiple cookbooks. For example, `knife cookbook bulk delete . -p` will entirely remove all cookbooks from your Chef server.
 
@@ -14,9 +14,9 @@ The [bulk delete](https://docs.chef.io/knife_cookbook.html#bulk-delete) option i
 
 ### Remove the cookbooks from your Berkshelf cache
 
-Berkshelf installs dependent cookbooks to the <code class="file-path">~/.berkshelf/cookbooks</code> directory so that they can be shared among all of your cookbooks.
+Berkshelf installs dependent cookbooks to the <code class="file-path">~/.berkshelf/cookbooks</code> directory on your workstation so that they can be shared among all of your cookbooks.
 
-You can remove individual cookbooks you no longer need from this directory, or remove them all like this.
+From your workstation, you can remove individual cookbooks you no longer need from this directory, or remove them all like this.
 
 ```bash
 $ rm -r ~/.berkshelf/cookbooks
@@ -24,7 +24,7 @@ $ rm -r ~/.berkshelf/cookbooks
 
 ### Delete your Chef repository
 
-This command will delete your Chef repository from disk.
+From your workstation, this command will delete your Chef repository from disk.
 
 ```bash
 $ rm -r ~/chef-repo
@@ -32,14 +32,14 @@ $ rm -r ~/chef-repo
 
 ### Delete the node from the Chef server
 
-Run these commands to delete the data about your node from the Chef server.
+From your workstation, run these commands to delete the data about your node from the Chef server.
 
 ```bash
 # ~/chef-repo
-$ knife node delete web_app_windows --yes
-Deleted node[web_app_windows]
-$ knife client delete web_app_windows --yes
-Deleted client[web_app_windows]
+$ knife node delete web_app_rhel --yes
+Deleted node[web_app_rhel]
+$ knife client delete web_app_rhel --yes
+Deleted client[web_app_rhel]
 ```
 
 ### Tear down your node
