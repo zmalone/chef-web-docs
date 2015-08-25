@@ -64,5 +64,3 @@ Column      : (All+New)
 ```
 
 You can also verify the state of your node by browsing the <code class="file-path">C:\inetpub</code> directory and from the IIS Management Console. When you're done, you can close your connection.
-
-You can experiment more with your web application or try the exercises that follow. When you're done, you can [clean up](/manage-a-web-app/windows/get-set-up#cleaningupyourenvironment) your workstation and Chef server if you like.
