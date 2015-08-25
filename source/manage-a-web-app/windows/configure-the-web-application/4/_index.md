@@ -2,7 +2,7 @@
 
 Applications that run in the `Products` application pool run under `IIS APPPOOL\Products`. We need to grant this user with query access to the `customers` table in the `learnchef` database.
 
-We'll follow the same process that we used to create the `learnchef` database, the `customers` table, and add some sample data.
+We'll follow the same process that we used to create the `learnchef` database, the `customers` table, and add sample data.
 
 1. Create a file that's part of the cookbook that contains SQL commands to grant access.
 1. In the `database` recipe, copy that file to the Chef cache.
@@ -81,3 +81,5 @@ powershell_script 'Grant SQL access to IIS APPPOOL\Products' do
   EOH
 end
 ```
+
+The `not_if` part of the `powershell_script` resource ensures that the SQL script is run only when `IIS APPPOOL\Products` does not have query access. It runs the built-in  [sp_helprotect](https://msdn.microsoft.com/en-us/library/ms190310\(v=sql.110\).aspx) stored procedure to list the permissions for the `IIS APPPOOL\Products` user for the `customers` table and checks whether the `ProtectType` field in the result set is `Grant` and whether the `Action` field is `Select`.

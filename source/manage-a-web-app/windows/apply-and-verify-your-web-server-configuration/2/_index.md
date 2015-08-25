@@ -14,8 +14,7 @@ In case you haven't yet prepared your node, here's the checklist that lists what
     <li>the knife windows plugin <a href="/manage-a-node/windows/bootstrap-your-node#step3" target="_blank">is installed</a> on your workstation.</li>
     <li>your node's IP address is accessible from your network.</li>
     <li>you have Administrator access on the node.</li>
-    <li>your node has inbound access (including firewall) on ports 5985 and 5986 (WinRM).</li>
-    <li>your node has inbound access (including firewall) on port 3389 (RDP).</li>
+    <li>your node has inbound access (including firewall) on ports 5985 and 5986 (WinRM), 3389 (RDP), and 80 (HTTP).</li>
     <li>your node has outbound access (including firewall) on port 443 (HTTPS).</li>
     <li>your node <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">is configured</a> to accept outside WinRM connections. Most commonly, you'll need to run these commands on your Windows Server node from PowerShell before you bootstrap it.<p></p>
     <div class="window Win32">
