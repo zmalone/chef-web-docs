@@ -133,7 +133,7 @@ $ kitchen diagnose | grep password:
 $ kitchen login
 ```
 
-From your instance, open a Microsoft PowerShell instance and run a few commands to verify that your web server is correctly set up.
+From your instance, open a Microsoft PowerShell window and run a few commands to verify that your web server is correctly set up.
 
 ```ps
 $  ls C:\inetpub\wwwroot\**\*
