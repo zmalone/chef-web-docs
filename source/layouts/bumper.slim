@@ -1,0 +1,25 @@
+= wrap_layout :layout do
+  .row
+    .small-10.small-centered.columns
+      div.box id="#{ current_page.data.name }" class="current_page"
+        h2 = current_page.data.title
+        - if current_page.data.tags
+          div style="margin-top:-16px;margin-bottom:10px;"
+            = partial "layouts/add-tags", locals: { tags: current_page.data.tags }
+        - if current_page.data.time_to_complete
+          div style="font-size:12px;margin-top:-10px;margin-bottom:10px;" == current_page.data.time_to_complete
+        = current_page.data.description
+        - if current_page.data.platform_intro
+          br
+          br
+          center
+            div
+              = current_page.data.platform_intro
+          ul#platform-tabs
+            - current_page.children.select{|p| p.data.platform}.each do |overview_page|
+              li style="border-width; 2px; border 1px solid black;" = link_to overview_page do
+                = image_tag "rhel/platform-logos/#{overview_page.data.logo}"
+                p = "#{overview_page.data.platform}&nbsp;&nbsp;<i class='fa fa-angle-double-right'></i>"
+        - if current_page.data.coming_soon
+          .coming-soon
+            = "Coming soon: #{current_page.data.coming_soon.join(', ')}"
