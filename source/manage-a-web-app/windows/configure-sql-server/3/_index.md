@@ -2,7 +2,7 @@
 
 In [Learn to manage a Windows Server node](/manage-a-node/windows/), you learned about some of the built-in node attributes that Chef provides, such as the node's IP address. You can also define your own custom attributes that are specific to your policy.
 
-The `sql_server` cookbook defines [a number of node attributes](https://github.com/opscode-cookbooks/sql_server/blob/master/attributes/server.rb) that control how SQL Server is installed, for example, the installation directory and which features to install. These values are written to the configuration file that the installer uses to customize the installation.
+The `sql_server` cookbook defines [a number of node attributes](https://github.com/opscode-cookbooks/sql_server/blob/master/attributes/server.rb) that control how SQL Server is installed, such as the installation directory and which features to install. These values are written to the configuration file that the installer uses to customize the installation.
 
 When you call one cookbook from another, you can specify, or _override_, that cookbook's node attributes with your values. Although in most cases we can use the default values, we also want to:
 

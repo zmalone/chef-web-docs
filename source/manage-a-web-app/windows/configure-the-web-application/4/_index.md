@@ -1,8 +1,8 @@
 ## 4. Grant the Customers application access to the customer data
 
-Applications that run in the `Products` application pool run under `IIS APPPOOL\Products`. We need to grant this user with query access to the `customers` table in the `learnchef` database.
+Applications that run in the `Products` application pool run under `IIS APPPOOL\Products`. We need to grant this user query access to the `customers` table in the `learnchef` database.
 
-We'll follow the same process that we used to create the `learnchef` database, the `customers` table, and add sample data.
+We'll follow the same process that we used to create the `learnchef` database and the `customers` table, and add sample data.
 
 1. Create a file that's part of the cookbook that contains SQL commands to grant access.
 1. In the `database` recipe, copy that file to the Chef cache.

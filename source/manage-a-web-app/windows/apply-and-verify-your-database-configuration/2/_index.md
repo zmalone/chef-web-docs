@@ -2,7 +2,7 @@
 
 When you bootstrapped your node, your node did an initial check-in to the Chef server and ran `chef-client` against the run-list.
 
-In _Learn to manage a Windows Server node_, you ran `knife winrm` from your workstation to [run chef-client on your node](/manage-a-node/windows/update-your-nodes-configuration#step3) to apply an updated cookbook. Some actions, such as [performing a remote installation of SQL Server](https://tickets.opscode.com/browse/COOK-1172), introduce complications when performed over the WinRM protocol.
+In [Learn to manage a Windows Server node](/manage-a-node/windows/), you ran `knife winrm` from your workstation to [run chef-client on your node](/manage-a-node/windows/update-your-nodes-configuration#step3) to apply an updated cookbook. Some actions, such as [performing a remote installation of SQL Server](https://tickets.opscode.com/browse/COOK-1172), introduce complications when performed over the WinRM protocol.
 
 To avoid these complications, the easiest way to run the cookbook is to connect directly to your node and run `chef-client`. `chef-client` will check in to the Chef server, download the latest cookbooks and data about your node, and apply the cookbooks from the run-list.
 

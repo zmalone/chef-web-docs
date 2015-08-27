@@ -18,7 +18,7 @@ dsc_script 'Web-Mgmt-Console' do
 end
 ```
 
-You're entire `webserver` recipe looks like this.
+Your entire `webserver` recipe looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb

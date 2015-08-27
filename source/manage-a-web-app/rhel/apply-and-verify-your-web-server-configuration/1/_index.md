@@ -21,7 +21,7 @@ These cookbooks need to exist on the Chef server so that the node can access the
 
 You could download each cookbook from Chef Supermarket and then upload it the Chef server, but there's one minor complication &ndash; each cookbook you depend on might depend on one or more other cookbooks. And those cookbooks in turn might depend on others.
 
-For example, if you [look at the mysql cookbook](https://github.com/chef-cookbooks/mysql/blob/master/metadata.rb), which you'll use later in this tutorial, you'll see in its <code class="file-path">metadata.rb</code> file that it depends on the `yum-mysql-community` and `smf` cookbooks.
+For example, if you look at the [mysql](https://github.com/chef-cookbooks/mysql/blob/master/metadata.rb) cookbook, which you'll use later in this tutorial, you'll see in its <code class="file-path">metadata.rb</code> file that it depends on the `yum-mysql-community` and `smf` cookbooks.
 
 ```ruby
 # metadata.rb
