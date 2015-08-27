@@ -1,1 +1,0 @@
-Now that you're all set up, let's get a hang for how Test Kitchen works by creating a cookbook that modifies the Message of the Day (MOTD) and use Test Kitchen to apply that cookbook to a Windows Server virtual machine.
