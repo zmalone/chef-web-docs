@@ -3,7 +3,7 @@ title: 'Audit a Windows Server node for compliance'
 layout: lesson-overview
 platform: 'Windows Server'
 logo: windows.svg
-order: 3
+order: 2
 ---
 Whether you must comply with regulatory frameworks such as PCI, HIPAA, or Dodd-Frank, or you have internal company standards you must meet, adhering to your compliance policies helps you deliver safe, secure applications and services.
 

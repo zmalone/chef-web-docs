@@ -33,4 +33,4 @@ latest_version:     https://supermarket.chef.io/api/v1/cookbooks/apt/versions/2.
 
 There are [multiple ways to specify version constraints](http://docs.chef.io/cookbook_versions.html). The `~>` syntax, called the _pessimistic version constraint_, tells Chef that we want the latest version of the `apt` cookbook that is greater than or equal to `2.6.1` but less than `2.7.0`. The third digit in a Chef cookbook's version typically relates to bug fixes or patches that are compatible with prior versions.
 
-[COMMENT] For this tutorial, just to ensure that what you see matches the output that is shown, we recommend that you use the versions that we specify, even if a newer version is available.
+[COMMENT] For this tutorial, just to ensure that what you see matches the output that is shown, we recommend that you use the versions that we specify, even if a newer version is available. We'll periodically update this tutorial to match newer versions of the community cookbooks.
