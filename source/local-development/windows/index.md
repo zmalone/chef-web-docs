@@ -5,7 +5,7 @@ platform: Windows Server
 logo: windows.svg
 order: 2
 ---
-In [Learn to manage a web application](/manage-a-web-app/windows), you built a basic but complete web application on Windows Server 2012 R2 that uses a web server, a database, and scripting.
+In [Learn to manage a basic Windows Server web application](/manage-a-web-app/windows), you built a basic but complete web application on Windows Server 2012 R2 that uses a web server, a database, and ASP.NET code.
 
 The basic process you followed was to:
 
