@@ -2,7 +2,7 @@
 
 Just like in the previous lesson, you need to tell Test Kitchen about the environment you want to run your cookbook in. Remember, when you create a cookbook using the `chef generate cookbook` command, Chef generates a Test Kitchen configuration file for you.
 
-In addition to configuring Test Kitchen to create a CentOS 6.6 virtual machine, we'll also:
+In addition to configuring Test Kitchen to create a Windows Server 2012 R2 virtual machine, we'll also:
 
 * assign an IP address in the private address space so that we can access the web application from the host machine. The private IP address space is a designated range whose traffic cannot be transmitted through the public Internet.
 * specify the location of the data bags for our database passwords and our secret key so that Test Kitchen can copy them to the virtual machine.
@@ -11,7 +11,7 @@ In addition to configuring Test Kitchen to create a CentOS 6.6 virtual machine, 
 Edit your `awesome_customers` cookbook's <code class="file-path">.kitchen.yml</code> file like this.
 
 ```ruby
-# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/.kitchen.yml
+# ~/manage-a-web-app-windows/chef-repo/cookbooks/awesome_customers/.kitchen.yml
 ---
 driver:
   name: vagrant

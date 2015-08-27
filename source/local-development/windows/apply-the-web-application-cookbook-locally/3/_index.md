@@ -5,16 +5,16 @@ In the previous lesson, you created the virtual machine and applied your cookboo
 First, run `kitchen list` to verify that the instance does not yet exist.
 
 ```bash
-# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-windows/chef-repo/cookbooks/awesome_customers
 $ kitchen list
 Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-66  Vagrant  ChefZero     Busser    Ssh        <Not Created>
 ```
 
-Now run `kitchen converge` to apply the cookbook to the CentOS virtual machine.
+Now run `kitchen converge` to apply the cookbook to the Windows Server virtual machine.
 
 ```bash
-# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-windows/chef-repo/cookbooks/awesome_customers
 $ kitchen converge
 -----> Starting Kitchen (v1.4.0)
 -----> Creating <default-centos-66>...
@@ -37,7 +37,7 @@ Verify that the process completed with no errors.
 ### From a Linux or Mac OS workstation
 
 ```bash
-# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-windows/chef-repo/cookbooks/awesome_customers
 $ echo $?
 0
 ```
@@ -45,7 +45,7 @@ $ echo $?
 ### From a Windows workstation
 
 ```ps
-# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-windows/chef-repo/cookbooks/awesome_customers
 $ echo $LastExitCode
 0
 ```

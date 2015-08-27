@@ -13,12 +13,12 @@ Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-66  Vagrant  ChefZero     Busser    Ssh        <Not Created>
 ```
 
-Our kitchen includes just one instance &ndash; a CentOS 6.6 virtual machine that's configured to run the `default` suite. The `Last Action` column shows that the virtual machine was not yet created.
+Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual machine that's configured to run the `default` suite. The `Last Action` column shows that the virtual machine was not yet created.
 
 <a class="help-button radius" href="#" data-reveal-id="test-matrix-modal">Learn more about test matrices</a>
 
 <div id="test-matrix-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-<p>Remember, you can target more than one platform, and also define more than one suite. Test Kitchen multiplies the number of platforms by the number of suites, creating a <em>matrix</em> of test scenarios. For example, imagine that you have two suites &ndash; one named <code>development</code> and one <code>test</code> &ndash; and that you wish to target both CentOS 6.5 and CentOS 6.6. platforms. Your <code class="file-path">.kitchen.yml</code> file might look like this.</p>
+<p>Remember, you can target more than one platform, and also define more than one suite. Test Kitchen multiplies the number of platforms by the number of suites, creating a <em>matrix</em> of test scenarios. For example, imagine that you have two suites &ndash; one named <code>development</code> and one <code>test</code> &ndash; and that you wish to target both Windows Server 6.5 and Windows Server 2012 R2. platforms. Your <code class="file-path">.kitchen.yml</code> file might look like this.</p>
 <div class="window ">
               <nav class="control-window">
                 <div class="close">&times;</div>

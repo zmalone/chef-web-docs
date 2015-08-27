@@ -1,6 +1,6 @@
 ## 4. Apply the motd cookbook to your Test Kitchen instance
 
-Now run `kitchen converge` to apply the cookbook to the CentOS virtual machine.
+Now run `kitchen converge` to apply the cookbook to the Windows Server virtual machine.
 
 <img src="/assets/images/misc/local_dev_workflow2.png" style="box-shadow: none;" alt=""/>
 

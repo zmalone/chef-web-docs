@@ -1,6 +1,6 @@
 ## 5. Verify that your Test Kitchen instance contains the updated MOTD
 
-Now let's log in to your virtual machine and verify that the MOTD was updated on your CentOS virtual machine.
+Now let's log in to your virtual machine and verify that the MOTD was updated on your Windows Server virtual machine.
 
 <img src="/assets/images/misc/local_dev_workflow3_4.png" style="box-shadow: none;" alt=""/>
 

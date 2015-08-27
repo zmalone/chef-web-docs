@@ -6,4 +6,4 @@ Now verify that everything's working. Point your browser on your workstation to 
 
 ![the resulting web page](/assets/images/misc/webapp_result_test_kitchen.png)
 
-Congratulations! You've successfully configured a LAMP stack on CentOS on your local system.
+Congratulations! You've successfully configured a LAMP stack on Windows Server on your local system.

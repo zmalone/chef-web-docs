@@ -1,4 +1,4 @@
-In this tutorial, you used Test Kitchen along with VirtualBox and Vagrant to configure your customers web application on a CentOS virtual machine, all from your workstation.
+In this tutorial, you used Test Kitchen along with VirtualBox and Vagrant to configure your customers web application on a Windows Server virtual machine, all from your workstation.
 
 When you start by developing locally, you speed up the development cycle, giving you the time and freedom to experiment, iterate, and fix problems. Now you only need to upload your cookbooks to the Chef server and apply them to your bootstrapped node after you've confirmed from your workstation that your configuration code works as you expect.
 
