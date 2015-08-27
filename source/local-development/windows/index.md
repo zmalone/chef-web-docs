@@ -1,11 +1,11 @@
 ---
-title: 'Learn to develop your Ubuntu infrastructure code locally'
+title: 'Learn to develop your Windows Server infrastructure code locally'
 layout: lesson-overview
-platform: Ubuntu
-logo: ubuntu.svg
-order: 3
+platform: Windows Server
+logo: windows.svg
+order: 2
 ---
-In [Learn to manage a web application](/manage-a-web-app/ubuntu), you built a basic but complete web application on Ubuntu that uses a web server, a database, and scripting.
+In [Learn to manage a web application](/manage-a-web-app/rhel), you built a basic but complete web application on Red Hat Enterprise Linux or CentOS that uses a web server, a database, and scripting.
 
 The basic process you followed was to:
 
@@ -26,7 +26,7 @@ In this tutorial, you'll use Test Kitchen together with the virtualization tools
 
 <img src="/assets/images/networks/workstation-vm.png" style="width:40%; box-shadow: none;" alt="Your workstation, Test Kitchen, and a virtual machine" />
 
-Another benefit to using Test Kitchen is that the operating system of your virtual environment doesn't need to match your workstation's. So even though you're configuring an Ubuntu server, your workstation can be Mac OS, Windows, or another Linux distribution.
+Another benefit to using Test Kitchen is that the operating system of your virtual environment doesn't need to match your workstation's. So even though you're configuring a Red Hat Enterprise Linux or CentOS server, your workstation can be Mac OS, Windows, or another Linux distribution.
 
 Recall that the `awesome_customers` cookbook configures a basic web application that reads customer records from a database and displays the results on a web page.
 
