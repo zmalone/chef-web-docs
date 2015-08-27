@@ -2,7 +2,7 @@
 
 We don't need the default web site that comes with IIS, so let's remove it.
 
-An easy way to do so is to use the [iis](https://supermarket.chef.io/cookbooks/iis) cookbook from Chef Supermarket. The `iis` cookbook defines resources that help you manage IIS, which we'll use later.
+An easy way to do so is to use the [iis](https://supermarket.chef.io/cookbooks/iis) cookbook from Chef Supermarket. The `iis` cookbook defines resources, some of which we'll use later, that help you manage IIS.
 
 We'll load the `iis` cookbook just like we did the `sql_server` cookbook. Append a `depends` statement to <code class="file-path">metadata.rb</code>, making the entire file look like this.
 

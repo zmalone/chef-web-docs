@@ -25,7 +25,7 @@ You'll see that Berkshelf downloaded the `iis` cookbook. The `iis` cookbook depe
 
 The `berks install` command downloads any new cookbooks that you don't have on your workstation.
 
-There's also the `berks update` command, which updates cookbooks and their dependencies. For example, recall that when you used the _pessimistic version constraint_ `~>` when you referenced the `sql_server` cookbook.
+There's also the `berks update` command, which updates cookbooks and their dependencies. For example, recall that you used the _pessimistic version constraint_ `~>` when you referenced the `sql_server` cookbook.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/metadata.rb

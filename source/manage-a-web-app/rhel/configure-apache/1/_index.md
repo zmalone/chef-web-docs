@@ -33,4 +33,4 @@ latest_version:     http://cookbooks.opscode.com/api/v1/cookbooks/httpd/versions
 
 There are [multiple ways to specify version constraints](http://docs.chef.io/cookbook_versions.html). The `~>` syntax, called the _pessimistic version constraint_, tells Chef that we want the latest version of the `httpd` cookbook that is greater than or equal to `0.2.18` but less than `0.3.0`. The third digit in a Chef cookbook's version typically relates to bug fixes or patches that are compatible with prior versions.
 
-[COMMENT] For this tutorial, just to ensure that what you see matches the output that is shown, we recommend that you use the versions that we specify, even if a newer version is available. We'll periodically update this tutorial to match newer versions of community cookbooks as they become available.
+[COMMENT] For this tutorial, just to ensure that what you see matches the output that is shown, we recommend that you use the versions that we specify, even if a newer version is available. We'll periodically update this tutorial to match newer versions of the community cookbooks.

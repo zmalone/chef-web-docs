@@ -15,11 +15,11 @@ version          '0.2.0'
 depends 'sql_server', '~> 2.4.0'
 ```
 
-In addition to your `awesome_customers` cookbook, the `sql_server` cookbook needs to exist on the Chef server so that the node can access them when it runs `chef-client`.
+In addition to your `awesome_customers` cookbook, the `sql_server` cookbook needs to exist on the Chef server so that the node can access it when it runs `chef-client`.
 
-You could download each cookbook from Chef Supermarket and then upload it the Chef server, but there's one minor complication &ndash; each cookbook you depend on might depend on one or more other cookbooks. And those cookbooks in turn might depend on others.
+You could download each cookbook from Chef Supermarket and then upload it to the Chef server, but there's one minor complication &ndash; each cookbook you depend on might depend on one or more other cookbooks. And those cookbooks in turn might depend on others.
 
-For example, if you [look at the sql_server cookbook](https://github.com/opscode-cookbooks/sql_server/blob/master/metadata.rb), you'll see in its <code class="file-path">metadata.rb</code> file that it depends on the `openssl` and `windows` cookbooks.
+For example, if you look at the [sql_server](https://github.com/opscode-cookbooks/sql_server/blob/master/metadata.rb) cookbook, you'll see in its <code class="file-path">metadata.rb</code> file that it depends on the `openssl` and `windows` cookbooks.
 
 ```ruby
 # metadata.rb

@@ -43,7 +43,7 @@ From the **Run** box or the **Start** screen on your Windows Server 2012 R2 node
 
 ## Verify that the default web site is installed and started
 
-From the IIS Management Console, select **Sites** from the **Connections** pane. You'll see the default web site from the **Sites** pane.
+From the IIS Management Console, select **Sites** from the **Connections** pane. You'll see the default web site on the **Sites** pane.
 
 ![the default site through the IIS Management Console](/assets/images/misc/iis_manager_default_site.png)
 
@@ -70,7 +70,7 @@ Alternatively, you can confirm the connection from the command line. On a Window
 
 ```ps
 # ~
-$ Invoke-WebRequest 52.10.205.36
+$ Invoke-WebRequest 52.26.226.15
 
 StatusCode        : 200
 StatusDescription : OK
