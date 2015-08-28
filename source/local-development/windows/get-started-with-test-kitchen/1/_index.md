@@ -61,3 +61,35 @@ template '/etc/motd' do
   mode '0644'
 end
 ```
+
+[START_TABS panel EC2, Vagrant]
+
+[START_TAB panel1 active]
+
+```bash
+$ IVE GOT CODE!!!
+```
+
+```ruby
+Meh too!
+```
+
+[END_TAB]
+
+[START_TAB panel2]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed interdum purus, vel aliquet est. Nunc sapien dui, facilisis dictum ultrices quis, eleifend at est. Sed eu tincidunt felis. Aliquam erat volutpat. Mauris mattis varius leo condimentum pharetra. Phasellus consectetur dolor ac magna porttitor lacinia. Praesent bibendum eros tellus, vitae tincidunt lorem mattis in. Nam eu congue tellus. Sed interdum est quis magna efficitur maximus. Praesent vehicula ligula elit, sit amet hendrerit tellus sodales placerat. Morbi molestie, elit iaculis interdum dictum, urna nulla ultricies sapien, a volutpat enim sem ut odio. Vivamus quis eleifend purus, eu ullamcorper est.
+
+Proin molestie est turpis, ut finibus nisi aliquam commodo. Aenean ut pulvinar velit, sit amet facilisis elit. Fusce et cursus leo, non euismod arcu. Etiam sollicitudin nulla sit amet tortor tempus gravida. Quisque efficitur, nisl at fringilla elementum, dolor mauris finibus sapien, sit amet bibendum ipsum purus lacinia augue. In hac habitasse platea dictumst. Aenean turpis tellus, malesuada id posuere non, suscipit vel tortor. Quisque fringilla quis lorem ac porttitor. Ut non faucibus turpis. In posuere lacus elit, non accumsan orci porttitor non. Fusce ex eros, pharetra non dolor vitae, porta aliquam nunc. Donec et leo turpis. Sed odio metus, efficitur ut lectus malesuada, blandit eleifend lorem.
+
+```bash
+$ MORE HERE
+```
+
+```ruby
+MOAR HERE MOAR HERE MOAR HERE MOAR HERE MOAR HERE MOAR HERE MOAR HERE MOAR HERE MOAR HERE MOAR HERE MOAR HERE MOAR HERE MOAR HERE
+```
+
+[END_TAB]
+
+[END_TABS]

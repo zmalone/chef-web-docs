@@ -30,6 +30,7 @@ module ZurbFoundation
     @app = options[:app]
 
     alerts
+    tabs
     anchors
     extras
 
@@ -66,6 +67,29 @@ module ZurbFoundation
     content.gsub!(/<p>\[AWS\] (.+)<\/p>/)  { "<div class=\"alert-box aws\"><img class=\"alert-box-icon-large\" src=\"/assets/images/partner/AWS-Cloud.svg\"></img>&nbsp; #{$1}</div>" }
   end
 
+  # we currently can't have ERB in partials, so we subsitute text for now.
+  def tabs
+    content.gsub!(/<p>\[START_TABS\s+(?<id>\w+)\s+(?<names>.+)\]<\/p>/) {
+      id = $1 # TODO: named groups ($~[:id]) not working?
+      names = $2.split(/,/)
+      active_class = ' active' # set .active class to first element.
+      items = []
+      names.each_with_index { |name, index|
+        items << "<li class=\"tab-title#{active_class}\"><a href=\"##{id}#{index+1}\">#{name}</a></li>"
+        active_class = ''
+      }
+      '<ul class="tabs" data-tab>' + items.join + '</ul>' + '<div class="tabs-content">'
+    }
+
+    content.gsub!(/<p>\[END_TABS\]/) {
+      "</div>"
+    }
+
+    content.gsub!(/<p>\[START_TAB\s+(\w+)(\s+(\w+))?\]<\/p>(.+?)<p>\[END_TAB\]<\/p>/m) {
+      puts $2
+      "<div class=\"content #{$2}\" id=\"#{$1}\"><p>#{$4}</p></div>"
+    }
+  end
 
   def anchors
     content.gsub!(/<h([0-9])>(.*)<\/h[0-9]>/) do
