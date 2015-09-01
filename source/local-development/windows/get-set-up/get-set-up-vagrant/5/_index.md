@@ -11,7 +11,7 @@ The Chef DK does not come with this plugin, so run the following command to inst
 ```bash
 # ~/chef-repo
 $ chef gem install chef-zero-scheduled-task
-Fetching: chef-zero-scheduled-task-0.0.5.gem (100%)
-Successfully installed chef-zero-scheduled-task-0.0.5
+Fetching: chef-zero-scheduled-task-0.0.6.gem (100%)
+Successfully installed chef-zero-scheduled-task-0.0.6
 1 gem installed
 ```

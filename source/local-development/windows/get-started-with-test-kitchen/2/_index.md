@@ -7,7 +7,7 @@ When you use the `chef generate cookbook` command to create a cookbook, Chef cre
 The default <code class="file-path">.kitchen.yml</code> file looks like this.
 
 ```ruby
-# ~/motd/.kitchen.yml
+# ~/settings/.kitchen.yml
 ---
 driver:
   name: vagrant
@@ -16,51 +16,92 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: ubuntu-12.04
-  - name: centos-6.5
+  - name: ubuntu-14.04
+  - name: centos-7.1
 
 suites:
   - name: default
     run_list:
-      - recipe[motd::default]
+      - recipe[settings::default]
     attributes:
 ```
 
 [COMMENT] On Linux and Mac OS, <code class="file-path">.kitchen.yml</code> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
-Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a Windows Server virtual machine. Since we want only Windows Server, modify <code class="file-path">~/motd/.kitchen.yml</code> like this. (Be sure to replace `centos-6.5` with `centos-6.6`.)
+Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want Windows Server, modify <code class="file-path">~/settings/.kitchen.yml</code> according to the Test Kitchen driver that you're using.
+
+[START_TABS initial EC2, Vagrant]
+
+[START_TAB initial1 active]
+
+Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
 ```ruby
-# ~/motd/.kitchen.yml
+# ~/settings/.kitchen.yml
+---
+driver:
+  name: ec2
+  aws_ssh_key_id: learnchef
+  region: us-west-2
+  availability_zone: a
+  subnet_id: subnet-eacb348f
+  instance_type: m1.small
+  image_id: ami-c3b3b1f3
+  security_group_ids: ['sg-2d3b3b48']
+  retryable_tries: 120
+
+transport:
+  ssh_key: /Users/learnchef/.ssh/learnchef.pem
+
+provisioner:
+  name: chef_zero_scheduled_task
+  client_rb:
+    audit_mode: :enabled
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[settings::default]
+    attributes:
+```
+
+This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html), which is the default. While an `m1.small` or larger instance type can provide better performance, you can use the `t2.micro` instance type if your AWS account provides [free-tier](http://aws.amazon.com/free/) access.
+
+[END_TAB]
+
+[START_TAB initial2]
+
+```ruby
+# ~/settings/.kitchen.yml
 ---
 driver:
   name: vagrant
 
 provisioner:
-  name: chef_zero
+  name: chef_zero_scheduled_task
 
 platforms:
-  - name: centos-6.6
-    driver:
-      customize:
-        memory: 256
+  - name: windows-2012r2
 
 suites:
   - name: default
     run_list:
-      - recipe[motd::default]
+      - recipe[settings::default]
     attributes:
 ```
 
-This configuration also specifies that the virtual machine should have 256 MB of memory available to it.
+[END_TAB]
+
+[END_TABS]
 
 Here's how the file breaks down.
 
 * **driver** specifies the software that creates the machine. We're using Vagrant.
 * **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and data bags.
 * **platforms** specifies the target operating systems. We're targeting just one &ndash; Windows Server 2012 R2.
-* **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `motd` cookbook's default recipe.
-
-[COMMENT] When Test Kitchen runs, it downloads the base virtual machine image, called a _box_, if the image does not already exist locally. Test Kitchen can [infer the location](https://github.com/test-kitchen/kitchen-vagrant#-default-configuration) for a set number of common configurations. The Test Kitchen [documentation](https://github.com/test-kitchen/kitchen-vagrant#-configuration) explains in detail about how to provide the box name, download URL, and other configuration parameters.
+* **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `settings` cookbook's default recipe.
 
 [DOCS] The [Chef documentation](http://docs.chef.io/config_yml_kitchen.html) explains the structure of the <code class="file-path">.kitchen.yml</code> file in greater detail, and also explains more about the available settings.

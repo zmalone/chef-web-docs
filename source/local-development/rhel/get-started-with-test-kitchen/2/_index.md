@@ -16,8 +16,8 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: ubuntu-12.04
-  - name: centos-6.5
+  - name: ubuntu-14.04
+  - name: centos-7.1
 
 suites:
   - name: default
@@ -28,7 +28,7 @@ suites:
 
 [COMMENT] On Linux and Mac OS, <code class="file-path">.kitchen.yml</code> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
-Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only CentOS, modify <code class="file-path">~/motd/.kitchen.yml</code> like this. (Be sure to replace `centos-6.5` with `centos-6.6`.)
+Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only CentOS, modify <code class="file-path">~/motd/.kitchen.yml</code> like this. (Be sure to replace `centos-7.1` with `centos-6.6`.)
 
 ```ruby
 # ~/motd/.kitchen.yml
