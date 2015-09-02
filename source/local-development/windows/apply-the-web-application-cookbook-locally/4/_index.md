@@ -1,8 +1,8 @@
 ## 4. Verify the result
 
-If you'd like, you can run `kitchen login` and run through the manual verifcation steps that you performed in the previous tutorial.
+If you'd like, you can connect to your instance and run through the manual verification steps that you performed in the previous tutorial.
 
-Now verify that everything's working. Point your browser on your workstation to the IP address that we assigned to the virtual machine, 192.168.33.33. You'll see this:
+To simply verify that the Customers web application is working, connect to your instance and browse to http://localhost/Products/Customers. You'll see this:
 
 ![the resulting web page](/assets/images/misc/webapp_result_test_kitchen.png)
 

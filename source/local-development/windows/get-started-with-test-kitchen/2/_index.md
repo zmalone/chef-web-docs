@@ -55,8 +55,6 @@ transport:
 
 provisioner:
   name: chef_zero_scheduled_task
-  client_rb:
-    audit_mode: :enabled
 
 platforms:
   - name: windows-2012r2
