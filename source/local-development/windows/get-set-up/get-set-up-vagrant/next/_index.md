@@ -1,1 +1,1 @@
-Now that you're all set up, let's write an audit control and test it against a basic web server configuration.
+Now that you're all set up, let's get a hang for how Test Kitchen works by creating a cookbook that creates a basic settings file and use Test Kitchen to apply that cookbook to a Windows Server 2012 R2 virtual machine.
