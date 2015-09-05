@@ -4,7 +4,7 @@ Just like in the previous lesson, you need to tell Test Kitchen about the enviro
 
 Edit your `awesome_customers` cookbook's <code class="file-path">.kitchen.yml</code> file according to your Test Kitchen driver.
 
-[START_TABS config EC2, Vagrant]
+[START_TABS config EC2, Hyper-V, Vagrant]
 
 [START_TAB configEC2 active]
 
@@ -42,6 +42,40 @@ suites:
 ```
 
 We recommend that you use an `m1.small` or larger instance type to ensure that the instance has enough memory to run SQL Server.
+
+[END_TAB]
+
+[START_TAB configHyperV]
+
+This configuration resembles the one that you used when you ran the `settings` cookbook in the previous lesson. It allocates 2GB of memory to the instance to give it enough to run SQL Server.
+
+Replace the value for `password` with the `Administrator` password on your base virtual machine.
+
+```ruby
+# ~/settings/.kitchen.yml
+---
+driver:
+  name: hyperv
+  parent_vhd_folder: C:\Hyper-V
+  parent_vhd_name: WindowsServer2012R2.vhdx
+  vm_switch: ExternalSwitch
+  memory_startup_bytes: 2GB
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+transport:
+  password: H24?6;H.QaV8JP2&
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[awesome_customers::default]
+    attributes:
+```
 
 [END_TAB]
 
