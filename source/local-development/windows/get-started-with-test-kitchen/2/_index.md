@@ -30,7 +30,7 @@ suites:
 
 Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want Windows Server, modify <code class="file-path">~/settings/.kitchen.yml</code> according to the Test Kitchen driver that you're using.
 
-[START_TABS initial EC2, Vagrant]
+[START_TABS initial EC2, Hyper-V, Vagrant]
 
 [START_TAB initial1 active]
 
@@ -72,6 +72,40 @@ This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.co
 
 [START_TAB initial2]
 
+This configuration specifies the location of the parent virtual hard drive (VHD) folder, the name of the virtual switch to use for network access, and allocates 2GB of memory to the instance.
+
+Replace the value for `password` with the `Administrator` password on your base virtual machine.
+
+```ruby
+# ~/settings/.kitchen.yml
+---
+driver:
+  name: hyperv
+  parent_vhd_folder: C:\Hyper-V
+  parent_vhd_name: WindowsServer2012R2.vhdx
+  vm_switch: ExternalSwitch
+  memory_startup_bytes: 2GB
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+transport:
+  password: H24?6;H.QaV8JP2&
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[settings::default]
+    attributes:
+```
+
+[END_TAB]
+
+[START_TAB initial3]
+
 ```ruby
 # ~/settings/.kitchen.yml
 ---
@@ -99,7 +133,23 @@ Here's how the file breaks down.
 
 * **driver** specifies the software that creates the machine. We're using Vagrant.
 * **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and data bags.
+* **transport** TBD
 * **platforms** specifies the target operating systems. We're targeting just one &ndash; Windows Server 2012 R2.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `settings` cookbook's default recipe.
 
 [DOCS] The [Chef documentation](http://docs.chef.io/config_yml_kitchen.html) explains the structure of the <code class="file-path">.kitchen.yml</code> file in greater detail, and also explains more about the available settings.
+
+<hr>
+
+### Sidebar: What about source control?
+
+Most Chef users store the <code class="file-path">.kitchen.yml</code> file in source control along with their cookbooks because it provides other users with a way to quickly use and verify [them].
+
+But you might notice two problems with this approach.
+
+1. Users might not be using the same Test Kitchen driver.
+1. The Test Kitchen configuration file can contain sensitive information such as passwords and access credentials.
+
+A common solution is to provide configuration for the Vagrant driver or another driver that does not require potentially sensitive information to run.
+
+It's also common to use [dynamic configuration](http://kitchen.ci/docs/getting-started/dynamic-configuration). For example, you can create a file named <code class="file-path">.kitchen.local.yml</code>, which you do not check into source control, that overrides the default configuration with your [specific] details. Or your configuration file can use  environment variables to hide [these details from XYZ.]

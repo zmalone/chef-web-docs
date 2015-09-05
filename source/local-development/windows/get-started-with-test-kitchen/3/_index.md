@@ -20,16 +20,15 @@ Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual 
 <a class="help-button radius" href="#" data-reveal-id="test-matrix-modal">Learn more about test matrices</a>
 
 <div id="test-matrix-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-<p>Remember, you can target more than one platform, and also define more than one suite. Test Kitchen multiplies the number of platforms by the number of suites, creating a <em>matrix</em> of test scenarios. For example, imagine that you have two suites &ndash; one named <code>development</code> and one <code>test</code> &ndash; and that you wish to target both Windows Server 6.5 and Windows Server 2012 R2. platforms. Your <code class="file-path">.kitchen.yml</code> file might look like this.</p>
-<div class="window ">
+<p>Remember, you can target more than one platform, and also define more than one suite. Test Kitchen multiplies the number of platforms by the number of suites, creating a <em>matrix</em> of test scenarios. For example, imagine that you have two suites &ndash; one named <code>development</code> and one <code>test</code>. You also have two platforms that you want to test against &ndash; a standard Windows Server 2012 R2 configuration named <code>windows-2012r2</code> and a version that contains added security settings named <code>windows-2012r2-secure</code>. You want to ensure that your cookbook works as you expect on both platforms. Your <code class="file-path">.kitchen.yml</code> file might look like this.</p>
+<div class="window " ng-non-bindable="">
               <nav class="control-window">
-                <div class="close">&times;</div>
+                <div class="close">×</div>
                 <div class="minimize"></div>
                 <div class="deactivate"></div>
               </nav>
-              <h1 class="titleInside">Editor: ~/settings/.kitchen.yml
-</h1>
-              <div class="container"><div class="editor"><div class='highlight conf'><pre><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+              <h1 class="titleInside">Editor: ~/settings</h1>
+              <div class="container"><div class="editor"><div class="highlight ruby"><pre class="code_wrapper"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
 3
 4
@@ -47,35 +46,37 @@ Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual 
 16
 17
 18
-19</pre></td><td class="code"><pre><span class="n">driver</span>:
-  <span class="n">name</span>: <span class="n">vagrant</span>
+19
+20</pre></td><td class="code"><pre><span class="o">---</span>
+<span class="ss">driver:
+  </span><span class="nb">name</span><span class="p">:</span> <span class="n">vagrant</span>
 
-<span class="n">provisioner</span>:
-  <span class="n">name</span>: <span class="n">chef_zero</span>
+<span class="ss">provisioner:
+  </span><span class="nb">name</span><span class="p">:</span> <span class="n">chef_zero_scheduled_task</span>
 
-<span class="n">platforms</span>:
-  - <span class="n">name</span>: <span class="n">centos</span>-<span class="m">6</span>.<span class="m">5</span>
-  - <span class="n">name</span>: <span class="n">centos</span>-<span class="m">6</span>.<span class="m">6</span>
+<span class="ss">platforms:
+  </span><span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">windows</span><span class="o">-</span><span class="mi">2012</span><span class="n">r2</span>
+  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">windows</span><span class="o">-</span><span class="mi">2012</span><span class="n">r2</span><span class="o">-</span><span class="n">secure</span>
 
-<span class="n">suites</span>:
-  - <span class="n">name</span>: <span class="n">development</span>
-    <span class="n">run_list</span>:
-      - <span class="n">recipe</span>[<span class="n">settings</span>::<span class="n">default</span>]
-    <span class="n">attributes</span>:
-  - <span class="n">name</span>: <span class="n">test</span>
-    <span class="n">run_list</span>:
-      - <span class="n">recipe</span>[<span class="n">settings</span>::<span class="n">default</span>]
-    <span class="n">attributes</span>:<span class="w">
+<span class="ss">suites:
+  </span><span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">development</span>
+    <span class="ss">run_list:
+      </span><span class="o">-</span> <span class="n">recipe</span><span class="o">[</span><span class="n">settings</span><span class="o">::</span><span class="n">default</span><span class="o">]</span>
+    <span class="ss">attributes:
+  </span><span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="nb">test</span>
+    <span class="ss">run_list:
+      </span><span class="o">-</span> <span class="n">recipe</span><span class="o">[</span><span class="n">settings</span><span class="o">::</span><span class="n">default</span><span class="o">]</span>
+    <span class="n">attributes</span><span class="p">:</span><span class="w">
 </span></pre></td></tr></tbody></table></pre></div></div></div></div>
 <p>When you run <code>kitchen list</code>, you&#39;ll see the full test matrix.</p>
 <div class="window ">
             <nav class="control-window">
-              <div class="close">&times;</div>
+              <div class="close">×</div>
               <div class="minimize"></div>
               <div class="deactivate"></div>
             </nav>
             <h1 class="titleInside">Terminal: ~/settings</h1>
-            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span></pre></td><td class='code'><pre><code><span class='line command'>kitchen list</span><span class='line output'>Instance               Driver   Provisioner  Verifier  Transport  Last Action</span><span class='line output'>development-centos-65  Vagrant  ChefZero     Busser    Ssh        &lt;Not Created&gt;</span><span class='line output'>development-centos-66  Vagrant  ChefZero     Busser    Ssh        &lt;Not Created&gt;</span><span class='line output'>test-centos-65         Vagrant  ChefZero     Busser    Ssh        &lt;Not Created&gt;</span><span class='line output'>test-centos-66         Vagrant  ChefZero     Busser    Ssh        &lt;Not Created&gt;</span></code></pre></td></tr></table></div></div>
+            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">kitchen list</span><span class="line output">Instance                           Driver   Provisioner            Verifier  Transport  Last Action</span><span class="line output">development-windows-2012r2         Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">development-windows-2012r2-secure  Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2                Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2-secure         Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span></code></pre></td></tr></tbody></table></div></div>
           </div>
 <p>This feature enables you to define multiple configurations, and test each configuration against one or more platforms.</p>
   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
