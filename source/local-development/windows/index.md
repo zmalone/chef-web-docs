@@ -30,7 +30,7 @@ Another benefit to using Test Kitchen is that the operating system of your virtu
 
 Recall that the `awesome_customers` cookbook configures a basic web application that reads customer records from a database and displays the results on a web page.
 
-![the resulting web page](/assets/images/misc/webapp_result_test_kitchen.png)
+![the resulting web page](misc/webapp_result_windows_local.png)
 
 After completing this lesson, you'll:
 
