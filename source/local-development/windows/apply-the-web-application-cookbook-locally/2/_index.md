@@ -4,9 +4,9 @@ Just like in the previous lesson, you need to tell Test Kitchen about the enviro
 
 Edit your `awesome_customers` cookbook's <code class="file-path">.kitchen.yml</code> file according to your Test Kitchen driver.
 
-[START_TABS initial EC2, Vagrant]
+[START_TABS config EC2, Vagrant]
 
-[START_TAB initial1 active]
+[START_TAB configEC2 active]
 
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
@@ -45,7 +45,7 @@ We recommend that you use an `m1.small` or larger instance type to ensure that t
 
 [END_TAB]
 
-[START_TAB initial2]
+[START_TAB configVagrant]
 
 ```ruby
 # ~/manage-a-web-app-windows/chef-repo/cookbooks/awesome_customers/.kitchen.yml

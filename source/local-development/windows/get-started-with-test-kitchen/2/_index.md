@@ -30,9 +30,9 @@ suites:
 
 Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want Windows Server, modify <code class="file-path">~/settings/.kitchen.yml</code> according to the Test Kitchen driver that you're using.
 
-[START_TABS initial EC2, Hyper-V, Vagrant]
+[START_TABS config EC2, Hyper-V, Vagrant]
 
-[START_TAB initial1 active]
+[START_TAB configEC2 active]
 
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
@@ -70,7 +70,7 @@ This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.co
 
 [END_TAB]
 
-[START_TAB initial2]
+[START_TAB configHyperV]
 
 This configuration specifies the location of the parent virtual hard drive (VHD) folder, the name of the virtual switch to use for network access, and allocates 2GB of memory to the instance.
 
@@ -104,7 +104,7 @@ suites:
 
 [END_TAB]
 
-[START_TAB initial3]
+[START_TAB configVagrant]
 
 ```ruby
 # ~/settings/.kitchen.yml

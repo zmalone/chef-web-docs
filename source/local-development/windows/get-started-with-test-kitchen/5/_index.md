@@ -8,7 +8,7 @@ The way you connect to your instance depends on which driver you're using.
 
 [START_TABS connect EC2, Hyper-V, Vagrant]
 
-[START_TAB connect1 active]
+[START_TAB connectEC2 active]
 
 When you use the EC2 driver, Test Kitchen creates two files in your cookbook's <code class="file-path">.kitchen</code> directory &ndash; a Remote Desktop (.rdp) file and a YAML (.yml) configuration file that lists details about the instance.
 
@@ -40,13 +40,13 @@ $ kitchen login
 
 [END_TAB]
 
-[START_TAB connect2]
+[START_TAB connectHyperV]
 
 If you're using the Hyper-V driver, login to your instance through Hyper-V Manager. Login as `Administrator` and use the same password that you set when you created the base virtual machine.
 
 [END_TAB]
 
-[START_TAB connect3]
+[START_TAB connectVagrant]
 
 If you're using the Vagrant driver, a VirtualBox window appears when you create the instance. Login through that window as either `Administrator` or `vagrant` &ndash; the password for both accounts is `vagrant`.
 

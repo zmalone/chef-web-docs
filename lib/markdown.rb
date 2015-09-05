@@ -74,8 +74,9 @@ module ZurbFoundation
       names = $2.split(/,/)
       active_class = ' active' # set .active class to first element.
       items = []
-      names.each_with_index { |name, index|
-        items << "<li class=\"tab-title#{active_class}\"><a href=\"##{id}#{index+1}\">#{name}</a></li>"
+      names.each { |name|
+        escaped_name = name.downcase.delete(' ').gsub(/\W/, "")
+        items << "<li class=\"tab-title#{active_class}\"><a href=\"##{id}#{escaped_name}\">#{name}</a></li>"
         active_class = ''
       }
       '<ul class="tabs" data-tab>' + items.join + '</ul>' + '<div class="tabs-content">'
@@ -86,8 +87,10 @@ module ZurbFoundation
     }
 
     content.gsub!(/<p>\[START_TAB\s+(\w+)(\s+(\w+))?\]<\/p>(.+?)<p>\[END_TAB\]<\/p>/m) {
-      puts $2
-      "<div class=\"content #{$2}\" id=\"#{$1}\"><p>#{$4}</p></div>"
+      content = $4
+      active_class = $2
+      escaped_name = $1.downcase.delete(' ').gsub(/\W/, "")
+      "<div class=\"content #{active_class}\" id=\"#{escaped_name}\"><p>#{content}</p></div>"
     }
   end
 
