@@ -4,7 +4,7 @@ You now have a cookbook that you can reuse. Your individual recipes declare the 
 
 [GITHUB] Get the final version of the `awesome_customers` cookbook [on GitHub](https://github.com/learn-chef/manage-a-web-app-rhel).
 
-In the next tutorial, [Learn to develop your infrastructure code locally](/local-development/rhel/), you'll learn how to speed up the development cycle by using Test Kitchen to configure your web application on a virtual machine.
+In the next tutorial, [Learn to develop your Red Hat Enterprise Linux infrastructure code locally](/local-development/rhel/), you'll learn how to speed up the development cycle by using Test Kitchen to configure your web application on a temporary virtual machine instance.
 
 <p style="font-size: 14px; font-style: italic;">
 This tutorial was adapted from <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting Started Writing Chef Cookbooks the Berkshelf Way</a>, by Mischa Taylor. It was updated for use with the Chef DK and the latest community cookbooks.
