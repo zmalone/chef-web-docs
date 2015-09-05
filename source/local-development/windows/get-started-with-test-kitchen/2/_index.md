@@ -131,8 +131,8 @@ suites:
 
 Here's how the file breaks down.
 
-* **driver** specifies the software that creates the machine. We're using Vagrant.
-* **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and data bags.
+* **driver** specifies the software that creates the machine. We're using Vagrant. [TODO]
+* **provisioner** specifies how to run Chef. We use `chef_zero_scheduled_task` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and data bags. [TODO]
 * **transport** TBD
 * **platforms** specifies the target operating systems. We're targeting just one &ndash; Windows Server 2012 R2.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `settings` cookbook's default recipe.
