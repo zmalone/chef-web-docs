@@ -22,7 +22,7 @@ Say you want to quickly experiment with a new feature, or you make a mistake and
 
 One answer is [Test Kitchen](http://kitchen.ci). Test Kitchen is a tool that runs your infrastructure code in an isolated environment that resembles your production environment. With Test Kitchen, you continue to write your Chef code from your workstation, but instead of uploading your code to the Chef server and applying it to a node, Test Kitchen applies your code to a temporary environment, such as a virtual machine on your workstation or a cloud or container instance. Doing so enables you to iterate faster and correct mistakes earlier in the process. Only after you've written and verified your configuration code do you need to upload your cookbooks to the Chef server, bootstrap your node, and run `chef-client` on your node.
 
-In this tutorial, you'll use Test Kitchen together with the virtualization tools [VirtualBox](https://www.virtualbox.org) and [Vagrant](https://www.vagrantup.com) to apply the `awesome_customers` cookbook you created in the previous tutorial on a virtual machine on your workstation.
+In this tutorial, you'll use Test Kitchen to apply the `awesome_customers` cookbook you created in the previous tutorial on either an Amazon EC2 instance or a virtual machine on your workstation under Hyper-V or VirtualBox and Vagrant.
 
 <img src="/assets/images/networks/workstation-vm.png" style="width:40%; box-shadow: none;" alt="Your workstation, Test Kitchen, and a virtual machine" />
 
@@ -34,8 +34,8 @@ Recall that the `awesome_customers` cookbook configures a basic web application 
 
 After completing this lesson, you'll:
 
-* know how to use Test Kitchen to apply your cookbooks locally on temporary instances.
-* be able to set up basic network settings for your instance, such as its IP address.
-* understand how to transfer your data bags and secret key file from your workstation to your instance.
+* know how to use Test Kitchen to apply your cookbooks on temporary Windows Server instances.
+* B
+* C
 
 You'll get started by setting up Chef DK and the virtualization tools on your workstation.

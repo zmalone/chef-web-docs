@@ -56,7 +56,7 @@ This configuration also specifies that the virtual machine should have 256 MB of
 
 Here's how the file breaks down.
 
-* **driver** specifies the software that creates the machine. We're using Vagrant.
+* **driver** specifies the software that manages the machine. We're using Vagrant.
 * **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and data bags.
 * **platforms** specifies the target operating systems. We're targeting just one &ndash; Ubuntu 14.04.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `motd` cookbook's default recipe.

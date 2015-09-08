@@ -35,9 +35,9 @@ $ Get-NetAdapter
 
 Name                      InterfaceDescription                    ifIndex Status       MacAddress             LinkSpeed
 ----                      --------------------                    ------- ------       ----------             ---------
-Wi-Fi                     Broadcom 802.11n Network Adapter              6 Up           4C-8D-79-DC-93-86       450 Mbps
-Bluetooth Network Conn... Bluetooth Device (Personal Area Netw...       5 Disconnected 4C-8D-79-DC-93-87         3 Mbps
-Ethernet                  Broadcom NetXtreme Gigabit Ethernet           3 Disconnected A8-20-66-59-CA-55          0 bps
+Wi-Fi                     Broadcom 802.11n Network Adapter              6 Up           6C-4A-97-DC-40-22       450 Mbps
+Bluetooth Network Conn... Bluetooth Device (Personal Area Netw...       5 Disconnected 6C-4A-97-DC-40-22         3 Mbps
+Ethernet                  Broadcom NetXtreme Gigabit Ethernet           3 Disconnected BB-21-66-79-AD-7D          0 bps
 ```
 
 The output you see depends on what network adapters you have installed. In this example, a Wi-Fi adapter is configured for external network traffic.
@@ -72,7 +72,7 @@ $ mkdir C:\Hyper-V
 
 ### Create an empty base virtual machine
 
-You now have everything we need to create the base virtual machine. You have a location to store it, a Hyper-V virtual switch, and the Windows Server 2012 R2 .iso on your hard drive.
+You now have everything you need to create the base virtual machine. You have a location to store it, a Hyper-V virtual switch, and the Windows Server 2012 R2 .iso on your hard drive.
 
 Run these commands to create a new virtual machine, mount the .iso to it as a DVD drive, and start the virtual machine.
 
@@ -97,13 +97,13 @@ Your base virtual machine appears in the **Virtual Machines** panel.
 
 ![Hyper-V Manager](misc/hyperv-view-vm.png)
 
-Now connect to your virtual machine either by double-clicking it or from the **Connect** option in the **Connect** option in the **Actions** pane.
+Now connect to your virtual machine either by double-clicking it or from the **Connect** option in the **Actions** pane.
 
 ### Install Windows Server 2012 R2 on your virtual machine
 
 At this point your virtual machine has an empty hard drive and is mounted to your .iso file as a virtual DVD drive. Now you need to install Windows Server 2012 R2 on the hard drive.
 
-The `New-VM` cmdlet that you ran earlier set this boot order:
+The `New-VM` cmdlet that you ran earlier sets this boot order:
 
 1. Network
 1. Hard disk drive

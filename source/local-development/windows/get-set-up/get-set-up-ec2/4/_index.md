@@ -49,7 +49,7 @@ Ensure that you have security groups available in your region that allow inbound
 * **5985** and **5986** (WinRM)
 * **3389** (RDP) (This setting is optional, but it's useful for creating Remote Desktop connections to your instances.)
 
-If you're unable to allow outbound traffic on all ports, ensure that you have a security group that allows outbound access on port **443** (HTTPS).
+If you're unable to allow outbound traffic on all ports, ensure that you have a security group that least allows outbound access on port **443** (HTTPS).
 
 ### Get the AMI ID for Windows Server 2012 R2 in your region
 

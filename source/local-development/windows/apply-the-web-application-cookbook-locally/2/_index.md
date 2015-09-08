@@ -29,7 +29,6 @@ transport:
 
 provisioner:
   name: chef_zero_scheduled_task
-  require_chef_omnibus: 12.3.0
 
 platforms:
   - name: windows-2012r2
@@ -89,7 +88,6 @@ driver:
 
 provisioner:
   name: chef_zero_scheduled_task
-  require_chef_omnibus: 12.3.0
 
 platforms:
   - name: windows-2012r2

@@ -20,7 +20,7 @@ We don't have you create the `settings` cookbook in a Chef repo because we won't
 
 ### Create the settings template
 
-We'll use a template to dynamically add information about the virtual machine to the settings file, <code class="file-path">/etc/settings</code>. Run the following command to generate a template in your `settings` cookbook named <code class="file-path">server-info.txt</code>.
+We'll use a template to dynamically add information about the virtual machine to the settings file, <code class="file-path">C:\temp\server-info.txt</code>. Run the following command to generate a template in your `settings` cookbook named <code class="file-path">server-info.txt</code>.
 
 ```bash
 # ~
@@ -45,6 +45,8 @@ hostname:  <%= node['hostname'] %>
 platform:  <%= node['platform'] %> - <%= node['platform_version'] %>
 cpu count: <%= node['cpu']['total'] %>
 ```
+
+This settings file lists the server's FQDN, hostname, operating system platform and version, and its total number of CPUs. When Chef runs, it uses node attributes to replace these placeholders with their values.
 
 ### Write the default recipe
 

@@ -131,11 +131,12 @@ suites:
 
 Here's how the file breaks down.
 
-* **driver** specifies the software that creates the machine. We're using Vagrant. [TODO]
-* **provisioner** specifies how to run Chef. We use `chef_zero_scheduled_task` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and data bags. [TODO]
-* **transport** TBD
-* **platforms** specifies the target operating systems. We're targeting just one &ndash; Windows Server 2012 R2.
+* **driver** specifies the software that manages the machine. It's the Test Kitchen driver that you set up in the previous lesson.
+* **provisioner** specifies how to run Chef. When working with Linux instances, `chef_zero` is a common choice because it enables you to mimic a Chef server environment on your local machine. For working with Windows Server, we use the `chef-zero-scheduled-task` plugin that you installed in the previous lesson. `chef_zero_scheduled_task` works like `chef_zero`, but also creates a scheduled task that runs `chef-client` immediately and connects to that task so that Test Kitchen can receive the output of the `chef-client` run.
+* **transport** specifies the protocol, port, and other network settings that allow Test Kitchen to communicate with the instance. When using the EC2 driver, this is where you specify the path to your key pair that enables you to create and manage cloud instances. For the Hyper-V driver, this is where you specify the password for the `Administrator` account.
+* **platforms** specifies the target operating systems. We're targeting just one &ndash; Windows Server 2012 R2. If you're using the Vagrant driver, this name matches the name that you specify when you run `vagrant box add` to add the Vagrant box to your local catalog.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `settings` cookbook's default recipe.
+
 
 [DOCS] The [Chef documentation](http://docs.chef.io/config_yml_kitchen.html) explains the structure of the <code class="file-path">.kitchen.yml</code> file in greater detail, and also explains more about the available settings.
 
@@ -143,13 +144,13 @@ Here's how the file breaks down.
 
 ### Sidebar: What about source control?
 
-Most Chef users store the <code class="file-path">.kitchen.yml</code> file in source control along with their cookbooks because it provides other users with a way to quickly use and verify [them].
+Most Chef users store the <code class="file-path">.kitchen.yml</code> file in source control along with their cookbooks because it provides other users with a way to quickly use and verify their work.
 
 But you might notice two problems with this approach.
 
-1. Users might not be using the same Test Kitchen driver.
-1. The Test Kitchen configuration file can contain sensitive information such as passwords and access credentials.
+1. Other users might not be using the same Test Kitchen driver. For example, one user might be using the EC2 driver and another user might be using Hyper-V.
+1. The <code class="file-path">.kitchen.yml</code> file can contain sensitive information such as passwords and access credentials.
 
-A common solution is to provide configuration for the Vagrant driver or another driver that does not require potentially sensitive information to run.
+A common solution is to maintain a version of <code class="file-path">.kitchen.yml</code> that works with the Vagrant driver or another driver that does not require potentially sensitive information to run.
 
-It's also common to use [dynamic configuration](http://kitchen.ci/docs/getting-started/dynamic-configuration). For example, you can create a file named <code class="file-path">.kitchen.local.yml</code>, which you do not check into source control, that overrides the default configuration with your [specific] details. Or your configuration file can use  environment variables to hide [these details from XYZ.]
+It's also common to use [dynamic configuration](http://kitchen.ci/docs/getting-started/dynamic-configuration). For example, you can create a file named <code class="file-path">.kitchen.local.yml</code>, which you do not check into source control, that overrides the default configuration with your specific details. Or your configuration file can use environment variables to hide passwords and other personal details.
