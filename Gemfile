@@ -23,5 +23,5 @@ group :test do
 end
 
 group :production do
-  gem 'therubyracer',       '~> 0.11.4'
+  gem 'therubyracer',       '~> 0.12.2'
 end
