@@ -2,7 +2,7 @@
 
 Now let's resolve the audit failure. We'll start by writing code to configure the firewall on the node. Then we'll verify the fix locally. Finally, we'll upload our updated `webserver` to the Chef server and run `chef-client` on our node and verify that the audit passes.
 
-To illustrate the state of the firewall, you would see from the **Windows Firewall with Advanced Security** Microsoft Management Console (MMC) snap-in that by default a firewall rule exists that allows inbound ICMPv4 traffic.
+To determine the state of the firewall, use the **Windows Firewall with Advanced Security** Microsoft Management Console (MMC) snap-in. You'll see that, by default, a firewall rule exists that allows inbound ICMPv4 traffic.
 
 ![Allowing inbound ICMPv4 traffic](chef-analytics/windows-firewall-allow-ping.png)
 
