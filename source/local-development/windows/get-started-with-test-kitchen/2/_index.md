@@ -140,17 +140,19 @@ Here's how the file breaks down.
 
 [DOCS] The [Chef documentation](http://docs.chef.io/config_yml_kitchen.html) explains the structure of the <code class="file-path">.kitchen.yml</code> file in greater detail, and also explains more about the available settings.
 
-<hr>
+[START_MODAL source-control Learn about .kitchen.yml and source control]
 
-### Sidebar: What about source control?
+### .kitchen.yml and source control
 
 Most Chef users store the <code class="file-path">.kitchen.yml</code> file in source control along with their cookbooks because it provides other users with a way to quickly use and verify their work.
 
 But you might notice two problems with this approach.
 
-1. Other users might not be using the same Test Kitchen driver. For example, one user might be using the EC2 driver and another user might be using Hyper-V.
+1. Not all users use the same Test Kitchen driver. For example, one user might be using the EC2 driver and another user might be using Hyper-V.
 1. The <code class="file-path">.kitchen.yml</code> file can contain sensitive information such as passwords and access credentials.
 
 A common solution is to maintain a version of <code class="file-path">.kitchen.yml</code> that works with the Vagrant driver or another driver that does not require potentially sensitive information to run.
 
 It's also common to use [dynamic configuration](http://kitchen.ci/docs/getting-started/dynamic-configuration). For example, you can create a file named <code class="file-path">.kitchen.local.yml</code>, which you do not check into source control, that overrides the default configuration with your specific details. Or your configuration file can use environment variables to hide passwords and other personal details.
+
+[END_MODAL]

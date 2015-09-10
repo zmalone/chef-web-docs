@@ -31,6 +31,7 @@ module ZurbFoundation
 
     alerts
     tabs
+    modals
     anchors
     extras
 
@@ -91,6 +92,21 @@ module ZurbFoundation
       active_class = $2
       escaped_name = $1.downcase.delete(' ').gsub(/\W/, "")
       "<div class=\"content #{active_class}\" id=\"#{escaped_name}\"><p>#{content}</p></div>"
+    }
+  end
+
+  def modals
+    content.gsub!(/<p>\[START_MODAL\s+([\w-]+)(\s+(.+?))?\]<\/p>(.+?)<p>\[END_MODAL\]<\/p>/m) {
+      content = $4
+      title = $2
+      id = $1
+      <<-EOH
+      <a class="help-button radius" href="#" data-reveal-id="#{id}">#{title}</a>
+      <div id="#{id}" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      #{content}
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+      </div>
+      EOH
     }
   end
 
