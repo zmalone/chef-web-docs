@@ -42,7 +42,7 @@ $ kitchen login
 
 [START_TAB connectHyperV]
 
-If you're using the Hyper-V driver, login to your instance through Hyper-V Manager. Login as `Administrator` and use the same password that you set when you created the base virtual machine.
+If you're using the Hyper-V driver, login to your instance, `default-windows-2012r2`, through Hyper-V Manager. Login as `Administrator` and use the same password that you set when you created the base virtual machine.
 
 [END_TAB]
 

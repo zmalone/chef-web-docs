@@ -13,7 +13,7 @@ Instance                Driver  Provisioner            Verifier  Transport  Last
 default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      <Not Created>
 ```
 
-If you're not using the EC2 driver, you would see that driver listed in the **Driver** column.
+If you're using a driver other than the EC2 driver, you would see that driver listed in the **Driver** column.
 
 Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual machine that's configured to run the `default` suite. The `Last Action` column shows that the virtual machine was not yet created.
 
