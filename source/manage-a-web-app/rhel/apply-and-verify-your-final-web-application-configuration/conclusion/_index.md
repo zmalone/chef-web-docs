@@ -2,7 +2,7 @@ In this tutorial, you set up a basic yet complete LAMP stack that includes a web
 
 You now have a cookbook that you can reuse. Your individual recipes declare the _policy_ that you want to enforce, and your attributes define the _data_. You can reference your `awesome_customers` cookbook from another cookbook and override its attributes with the specific data you need.
 
-[GITHUB] Get the final version of the `awesome_customers` cookbook [on GitHub](https://github.com/learn-chef/manage-a-web-app-rhel).
+[GITHUB] Get the final version of the `awesome_customers` cookbook on [GitHub](https://github.com/learn-chef/manage-a-web-app-rhel).
 
 In the next tutorial, [Learn to develop your Red Hat Enterprise Linux infrastructure code locally](/local-development/rhel/), you'll learn how to speed up the development cycle by using Test Kitchen to configure your web application on a temporary virtual machine instance.
 
