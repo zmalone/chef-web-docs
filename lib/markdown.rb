@@ -71,7 +71,7 @@ module ZurbFoundation
   # we currently can't have ERB in partials, so we subsitute text for now.
   def tabs
     content.gsub!(/<p>\[START_TABS\s+(?<id>\w+)\s+(?<names>.+)\]<\/p>/) {
-      id = $1 # TODO: named groups ($~[:id]) not working?
+      id = $1.downcase # TODO: named groups ($~[:id]) not working?
       names = $2.split(/,/)
       active_class = ' active' # set .active class to first element.
       items = []

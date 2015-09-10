@@ -9,4 +9,4 @@ If you're not familiar with Test Kitchen, follow this Learn Chef tutorial to get
 After completing this tutorial, you'll:
 
 * have the Chef development tools installed on your workstation.
-* understand how to apply your cookbooks to a local virtual machine.
+* understand how to apply your cookbooks to a temporary local virtual machine or cloud instance.

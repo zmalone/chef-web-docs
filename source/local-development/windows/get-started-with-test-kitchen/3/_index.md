@@ -119,6 +119,8 @@ are responsible for your incurred costs.
 
 This output is for the EC2 driver. The output that you'll see depends on which driver you're using.
 
+[TIP] We'll show you how to later, but if at any point you need to destroy your instance, run `kitchen destroy`. You can run `kitchen converge` again at a later time to pick up where you left off. This is especially important when using the EC2 driver, as you are billed hourly for any machine resources that you use.
+
 Now run `kitchen list` again.
 
 ```bash
