@@ -26,13 +26,13 @@ While you wait for the download, you can continue to the next step.
 
 #### Install Packer on your workstation
 
-Next, install Packer. Packer is the software that builds the Vagrant box from your ISO image.
+Next, install Packer. Packer builds the Vagrant box from your ISO image.
 
 <a class='accent-button radius' href='https://packer.io/downloads.html' target='_blank'>Install Packer&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
 #### Get the packer-templates project from GitHub
 
-Now download the latest `packer-templates` project from GitHub. This project uses Packer to build the Vagrant box from your ISO image. It also installs all Windows updates and reduces the size of the image as much as possible.
+Now download the latest `packer-templates` project from GitHub. This template installs all Windows updates and reduces the size of the image as much as possible.
 
 If you use Git, clone the repository to where you do your development work, for example, <code class="file-path">~/Development/mwrock</code>.
 

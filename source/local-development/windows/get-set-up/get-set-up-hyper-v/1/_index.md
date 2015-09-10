@@ -1,6 +1,6 @@
 ## 1. Install the kitchen-hyperv driver
 
-Although Chef DK comes with Test Kitchen, you need to install the [kitchen-hyperv](https://github.com/test-kitchen/kitchen-hyperv) driver to enable it to communicate with Hyper-V.
+Although Chef DK comes with Test Kitchen, you need to install the [kitchen-hyperv](https://github.com/test-kitchen/kitchen-hyperv) driver to enable Test Kitchen to communicate with Hyper-V.
 
 Run this command to install it.
 

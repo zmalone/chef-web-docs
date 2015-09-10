@@ -1,4 +1,4 @@
-## 4. Prepare your AWS account
+## 3. Prepare your AWS account
 
 You'll use Test Kitchen to create an EC2 instance later in this tutorial. For now, let's ensure you have everything you'll need to create and connect to your instance.
 

@@ -1,6 +1,6 @@
 ## 1. Install VirtualBox
 
-Next, install VirtualBox. VirtualBox is software that manages your virtual machine instances.
+Install VirtualBox. VirtualBox manages your virtual machine instances.
 
 <a class='accent-button radius' href='https://www.virtualbox.org/wiki/Downloads' target='_blank'>Install VirtualBox&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 

@@ -1,6 +1,6 @@
 ## 1. Install the kitchen-ec2 driver
 
-Although Chef DK comes with Test Kitchen, you need to install the [kitchen-ec2](https://github.com/test-kitchen/kitchen-ec2) driver to enable it to communicate with Amazon EC2.
+Although Chef DK comes with Test Kitchen, you need to install the [kitchen-ec2](https://github.com/test-kitchen/kitchen-ec2) driver to enable Test Kitchen to communicate with Amazon EC2.
 
 Run this command to install it.
 

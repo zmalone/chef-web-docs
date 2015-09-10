@@ -25,9 +25,9 @@ While you wait for the download, you can continue to the next step.
 
 ### Create a Hyper-V virtual switch
 
-Recall that the `awesome_customers` cookbook downloads the SQL Server 2012 Express installer from download.microsoft.com. So when you create the base virtual machine, you'll need to configure access to the Internet.
+Recall that the `awesome_customers` cookbook downloads the SQL Server 2012 Express installer from download.microsoft.com. To reach the site, you'll need to configure the base virtual image to have Internet access.
 
-So do so, you'll choose the network adapter on your workstation that can access the Internet and create a [virtual switch](https://technet.microsoft.com/en-us/library/Hh831823.aspx) that provides the virtual machine with access to that adapter.
+To do so, you'll choose the network adapter on your workstation that can access the Internet and create a [virtual switch](https://technet.microsoft.com/en-us/library/Hh831823.aspx) that provides the virtual machine with access to that adapter.
 
 The first step is to list all network adapters. From a PowerShell window on your workstation, run the [Get-NetAdapter](https://technet.microsoft.com/library/JJ130867.aspx) cmdlet to list all available adapters.
 
@@ -49,7 +49,7 @@ The next step is to create a variable that refers to your public network adapter
 $ $net_adapter = Get-NetAdapter -Name Wi-Fi
 ```
 
-Now run [New-VMSwitch](https://technet.microsoft.com/library/hh848455.aspx) to create the virtual switch. You'll use the name of the switch, `ExternalSwitch`, in the next step when you create the base virtual machine.
+Now run [New-VMSwitch](https://technet.microsoft.com/library/hh848455.aspx) to create the virtual switch. You'll use the name of the switch, `ExternalSwitch`, in a later step when you create the base virtual machine.
 
 ```ps
 $ New-VMSwitch -Name ExternalSwitch -NetAdapterName $net_adapter.Name -AllowManagementOS $True -Notes "Provide public network access to VMs"
@@ -73,7 +73,7 @@ $ mkdir C:\Hyper-V
 
 ### Create an empty base virtual machine
 
-You now have everything you need to create the base virtual machine. You have a location to store it, a Hyper-V virtual switch, and the Windows Server 2012 R2 ISO image on your hard drive.
+If your download is complete, you now have everything you need to create the base virtual machine. You have a location to store it, a Hyper-V virtual switch, and the Windows Server 2012 R2 ISO image on your hard drive.
 
 Run these commands to create a new virtual machine, mount the ISO image to it as a DVD drive, and start the virtual machine.
 
@@ -84,7 +84,7 @@ $ $vm | Set-VM -AutomaticStartAction StartIfRunning -AutomaticStopAction ShutDow
 $ $vm | Start-VM
 ```
 
-The [New-VM](https://technet.microsoft.com/library/hh848537.aspx) command also creates a new virtual hard disk drive for the virtual machine that can grow up to 40GB and associates the virtual machine with your virtual switch.
+The [New-VM](https://technet.microsoft.com/library/hh848537.aspx) command also creates a new virtual hard disk drive for the virtual machine that can grow as large as 40 GB and associates the virtual machine with your virtual switch.
 
 ### Connect to your virtual machine through Hyper-V Manager
 
@@ -114,10 +114,12 @@ Your virtual network doesn't have a boot server and your virtual hard drive does
 
 ![Windows setup](misc/hyperv-windows-setup.png)
 
-Proceed through the installation process. Here are the options you'll need for some steps. For the remaining steps, choose the default option.
+Proceed through the installation process. Two of the steps require specific options:
 
 * Select **Windows Server 2012 Standard Evaluation (Server with a GUI)** when prompted to select the operating system you want to install.
 * Choose **Custom: Install Windows only (advanced)** when prompted which type of installation do you want.
+
+Choose the default option for the other steps.
 
 From the **Settings** screen, you'll be prompted to create a password for the `Administrator` user. Note the password that you choose.
 

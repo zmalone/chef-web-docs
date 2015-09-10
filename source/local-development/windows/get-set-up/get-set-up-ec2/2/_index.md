@@ -4,7 +4,7 @@ In [Learn to manage a basic Windows Server web application](/manage-a-web-app/wi
 
 In practice, Chef users commonly create a scheduled task, use [push jobs](https://docs.chef.io/push_jobs.html), or set up an SSH server to run `chef-client` on their nodes.
 
-In this tutorial, we'll use the [chef-zero-scheduled-task](https://github.com/smurawski/chef-zero-scheduled-task) Test Kitchen plugin to run our cookbooks on temporary instances. `chef-zero-scheduled-task` creates a scheduled task that runs `chef-client` immediately and connects to that task so that Test Kitchen can receive the output of the `chef-client` run.
+In this tutorial, we'll use the [chef-zero-scheduled-task](https://github.com/smurawski/chef-zero-scheduled-task) Test Kitchen plugin to run our cookbooks. `chef-zero-scheduled-task` creates a scheduled task that runs `chef-client` immediately and connects to that task so that Test Kitchen can receive the output of the `chef-client` run.
 
 The Chef DK does not come with this plugin, so run the following command to install it.
 
