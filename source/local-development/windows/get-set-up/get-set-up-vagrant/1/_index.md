@@ -1,5 +1,15 @@
-## 1. Install the Chef development kit on your workstation
+## 1. Install VirtualBox
 
-Install Chef DK on your workstation now if you haven't already. Chef DK comes with Test Kitchen, so there's nothing additional to set up.
+Next, install VirtualBox. VirtualBox is software that manages your virtual machine instances.
 
-<a class='accent-button radius' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+<a class='accent-button radius' href='https://www.virtualbox.org/wiki/Downloads' target='_blank'>Install VirtualBox&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+
+Then run the following command to verify that VirtualBox is installed.
+
+```bash
+# ~
+$ VBoxManage --version
+4.3.26r98988
+```
+
+[WINDOWS] By default, VirtualBox is installed to <code class="file-path">C:\Program Files\Oracle\VirtualBox</code> on Windows. However, this path is not added to the `PATH` environment variable. Either `cd` to this directory or add it to your `PATH` before you run `VBoxManage`.

@@ -34,8 +34,8 @@ Recall that the `awesome_customers` cookbook configures a basic web application 
 
 After completing this lesson, you'll:
 
-* know how to use Test Kitchen to apply your cookbooks on temporary Windows Server instances.
-* B
-* C
+* understand how to set up your environment to run temporary Windows Server instances either on your workstation or in the cloud.
+* know how to use Test Kitchen to apply your cookbooks to your temporary Windows Server instances.
+* gain confidence that the changes you make to your cookbooks work like you expect in production.
 
 You'll get started by setting up Chef DK and the virtualization tools on your workstation.
