@@ -137,7 +137,6 @@ Here's how the file breaks down.
 * **platforms** specifies the target operating systems. We're targeting just one &ndash; Windows Server 2012 R2. If you're using the Vagrant driver, this name matches the name that you specified when you ran `vagrant box add` to add the Vagrant box to your local catalog. For the Hyper-V and EC2 drivers, this is a descriptive name, and can be anything.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `settings` cookbook's default recipe.
 
-
 [DOCS] The [Chef documentation](http://docs.chef.io/config_yml_kitchen.html) explains the structure of the <code class="file-path">.kitchen.yml</code> file in greater detail, and also explains more about the available settings.
 
 [START_MODAL source-control Learn about .kitchen.yml and source control]
@@ -151,8 +150,10 @@ But you might notice two problems with this approach.
 1. Not all users use the same Test Kitchen driver. For example, one user might be using the EC2 driver and another user might be using Hyper-V.
 1. The <code class="file-path">.kitchen.yml</code> file can contain sensitive information such as passwords and access credentials.
 
-A common solution is to maintain a version of <code class="file-path">.kitchen.yml</code> that works with the Vagrant driver or another driver that does not require potentially sensitive information to run.
+A common solution is to maintain a version of <code class="file-path">.kitchen.yml</code> that works with the Vagrant driver because the Vagrant driver uses free software and doesn't require passwords or other sensitive information to run.
 
 It's also common to use [dynamic configuration](http://kitchen.ci/docs/getting-started/dynamic-configuration). For example, you can create a file named <code class="file-path">.kitchen.local.yml</code>, which you do not check into source control, that overrides the default configuration with your specific details. Or your configuration file can use environment variables to hide passwords and other personal details.
+
+Another common option is to provide the Vagrant configuration in <code class="file-path">.kitchen.yml</code> and a configuration that runs in the cloud in a file named <code class="file-path">.kitchen.cloud.yml</code>. This enables you to provide a standard configuration that runs on Vagrant and an option to test your configuration on one or more cloud providers ([the mysql community cookbook is a good example](https://github.com/chef-cookbooks/mysql/blob/master/.kitchen.cloud.yml)). To run the cloud configuration, set the `KITCHEN_YAML=.kitchen.cloud.yml` environment variable. This tells Test Kitchen to read from that file.
 
 [END_MODAL]
