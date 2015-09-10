@@ -19,6 +19,109 @@ cookbook 'audit', path: '../audit'
 
 Now modify your `webserver` cookbook's <code class="file-path">.kitchen.yml</code> file like this. This configuration sets the `audit_mode` to `:enabled` so that `chef-client` runs both the web server configuration code and the audit tests.
 
+[START_TABS configWebAudit EC2, Hyper-V, Vagrant]
+
+[START_TAB configWebAuditEC2 active]
+
+Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/.kitchen.yml
+---
+driver:
+  name: ec2
+  aws_ssh_key_id: learnchef
+  region: us-west-2
+  availability_zone: a
+  subnet_id: subnet-eacb348f
+  image_id: ami-c3b3b1f3
+  security_group_ids: ['sg-2d3b3b48']
+  retryable_tries: 120
+
+transport:
+  ssh_key: /Users/learnchef/.ssh/learnchef.pem
+
+provisioner:
+  name: chef_zero_scheduled_task
+  client_rb:
+    audit_mode: :enabled
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[webserver::default]
+      - recipe[audit::default]
+    attributes:
+```
+
+[END_TAB]
+
+[START_TAB configWebAuditHyperV]
+
+Replace the value for `password` with the `Administrator` password on your base virtual machine.
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/.kitchen.yml
+---
+driver:
+  name: hyperv
+  parent_vhd_folder: C:\Hyper-V
+  parent_vhd_name: WindowsServer2012R2.vhdx
+  vm_switch: ExternalSwitch
+  memory_startup_bytes: 2GB
+
+provisioner:
+  name: chef_zero_scheduled_task
+  client_rb:
+    audit_mode: :enabled
+
+transport:
+  password: H24?6;H.QaV8JP2&
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[webserver::default]
+      - recipe[audit::default]
+    attributes:
+```
+
+[END_TAB]
+
+[START_TAB configWebAuditVagrant]
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/.kitchen.yml
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero_scheduled_task
+  client_rb:
+    audit_mode: :enabled
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[webserver::default]
+      - recipe[audit::default]
+    attributes:
+```
+
+[END_TAB]
+
+[END_TABS]
+
 ### If you're using the Vagrant driver
 
 ```ruby
@@ -123,11 +226,12 @@ Although the web server was successfully configured, the audit run failed. You'l
 ```bash
 # ~/chef-repo/cookbooks/webserver
 [...]
-       Failed examples:
-
-       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/Default.htm must not be owned by Administrators
-       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page1.htm must not be owned by Administrators
-       rspec 'C:/Users/vagrant/AppData/Local/Temp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3]' # Validate web services Ensure no web files are owned by the Administrators group c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators
+Validate web services
+  Ensure no web files are owned by the Administrators group
+    c:/inetpub/wwwroot/Default.htm must not be owned by Administrators (FAILED - 1)
+    c:/inetpub/wwwroot/iisstart.htm must not be owned by Administrators
+    c:/inetpub/wwwroot/pages/Page1.htm must not be owned by Administrators (FAILED - 2)
+    c:/inetpub/wwwroot/pages/Page2.htm must not be owned by Administrators (FAILED - 3)
 [...]
 ```
 
