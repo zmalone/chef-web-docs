@@ -51,7 +51,7 @@ driver:
   retryable_tries: 120
 
 transport:
-  ssh_key: /Users/learnchef/.ssh/learnchef.pem
+  ssh_key: C:\Users\LearnChef\.ssh\learnchef.pem
 
 provisioner:
   name: chef_zero_scheduled_task
