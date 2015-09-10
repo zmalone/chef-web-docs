@@ -57,6 +57,7 @@ driver:
   region: us-west-2
   availability_zone: a
   subnet_id: subnet-eacb348f
+  instance_type: m1.small
   image_id: ami-c3b3b1f3
   security_group_ids: ['sg-2d3b3b48']
   retryable_tries: 120
