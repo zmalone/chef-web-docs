@@ -70,7 +70,7 @@ end
 
 The `code` part of the resource defines the PowerShell command to run to place the firewall in the desired state. The command runs the [New-NetFirewallRule](https://technet.microsoft.com/library/jj554908.aspx) cmdlet to create a rule that blocks public inbound Echo Request messages.
 
-The `not_if` part ensures that the `powershell_script` resource is applied only when it needs to be. It uses the same code as the audit control to check whether any firewall rules that need to be changed exist.
+The `not_if` part ensures that the `powershell_script` resource is applied only when it needs to be. It uses the same code as the audit control to check whether an existing firewall rule exists.
 
 The entire recipe looks like this.
 

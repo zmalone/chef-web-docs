@@ -4,7 +4,7 @@ Now let's apply both the `webserver` and `audit` cookbooks to the same Test Kitc
 
 In previous steps, you applied the `audit` and `webserver` cookbooks on separate Test Kitchen instances. Let's set things up so that you can run them both from the same instance. Here you'll apply the `audit` cookbook from the Test Kitchen instance for your `webserver` cookbook.
 
-Test Kitchen uses [Berkshelf](http://berkshelf.com) to resolve dependencies among cookbooks (if you haven't gone through the _Learn to manage a basic web application_ tutorial, you can [read](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration#1uploadyourcookbooktothechefserver) a bit about how Berkshelf works.) Berkshelf resolves dependencies that come from a remote source, such as Chef Supermarket, or from your local system.
+Test Kitchen uses [Berkshelf](http://berkshelf.com) to resolve dependencies among cookbooks (if you haven't gone through the _Learn to manage a basic web application_ tutorial, you can [read](/manage-a-web-app/windows/apply-and-verify-your-database-configuration#step1) a bit about how Berkshelf works.) Berkshelf resolves dependencies that come from a remote source, such as Chef Supermarket, or from your local system.
 
 To run the `audit` cookbook from your `webserver` cookbook, modify your `webserver` cookbook's <code class="file-path">Berksfile</code> to point to the `audit` cookbook's relative location, like this.
 
@@ -121,66 +121,6 @@ suites:
 [END_TAB]
 
 [END_TABS]
-
-### If you're using the Vagrant driver
-
-```ruby
-# ~/chef-repo/cookbooks/webserver/.kitchen.yml
----
-driver:
-  name: vagrant
-
-provisioner:
-  name: chef_zero
-  client_rb:
-    audit_mode: :enabled
-
-platforms:
-  - name: windows-2012r2
-
-suites:
-  - name: default
-    run_list:
-      - recipe[webserver::default]
-      - recipe[audit::default]
-    attributes:
-```
-
-### If you're using the EC2 driver
-
-Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
-
-```ruby
-# ~/chef-repo/cookbooks/webserver/.kitchen.yml
----
-driver:
-  name: ec2
-  aws_ssh_key_id: learnchef
-  region: us-west-2
-  availability_zone: a
-  subnet_id: subnet-eacb348f
-  image_id: ami-c3b3b1f3
-  security_group_ids: ['sg-2d3b3b48']
-  retryable_tries: 120
-
-transport:
-  ssh_key: /Users/learnchef/.ssh/learnchef.pem
-
-provisioner:
-  name: chef_zero
-  client_rb:
-    audit_mode: :enabled
-
-platforms:
-  - name: windows-2012r2
-
-suites:
-  - name: default
-    run_list:
-      - recipe[webserver::default]
-      - recipe[audit::default]
-    attributes:
-```
 
 This configuration also adds the `audit` cookbook's default recipe to the run-list. The order is important because it ensures that the configuration changes are made before the audit tests are run.
 
