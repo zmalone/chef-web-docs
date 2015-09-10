@@ -22,7 +22,8 @@ task :build_redirects do
 
   redirects.each_key do |r|
     obj = bucket.object(r)
-    obj.put(website_redirect_location: redirects[r])
+
+    obj.put(website_redirect_location: redirects[r], acl: 'public-read')
     puts "#{r} -> #{redirects[r]}"
   end
 end
