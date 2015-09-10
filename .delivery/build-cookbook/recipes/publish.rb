@@ -37,7 +37,7 @@ include_recipe 'build-cookbook::_install_dependencies'
 execute 'build the site' do
   command 'bundle exec middleman build --clean --verbose'
   environment(
-    'PATH' => '/opt/chef/embedded/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games',
+    'PATH' => '/opt/chefdk/embedded/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games',
     'HOME' => node['delivery']['workspace']['cache']
   )
   cwd node['delivery']['workspace']['repo']
