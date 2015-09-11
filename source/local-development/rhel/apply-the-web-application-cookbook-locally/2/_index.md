@@ -1,6 +1,6 @@
 ## 2. Set up the Test Kitchen configuration file
 
-Just like in the previous lesson, you need to tell Test Kitchen about the environment you want to run your cookbook in. Remember, when you create a cookbook using the `chef generate cookbook` command, Chef generates a Test Kitchen configuration file for you.
+Just as in the previous lesson, you need to tell Test Kitchen about the environment where your cookbook will run. Remember, when you create a cookbook using the `chef generate cookbook` command, Chef generates a Test Kitchen configuration file for you.
 
 In addition to configuring Test Kitchen to create a CentOS 6.6 virtual machine, we'll also:
 
