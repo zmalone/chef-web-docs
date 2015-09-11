@@ -72,7 +72,7 @@ This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.co
 
 [START_TAB configHyperV]
 
-This configuration specifies the location of the parent virtual hard drive (VHD) folder, the name of the virtual switch to use for network access, and allocates 2GB of memory to the instance.
+This configuration specifies the location of the parent virtual hard drive (VHD) folder, the name of the virtual switch to use for network access, and allocates 2 GB of memory to the instance.
 
 Replace the value for `password` with the `Administrator` password on your base virtual machine.
 
