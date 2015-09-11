@@ -27,7 +27,7 @@ Choose this option if you prefer to work with cloud instances or your workstatio
 
 This option uses [Hyper-V](https://technet.microsoft.com/windowsserver/dd448604.aspx) to manage virtual machine instances on your workstation.
 
-Choose this option if you're using a Windows workstation, [your workstation can run Hyper-V](https://msdn.microsoft.com/virtualization/hyperv_on_windows/quick_start/walkthrough_compatibility), and you'd rather work with local virtual machines than with cloud instances. This option can take longer to set up than the EC2 option because you need to download and set up a base Windows Server image.
+Choose this option if you're using a Windows 8.1 or Windows 10 workstation, [your workstation can run Hyper-V](https://msdn.microsoft.com/virtualization/hyperv_on_windows/quick_start/walkthrough_compatibility), and you'd rather work with local virtual machines than with cloud instances. This option can take longer to set up than the EC2 option because you need to download and set up a base Windows Server image.
 
 <a class="button radius" href="/local-development/windows/get-set-up/get-set-up-hyper-v/">Get set up with Test Kitchen and Hyper-V</a>
 
@@ -35,6 +35,6 @@ Choose this option if you're using a Windows workstation, [your workstation can 
 
 This option uses the virtualization tools [VirtualBox](https://www.virtualbox.org) and [Vagrant](https://www.vagrantup.com) to manage virtual machine instances on your workstation.
 
-Choose this option if you're running a Linux or Mac OS workstation and you'd rather work with local virtual machines than with cloud instances. Like the Hyper-V option, you'll need to build your own Windows Server base image.
+Choose this option if you're using a Windows 7, Linux, or Mac OS workstation and you'd rather work with local virtual machines than with cloud instances. Like the Hyper-V option, you'll need to build your own Windows Server base image.
 
 <a class="button radius" href="/local-development/windows/get-set-up/get-set-up-vagrant/">Get set up with Test Kitchen and Vagrant</a>
