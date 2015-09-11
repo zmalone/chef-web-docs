@@ -1,6 +1,6 @@
 ## 2. Set up the Test Kitchen configuration file
 
-Now we need to tell Test Kitchen a bit about the environment we want to run our cookbook in.
+Now we need to tell Test Kitchen a bit about the environment where our cookbook will run.
 
 When you use the `chef generate cookbook` command to create a cookbook, Chef creates a file named <code class="file-path">.kitchen.yml</code> in the root directory of your cookbook. <code class="file-path">.kitchen.yml</code> defines what's needed to run Test Kitchen, including which virtualization provider to use, how to run Chef, and what platforms to run your code on.
 

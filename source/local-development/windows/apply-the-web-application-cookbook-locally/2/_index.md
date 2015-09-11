@@ -24,11 +24,11 @@ driver:
   security_group_ids: ['sg-2d3b3b48']
   retryable_tries: 120
 
-transport:
-  ssh_key: C:\Users\LearnChef\.ssh\learnchef.pem
-
 provisioner:
   name: chef_zero_scheduled_task
+  
+transport:
+  ssh_key: C:\Users\LearnChef\.ssh\learnchef.pem
 
 platforms:
   - name: windows-2012r2

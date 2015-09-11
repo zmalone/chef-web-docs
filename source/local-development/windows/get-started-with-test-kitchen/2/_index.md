@@ -1,6 +1,6 @@
 ## 2. Set up the Test Kitchen configuration file
 
-Now we need to tell Test Kitchen a bit about the environment we want to run our cookbook in.
+Now we need to tell Test Kitchen a bit about the environment where our cookbook will run.
 
 When you use the `chef generate cookbook` command to create a cookbook, Chef creates a file named <code class="file-path">.kitchen.yml</code> in the root directory of your cookbook. <code class="file-path">.kitchen.yml</code> defines what's needed to run Test Kitchen, including which virtualization provider to use, how to run Chef, and what platforms to run your code on.
 
@@ -50,11 +50,11 @@ driver:
   security_group_ids: ['sg-2d3b3b48']
   retryable_tries: 120
 
-transport:
-  ssh_key: C:\Users\LearnChef\.ssh\learnchef.pem
-
 provisioner:
   name: chef_zero_scheduled_task
+
+transport:
+  ssh_key: C:\Users\LearnChef\.ssh\learnchef.pem
 
 platforms:
   - name: windows-2012r2
@@ -133,8 +133,8 @@ Here's how the file breaks down.
 
 * **driver** specifies the software that manages the machine. It's the Test Kitchen driver that you set up in the previous lesson.
 * **provisioner** specifies how to run Chef. When working with Linux instances, `chef_zero` is a common choice because it enables you to mimic a Chef server environment on your local machine. For working with Windows Server, we use the `chef_zero_scheduled_task` plugin that you installed in the previous lesson. `chef_zero_scheduled_task` works like `chef_zero`, but also creates a scheduled task that runs `chef-client` immediately and connects to that task so that Test Kitchen can receive the output of the `chef-client` run.
-* **transport** specifies the protocol, port, and other network settings that allow Test Kitchen to communicate with the instance. When using the EC2 driver, this is where you specify the path to your key pair that enables you to create and manage cloud instances. For the Hyper-V driver, this is where you specify the password for the `Administrator` account.
-* **platforms** specifies the target operating systems. We're targeting just one &ndash; Windows Server 2012 R2. If you're using the Vagrant driver, this name matches the name that you specified when you ran `vagrant box add` to add the Vagrant box to your local catalog. For the Hyper-V and EC2 drivers, this is a descriptive name, and can be anything.
+* **transport** specifies the protocol, port, and other network settings that allow Test Kitchen to communicate with the instance.
+* **platforms** specifies the target operating systems. We're targeting just one &ndash; Windows Server 2012 R2.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `settings` cookbook's default recipe.
 
 [DOCS] The [Chef documentation](http://docs.chef.io/config_yml_kitchen.html) explains the structure of the <code class="file-path">.kitchen.yml</code> file in greater detail, and also explains more about the available settings.
@@ -143,7 +143,7 @@ Here's how the file breaks down.
 
 ### .kitchen.yml and source control
 
-Most Chef users store the <code class="file-path">.kitchen.yml</code> file in source control along with their cookbooks because it provides other users with a way to quickly use and verify their work.
+Most Chef users store the <code class="file-path">.kitchen.yml</code> file in source control along with their cookbooks so that other users can also use it to verify their own work.
 
 But you might notice two problems with this approach.
 

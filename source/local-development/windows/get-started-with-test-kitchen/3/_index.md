@@ -15,7 +15,7 @@ default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      <Not
 
 If you're using a driver other than the EC2 driver, you would see that driver listed in the **Driver** column.
 
-Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual machine that's configured to run the `default` suite. The `Last Action` column shows that the virtual machine was not yet created.
+Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual machine that's configured to run the `default` suite. The `Last Action` column shows that the virtual machine is not yet created.
 
 <a class="help-button radius" href="#" data-reveal-id="test-matrix-modal">Learn more about test matrices</a>
 
@@ -78,7 +78,7 @@ Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual 
             <h1 class="titleInside">Terminal: ~/settings</h1>
             <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">kitchen list</span><span class="line output">Instance                           Driver   Provisioner            Verifier  Transport  Last Action</span><span class="line output">development-windows-2012r2         Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">development-windows-2012r2-secure  Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2                Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2-secure         Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span></code></pre></td></tr></tbody></table></div></div>
           </div>
-<p>This feature enables you to define multiple configurations, and test each configuration against one or more platforms.</p>
+<p>Test matrices enable you to define multiple configurations, and test each configuration against one or more platforms.</p>
   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
 </div>
 

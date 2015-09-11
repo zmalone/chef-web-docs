@@ -106,4 +106,4 @@ $ kitchen converge
 -----> Kitchen is finished. (1m36.02s)
 ```
 
-This run was faster &ndash; 1 minute and 36 seconds compared 6 minutes &ndash; not only because the instance already had the Chef tools installed, but also because it was already in the desired state, so Chef had to do no work.
+This run was faster &ndash; 1 minute and 36 seconds compared to 6 minutes &ndash; not only because the instance already had the Chef tools installed, but also because it was already in the desired state, so Chef had to do no work.
