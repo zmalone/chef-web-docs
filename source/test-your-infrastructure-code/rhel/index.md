@@ -1,11 +1,11 @@
 ---
-title: 'Learn how to test your Ubuntu infrastructure code'
+title: 'Learn how to test your Red Hat Enterprise Linux infrastructure code'
 layout: lesson-overview
-platform: Ubuntu
-logo: ubuntu.svg
+platform: Red Hat Enterprise Linux
+logo: redhat.svg
 order: 1
 ---
-In [Learn to develop your infrastructure code locally](/local-development/ubuntu/), you used [Test Kitchen](http://kitchen.ci) to configure and run a web application in an isolated environment that resembles your production environment.
+In [Learn to develop your infrastructure code locally](/local-development/rhel/), you used [Test Kitchen](http://kitchen.ci) to configure and run a web application in an isolated environment that resembles your production environment.
 
 Local development with Test Kitchen can greatly speed up the development process because it shortens the time it takes to bring up a machine and apply your Chef code. If you make a mistake or want to try something new, you can run your cookbook again or simply destroy the instance and create a new one.
 
