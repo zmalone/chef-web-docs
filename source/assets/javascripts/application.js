@@ -4,5 +4,6 @@
 //= require platform-window
 //= require answerdash
 //= require nav
+//= require home
 
 $(document).foundation();

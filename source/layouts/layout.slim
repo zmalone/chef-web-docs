@@ -31,15 +31,17 @@ body class=page_classes ng-app='chefLabClient'
       = link_to chef_www_url, id: "logo" do
         = image_tag('chef-logo-mark.svg', onerror: 'chef-logo-mark.png')
       ul.nav-links
-        li.nav-link= link_to 'Tutorials', 'https://learn.chef.io/tutorials'
-        li.nav-link= link_to 'Skills Library', 'https://learn.chef.io/skills/'
+        li.nav-link= link_to 'Tutorials', '/tutorials/'
+        li.nav-link= link_to 'Skills Library', '/skills/'
         li.nav-link= link_to 'Docs', 'http://docs.chef.io/'
         li.nav-link= link_to 'Training', 'https://www.chef.io/training/'
 
   section
     - if data.page.type
-      - if data.page.type == "landing"
+      - if data.page.type == "tutorials"
         = partial 'layouts/section_header'
+    - if %w(lesson lesson-options).include? data.page.layout
+      = partial "layouts/training"
     .content
       - if data.page.deprecated
         = partial 'layouts/deprecated'
