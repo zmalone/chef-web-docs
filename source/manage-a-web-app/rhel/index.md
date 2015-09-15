@@ -1,5 +1,5 @@
 ---
-title: 'Learn to manage a basic web application on Red Hat Enterprise Linux'
+title: 'Learn to manage a basic Red Hat Enterprise Linux web application'
 layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg
@@ -31,5 +31,7 @@ After completing this lesson, you'll:
 * be more productive by using community cookbooks from Chef Supermarket to perform common tasks.
 * be able to use encrypted data bags to protect sensitive data.
 * know how to use tools such as Berkshelf to resolve dependencies among your cookbooks.
+
+[COMMENT] You don't need to understand all the details about how Apache and MySQL work to complete this tutorial. The goal is to learn skills and patterns that will help you apply Chef to your specific infrastructure challenges.
 
 You'll get started by setting up your workstation, a Chef server, and a node to manage.

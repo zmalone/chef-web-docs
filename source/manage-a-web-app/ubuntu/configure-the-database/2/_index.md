@@ -49,6 +49,8 @@ default['awesome_customers']['group'] = 'web_admin'
 
 default['awesome_customers']['document_root'] = '/var/www/customers/public_html'
 
+default['firewall']['allow_ssh'] = true
+
 default['awesome_customers']['passwords']['secret_path'] = '/etc/chef/encrypted_data_bag_secret'
 
 default['awesome_customers']['database']['dbname'] = 'products'
@@ -103,7 +105,7 @@ mysql_client 'default' do
 end
 
 # Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret("#{node['awesome_customers']['passwords']['secret_path']}")
+password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers']['passwords']['secret_path'])
 root_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'sql_server_root_password', password_secret)
 
 # Configure the MySQL service.

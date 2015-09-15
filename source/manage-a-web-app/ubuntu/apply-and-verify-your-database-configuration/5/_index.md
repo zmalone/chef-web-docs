@@ -31,7 +31,7 @@ $ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ident
   <ul>
     <li>Ensure that your environment is active before you run <code>knife</code>. For example, CloudShare instances suspend after a period of inactivity. <img class="border" src="/assets/images/ubuntu/cloudshare-suspend.png"></img></li>
     <li>Ensure that you run <code>knife</code> commands from your <code class="file-path">chef-repo</code> directory or one of its sub-directories.</li>
-    <li>Ensure you have a <code class="file-path">chef-repo/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and two <code class="file-path">.pem</code> files. If you don't, <a href="/manage-a-node/ubuntu/set-up-your-chef-server/#2installthestarterkit" target="_blank">install the Starter Kit</a>.</li>
+    <li>Ensure you have a <code class="file-path">chef-repo/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and two <code class="file-path">.pem</code> files. If you don't, <a href="/manage-a-node/ubuntu/set-up-your-chef-server#step2" target="_blank">install the Starter Kit</a>.</li>
     <li>Ensure that your node's IP address is accessible from your network.</li>
     <li>Ensure the user name you provide has root or <code>sudo</code> access on the node.</li>
     <li>Ensure your workstation has outbound access (including firewall) on these ports:

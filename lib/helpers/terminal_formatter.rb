@@ -3,7 +3,7 @@ module Middleman
     module Highlighter
 
       class TerminalFormatter
-        def initialize(options = {:prompt => "$", :title_prefix => "Terminal", :window_style => "", :default_working_dir => "~/" })
+        def initialize(options = {:prompt => "$", :title_prefix => "Terminal", :window_style => "", :default_working_dir => "~" })
           @prompt = options[:prompt]
           @title_prefix = options[:title_prefix]
           @window_style = options[:window_style]

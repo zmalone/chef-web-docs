@@ -12,9 +12,9 @@ gem 'rb-fsevent',           '~> 0.9'
 gem 'slim',                 '~> 1.3.8'
 gem 'foundation-rails', require: false
 gem 'chef-web-core', git: 'git@github.com:opscode/chef-web-core'
+gem 'aws-sdk', '~> 2.0'
 
 group :development, :test do
-  gem 'aws-sdk' # For AWS data syncing
   gem 'pry'
 end
 
@@ -23,5 +23,5 @@ group :test do
 end
 
 group :production do
-  gem 'therubyracer',       '~> 0.11.4'
+  gem 'therubyracer',       '~> 0.12.2'
 end

@@ -7,5 +7,6 @@ Append an `include_recipe` statement to your default recipe, <code class="file-p
 include_recipe 'selinux::permissive'
 include_recipe 'awesome_customers::user'
 include_recipe 'awesome_customers::webserver'
+include_recipe 'awesome_customers::firewall'
 include_recipe 'awesome_customers::database'
 ```

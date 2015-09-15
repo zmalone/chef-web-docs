@@ -1,4 +1,4 @@
-## 2: Create the MOTD file
+## 2. Create the MOTD file
 
 First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
 

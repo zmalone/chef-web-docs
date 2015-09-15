@@ -51,18 +51,20 @@ module ZurbFoundation
     content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box comment error\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"fa fa-2x fa-info-circle\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[DOCS\] (.+)<\/p>/)     { "<div class=\"alert-box docs\"><i class=\"fa fa-2x fa-book\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-info-circle blueiconcolor\"></i>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-info-circle comment-icon\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[SIDEBAR\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><i class=\"fa fa-2x fa-comment blueiconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[INTERNAL\] (.+)<\/p>/)  { "<div class=\"alert-box internal\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[WINDOWS\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-windows blueiconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[LINUX\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-linux\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[ERROR\] (.+)<\/p>/)  { "<div class=\"alert-box error\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[RUBY\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><img class=\"alert-box-icon\" src=\"http://upload.wikimedia.org/wikipedia/commons/7/73/Ruby_logo.svg\" title=\"By Yukihiro Matsumoto, Ruby Visual Identity Team (http://rubyidentity.org/ (archive)) [CC BY-SA 2.5 (http://creativecommons.org/licenses/by-sa/2.5)], via Wikimedia Commons\"></img>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[TIP\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-thumbs-o-up tip-icon\"></i>&nbsp; <b>Tip:</b>&nbsp #{$1}</div>" }
+    content.gsub!(/<p>\[RUBY\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><img class=\"alert-box-icon-small\" src=\"http://upload.wikimedia.org/wikipedia/commons/7/73/Ruby_logo.svg\" title=\"By Yukihiro Matsumoto, Ruby Visual Identity Team (http://rubyidentity.org/ (archive)) [CC BY-SA 2.5 (http://creativecommons.org/licenses/by-sa/2.5)], via Wikimedia Commons\"></img>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[TIP\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-thumbs-o-up tip-icon\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[GITHUB\] (.+)<\/p>/)  { "<div class=\"alert-box github\"><i class=\"fa fa-2x fa-github\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[FEEDBACK\] (.+)<\/p>/)  { "<div class=\"alert-box feedback\"><i class=\"fa fa-2x fa-comment-o\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[HEADLINE\] (.+)<\/p>/)  { "<div class=\"alert-box headline\">#{$1}</div>" }
-
+    content.gsub!(/<p>\[QUOTE\] (.+)<\/p>/)  { "<div class=\"alert-box quote\"><i class=\"fa fa-quote-left\"></i>&nbsp;<i>#{$1}</i>&nbsp;<i class=\"fa fa-quote-right\"></i></div>" }
+    content.gsub!(/<p>\[AWS\] (.+)<\/p>/)  { "<div class=\"alert-box aws\"><img class=\"alert-box-icon-large\" src=\"/assets/images/partner/AWS-Cloud.svg\"></img>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[TRAINING\] (.+)<\/p>/)  { "<div class=\"alert-box training\"><i class=\"fa fa-2x fa-laptop training-icon\"></i>&nbsp; #{$1}</div>" }
   end
 
 
@@ -72,7 +74,13 @@ module ZurbFoundation
       old = $2
       flat = old.downcase.delete(' ')
       escaped = flat.gsub(/\W/, "")
-      "<h#{size}><a class=\"section-link\" name=\"#{escaped}\" href=\"##{escaped}\">&#167;</a>#{old}</h#{size}>"
+      s = ''
+      # if the title looks like a step, create an additional anchor, e.g. #step2
+      m = /\A(?<step>\d+)\./.match(flat)
+      step = m.nil? ? nil : "step#{m['step']}"
+      s += "<a name=\"#{step}\" href=\"##{step}\"></a>" unless step.nil?
+      # create a second anchor for the long form and link it to the step anchor if it exists; otherwise, link to the long form
+      s + "<h#{size}>#{old}<a class=\"section-link\" name=\"#{escaped}\" href=\"##{step || escaped}\"><i class=\"fa fa-link\"></i></a></h#{size}>"
     end
   end
 

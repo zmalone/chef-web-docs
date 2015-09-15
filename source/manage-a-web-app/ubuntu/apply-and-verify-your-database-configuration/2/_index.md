@@ -10,7 +10,7 @@ Skipping awesome_customers (0.1.0) (frozen)
 Uploaded build-essential (2.2.3) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded chef-sugar (3.1.1) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded database (4.0.6) to: 'https://api.opscode.com:443/organizations/your-org-name'
-Skipping firewall (0.11.8) (frozen)
+Skipping firewall (1.5.0) (frozen)
 Skipping httpd (0.2.14) (frozen)
 Uploaded mariadb (0.3.0) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded mysql (6.0.23) to: 'https://api.opscode.com:443/organizations/your-org-name'
@@ -23,6 +23,8 @@ Uploaded yum (3.6.1) to: 'https://api.opscode.com:443/organizations/your-org-nam
 Uploaded yum-epel (0.6.2) to: 'https://api.opscode.com:443/organizations/your-org-name'
 Uploaded yum-mysql-community (0.1.17) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
+
+[COMMENT] Remember to pass the `--no-ssl-verify` flag or set up a trusted SSL certificate if you're working with your own on-premises Chef server.
 
 One advantage to pinning to specific cookbook versions is that Berkshelf can skip the upload process for cookbook versions that already exist on the Chef server. However, you'll notice that your `awesome_customers` was skipped as well!
 

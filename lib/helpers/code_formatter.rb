@@ -46,8 +46,10 @@ module Middleman
         #   -- path/to/filename.sql
         #   OR
         #   // path/to/filename.php
+        #   OR
+        #   ; path/to/filename.ini
         def create_title_from_comment(content)
-          content.gsub(/^\s*(?:#|<!--|--|\/\/)\s*/,"").gsub(/\s*-->\s*$/,"")
+          content.gsub(/^\s*(?:#|;|<!--|--|\/\/)\s*/,"").gsub(/\s*-->\s*$/,"")
         end
 
         def default_filename
@@ -59,7 +61,7 @@ module Middleman
         end
 
         def source_window(content,filepath,window_style)
-          %{<div class="window #{window_style}">
+          %{<div class="window #{window_style}" ng-non-bindable>
               <nav class="control-window">
                 <div class="close">&times;</div>
                 <div class="minimize"></div>

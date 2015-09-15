@@ -6,7 +6,7 @@
         h1 == current_page.data.title
         - if current_page.parent.data.tags
           div style="margin-top:-16px;margin-bottom:10px;"
-            = partial "layouts/add-tags", locals: { page: current_page.parent }
+            = partial "layouts/add-tags", locals: { tags: current_page.parent.data.tags }
         = yield
         hr
         .small-10.small.columns
@@ -16,3 +16,7 @@
           ul.side-nav.box
             - current_page.children.each do |p|
               li == link_to p.data.title, p
+              - if p.data.layout == "lesson-options"
+                ul
+                  - p.children.each do |p2|
+                      li == link_to p2.data.title, p2

@@ -25,6 +25,8 @@ Uploaded yum-epel (0.6.2) to: 'https://api.opscode.com:443/organizations/your-or
 Uploaded yum-mysql-community (0.1.17) to: 'https://api.opscode.com:443/organizations/your-org-name'
 ```
 
+[COMMENT] Remember to pass the `--no-ssl-verify` flag or set up a trusted SSL certificate if you're working with your own on-premises Chef server.
+
 One advantage to pinning to specific cookbook versions is that Berkshelf can skip the upload process for cookbook versions that already exist on the Chef server. However, you'll notice that your `awesome_customers` was skipped as well!
 
 ```bash

@@ -10,4 +10,4 @@ The easiest way to get set up is to install Git, which includes an SSH client.
 
 After you install Git, ensure that the path to the Git binaries are included in your system `PATH`, for example <code class="file-path">C:\\Program Files (x86)\\Git\\bin</code>.
 
-[FEEDBACK] We're looking for feedback on this requirement. Is Git part of your existing workflow? Would you rather be able to configure your own SSH client? Should we provide an SSH client in the ChefDK? Share your thoughts in the forum at the bottom of this page or <a href="mailto:learnchef@chef.io?subject=Feedback on Git for Windows workstations">email us</a>.
+[FEEDBACK] We're looking for feedback on this requirement. Is Git part of your existing workflow? Would you rather be able to configure your own SSH client? Should we provide an SSH client in the Chef DK? Share your thoughts in the forum at the bottom of this page or <a href="mailto:learnchef@chef.io?subject=Feedback on Git for Windows workstations">email us</a>.

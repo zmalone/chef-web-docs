@@ -1,10 +1,10 @@
-## 2. Use Berkshelf to update your dependencies
+## 2. Use Berkshelf to install your dependencies
 
-Now run `berks update` to update the dependency tree.
+Now run `berks install` to update the dependency tree.
 
 ```bash
 # ~/chef-repo/cookbooks/awesome_customers
-$ berks update
+$ berks install
 Resolving cookbook dependencies...
 Fetching 'awesome_customers' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
@@ -13,7 +13,7 @@ Using awesome_customers (0.3.0) from source at .
 Using chef-sugar (3.1.1)
 Using build-essential (2.2.3)
 Using apt (2.6.1)
-Using firewall (0.11.8)
+Using firewall (1.5.0)
 Using httpd (0.2.14)
 Using mariadb (0.3.0)
 Using mysql (6.0.23)
