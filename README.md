@@ -8,7 +8,7 @@ Installation
 
 1. Clone the repository:
 
-        $ git clone git@github.com:opscode/learn-chef.git
+        $ delivery clone --server delivery.chef.co --ent chef --org CIA chef-web-learn
 
 1. CD into the project:
 
