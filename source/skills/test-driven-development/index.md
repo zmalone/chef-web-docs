@@ -5,7 +5,7 @@ order: 2
 category: 'planning-and-practices'
 layout: skills-topic
 sections: [1, 2, 3, 4, 5, exercises]
-icon: security.png
+icon: magnify.png
 byline: Joshua Timberman
 ---
 This post is all about test driven infrastructure with Chef: an overview in testing Chef cookbooks for the current landscape. This post is focused on tools included in the [Chef DK](https://downloads.chef.io/chef-dk/). Some other tools and projects are mentioned for completeness or historical purposes.
