@@ -62,7 +62,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[GITHUB\] (.+)<\/p>/)  { "<div class=\"alert-box github\"><i class=\"fa fa-2x fa-github\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[FEEDBACK\] (.+)<\/p>/)  { "<div class=\"alert-box feedback\"><i class=\"fa fa-2x fa-comment-o\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[HEADLINE\] (.+)<\/p>/)  { "<div class=\"alert-box headline\">#{$1}</div>" }
-    content.gsub!(/<p>\[QUOTE\] (.+)<\/p>/)  { "<div class=\"alert-box quote\"><i class=\"fa fa-quote-left\"></i>&nbsp;<i>#{$1}</i>&nbsp;<i class=\"fa fa-quote-right\"></i></div>" }
+    content.gsub!(/<p>\[QUOTE\] (.+)<\/p>/)  { "<div class=\"alert-box quote\"><i class=\"fa fa-quote-left\"></i>&nbsp;<i>#{$1}</i></div>" }
     content.gsub!(/<p>\[AWS\] (.+)<\/p>/)  { "<div class=\"alert-box aws\"><img class=\"alert-box-icon-large\" src=\"/assets/images/partner/AWS-Cloud.svg\"></img>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[TRAINING\] (.+)<\/p>/)  { "<div class=\"alert-box training\"><i class=\"fa fa-2x fa-laptop training-icon\"></i>&nbsp; #{$1}</div>" }
   end
