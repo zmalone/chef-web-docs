@@ -1,7 +1,7 @@
 ---
 title: 'How to be a secure Chef'
 description: 'Learn how a secure workflow can help you deliver your applications and services securely without losing speed.'
-order: 2
+order: 1
 category: 'planning-and-practices'
 layout: skills-topic
 sections: [1, 2]
