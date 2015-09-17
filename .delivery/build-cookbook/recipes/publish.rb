@@ -38,7 +38,8 @@ execute 'build the site' do
   command 'bundle exec middleman build --clean --verbose'
   environment(
     'PATH' => '/opt/chefdk/embedded/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games',
-    'HOME' => node['delivery']['workspace']['cache']
+    'HOME' => node['delivery']['workspace']['cache'],
+    'CHEF_LAB_URL' => 'http://opscode-cheflab.herokuapp.com'
   )
   cwd node['delivery']['workspace']['repo']
 end
