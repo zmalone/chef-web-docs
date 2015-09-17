@@ -7,169 +7,55 @@ sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 ---
-TODO: PATH
+[HEADLINE] Testing your configuration code through automation gives you increased confidence that your changes will work as you expect in production.
 
-Scenario: Create a user who can manage a file.
+TODO: Just do curl commmand at first (add callout that "having just one test is ..."), then show the rest (building more can help you more quickly pin-point errors should something break.)
 
-## Create the hello_testing cookbook
+TODO: VIDEO
+
+Let's ...
+
+Although it's common to write your tests after you write your configuration code, another way to approach [things, the problem] is to write your tests first. Often called _test-driven infrastructure_ or _test-driven development_.
+
+When you write your tests first [you see them fail - use BL below?] [The process is to:]
+
+* Write [Serverspec]() tests that ...
+* Apply to CentOS 6.5 instance through TK - watch it fail
+* Write just enough Chef code to make the test pass
+* Apply to CentOS 6.5 instance through TK - watch it pass
+
+The benefit to this approach is that
+
+* it clearly documents your requirements
+* it tells you when you're _done_.
+
+It also helps limit scope?
+
+We'll use a basic cookbook that configures Apache web server that resembles the one that you wrote previously.
+
+You can think of it like integration or functional testing.
+Integration testing verifies that two or more components operate together.
+[Functional testing](https://en.wikipedia.org/wiki/Functional_testing) verifies that
+
+
+## 1. Create cookbook
 
 ```bash
-# ~/chef-repo
-$ chef generate cookbook cookbooks/hello_testing
+# ~
+$ chef generate cookbook webserver_test
 Compiling Cookbooks...
 Recipe: code_generator::cookbook
-  * directory[/home/user/chef-repo/cookbooks/hello_testing] action create
-    - create new directory /home/user/chef-repo/cookbooks/hello_testing
+  * directory[/Users/user/webserver_test] action create
+    - create new directory /Users/user/webserver_test
 [...]
-  * cookbook_file[/home/user/chef-repo/cookbooks/hello_testing/.gitignore] action create
-    - create new file /home/user/chef-repo/cookbooks/hello_testing/.gitignore
-    - update content in file /home/user/chef-repo/cookbooks/hello_testing/.gitignore from none to dd37b2
+  * cookbook_file[/Users/user/webserver_test/.gitignore] action create
+    - create new file /Users/user/webserver_test/.gitignore
+    - update content in file /Users/user/webserver_test/.gitignore from none to dd37b2
     (diff output suppressed by config)
 ```
 
-## Create the users recipe
-
 ```bash
-# ~/chef-repo
-$ chef generate recipe cookbooks/hello_testing users
-Compiling Cookbooks...
-Recipe: code_generator::recipe
-  * directory[./hello_testing/spec/unit/recipes] action create (up to date)
-  * cookbook_file[./hello_testing/spec/spec_helper.rb] action create_if_missing (up to date)
-  * template[./hello_testing/spec/unit/recipes/users_spec.rb] action create_if_missing
-    - create new file ./hello_testing/spec/unit/recipes/users_spec.rb
-    - update content in file ./hello_testing/spec/unit/recipes/users_spec.rb from none to ea0d16
-    (diff output suppressed by config)
-  * template[./hello_testing/recipes/users.rb] action create
-    - create new file ./hello_testing/recipes/users.rb
-    - update content in file ./hello_testing/recipes/users.rb from none to b14d42
-    (diff output suppressed by config)
-```
-
-```ruby
-# ~/chef-repo/cookbooks/hello_testing/recipes/users.rb
-group 'admins'
-
-user 'maria' do
-  group 'admins'
-  system true
-  shell '/bin/bash'
-end
-```
-
-## Create the greeting recipe
-
-```bash
-# ~/chef-repo
-$ chef generate recipe cookbooks/hello_testing greeting
-Compiling Cookbooks...
-Recipe: code_generator::recipe
-  * directory[./hello_testing/spec/unit/recipes] action create (up to date)
-  * cookbook_file[./hello_testing/spec/spec_helper.rb] action create_if_missing (up to date)
-  * template[./hello_testing/spec/unit/recipes/greeting_spec.rb] action create_if_missing
-    - create new file ./hello_testing/spec/unit/recipes/greeting_spec.rb
-    - update content in file ./hello_testing/spec/unit/recipes/greeting_spec.rb from none to 2c6187
-    (diff output suppressed by config)
-  * template[./hello_testing/recipes/greeting.rb] action create
-    - create new file ./hello_testing/recipes/greeting.rb
-    - update content in file ./hello_testing/recipes/greeting.rb from none to 3b8c65
-    (diff output suppressed by config)
-```
-
-```ruby
-# ~/chef-repo/cookbooks/hello_testing/recipes/greeting.rb
-file '/etc/chef/hello_testing.txt' do
-  content 'Hello, testing!'
-  mode '0640'
-  owner 'maria'
-  group 'maria'
-end
-```
-
-## Write the default recipe
-
-```ruby
-# ~/chef-repo/cookbooks/hello_testing/recipes/default.rb
-include_recipe 'hello_testing::users'
-include_recipe 'hello_testing::greeing'
-```
-
-## Create the Test Kitchen configuration file
-
-```ruby
-# ~/chef-repo/cookbooks/hello_testing/.kitchen.yml
----
-driver:
-  name: vagrant
-
-provisioner:
-  name: chef_zero
-
-platforms:
-  - name: ubuntu-14.04
-
-suites:
-  - name: default
-    run_list:
-      - recipe[hello_testing::default]
-    attributes:
-```
-
-## Apply the hello_testing cookbook and run a few manual tests
-
-```bash
-# ~/chef-repo/cookbooks/hello_testing
-$ kitchen converge
------> Starting Kitchen (v1.4.0)
------> Creating <default-ubuntu-1404>...
-       Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'opscode-ubuntu-14.04'...
-[...]
-           +Hello, testing!
-           - change mode from '' to '0640'
-           - change owner from '' to 'maria'
-           - change group from '' to 'admins'
-
-       Running handlers:
-       Running handlers complete
-       Chef Client finished, 2/4 resources updated in 6.135485771 seconds
-       Finished converging <default-ubuntu-1404> (0m9.05s).
------> Kitchen is finished. (0m9.51s)
-```
-
-```bash
-# ~/chef-repo/cookbooks/hello_testing
-$ kitchen login
-Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-24-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com/
-Last login: Mon Jul  6 19:06:52 2015 from 10.0.2.2
-```
-
-```bash
-$ getent passwd maria
-maria:x:998:1000::/home/maria:/bin/bash
-```
-
-```bash
-$ stat -c "%U %G" /etc/chef
-root root
-```
-
-```bash
-$ stat -c "%U %G" /etc/chef/hello_testing.txt
-maria admins
-```
-
-```bash
-$ more /etc/chef/hello_testing.txt
-Hello, testing!
-```
-
-## Use Serverspec to automate the testing process
-
-```bash
-# ~/chef-repo/cookbooks/hello_testing
+# ~/webserver_test
 $ tree test
 test
 └── integration
@@ -183,300 +69,128 @@ test
 5 directories, 2 files
 ```
 
-Show default_spec.rb and general form.
+ONE TEST PER RECIPE. DEFAULT -> DEFAULT_SPEC.RB. IF YOU HAD WEBSERVER.RB, YOU'D HAVE WEBSERVER_SPEC.RB
 
-### Test the users recipe
+## 2. Write a test
+
+SHOW GENERAL FORM
 
 ```ruby
-# ~/chef-repo/cookbooks/hello_testing/test/integration/default/serverspec/users_spec.rb
+# ~/webserver_test/test/integration/default/serverspec/default_spec.rb
 require 'spec_helper'
 
-describe group 'admins' do
-  it { should exist }
-end
-
-describe user 'maria' do
-  it { should exist }
-  it { should belong_to_group 'admins' }
-end
-```
-
-```bash
-# ~/chef-repo/cookbooks/hello_testing
-$ kitchen verify
------> Starting Kitchen (v1.4.0)
------> Setting up <default-ubuntu-1404>...
-       Finished setting up <default-ubuntu-1404> (0m0.00s).
------> Verifying <default-ubuntu-1404>...
-       Preparing files for transfer
------> Installing Busser (busser)
-[...]
-       Pending: (Failures listed here are expected and do not affect your suite's status)
-
-         1) hello_testing::default does something
-            # Replace this with meaningful tests
-            # /tmp/verifier/suites/serverspec/default_spec.rb:6
-
-       Finished in 0.10085 seconds (files took 0.24524 seconds to load)
-       5 examples, 0 failures, 1 pending
-
-       Finished verifying <default-ubuntu-1404> (0m31.14s).
------> Kitchen is finished. (0m31.79s)
-```
-
-(The pending item ... your `default_spec.rb` file.)
-
-Maybe show full context?
-
-```ruby
-hello_testing::default
- does something (PENDING: Replace this with meaningful tests)
-
-File "/etc/chef"
- should be owned by "root"
-
-File "/etc/chef/hello_testing.txt"
- should be mode 644
- content
-   should match /Hello/
-
-Group "admins"
- should exist
-
-User "maria"
- should exist
- should belong to group "admins"
-```
-
-### Test the greeting recipe
-
-```ruby
-# ~/chef-repo/cookbooks/hello_testing/test/integration/default/serverspec/greeting_spec.rb
-require 'spec_helper'
-
-describe file '/etc/chef' do
-  it {
-    should exist
-    should be_directory
-    should be_owned_by 'root'
-  }
-end
-
-describe file '/etc/chef/hello_testing.txt' do
-  it {
-     should exist
-     should be_file
-     should be_owned_by 'maria'
-     should be_mode 644
-  }
-  its(:content) { should match /Hello/ }
-end
-```
-
-Something about multiple `should` clauses? in each `it` block.
-
-```bash
-# ~/chef-repo/cookbooks/hello_testing
-$ kitchen verify
------> Starting Kitchen (v1.4.0)
------> Verifying <default-ubuntu-1404>...
-       Preparing files for transfer
------> Busser installation detected (busser)
-[...]
-       Pending: (Failures listed here are expected and do not affect your suite's status)
-
-         1) hello_testing::default does something
-            # Replace this with meaningful tests
-            # /tmp/verifier/suites/serverspec/default_spec.rb:6
-
-
-       Finished in 0.12372 seconds (files took 0.24467 seconds to load)
-       7 examples, 0 failures, 1 pending
-
-       Finished verifying <default-ubuntu-1404> (0m10.33s).
------> Kitchen is finished. (0m11.12s)
-```
-
-### KITCHEN TEST
-
-Can `kitchen destroy` manually, but what if you wanted to automatically destroy...
-
-```bash
-# ~/chef-repo/cookbooks/hello_testing
-$ kitchen test
------> Starting Kitchen (v1.4.0)
------> Cleaning up any prior instances of <default-ubuntu-1404>
------> Destroying <default-ubuntu-1404>...
-       ==> default: Forcing shutdown of VM...
-       ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-ubuntu-1404> destroyed.
-       Finished destroying <default-ubuntu-1404> (0m3.72s).
------> Testing <default-ubuntu-1404>
------> Creating <default-ubuntu-1404>...
-       Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'opscode-ubuntu-14.04'...
-[...]
-       Finished in 0.15913 seconds (files took 0.25027 seconds to load)
-       7 examples, 0 failures, 1 pending
-
-       Finished verifying <default-ubuntu-1404> (1m22.12s).
------> Destroying <default-ubuntu-1404>...
-       ==> default: Forcing shutdown of VM...
-       ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-ubuntu-1404> destroyed.
-       Finished destroying <default-ubuntu-1404> (0m3.76s).
-       Finished testing <default-ubuntu-1404> (25m19.94s).
------> Kitchen is finished. (25m20.71s)
-```
-
-### BREAK THE TEST
-
-Put this up front:
-
-The main point(S?) of testing isn't to verify that Chef works expected; rather, it's to ensure that
-1) speed up the feedback cycle by verifying that the actual result is what you think it should be.
-2) the change stays good
-(Something about near-term advangate vs later term? now vs later?)
-You get two main advantages. One near-term adv is that ... . The far term adv is that you can ensure that your current features continue to work after you or someone else makes later changes.
-
-REminder abt second pt above^. Then,
-
-Let's look at an example.
-
-regression, where existing functionality no longer works due to another change.
-
-- Add user `james` to users.rb
-
-```ruby
-# ~/chef-repo/cookbooks/hello_testing/recipes/users.rb
-group 'admins'
-
-%w(maria james).each do |user_name|
-  user user_name do
-    group 'admins'
-    system true
-    shell '/bin/bash'
+describe 'apache' do
+  it 'displays a custom home page' do
+    expect(command('curl localhost').stdout).to match /hello/
   end
 end
 ```
 
-And set `james` as the owner in greeting.rb.
+TALK ABOUT
+
+- MIMICS NATURAL LANGUAGE
+- REGEX
+
+https://www.relishapp.com/rspec/rspec-expectations/v/2-2/docs/matchers/match-matcher
+
+http://serverspec.org/resource_types.html
+
+RUBULAR
+
+## 3. Watch it fail
+
+## Create the Test Kitchen configuration file
 
 ```ruby
-# ~/chef-repo/cookbooks/hello_testing/recipes/greeting.rb
-directory '/etc/chef'
+# ~/webserver_test/.kitchen.yml
+---
+driver:
+  name: vagrant
 
-file '/etc/chef/hello_testing.txt' do
-  content 'Hello, testing!'
-  mode '0644'
-  owner 'james'
-  group 'admins'
-end
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: centos-6.6
+
+suites:
+  - name: default
+    run_list:
+      - recipe[webserver_test::default]
+    attributes:
 ```
 
-Apply the cookbook.
+WHY 66?
 
 ```bash
-$ kitchen converge
------> Starting Kitchen (v1.4.0)
------> Converging <default-ubuntu-1404>...
-       Preparing files for transfer
-       Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 3.2.4...
-       Removing non-cookbook files before transfer
-       Preparing validation.pem
-       Preparing client.rb
------> Chef Omnibus installation detected (install only if missing)
-       Transferring files to <default-ubuntu-1404>
-       Starting Chef Client, version 12.4.0
-[...]
-           +++ /etc/chef/.hello_testing.txt20150707-9247-13tjnud	2015-07-07 12:49:38.509972203 +0000
-           @@ -1 +1,2 @@
-           +Hello, testing!
-           - change mode from '' to '0644'
-           - change owner from '' to 'james'
-           - change group from '' to 'admins'
-
-       Running handlers:
-       Running handlers complete
-       Chef Client finished, 2/5 resources updated in 6.218857847 seconds
-       Finished converging <default-ubuntu-1404> (0m9.06s).
------> Kitchen is finished. (0m9.52s)
+# ~/webserver_test
+$ kitchen list
+Instance           Driver   Provisioner  Verifier  Transport  Last Action
+default-centos-66  Vagrant  ChefZero     Busser    Ssh        <Not Created>
 ```
 
-However, ..., watch test fail.
-
 ```bash
-# ~/chef-repo/cookbooks/hello_testing
+# ~/webserver_test
 $ kitchen verify
------> Starting Kitchen (v1.4.0)
------> Setting up <default-ubuntu-1404>...
-       Finished setting up <default-ubuntu-1404> (0m0.00s).
------> Verifying <default-ubuntu-1404>...
-       Preparing files for transfer
------> Installing Busser (busser)
+-----> Starting Kitchen (v1.4.2)
+-----> Creating <default-centos-66>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Importing base box 'opscode-centos-6.6'...
 [...]
-       File "/etc/chef/hello_testing.txt"
-         should be owned by "maria" (FAILED - 1)
-         content
-           should match /Hello/
-
-       Pending: (Failures listed here are expected and do not affect your suite's status)
-
-         1) hello_testing::default does something
-            # Replace this with meaningful tests
-            # /tmp/verifier/suites/serverspec/default_spec.rb:6
-
+       webserver_test::default
+         displays a custom home page (FAILED - 1)
 
        Failures:
 
-         1) File "/etc/chef/hello_testing.txt" should be owned by "maria"
-            Failure/Error: should be_owned_by 'maria'
-              expected `File "/etc/chef/hello_testing.txt".owned_by?("maria")` to return true, got false
-            # /tmp/verifier/suites/serverspec/greeting_spec.rb:15:in `block (2 levels) in <top (required)>'
+         1) webserver_test::default displays a custom home page
+            Failure/Error: expect(command('curl localhost').stdout).to match /hello/
+              expected "" to match /hello/
+              Diff:
+              @@ -1,2 +1,2 @@
+              -/hello/
+              +""
 
-       Finished in 0.1196 seconds (files took 0.26103 seconds to load)
-       4 examples, 1 failure, 1 pending
+              /bin/sh -c curl\ localhost
+
+            # /tmp/verifier/suites/serverspec/default_spec.rb:5:in `block (2 levels) in <top (required)>'
+
+       Finished in 0.06486 seconds (files took 0.264 seconds to load)
+       1 example, 1 failure
 
        Failed examples:
 
-       rspec /tmp/verifier/suites/serverspec/greeting_spec.rb:12 # File "/etc/chef/hello_testing.txt" should be owned by "maria"
+       rspec /tmp/verifier/suites/serverspec/default_spec.rb:4 # webserver_test::default displays a custom home page
 [...]
 ```
 
-```bash
-Failures:
-
- 1) File "/etc/chef/hello_testing.txt" should be owned by "maria"
-    Failure/Error: should be_owned_by 'maria'
-      expected `File "/etc/chef/hello_testing.txt".owned_by?("maria")` to return true, got false
-```
-
-### FIX THE TEST
-
-- Update user name in greeting.rb, watch test pass.
-
-And set `james` as the owner in greeting.rb.
+## 4. Write just enough code to make the test succeed
 
 ```ruby
-# ~/chef-repo/cookbooks/hello_testing/recipes/greeting.rb
-directory '/etc/chef'
+# ~/webserver_test/recipes/default.rb
+package 'httpd'
 
-file '/etc/chef/hello_testing.txt' do
-  content 'Hello, testing!'
-  mode '0644'
-  owner 'james'
-  group 'admins'
+service 'httpd' do
+  action [:enable, :start]
+end
+
+file '/var/www/html/index.html' do
+  content '<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>'
 end
 ```
 
-Apply it.
+## 5. Apply the configuration
+
+INSTANCE ALREADY RUNNING. APPLY NEW CONFIG
 
 ```bash
-# ~/chef-repo/cookbooks/hello_testing
+# ~/webserver_test
 $ kitchen converge
------> Starting Kitchen (v1.4.0)
------> Converging <default-ubuntu-1404>...
+-----> Starting Kitchen (v1.4.2)
+-----> Converging <default-centos-66>...
        Preparing files for transfer
        Preparing dna.json
        Resolving cookbook dependencies with Berkshelf 3.2.4...
@@ -484,61 +198,237 @@ $ kitchen converge
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
-       Transferring files to <default-ubuntu-1404>
-       Starting Chef Client, version 12.4.0
-       [2015-07-07T12:59:51+00:00] WARN: Child with name 'dna.json' found in multiple directories: /tmp/kitchen/dna.json and /tmp/kitchen/dna.json
-       resolving cookbooks for run list: ["hello_testing::default"]
-       Synchronizing Cookbooks:
-         - hello_testing
-       Compiling Cookbooks...
-       Converging 5 resources
-       Recipe: hello_testing::users
-         * group[admins] action create (up to date)
-         * user[maria] action create (up to date)
-         * user[james] action create (up to date)
-       Recipe: hello_testing::greeting
-         * directory[/etc/chef] action create (up to date)
-         * file[/etc/chef/hello_testing.txt] action create
-           - change owner from 'james' to 'maria'
+       Transferring files to <default-centos-66>
+       Starting Chef Client, version 12.4.1
+[...]
+       Recipe: webserver_test::default
+
+
+
+           - enable service service[httpd]
+
+           - start service service[httpd]
+
+
+           - update content in file /var/www/html/index.html from none to 2914aa
+           --- /var/www/html/index.html	2015-09-17 14:30:59.502280398 +0000
+           +++ /var/www/html/.index.html20150917-2164-1mloyt0	2015-09-17 14:30:59.502280398 +0000
+           @@ -1 +1,6 @@
+           +<html>
+
+           +    <h1>hello world</h1>
+           +  </body>
+
+
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 1/5 resources updated in 6.147365874 seconds
-       Finished converging <default-ubuntu-1404> (0m9.12s).
------> Kitchen is finished. (0m9.85s)
+       Chef Client finished, 4/4 resources updated in 7.098627611 seconds
+       Finished converging <default-centos-66> (0m8.78s).
+-----> Kitchen is finished. (0m9.47s)
 ```
 
+## 6. Watch it pass
 
 ```bash
-# ~/chef-repo/cookbooks/hello_testing
+# ~/webserver_test
 $ kitchen verify
------> Starting Kitchen (v1.4.0)
------> Setting up <default-ubuntu-1404>...
-       Finished setting up <default-ubuntu-1404> (0m0.00s).
------> Verifying <default-ubuntu-1404>...
+-----> Starting Kitchen (v1.4.2)
+-----> Verifying <default-centos-66>...
        Preparing files for transfer
 -----> Busser installation detected (busser)
        Installing Busser plugins: busser-serverspec
-[...]
-       Finished in 0.11035 seconds (files took 0.24821 seconds to load)
-       4 examples, 0 failures, 1 pending
+       Plugin serverspec already installed
+       Removing /tmp/verifier/suites/serverspec
+       Transferring files to <default-centos-66>
+-----> Running serverspec test suite
+       /opt/chef/embedded/bin/ruby -I/tmp/verifier/suites/serverspec -I/tmp/verifier/gems/gems/rspec-support-3.3.0/lib:/tmp/verifier/gems/gems/rspec-core-3.3.2/lib /opt/chef/embedded/bin/rspec --pattern /tmp/verifier/suites/serverspec/\*\*/\*_spec.rb --color --format documentation --default-path /tmp/verifier/suites/serverspec
 
-       Finished verifying <default-ubuntu-1404> (0m8.88s).
------> Kitchen is finished. (0m9.35s)
+       webserver_test::default
+         displays a custom home page
+
+       Finished in 0.05451 seconds (files took 0.27734 seconds to load)
+       1 example, 0 failures
+
+       Finished verifying <default-centos-66> (0m3.13s).
+-----> Kitchen is finished. (0m3.62s)
 ```
 
-### etc
+SUCCESS!
 
-[COMMENT] http://serverspec.org/resource_types.html
+```bash
+# ~/webserver_test
+$ kitchen list
+Instance           Driver   Provisioner  Verifier  Transport  Last Action
+default-centos-66  Vagrant  ChefZero     Busser    Ssh        Verified
+```
 
-[COMMENT] http://betterspecs.org
+## 7. Write additional tests
 
-[COMMENT] Spec_helper http://jtimberman.housepub.org/blog/2014/12/31/quick-tip-serverspec-spec-helper-in-test-kitchen/
+You've satisfied your requirements blah blah.
 
-[COMMENT] https://www.relishapp.com/rspec/rspec-expectations/v/2-2/docs/matchers/match-matcher
+However, as you add additional features, you may introduce a _regresssion_, or break, in existing functionality. Your test verifies only the end result of your web configuration. If this test were to fail, you would have to perform additional troubleshooting to understand the root cause.
 
-### Exercises
+Let's write a few more tests that verify other aspects of your configuration. Specifically, we'll verify that:
 
-Matcher question?
+* the `httpd` package is installed.
+* the `httpd` service is running.
+* port 80 is listening to incoming requests.
 
-Write cookbook based soley on spec
+```ruby
+# ~/webserver_test/test/integration/default/serverspec/default_spec.rb
+require 'spec_helper'
+
+describe 'apache' do
+  it 'is installed' do
+    expect(package 'httpd').to be_installed
+  end
+
+  it 'is running' do
+    expect(service 'httpd').to be_running
+  end
+
+  it 'is listening to port 80' do
+    expect(port 80).to be_listening
+  end
+
+  it 'displays a custom home page' do
+    expect(command('curl localhost').stdout).to match /hello/
+  end
+end
+```
+
+```bash
+# ~/webserver_test
+$ kitchen verify
+-----> Starting Kitchen (v1.4.2)
+-----> Setting up <default-centos-66>...
+       Finished setting up <default-centos-66> (0m0.00s).
+-----> Verifying <default-centos-66>...
+       Preparing files for transfer
+-----> Busser installation detected (busser)
+       Installing Busser plugins: busser-serverspec
+       Plugin serverspec already installed
+       Removing /tmp/verifier/suites/serverspec
+       Transferring files to <default-centos-66>
+-----> Running serverspec test suite
+       /opt/chef/embedded/bin/ruby -I/tmp/verifier/suites/serverspec -I/tmp/verifier/gems/gems/rspec-support-3.3.0/lib:/tmp/verifier/gems/gems/rspec-core-3.3.2/lib /opt/chef/embedded/bin/rspec --pattern /tmp/verifier/suites/serverspec/\*\*/\*_spec.rb --color --format documentation --default-path /tmp/verifier/suites/serverspec
+
+       apache
+         is installed
+         is running
+         is listening to port 80
+         displays a custom home page
+
+       Finished in 0.21102 seconds (files took 0.29319 seconds to load)
+       4 examples, 0 failures
+
+       Finished verifying <default-centos-66> (0m3.57s).
+-----> Kitchen is finished. (0m4.10s)
+```
+
+All tests pass! Now your tests cover multiple common points of failure. If one of the tests fail, you'll be closer to the root cause.
+
+You can now destroy your instance.
+
+```bash
+# ~/webserver_test
+$ kitchen destroy
+-----> Starting Kitchen (v1.4.2)
+-----> Destroying <default-centos-66>...
+       ==> default: Forcing shutdown of VM...
+       ==> default: Destroying VM and associated drives...
+       Vagrant instance <default-centos-66> destroyed.
+       Finished destroying <default-centos-66> (0m3.86s).
+-----> Kitchen is finished. (0m4.35s)
+```
+
+```bash
+# ~/webserver_test
+$ kitchen list
+Instance           Driver   Provisioner  Verifier  Transport  Last Action
+default-centos-66  Vagrant  ChefZero     Busser    Ssh        <Not Created>
+```
+
+## 8. Test your configuration in one step
+
+So far, you've run commands such as `kitchen converge`, `kitchen verify`, and `kitchen destroy` to manage your instances.
+
+You can also run the `kitchen test` command to create, converge, verify, and destroy your instance all in one step. Running this command is equivalent to running these commands.
+
+```bash
+$ kitchen destroy
+$ kitchen create
+$ kitchen converge
+$ kitchen verify
+$ kitchen destroy
+```
+
+The `kitchen test` command is useful when you want to quickly verify a change. It's also commonly used in automated pipelines because it ensures that the virtual instance is destroyed immediately after all tests are run. Ensuring that you've freed your virtual instances is especially important when you use a cloud [driver](https://docs.chef.io/kitchen.html#drivers) because you typically rent cloud resources by the hour.
+
+```bash
+# ~/webserver_test
+$ kitchen test
+-----> Starting Kitchen (v1.4.2)
+-----> Cleaning up any prior instances of <default-centos-66>
+-----> Destroying <default-centos-66>...
+       Finished destroying <default-centos-66> (0m0.00s).
+-----> Testing <default-centos-66>
+-----> Creating <default-centos-66>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Importing base box 'opscode-centos-6.6'...
+[...]
+       Synchronizing Cookbooks:
+         - webserver_test
+       Compiling Cookbooks...
+       Converging 3 resources
+       Recipe: webserver_test::default
+
+           - install version 2.2.15-47.el6.centos of package httpd
+
+
+
+           - start service service[httpd]
+
+
+           - update content in file /var/www/html/index.html from none to 2914aa
+           --- /var/www/html/index.html	2015-09-17 17:19:50.382184641 +0000
+           +++ /var/www/html/.index.html20150917-1865-gk92cm	2015-09-17 17:19:50.381184641 +0000
+           @@ -1 +1,6 @@
+           +<html>
+           +  <body>
+           +    <h1>hello world</h1>
+
+
+           - restore selinux security context
+
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 4/4 resources updated in 8.09604643 seconds
+       Finished converging <default-centos-66> (0m22.24s).
+[...]
+       apache
+         is installed
+         is running
+         is listening to port 80
+         displays a custom home page
+
+       Finished in 0.1436 seconds (files took 0.29668 seconds to load)
+       4 examples, 0 failures
+
+       Finished verifying <default-centos-66> (0m15.07s).
+-----> Destroying <default-centos-66>...
+       ==> default: Forcing shutdown of VM...
+       ==> default: Destroying VM and associated drives...
+       Vagrant instance <default-centos-66> destroyed.
+       Finished destroying <default-centos-66> (0m3.42s).
+       Finished testing <default-centos-66> (3m22.16s).
+-----> Kitchen is finished. (3m22.66s)
+```
+
+```bash
+# ~/webserver_test
+$ kitchen list
+Instance           Driver   Provisioner  Verifier  Transport  Last Action
+default-centos-66  Vagrant  ChefZero     Busser    Ssh        <Not Created>
+```
