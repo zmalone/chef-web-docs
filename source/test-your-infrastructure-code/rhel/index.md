@@ -36,6 +36,6 @@ You'll get started by setting up ChefDK and the virtualization tools on your wor
 
 [HEADLINE] Writing just one test [is better than nothing]
 
-[HEADLINE] Testing your configuration code through automation gives you increased confidence that your changes will work as you expect in production.
+
 
 Exercise: change your web application to listen to port 81 instead of port 80 and write a test to confirm that it works.
