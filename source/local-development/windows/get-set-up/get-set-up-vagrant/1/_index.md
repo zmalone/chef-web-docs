@@ -29,17 +29,21 @@ If you're on a Linux or Mac OS workstation or don't use Chocolatey, download and
 
 <hr>
 
-Run the following command to verify that VirtualBox is installed.
+### Windows only - Update your PATH environment variable
 
-### From a Windows workstation
+By default, VirtualBox is installed to <code class="file-path">C:\Program Files\Oracle\VirtualBox</code> on Windows. However, the installer does not add this path to your `PATH` environment variable. Run these commands to add VirtualBox to your system path.
 
 ```ps
-# ~
-$ & 'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe' --version
-5.0.4r102546
+$ $path = [Environment]::GetEnvironmentVariable("PATH")
+$ $vbox_path = "C:\Program Files\Oracle\VirtualBox"
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vbox_path")
 ```
 
-### From a Linux or Mac OS workstation
+<hr>
+
+### Verify the installation
+
+Now run the following command to verify that VirtualBox is installed.
 
 ```bash
 # ~
