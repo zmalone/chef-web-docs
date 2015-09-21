@@ -4,6 +4,8 @@ In this tutorial, you set up a basic yet complete LAMP, or WISA, stack on Window
 
 In the next tutorial, [Learn to develop your Windows Server infrastructure code locally](/local-development/windows/), you'll learn how to speed up the development cycle by using Test Kitchen to configure your web application on a temporary virtual machine or cloud instance.
 
+[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%.
+
 <p style="font-size: 14px; font-style: italic;">
 This tutorial was adapted from <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting Started Writing Chef Cookbooks the Berkshelf Way</a>, by Mischa Taylor. It was updated for use with the Chef DK, Windows Server, and the latest community cookbooks.
 </p>

@@ -53,7 +53,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box comment error\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"fa fa-2x fa-info-circle\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[DOCS\] (.+)<\/p>/)     { "<div class=\"alert-box docs\"><i class=\"fa fa-2x fa-book\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-info-circle blueiconcolor\"></i>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-info-circle comment-icon\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[SIDEBAR\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><i class=\"fa fa-2x fa-comment blueiconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[INTERNAL\] (.+)<\/p>/)  { "<div class=\"alert-box internal\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[WINDOWS\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-windows blueiconcolor\"></i>&nbsp; #{$1}</div>" }
@@ -66,6 +66,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[HEADLINE\] (.+)<\/p>/)  { "<div class=\"alert-box headline\">#{$1}</div>" }
     content.gsub!(/<p>\[QUOTE\] (.+)<\/p>/)  { "<div class=\"alert-box quote\"><i class=\"fa fa-quote-left\"></i>&nbsp;<i>#{$1}</i>&nbsp;<i class=\"fa fa-quote-right\"></i></div>" }
     content.gsub!(/<p>\[AWS\] (.+)<\/p>/)  { "<div class=\"alert-box aws\"><img class=\"alert-box-icon-large\" src=\"/assets/images/partner/AWS-Cloud.svg\"></img>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[TRAINING\] (.+)<\/p>/)  { "<div class=\"alert-box training\"><i class=\"fa fa-2x fa-laptop training-icon\"></i>&nbsp; #{$1}</div>" }
   end
 
   # we currently can't have ERB in partials, so we subsitute text for now.
