@@ -12,7 +12,7 @@ Download the `awesome_customers` project as a zip file from GitHub and extract i
 
 ### Option 2: Clone the GitHub repo
 
-If you're a Git user, you can also clone this repo from GitHub.
+If you're a Git user, you can clone the GitHub repo.
 
 ```bash
 $ cd ~

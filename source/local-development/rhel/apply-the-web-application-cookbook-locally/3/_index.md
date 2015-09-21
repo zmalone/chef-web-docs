@@ -30,7 +30,7 @@ $ kitchen converge
        Finished converging <default-centos-66> (36m12.34s).
 ```
 
-[COMMENT] Notice that you didn't have to run Berkshelf to resolve the your cookbook's dependencies on other cookbooks from Chef Supermarket. Test Kitchen takes care of this for you!
+[COMMENT] Notice that you didn't have to run Berkshelf to resolve your cookbook's dependencies on other cookbooks from Chef Supermarket. Test Kitchen takes care of this for you!
 
 Verify that the process completed with no errors.
 

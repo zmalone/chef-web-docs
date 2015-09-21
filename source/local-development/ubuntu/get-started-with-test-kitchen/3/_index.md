@@ -13,7 +13,7 @@ Instance             Driver   Provisioner  Verifier  Transport  Last Action
 default-ubuntu-1404  Vagrant  ChefZero     Busser    Ssh        <Not Created>
 ```
 
-Our kitchen includes just one instance &ndash; an Ubuntu 14.04 virtual machine that's configured to run the `default` suite. The `Last Action` column shows that the virtual machine was not yet created.
+Our kitchen includes just one instance &ndash; an Ubuntu 14.04 virtual machine that's configured to run the `default` suite. The `Last Action` column shows that the virtual machine is not yet created.
 
 <a class="help-button radius" href="#" data-reveal-id="test-matrix-modal">Learn more about test matrices</a>
 
@@ -75,7 +75,7 @@ Our kitchen includes just one instance &ndash; an Ubuntu 14.04 virtual machine t
             <h1 class="titleInside">Terminal: ~/motd</h1>
             <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span></pre></td><td class='code'><pre><code><span class='line command'>kitchen list</span><span class='line output'>Instance                  Driver   Provisioner  Verifier  Transport  Last Action</span><span class='line output'>development-ubuntu-12.04  Vagrant  ChefZero     Busser    Ssh        &lt;Not Created&gt;</span><span class='line output'>development-ubuntu-14.04  Vagrant  ChefZero     Busser    Ssh        &lt;Not Created&gt;</span><span class='line output'>test-ubuntu-12.04         Vagrant  ChefZero     Busser    Ssh        &lt;Not Created&gt;</span><span class='line output'>test-ubuntu-14.04         Vagrant  ChefZero     Busser    Ssh        &lt;Not Created&gt;</span></code></pre></td></tr></table></div></div>
           </div>
-<p>This feature enables you to define multiple configurations, and test each configuration against one or more platforms.</p>
+<p>Test matrices enable you to define multiple configurations, and test each configuration against one or more platforms.</p>
   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
 </div>
 

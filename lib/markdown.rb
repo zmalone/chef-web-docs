@@ -30,6 +30,8 @@ module ZurbFoundation
     @app = options[:app]
 
     alerts
+    tabs
+    modals
     anchors
     extras
 
@@ -67,6 +69,47 @@ module ZurbFoundation
     content.gsub!(/<p>\[TRAINING\] (.+)<\/p>/)  { "<div class=\"alert-box training\"><i class=\"fa fa-2x fa-laptop training-icon\"></i>&nbsp; #{$1}</div>" }
   end
 
+  # we currently can't have ERB in partials, so we subsitute text for now.
+  def tabs
+    content.gsub!(/<p>\[START_TABS\s+(?<id>\w+)\s+(?<names>.+)\]<\/p>/) {
+      id = $1.downcase # TODO: named groups ($~[:id]) not working?
+      names = $2.split(/,/)
+      active_class = ' active' # set .active class to first element.
+      items = []
+      names.each { |name|
+        escaped_name = name.downcase.delete(' ').gsub(/\W/, "")
+        items << "<li class=\"tab-title#{active_class}\"><a href=\"##{id}#{escaped_name}\">#{name}</a></li>"
+        active_class = ''
+      }
+      '<ul class="tabs" data-tab>' + items.join + '</ul>' + '<div class="tabs-content">'
+    }
+
+    content.gsub!(/<p>\[END_TABS\]/) {
+      "</div>"
+    }
+
+    content.gsub!(/<p>\[START_TAB\s+(\w+)(\s+(\w+))?\]<\/p>(.+?)<p>\[END_TAB\]<\/p>/m) {
+      content = $4
+      active_class = $2
+      escaped_name = $1.downcase.delete(' ').gsub(/\W/, "")
+      "<div class=\"content #{active_class}\" id=\"#{escaped_name}\"><p>#{content}</p></div>"
+    }
+  end
+
+  def modals
+    content.gsub!(/<p>\[START_MODAL\s+([\w-]+)(\s+(.+?))?\]<\/p>(.+?)<p>\[END_MODAL\]<\/p>/m) {
+      content = $4
+      title = $2
+      id = $1
+      <<-EOH
+      <a class="help-button radius" href="#" data-reveal-id="#{id}">#{title}</a>
+      <div id="#{id}" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      #{content}
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+      </div>
+      EOH
+    }
+  end
 
   def anchors
     content.gsub!(/<h([0-9])>(.*)<\/h[0-9]>/) do

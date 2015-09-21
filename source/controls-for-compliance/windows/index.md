@@ -34,10 +34,10 @@ In this tutorial, you'll first use audit mode to discover an infrastructure chan
 
 After completing this lesson, you'll be able to:
 
-* write and apply controls, both to a local virtual machine and to a node bootstrapped to your Chef server.
+* write and apply controls, both to a local virtual machine or cloud instance and to a node bootstrapped to your Chef server.
 * verify and resolve audit failures.
 * use Chef Analytics to create alerts that signal when your infrastructure falls out of compliance.
 
-[GITHUB] The final code for this tutorial is available [on GitHub](https://github.com/learn-chef/controls-for-compliance-windows).
+[GITHUB] The final code for this tutorial is available on [GitHub](https://github.com/learn-chef/controls-for-compliance-windows).
 
 Let's get started by ensuring you're all set up.

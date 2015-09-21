@@ -27,6 +27,7 @@ control_group 'Validate network configuration and firewalls' do
           ($_.Profile -eq "Public") -and
           ($_.Direction -eq "Inbound") -and
           ($_.Enabled -eq "True") -and
+          ($_.Group -eq "File and Printer Sharing") -and
           ($_.Action -eq "Block") } |
         Measure-Object).Count -gt 0
         EOH
@@ -49,13 +50,7 @@ Add the following code to the beginning of your `webserver` cookbook's default r
 # Block ICMPv4 Echo Request messages in the public profile.
 powershell_script 'Block ICMPv4 Echo Request messages' do
   code <<-EOH
-    Get-NetFirewallPortFilter -Protocol ICMPv4 |
-    Get-NetFirewallRule |
-    Where-Object {
-      ($_.Profile -eq "Public") -and
-      ($_.Direction -eq "Inbound") -and
-      ($_.Action -eq "Allow") } |
-    Set-NetFirewallRule -Action Block -IcmpType 8 -Enabled True
+    New-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)" -Group "File and Printer Sharing" -Action Block -Description "Echo Request messages are sent as ping requests to other nodes." -Direction Inbound -Enabled True -IcmpType 8 -Profile Public -Protocol ICMPv4
   EOH
   guard_interpreter :powershell_script
   not_if <<-EOH
@@ -66,15 +61,16 @@ powershell_script 'Block ICMPv4 Echo Request messages' do
       ($_.Profile -eq "Public") -and
       ($_.Direction -eq "Inbound") -and
       ($_.Enabled -eq "True") -and
+      ($_.Group -eq "File and Printer Sharing") -and
       ($_.Action -eq "Block") } |
     Measure-Object).Count -gt 0
   EOH
 end
 ```
 
-The `code` part of the resource defines the PowerShell command to run to place the firewall in the desired state. The command finds all firewall rules that allow public inbound ICMPv4 traffic and sets them to block Echo Request messages.
+The `code` part of the resource defines the PowerShell command to run to place the firewall in the desired state. The command runs the [New-NetFirewallRule](https://technet.microsoft.com/library/jj554908.aspx) cmdlet to create a rule that blocks public inbound Echo Request messages.
 
-The `not_if` part ensures that the `powershell_script` resource is applied only when it needs to be. It uses the same code as the audit control to check whether any firewall rules that need to be changed exist.
+The `not_if` part ensures that the `powershell_script` resource is applied only when it needs to be. It uses the same code as the audit control to check whether an existing firewall rule exists.
 
 The entire recipe looks like this.
 
@@ -83,13 +79,7 @@ The entire recipe looks like this.
 # Block ICMPv4 Echo Request messages in the public profile.
 powershell_script 'Block ICMPv4 Echo Request messages' do
   code <<-EOH
-    Get-NetFirewallPortFilter -Protocol ICMPv4 |
-    Get-NetFirewallRule |
-    Where-Object {
-      ($_.Profile -eq "Public") -and
-      ($_.Direction -eq "Inbound") -and
-      ($_.Action -eq "Allow") } |
-    Set-NetFirewallRule -Action Block -IcmpType 8 -Enabled True
+    New-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)" -Group "File and Printer Sharing" -Action Block -Description "Echo Request messages are sent as ping requests to other nodes." -Direction Inbound -Enabled True -IcmpType 8 -Profile Public -Protocol ICMPv4
   EOH
   guard_interpreter :powershell_script
   not_if <<-EOH
@@ -100,6 +90,7 @@ powershell_script 'Block ICMPv4 Echo Request messages' do
       ($_.Profile -eq "Public") -and
       ($_.Direction -eq "Inbound") -and
       ($_.Enabled -eq "True") -and
+      ($_.Group -eq "File and Printer Sharing") -and
       ($_.Action -eq "Block") } |
     Measure-Object).Count -gt 0
   EOH
@@ -199,6 +190,7 @@ Now that you've verified the fix locally, you can destroy your Test Kitchen inst
 
 ```bash
 # ~/chef-repo/cookbooks/webserver
+$ kitchen destroy
 -----> Starting Kitchen (v1.4.0)
 -----> Destroying <default-windows-2012r2>...
        ==> default: Forcing shutdown of VM...

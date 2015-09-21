@@ -42,28 +42,9 @@ This recipe configures IIS and writes a few files for it to serve.
 
 Now use Test Kitchen to apply the `webserver` cookbook locally. This instance is different than the one you used to apply the `audit` cookbook. Start by adding this code to your `webserver` cookbook's <code class="file-path">.kitchen.yml</code> file.
 
-### If you're using the Vagrant driver
+[START_TABS configWeb EC2, Hyper-V, Vagrant]
 
-```ruby
-# ~/chef-repo/cookbooks/webserver/.kitchen.yml
----
-driver:
-  name: vagrant
-
-provisioner:
-  name: chef_zero
-
-platforms:
-  - name: windows-2012r2
-
-suites:
-  - name: default
-    run_list:
-      - recipe[webserver::default]
-    attributes:
-```
-
-### If you're using the EC2 driver
+[START_TAB configWebEC2 active]
 
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
@@ -76,15 +57,16 @@ driver:
   region: us-west-2
   availability_zone: a
   subnet_id: subnet-eacb348f
+  instance_type: m1.small
   image_id: ami-c3b3b1f3
   security_group_ids: ['sg-2d3b3b48']
   retryable_tries: 120
 
+provisioner:
+  name: chef_zero_scheduled_task
+  
 transport:
   ssh_key: /Users/learnchef/.ssh/learnchef.pem
-
-provisioner:
-  name: chef_zero
 
 platforms:
   - name: windows-2012r2
@@ -95,6 +77,65 @@ suites:
       - recipe[webserver::default]
     attributes:
 ```
+
+[END_TAB]
+
+[START_TAB configWebHyperV]
+
+Replace the value for `password` with the `Administrator` password on your base virtual machine.
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/.kitchen.yml
+---
+driver:
+  name: hyperv
+  parent_vhd_folder: C:\Hyper-V
+  parent_vhd_name: WindowsServer2012R2.vhdx
+  vm_switch: ExternalSwitch
+  memory_startup_bytes: 2GB
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+transport:
+  password: H24?6;H.QaV8JP2&
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[webserver::default]
+    attributes:
+```
+
+[END_TAB]
+
+[START_TAB configWebVagrant]
+
+```ruby
+# ~/chef-repo/cookbooks/webserver/.kitchen.yml
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[webserver::default]
+    attributes:
+```
+
+[END_TAB]
+
+[END_TABS]
 
 Run `kitchen converge` to create the instance and apply the web server configuration.
 
@@ -119,19 +160,56 @@ $ kitchen converge
 -----> Kitchen is finished. (7m51.92s)
 ```
 
-Now login to your Windows Server instance.
+Now login to your Windows Server instance. The way you connect to your instance depends on which driver you're using.
 
-If you're using the Vagrant driver, login through the VirtualBox window that appeared during the `kitchen converge` run. Login as either the `Administrator` or `Vagrant` user; the password for both accounts is `vagrant`.
+[START_TABS connect EC2, Hyper-V, Vagrant]
 
-If you're using the EC2 driver, first run `kitchen diagnose` to get the password for the Administrator account and then run `kitchen login` to launch an RDP connection to your Windows Server instance.
+[START_TAB connectEC2 active]
+
+When you use the EC2 driver, Test Kitchen creates two files in your cookbook's <code class="file-path">.kitchen</code> directory &ndash; a Remote Desktop (.rdp) file and a YAML (.yml) configuration file that lists details about the instance.
 
 ```bash
 # ~/chef-repo/cookbooks/webserver
-$ kitchen diagnose | grep password:
-      password: QkXR4KWCgc
-      password:
+$ ls .kitchen
+default-windows-2012r2.rdp default-windows-2012r2.yml logs
+```
+
+Get the password for the Windows account that Test Kitchen used to run `chef-client`.
+
+```bash
+# ~/chef-repo/cookbooks/webserver
+$ more .kitchen/default-windows-2012r2.yml
+---
+username: administrator
+server_id: i-c6047d03
+hostname: ec2-52-88-81-53.us-west-2.compute.amazonaws.com
+password: A4rs&sCTBpP
+last_action: converge
+```
+
+Now either run the .rdp file directly or run `kitchen login` to create a Remote Desktop connection to your instance. When prompted, enter the password that you retrieved in the previous step.
+
+```bash
+# ~/chef-repo/cookbooks/webserver
 $ kitchen login
 ```
+
+[END_TAB]
+
+[START_TAB connectHyperV]
+
+If you're using the Hyper-V driver, login to your instance, `default-windows-2012r2`, through Hyper-V Manager. Login as `Administrator` and use the same password that you set when you created the base virtual machine.
+
+[END_TAB]
+
+[START_TAB connectVagrant]
+
+If you're using the Vagrant driver, a VirtualBox window appears when you create the instance. Login through that window as either `Administrator` or `vagrant` &ndash; the password for both accounts is `vagrant`.
+
+[END_TAB]
+
+[END_TABS]
+
 
 From your instance, open a Microsoft PowerShell window and run a few commands to verify that your web server is correctly set up.
 
