@@ -1,6 +1,6 @@
 ## 4. Verify the result
 
-If you'd like, you can run `kitchen login` and run through the manual verifcation steps that you performed in the previous tutorial.
+If you'd like, you can run `kitchen login` and run through the manual verification steps that you performed in the previous tutorial.
 
 Now verify that everything's working. Point your browser on your workstation to the IP address that we assigned to the virtual machine, 192.168.33.33. You'll see this:
 
