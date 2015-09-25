@@ -34,4 +34,19 @@ $(document).ready(function() {
     }
   });
 
+  // Add Active State to Nav for Sub-pages
+  var currentUrl = location.pathname;
+  var $docsNavLinks = $(".nav-link");
+  var linkUrl;
+
+  $docsNavLinks.each(function() {
+    var $this = $(this);
+    linkUrl = $this.find("a").attr("href");
+
+    if (currentUrl == linkUrl) {
+      $(".nav-link.is-active").removeClass("is-active");
+      $this.addClass("is-active");
+    }
+  });
+
 });
