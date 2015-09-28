@@ -34,4 +34,32 @@ $(document).ready(function() {
     }
   });
 
+  // Add Active State to Nav for Sub-pages
+  var currentUrl = location.pathname;
+  var $navLink = $(".nav-link");
+  var linkUrl, learnCategory;
+  var tutorialsLink, skillsLink;
+
+  if (layoutCategory.search("lesson") >= 0) {
+    learnCategory = "tutorials";
+  } else if (layoutCategory.search("skills") >= 0) {
+    learnCategory = "skills";
+  }
+
+  $navLink.each(function() {
+    var $this = $(this);
+    linkUrl = $this.find("a").attr("href");
+
+    tutorialsLink = linkUrl.search("tutorials") >= 0;
+    skillsLink = linkUrl.search("skills") >= 0;
+
+    if ((currentUrl === linkUrl) || 
+      (tutorialsLink && learnCategory === "tutorials") || 
+      (skillsLink && learnCategory === "skills")) {
+
+      $(".nav-link.is-active").removeClass("is-active");
+      $this.addClass("is-active");
+    }
+  });
+
 });
