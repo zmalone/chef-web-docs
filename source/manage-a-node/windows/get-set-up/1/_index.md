@@ -1,6 +1,6 @@
-## 1. Install the Chef development kit on your workstation
+## 1. Install the Chef development kit
 
-Install Chef DK on your workstation now if you haven't already. Chef DK comes with Test Kitchen.
+The first step to managing a node remotely is to install the Chef development kit (Chef DK) on your workstation.
 
 <a class='accent-button radius' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
