@@ -11,6 +11,39 @@ From your workstation,
 1. Select **Starter Kit** from the menu on the left.
 1. Click the **Download Starter Kit** button.
 1. Click **Proceed**. Save the file <code class="file-path">chef-starter.zip</code> to your computer.
-1. Create the <code class="file-path">~/chef-repo</code> directory if it does not exist and extract <code class="file-path">chef-starter.zip</code> to that location.
+1. Extract <code class="file-path">chef-starter.zip</code> to a working directory, for example, your home directory.
+
+Here's how to unzip the files to your home directory on a Windows, Linux, or Mac OS workstation.
+
+[START_TABS extractStarter Windows, Linux and Mac OS]
+
+[START_TAB extractStarterWindows active]
+
+```ps
+$ cd ~
+$ Add-Type -AssemblyName "System.IO.Compression.FileSystem"
+$ [IO.Compression.ZipFile]::ExtractToDirectory(".\Downloads\chef-starter.zip", ".\")
+```
+
+[END_TAB]
+
+[START_TAB extractStarterLinuxandMacOS]
+
+```bash
+$ cd ~
+$ unzip ~/Downloads/chef-starter.zip
+Archive:  /Users/user/Downloads/chef-starter.zip
+  inflating: chef-repo/README.md
+   creating: chef-repo/cookbooks/
+  inflating: chef-repo/cookbooks/chefignore
+   creating: chef-repo/cookbooks/starter/
+[...]
+  inflating: chef-repo/.chef/admin.pem
+  inflating: chef-repo/.chef/org-validator.pem
+```
+
+[END_TAB]
+
+[END_TABS]
 
 [WARN] Verify that your <code class="file-path">~/chef-repo</code> directory contains a <code class="file-path">.chef</code> directory to ensure that you extracted all files and folders from the Starter Kit, including hidden ones.
