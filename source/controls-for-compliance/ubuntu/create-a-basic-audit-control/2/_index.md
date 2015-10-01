@@ -11,7 +11,7 @@ Add the following code to your default recipe, <code class="file-path">default.r
 control_group 'Validate web services' do
   control 'Ensure no web files are owned by the root user' do
     Dir.glob('/var/www/html/**/*') {|web_file|
-      it 'is not owned by the root user' do
+      it "#{web_file} is not owned by the root user" do
         expect(file(web_file)).to_not be_owned_by('root')
       end
     }

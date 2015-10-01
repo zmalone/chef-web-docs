@@ -6,20 +6,20 @@ Choose the option that matches how you connect to your Red Hat Enterprise Linux 
 
 ### Option 1: Use a user name and password
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --ssh-password '{password}'
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user USER --ssh-password 'PASSWORD'
 ```
 
 ### Option 2: Use key-based authentication
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --identity-file {identity-file}
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
 ```
 
 ### See the failure from the output
@@ -31,10 +31,10 @@ You'll see from the output that although `iptables` is enabled, running, and per
 [...]
 52.27.18.148 Validate web services
 52.27.18.148   Ensure no web files are owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
-52.27.18.148     is not owned by the root user
+52.27.18.148     /var/www/html/pages is not owned by the root user
+52.27.18.148     /var/www/html/pages/page2.html is not owned by the root user
+52.27.18.148     /var/www/html/pages/page1.html is not owned by the root user
+52.27.18.148     /var/www/html/index.html is not owned by the root user
 52.27.18.148
 52.27.18.148 Validate network configuration and firewalls
 52.27.18.148   Ensure the firewall is active
@@ -45,7 +45,7 @@ You'll see from the output that although `iptables` is enabled, running, and per
 52.27.18.148     rejects all other connections (FAILED - 3)
 52.27.18.148     permits all outbound traffic
 52.27.18.148
-2.27.18.148 Failures:
+52.27.18.148 Failures:
 52.27.18.148
 52.27.18.148   1) Validate network configuration and firewalls Ensure the firewall is active accepts SSH connections
 52.27.18.148      Failure/Error: expect(iptables).to have_rule('-A INPUT -i eth0 -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT')

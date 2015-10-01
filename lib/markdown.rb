@@ -30,6 +30,8 @@ module ZurbFoundation
     @app = options[:app]
 
     alerts
+    tabs
+    modals
     anchors
     extras
 
@@ -51,7 +53,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[WARN\] (.+)<\/p>/)     { "<div class=\"alert-box comment error\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[NOTE\] (.+)<\/p>/)     { "<div class=\"alert-box secondary\"><i class=\"fa fa-2x fa-info-circle\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[DOCS\] (.+)<\/p>/)     { "<div class=\"alert-box docs\"><i class=\"fa fa-2x fa-book\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-info-circle blueiconcolor\"></i>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[COMMENT\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-info-circle comment-icon\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[SIDEBAR\] (.+)<\/p>/)  { "<div class=\"alert-box sidebar\"><i class=\"fa fa-2x fa-comment blueiconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[INTERNAL\] (.+)<\/p>/)  { "<div class=\"alert-box internal\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[WINDOWS\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-windows blueiconcolor\"></i>&nbsp; #{$1}</div>" }
@@ -65,8 +67,50 @@ module ZurbFoundation
     content.gsub!(/<p>\[QUOTE\] (.+)<\/p>/)  { "<div class=\"alert-box quote\"><i class=\"fa fa-quote-left\"></i>&nbsp;<i>#{$1}</i>&nbsp;<i class=\"fa fa-quote-right\"></i></div>" }
     content.gsub!(/<p>\[AWS\] (.+)<\/p>/)  { "<div class=\"alert-box aws\"><img class=\"alert-box-icon-large\" src=\"/assets/images/partner/AWS-Cloud.svg\"></img>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[CLOUD\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-cloud blueiconcolor\"></i>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[TRAINING\] (.+)<\/p>/)  { "<div class=\"alert-box training\"><i class=\"fa fa-2x fa-laptop training-icon\"></i>&nbsp; #{$1}</div>" }
   end
 
+  # we currently can't have ERB in partials, so we subsitute text for now.
+  def tabs
+    content.gsub!(/<p>\[START_TABS\s+(?<id>\w+)\s+(?<names>.+)\]<\/p>/) {
+      id = $1.downcase # TODO: named groups ($~[:id]) not working?
+      names = $2.split(/,/)
+      active_class = ' active' # set .active class to first element.
+      items = []
+      names.each { |name|
+        escaped_name = name.downcase.delete(' ').gsub(/\W/, "")
+        items << "<li class=\"tab-title#{active_class}\"><a href=\"##{id}#{escaped_name}\">#{name}</a></li>"
+        active_class = ''
+      }
+      '<ul class="tabs" data-tab>' + items.join + '</ul>' + '<div class="tabs-content">'
+    }
+
+    content.gsub!(/<p>\[END_TABS\]/) {
+      "</div>"
+    }
+
+    content.gsub!(/<p>\[START_TAB\s+(\w+)(\s+(\w+))?\]<\/p>(.+?)<p>\[END_TAB\]<\/p>/m) {
+      content = $4
+      active_class = $2
+      escaped_name = $1.downcase.delete(' ').gsub(/\W/, "")
+      "<div class=\"content #{active_class}\" id=\"#{escaped_name}\"><p>#{content}</p></div>"
+    }
+  end
+
+  def modals
+    content.gsub!(/<p>\[START_MODAL\s+([\w-]+)(\s+(.+?))?\]<\/p>(.+?)<p>\[END_MODAL\]<\/p>/m) {
+      content = $4
+      title = $2
+      id = $1
+      <<-EOH
+      <a class="help-button radius" href="#" data-reveal-id="#{id}">#{title}</a>
+      <div id="#{id}" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      #{content}
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+      </div>
+      EOH
+    }
+  end
 
   def anchors
     content.gsub!(/<h([0-9])>(.*)<\/h[0-9]>/) do
@@ -80,7 +124,7 @@ module ZurbFoundation
       step = m.nil? ? nil : "step#{m['step']}"
       s += "<a name=\"#{step}\" href=\"##{step}\"></a>" unless step.nil?
       # create a second anchor for the long form and link it to the step anchor if it exists; otherwise, link to the long form
-      s + "<h#{size}><a class=\"section-link\" name=\"#{escaped}\" href=\"##{step || escaped}\"><i class=\"fa fa-angle-right\"></i></a>#{old}</h#{size}>"
+      s + "<h#{size}>#{old}<a class=\"section-link\" name=\"#{escaped}\" href=\"##{step || escaped}\"><i class=\"fa fa-link\"></i></a></h#{size}>"
     end
   end
 

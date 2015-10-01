@@ -1,7 +1,7 @@
 ## 4. Bootstrap your node
 
 <div class="indent" id="bootstrap-intro" data-type="windows-fundamentals" ng-non-bindable>
-From your workstation, run this command to bootstrap your node. Replace <code>{{address}}</code> with your remote node's external address, <code>{{user}}</code> with your username, and <code>{{password}}</code> with your password.
+From your workstation, run this command to bootstrap your node. Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 </div>
 <p/>
 <div id="bootstrap-command" class="window" ng-non-bindable>
@@ -15,7 +15,7 @@ From your workstation, run this command to bootstrap your node. Replace <code>{{
     <tbody>
       <tr>
         <td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td>
-        <td class="code"><pre><code><span class="line command">knife bootstrap windows winrm {{address}} --winrm-user {{user}} --winrm-password '{{password}}' --node-name node1 --run-list 'recipe[learn\_chef\_iis]'</span></code></pre></td>
+        <td class="code"><pre><code><span class="line command">knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name node1 --run-list 'recipe[learn\_chef\_iis]'</span></code></pre></td>
       </tr>
     </tbody></table></div></div>
 </div>
@@ -56,15 +56,15 @@ The optional `--node-name` argument uniquely identifies the node with the Chef s
         <li>443 (HTTPS)</li>
       </ul>
     </li>
-    <li>Ensure your node <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">is configured</a> to accept outside WinRM connections. Most commonly, you'll need to run these commands on your Windows Server node (from a command prompt and not PowerShell) before you bootstrap it.<p></p>
+    <li>Ensure your node <a href="https://docs.chef.io/plugin_knife_windows.html#requirements" target="_blank">is configured</a> to accept outside WinRM connections. Most commonly, you'll need to run these commands on your Windows Server node from PowerShell before you bootstrap it.<p></p>
     <div class="window Win32">
             <nav class="control-window">
               <div class="close">&times;</div>
               <div class="minimize"></div>
               <div class="deactivate"></div>
             </nav>
-            <h1 class="titleInside">Command Prompt: ~</h1>
-            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>&nbsp;</span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>&nbsp;</span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span></pre></td><td class='code'><pre><code><span class='line command'>winrm quickconfig -q</span><span class='line command'>winrm set winrm/config/winrs @{MaxMemoryPerShellMB=&quot;300&quot;}</span><span class='line command'>winrm set winrm/config @{MaxTimeoutms=&quot;1800000&quot;}</span><span class='line command'>winrm set winrm/config/service @{AllowUnencrypted=&quot;true&quot;}</span><span class='line command'>winrm set winrm/config/service/auth @{Basic=&quot;true&quot;}</span><span class='line output'>&nbsp;</span><span class='line command'>netsh advfirewall firewall add rule name=&quot;WinRM 5985&quot; protocol=TCP dir=in localport=5985 action=allow</span><span class='line command'>netsh advfirewall firewall add rule name=&quot;WinRM 5986&quot; protocol=TCP dir=in localport=5986 action=allow</span><span class='line output'>&nbsp;</span><span class='line command'>net stop winrm</span><span class='line command'>sc config winrm start= auto</span><span class='line command'>net start winrm</span></code></pre></td></tr></table></div></div>
+            <h1 class="titleInside">Windows PowerShell: ~</h1>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>&nbsp;</span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>&nbsp;</span><span class='line-number'>></span><span class='line-number'>></span><span class='line-number'>></span></pre></td><td class='code'><pre><code><span class='line command'>winrm quickconfig -q</span><span class='line command'>winrm set winrm/config/winrs '@{MaxMemoryPerShellMB=&quot;1024&quot;}'</span><span class='line command'>winrm set winrm/config '@{MaxTimeoutms=&quot;1800000&quot;}'</span><span class='line command'>winrm set winrm/config/service '@{AllowUnencrypted=&quot;true&quot;}'</span><span class='line command'>winrm set winrm/config/service/auth '@{Basic=&quot;true&quot;}'</span><span class='line output'>&nbsp;</span><span class='line command'>netsh advfirewall firewall add rule name=&quot;WinRM 5985&quot; protocol=TCP dir=in localport=5985 action=allow</span><span class='line command'>netsh advfirewall firewall add rule name=&quot;WinRM 5986&quot; protocol=TCP dir=in localport=5986 action=allow</span><span class='line output'>&nbsp;</span><span class='line command'>net stop winrm</span><span class='line command'>sc.exe config winrm start= auto</span><span class='line command'>net start winrm</span></code></pre></td></tr></table></div></div>
     </li>
   </ul>
   <a class="close-reveal-modal" aria-label="Close">&#215;</a>

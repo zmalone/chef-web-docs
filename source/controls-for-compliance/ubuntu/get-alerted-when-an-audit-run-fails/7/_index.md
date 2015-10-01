@@ -69,10 +69,10 @@ firewall_rule 'http' do
   action :allow
 end
 
-# Install the Apache2 package.
+# Install the apache2 package.
 package 'apache2'
 
-# Enable and start the Apache2 service.
+# Enable and start the apache2 service.
 service 'apache2' do
   action [:enable, :start]
 end
@@ -137,10 +137,10 @@ $ kitchen converge
 [...]
        Validate web services
          Ensure no web files are owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
+           /var/www/html/index.html is not owned by the root user
+           /var/www/html/pages is not owned by the root user
+           /var/www/html/pages/page2.html is not owned by the root user
+           /var/www/html/pages/page1.html is not owned by the root user
 
        Validate network configuration and firewalls
          Ensure the firewall is active
@@ -216,20 +216,20 @@ Choose the option that matches how you connect to your Ubuntu node.
 
 ### Option 1: Use a user name and password
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode enabled' --manual-list --ssh-user {user} --ssh-password '{password}'
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode enabled' --manual-list --ssh-user USER --ssh-password 'PASSWORD'
 ```
 
 ### Option 2: Use key-based authentication
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode enabled' --manual-list --ssh-user {user} --identity-file {identity-file}
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode enabled' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
 ```
 
 As with your Test Kitchen instance, you'll see that the `webserver` cookbook updates your configuration and that all audit tests pass.
@@ -239,10 +239,10 @@ As with your Test Kitchen instance, you'll see that the `webserver` cookbook upd
 [...]
 52.27.87.170 Validate web services
 52.27.87.170   Ensure no web files are owned by the root user
-52.27.87.170     is not owned by the root user
-52.27.87.170     is not owned by the root user
-52.27.87.170     is not owned by the root user
-52.27.87.170     is not owned by the root user
+52.27.87.170     /var/www/html/index.html is not owned by the root user
+52.27.87.170     /var/www/html/pages is not owned by the root user
+52.27.87.170     /var/www/html/pages/page2.html is not owned by the root user
+52.27.87.170     /var/www/html/pages/page1.html is not owned by the root user
 52.27.87.170
 52.27.87.170 Validate network configuration and firewalls
 52.27.87.170   Ensure the firewall is active

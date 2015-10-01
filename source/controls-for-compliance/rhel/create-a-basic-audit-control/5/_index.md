@@ -52,51 +52,46 @@ $ kitchen converge
 -----> Converging <default-centos-65>...
        Preparing files for transfer
 [...]
-         4) Validate web services Ensure no web files are owned by the root user is not owned by the root user
+         4) Validate web services Ensure no web files are owned by the root user /var/www/html/index.html is not owned by the root user
             Failure/Error: expect(file(web_file)).to_not be_owned_by('root')
        expected `File "/var/www/html/index.html".owned_by?("root")` to return false, got true
             # /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb:10:in `block (4 levels) in from_file'
 
-       Finished in 0.12686 seconds (files took 0.2665 seconds to load)
+       Finished in 0.15964 seconds (files took 0.33416 seconds to load)
        4 examples, 4 failures
 
        Failed examples:
 
-       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
-       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
-       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
-       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:4] # Validate web services Ensure no web files are owned by the root user is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages/page2.html is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages/page1.html is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:4] # Validate web services Ensure no web files are owned by the root user /var/www/html/index.html is not owned by the root user
 
        Audit phase exception:
          Audit phase found failures - 4/4 controls failed
 
          Running handlers:
          Running handlers complete
-         Chef Client finished, 0/7 resources updated in 2.545688357 seconds
+         Chef Client finished, 7/7 resources updated in 8.127407378 seconds
            0/4 controls succeeded
-       [2015-07-24T04:20:19+00:00] FATAL: Stacktrace dumped to /tmp/kitchen/cache/chef-stacktrace.out
-       [2015-07-24T04:20:19+00:00] ERROR: Found 1 errors, they are stored in the backtrace
-       [2015-07-24T04:20:20+00:00] FATAL: Chef::Exceptions::ChildConvergeError: Chef run process exited unsuccessfully (exit code 1)
->>>>>> Converge failed on instance <default-centos-65>.
->>>>>> Please see .kitchen/logs/default-centos-65.log for more details
->>>>>> ------Exception-------
->>>>>> Class: Kitchen::ActionFailed
->>>>>> Message: SSH exited (1) for command: [sh -c '
-
-sudo -E /opt/chef/bin/chef-client --local-mode --config /tmp/kitchen/client.rb --log_level auto --force-formatter --no-color --json-attributes /tmp/kitchen/dna.json --chef-zero-port 8889
-']
->>>>>> ----------------------
+       [2015-08-07T15:24:45+00:00] FATAL: Stacktrace dumped to /tmp/kitchen/cache/chef-stacktrace.out
+       [2015-08-07T15:24:45+00:00] ERROR: Found 1 errors, they are stored in the backtrace
+       [2015-08-07T15:24:45+00:00] FATAL: Chef::Exceptions::ChildConvergeError: Chef run process exited unsuccessfully (exit code 1)
+[...]
 ```
 
-Although the web server was successfully configured, the `chef-client` run failed because the audit failed. You can look through the error log to see which files failed the audit.
+Although the web server was successfully configured, the audit run failed. You'll see from the output that the <code class="file-path">/var/www/html/pages</code> directory and our three web files caused the audit run to fail.
 
 ```bash
 # ~/chef-repo/cookbooks/webserver
-$ less .kitchen/logs/default-centos-65.log | grep 'got true'
-I, [2015-07-24T00:20:19.430395 #39670]  INFO -- default-centos-65: expected `File "/var/www/html/pages".owned_by?("root")` to return false, got true
-I, [2015-07-24T00:20:19.430516 #39670]  INFO -- default-centos-65: expected `File "/var/www/html/pages/page2.html".owned_by?("root")` to return false, got true
-I, [2015-07-24T00:20:19.430575 #39670]  INFO -- default-centos-65: expected `File "/var/www/html/pages/page1.html".owned_by?("root")` to return false, got true
-I, [2015-07-24T00:20:19.430634 #39670]  INFO -- default-centos-65: expected `File "/var/www/html/index.html".owned_by?("root")` to return false, got true
+[...]
+       Failed examples:
+
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:1] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:2] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages/page2.html is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:3] # Validate web services Ensure no web files are owned by the root user /var/www/html/pages/page1.html is not owned by the root user
+       rspec /tmp/kitchen/cache/cookbooks/audit/recipes/default.rb[1:1:4] # Validate web services Ensure no web files are owned by the root user /var/www/html/index.html is not owned by the root user
+[...]
 ```
 
 The next step is to revise the `webserver` cookbook to incorporate our audit policy and verify that the system meets compliance.

@@ -16,13 +16,13 @@ Recipe: code_generator::cookbook
     (diff output suppressed by config)
 ```
 
-We don't have you create the `motd` cookbook in a Chef repo because we won't use the functionality that it provides.
+We don't have you create the `motd` cookbook in a Chef repo because we won't use the functionality that a Chef repo provides.
 
 [COMMENT] For learning purposes, we'll build a basic MOTD cookbook ourselves. The [motd](https://supermarket.chef.io/cookbooks/motd)  and cookbook on Chef Supermarket provides a more robust solution.
 
 ### Create the MOTD template
 
-We'll use a template to dynamically add information about the virtual machine to the MOTD file, <code class="file-path">/etc/motd</code>. Run the following command to generate a template in your `motd` cookbook named <code class="file-path">chef</code>.
+We'll use a template to dynamically add information about the virtual machine to the MOTD file, <code class="file-path">/etc/motd</code>. Run the following command to generate a template in your `motd` cookbook named <code class="file-path">server-info</code>.
 
 ```bash
 # ~

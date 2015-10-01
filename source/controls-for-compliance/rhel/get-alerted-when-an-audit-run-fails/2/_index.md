@@ -12,23 +12,14 @@ From your workstation, run the following command to set the run-list to contain 
 
 ```bash
 # ~/chef-repo
-$ knife node run_list set webserver1 'recipe[webserver::default], recipe[audit::default]'
+$ knife node run_list set webserver1 'recipe[webserver::default],recipe[audit::default]'
 webserver1:
   run_list:
     recipe[webserver::default]
     recipe[audit::default]
 ```
 
-When running `knife` from Windows PowerShell, surround the string with triple single quotes (''' '''), like this.
-
-```ps
-# ~/chef-repo
-$ knife node run_list set webserver1 '''recipe[webserver::default], recipe[audit::default]'''
-webserver1:
-  run_list:
-    recipe[webserver::default]
-    recipe[audit::default]
-```
+[WINDOWS] When running `knife` on Windows, consider [activating the chef PowerShell module](http://docs.chef.io/release_notes.html#import-module-chef) to make it easier to use strings from the command line.
 
 Now run `chef-client` on your node. We want to run only the `webserver` cookbook, so we use the `--audit-mode disabled` option to disable the `audit` cookbook (`disabled` is also the default).
 
@@ -36,20 +27,20 @@ Choose the option that matches how you connect to your Red Hat Enterprise Linux 
 
 #### Option a: Use a user name and password
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --ssh-password '{password}'
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user USER --ssh-password 'PASSWORD'
 ```
 
 #### Option b: Use key-based authentication
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --identity-file {identity-file}
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
 ```
 
 ### Option 2: Bootstrap a new Red Hat Enterprise Linux 6.5 or CentOS 6.5 node
@@ -67,20 +58,20 @@ Now bootstrap your node. Choose the option below that matches how you can authen
 
 #### Option a: Use a user name and password
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name webserver1 --run-list 'recipe[webserver::default], recipe[audit::default]'
+$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
 
 #### Option b: Use key-based authentication
 
-Replace `{address}` with your remote node's external address, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name webserver1 --run-list 'recipe[webserver::default], recipe[audit::default]'
+$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
 
 <a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>

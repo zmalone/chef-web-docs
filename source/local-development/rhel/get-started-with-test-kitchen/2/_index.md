@@ -1,6 +1,6 @@
 ## 2. Set up the Test Kitchen configuration file
 
-Now we need to tell Test Kitchen a bit about the environment we want to run our cookbook in.
+Now we need to tell Test Kitchen a bit about the environment where our cookbook will run.
 
 When you use the `chef generate cookbook` command to create a cookbook, Chef creates a file named <code class="file-path">.kitchen.yml</code> in the root directory of your cookbook. <code class="file-path">.kitchen.yml</code> defines what's needed to run Test Kitchen, including which virtualization provider to use, how to run Chef, and what platforms to run your code on.
 
@@ -16,8 +16,8 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: ubuntu-12.04
-  - name: centos-6.5
+  - name: ubuntu-14.04
+  - name: centos-7.1
 
 suites:
   - name: default
@@ -28,7 +28,7 @@ suites:
 
 [COMMENT] On Linux and Mac OS, <code class="file-path">.kitchen.yml</code> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
-Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only CentOS, modify <code class="file-path">~/motd/.kitchen.yml</code> like this. (Be sure to replace `centos-6.5` with `centos-6.6`.)
+Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only CentOS, modify <code class="file-path">~/motd/.kitchen.yml</code> like this. (Be sure to replace `centos-7.1` with `centos-6.6`.)
 
 ```ruby
 # ~/motd/.kitchen.yml
@@ -56,7 +56,7 @@ This configuration also specifies that the virtual machine should have 256 MB of
 
 Here's how the file breaks down.
 
-* **driver** specifies the software that creates the machine. We're using Vagrant.
+* **driver** specifies the software that manages the machine. We're using Vagrant.
 * **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and data bags.
 * **platforms** specifies the target operating systems. We're targeting just one &ndash; CentOS 6.6.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `motd` cookbook's default recipe.

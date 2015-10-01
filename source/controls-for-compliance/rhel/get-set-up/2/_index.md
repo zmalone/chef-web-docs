@@ -14,3 +14,5 @@ After completing this tutorial, you'll have:
 * a Chef Analytics server running in your infrastructure.
 
 [COMMENT] In the _Get started with Chef Analytics_ tutorial, you'll have the option to choose which operating system to run on your node. We recommend that you use Red Hat Enterprise Linux 6.5 or CentOS 6.5 so that you have a node that's already set up to use in this tutorial.
+
+[WARN] Chef audit mode requires `chef-client` version 12.1.0 or greater on your node. If you have an existing node that has a prior version of `chef-client`, [upgrade to the latest version](https://downloads.chef.io/chef-client/).

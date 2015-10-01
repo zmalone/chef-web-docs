@@ -32,4 +32,6 @@ After completing this lesson, you'll:
 * be able to use encrypted data bags to protect sensitive data.
 * know how to use tools such as Berkshelf to resolve dependencies among your cookbooks.
 
+[COMMENT] You don't need to understand all the details about how Apache and MySQL work to complete this tutorial. The goal is to learn skills and patterns that will help you apply Chef to your specific infrastructure challenges.
+
 You'll get started by setting up your workstation, a Chef server, and a node to manage.

@@ -13,7 +13,7 @@ Recall that your control looks like this.
 control_group 'Validate web services' do
   control 'Ensure no web files are owned by the root user' do
     Dir.glob('/var/www/html/**/*') {|web_file|
-      it 'is not owned by the root user' do
+      it "#{web_file} is not owned by the root user" do
         expect(file(web_file)).to_not be_owned_by('root')
       end
     }
@@ -29,7 +29,7 @@ Now add the following code to define your rule.
 rules 'Validate web services'
   rule on run_control
   when
-    name = 'is not owned by the root user' and status != 'success'
+    name =~ 'is not owned by the root user$' and status != 'success'
   then
     alert:error('Run control group "{{ message.name }}" failed on {{ message.run.node_name }}.')
   end
@@ -37,6 +37,10 @@ end
 ```
 
 The [run_control](https://docs.chef.io/analytics_rules.html#run-control) message states a rule for a single audit. The `name` part of the `when` block corresponds to the name of the `it` block in your audit control. The rule triggers only when the status of the control is not `success`.
+
+The `it` part of your control has a different name for each file that you're testing. Therefore, we use a [regular expression](https://docs.chef.io/analytics_rules.html#regular-expressions) to match the pattern for how the `it` blocks are named. The `=~` operator sets up the comparison as a regular expression and the `user$` part says that the string to match must end with "user".
+
+[TIP] [Rubular](http://rubular.com) is a handy way to test out your regular expressions.
 
 The [alert:error](https://docs.chef.io/analytics_rules.html#alert-level) part adds the alert to Chef Analytics. In our case, we want the alert to signal an error condition. You can also use `alert:warn` and `alert:info` to signal other types of conditions.
 

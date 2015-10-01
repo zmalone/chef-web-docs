@@ -13,10 +13,10 @@ Modify your `webserver` cookbook's default recipe like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/webserver/recipes/default.rb
-# Install the Apache2 package.
+# Install the httpd package.
 package 'httpd'
 
-# Enable and start the Apache2 service.
+# Enable and start the httpd service.
 service 'httpd' do
   action [:enable, :start]
 end
@@ -76,10 +76,10 @@ $ kitchen converge
 
        Validate web services
          Ensure no web files are owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
-           is not owned by the root user
+           /var/www/html/pages is not owned by the root user
+           /var/www/html/pages/page2.html is not owned by the root user
+           /var/www/html/pages/page1.html is not owned by the root user
+           /var/www/html/index.html is not owned by the root user
 
        Finished in 0.13817 seconds (files took 0.25295 seconds to load)
        4 examples, 0 failures
@@ -93,6 +93,6 @@ $ kitchen converge
 -----> Kitchen is finished. (0m5.95s)
 ```
 
-[COMMENT] As your infrastructure code grows in complexity, you can temporarily set `audit_mode` in your <code class="file-path">.kitchen.yml</code> to `:disabled` to disable audit tests so that you can first verify that your configuration code works. Then you can enable audit mode to ensure that the working configuraiton also passes audit.
+[COMMENT] As your infrastructure code grows in complexity, you can temporarily set `audit_mode` in your <code class="file-path">.kitchen.yml</code> to `:disabled` to disable audit tests so that you can first verify that your configuration code works. Then you can enable audit mode to ensure that the working configuration also passes audit.
 
 Congratulations. The ownership of your web content changed from `root` to `web_admin` and your audit tests now pass!
