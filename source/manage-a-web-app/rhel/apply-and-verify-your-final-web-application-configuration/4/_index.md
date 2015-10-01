@@ -6,20 +6,20 @@ Here's a reminder of how to do this.
 
 ### Option 1: Use a user name and password
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
 
 ```bash
 # ~/chef-repo/cookbooks/awesome_customers
-$ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ssh-password '{password}'
+$ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password 'PASSWORD'
 ```
 
 ### Option 2: Use key-based authentication
 
-Replace `{address}` with your remote node's external address and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace `ADDRESS` with your remote node's external address and `IDENTITY_FILE` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo/cookbooks/awesome_customers
-$ knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --identity-file {identity-file}
+$ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
 ```
 
 <a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>

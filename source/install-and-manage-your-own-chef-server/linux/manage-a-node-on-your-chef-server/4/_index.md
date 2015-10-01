@@ -17,7 +17,7 @@ Alternatively, you can use the `knife ssh` command from your workstation. Here's
 
 ```bash
 # ~
-$ knife ssh {address} 'more /var/chef/cache/hello.txt' --manual-list --ssh-user {user} --identity-file {identity-file}
+$ knife ssh ADDRESS 'more /var/chef/cache/hello.txt' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
 52.25.26.65 Hello, Chef server!
 ```
 

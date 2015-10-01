@@ -1,10 +1,10 @@
 ## 4. Configure Chef Analytics
 
-From your Chef Analytics server, create the file <code class="file-path">/etc/opscode-analytics/opscode-analytics.rb</code> and add the following to it. Replace `{analytics-fqdn}` with the hostname of your Chef Analytics system.
+From your Chef Analytics server, create the file <code class="file-path">/etc/opscode-analytics/opscode-analytics.rb</code> and add the following to it. Replace `ANALYTICS_FQDN` with the hostname of your Chef Analytics system.
 
 ```ruby
 # /etc/opscode-analytics/opscode-analytics.rb
-analytics_fqdn '{analytics-fqdn}'
+analytics_fqdn 'ANALYTICS_FQDN'
 topology 'standalone'
 ```
 

@@ -7,7 +7,7 @@ Now let's run `chef-client` on your node and confirm that the notification is se
 <div id="chef-client-cheat-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">Here are some of the common ways to run chef-client on your node from your workstation</h3>
   <h4>Linux node: user name and password</h4>
-  <p>Replace <code>{address}</code> with your remote node&#39;s external address, <code>{user}</code> with your username, and <code>{password}</code> with your password.</p>
+  <p>Replace <code>ADDRESS</code> with your remote node&#39;s external address, <code>USER</code> with your username, and <code>PASSWORD</code> with your password.</p>
 <div class="window ">
             <nav class="control-window">
               <div class="close">&times;</div>
@@ -15,10 +15,10 @@ Now let's run `chef-client` on your node and confirm that the notification is se
               <div class="deactivate"></div>
             </nav>
             <h1 class="titleInside">Terminal: ~/chef-repo</h1>
-            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --ssh-password '{password}'</span></code></pre></td></tr></table></div></div>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password 'PASSWORD'</span></code></pre></td></tr></table></div></div>
           </div>
   <h4>Linux node: key-based authentication</h4>
-  <p>Replace <code>{address}</code> with your remote node&#39;s external address and <code>{identity-file}</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.</p>
+  <p>Replace <code>ADDRESS</code> with your remote node&#39;s external address and <code>IDENTITY_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.</p>
 <div class="window ">
             <nav class="control-window">
               <div class="close">&times;</div>
@@ -26,11 +26,11 @@ Now let's run `chef-client` on your node and confirm that the notification is se
               <div class="deactivate"></div>
             </nav>
             <h1 class="titleInside">Terminal: ~/chef-repo</h1>
-            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>knife ssh {address} 'sudo chef-client' --manual-list --ssh-user {user} --identity-file {identity-file}</span></code></pre></td></tr></table></div></div>
+            <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --identity-file IDENTITY_FILE</span></code></pre></td></tr></table></div></div>
             </div>
   <h4>Windows Server node</h4>
   <p>
-Replace <code>{address}</code>, <code>{user}</code>, and <code>{password}</code> with your values.
+Replace <code>ADDRESS</code>, <code>USER</code>, and <code>PASSWORD</code> with your values.
 </p>
 <div id="knife-command" class="window" ng-non-bindable>
   <nav class="control-window">
@@ -43,7 +43,7 @@ Replace <code>{address}</code>, <code>{user}</code>, and <code>{password}</code>
     <tbody>
       <tr>
         <td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td>
-        <td class="code"><pre><code><span class="line command">knife winrm {address} chef-client --manual-list --winrm-user {user} --winrm-password &#39;{password}&#39;</span></code></pre></td>
+        <td class="code"><pre><code><span class="line command">knife winrm ADDRESS chef-client --manual-list --winrm-user USER --winrm-password &#39;PASSWORD&#39;</span></code></pre></td>
       </tr>
     </tbody></table></div></div>
 </div>

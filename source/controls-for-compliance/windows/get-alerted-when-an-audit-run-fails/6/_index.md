@@ -2,11 +2,11 @@
 
 From your workstation, run `chef-client` with audit mode enabled a second time.
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
 
 ```bash
 # ~/chef-repo
-$ knife winrm {address} 'chef-client --audit-mode audit-only' --manual-list --winrm-user {user} --winrm-password '{password}'
+$ knife winrm ADDRESS 'chef-client --audit-mode audit-only' --manual-list --winrm-user USER --winrm-password 'PASSWORD'
 ```
 
 ### See the failure from the output

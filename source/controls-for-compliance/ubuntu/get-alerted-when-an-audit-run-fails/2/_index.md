@@ -27,20 +27,20 @@ Choose the option that matches how you connect to your Ubuntu node.
 
 #### Option a: Use a user name and password
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --ssh-password '{password}'
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user USER --ssh-password 'PASSWORD'
 ```
 
 #### Option b: Use key-based authentication
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `IDENTITY_FILE` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user {user} --identity-file {identity-file}
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode disabled' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
 ```
 
 ### Option 2: Bootstrap a new Ubuntu 14.04 node
@@ -58,20 +58,20 @@ Now bootstrap your node. Choose the option below that matches how you can authen
 
 #### Option a: Use a user name and password
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
+$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
 
 #### Option b: Use key-based authentication
 
-Replace `{address}` with your remote node's external address, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace `ADDRESS` with your remote node's external address, and `IDENTITY_FILE` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
+$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
 
 <a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>

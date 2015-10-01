@@ -215,11 +215,11 @@ Uploaded 1 cookbook.
 
 From your workstation, run `chef-client` with audit mode enabled so that both the `webserver` and `audit` cookbooks are run.
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
 
 ```bash
 # ~/chef-repo
-$ knife winrm {address} 'chef-client --audit-mode enabled' --manual-list --winrm-user {user} --winrm-password '{password}'
+$ knife winrm ADDRESS 'chef-client --audit-mode enabled' --manual-list --winrm-user USER --winrm-password 'PASSWORD'
 ```
 
 As with your Test Kitchen instance, you'll see that the `webserver` cookbook updates your configuration and that all audit tests pass.

@@ -1,7 +1,7 @@
 ## 4. Bootstrap your node
 
 <div class="indent" id="bootstrap-intro" data-type="windows-fundamentals" ng-non-bindable>
-From your workstation, run this command to bootstrap your node. Replace <code>{{address}}</code> with your remote node's external address, <code>{{user}}</code> with your username, and <code>{{password}}</code> with your password.
+From your workstation, run this command to bootstrap your node. Replace <code>ADDRESS</code> with your remote node's external address, <code>USER</code> with your username, and <code>PASSWORD</code> with your password.
 </div>
 <p/>
 <div id="bootstrap-command" class="window" ng-non-bindable>
@@ -15,7 +15,7 @@ From your workstation, run this command to bootstrap your node. Replace <code>{{
     <tbody>
       <tr>
         <td class="gutter"><pre class="line-numbers"><span class="line-number">$</span></pre></td>
-        <td class="code"><pre><code><span class="line command">knife bootstrap windows winrm {{address}} --winrm-user {{user}} --winrm-password '{{password}}' --node-name node1 --run-list 'recipe[learn\_chef\_iis]'</span></code></pre></td>
+        <td class="code"><pre><code><span class="line command">knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name node1 --run-list 'recipe[learn\_chef\_iis]'</span></code></pre></td>
       </tr>
     </tbody></table></div></div>
 </div>

@@ -10,22 +10,22 @@ Choose the option below that matches how you can authenticate and bootstrap your
 
 ### Option 1: Use a user name and password
 
-This is what we did in [Learn to manage a node](/manage-a-node/ubuntu/). From your workstation, run this command to bootstrap your node. Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+This is what we did in [Learn to manage a node](/manage-a-node/ubuntu/). From your workstation, run this command to bootstrap your node. Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --ssh-password '{password}' --sudo --use-sudo-password --node-name web_app_ubuntu --run-list 'recipe[awesome_customers]'
+$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name web_app_ubuntu --run-list 'recipe[awesome_customers]'
 ```
 
 You'll see lots of output as your node installs `chef-client` and runs the `awesome_customers` cookbook.
 
 ### Option 2: Use key-based authentication
 
-From your workstation, run this command to bootstrap your node. Replace `{address}` with your remote node's external address, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+From your workstation, run this command to bootstrap your node. Replace `ADDRESS` with your remote node's external address, and `IDENTITY_FILE` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap {address} --ssh-user {user} --sudo --identity-file {identity-file} --node-name web_app_ubuntu --run-list 'recipe[awesome_customers]'
+$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name web_app_ubuntu --run-list 'recipe[awesome_customers]'
 ```
 
 You'll see lots of output as your node installs `chef-client` and runs the `awesome_customers` cookbook.
