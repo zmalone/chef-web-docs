@@ -19,9 +19,7 @@ Using windows (1.38.1)
 
 You'll see that Berkshelf downloaded the `iis` cookbook. The `iis` cookbook depends on the `windows` cookbook, but that dependency was resolved when Berkshelf downloaded the `sql_server` cookbook, which also depends on `windows`.
 
-<hr>
-
-### Sidebar: berks install versus berks update
+[START_MODAL berks-install-vs-update How does berks install differ from berks update?]
 
 The `berks install` command downloads any new cookbooks that you don't have on your workstation.
 
@@ -45,3 +43,5 @@ Recall that under [Semantic Versioning](http://semver.org), version numbers are 
 * PATCH specifies backwards-compatible bug fixes.
 
 When you update your dependent cookbook versions, always test and verify that they continue to behave as you expect. Although the pessimistic constraint is a good way to pick up bug fixes, the `>` and `>=` constraints will update any newer MINOR or MAJOR versions that are available.
+
+[END_MODAL]

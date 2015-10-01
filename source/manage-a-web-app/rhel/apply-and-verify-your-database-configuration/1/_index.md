@@ -30,13 +30,11 @@ Installing yum-mysql-community (0.1.17)
 
 You'll see that Berkshelf downloaded `mysql2_chef_gem` `mysql`, `database`, and their dependencies.
 
-<hr>
-
-### Sidebar: berks install versus berks update
+[START_MODAL berks-install-vs-update How does berks install differ from berks update?]
 
 The `berks install` command downloads any new cookbooks that you don't have on your workstation.
 
-There's also the `berks update` command, which updates cookbooks and their dependencies. For example, recall that when you used the _pessimistic version constraint_ `~>` when you referenced the `mysql` cookbook.
+There's also the `berks update` command, which updates cookbooks and their dependencies. For example, recall that you used the _pessimistic version constraint_ `~>` when you referenced the `mysql` cookbook.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/metadata.rb
@@ -56,3 +54,5 @@ Recall that under [Semantic Versioning](http://semver.org), version numbers are 
 * PATCH specifies backwards-compatible bug fixes.
 
 When you update your dependent cookbook versions, always test and verify that they continue to behave as you expect. Although the pessimistic constraint is a good way to pick up bug fixes, the `>` and `>=` constraints will update any newer MINOR or MAJOR versions that are available.
+
+[END_MODAL]
