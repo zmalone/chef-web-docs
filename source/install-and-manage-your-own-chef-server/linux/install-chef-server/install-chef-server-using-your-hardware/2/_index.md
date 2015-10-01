@@ -6,7 +6,7 @@ Click the button to get the Chef server package for your version of Red Hat Ente
 
 It's likely that you're viewing this web page from your workstation, and that your Chef server is running without a graphical user interface. The easiest way to get the download link from your workstation to your Chef server is to locate and copy the link you need, and then paste it into a `wget` command through an SSH session to your Chef server.
 
-Here's an example of how to download and install Chef server on Red Hat Enterprise Linux or CentOS. Replace `PACKAGE_URL` and `PACKAGE_NAME` with the latest one from the download page.
+Here's an example of how to download and install Chef server on Red Hat Enterprise Linux or CentOS. Replace <code class="placeholder">PACKAGE\_URL</code> and <code class="placeholder">PACKAGE\_NAME</code> with the latest one from the download page.
 
 ```bash
 $ sudo yum install wget -y

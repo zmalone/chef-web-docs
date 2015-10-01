@@ -4,11 +4,11 @@ Now let's run the `audit` cookbook on your node. You already verified that the a
 
 Because you already applied the `webserver` cookbook to your node, this time you'll specify the `--audit-mode audit-only` option to run only the audit code on your node.
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
-$ knife winrm {address} 'chef-client --audit-mode audit-only' --manual-list --winrm-user {user} --winrm-password '{password}'
+$ knife winrm ADDRESS 'chef-client --audit-mode audit-only' --manual-list --winrm-user USER --winrm-password 'PASSWORD'
 ```
 
 ### Verify that the alert didn't trigger
