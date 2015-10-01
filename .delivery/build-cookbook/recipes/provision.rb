@@ -11,6 +11,9 @@ ENV['AWS_CONFIG_FILE'] = File.join(node['delivery']['workspace']['root'], 'aws_c
 require 'chef/provisioning/aws_driver'
 with_driver 'aws'
 
+site_name = 'learn'
+domain_name = 'chef.io'      
+
 if node['delivery']['change']['stage'] == 'delivered'
   bucket_name = node['delivery']['change']['project'].gsub(/_/, '-')
   fqdn = "#{site_name}.#{domain_name}"
