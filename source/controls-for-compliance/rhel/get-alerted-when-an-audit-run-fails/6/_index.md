@@ -6,20 +6,20 @@ Choose the option that matches how you connect to your Red Hat Enterprise Linux 
 
 ### Option 1: Use a user name and password
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --ssh-password '{password}'
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user USER --ssh-password 'PASSWORD'
 ```
 
 ### Option 2: Use key-based authentication
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{identity-file}` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
-$ knife ssh {address} 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user {user} --identity-file {identity-file}
+$ knife ssh ADDRESS 'sudo chef-client --audit-mode audit-only' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
 ```
 
 ### See the failure from the output

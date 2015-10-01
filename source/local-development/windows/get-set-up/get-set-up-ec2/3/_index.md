@@ -32,7 +32,7 @@ Note your [IAM](http://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.htm
 
 There are [a few ways](https://github.com/test-kitchen/kitchen-ec2#authenticating-with-aws) to authenticate with AWS from Test Kitchen. One way is to write your AWS secret access key to a <code class="file-path">credentials</code> file on your workstation.
 
-If you're using Linux or Mac OS for your workstation, add the following to <code class="file-path">~/.aws/credentials</code>. If you're using Windows, add it to <code class="file-path">%USERPROFILE%\\.aws\\credentials</code>. Replace `ACCESS_KEY` and `SECRET_KEY` [with your values](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html#cli-signup).
+If you're using Linux or Mac OS for your workstation, add the following to <code class="file-path">~/.aws/credentials</code>. If you're using Windows, add it to <code class="file-path">%USERPROFILE%\\.aws\\credentials</code>. Replace <code class="placeholder">ACCESS\_KEY</code> and <code class="placeholder">SECRET\_KEY</code> [with your values](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html#cli-signup).
 
 ```ruby
 # ~/.aws/credentials

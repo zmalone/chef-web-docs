@@ -23,11 +23,11 @@ webserver1:
 
 Now run `chef-client` on your node. We want to run only the `webserver` cookbook, so we use the `--audit-mode disabled` option to disable the `audit` cookbook (`disabled` is also the default).
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
-$ knife winrm {address} 'chef-client --audit-mode disabled' --manual-list --winrm-user {user} --winrm-password '{password}'
+$ knife winrm ADDRESS 'chef-client --audit-mode disabled' --manual-list --winrm-user USER --winrm-password 'PASSWORD'
 ```
 
 ### Option 2: Bootstrap a new Windows Server node
@@ -62,11 +62,11 @@ Now bootstrap your node.
 
 [COMMENT] Although you set both the `audit` and `webserver` cookbooks' default recipes as part of the run-list, only the infrastructure code, not the audit code, is run during the bootstrap process. You'll run the audit code in a later step.
 
-Replace `{address}` with your remote node's external address, `{user}` with your username, and `{password}` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
-$ knife bootstrap windows winrm {address} --winrm-user {user} --winrm-password '{password}' --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
+$ knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
 
 ### View the events in the Timeline view
