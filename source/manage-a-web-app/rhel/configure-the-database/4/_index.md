@@ -70,6 +70,29 @@ The `not_if` attribute is an example of a [guard](https://docs.chef.io/resource_
 
 [COMMENT] `not_if` _prevents_ a resource from executing if its result holds true. There's also `only_if`, which executes the resource _only if_ its result holds true.
 
+[START_MODAL sql-script Should the SQL script be more granular?]
+
+Recall that the SQL script file looks like this:
+
+```sql
+-- ~/chef-repo/cookbooks/awesome_customers/files/default/create-tables.sql
+
+CREATE TABLE customers(
+  id CHAR (32) NOT NULL,
+  PRIMARY KEY(id),
+  first_name VARCHAR(64),
+  last_name VARCHAR(64),
+  email VARCHAR(64)
+);
+
+INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Jane', 'Smith', 'jane.smith@example.com' );
+INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Dave', 'Richards', 'dave.richards@example.com' );
+```
+
+Our `not_if` guard tests only for when the `customers` table doesn't exist; it doesn't cover the case where the sample data doesn't exist. This is fine for learning purposes. In practice, you would need to decide how granular your scripts and your tests need to be. For example, you might break this script into two separate scripts &ndash; one to create the table and one to create the sample data &ndash; if there is a chance that one component might be changed or removed by some other process.
+
+[END_MODAL]
+
 ### Refactor the database table creation
 
 Like we've done before, let's look at how we can factor out the data. In your `cookbook_file` resource, we specified the destination path for your SQL script. Let's create a node attribute to describe it.

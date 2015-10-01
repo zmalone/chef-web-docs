@@ -18,9 +18,7 @@ dsc_script 'Web-Asp-Net45' do
 end
 ```
 
-<hr>
-
-### Sidebar: A quick look at dsc_resource
+[START_MODAL dsc-resource A quick look at dsc&#95;resource]
 
 Systems running Windows PowerShell 5.0 can use [dsc_resource](https://docs.chef.io/resource_dsc_resource.html) to define DSC resources.
 
@@ -38,3 +36,5 @@ end
 `dsc_resource` resources more closely resemble other Chef resources and don't require use of here documents, so they can be written using less code.
 
 [WARN] Windows PowerShell 5.0 and `dsc_resource` are still under development. Refer to the [dsc_resource documentation](https://docs.chef.io/resource_dsc_resource.html) for more information on its status and restrictions.
+
+[END_MODAL]
