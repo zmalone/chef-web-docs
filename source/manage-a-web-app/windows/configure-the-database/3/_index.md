@@ -92,9 +92,7 @@ This code uses the heredoc mechanism that you used when you set up IIS and ASP.N
 
 The `only_if` part enables the SQL script to run only when needed. In this case, we run the script only when the `learnchef` database does not exist.
 
-<hr>
-
-#### Sidebar: Should the SQL script be more granular?
+[START_MODAL sql-script Should the SQL script be more granular?]
 
 Recall that the SQL script file looks like this:
 
@@ -123,9 +121,9 @@ INSERT INTO customers(id, first_name, last_name, email) VALUES(newid(), 'Dave', 
 GO
 ```
 
-Our `only_if` guard tests only when the `learnchef` database doesn't exist; it doesn't cover the case where the `customers` table or the sample data doesn't exist. This is fine for learning purposes. In practice, you would need to decide how granular your scripts and your tests need to be. For example, you might break this script into three separate scripts &ndash; one to create the database, one to create the table, and one to create the sample data &ndash; if there is a chance that one component might be changed or removed by some other process.
+Our `only_if` guard tests only for when the `learnchef` database doesn't exist; it doesn't cover the case where the `customers` table or the sample data doesn't exist. This is fine for learning purposes. In practice, you would need to decide how granular your scripts and your tests need to be. For example, you might break this script into three separate scripts &ndash; one to create the database, one to create the table, and one to create the sample data &ndash; if there is a chance that one component might be changed or removed by some other process.
 
-<hr>
+[END_MODAL]
 
 Your entire `database` recipe looks like this.
 
