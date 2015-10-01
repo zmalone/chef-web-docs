@@ -23,7 +23,7 @@ webserver1:
 
 Now run `chef-client` on your node. We want to run only the `webserver` cookbook, so we use the `--audit-mode disabled` option to disable the `audit` cookbook (`disabled` is also the default).
 
-Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
@@ -62,7 +62,7 @@ Now bootstrap your node.
 
 [COMMENT] Although you set both the `audit` and `webserver` cookbooks' default recipes as part of the run-list, only the infrastructure code, not the audit code, is run during the bootstrap process. You'll run the audit code in a later step.
 
-Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo

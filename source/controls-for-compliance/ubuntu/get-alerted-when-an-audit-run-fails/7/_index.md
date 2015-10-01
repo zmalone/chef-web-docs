@@ -216,7 +216,7 @@ Choose the option that matches how you connect to your Ubuntu node.
 
 ### Option 1: Use a user name and password
 
-Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
@@ -225,7 +225,7 @@ $ knife ssh ADDRESS 'sudo chef-client --audit-mode enabled' --manual-list --ssh-
 
 ### Option 2: Use key-based authentication
 
-Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `IDENTITY_FILE` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo

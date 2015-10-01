@@ -7,7 +7,7 @@ Now let's run `chef-client` on your node and confirm that the notification is se
 <div id="chef-client-cheat-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">Here are some of the common ways to run chef-client on your node from your workstation</h3>
   <h4>Linux node: user name and password</h4>
-  <p>Replace <code>ADDRESS</code> with your remote node&#39;s external address, <code>USER</code> with your username, and <code>PASSWORD</code> with your password.</p>
+  <p>Replace <code class="placeholder">ADDRESS</code> with your remote node&#39;s external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.</p>
 <div class="window ">
             <nav class="control-window">
               <div class="close">&times;</div>
@@ -18,7 +18,7 @@ Now let's run `chef-client` on your node and confirm that the notification is se
             <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password 'PASSWORD'</span></code></pre></td></tr></table></div></div>
           </div>
   <h4>Linux node: key-based authentication</h4>
-  <p>Replace <code>ADDRESS</code> with your remote node&#39;s external address and <code>IDENTITY_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.</p>
+  <p>Replace <code class="placeholder">ADDRESS</code> with your remote node&#39;s external address and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.</p>
 <div class="window ">
             <nav class="control-window">
               <div class="close">&times;</div>
@@ -30,7 +30,7 @@ Now let's run `chef-client` on your node and confirm that the notification is se
             </div>
   <h4>Windows Server node</h4>
   <p>
-Replace <code>ADDRESS</code>, <code>USER</code>, and <code>PASSWORD</code> with your values.
+Replace <code class="placeholder">ADDRESS</code>, <code class="placeholder">USER</code>, and <code class="placeholder">PASSWORD</code> with your values.
 </p>
 <div id="knife-command" class="window" ng-non-bindable>
   <nav class="control-window">

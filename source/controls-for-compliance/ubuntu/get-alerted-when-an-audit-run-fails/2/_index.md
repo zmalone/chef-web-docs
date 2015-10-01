@@ -27,7 +27,7 @@ Choose the option that matches how you connect to your Ubuntu node.
 
 #### Option a: Use a user name and password
 
-Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
@@ -36,7 +36,7 @@ $ knife ssh ADDRESS 'sudo chef-client --audit-mode disabled' --manual-list --ssh
 
 #### Option b: Use key-based authentication
 
-Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `IDENTITY_FILE` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo
@@ -58,7 +58,7 @@ Now bootstrap your node. Choose the option below that matches how you can authen
 
 #### Option a: Use a user name and password
 
-Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
@@ -67,7 +67,7 @@ $ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use
 
 #### Option b: Use key-based authentication
 
-Replace `ADDRESS` with your remote node's external address, and `IDENTITY_FILE` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo

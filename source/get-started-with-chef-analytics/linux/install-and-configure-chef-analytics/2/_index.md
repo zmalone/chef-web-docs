@@ -22,7 +22,7 @@ ok: down: rabbitmq: 1s, normally up
 ok: down: redis_lb: 0s, normally up
 ```
 
-From your Chef server, add the FQDN for the Chef server and the Chef analytics server to <code class="file-path">/etc/opscode/chef-server.rb</code>. Replace `CHEF_SERVER_FQDN` with your Chef server's FQDN and `ANALYTICS_FQDN` with your Chef Analytics server's FQDN. For `redirect_uri`, the ending slash is required.
+From your Chef server, add the FQDN for the Chef server and the Chef analytics server to <code class="file-path">/etc/opscode/chef-server.rb</code>. Replace <code class="placeholder">CHEF\_SERVER\_FQDN</code> with your Chef server's FQDN and <code class="placeholder">ANALYTICS\_FQDN</code> with your Chef Analytics server's FQDN. For `redirect_uri`, the ending slash is required.
 
 ```ruby
 # /etc/opscode/chef-server.rb
@@ -34,7 +34,7 @@ oc_id['applications'] = {
 }
 ```
 
-Also, add the following to <code class="file-path">/etc/opscode/chef-server.rb</code> to enable remote access to RabbitMQ on the Chef server. Replace `CHEF_SERVER_IP_ADDRESS` with your Chef server's public IP address (not its hostname.)
+Also, add the following to <code class="file-path">/etc/opscode/chef-server.rb</code> to enable remote access to RabbitMQ on the Chef server. Replace <code class="placeholder">CHEF\_SERVER\_IP\_ADDRESS</code> with your Chef server's public IP address (not its hostname.)
 
 ```ruby
 # /etc/opscode/chef-server.rb

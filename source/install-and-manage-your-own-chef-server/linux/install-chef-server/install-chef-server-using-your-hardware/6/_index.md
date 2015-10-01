@@ -6,15 +6,15 @@ You'll need some information that you'll use in later steps, so jot down the fol
 
 | Item                | Description |    Notes and examples |
 |----------------------------------:|------------|----------|
-| `ADMIN_USER_NAME`  | user name for the administrator account | `jsmith`, `admin` |
-| `ADMIN_PASSWORD`   | password for the administrator account | Note your password somewhere safe! |
-| `ADMIN_FIRST_NAME` | administrator's first name | `Joe` |
-| `ADMIN_LAST_NAME`  | administrator's last name | `Smith` |
-| `ADMIN_EMAIL`      | administrator's email address | `joe.smith@example.com` |
+| <code class="placeholder">ADMIN\_USER\_NAME</code>  | user name for the administrator account | `jsmith`, `admin` |
+| <code class="placeholder">ADMIN\_PASSWORD</code>   | password for the administrator account | Note your password somewhere safe! |
+| <code class="placeholder">ADMIN\_FIRST\_NAME</code> | administrator's first name | `Joe` |
+| <code class="placeholder">ADMIN\_LAST\_NAME</code>  | administrator's last name | `Smith` |
+| <code class="placeholder">ADMIN\_EMAIL</code>      | administrator's email address | `joe.smith@example.com` |
 
 ### Create the admin account
 
-From your Chef server, run the following command to create the administrator account. Replace `ADMIN_USER_NAME`, `ADMIN_FIRST_NAME`, `ADMIN_LAST_NAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` with your values.
+From your Chef server, run the following command to create the administrator account. Replace <code class="placeholder">ADMIN\_USER\_NAME</code>, <code class="placeholder">ADMIN\_FIRST\_NAME</code>, <code class="placeholder">ADMIN\_LAST\_NAME</code>, <code class="placeholder">ADMIN\_EMAIL</code>, and <code class="placeholder">ADMIN\_PASSWORD</code> with your values.
 
 ```bash
 $ sudo chef-server-ctl user-create ADMIN_USER_NAME ADMIN_FIRST_NAME ADMIN_LAST_NAME ADMIN_EMAIL ADMIN_PASSWORD --filename ADMIN_USER_NAME.pem

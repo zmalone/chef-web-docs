@@ -6,7 +6,7 @@ The [Chef server configuration file](https://docs.chef.io/config_rb_server.html)
 
 [COMMENT] This step is especially important in cloud environments such as Amazon EC2, where each instance is assigned a hostname on the private network and the firewall routes traffic between the private network and the public Internet. This step ensures that the Chef server uses the public hostname that's accessible from outside the firewall.
 
-First, get the fully-qualified domain name (FQDN) for your Chef server that's accessible from the rest of your network. Then write out <code class="file-path">/etc/opscode/chef-server.rb</code>, like this, replacing `CHEF_SERVER_FQDN` with your Chef server's FQDN.
+First, get the fully-qualified domain name (FQDN) for your Chef server that's accessible from the rest of your network. Then write out <code class="file-path">/etc/opscode/chef-server.rb</code>, like this, replacing <code class="placeholder">CHEF\_SERVER\_FQDN</code> with your Chef server's FQDN.
 
 ```ruby
 # /etc/opscode/chef-server.rb

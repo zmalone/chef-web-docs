@@ -10,7 +10,7 @@ Choose the option below that matches how you can authenticate and bootstrap your
 
 ### Option 1: Use a user name and password
 
-This is what we did in [Learn to manage a node](/manage-a-node/ubuntu/). From your workstation, run this command to bootstrap your node. Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
+This is what we did in [Learn to manage a node](/manage-a-node/ubuntu/). From your workstation, run this command to bootstrap your node. Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
@@ -21,7 +21,7 @@ You'll see lots of output as your node installs `chef-client` and runs the `awes
 
 ### Option 2: Use key-based authentication
 
-From your workstation, run this command to bootstrap your node. Replace `ADDRESS` with your remote node's external address, and `IDENTITY_FILE` with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+From your workstation, run this command to bootstrap your node. Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
 ```bash
 # ~/chef-repo

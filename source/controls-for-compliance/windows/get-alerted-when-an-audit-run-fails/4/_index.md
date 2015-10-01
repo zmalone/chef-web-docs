@@ -4,7 +4,7 @@ Now let's run the `audit` cookbook on your node. You already verified that the a
 
 Because you already applied the `webserver` cookbook to your node, this time you'll specify the `--audit-mode audit-only` option to run only the audit code on your node.
 
-Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo

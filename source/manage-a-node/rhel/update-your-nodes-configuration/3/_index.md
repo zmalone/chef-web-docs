@@ -1,7 +1,7 @@
 ## 3. Run the cookbook on your node
 
 <div id="knife-intro" class="indent" data-type="rhel-fundamentals" ng-non-bindable>
-Run <code>knife ssh</code> to run your cookbook on your node. Replace <code>ADDRESS</code>, <code>USER</code>, and <code>PASSWORD</code> with your values.
+Run <code>knife ssh</code> to run your cookbook on your node. Replace <code class="placeholder">ADDRESS</code>, <code class="placeholder">USER</code>, and <code class="placeholder">PASSWORD</code> with your values.
 </div>
 <p/>
 <div id="knife-command" class="window" ng-non-bindable>

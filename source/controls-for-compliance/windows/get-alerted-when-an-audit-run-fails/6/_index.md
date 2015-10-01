@@ -2,7 +2,7 @@
 
 From your workstation, run `chef-client` with audit mode enabled a second time.
 
-Replace `ADDRESS` with your remote node's external address, `USER` with your username, and `PASSWORD` with your password.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/chef-repo
