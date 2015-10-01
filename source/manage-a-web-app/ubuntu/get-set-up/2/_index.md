@@ -10,3 +10,5 @@ All you need to do right now is bring up a clean instance of Ubuntu 14.04 that w
 * you have root or `sudo` access.
 
 [WARN] Software such as Apache is configured differently in various releases of Ubuntu. For learning purposes, we recommend that you use Ubuntu 14.04 as your node so that you can more easily verify your progress. However, if you're unable to use Ubuntu 14.04, other versions of Ubuntu can work with some modification.
+
+[WARN] Some of the cookbooks and features that you'll use in this tutorial require `chef-client` version 12.4.0 or greater on your node. If you have an existing node that has a prior version of `chef-client`, [upgrade to the latest version](https://downloads.chef.io/chef-client/).
