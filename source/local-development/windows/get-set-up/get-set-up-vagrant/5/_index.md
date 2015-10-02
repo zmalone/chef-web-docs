@@ -6,33 +6,24 @@ For some operating systems, Test Kitchen can automatically download a Vagrant bo
 
 In this part, you'll perform these steps.
 
-1. Download the evaluation version of Windows Server 2012 R2.
-1. Install [Packer](https://packer.io/) on your workstation. You'll use Packer to create a Windows Server machine image.
+1. Install [Packer](https://packer.io/) on your workstation.
 1. Get the [packer-templates](https://github.com/mwrock/packer-templates) project from GitHub.
 1. Run the Packer template to generate a Vagrant box.
 1. Register the box with your local Vagrant catalog.
 
 Read [this blog post](http://www.hurryupandwait.io/blog/creating-windows-base-images-for-virtualbox-and-hyper-v-using-packer-boxstarter-and-vagrant) for more information about the process.
 
-#### Download the evaluation version of Windows Server 2012 R2
-
-Download the ISO image of the evaluation version of Windows Server 2012 R2 to your workstation from this URL.
-
-<http://care.dlservice.microsoft.com/dl/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO>
-
-The Packer template that you'll run later reads this file from your <code class="file-path">/iso</code> or <code class="file-path">C:\iso</code> directory. If you can't download the file to this location, you can choose another. We'll show you how to modify the Packer template to read from your path.
-
-While you wait for the download, you can continue to the next step.
-
 #### Install Packer on your workstation
 
-Next, install Packer. Packer builds the Vagrant box from your ISO image.
+First, install Packer. Packer builds the Vagrant box from an ISO image.
 
 <a class='accent-button radius' href='https://packer.io/downloads.html' target='_blank'>Install Packer&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
+Packer is distributed through a .zip file. After you extract the .zip file, add the path to `packer` to your `PATH` environment variable or use the full path to in the steps that follow.
+
 #### Get the packer-templates project from GitHub
 
-Now download the latest `packer-templates` project from GitHub. This template installs all Windows updates and reduces the size of the image as much as possible.
+Now download the latest `packer-templates` project from GitHub. This template downloads the evaluation version of Windows Server 2012 R2 as an ISO image, installs all Windows updates, and reduces the size of the image as much as possible.
 
 If you use Git, clone the repository to where you do your development work, for example, <code class="file-path">~/Development/mwrock</code>.
 
@@ -55,15 +46,21 @@ If you don't use Git, you can download a .zip file that contains the latest vers
 
 #### Run the Packer template to generate a Vagrant box
 
-Now run Packer to apply the template to your ISO image.
+Now run Packer to apply the template. This process can take several hours because it downloads the ISO image and  applies the latest Windows updates.
 
 ```bash
 # ~/Development/mwrock/packer-templates
-$ packer build -force vbox-2012r2.json
+$ packer build -force -only virtualbox-iso vbox-2012r2.json
 virtualbox-iso output will be in this color.
 
 ==> virtualbox-iso: Downloading or copying ISO
-    virtualbox-iso: Downloading or copying: file:///iso/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO
+    virtualbox-iso: Downloading or copying: http://care.dlservice.microsoft.com/dl/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO
+    virtualbox-iso: Download progress: 0%
+    virtualbox-iso: Download progress: 1%
+    virtualbox-iso: Download progress: 2%
+[...]
+    virtualbox-iso: Download progress: 100%
+==> virtualbox-iso: Deleting previous output directory...
 ==> virtualbox-iso: Creating floppy disk...
     virtualbox-iso: Copying: answer_files/2012_r2/Autounattend.xml
     virtualbox-iso: Copying: scripts/postunattend.xml
@@ -72,42 +69,41 @@ virtualbox-iso output will be in this color.
 ==> virtualbox-iso: Creating virtual machine...
 ==> virtualbox-iso: Creating hard drive...
 ==> virtualbox-iso: Attaching floppy disk...
-==> virtualbox-iso: Creating forwarded port mapping for SSH (host port 4059)
+==> virtualbox-iso: Creating forwarded port mapping for SSH (host port 3165)
 ==> virtualbox-iso: Executing custom VBoxManage commands...
-    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1438115991 --natpf1 guest_winrm,tcp,,55985,,5985
-    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1438115991 --memory 2048
-    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1438115991 --cpus 2
+    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1443702410 --natpf1 guest_winrm,tcp,,55985,,5985
+    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1443702410 --memory 2048
+    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1443702410 --vram 36
+    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1443702410 --cpus 2
 ==> virtualbox-iso: Starting the virtual machine...
 ==> virtualbox-iso: Waiting 10s for boot...
 ==> virtualbox-iso: Typing the boot command...
 ==> virtualbox-iso: Waiting for WinRM to become available...
 ==> virtualbox-iso: Connected to WinRM!
-==> virtualbox-iso: Uploading VirtualBox version info (4.3.30)
+==> virtualbox-iso: Uploading VirtualBox version info (5.0.4)
 ==> virtualbox-iso: Gracefully halting virtual machine...
     virtualbox-iso: Removing floppy drive...
 ==> virtualbox-iso: Preparing to export machine...
-    virtualbox-iso: Deleting forwarded port mapping for SSH (host port 4059)
+    virtualbox-iso: Deleting forwarded port mapping for SSH (host port 3165)
 ==> virtualbox-iso: Exporting virtual machine...
-    virtualbox-iso: Executing: export packer-virtualbox-iso-1438115991 --output output-virtualbox-iso/packer-virtualbox-iso-1438115991.ovf
+    virtualbox-iso: Executing: export packer-virtualbox-iso-1443702410 --output output-virtualbox-iso/packer-virtualbox-iso-1443702410.ovf
 ==> virtualbox-iso: Unregistering and deleting virtual machine...
 ==> virtualbox-iso: Running post-processor: vagrant
 ==> virtualbox-iso (vagrant): Creating Vagrant box for 'virtualbox' provider
-    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/packer-virtualbox-iso-1438115991-disk1.vmdk
-    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/packer-virtualbox-iso-1438115991.ovf
+    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/packer-virtualbox-iso-1443702410-disk1.vmdk
+    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/packer-virtualbox-iso-1443702410.ovf
     virtualbox-iso (vagrant): Renaming the OVF to box.ovf...
     virtualbox-iso (vagrant): Using custom Vagrantfile: vagrantfile-windows.template
     virtualbox-iso (vagrant): Compressing: Vagrantfile
     virtualbox-iso (vagrant): Compressing: box.ovf
     virtualbox-iso (vagrant): Compressing: metadata.json
-    virtualbox-iso (vagrant): Compressing: packer-virtualbox-iso-1438115991-disk1.vmdk
+    virtualbox-iso (vagrant): Compressing: packer-virtualbox-iso-1443702410-disk1.vmdk
 Build 'virtualbox-iso' finished.
 
 ==> Builds finished. The artifacts of successful builds are:
 --> virtualbox-iso: VM files in directory: output-virtualbox-iso
 --> virtualbox-iso: 'virtualbox' provider box: windows2012r2min-virtualbox.box
 ```
-
-If you downloaded the ISO image to a directory other than <code class="file-path">/iso</code> or <code class="file-path">C:\iso</code>, [modify vbox-2012r2.json](https://github.com/mwrock/packer-templates/blob/8b4e62a014a571666a4534458426ff397932b330/vbox-2012r2.json#L49) to point to your path.
 
 #### Register the box with your local Vagrant catalog
 
