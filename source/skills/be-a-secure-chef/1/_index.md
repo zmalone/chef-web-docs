@@ -99,7 +99,7 @@ If possible, use validatorless bootstrapping. With it, you eliminate the organiz
 For more information about validatorless bootstrapping, see: <https://docs.chef.io/install_bootstrap.html#validatorless-bootstrap>. For a blog post on the subject, see: <https://www.chef.io/blog/2015/04/16/validatorless-bootstraps/>.
 
 
-If you do use the validator certificate (preferably only with automated bootstrapping and not with manual bootstrapping), delete it after the Chef client registers with the Chef server by using the chef-client cookbook at: <https://supermarket.chef.io/cookbooks/chef-client/versions/0.99.1>.
+If you do use the validator certificate (preferably only with automated bootstrapping and not with manual bootstrapping), delete it after the Chef client registers with the Chef server by using the chef-client cookbook at: <https://supermarket.chef.io/cookbooks/chef-client/>.
 
 ###Securing the Chef workstation
 
