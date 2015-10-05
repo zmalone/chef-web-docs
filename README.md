@@ -8,7 +8,7 @@ Installation
 
 1. Clone the repository:
 
-        $ delivery clone --server delivery.chef.co --ent chef --org CIA chef-web-learn
+        $ git clone git@github.com:chef/chef-web-learn.git
 
 1. CD into the project:
 
