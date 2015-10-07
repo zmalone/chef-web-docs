@@ -1,4 +1,4 @@
-## 6. Run the tests a second time
+## 6. Run the test a second time
 
 Run `kitchen verify` to run your test against your new web server configuration.
 

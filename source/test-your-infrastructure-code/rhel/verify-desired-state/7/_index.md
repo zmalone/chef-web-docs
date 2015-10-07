@@ -12,7 +12,7 @@ Let's write a few more tests that verify other aspects of your configuration. Sp
 
 Doing so gives you more information that will enable you to better pinpoint the root cause of failure.
 
-Our new tests will follow the same format as the first one. Append one test for each of the above [requirements] to <code class="file-path">default_spec.rb</code>, making the entire file look like this.
+Our new tests will follow the same format as the first one. Append one test for each of the above requirements to <code class="file-path">default_spec.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/webserver/test/integration/default/serverspec/default_spec.rb

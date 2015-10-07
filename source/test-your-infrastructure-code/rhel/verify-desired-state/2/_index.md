@@ -1,4 +1,4 @@
-## 2. Write a test
+## 2. Write a test that verifies the web server configuration
 
 The `chef generate cookbook` command creates a <code class="file-path">test</code> directory for you to hold your Serverspec tests.
 
