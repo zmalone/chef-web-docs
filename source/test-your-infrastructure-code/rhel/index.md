@@ -15,7 +15,7 @@ One advantage to developing locally is that it enables you to confirm that `chef
 
 For example, say you have a cookbook that configures a web application. A recipe in that cookbook configures a database server to listen on port 3306. You confirm that your configuration behaves as you expect. Later, another member of your team adds a recipe that configures the firewall, and inadvertently closes access to port 3306. When you apply your configuration, your web application now displays a basic "access denied" error.
 
-How would you diagnose the error? You might start by manually verifying that the database software is installed and running and that you can run basic queries. Or you might start by looking at other aspects of your configuration, such as user, group, and file permissions. It might take some time to discover that firewall access is blocked. After you remedy the error, you may need to repeat the verification process to ensure that other functionality continues to work like you expect.
+How would you diagnose the error? You might start by manually verifying that the database software is installed and running and that you can run basic queries. Or you might start by looking at other aspects of your configuration, such as user, group, and file permissions. It might take some time to discover that the firewall is blocking access to the required port. After you remedy the error, you may need to repeat the verification process to ensure that other functionality continues to work like you expect.
 
 With Chef, you use _code_ to create cookbooks that express the desired state of your systems. You can also use code in a similar way to verify that the cookbooks you write do what you expect. The article [Overview of test driven infrastructure with Chef](/skills/test-driven-development/) outlines some of the more popular testing tools, and in this tutorial you'll use several of them.
 
@@ -29,13 +29,7 @@ After completing this tutorial, you'll:
 
 * be able to use [Serverspec](http://serverspec.org) to verify that your cookbook configures the system as you expect.
 * be able to use [ChefSpec](http://sethvargo.github.io/chefspec/) to verify that your resources are properly defined, even before you apply your cookbook.
-* be able to use [RuboCop](https://github.com/bbatsov/rubocop) and [Foodcritic](http://acrmp.github.io/foodcritic/) to verify that your cookbook adheres and avoids common defects.
-* have increased confidence that your `awesome_customers` cookbook will behave as you expect in production.
+* be able to use [RuboCop](https://github.com/bbatsov/rubocop) and [Foodcritic](http://acrmp.github.io/foodcritic/) to verify that your cookbook adheres to accepted coding standards and avoids common defects.
+* have increased confidence that your `awesome_customers` cookbook that you've built in the previous tutorials will behave as you expect in production.
 
-You'll get started by setting up ChefDK and the virtualization tools on your workstation.
-
-[HEADLINE] Writing just one test [is better than nothing]
-
-
-
-Exercise: change your web application to listen to port 81 instead of port 80 and write a test to confirm that it works.
+You'll get started by setting up the Chef Development Kit and the virtualization tools on your workstation.
