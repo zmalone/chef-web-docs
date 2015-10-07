@@ -14,15 +14,15 @@ Doing so gives you more information that will enable you to better pinpoint the 
 
 Our new tests will follow the same format as the first one. Append one test for each of the above [requirements] to <code class="file-path">default_spec.rb</code>, making the entire file look like this.
 
-TODO: Reorder these so that curl is first.
-
-TODO: Remember to rename webserver to webserver.
-
 ```ruby
 # ~/webserver/test/integration/default/serverspec/default_spec.rb
 require 'spec_helper'
 
 describe 'apache' do
+  it 'displays a custom home page' do
+    expect(command('curl localhost').stdout).to match /hello/
+  end
+
   it 'is installed' do
     expect(package 'httpd').to be_installed
   end
@@ -33,10 +33,6 @@ describe 'apache' do
 
   it 'is listening to port 80' do
     expect(port 80).to be_listening
-  end
-
-  it 'displays a custom home page' do
-    expect(command('curl localhost').stdout).to match /hello/
   end
 end
 ```
