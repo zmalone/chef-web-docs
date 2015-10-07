@@ -3,7 +3,7 @@
 The `kitchen verify` command already brought up a CentOS instance. Now run `kitchen converge` to apply your web server cookbook to your instance.
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
 -----> Converging <default-centos-66>...
@@ -17,7 +17,7 @@ $ kitchen converge
        Transferring files to <default-centos-66>
        Starting Chef Client, version 12.4.1
 [...]
-       Recipe: webserver_test::default
+       Recipe: webserver::default
 
 
 

@@ -4,14 +4,14 @@ To begin, run the following `chef generate cookbook` command from a working dire
 
 ```bash
 # ~
-$ chef generate cookbook webserver_test
+$ chef generate cookbook webserver
 Compiling Cookbooks...
 Recipe: code_generator::cookbook
-  * directory[/Users/user/webserver_test] action create
-    - create new directory /Users/user/webserver_test
+  * directory[/Users/user/webserver] action create
+    - create new directory /Users/user/webserver
 [...]
-  * cookbook_file[/Users/user/webserver_test/.gitignore] action create
-    - create new file /Users/user/webserver_test/.gitignore
-    - update content in file /Users/user/webserver_test/.gitignore from none to dd37b2
+  * cookbook_file[/Users/user/webserver/.gitignore] action create
+    - create new file /Users/user/webserver/.gitignore
+    - update content in file /Users/user/webserver/.gitignore from none to dd37b2
     (diff output suppressed by config)
 ```

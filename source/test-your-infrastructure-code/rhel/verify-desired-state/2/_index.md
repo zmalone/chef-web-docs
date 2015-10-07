@@ -3,7 +3,7 @@
 The `chef generate cookbook` command creates a <code class="file-path">test</code> directory for you to hold your Serverspec tests.
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ tree test
 test
 └── integration
@@ -59,7 +59,7 @@ Say that the custom home page always contains the word "hello". We can write one
 Replace the contents of <code class="file-path">default_spec.rb</code> with this.
 
 ```ruby
-# ~/webserver_test/test/integration/default/serverspec/default_spec.rb
+# ~/webserver/test/integration/default/serverspec/default_spec.rb
 require 'spec_helper'
 
 describe 'apache' do

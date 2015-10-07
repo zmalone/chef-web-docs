@@ -17,7 +17,7 @@ $ kitchen destroy
 Run `kitchen test` to apply and test your configuration one final time.
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ kitchen test
 -----> Starting Kitchen (v1.4.2)
 -----> Cleaning up any prior instances of <default-centos-66>
@@ -29,10 +29,10 @@ $ kitchen test
        ==> default: Importing base box 'opscode-centos-6.6'...
 [...]
        Synchronizing Cookbooks:
-         - webserver_test
+         - webserver
        Compiling Cookbooks...
        Converging 3 resources
-       Recipe: webserver_test::default
+       Recipe: webserver::default
 
            - install version 2.2.15-47.el6.centos of package httpd
 
@@ -79,7 +79,7 @@ $ kitchen test
 You've verified that your web server configuration is repeatable. Run `kitchen list` to verify that the instance is destroyed.
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ kitchen list
 Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-66  Vagrant  ChefZero     Busser    Ssh        <Not Created>

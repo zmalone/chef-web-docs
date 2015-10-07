@@ -9,7 +9,7 @@ To make the test pass, we need:
 Write out the default recipe, <code class="file-path">default.rb</code>, like this.
 
 ```ruby
-# ~/webserver_test/recipes/default.rb
+# ~/webserver/recipes/default.rb
 package 'httpd'
 
 service 'httpd' do

@@ -13,7 +13,7 @@ You may want to verify your work on a local instance before you run your cookboo
 
 ChefSpec is most useful when your recipes uses logic &ndash; conditinal statements such as `if`, `else`, and `case` &ndash; to XXXXX.
 
-In this lesson, you'll modify the `webserver_test` cookbook to work on two platform families &ndash; Red Hat Enterprise Linux (which includes CentOS, XXX) and Debian (which includes Ubuntu, XXX.) and write tests that verify that the code is defined correctly for both &ndash; all without running it on a local instance.
+In this lesson, you'll modify the `webserver` cookbook to work on two platform families &ndash; Red Hat Enterprise Linux (which includes CentOS, XXX) and Debian (which includes Ubuntu, XXX.) and write tests that verify that the code is defined correctly for both &ndash; all without running it on a local instance.
 
 TODO: It's like a unit test...
 
@@ -24,7 +24,7 @@ To illustrate XXX, let's start again by writing our tests first, watching them f
 DIR STRUCTURE
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ tree spec
 spec
 ├── spec_helper.rb
@@ -37,13 +37,13 @@ spec
 
 TALK ABOUT HOW DEFAULT_SPEC.RB MAPS TO DEFAULT.RB, ETC.
 
-THE DEFAULT SPEC, # ~/webserver_test/spec/unit/recipes/default_spec.rb, LOOKS LIKE THIS
+THE DEFAULT SPEC, # ~/webserver/spec/unit/recipes/default_spec.rb, LOOKS LIKE THIS
 
 ```ruby
-# ~/webserver_test/spec/unit/recipes/default_spec.rb
+# ~/webserver/spec/unit/recipes/default_spec.rb
 require 'spec_helper'
 
-describe 'webserver_test::default' do
+describe 'webserver::default' do
   context 'When all attributes are default, on an unspecified platform' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new
@@ -65,10 +65,10 @@ TODO: Remove the 'converges successfully' part.
 TODO: 'on Ubuntu 14.04'
 
 ```ruby
-# ~/webserver_test/spec/unit/recipes/default_spec.rb
+# ~/webserver/spec/unit/recipes/default_spec.rb
 require 'spec_helper'
 
-describe 'webserver_test::default' do
+describe 'webserver::default' do
   context 'on CentOS' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new(platform: 'centos', version: '6.6')
@@ -114,13 +114,13 @@ Remember, ChefSpec doesn't run the code. We don't include tests that tests acces
 ## 2. Run the ChefSpec tests
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ chef exec rspec --color spec/unit/recipes/default_spec.rb
 ....FF
 
 Failures:
 
-  1) webserver_test::default on Ubuntu installs apache2
+  1) webserver::default on Ubuntu installs apache2
      Failure/Error: expect(chef_run).to install_package 'apache2'
        expected "package[apache2]" with action :install to be in Chef run. Other package resources:
 
@@ -128,7 +128,7 @@ Failures:
 
      # ./spec/unit/recipes/default_spec.rb:40:in `block (3 levels) in <top (required)>'
 
-  2) webserver_test::default on Ubuntu starts the apache2 service
+  2) webserver::default on Ubuntu starts the apache2 service
      Failure/Error: expect(chef_run).to start_service 'apache2'
        expected "service[apache2]" with action :start to be in Chef run. Other service resources:
 
@@ -141,8 +141,8 @@ Finished in 1.15 seconds (files took 3.71 seconds to load)
 
 Failed examples:
 
-rspec ./spec/unit/recipes/default_spec.rb:39 # webserver_test::default on Ubuntu installs apache2
-rspec ./spec/unit/recipes/default_spec.rb:43 # webserver_test::default on Ubuntu starts the apache2 service
+rspec ./spec/unit/recipes/default_spec.rb:39 # webserver::default on Ubuntu installs apache2
+rspec ./spec/unit/recipes/default_spec.rb:43 # webserver::default on Ubuntu starts the apache2 service
 ```
 
 [COMMENT] To run all tests, you could run `chef exec rspec --color spec/unit/recipes/*.rb`.
@@ -152,7 +152,7 @@ rspec ./spec/unit/recipes/default_spec.rb:43 # webserver_test::default on Ubuntu
 Let's say you want to create one web server cookbook that runs on multiple platforms.
 
 ```ruby
-# ~/webserver_test/recipes/default.rb
+# ~/webserver/recipes/default.rb
 package_name = service_name = case node['platform']
 when 'centos' then 'httpd'
 when 'ubuntu' then 'apache2'
@@ -178,7 +178,7 @@ COMMON ON HOW YOU MIGHT USE HTTPD COOKBOOK IN PRACTICE
 ## 4. Run the ChefSpec tests again
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ chef exec rspec --color spec/unit/recipes/default_spec.rb
 ......
 

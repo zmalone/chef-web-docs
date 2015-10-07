@@ -16,10 +16,10 @@ Our new tests will follow the same format as the first one. Append one test for 
 
 TODO: Reorder these so that curl is first.
 
-TODO: Remember to rename webserver_test to webserver.
+TODO: Remember to rename webserver to webserver.
 
 ```ruby
-# ~/webserver_test/test/integration/default/serverspec/default_spec.rb
+# ~/webserver/test/integration/default/serverspec/default_spec.rb
 require 'spec_helper'
 
 describe 'apache' do
@@ -47,7 +47,7 @@ end
 Now run `kitchen verify` to run your new tests.
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ kitchen verify
 -----> Starting Kitchen (v1.4.2)
 -----> Setting up <default-centos-66>...
@@ -80,7 +80,7 @@ All tests pass! Now your tests cover multiple points of failure. If one of the t
 Now run `kitchen destroy` to destroy your instance.
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ kitchen destroy
 -----> Starting Kitchen (v1.4.2)
 -----> Destroying <default-centos-66>...
@@ -94,7 +94,7 @@ $ kitchen destroy
 Run `kitchen list` to verify that the instance no longer exists.
 
 ```bash
-# ~/webserver_test
+# ~/webserver
 $ kitchen list
 Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-66  Vagrant  ChefZero     Busser    Ssh        <Not Created>

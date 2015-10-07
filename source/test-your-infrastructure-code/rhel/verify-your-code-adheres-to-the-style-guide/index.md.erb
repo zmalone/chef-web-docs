@@ -31,7 +31,7 @@ Although they both Z, it's common to run them both because:
 * it's fast
 * Foodcritic also can identify common [usage pattern errors] (example is using execute instead of service)
 
-We'll use the two variations of your `webserver_test` cookbook (Serverspec and ChefSpec) to XXX.
+We'll use the two variations of your `webserver` cookbook (Serverspec and ChefSpec) to XXX.
 
 ## Rubocop
 
@@ -40,7 +40,7 @@ We'll use the two variations of your `webserver_test` cookbook (Serverspec and C
 - indented `end`
 
 ```ruby
-# ~/webserver_test
+# ~/webserver
 package 'httpd'
 
 service 'httpd' do
@@ -60,7 +60,7 @@ file '/var/www/html/index.html' do
 RUN RUBOCOP FROM RECIPES DIR
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ rubocop
 Inspecting 1 file
 W
@@ -83,7 +83,7 @@ default.rb:19:3: W: end at 19, 2 is not aligned with file '/var/www/html/index.h
 FIX THE OFFENSES
 
 ```ruby
-# ~/webserver_test
+# ~/webserver
 package 'httpd'
 
 service 'httpd' do
@@ -102,7 +102,7 @@ end
 RUN RUBOCOP AGAIN
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ rubocop
 Inspecting 1 file
 C
@@ -121,7 +121,7 @@ NEW ERROR IS DISCOVERED BECAUSE IT HAS HIDDEN BY THE PREVIOUS ONE (THE INDENTED 
 FIX IT
 
 ```ruby
-# ~/webserver_test
+# ~/webserver
 package 'httpd'
 
 service 'httpd' do
@@ -140,7 +140,7 @@ end
 RUN RUBOCOP AGAIN
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ rubocop
 Inspecting 1 file
 .
@@ -159,7 +159,7 @@ You can disable or modify rules.
 Say you have lots of existing code that uses 4 spaces, and you want to temporarily disable the 2 space check.
 
 ```ruby
-# ~/webserver_test
+# ~/webserver
 package 'httpd'
 
 service 'httpd' do
@@ -176,7 +176,7 @@ end
 ```
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ rubocop
 Inspecting 1 file
 C
@@ -197,7 +197,7 @@ Add .rubocop.yml to cookbook directory (can be anywhere up; what's the recommend
 Add this code.
 
 ```ruby
-# ~/webserver_test/.rubocop.yml
+# ~/webserver/.rubocop.yml
 Style/IndentationWidth:
   # Number of spaces for each indentation level.
   Width: 4
@@ -208,7 +208,7 @@ Style/IndentationWidth:
 RUN IT
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ rubocop
 Inspecting 1 file
 .
@@ -229,7 +229,7 @@ A common mistake is to use string interpolation when it's not necessary.
 Let's revisit. Recall it looks like this.
 
 ```ruby
-# ~/webserver_test/recipes/default.rb
+# ~/webserver/recipes/default.rb
 package_name = service_name = case node['platform']
 when 'centos' then 'httpd'
 when 'ubuntu' then 'apache2'
@@ -255,7 +255,7 @@ MODIFY IT LIKE THIS.
 TODO: MAKE SURE PATH IS CORRECT EVERYWHERE!
 
 ```ruby
-# ~/webserver_test/recipes/default.rb
+# ~/webserver/recipes/default.rb
 package_name = service_name = case node['platform']
 when 'centos' then 'httpd'
 when 'ubuntu' then 'apache2'
@@ -279,20 +279,20 @@ end
 RUN FOODCRITIC
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ foodcritic default.rb
 FC002: Avoid string interpolation where not required: default.rb:11
 FC002: Avoid string interpolation where not required: default.rb:13
 ```
 
-[COMMENT] To test all recipes, you can run Foodcritic from a directory above your cookbook and specify the cookbook name. For example, you can run `foodcritic webserver_test` from your <code class="file-path">~</code> directory.
+[COMMENT] To test all recipes, you can run Foodcritic from a directory above your cookbook and specify the cookbook name. For example, you can run `foodcritic webserver` from your <code class="file-path">~</code> directory.
 
 TODO^ On second thought, why not just run from ~?
 
 FIX THE ERROR
 
 ```ruby
-# ~/webserver_test/recipes/default.rb
+# ~/webserver/recipes/default.rb
 package_name = service_name = case node['platform']
 when 'centos' then 'httpd'
 when 'ubuntu' then 'apache2'
@@ -316,7 +316,7 @@ end
 RUN FOODCRITIC
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ foodcritic default.rb
 
 ```
@@ -326,7 +326,7 @@ ALL CLEAN!
 - show use of execute instead of service
 
 ```ruby
-# ~/webserver_test/recipes/default.rb
+# ~/webserver/recipes/default.rb
 case node['platform']
 when 'centos' then
   package 'httpd'
@@ -360,7 +360,7 @@ end
 ```
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ foodcritic default.rb
 FC004: Use a service resource to start and stop services: default.rb:13
 FC004: Use a service resource to start and stop services: default.rb:23
@@ -383,14 +383,14 @@ A common Ruby convention is to use double-quotes `"` only when:
 
 And to use single-quotes `'` for all other strings.
 
-Create the </code class="file-path">~/webserver_test/foodcritic</code> directory.
+Create the </code class="file-path">~/webserver/foodcritic</code> directory.
 
 [COMMENT] We don't have a Chef repo. If you did, you can add the foodcritic directory as a sub-directory of that so that you can easily apply it to all cookbooks in that repo.
 
-Add this to </code class="file-path">~/webserver_test/foodcritic/rules.rb</code>
+Add this to </code class="file-path">~/webserver/foodcritic/rules.rb</code>
 
 ```ruby
-# ~/webserver_test/rules.rb
+# ~/webserver/rules.rb
 # Adapted from https://github.com/customink-webops/foodcritic-rules.
 
 rule 'CINK002', 'Prefer single-quoted strings' do
@@ -446,10 +446,10 @@ RUN FOODCRITIC
 
 ```bash
 # ~
-$ foodcritic -I webserver_test/foodcritic  webserver_test
-CINK002: Prefer single-quoted strings: webserver_test/recipes/default.rb:6
-CINK002: Prefer single-quoted strings: webserver_test/recipes/default.rb:8
-CINK002: Prefer single-quoted strings: webserver_test/recipes/default.rb:12
+$ foodcritic -I webserver/foodcritic  webserver
+CINK002: Prefer single-quoted strings: webserver/recipes/default.rb:6
+CINK002: Prefer single-quoted strings: webserver/recipes/default.rb:8
+CINK002: Prefer single-quoted strings: webserver/recipes/default.rb:12
 ```
 
 SUMMARIZE...
@@ -459,7 +459,7 @@ Exercise:
 Run RuboCop on this one. How would you fix?
 
 ```ruby
-# ~/webserver_test/recipes/default.rb
+# ~/webserver/recipes/default.rb
 package_name = service_name = case node['platform']
 when 'centos' then 'httpd'
 when 'ubuntu' then 'apache2'
@@ -485,7 +485,7 @@ Answer:
 Here's what happens:
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ rubocop .
 Inspecting 1 file
 W
@@ -519,7 +519,7 @@ Style/CaseIndentation:
 - possibly ignore the `end`. (show inline as an example?)
 
 ```ruby
-# ~/webserver_test/recipes/default.rb
+# ~/webserver/recipes/default.rb
 package_name = service_name = case node['platform']
 when 'centos' then 'httpd'
 when 'ubuntu' then 'apache2'
@@ -529,7 +529,7 @@ end # rubocop:disable Lint/EndAlignment
 Or you can fix the code like this.
 
 ```ruby
-# ~/webserver_test/recipes/default.rb
+# ~/webserver/recipes/default.rb
 package_name = service_name =
 case node['platform']
 when 'centos' then 'httpd'
@@ -538,7 +538,7 @@ end
 ```
 
 ```bash
-# ~/webserver_test/recipes
+# ~/webserver/recipes
 $ rubocop .
 Inspecting 1 file
 .
