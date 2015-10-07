@@ -3,164 +3,47 @@ title: 'Verify your resources are properly defined'
 order: 3
 keywords: TODO
 layout: lesson
-sections: []
+sections: [1, 2, 3, 4]
 next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 ---
-So far, you've verified that your web server cookbook configures Apache as you expect. To do that, you used Test Kitchen to bring up a local CentOS instance, apply the cookbook, and run Serverspec tests. And although it's faster than manual verification, it can take several minutes for even a basic test run to complete.
+[HEADLINE] ChefSpec simulates the execution of your resources, giving you an even faster feedback loop as you create and refine your recipes.
 
-You may want to verify your work on a local instance before you run your cookbook in production, but as you develop your cookbook, you can use [ChefSpec](http://sethvargo.github.io/chefspec/) to speed up the feedback cycle even more. ChefSpec simulates the execution of your resources in memory, and does not involve the creation of a local instance. It's the fastest way to test your resources and is a great way to validate the correctness of your work, even before you set up a local instance to test on.
+In the previous lesson, you wrote Serverspec tests that automatically verify that your basic web server cookbook configures Apache as you expect. Although automated testing is faster than manual testing, it can still take some time for the instance to come up, run `chef-client`, and run the tests.
 
-ChefSpec is most useful when your recipes uses logic &ndash; conditinal statements such as `if`, `else`, and `case` &ndash; to XXXXX.
+You'll want to verify your work on a virtual instance before you run your cookbook in production, but as you develop your cookbook, you can use [ChefSpec](http://sethvargo.github.io/chefspec/) to speed up the feedback cycle even more. ChefSpec _simulates_ the execution of your resources in memory, and does not involve the creation of a virtual instance. It's the fastest way to test your resources and is a great way to validate the correctness of your work, even before you set up a virtual instance to test on.
 
-In this lesson, you'll modify the `webserver` cookbook to work on two platform families &ndash; Red Hat Enterprise Linux (which includes CentOS, XXX) and Debian (which includes Ubuntu, XXX.) and write tests that verify that the code is defined correctly for both &ndash; all without running it on a local instance.
+ChefSpec provides a kind of _unit_ testing, where you verify that a single component, such as a Chef resource, functions correctly. Unlike integration testing, unit testing does not focus on how multiple components work together.
 
-TODO: It's like a unit test...
-
-## 1. Write ChefSpec tests to verify XXX
-
-To illustrate XXX, let's start again by writing our tests first, watching them fail, and then writing just enough code to make them pass. We'll use knowledge that we have about the expected configuration to [drive the tests.]
-
-DIR STRUCTURE
-
-```bash
-# ~/webserver
-$ tree spec
-spec
-├── spec_helper.rb
-└── unit
-    └── recipes
-        └── default_spec.rb
-
-2 directories, 2 files
-```
-
-TALK ABOUT HOW DEFAULT_SPEC.RB MAPS TO DEFAULT.RB, ETC.
-
-THE DEFAULT SPEC, # ~/webserver/spec/unit/recipes/default_spec.rb, LOOKS LIKE THIS
+ChefSpec testing is most useful when a component's behavior varies based on the environment or other variable input. For example, say you define this `package` resource to install the `vim` text editor.
 
 ```ruby
-# ~/webserver/spec/unit/recipes/default_spec.rb
-require 'spec_helper'
-
-describe 'webserver::default' do
-  context 'When all attributes are default, on an unspecified platform' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-  end
+# default.rb
+package 'vim' do
+  action :install
 end
 ```
 
-MODIFY YOURS LIKE THIS
-
-TODO: CHeck case and make 'Apache' in previous lesson?
-
-TODO: Remove the 'converges successfully' part.
-TODO: 'on Ubuntu 14.04'
+You don't need to write a unit test here because this `package` resource can do only one thing &ndash; install the `vim` package if it's not already installed. However, say your `package` resource reads from a node attribute to determine which text editor to install.
 
 ```ruby
-# ~/webserver/spec/unit/recipes/default_spec.rb
-require 'spec_helper'
-
-describe 'webserver::default' do
-  context 'on CentOS' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'centos', version: '6.6')
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-
-    it 'installs httpd' do
-      expect(chef_run).to install_package 'httpd'
-    end
-
-    it 'starts the httpd service' do
-      expect(chef_run).to start_service 'httpd'
-    end
-  end
-
-  context 'on Ubuntu' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '14.04')
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-
-    it 'installs apache2' do
-      expect(chef_run).to install_package 'apache2'
-    end
-
-    it 'starts the apache2 service' do
-      expect(chef_run).to start_service 'apache2'
-    end
-  end
+# default.rb
+package node['text_editor'] do
+  action :install
 end
 ```
 
-Remember, ChefSpec doesn't run the code. We don't include tests that tests access to port 80 or [curls localhost] because ChefSpec does not have that information &ndash; it tests only what it can directly [determine] from the code.
+In this case, you might want to validate that when the `node['text_editor']` attribute is set, that the appropriate text editor would be installed.
 
-## 2. Run the ChefSpec tests
+In this lesson, you'll modify the `webserver` cookbook to work on both CentOS and Ubuntu. The way Apache is installed and managed differs slightly on both platforms.
 
-```bash
-# ~/webserver
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-....FF
-
-Failures:
-
-  1) webserver::default on Ubuntu installs apache2
-     Failure/Error: expect(chef_run).to install_package 'apache2'
-       expected "package[apache2]" with action :install to be in Chef run. Other package resources:
-
-         apt_package[httpd]
-
-     # ./spec/unit/recipes/default_spec.rb:40:in `block (3 levels) in <top (required)>'
-
-  2) webserver::default on Ubuntu starts the apache2 service
-     Failure/Error: expect(chef_run).to start_service 'apache2'
-       expected "service[apache2]" with action :start to be in Chef run. Other service resources:
-
-         service[httpd]
-
-     # ./spec/unit/recipes/default_spec.rb:44:in `block (3 levels) in <top (required)>'
-
-Finished in 1.15 seconds (files took 3.71 seconds to load)
-6 examples, 2 failures
-
-Failed examples:
-
-rspec ./spec/unit/recipes/default_spec.rb:39 # webserver::default on Ubuntu installs apache2
-rspec ./spec/unit/recipes/default_spec.rb:43 # webserver::default on Ubuntu starts the apache2 service
-```
-
-[COMMENT] To run all tests, you could run `chef exec rspec --color spec/unit/recipes/*.rb`.
-
-## 3. Write code to configure Apache for multiple platforms
-
-Let's say you want to create one web server cookbook that runs on multiple platforms.
+Recall that our `webserver` cookbook's default recipe looks like this.
 
 ```ruby
 # ~/webserver/recipes/default.rb
-package_name = service_name = case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end
+package 'httpd'
 
-package package_name
-
-service service_name do
+service 'httpd' do
   action [:enable, :start]
 end
 
@@ -173,45 +56,11 @@ file '/var/www/html/index.html' do
 end
 ```
 
-COMMON ON HOW YOU MIGHT USE HTTPD COOKBOOK IN PRACTICE
+We know that this configuration works on CentOS, but on Ubuntu, both the package and service name is `apache2`.
 
-## 4. Run the ChefSpec tests again
+The criteria for the web server configuration are:
 
-```bash
-# ~/webserver
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-......
+* on CentOS, install the `httpd` package and enable and start the `httpd` service.
+* on Ubuntu, install the `apache2` package and enable and start the `apache2` service.
 
-Finished in 1.09 seconds (files took 3.57 seconds to load)
-6 examples, 0 failures
-```
-
-<hr>
-
-### Sidebar: What makes a good ChefSpec test?
-
-Your goal isn't to verify that Chef works as expected &ndash; Chef does its own testing to ensure that the core functionality works as intended. Rather, your goal is to [verify that your cookbooks do what you intend] &ndash; and that your configuration stays good as you add functionality.
-
-For example, say you define [this `package` resource].
-
-```ruby
-# default.rb
-package 'httpd'
-  action :install
-end
-```
-
-You don't need to write a test like this because you already **know** that the recipe will install the `httpd` package, because that is exactly how Chef works!
-
-```ruby
-# default_spec.rb
-it 'installs httpd' do
-  expect(chef_run).to install_package 'httpd'
-end
-```
-
-In this lesson, our tests validate the conditional logic that [drives] the package and service names that are used to configure Apache on different platforms. Read this [quick tip](http://jtimberman.housepub.org/blog/2015/01/12/quick-tip-testing-conditionals-in-chefspec/) to learn more about testing conditionals in ChefSpec.
-
-<hr>
-
-https://micgo.net/serverspec-guard-and-test-kitchen-testing-servers-like-a-boss/
+You'll need to write code to ensure that your cookbook performs the correct steps in both environments. You'll write ChefSpec tests that verify that the code is defined correctly for both platforms &ndash; without the need to run it on a local instance.
