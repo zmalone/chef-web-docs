@@ -7,40 +7,33 @@ sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 ---
-TODO: ADD ALL CODE TO default.rb and comment them out. Add a comment saying to uncomment what you want.
+TODO: Each example in a file.
 
-Setup scenario
-Last lesson, you xxxx.
+[HEADLINE] Lint testing can help you identify potential defects in your code early and also makes  your code easier to read and maintain.
 
-What about zzz?
+So far, you've learned how to use automated testing to speed up the feedback cycle. Getting feedback early and often can help you release more quickly and with higher-quality.
 
-lint testing is XXX
-static analysis is YYY
+Although your code may behave as you expect, it's also important to ensure your code is easy to read and maintain, and avoid hidden defects that can be difficult to fix later. Lint testing, or _linting_, is one way to help ensure that your code aheres to standard style guidelines and avoids common defects.
 
-We're going to look at xxx &ndash; RuboCop and Foodcritic.
+Lint testing is a form of [static program analysis](https://en.wikipedia.org/wiki/Static_program_analysis), also called static code analytis. Static code analysis involves the automated inspection of a program's source code for potential defects without actually running the program.
 
-[RuboCop](http://batsov.com/rubocop/) is a Ruby static code analyzer, based on the community [Ruby style guide](https://github.com/bbatsov/ruby-style-guide#the-ruby-style-guide).
+Lint testing can identify a range of issues, from code that's correct but difficult to read (such as code that uses non-uniform indentation) all the way to code that will almost always fail (such as dividing a number by zero.)
 
-Foodcritic does Y
+In this lesson, you'll use two popular tools that are part of the Chef DK &ndash; RuboCop and Foodcritic &ndash; to identify potential issues in variations of the `webserver` cookbook you created in the previous lessons. You'll also learn how to disable certain rules and create new rules that adhere to your team's own style guidelines.
 
+## Use RuboCop to make your code easier to read and maintain
 
+Let's see how [RuboCop](http://batsov.com/rubocop/), a Ruby static code analyzer that's based on the community [Ruby style guide](https://github.com/bbatsov/ruby-style-guide#the-ruby-style-guide), can help identify inconsistent code formatting in a basic recipe.
 
-Although they both Z, it's common to run them both because:
-
-* they lint test different things
-* it's fast
-* Foodcritic also can identify common [usage pattern errors] (example is using execute instead of service)
-
-We'll use the two variations of your `webserver` cookbook (Serverspec and ChefSpec) to XXX.
-
-## Rubocop
-
-- show four spaces
-- array
-- indented `end`
+Start by modifying your `webserver` cookbook's default recipe like this. Be sure to copy the code exactly as it appears.
 
 ```ruby
-# ~/webserver
+# ~/webserver/recipes/default.rb
+#
+# Cookbook Name:: webserver
+# Recipe:: default
+#
+# Copyright (c) 2015 The Authors, All Rights Reserved.
 package 'httpd'
 
 service 'httpd' do
@@ -57,7 +50,15 @@ file '/var/www/html/index.html' do
   end
 ```
 
-RUN RUBOCOP FROM RECIPES DIR
+Note how the code is formatted.
+
+* It uses four spaces for indentation.
+* The `action` attribute is broken into multiple lines.
+* The `file` resource uses two spaces to indent the `end` keyword.
+
+When you run the `rubocop` command with no arguments, RuboCop checks all Ruby source files in the current directory.
+
+Run `rubocop` from your <code class="file-path">recipes</code> directory.
 
 ```bash
 # ~/webserver/recipes
@@ -80,10 +81,36 @@ default.rb:19:3: W: end at 19, 2 is not aligned with file '/var/www/html/index.h
 1 file inspected, 3 offenses detected
 ```
 
-FIX THE OFFENSES
+For each file, RuboCop prints to the console a character that indicates the status of that file.
+
+TODO: Finish these.
+
+* `.` indicates that RuboCop found no potential issues.
+* `R` (Refactor) indicates that XXX.
+* `C` (Convention) indicates that RuboCop code that potentially violates standard convention, for example, inconsistent use of indentation.
+* `W` (Warning) indicates that RuboCop found code that's valid, but potentially isn't what the programmer intended, such as comparing a variable to itself or defining [unreachable code](https://en.wikipedia.org/wiki/Unreachable_code).
+* `E` (Error) indicates that RuboCop found a potential error, such as using an invalid character in a variable name.
+* `F` (Fatal) indicates that RuboCop found a potentially fatal, or unrecoverable, error.
+
+When RuboCop finds multiple potential issues, it reports the most severe as the file's status. In this example, RuboCop found both a convention violation and a warning, so our recipe's overall status is `W` (Warning).
+
+### Fix the violations
+
+Let's fix the reported violations. To summarize:
+
+* Line 9 uses 4 spaces for indentation.
+* Line 10 does not properly align the array elements.
+* Line 19 indents the `end` keyword.
+
+Modify <code class="file-path">default.rb</code> like this.
 
 ```ruby
-# ~/webserver
+# ~/webserver/recipes/default.rb
+#
+# Cookbook Name:: webserver
+# Recipe:: default
+#
+# Copyright (c) 2015 The Authors, All Rights Reserved.
 package 'httpd'
 
 service 'httpd' do
@@ -99,7 +126,7 @@ file '/var/www/html/index.html' do
 end
 ```
 
-RUN RUBOCOP AGAIN
+Run `rubocop` a second time to verify whether the violations are fixed.
 
 ```bash
 # ~/webserver/recipes
@@ -116,12 +143,17 @@ default.rb:13:1: C: Use 2 (not 4) spaces for indentation.
 1 file inspected, 1 offense detected
 ```
 
-NEW ERROR IS DISCOVERED BECAUSE IT HAS HIDDEN BY THE PREVIOUS ONE (THE INDENTED END)
+This time a new violation is discovered. This violation was not reported originally because the use of indentation was consistent with the indented `end` keyword.
 
-FIX IT
+Correct the indentation, making your default recipe look like this.
 
 ```ruby
-# ~/webserver
+# ~/webserver/recipes/default.rb
+#
+# Cookbook Name:: webserver
+# Recipe:: default
+#
+# Copyright (c) 2015 The Authors, All Rights Reserved.
 package 'httpd'
 
 service 'httpd' do
@@ -137,7 +169,7 @@ file '/var/www/html/index.html' do
 end
 ```
 
-RUN RUBOCOP AGAIN
+Run `rubocop` to verify the correction.
 
 ```bash
 # ~/webserver/recipes
@@ -148,18 +180,27 @@ Inspecting 1 file
 1 file inspected, no offenses detected
 ```
 
-ALL CLEAN NOW
+Congratulations. RuboCop reported no additional violations.
 
-## Configure a RuboCop rule
+## Configure RuboCop to follow your preferred style
 
-(RULES CALLED _COPS_ TOO)
+A RuboCop rule is also called a _cop_. You can modify the behavior of RuboCop's predefined cops or disable one or more cops altogether.
 
-You can disable or modify rules.
+One reason you may want to customize RuboCop's predefined behavior is when your team or organization defines style guidelines that differ from the community standard.
 
-Say you have lots of existing code that uses 4 spaces, and you want to temporarily disable the 2 space check.
+Another reason might be when you have many RuboCop violations in your existing code, and you want to resolve them gradually.
+
+For example, say your existing code uses 4 spaces for indentation and you want to temporarily configure RuboCop accept this indentation so that you can focus on potentially more severe issues.
+
+Start by modifying your default recipe to look like this.
 
 ```ruby
-# ~/webserver
+# ~/webserver/recipes/default.rb
+#
+# Cookbook Name:: webserver
+# Recipe:: default
+#
+# Copyright (c) 2015 The Authors, All Rights Reserved.
 package 'httpd'
 
 service 'httpd' do
@@ -174,6 +215,8 @@ file '/var/www/html/index.html' do
 </html>'
 end
 ```
+
+Run `rubocop` to observe the violations.
 
 ```bash
 # ~/webserver/recipes
@@ -193,8 +236,9 @@ default.rb:13:1: C: Use 2 (not 4) spaces for indentation.
 1 file inspected, 2 offenses detected
 ```
 
-Add .rubocop.yml to cookbook directory (can be anywhere up; what's the recommended way??)
-Add this code.
+You customize RuboCop's behavior through a file named <code class="file-path">.rubocop.yml</code>. When RuboCop runs, it loads all predefined rules and then overrides any rules that you specify.
+
+Add the following code to <code class="file-path">.rubocop.yml</code> in your cookbook directory, <code class="file-path">~/webserver</code>.
 
 ```ruby
 # ~/webserver/.rubocop.yml
@@ -203,9 +247,11 @@ Style/IndentationWidth:
   Width: 4
 ```
 
-[COMMENT] You can use https://github.com/bbatsov/rubocop/blob/master/config/default.yml as a guide.
+RuboCop searches for a <code class="file-path">.rubocop.yml</code> by traversing up the directory tree. So in practice you could add your <code class="file-path">.rubocop.yml</code> file to a directory that's higher in the tree if you want your modified rules to apply to mulitple projects.
 
-RUN IT
+[TIP] You can use RuboCop's [default rules](https://github.com/bbatsov/rubocop/blob/master/config/default.yml) as a guide. Just copy the rules that you want to modify or disable to your <code class="file-path">.rubocop.yml</code> file and modify its parameters. To disable a rule, add `Enabled: false` to the rule.
+
+Now run `rubocop` from your <code class="file-path">~/webserver/recipes</code> directory to verify that your custom behavior is used.
 
 ```bash
 # ~/webserver/recipes
@@ -216,20 +262,42 @@ Inspecting 1 file
 1 file inspected, no offenses detected
 ```
 
-## Foodcritic
+[TIP] If your code produces a large number of violations, you can run RuboCop to  [automatically generate a configuration file](https://github.com/bbatsov/rubocop#automatically-generated-configuration) that excludes the violations from a `rubocop` run. As you work through the violations, you can remove each entry from the generated configuration file.<br/>You can also [disable cops directly in your source code](https://github.com/bbatsov/rubocop#disabling-cops-within-source-code) if you have a special case that you want RuboCop to ignore.
 
-- show unnecessary string interpolation
+## Use Foodcritic to identify better usage patterns
 
-string interpolation is XXX.
+[Foodcritic](https://acrmp.github.io/foodcritic/) is another popular linting tool that comes with the Chef DK.
 
-Show example.
+RuboCop can be run on any Ruby program, and isn't specific to Chef. Foodcritic identifies usage patterns that are specific to Chef code. Many Chef users run both tools as part of their lint testing.
 
-A common mistake is to use string interpolation when it's not necessary.
+In this part you'll see how Foodcritic can identify usage patterns that improve the quality of your code. You'll also extend Foodcritic by writing a custom rule.
 
-Let's revisit. Recall it looks like this.
+### Identify use of unnecessary string interpolation
+
+In previous tutorials, you used _string interpolation_ to replace placeholders within a string with the values they represent. Here's an example from the `awesome_customers` cookbook's `webserver` recipe.
+
+```ruby
+# webserver.rb
+# Write the home page.
+file "#{node['awesome_customers']['document_root']}/index.php" do
+  content '<html>This is a placeholder</html>'
+  mode '0644'
+  owner node['awesome_customers']['user']
+  group node['awesome_customers']['group']
+end
+```
+
+In this example, the `file` resource uses string interpolation to combine the document root, stored as a node attribute, with the name of the index file to create a full path to the home page.
+
+It's common to use string interpolation when it's not necessary. Let's start by looking at the default recipe for the `webserver` cookbook you wrote to run on CentOS and Ubuntu. Recall that it looks like this.
 
 ```ruby
 # ~/webserver/recipes/default.rb
+#
+# Cookbook Name:: webserver
+# Recipe:: default
+#
+# Copyright (c) 2015 The Authors, All Rights Reserved.
 package_name = service_name = case node['platform']
 when 'centos' then 'httpd'
 when 'ubuntu' then 'apache2'
@@ -250,12 +318,15 @@ file '/var/www/html/index.html' do
 end
 ```
 
-MODIFY IT LIKE THIS.
-
-TODO: MAKE SURE PATH IS CORRECT EVERYWHERE!
+To demonstrate the use of unnecessary string interpolation, modify your default recipe to look like this.
 
 ```ruby
 # ~/webserver/recipes/default.rb
+#
+# Cookbook Name:: webserver
+# Recipe:: default
+#
+# Copyright (c) 2015 The Authors, All Rights Reserved.
 package_name = service_name = case node['platform']
 when 'centos' then 'httpd'
 when 'ubuntu' then 'apache2'
@@ -276,7 +347,9 @@ file '/var/www/html/index.html' do
 end
 ```
 
-RUN FOODCRITIC
+Although this program is valid and behaves as you would expect, it's intention might not be clear to others. It can appear that the code intends to use string interpolation but the string is missing additional information.
+
+From your <code class="file-path">~/webserver/recipes</code> directory, run `foodcritic default.rb` to run the Foodcritic rules against the default recipe.
 
 ```bash
 # ~/webserver/recipes
@@ -287,9 +360,9 @@ FC002: Avoid string interpolation where not required: default.rb:13
 
 [COMMENT] To test all recipes, you can run Foodcritic from a directory above your cookbook and specify the cookbook name. For example, you can run `foodcritic webserver` from your <code class="file-path">~</code> directory.
 
-TODO^ On second thought, why not just run from ~?
+Foodcritic reports [FC002](http://acrmp.github.io/foodcritic/#FC002): "Avoid string interpolation where not required".
 
-FIX THE ERROR
+Now remove the string interpolation to fix the violation. Your recipe should look like the one you created in the previous lesson.
 
 ```ruby
 # ~/webserver/recipes/default.rb
@@ -313,7 +386,7 @@ file '/var/www/html/index.html' do
 end
 ```
 
-RUN FOODCRITIC
+Run `foodcritic default.rb` a second time to verify that the violation is fixed.
 
 ```bash
 # ~/webserver/recipes
@@ -321,12 +394,21 @@ $ foodcritic default.rb
 
 ```
 
-ALL CLEAN!
+When `foodcritic` does not produce any output, it indicates that Foodcritic found no violations.
 
-- show use of execute instead of service
+### Use Foodcritic to identify where to better manage services
+
+Say you didn't know about the [service](https://docs.chef.io/resource_service.html) resource, and that you instead use the [execute](https://docs.chef.io/resource_execute.html) resource to manage the Apache service in your `webserver` cookbook.
+
+Modify your default recipe like this.
 
 ```ruby
 # ~/webserver/recipes/default.rb
+#
+# Cookbook Name:: webserver
+# Recipe:: default
+#
+# Copyright (c) 2015 The Authors, All Rights Reserved.
 case node['platform']
 when 'centos' then
   package 'httpd'
@@ -359,6 +441,10 @@ file '/var/www/html/index.html' do
 end
 ```
 
+Although this recipe might work as you expect, it's unnecessarily complex. The `execute` resource requires additional code to ensure that the service is enabled and started only when needed. This code would require additional testing to ensure that it accounts for differences among each version of CentOS and Ubuntu that you support.
+
+Run `foodcritic default.rb` to apply Foodcritic's rules to your recipe.
+
 ```bash
 # ~/webserver/recipes
 $ foodcritic default.rb
@@ -366,31 +452,57 @@ FC004: Use a service resource to start and stop services: default.rb:13
 FC004: Use a service resource to start and stop services: default.rb:23
 ```
 
-_CAN_ HELP YOU ...
+Foodcritic reports [FC004](http://acrmp.github.io/foodcritic/#FC004): "Use a service resource to start and stop services".
 
-## Excluding rules
-
-## Create a custom Foodcritic rule
-
-You can also define your own rules...
-
-Involves creating a </code class="file-path">rules.rb</code> file to hold your custom rules...
-
-A common Ruby convention is to use double-quotes `"` only when:
-
-* string interpolation is required, for example, "".
-* the string contains `'` characters, for example, "".
-
-And to use single-quotes `'` for all other strings.
-
-Create the </code class="file-path">~/webserver/foodcritic</code> directory.
-
-[COMMENT] We don't have a Chef repo. If you did, you can add the foodcritic directory as a sub-directory of that so that you can easily apply it to all cookbooks in that repo.
-
-Add this to </code class="file-path">~/webserver/foodcritic/rules.rb</code>
+The `service` resource takes care of all of the details required to enable and start the service. Modify your recipe to look like the original version, like this.
 
 ```ruby
-# ~/webserver/rules.rb
+# ~/webserver/recipes/default.rb
+package_name = service_name = case node['platform']
+when 'centos' then 'httpd'
+when 'ubuntu' then 'apache2'
+end
+
+package package_name
+
+service service_name do
+  action [:enable, :start]
+end
+
+file '/var/www/html/index.html' do
+  content '<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>'
+end
+```
+
+Run `foodcritic default.rb` a to verify that the violation is fixed.
+
+```bash
+# ~/webserver/recipes
+$ foodcritic default.rb
+
+```
+
+[TIP] The [Foodcritic documention](http://acrmp.github.io/foodcritic/#faq) explains how to exclude specific warnings from a `foodcritic` run.
+
+### Create a custom Foodcritic rule
+
+Let's define a custom Foodcritic rule that validates the way that strings are defined.
+
+A common Ruby coding convention is to surround strings with single quotes `'` and use double-quotes `"` only when:
+
+* string interpolation is required, for example, `"#{document_root}\index.html"`.
+* the string contains `'` characters, for example, `"cat default.rb | grep 'web'"`.
+
+The [CustomInk Foodcritic rules](https://github.com/customink-webops/foodcritic-rules) already define this rule for us, so let's adapt it for our custom rule.
+
+Create the <code class="file-path">~/webserver/foodcritic</code> directory and add this code to  <code class="file-path">~/webserver/foodcritic/rules.rb</code>
+
+```ruby
+# ~/webserver/foodcritic/rules.rb
 # Adapted from https://github.com/customink-webops/foodcritic-rules.
 
 rule 'CINK002', 'Prefer single-quoted strings' do
@@ -421,10 +533,17 @@ rule 'CINK002', 'Prefer single-quoted strings' do
 end
 ```
 
-Make your default.rb look like this:
+[COMMENT] As with RuboCop, you can add this file to a directory higher in the tree so that multiple projects can access it.
+
+To test your rule, modify your default `webserver` recipe like this.
 
 ```ruby
-# ~/webserver-test/recipes/default.rb
+# ~/webserver/recipes/default.rb
+#
+# Cookbook Name:: webserver
+# Recipe:: default
+#
+# Copyright (c) 2015 The Authors, All Rights Reserved.
 package "httpd"
 
 service "httpd" do
@@ -440,108 +559,14 @@ file "/var/www/html/index.html" do
 end
 ```
 
-RUN FOODCRITIC
-
--I Means include?
-
-```bash
-# ~
-$ foodcritic -I webserver/foodcritic  webserver
-CINK002: Prefer single-quoted strings: webserver/recipes/default.rb:6
-CINK002: Prefer single-quoted strings: webserver/recipes/default.rb:8
-CINK002: Prefer single-quoted strings: webserver/recipes/default.rb:12
-```
-
-SUMMARIZE...
-
-Exercise:
-
-Run RuboCop on this one. How would you fix?
-
-```ruby
-# ~/webserver/recipes/default.rb
-package_name = service_name = case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end
-
-package package_name
-
-service service_name do
-  action [:enable, :start]
-end
-
-file '/var/www/html/index.html' do
-  content '<html>
-  <body>
-    <h1>hello world</h1>
-  </body>
-</html>'
-end
-```
-
-Answer:
-
-Here's what happens:
+Now run `foodcritic`, specifying the `-I` argument to specify the path to our custom rule.
 
 ```bash
 # ~/webserver/recipes
-$ rubocop .
-Inspecting 1 file
-W
-
-Offenses:
-
-default.rb:7:1: C: Indent when as deep as case.
-when 'centos' then 'httpd'
-^^^^
-default.rb:8:1: C: Indent when as deep as case.
-when 'ubuntu' then 'apache2'
-^^^^
-default.rb:9:1: W: end at 9, 0 is not aligned with case at 6, 30.
-end
-^^^
-
-1 file inspected, 3 offenses detected
+$ foodcritic -I ~/webserver/foodcritic default.rb
+CINK002: Prefer single-quoted strings: ../recipes/default.rb:6
+CINK002: Prefer single-quoted strings: ../recipes/default.rb:8
+CINK002: Prefer single-quoted strings: ../recipes/default.rb:12
 ```
 
-- indent the `when`s, or if you prefer that style, disable the rule in .rubocop.yml.
-
-```
-# rubocop.yml
-# Indentation of `when`.
-Style/CaseIndentation:
-  Enabled: false
-```
-
-(copied from https://github.com/bbatsov/rubocop/blob/master/config/default.yml and added `Enabled` field.)
-
-- possibly ignore the `end`. (show inline as an example?)
-
-```ruby
-# ~/webserver/recipes/default.rb
-package_name = service_name = case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end # rubocop:disable Lint/EndAlignment
-```
-
-Or you can fix the code like this.
-
-```ruby
-# ~/webserver/recipes/default.rb
-package_name = service_name =
-case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end
-```
-
-```bash
-# ~/webserver/recipes
-$ rubocop .
-Inspecting 1 file
-.
-
-1 file inspected, no offenses detected
-```
+Foodcritic reports CINK002: "Prefer single-quoted strings". To resolve the error, you would replace the double quote characters with single quotes, and run Foodcritic to verify that the violation is fixed.
