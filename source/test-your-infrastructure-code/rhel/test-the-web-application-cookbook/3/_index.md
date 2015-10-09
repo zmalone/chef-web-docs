@@ -1,9 +1,11 @@
-## Verify the code adheres to the style guide
+## 3. Verify the awesome_customers cookbook adheres to the style guide
 
-### RuboCop
+Now that you have automated testing that verifies that the `awesome_customers` cookbook behaves as you expect and properly defines its resources, let's run the lint tools RuboCop and Foodcritic against it to verify that it adheres to the style guide and avoids potential defects.
+
+Let's start by moving to your cookbook's root directory and running RuboCop and Foodcritic on all files in the <code class="file-path">recipes</code> directory. That will give us a sense of how many potential issues there are to fix.
 
 ```bash
-# ~/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ rubocop recipes
 Inspecting 5 files
 C...C
@@ -75,31 +77,54 @@ recipes/webserver.rb:36:3: C: Indent the right brace the same as the first posit
 ```
 
 ```bash
-# ~/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ foodcritic recipes
 
 ```
 
-FOODCRITIC IS CLEAN
+The Foodcritic run discovered no issues. However, the RuboCop run discovered 20 convention issues in two of the five recipe files &ndash; <code class="file-path">webserver.rb</code> and <code class="file-path">database.rb</code>.
 
-WE SEE TWO THEMES - LONG LINES AND OLD HASH SYNTAX
+In practice, you would typically start by resolving the most severe issues first (such as errors) and then move back and resolve less severe issues (such as warnings and convention issues). RuboCop discovered only convention issues, so we don't need to prioritize our work by severity.
 
-#### Fix long lines
+A common next step is to identify common themes among the reported issues. The two issues that occur most often are:
 
-SIMPLY IGNORE THESE
+* `C: Line is too long.`
+* `C: Use the new Ruby 1.9 hash syntax.`
 
-ADD .rubocop.yml to chef-repo so can be used by all cookbooks
+Let's resolve those issues first to narrow things down.
+
+### Fix long lines
+
+Let's say that our organization does not wish to adhere to the standard maximum line length of 80, and that any line length is acceptable. We can simply configure RuboCop to ignore maximum line length.
+
+RuboCop's [default rules](https://github.com/bbatsov/rubocop/blob/master/config/default.yml) tells us that the [Metrics/LineLength](https://github.com/bbatsov/rubocop/blob/master/config/default.yml#L802) rule defines the maximum line length.
 
 ```ruby
-# ~/chef-repo/.rubocop.yml
+# default.yml
+Metrics/LineLength:
+  Max: 80
+  # To make it possible to copy or click on URIs in the code, we allow lines
+  # contaning a URI to be longer than Max.
+  AllowURI: true
+  URISchemes:
+    - http
+    - https
+```
+
+To disable this rule, create a file named <code class="file-path">.rubocop.yml</code> at the root of your Chef repo and add the following code. We create the file in this location so that any other cookbooks in the same repo can share the same custom rules.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/.rubocop.yml
 Metrics/LineLength:
   Enabled: false
 ```
 
-RUN RUBOCOP AGAIN
+This code disables the `Metrics/LineLength` rule.
+
+Run RuboCop a second time to verify that the line length violation no longer appears.
 
 ```bash
-# ~/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ rubocop recipes
 Inspecting 5 files
 C...C
@@ -143,26 +168,44 @@ recipes/webserver.rb:36:3: C: Indent the right brace the same as the first posit
 5 files inspected, 11 offenses detected
 ```
 
-GETTING THERE!
+The line length violation no longer appears, and our change introduced no new violations.
 
-#### Use the Ruby 1.9 hash syntax
+Let's move on to the next most frequent violation &ndash; not using the Ruby 1.9 Hash syntax.
 
-OLD
+### Use the Ruby 1.9 Hash syntax
 
-```
-my_hash = { :key => 'value' }
-```
-
-NEW
-
-```
-my_hash = { key: 'value' }
-```
-
-FIX WEBSERVER
+Recall that a Ruby [Hash](http://docs.ruby-lang.org/en/2.0.0/Hash.html) is a collection of key-value pairs. Ruby provides multiple ways to declare Hash values. Prior to Ruby 1.9, Hash values are defined like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+h = { :password => 'fake_password' }
+```
+
+This is often referred to as _Hash rocket_ syntax.
+
+Ruby 1.9 introduced this new syntax, often called _JSON-style_ or _colon_ syntax.
+
+```ruby
+h = { password: 'fake_password' }
+```
+
+The community style guide prefers the new style, when possible.
+
+Let's convert our code that uses the Hash rocket style to use the new style. We'll convert code that looks like this:
+
+```ruby
+:database_password => user_password_data_bag_item['password']
+```
+
+to look like this:
+
+```ruby
+database_password: user_password_data_bag_item['password']
+```
+
+We'll start with the `websever` recipe. Write out <code class="file-path">webserver.rb</code> like this.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 httpd_service 'customers' do
   mpm 'prefork'
   action [:create, :start]
@@ -207,10 +250,10 @@ package 'php-mysql' do
 end
 ```
 
-FIX DATABASE
+Now let's fix the `database` recipe. Write out <code class="file-path">database.rb</code> like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 mysql2_chef_gem 'default' do
   action :install
 end
@@ -271,10 +314,10 @@ execute 'initialize database' do
 end
 ```
 
-RUN RUBOCOP
+Run RuboCop to verify the changes.
 
 ```bash
-# ~/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ rubocop recipes
 Inspecting 5 files
 C...C
@@ -297,18 +340,27 @@ recipes/webserver.rb:36:3: C: Indent the right brace the same as the first posit
 5 files inspected, 4 offenses detected
 ```
 
-FOUR LEFT!
+We've successfully updated our Hash values to use the new syntax. Now let's resolve the four remaining RuboCop violations.
 
-#### Resolve the other error
+### Resolve the remaining violations
 
-* C: Put one space between the method name and the first argument.
-* C: Redundant curly braces around a hash parameter.
-* C: Indent the right brace the same as the first position after the preceding left parenthesis.
+Here are the remaining violations.
 
-Let's fix these!
+* `C: Put one space between the method name and the first argument.`
+* `C: Redundant curly braces around a hash parameter.`
+* `C: Indent the right brace the same as the first position after the preceding left parenthesis.`
+
+The first violation states that two much whitespace separates a method name from its first argument. Verify this in the `execute` resource in your `database` recipe.
 
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/database.rb
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/database.rb
+not_if  "mysql -h #{node['awesome_customers']['database']['host']} -u
+```
+
+Now remove the extra space from your `database` recipe. The entire `execute` resources now looks like this.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/database.rb
 [...]
 
 # Seed the database with a table and test data.
@@ -318,8 +370,24 @@ execute 'initialize database' do
 end
 ```
 
+The second error, `C: Redundant curly braces around a hash parameter.`, relates to the fact that both parenthesis and curly braces are used to define a Hash value. Although the following code blocks are equivalent, the second form is preferred because it is more concise.
+
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+variables({
+  database_password: user_password_data_bag_item['password']
+})
+```
+
+```ruby
+variables(
+  database_password: user_password_data_bag_item['password']
+)
+```
+
+Update your `webserver` recipe to use the recommended Hash syntax, like this.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
 [...]
 
 # Write the home page.
@@ -336,10 +404,12 @@ end
 [...]
 ```
 
-RUN RUBOCOP
+The final violation, `C: Indent the right brace the same as the first position after the preceding left parenthesis.` appears to not be relevant anymore because we removed the right curly brace in question.
+
+So let's run RuboCop to get the latest status on our cookbook.
 
 ```bash
-# ~/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ rubocop recipes
 Inspecting 5 files
 .....
@@ -347,14 +417,12 @@ Inspecting 5 files
 5 files inspected, no offenses detected
 ```
 
-woot!
+Terrific! RuboCop now reports zero offenses. Although each change might seem minor, cumulatively they can go a long way to ensuring that the code is readable and maintainable as the project evolves. A clean RuboCop and Foodcritic run also builds confidence that the code is free of many common defects.
 
-### Foodcritic
-
-Run one more time, just to ensure no new violations were introduced.
+Run Foodcritic one last time to ensure that the fixes for the RuboCop violations didn't introduce any new Foodcritic violations.
 
 ```bash
-# ~/chef-repo/cookbooks/awesome_customers
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ foodcritic recipes
 
 ```
