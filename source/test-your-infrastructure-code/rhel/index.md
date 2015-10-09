@@ -32,4 +32,6 @@ After completing this tutorial, you'll:
 * be able to use [RuboCop](https://github.com/bbatsov/rubocop) and [Foodcritic](http://acrmp.github.io/foodcritic/) to verify that your cookbook adheres to accepted coding standards and avoids common defects.
 * have increased confidence that your `awesome_customers` cookbook that you've built in the previous tutorials will behave as you expect in production.
 
-You'll get started by setting up the Chef Development Kit and the virtualization tools on your workstation.
+You'll get started by setting up the Chef Development Kit and familiarize yourself with Test Kitchen.
+
+[GITHUB] After you complete this tutorial, you can get the final version of the code on [GitHub](https://github.com/learn-chef/test-your-infrastructure-code-rhel).

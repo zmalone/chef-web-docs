@@ -3,8 +3,8 @@ title: 'Test the awesome_customers web application cookbook'
 order: 5
 keywords: TODO
 layout: lesson
-sections: [1, 2, 3]
-next: {heading: Next, partial: next}
+sections: [1, 2, 3, exercises]
+next: {heading: Conclusion, partial: conclusion}
 time_to_complete: 60 minutes
 ---
 The previous two tutorials &ndash; [Learn to manage a basic web application](/manage-a-web-app/rhel/) and [Learn to develop your infrastructure code locally](/local-development/rhel/) &ndash; walk you through the creation of a cookbook named `awesome_customers` that manages a basic web application that reads customer records from a database and displays them as a table.
@@ -30,114 +30,4 @@ In this lesson, you'll:
 * write ChefSpec tests that verify that the cookbook's resources are properly defined.
 * run RuboCop and Foodcritic to ensure that the cookbook adheres to the standard Ruby style guide and avoids common defects.
 
-We'll start by XXXX.
-
-### Exercises
-
-Explain the difference between ChefSpec and Serverpec tests. Do you need both a ChefSpec and a Serverspec test for every feature in your cookbook?
-
-Why is it important to run tools such as RuboCop and Foodcritic on your cookbooks?
-
-Write cookbook based soley on spec
-
-Actually run the webserver cookbook on Ubuntu and CentOS and run your tests. How do you need to modfiy the tests to incorporate Ubuntu?
-
-Need a call to action to apply Serverspec, ChefSpec, and lint testing to user's own infra code.
-
-Exercise:
-
-Run RuboCop on this one. How would you fix?
-
-```ruby
-# ~/webserver/recipes/default.rb
-package_name = service_name = case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end
-
-package package_name
-
-service service_name do
-  action [:enable, :start]
-end
-
-file '/var/www/html/index.html' do
-  content '<html>
-  <body>
-    <h1>hello world</h1>
-  </body>
-</html>'
-end
-```
-
-Answer:
-
-Here's what happens:
-
-```bash
-# ~/webserver/recipes
-$ rubocop .
-Inspecting 1 file
-W
-
-Offenses:
-
-default.rb:7:1: C: Indent when as deep as case.
-when 'centos' then 'httpd'
-^^^^
-default.rb:8:1: C: Indent when as deep as case.
-when 'ubuntu' then 'apache2'
-^^^^
-default.rb:9:1: W: end at 9, 0 is not aligned with case at 6, 30.
-end
-^^^
-
-1 file inspected, 3 offenses detected
-```
-
-- indent the `when`s, or if you prefer that style, disable the rule in .rubocop.yml.
-
-```
-# rubocop.yml
-# Indentation of `when`.
-Style/CaseIndentation:
-  Enabled: false
-```
-
-(copied from https://github.com/bbatsov/rubocop/blob/master/config/default.yml and added `Enabled` field.)
-
-- possibly ignore the `end`. (show inline as an example?)
-
-```ruby
-# ~/webserver/recipes/default.rb
-package_name = service_name = case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end # rubocop:disable Lint/EndAlignment
-```
-
-Or you can fix the code like this.
-
-```ruby
-# ~/webserver/recipes/default.rb
-package_name = service_name =
-case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end
-```
-
-```bash
-# ~/webserver/recipes
-$ rubocop .
-Inspecting 1 file
-.
-
-1 file inspected, no offenses detected
-```
-
-### Conclusion
-
-http://betterspecs.org
-
-[HEADLINE] Writing just one test [is better than nothing]
+We'll start by writing Serverspec tests that verify that the Customers web application is configured as we expect.

@@ -1,1 +1,0 @@
-Now that you've used Test Kitchen to configure the `awesome_customers` cookbook locally, let's write a cookbook that configures a file and see how _Serverspec_ can help us automatically verify that the file was properly configured.
