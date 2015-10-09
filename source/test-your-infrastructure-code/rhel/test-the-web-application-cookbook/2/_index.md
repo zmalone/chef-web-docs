@@ -196,48 +196,202 @@ Finished in 5.48 seconds (files took 13.14 seconds to load)
 1 example, 0 failures
 ```
 
+[COMMENT] You'll likely see lots of warnings appear at the start of the output. These warnings are OK to ignore, and we're working to remove them.
+
 Success! Now that ChefSpec can simulate the `webserver` recipe in memory, we can move on to writing more valuable tests.
 
-### MATCHERS
+### Write the remaining tests
 
-In X, you used the default matchers that ChefSpec provides, for example, Y and Z.  
-
-
-
-Define what a matcher is.
-
-https://github.com/chef-cookbooks/httpd/blob/dc951d170c3051742782f58a2e651cba1917994a/libraries/matchers.rb
-
-https://github.com/opscode-cookbooks/firewall/blob/7d37d91d48d31906cf0306b2bcabba01d67fda0d/libraries/matchers.rb
-
-Start with the default generated spec.
+The `awesome_customers` cookbook uses the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket to configure Apache web server. Here's how the `webserver` recipe creates and starts the web service and applies the Apache configuration file.
 
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers/spec/unit/recipes/webserver_spec.rb
-require 'spec_helper'
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+httpd_service 'customers' do
+  mpm 'prefork'
+  action [:create, :start]
+end
 
-describe 'webserver::default' do
-  context 'When all attributes are default, on an unspecified platform' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new
-      runner.converge(described_recipe)
-    end
+# Add the site configuration.
+httpd_config 'customers' do
+  instance 'customers'
+  source 'customers.conf.erb'
+  notifies :restart, 'httpd_service[customers]'
+end
 
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-  end
+#[...]
+```
+
+PHP must be run in a single-threaded [Multi-Processing Module](http://httpd.apache.org/docs/2.2/mpm.html), or MPM. Therefore, we set the `mpm` attribute to use the [prefork](http://httpd.apache.org/docs/2.2/mod/prefork.html) module.
+
+The `httpd_config` resource restarts the service when the configuration file changes.
+
+The `httpd` cookbook provides its own set of verification tests. Because we don't have different environments that cause us to configure these resources in any dynamic way, we don't need to write ChefSpec tests for them. But let's write a few anyway to demonstrate the use of _custom matchers_.
+
+When you worked with ChefSpec in a prior lesson, you used the default matchers that ChefSpec provides. For example, you used the built-in `install_package` resource to verify that a `package` resource exists that installs the `httpd` package.
+
+```ruby
+# ~/webserver/spec/unit/recipes/default_spec.rb
+it 'installs httpd' do
+  expect(chef_run).to install_package 'httpd'
 end
 ```
 
+Much like how the `httpd` cookbook provides an additional layer of abstraction over the built-in `package`, `service`, and `template` resources to make Apache easier to configure, it provides what are called _custom matchers_ to provide a corresponding abstraction for testing.
+
+We won't go into detail about how to write a custom matcher, but when you use a community cookbook, you can look to see whether it provides custom matchers for you to use in your tests.
+
+The `httpd` cookbook defines [these custom matchers](https://github.com/chef-cookbooks/httpd/blob/dc951d170c3051742782f58a2e651cba1917994a/libraries/matchers.rb).
+
+* `create_httpd_config`
+* `delete_httpd_config`
+* `create_httpd_module`
+* `delete_httpd_module`
+* `create_httpd_service`
+* `delete_httpd_service`
+
+The `httpd` cookbook also provides [ChefSpec tests](https://github.com/chef-cookbooks/httpd/tree/dc951d170c3051742782f58a2e651cba1917994a/spec) to help ensure that the cookbook continues to behave as expected as improvements are made to it.
+
+Here's how the `webserver` recipe from our `awesome_customers` cookbook configures Apache.
+
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers/spec/unit/recipes/webserver_spec.rb
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+httpd_service 'customers' do
+  mpm 'prefork'
+  action [:create, :start]
+end
+
+# Add the site configuration.
+httpd_config 'customers' do
+  instance 'customers'
+  source 'customers.conf.erb'
+  notifies :restart, 'httpd_service[customers]'
+end
+```
+
+And here's how you would use the custom `create_httpd_service` and `create_httpd_config` matchers to validate the `httpd_service` and `httpd_config` resources from ChefSpec. Don't add this code just yet.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/spec/unit/recipes/webserver_spec.rb
+it "creates httpd_service['customers']" do
+  expect(chef_run).to create_httpd_service('customers')
+    .with(
+        mpm: 'prefork'
+      )
+end
+
+it "creates httpd_config['customers']" do
+  expect(chef_run).to create_httpd_config 'customers'
+end
+```
+
+Here's how the `webserver` recipe configures the document root.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+# [...]
+
+# Create the document root directory.
+directory node['awesome_customers']['document_root'] do
+  recursive true
+end
+
+# [...]
+```
+
+To test this, you would use the built-in `create_directory` matcher.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/spec/unit/recipes/webserver_spec.rb
+it "creates directory['/var/www/customers/public_html']" do
+  expect(chef_run).to create_directory('/var/www/customers/public_html')
+    .with(
+      recursive: true
+    )
+end
+```
+
+Here's how the `webserver` recipe configures the PHP script template to include the database password.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+[...]
+
+# Load the secrets file and the encrypted data bag item that holds the database password.
+password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers']['passwords']['secret_path'])
+user_password_data_bag_item = Chef::EncryptedDataBagItem.load('passwords', 'db_admin_password', password_secret)
+
+# Write the home page.
+template "#{node['awesome_customers']['document_root']}/index.php" do
+  source 'index.php.erb'
+  mode '0644'
+  owner node['awesome_customers']['user']
+  group node['awesome_customers']['group']
+  variables(
+    database_password: user_password_data_bag_item['password']
+  )
+end
+
+[...]
+```
+
+To test this, you would use the built-in `create_template` and matcher.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/spec/unit/recipes/webserver_spec.rb
+it "creates template['/var/www/customers/public_html/index.php']" do
+  expect(chef_run).to create_template('/var/www/customers/public_html/index.php')
+    .with(
+      mode: '0644',
+      owner: 'web_admin',
+      group: 'web_admin',
+      variables: {
+        database_password: user_password_data_bag_item['password']
+      }
+    )
+end
+```
+
+This is one place where we can use our fake database password. This tests doesn't ensure that the _correct_ database password is passed to the template, but it ensures that the template receives the same database password that's defined in the encrypted data bag.
+
+Finally, here's how the `webserver` recipe configures the PHP modules needed to work with Apache and MySQL.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
+# [...]
+
+# Install the mod_php5 Apache module.
+httpd_module 'php' do
+  instance 'customers'
+end
+
+# Install php5-mysql.
+package 'php-mysql' do
+  action :install
+  notifies :restart, 'httpd_service[customers]'
+end
+```
+
+To test these resources, you would use the custom `create_http_module` matcher from the `httpd` cookbook and the built-in `install_package` matcher.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/spec/unit/recipes/webserver_spec.rb
+it "installs httpd_module['php']" do
+  expect(chef_run).to create_httpd_module('php')
+end
+
+it "installs package['php-mysql']" do
+  expect(chef_run).to install_package('php-mysql')
+end
+```
+
+Write out your final <code class="file-path">webserver_spec.rb</code> file like this.
+
+```ruby
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/spec/unit/recipes/webserver_spec.rb
 require 'spec_helper'
 
 describe 'awesome_customers::webserver' do
-
   context 'When all attributes are default, on an unspecified platform' do
-
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new
       runner.converge(described_recipe)
@@ -245,7 +399,9 @@ describe 'awesome_customers::webserver' do
 
     let(:secret_path) { '/etc/chef/encrypted_data_bag_secret' }
     let(:secret) { 'secret' }
-    let(:user_password_data_bag_item) do { password: 'sample_password' } end
+    let(:user_password_data_bag_item) do
+      { password: 'fake_password' }
+    end
 
     before do
       allow(File).to receive(:exist?).and_call_original
@@ -254,13 +410,11 @@ describe 'awesome_customers::webserver' do
       allow(IO).to receive(:read).and_call_original
       allow(IO).to receive(:read).with(secret_path).and_return(secret)
 
-      allow(Chef::EncryptedDataBagItem).to receive(:load).with('passwords', 'db_admin_password', secret).and_return({
-        password: 'sample_password'
-      })
+      allow(Chef::EncryptedDataBagItem).to receive(:load).with('passwords', 'db_admin_password', secret).and_return(user_password_data_bag_item)
     end
 
     it 'converges successfully' do
-      chef_run # This should not raise an error
+      expect { chef_run }.to_not raise_error
     end
 
     it "creates httpd_service['customers']" do
@@ -268,10 +422,6 @@ describe 'awesome_customers::webserver' do
         .with(
             mpm: 'prefork'
           )
-    end
-
-    it "creates httpd_config['customers']" do
-      expect(chef_run).to create_httpd_config 'customers'
     end
 
     it "creates httpd_config['customers']" do
@@ -308,13 +458,15 @@ describe 'awesome_customers::webserver' do
 end
 ```
 
-```bash
-# ~/chef-repo/cookbooks/awesome_customers
-$ rspec spec/unit/recipes/webserver_spec.rb
-.
+Run `rspec` to run the tests.
 
-Finished in 34.45 seconds (files took 11.97 seconds to load)
-8 examples, 0 failures
+```bash
+# ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
+$ rspec --color spec/unit/recipes/webserver_spec.rb
+.......
+
+Finished in 30.91 seconds (files took 13.31 seconds to load)
+7 examples, 0 failures
 ```
 
-[COMMENT] You'll likely see lots of warnings appear at the start of the output. These warnings are OK to ignore, and we're working to remove them.
+Great work. You now have a set of tests that help validate that the `awesome_customers` cookbook's resources are properly defined. You have a few more tests than you need because the `awesome_customers` cookbook's resources don't define dynamic behaviors, but you now know how to work with encrypted data bag items and use custom matchers in your tests.
