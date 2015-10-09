@@ -10,5 +10,4 @@ After completing this tutorial, you'll:
 
 * have the Chef development tools installed on your workstation.
 * understand how to apply your cookbooks to a temporary local virtual machine.
-
-[COMMENT] To complete this tutorial, you'll need the `awesome_customers` cookbook. If you didn't complete the previous tutorial, ensure that you at least follow [step 1](/local-development/rhel/apply-the-web-application-cookbook-locally#step1) in the previous tutorial to get it and encrypt your database passwords.
+* have experience setting up a basic but complete web application locally on your workstation.
