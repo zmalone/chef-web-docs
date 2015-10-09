@@ -1,4 +1,4 @@
-## 1. Verify your cookbook places the system in the desired state
+## 1. Verify the awesome_customers cookbook places the system in the desired state
 
 In this part, you'll write Serverspec tests that verify the state of the web application on a Test Kitchen instance.
 

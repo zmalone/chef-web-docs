@@ -66,6 +66,7 @@ Common statuses include:
 * `C` (Convention) &ndash; indicates that RuboCop found code that potentially violates standard convention, for example, inconsistent use of indentation.
 * `W` (Warning) &ndash; indicates that RuboCop found code that's valid, but potentially isn't what the programmer intended, such as comparing a variable to itself or defining [unreachable code](https://en.wikipedia.org/wiki/Unreachable_code).
 * `E` (Error) &ndash; indicates that RuboCop found a potential error, such as using an invalid character in a variable name.
+* `F` (Fatal) &ndash; indicates that RuboCop found a potential unrecoverable error that would cause the program to crash, such as an [exception](http://ruby-doc.org/core-2.2.0/Exception.html) that is not handled.
 
 When RuboCop finds multiple potential issues, it reports the most severe as the file's status. In this example, RuboCop found both a convention violation and a warning, so our recipe's overall status is `W` (Warning).
 
