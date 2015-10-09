@@ -1,4 +1,4 @@
-## 4. Bootstrap your node
+## 3. Bootstrap your node
 
 <div class="indent" id="bootstrap-intro" data-type="windows-fundamentals" ng-non-bindable>
 From your workstation, run this command to bootstrap your node. Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.

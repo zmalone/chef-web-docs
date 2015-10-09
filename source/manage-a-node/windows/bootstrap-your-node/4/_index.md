@@ -1,4 +1,4 @@
-## 5. Confirm the result
+## 4. Confirm the result
 
 Two things just happened.
 
