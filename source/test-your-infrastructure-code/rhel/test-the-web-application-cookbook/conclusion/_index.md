@@ -6,6 +6,8 @@ This tutorial proposed these questions:
 
 In this tutorial, you used Serverspec, ChefSpec, and the lint tools RuboCop and Foodcritic to help answer these questions. Each of these tools plays an important role to helping ensure that your cookbooks behave like you intend, are well-defined, adhere to accepted standards, and avoid common potential defects.
 
+It's become increasingly popular to write your tests before you write your Chef code. This _test-driven_ approach helps document your requirements and goals, and the scope of your project. Once all your tests pass, you've satisfied the requirements for your project and can move it to the next phase.
+
 [TIP] Learn more about writing great tests and see practical examples at [betterspecs.org](http://betterspecs.org).
 
 As with any kind of software testing, there's a time tradeoff. It can take some time to write your initial tests and incorporate them into your workflow &ndash; arguably, it can take more time to set up your test process than it would take to test your initial configuration manually. It can also take time to get buy-in from others that automated testing is the right thing to do.
