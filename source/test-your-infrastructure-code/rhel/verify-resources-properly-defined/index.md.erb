@@ -1,0 +1,74 @@
+---
+title: 'Verify your resources are properly defined'
+order: 3
+keywords: TODO
+layout: lesson
+sections: [1, 2, 3, 4]
+next: {heading: Next, partial: next}
+time_to_complete: 30 minutes
+---
+[HEADLINE] ChefSpec simulates the execution of your resources, giving you an even faster feedback loop as you create and refine your recipes.
+
+In the previous lesson, you wrote Serverspec tests that automatically verify that your basic web server cookbook configures Apache as you expect. Although automated testing is faster than manual testing, it can still take some time for the instance to come up, run `chef-client`, and run the tests.
+
+You'll want to verify your work on a virtual instance before you run your cookbook in production, but as you develop your cookbook, you can use [ChefSpec](http://sethvargo.github.io/chefspec/) to speed up the feedback cycle even more. ChefSpec _simulates_ the execution of your resources in memory, and does not involve the creation of a virtual instance. It's the fastest way to test your resources and is a great way to validate the correctness of your work, even before you set up a virtual instance to test on.
+
+ChefSpec provides a kind of _unit_ testing, where you verify that a single component, such as a Chef resource, functions correctly. Unlike integration testing, unit testing does not focus on how multiple components work together.
+
+ChefSpec testing is most useful when a component's behavior varies based on the environment or other variable input. For example, say you define this `package` resource to install the `vim` text editor.
+
+```ruby
+# default.rb
+package 'vim' do
+  action :install
+end
+```
+
+You don't need to write a unit test here because this `package` resource can do only one thing &ndash; install the `vim` package if it's not already installed. However, say your `package` resource reads from a node attribute to determine which text editor to install.
+
+```ruby
+# default.rb
+package node['text_editor'] do
+  action :install
+end
+```
+
+In this case, you might want to validate that when the `node['text_editor']` attribute is set, that the appropriate text editor would be installed.
+
+In this lesson, you'll modify the `webserver` cookbook to work on both CentOS and Ubuntu. The way Apache is installed and managed differs slightly on both platforms.
+
+Recall that our `webserver` cookbook's default recipe looks like this.
+
+```ruby
+# ~/webserver/recipes/default.rb
+package 'httpd'
+
+service 'httpd' do
+  action [:enable, :start]
+end
+
+file '/var/www/html/index.html' do
+  content '<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>'
+end
+```
+
+We know that this configuration works on CentOS, but on Ubuntu, both the package and service name is `apache2`.
+
+The criteria for the web server configuration are:
+
+* on CentOS, install the `httpd` package and enable and start the `httpd` service.
+* on Ubuntu, install the `apache2` package and enable and start the `apache2` service.
+
+You'll need to write code to ensure that your cookbook performs the correct steps in both environments. You'll write ChefSpec tests that verify that the code is defined correctly for both platforms &ndash; without the need to run it on a local instance.
+
+[START_MODAL video-overview Watch the video]
+
+Watch this 3-minute video for a second look at how ChefSpec works.
+
+<iframe class="embedded-video" src="//www.youtube.com/embed/UwG3et-MxU8" frameborder="0" allowfullscreen></iframe>
+
+[END_MODAL]

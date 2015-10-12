@@ -22,7 +22,7 @@ Now that we're logged in, we'll verify that:
 
 * the user `web_admin` exists.
 * `web_admin` owns the default home page.
-* the `httpd` service is running.
+* the `httpd-customers` service is running.
 * the home page is in the location we expect.
 * the home page is being served and is accessible externally.
 

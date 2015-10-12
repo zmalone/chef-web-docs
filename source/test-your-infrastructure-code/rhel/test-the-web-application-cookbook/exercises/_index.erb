@@ -1,0 +1,161 @@
+<h2>Exercises</h2>
+<p>
+<span style="font-size:22px;">1. Explain the difference between ChefSpec and Serverpec tests. Do you need both a ChefSpec and a Serverspec test for every feature in your cookbook?</span>
+</p>
+<p>
+<dl class="accordion" data-accordion>
+  <dd class="accordion-navigation">
+    <a href="#question1">Answer <i class='fa fa-angle-double-right'></i></a>
+    <div id="question1" class="box content">
+      <%= partial "/test-your-infrastructure-code/rhel/test-the-web-application-cookbook/exercises/answers/1" %>
+    </div>
+  </dd>
+</dl>
+</p>
+<hr>
+<p>
+<a name="2"></a>
+<span style="font-size:22px;">2. Why is it important to run lint tools such as RuboCop and Foodcritic on your cookbooks?</span>
+</p>
+<p>
+<dl class="accordion" data-accordion>
+  <dd class="accordion-navigation">
+    <a href="#question2">Answer <i class='fa fa-angle-double-right'></i></a>
+    <div id="question2" class="box content">
+      <%= partial "/test-your-infrastructure-code/rhel/test-the-web-application-cookbook/exercises/answers/2" %>
+    </div>
+  </dd>
+</dl>
+</p>
+<hr>
+<p>
+<a name="3"></a>
+<span style="font-size:22px;">3. Write a cookbook based soley on the following Serverspec test.</span>
+</p>
+<div class="window " ng-non-bindable>
+              <nav class="control-window">
+                <div class="close">&times;</div>
+                <div class="minimize"></div>
+                <div class="deactivate"></div>
+              </nav>
+              <h1 class="titleInside">Editor: default_spec.rb</h1>
+              <div class="container"><div class="editor"><div class='highlight ruby'><pre class='code_wrapper'><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'spec_helper'</span>
+
+<span class="n">describe</span> <span class="s1">'postfix'</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s1">'is installed'</span> <span class="k">do</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">package</span> <span class="s1">'postfix'</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_installed</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s1">'is enabled and running'</span> <span class="k">do</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">'postfix'</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_enabled</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">'postfix'</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_running</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s1">'is configured to use the example.com domain in outbound mail'</span> <span class="k">do</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">file</span> <span class="s1">'/etc/postfix/main.cf'</span><span class="p">).</span><span class="nf">to</span> <span class="n">contain</span> <span class="sr">/^mydomain = example.com$/</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">file</span> <span class="s1">'/etc/postfix/main.cf'</span><span class="p">).</span><span class="nf">to</span> <span class="n">contain</span> <span class="sr">/^myorigin = example.com$/</span>
+  <span class="k">end</span>
+<span class="k">end</span><span class="w">
+</span></pre></td></tr></tbody></table></pre></div></div></div></div>
+<p>
+<b>Hint:</b> You can find a cookbook for the Postfix mail server on <a href="https://supermarket.chef.io/">Chef Supermarket</a>. Find the necessary node attributes and add them to your default attributes file or to the <code>attributes</code> section of your <code class="file-path">.kitchen.yml</code> file. 
+</p>
+<p>
+<dl class="accordion" data-accordion>
+  <dd class="accordion-navigation">
+    <a href="#question3">Answer <i class='fa fa-angle-double-right'></i></a>
+    <div id="question3" class="box content">
+      <%= partial "/test-your-infrastructure-code/rhel/test-the-web-application-cookbook/exercises/answers/3" %>
+    </div>
+  </dd>
+</dl>
+</p>
+<hr>
+<p>
+<a name="4"></a>
+<span style="font-size:22px;">4. Run RuboCop on the following recipe. How would you resolve the reported violations?</span>
+</p>
+<div class="window " ng-non-bindable>
+              <nav class="control-window">
+                <div class="close">&times;</div>
+                <div class="minimize"></div>
+                <div class="deactivate"></div>
+              </nav>
+              <h1 class="titleInside">Editor: ~/webserver/recipes/default.rb</h1>
+              <div class="container"><div class="editor"><div class='highlight ruby'><pre class='code_wrapper'><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></td><td class="code"><pre><span class="n">package_name</span> <span class="o">=</span> <span class="n">service_name</span> <span class="o">=</span> <span class="k">case</span> <span class="n">node</span><span class="o">[</span><span class="s1">'platform'</span><span class="o">]</span>
+<span class="k">when</span> <span class="s1">'centos'</span> <span class="k">then</span> <span class="s1">'httpd'</span>
+<span class="k">when</span> <span class="s1">'ubuntu'</span> <span class="k">then</span> <span class="s1">'apache2'</span>
+<span class="k">end</span>
+
+<span class="n">package</span> <span class="n">package_name</span>
+
+<span class="n">service</span> <span class="n">service_name</span> <span class="k">do</span>
+  <span class="n">action</span> <span class="o">[</span><span class="ss">:enable</span><span class="p">,</span> <span class="ss">:start</span><span class="o">]</span>
+<span class="k">end</span>
+
+<span class="n">file</span> <span class="s1">'/var/www/html/index.html'</span> <span class="k">do</span>
+  <span class="n">content</span> <span class="s1">'&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;hello world&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;'</span>
+<span class="k">end</span><span class="w">
+</span></pre></td></tr></tbody></table></pre></div></div></div></div>
+<p>
+<dl class="accordion" data-accordion>
+  <dd class="accordion-navigation">
+    <a href="#question4">Answer <i class='fa fa-angle-double-right'></i></a>
+    <div id="question4" class="box content">
+      <%= partial "/test-your-infrastructure-code/rhel/test-the-web-application-cookbook/exercises/answers/4" %>
+    </div>
+  </dd>
+</dl>
+</p>
+<hr>
+<p>
+<a name="5"></a>
+<span style="font-size:22px;">5. Write at least one Serverspec test to verify a piece of configuration that you manage on a daily basis.</span>
+</p>
+<p>
+<dl class="accordion" data-accordion>
+  <dd class="accordion-navigation">
+    <a href="#question5">Answer <i class='fa fa-angle-double-right'></i></a>
+    <div id="question5" class="box content">
+      <%= partial "/test-your-infrastructure-code/rhel/test-the-web-application-cookbook/exercises/answers/5" %>
+    </div>
+  </dd>
+</dl>
+</p>

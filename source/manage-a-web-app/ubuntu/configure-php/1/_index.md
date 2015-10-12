@@ -63,12 +63,6 @@ The entire file looks like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-#
-# Cookbook Name:: awesome_customers
-# Recipe:: webserver
-#
-# Copyright (c) 2015 The Authors, All Rights Reserved.
-# Install Apache and start the service.
 httpd_service 'customers' do
   mpm 'prefork'
   action [:create, :start]

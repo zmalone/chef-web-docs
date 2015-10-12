@@ -41,7 +41,7 @@ $ stat -c "%U %G" /var/www/customers/public_html/index.php
 web_admin web_admin
 ```
 
-### Verify that the apache2 service is running
+### Verify that the apache2-customers service is running
 
 ```bash
 # ~

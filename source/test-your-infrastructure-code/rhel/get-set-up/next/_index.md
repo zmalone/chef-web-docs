@@ -1,0 +1,1 @@
+Now that you have the hang of how to use Test Kitchen to configure a local virtual machine, let's write a cookbook that configures a basic web server and see how _Serverspec_ can help us automatically verify that our configuration behaves as we expect.
