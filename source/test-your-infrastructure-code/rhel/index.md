@@ -34,4 +34,4 @@ After completing this tutorial, you'll:
 
 You'll get started by setting up the Chef Development Kit and familiarize yourself with Test Kitchen.
 
-[GITHUB] After you complete this tutorial, you can get the final version of the code on [GitHub](https://github.com/learn-chef/test-your-infrastructure-code-rhel).
+[GITHUB] After you complete this tutorial, you can refer back to the final version of the code on [GitHub](https://github.com/learn-chef/test-your-infrastructure-code-rhel).

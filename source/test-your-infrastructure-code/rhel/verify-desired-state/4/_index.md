@@ -1,8 +1,8 @@
 ## 4. Write just enough code to make the test pass
 
-To make the test pass, we need:
+To make the test pass, we need to:
 
-* to install Apache. On Red Hat Enterprise Linux and CentOS, this is done through the `httpd` package.
+* install Apache. On Red Hat Enterprise Linux and CentOS, this is done through the `httpd` package.
 * enable and start the `httpd` service.
 * write a basic home page that contains the word "hello".
 

@@ -71,4 +71,4 @@ end
 
 This test uses Serverspec's [command](http://serverspec.org/resource_types.html#command) resource to run `curl localhost`. It then checks that the output contains the word "hello".
 
-[RUBY] This example uses a [matcher](https://www.relishapp.com/rspec/rspec-expectations/v/2-2/docs/matchers/match-matcher) to compare the result against a regular expression. Regular expressions in Ruby are usually surrounded with forward slashes `/`. [Rubular](http://rubular.com) is a handy way to test out your regular expressions.
+[RUBY] This example uses a regular expression to compare the result against the expected value. Regular expressions in Ruby are usually surrounded with forward slashes `/`. [Rubular](http://rubular.com) is a handy way to test out your regular expressions.
