@@ -37,8 +37,52 @@ describe 'apache' do
 end
 ```
 
-[COMMENT] These tests use Serverspec's built-in `package`, `service`, `port`, and `command` resources. You can find the full list of available resource types in the [Serverspec documentation](http://serverspec.org/resource_types.html
-).
+[START_MODAL serverspec-closer-look A closer look at a Serverspec test]
+
+The format of an RSpec test (remember, Serverspec is based on RSpec) has two main components: the _subject to examine_ and the subject's _expected state_. Let's see how this relates to our initial test.
+
+```ruby
+# ~/webserver/test/integration/default/serverspec/default_spec.rb
+expect(command('curl localhost').stdout).to match /hello/
+```
+
+Here, the subject to examine is the result of the `curl localhost` command &ndash; specifically, the text that's printed to the standard output stream (stdout). The expected state, or the desired result, is that the output of the `curl localhost` command match the regular expression `/hello/`.
+
+The `match` method is an example of a _matcher_. Think of a matcher as a way to define the expected state.
+
+The `to` method means that we expect a positive match, in other words, the expectation is for the match to succeed. If instead we want to verify that the result does _not_ match the regular expression `/hello/`, we would write this.
+
+```ruby
+# ~/webserver/test/integration/default/serverspec/default_spec.rb
+expect(command('curl localhost').stdout).not_to match /hello/
+```
+
+(You can use `not_to` and `to_not` interchangeably.)
+
+Let's look at the next test.
+
+```ruby
+# ~/webserver/test/integration/default/serverspec/default_spec.rb
+expect(package 'httpd').to be_installed
+```
+
+Here, the subject is the `httpd` package (Serverspec defines the `package` method as a [short-hand way](https://github.com/mizzy/serverspec/blob/8139e844048712dcc1b7b036d3651bb48b68bf14/lib/serverspec/helper/type.rb#L8) of creating a [Package](https://github.com/mizzy/serverspec/blob/6df93896d92e5d8700886911dfa3aa1e06a7c215/lib/serverspec/type/package.rb#L2) object.) The expectation is that the `httpd` package be installed. Serverspec defines the [be_installed](https://github.com/mizzy/serverspec/blob/master/lib/serverspec/matcher/be_installed.rb) method to call the [installed?](https://github.com/mizzy/serverspec/blob/6df93896d92e5d8700886911dfa3aa1e06a7c215/lib/serverspec/type/package.rb#L3) method on the subject. A matcher's underlying call, for example, the `installed?` method, is also called a _predicate_. A predicate is a method that returns `true` or `false`.
+
+Ruby, unlike many programming languages, doesn't require you to surround a method's parameters with parenthesis unless they're required to make the intention clear. For example, these two lines mean the same thing.
+
+```ruby
+# default_spec.rb
+package 'httpd'
+package('httpd')
+```
+
+The reduced need for parenthesis is one thing that helps RSpec tests read similar to natural language.
+
+This tutorial uses what's called the _expectation syntax_. You'll see examples in other places that use the _should_ syntax ([this article](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/) explains the differences in greater detail.) Both styles are valid, just be aware of the differences.
+
+If you're new to Ruby programming or testing with RSpec, the best way to get started is to adapt other examples that you see. The [Serverspec documentation](http://serverspec.org/resource_types.html) provides the full list of available resource types, and has many good examples.
+
+[END_MODAL]
 
 Now run `kitchen verify` to run your new tests.
 
