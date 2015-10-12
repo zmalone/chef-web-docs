@@ -1,1 +1,1 @@
-Now that you've used Test Kitchen to configure the `awesome_customers` cookbook locally, let's write a cookbook that configures a file and see how _Serverspec_ can help us automatically verify that the file was properly configured.
+Next, you'll apply what you've learned about Serverspec, ChefSpec, RuboCop, and Foodcritic by applying these tools to the `awesome_customers` web application cookbook that you've developed in the previous tutorials.
