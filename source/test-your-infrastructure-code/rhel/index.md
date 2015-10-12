@@ -19,6 +19,14 @@ How would you diagnose the error? You might start by manually verifying that the
 
 With Chef, you use _code_ to create cookbooks that express the desired state of your systems. You can also use code in a similar way to verify that the cookbooks you write do what you expect. The article [Overview of test driven infrastructure with Chef](/skills/test-driven-development/) outlines some of the more popular testing tools, and in this tutorial you'll use several of them.
 
+[START_MODAL video-overview Watch the video]
+
+In this video, Frank Webber outlines why testing is an important part of your Chef workflow.
+
+<iframe class="embedded-video" src="//www.youtube.com/embed/HnalNLa8Pbo" frameborder="0" allowfullscreen></iframe>
+
+[END_MODAL]
+
 Rather than focusing on the specific kinds of software testing, like unit and integration testing, in this tutorial we'll focus on these questions:
 
 * Did our cookbook place the system in the desired state?
