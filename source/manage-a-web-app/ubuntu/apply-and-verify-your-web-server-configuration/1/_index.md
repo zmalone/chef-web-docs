@@ -37,19 +37,20 @@ To help unravel this dependency web &ndash; and remove the need for you to manua
 
 Berkshelf comes with the Chef DK, so you don't have to install anything.
 
-When you created your cookbook, the `chef generate cookbook` command created a file named <code class="file-path">Berksfile</code> in the cookbook's root directory.
+In Chef DK versions prior to 0.9.0, the `chef generate cookbook` command creates a file named <code class="file-path">Berksfile</code> in the cookbook's root directory.
 
-For this project, you won't need to work directly with <code class="file-path">Berksfile</code>. But you'll notice that <code class="file-path">Berksfile</code> comes pre-configured to pull cookbooks from Chef Supermarket.
+If you're using Chef DK version 0.9.0 or later (you can run the `chef --version` command to verify your version), you'll need to create this file by hand. Create a file named <code class="file-path">Berksfile</code> in the <code class="file-path">~/chef-repo/cookbooks/awesome_customers</code> directory and add this.
 
-```bash
-# ~/chef-repo/cookbooks/awesome_customers
-$ more Berksfile
+```ruby
+# ~/chef-repo/cookbooks/awesome_customers/Berksfile
 source "https://supermarket.chef.io"
 
 metadata
 ```
 
-The `metadata` line tells Berkshelf to pull additional dependencies from the <code class="file-path">metadata.rb</code> file.
+The `source` lines configures Berkshelf to pull dependent cookbooks from Chef Supermarket. The `metadata` line tells Berkshelf to that your cookbook's dependencies are located in your cookbook's <code class="file-path">metadata.rb</code> file.
+
+[COMMENT] In Chef DK 0.9.0 and later, the `chef generate cookbook` command creates what's called a [policy file](https://github.com/chef/chef-dk/blob/master/POLICYFILE_README.md) instead of a <code class="file-path">Berksfile</code>. Chef can use your policy file instead of the <code class="file-path">Berksfile</code> to resolve cookbook dependencies. Policy files are still an experimental feature, and we'll update this tutorial to use them when they're ready for use in production.
 
 ### Use Berkshelf to install your dependencies
 
