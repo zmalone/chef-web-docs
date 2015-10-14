@@ -10,9 +10,9 @@ It's become increasingly popular to write your tests before you write your Chef 
 
 [TIP] Learn more about writing great tests and see practical examples at [betterspecs.org](http://betterspecs.org).
 
-As with any kind of software testing, there's a time tradeoff. It can take some time to write your initial tests and incorporate them into your workflow &ndash; arguably, it can take more time to set up your test process than it would take to test your initial configuration manually. It can also take time to get buy-in from others that automated testing is the right thing to do.
+As with any kind of software testing, there's a time tradeoff. It can take some time to write your initial tests and incorporate them into your workflow &ndash; arguably, it can take more time to set up your test process than it would take to test your initial configuration manually. Writing test code is a also a new skill for many, and it can take time to ramp up your skills.
 
-But once you have automated testing in place, verifying changes becomes significantly faster. What once took days or weeks to manually verify can now take hours or even minutes. And because automated testing enables you to more quickly and easily build confidence in your changes, you'll be better able to tackle those small but important changes that you were once hesitant to commit to.
+But once you have automated testing in place and the skills to start writing tests, verifying changes becomes significantly faster. What once took days or weeks to manually verify can now take hours or even minutes. And because automated testing enables you to more quickly and easily build confidence in your changes, you'll be better able to tackle those small but important changes that you were once hesitant to commit to.
 
 [GITHUB] Get the final version of the code for this tutorial on [GitHub](https://github.com/learn-chef/test-your-infrastructure-code-rhel).
 
