@@ -58,13 +58,11 @@ $ kitchen test
        Finished converging <default-centos-66> (0m22.24s).
 [...]
        apache
-         is installed
-         is running
          is listening to port 80
          displays a custom home page
 
        Finished in 0.1436 seconds (files took 0.29668 seconds to load)
-       4 examples, 0 failures
+       2 examples, 0 failures
 
        Finished verifying <default-centos-66> (0m15.07s).
 -----> Destroying <default-centos-66>...

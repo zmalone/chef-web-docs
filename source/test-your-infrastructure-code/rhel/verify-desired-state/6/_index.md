@@ -28,6 +28,8 @@ $ kitchen verify
 
 Success! The test passes. If the test did not pass, you would go back to your web server code, fix the failure, and run your test again.
 
+[COMMENT] Writing just one test is better than having no tests at all. After you have at least one test in place, you have a foundation and a process for writing more.
+
 Run `kitchen list`. You'll see in the `Last Action` column that the instance's state is `Verified`, which means that Test Kitchen's most previous action was to run the tests.
 
 ```bash

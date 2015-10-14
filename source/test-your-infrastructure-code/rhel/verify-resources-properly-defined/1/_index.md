@@ -102,4 +102,4 @@ This spec file contains two `context` blocks &ndash; one that simulates the appl
 
 [COMMENT] The [ChefSpec documentation](http://www.rubydoc.info/github/sethvargo/chefspec) lists the matchers that are available in your tests. For example, [ServiceMatchers](http://www.rubydoc.info/github/sethvargo/chefspec/ChefSpec/API/ServiceMatchers) describes the `enable_service` and `start_service` matchers.<br/>You can also browse these [additional examples](https://github.com/sethvargo/chefspec/tree/master/examples).
 
-Remember, ChefSpec only simluates the execution of your resources; it doesn't run the code on a real instance. Therefore we can't things like whether port 80 would be open or whether `curl localhost` would succeed because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.
+Remember, ChefSpec only simluates the execution of your resources; it doesn't run the code on a real instance. Therefore we can't verify things like whether port 80 would be open or whether `curl localhost` would succeed because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.

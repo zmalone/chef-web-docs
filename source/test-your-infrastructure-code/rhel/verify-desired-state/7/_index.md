@@ -1,18 +1,12 @@
-## 7. Write additional Serverspec tests
+## 7. Write one more Serverspec test
 
 You've satisfied the basic requirements for your web server. Your test verifies that it can access the home page and that the home page contains "hello".
 
 However, as you add additional features, you may introduce a _regresssion_, or break, in existing functionality. Your test verifies only the end result of your web configuration. If this test were to fail, you would have to perform additional troubleshooting to understand the root cause.
 
-Let's write a few more tests that verify other aspects of your configuration. Specifically, we'll verify that:
+Let's write just one more test that verifies that port 80 is listening to incoming requests. Doing so gives you more information that will enable you to better pinpoint the root cause of failure.
 
-* the `httpd` package is installed.
-* the `httpd` service is running.
-* port 80 is listening to incoming requests.
-
-Doing so gives you more information that will enable you to better pinpoint the root cause of failure.
-
-Our new tests will follow the same format as the first one. Append one test for each of the above requirements to <code class="file-path">default_spec.rb</code>, making the entire file look like this.
+Our new test will follow the same format as the first one. Append your new test to <code class="file-path">default_spec.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/webserver/test/integration/default/serverspec/default_spec.rb
@@ -21,14 +15,6 @@ require 'spec_helper'
 describe 'apache' do
   it 'displays a custom home page' do
     expect(command('curl localhost').stdout).to match /hello/
-  end
-
-  it 'is installed' do
-    expect(package 'httpd').to be_installed
-  end
-
-  it 'is running' do
-    expect(service 'httpd').to be_running
   end
 
   it 'is listening to port 80' do
@@ -63,17 +49,17 @@ Let's look at the next test.
 
 ```ruby
 # ~/webserver/test/integration/default/serverspec/default_spec.rb
-expect(package 'httpd').to be_installed
+expect(port 80).to be_listening
 ```
 
-Here, the subject is the `httpd` package (Serverspec defines the `package` method as a [short-hand way](https://github.com/mizzy/serverspec/blob/8139e844048712dcc1b7b036d3651bb48b68bf14/lib/serverspec/helper/type.rb#L8) of creating a [Package](https://github.com/mizzy/serverspec/blob/6df93896d92e5d8700886911dfa3aa1e06a7c215/lib/serverspec/type/package.rb#L2) object.) The expectation is that the `httpd` package be installed. Serverspec defines the [be_installed](https://github.com/mizzy/serverspec/blob/master/lib/serverspec/matcher/be_installed.rb) method to call the [installed?](https://github.com/mizzy/serverspec/blob/6df93896d92e5d8700886911dfa3aa1e06a7c215/lib/serverspec/type/package.rb#L3) method on the subject. A matcher's underlying call, for example, the `installed?` method, is also called a _predicate_. A predicate is a method that returns `true` or `false`.
+Here, the subject is port 80 (Serverspec defines the `port` method as a [short-hand way](https://github.com/mizzy/serverspec/blob/8139e844048712dcc1b7b036d3651bb48b68bf14/lib/serverspec/helper/type.rb#L8) of creating a [Port](https://github.com/mizzy/serverspec/blob/6df93896d92e5d8700886911dfa3aa1e06a7c215/lib/serverspec/type/port.rb#L4) object.) The expectation is that port 80 is listening to incoming requests. Serverspec defines the [be_listening](https://github.com/mizzy/serverspec/blob/master/lib/serverspec/matcher/be_listening.rb) method to call the [listening?](https://github.com/mizzy/serverspec/blob/6df93896d92e5d8700886911dfa3aa1e06a7c215/lib/serverspec/type/port.rb#L30) method on the subject. A matcher's underlying call, for example, the `listening?` method, is also called a _predicate_. A predicate is a method that returns `true` or `false`.
 
 Ruby, unlike many programming languages, doesn't require you to surround a method's parameters with parenthesis unless they're required to make the intention clear. For example, these two lines mean the same thing.
 
 ```ruby
 # default_spec.rb
-package 'httpd'
-package('httpd')
+port 80
+port(80)
 ```
 
 The reduced need for parenthesis is one thing that helps RSpec tests read similar to natural language.
@@ -103,13 +89,11 @@ $ kitchen verify
        /opt/chef/embedded/bin/ruby -I/tmp/verifier/suites/serverspec -I/tmp/verifier/gems/gems/rspec-support-3.3.0/lib:/tmp/verifier/gems/gems/rspec-core-3.3.2/lib /opt/chef/embedded/bin/rspec --pattern /tmp/verifier/suites/serverspec/\*\*/\*_spec.rb --color --format documentation --default-path /tmp/verifier/suites/serverspec
 
        apache
-         is installed
-         is running
          is listening to port 80
          displays a custom home page
 
        Finished in 0.21102 seconds (files took 0.29319 seconds to load)
-       4 examples, 0 failures
+       2 examples, 0 failures
 
        Finished verifying <default-centos-66> (0m3.57s).
 -----> Kitchen is finished. (0m4.10s)
