@@ -361,7 +361,7 @@ Now remove the extra space from your `database` recipe. The entire `execute` res
 
 ```ruby
 # ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/database.rb
-[...]
+# [...]
 
 # Seed the database with a table and test data.
 execute 'initialize database' do
@@ -388,7 +388,7 @@ Update your `webserver` recipe to use the recommended Hash syntax, like this.
 
 ```ruby
 # ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-[...]
+# [...]
 
 # Write the home page.
 template "#{node['awesome_customers']['document_root']}/index.php" do
@@ -401,7 +401,7 @@ template "#{node['awesome_customers']['document_root']}/index.php" do
   )
 end
 
-[...]
+# [...]
 ```
 
 The final violation, `C: Indent the right brace the same as the first position after the preceding left parenthesis.` appears to not be relevant anymore because we removed the right curly brace in question.

@@ -27,11 +27,11 @@ When you logged into your node, you ran [these manual tests](/manage-a-web-app/r
 * the `httpd-customers` service is running.
 * the home page is in the location we expect.
 
-Let's translate each of these manual checks into Serverspec tests.
+Let's translate these manual checks into Serverspec tests.
 
 ### Fetch details for user web_admin
 
-You ran this test on your node to verify that the user `web_admin` exists.
+You ran this command on your node to verify that the user `web_admin` exists.
 
 ```bash
 # ~
@@ -58,7 +58,7 @@ end
 
 ### Verify that web_admin owns the default home page
 
-You ran this test on your node to verify that `web_admin` owns the default home page.
+You ran this command on your node to verify that `web_admin` owns the default home page.
 
 ```bash
 $ stat -c "%U %G" /var/www/customers/public_html/index.php
@@ -67,7 +67,7 @@ web_admin web_admin
 
 The `stat` command displays properties about the specified file. The `-c "%U %G"` part formats the output to display only the user and group names of the owner.
 
-In Serverspec, the [user](http://serverspec.org/resource_types.html#user) resource's `be_owned_by` and `be_grouped_into` matchers give us this information.
+In Serverspec, the [file](http://serverspec.org/resource_types.html#file) resource's `be_owned_by` and `be_grouped_into` matchers give us this information.
 
 Append this code to <code class="file-path">default_spec.rb</code>.
 
@@ -83,7 +83,7 @@ end
 
 ### Verify that the httpd-customers service is running
 
-You ran this test on your node to verify that `httpd-customers` service is running.
+You ran this command on your node to verify that `httpd-customers` service is running.
 
 ```bash
 # ~
@@ -109,7 +109,7 @@ end
 
 ### Verify that the home page is in the location we expect
 
-You ran this test on your node to verify that home page is located at <code class="file-path"> /var/www/customers/public_html/index.php</code>.
+You ran this command on your node to verify that home page is located at <code class="file-path"> /var/www/customers/public_html/index.php</code>.
 
 ```bash
 # ~

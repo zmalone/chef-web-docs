@@ -4,7 +4,7 @@ In this part, you'll write ChefSpec tests that verify the state of the web appli
 
 Remember that ChefSpec tests are ideal when a component's behavior varies based on the environment or other variable input &ndash; for example, recipes that target multiple platforms or multiple versions of the same platform. ChefSpec helps you validate that the correct actions are taken in each environment.
 
-Although this version of the `awesome_customers` cookbook targets just Red Hat Enterprise Linux (including CentOS), let's write a few ChefSpec tests anyway to demonstrate two important concepts &ndash; using custom matchers and [creating mocks] to simulate the use of encrypted data bag items.
+Although this version of the `awesome_customers` cookbook targets just Red Hat Enterprise Linux (including CentOS), let's write a few ChefSpec tests anyway to demonstrate two important concepts &ndash; using _custom matchers_ to verify the use of custom resources and _method stubs_ to simulate the use of encrypted data bag items.
 
 We'll focus just on the web server portion of the cookbook.
 
@@ -56,7 +56,7 @@ Failed examples:
 rspec ./spec/unit/recipes/webserver_spec.rb:16 # awesome_customers::webserver When all attributes are default, on an unspecified platform converges successfully
 ```
 
-The command reported a fatal error &ndash; that the file data bag secret key <code class="file-path">/etc/chef/encrypted\_data\_bag\_secret</code> does not exist.
+The command reported a fatal error &ndash; that the data bag secret key <code class="file-path">/etc/chef/encrypted\_data\_bag\_secret</code> file does not exist.
 
 ```bash
 #
@@ -314,7 +314,7 @@ Here's how the `webserver` recipe configures the PHP script template to include 
 
 ```ruby
 # ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/recipes/webserver.rb
-[...]
+# [...]
 
 # Load the secrets file and the encrypted data bag item that holds the database password.
 password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers']['passwords']['secret_path'])
@@ -331,7 +331,7 @@ template "#{node['awesome_customers']['document_root']}/index.php" do
   )
 end
 
-[...]
+# [...]
 ```
 
 To test this, you would use the built-in `create_template` and matcher.
@@ -351,7 +351,7 @@ it "creates template['/var/www/customers/public_html/index.php']" do
 end
 ```
 
-This is one place where we can use our fake database password. This tests doesn't ensure that the _correct_ database password is passed to the template, but it ensures that the template receives the same database password that's defined in the encrypted data bag.
+This is one place where we can use our fake database password. This test doesn't ensure that the _correct_ database password is passed to the template, but it ensures that the template receives the same database password that's defined in the encrypted data bag.
 
 Finally, here's how the `webserver` recipe configures the PHP modules needed to work with Apache and MySQL.
 
