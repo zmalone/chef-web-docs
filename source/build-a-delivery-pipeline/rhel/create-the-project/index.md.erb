@@ -1,0 +1,111 @@
+---
+title: 'Create the project'
+order: 2
+keywords: TODO
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 60 minutes
+---
+
+* git clone
+
+```bash
+# ~/Development
+$ git clone https://github.com/learn-chef/build-a-delivery-pipeline-rhel.git
+Cloning into 'build-a-delivery-pipeline-rhel'...
+remote: Counting objects: 65, done.
+remote: Compressing objects: 100% (45/45), done.
+remote: Total 65 (delta 4), reused 65 (delta 4), pack-reused 0
+Unpacking objects: 100% (65/65), done.
+Checking connectivity... done.
+$ cd build-a-delivery-pipeline-rhel
+```
+
+* Run `delivery token`. Enter your password when prompted.
+
+[PRODNOTE] This step seems borked. Folks say you need to run this along with `delivery setup`, one dir above. Need to reconcile.
+
+```bash
+# ~/Development/build-a-delivery-pipeline-rhel
+$ delivery token
+Chef Delivery
+Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel
+Delivery password:
+token: 7lPcEefiDUsNqnjopso1gE8OCscH3Zm++bCNgShXkn0=
+saved API token to: /home/thomaspetchel/.delivery/api-tokens
+```
+
+You now have a .delivery directory.
+
+```bash
+# ~/Development/build-a-delivery-pipeline-rhel
+$ tree .delivery
+.delivery/
+└── cli.toml
+
+0 directories, 1 file
+$ more .delivery/cli.toml
+enterprise = "test"
+git_port = "8989"
+organization = "learn-chef"
+pipeline = "master"
+server = "10.194.8.162"
+user = "tpetchel"
+```
+
+* delivery init
+
+```bash
+# ~/Development/build-a-delivery-pipeline-rhel
+$ delivery init
+Chef Delivery
+Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel
+Is /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel a git repo?  yes
+adding remote: ssh://tpetchel@test@10.194.8.162:8989/test/learn-chef/build-a-delivery-pipeline-rhel
+Creating project: build-a-delivery-pipeline-rhel
+Checking for content on the git remote delivery: No upstream content
+No upstream content; pushing local content to server.
+To ssh://tpetchel@test@10.194.8.162:8989/test/learn-chef/build-a-delivery-pipeline-rhel
+*	refs/heads/master:refs/heads/master	[new branch]
+Branch master set up to track remote branch master from delivery.
+Done
+
+Creating master pipeline for project: build-a-delivery-pipeline-rhel ... done
+Writing configuration to /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel/.delivery/config.json
+New delivery configuration
+--------------------------
+{
+  "version": "2",
+  "build_cookbook": {
+    "name": "<your build cookbook name>",
+    "path": "<relative path from project root>"
+  },
+  "skip_phases": []
+}Chef Delivery
+Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel
+Review for change add-delivery-config targeted for pipeline master
+Created
+https://10.194.8.162/e/test/#/organizations/learn-chef/projects/build-a-delivery-pipeline-rhel/changes/28aad937-4c50-4b41-b053-dc4d36b42983
+```
+
+`delivery init`:
+
+* Push to master
+* Create the pipeline
+* Create a branch (to add the delivery config)
+* Add the Delivery configuration files
+* Create a change for review
+
+* A browser window appears. Watch it flow through the pipeline - the default actions happen.
+
+The build is expected to fail because it needs to be set up for your [environment....]
+
+![Verify the failure](delivery/rhel/add-delivery-config-verify-failure.png)
+
+Talk about what `delivery init` does (creates branch, creates stubs, pushes for review)
+
+```
+$ git branch -v* add-delivery-config 873b461 Add Delivery config
+  master              aa1a07c import from testing tutorial
+```

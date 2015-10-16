@@ -1,0 +1,152 @@
+---
+title: 'Get set up'
+order: 1
+keywords: TODO
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: XX minutes
+---
+
+## Infrastructure you’ll need:
+
+### SSH provisioner
+
+* Delivery server
+* Chef server
+* Build node
+* Acceptance
+* Union
+* Rehearsal
+* Delivered
+
+### AWS provisioner
+
+* Acceptance
+* Union
+* Rehearsal
+* Delivered
+
+## 1. Install Chef DK
+
+Although Chef Delivery runs on Linux and you're managing a Red Hat Enterprise Linux server, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
+
+[COMMENT] It's common to use a virtual machine as your workstation. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites).
+
+Install Chef DK on your workstation now if you haven't already.
+
+<a class='accent-button radius' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+
+[COMMENT] The [Chef documentation](https://docs.chef.io/install_dk.html) describes additional steps that can help you set up your workstation to use Chef more effectively. You don't have to perform all the steps now, but you can refer to it later if you run into problems. For example, if you're running multiple versions of Ruby, the documentation explains [how to use Chef's Ruby](https://docs.chef.io/install_dk.html#set-system-ruby).
+
+## 2. Install Git
+
+http://git-scm.com/downloads
+
+Set your Git credentials
+
+```bash
+$ git config --global user.email "tpetchel@gmail.com"
+$ git config --global user.name "tpetchel"
+```
+
+## 3. Install [additional tools]
+
+[PRODNOTE] This is what I had to do to set shit up on Ubuntu. Is this covered in the docs?
+
+```bash
+$ sudo apt-get install rake
+$ chef gem install bundler
+```
+
+[PRODNOTE] Will `apt-get install build-essential` do ^ that for me on Ubuntu?
+
+## X. Install the Delivery command-line tools
+
+```bash
+$ curl https://packagecloud.io/install/repositories/chef/current/script.deb | sudo bash
+```
+
+## 4. Create a working directory
+
+We'll use <code class="file-path">~/Development</code>, but you can choose a directory that best suits you. Just remember to change the paths that we show as necessary.
+
+```bash
+# ~
+$ mkdir ~/Development
+$ cd ~/Development
+```
+
+## 4. Get a Chef Delivery license key
+
+[PRODNOTE] This is where we need to say that you can get a temporary license key if you don't have a key. Point to the web portal that offers this.
+
+## 5. Install Chef Delivery
+
+[PRODNOTE] Replace V with install docs on docs.chef.io...
+
+[PRODNOTE] The docs recommend creating a provisioning node. How do we make it super smooth for evaluators? Should we call out that you don't need it, and can provision from your workstation?
+
+```bash
+# ~/Development
+$ git clone https://github.com/chef-cookbooks/delivery-cluster
+$ rake setup:generate_env
+[...]
+# I went the AWS route...
+$ export CHEF_ENV=test
+$ rake setup:cluster
+[...]
+$ rake info:list_core_services
+2 items found
+
+delivery-server-test:
+  ipaddress: 10.194.8.162
+
+build-node-test-1:
+  ipaddress: 10.194.12.90
+
+chef_server_url      'https://10.194.12.255/organizations/test'
+$ rake info:delivery_creds
+Created enterprise: test
+Admin username: admin
+Admin password: vsufq9EkyogkrB3X++uGCvx5Vl0pCTa7owU=
+Builder Password: WoiHtKVKIISdQeEnoDMnrwgephOxZnOi9g8=
+Web login: https://10.194.8.162/e/test/
+```
+
+[PRODNOTE] Tell the user how to uninstall, especially important for AWS provisioning.
+
+## 6. Create organization & user
+
+* Login to Delivery server
+
+```bash
+# ~/Development
+$ rake info:delivery_creds
+Created enterprise: test
+Admin username: admin
+Admin password: vsufq9EkyogkrB3X++uGCvx5Vl0pCTa7owU=
+Builder Password: WoiHtKVKIISdQeEnoDMnrwgephOxZnOi9g8=
+Web login: https://10.194.8.162/e/test/
+```
+
+* Create organization (e.g. learn-chef)
+* Create new user (e.g. tpetchel)
+
+* delivery setup
+
+```bash
+# ~/Development
+$ delivery setup --server=10.194.8.122 --ent=test --org=learn-chef --user=tpetchel
+Chef Delivery
+Loading configuration from /home/thomaspetchel/Development
+Writing configuration to /home/thomaspetchel/Development/.delivery/cli.toml
+New configuration
+-----------------
+enterprise = "test"
+git_port = "8989"
+organization = "learn-chef"
+pipeline = "master"
+server = "10.194.8.122"
+user = "tpetchel"
+```
