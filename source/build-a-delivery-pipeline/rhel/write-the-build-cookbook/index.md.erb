@@ -8,6 +8,13 @@ next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 ---
 
+TODO: Maybe throw in this somewhere?
+
+```
+$ knife node status
+build-node-test-1	available
+```
+
 A _build cookbook_ is a xxxx..
 
 [PRODNOTE] Show the Delivery pipeline here...
@@ -385,23 +392,49 @@ Recipe: code_generator::recipe
 # ~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/recipes/publish.rb
 include_recipe 'delivery-truck::publish'
 
-ruby_block 'upload data bag' do
-  block do
-    dbag = Chef::DataBag.new
-    dbag.name('passwords') # or use a node attribute to hold this.
-    dbag.save
+chef_repo = "#{node['delivery_builder']['repo']}/chef-repo"
 
-    dbag_item = Chef::DataBagItem.new
-    dbag_item.data_bag(dbag.name)
-    dbag_item.load 'db_admin_password'
-    dbag_item.save
+execute 'create passwords data bag' do
+  cwd chef_repo
+  command 'knife data bag create passwords'
+  not_if "knife data bag list | grep '^passwords$'"
+end
 
-    dbag_item = Chef::DataBagItem.new
-    dbag_item.data_bag(dbag.name)
-    dbag_item.load 'sql_server_root_password'
-    dbag_item.save
+%w(db_admin_password sql_server_root_password).each do |data_bag_item|
+  execute "create #{data_bag_item} data bag item" do
+    cwd chef_repo
+    command "knife data bag from file passwords #{data_bag_item}.json --config #{delivery_knife_rb}"
   end
 end
+
+# << TODO
+# I dunno dude. delivery-truck::publish doesn't seem to find then my cookbook changes...
+# So I'm copy pastaing and tweaking the base implementation here.
+
+# Create the upload directory where cookbooks to be uploaded will be staged
+cookbook_directory = File.join(node['delivery']['workspace']['cache'], "cookbook-upload")
+directory cookbook_directory do
+  recursive true
+  # We delete the cookbook upload staging directory each time to ensure we
+  # don't have out-of-date cookbooks hanging around from a previous build.
+  action [:delete, :create]
+end
+
+# Upload cookbook to the Chef Server
+execute "berks_vendor_cookbook_awesome_customers" do
+  command "berks vendor #{cookbook_directory}"
+  cwd "#{chef_repo}/cookbooks/awesome_customers"
+end
+
+Dir.glob("#{cookbook_directory}/*").select {|f| File.directory? f}.map {|f| File.basename f}.each do |cookbook|
+  execute "upload_cookbook_#{cookbook}" do
+    command "knife cookbook upload #{cookbook} --freeze --all --force " \
+            "--config #{delivery_knife_rb} " \
+            "--cookbook-path #{cookbook_directory}"
+  end
+end
+
+# TODO
 ```
 
 ```bash
@@ -418,27 +451,239 @@ Watch build happen. (incl/ screnshot.)
 
 Confirm data bag and cookbook are uploaded.
 
-- Login to Delivery server
+[PRODNOTE] There's a problem here. The awesome_customers cookbook was already uploaded, so no new changes happen, so publish cookbook won't upload it until it's changed again. Need to think about this...
 
--- see cookbook
+- Login to Chef server
+
+-- see `awesome_customers` cookbook and its deps
 -- see data bag
 
 Alternatively, we could:
 - Have the user logon to the build node and do it from the CLI.
 - Have the user setup their .knife.rb on thier workstation.
 
-Need to verify what the best flow is....
+^ Explain this.
 
+Need to verify what the best flow is....
 
 ## Z.
 
 ### provision.rb (Acceptance, Union, Rehearsal, Delivered)
 
-* Skip it
+TODO: Talk about how you might use a provisioning node for this...
+
+#### Create a Chef repo
+
+```bash
+# ~/Development
+$ chef generate repo chef-repo
+[...]
+```
+
+#### Download the Starter Kit
+
+TODO: SPELL THIS OUT
+
+Unzip, say Y to overwrite any files.
+
+TODO: Show tabs...
+
+TODO: Is there a flag for `unzip` so it doesn't prompt?
+
+```bash
+# ~/Development
+$ unzip ~/Downloads/chef-starter.zip
+Archive:  /home/thomaspetchel/Downloads/chef-starter.zip
+  inflating: chef-repo/cookbooks/chefignore
+   creating: chef-repo/cookbooks/starter/
+   creating: chef-repo/cookbooks/starter/recipes/
+  inflating: chef-repo/cookbooks/starter/recipes/default.rb
+   creating: chef-repo/cookbooks/starter/attributes/
+  inflating: chef-repo/cookbooks/starter/attributes/default.rb
+   creating: chef-repo/cookbooks/starter/files/
+   creating: chef-repo/cookbooks/starter/files/default/
+  inflating: chef-repo/cookbooks/starter/files/default/sample.txt
+   creating: chef-repo/cookbooks/starter/templates/
+   creating: chef-repo/cookbooks/starter/templates/default/
+  inflating: chef-repo/cookbooks/starter/templates/default/sample.erb
+  inflating: chef-repo/cookbooks/starter/metadata.rb
+replace chef-repo/README.md? [y]es, [n]o, [A]ll, [N]one, [r]ename: A
+  inflating: chef-repo/README.md
+  inflating: chef-repo/.gitignore
+   creating: chef-repo/.chef/
+  inflating: chef-repo/.chef/knife.rb
+  inflating: chef-repo/roles/starter.rb
+  inflating: chef-repo/.chef/delivery.pem
+  inflating: chef-repo/.chef/test-validator.pem
+```
+
+### Move to chef-repo
+
+```bash
+# ~/Development
+$ cd chef-repo
+```
+
+#### Get a node to bootstrap
+
+In [Learn to manage a node](/manage-a-node/rhel/), you bootstrapped a node that we provided. Now it's time to bootstrap a Red Hat Enterprise Linux 6.5 or CentOS 6.5 node that you own to give you experience working with your own infrastructure.
+
+Chef provides ways to provision a node and bootstrap it all in one step &ndash; we'll cover this in a later tutorial. For learning purposes, it's best to start by bringing up your own node manually and bootstrapping it separately.
+
+Remember, your node can be any physical machine, virtual machine, or cloud instance, as long as:
+
+* its IP address is accessible from your network. <= INCLUDING DELIVERY, CHEF SERVER, Etc.
+* it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
+* it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
+* you have root or `sudo` access.
+
+#### Bootstrap your node
+
+BETTER YET, AUTOMATE THIS. MOVE COMMANDS INTO PROVISION RECIPE. SCP DATA BAG SECRET KEY TO BUILD NODE. TALK ABOUT PROVISINING AND PROVISIONING NODE (FOR WHEN YOU NEED ...)
+SHOW BOTH -i AND PASSWORD FLAVORS.
+
+ADD TO DEFAULT ATTRS FILE
+
+```ruby
+default['build-cookbook']['acceptance-env'] = { node_name: 'acceptance_customers', ip_address: '10.194.15.116' }
+default['build-cookbook']['union-env'] = { node_name: 'union_customers', ip_address: '10.194.15.119' }
+default['build-cookbook']['rehearsal-env'] = { node_name: 'rehearsal_customers', ip_address: '10.194.15.117' }
+default['build-cookbook']['delivered-env'] = { node_name: 'delivered_customers', ip_address: '10.194.15.120' }
+
+default['build-cookbook']['user-name'] = 'ubuntu'
+default['build-cookbook']['identity-file'] = 'tpetchel.pem'
+```
+
+[PRODNOTE] Is user name built-in for me already?
+
+Now that you have a node running, it's time to bootstrap it.
+
+In [Learn to manage a node](/manage-a-node/rhel/), we provided you with a virtual machine that uses a user name and password to authenticate. For learning purposes, this is just fine.
+
+In production, we recommend that you use key-based authentication instead of a user name and password because it can be more secure. This option is commonly used with Amazon EC2 instances because EC2 typically works using key-based authentication.
+
+Choose the option below that matches how you can authenticate and bootstrap your node.
+
+##### Option 1: Use a user name and password
+
+This is what we did in [Learn to manage a node](/manage-a-node/rhel/). From your workstation, run this command to bootstrap your node. Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
+
+```bash
+# ~/chef-repo
+$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name acceptance_customers --run-list 'recipe[awesome_customers]'
+```
+
+REPEAT FOR UNION REHEARSAL DELIVERED.
+
+You'll see lots of output as your node installs `chef-client` and runs the `awesome_customers` cookbook.
+
+##### Option 2: Use key-based authentication
+
+From your workstation, run this command to bootstrap your node. Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+
+```bash
+# ~/chef-repo
+$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name acceptance_customers --run-list 'recipe[awesome_customers]'
+```
+
+REPEAT FOR UNION REHEARSAL DELIVERED.
+
+You'll see lots of output as your node installs `chef-client` and runs the `awesome_customers` cookbook.
+
+<a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
+
+<div id="knife-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+  <h3 id="modalTitle">If the operation times out or fails, here are some things to try</h3>
+  <ul>
+    <li>Ensure that your environment is active before you run <code>knife</code>. For example, CloudShare instances suspend after a period of inactivity. <img class="border" src="/assets/images/rhel/cloudshare-suspend.png"></img></li>
+    <li>Ensure that you run <code>knife</code> commands from your <code class="file-path">chef-repo</code> directory or one of its sub-directories.</li>
+    <li>Ensure you have a <code class="file-path">chef-repo/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and two <code class="file-path">.pem</code> files. If you don't, <a href="/manage-a-node/rhel/set-up-your-chef-server#step2" target="_blank">install the Starter Kit</a>.</li>
+    <li>Ensure that your node's IP address is accessible from your network.</li>
+    <li>Ensure the user name you provide has root or <code>sudo</code> access on the node.</li>
+    <li>Ensure your workstation has outbound access (including firewall) on these ports:
+      <ul>
+        <li>22 (SSH)</li>
+        <li>80 (HTTP)</li>
+        <li>443 (HTTPS)</li>
+      </ul>
+    </li>
+    <li>Ensure your node has inbound access (including firewall) on these ports:
+      <ul>
+        <li>22 (SSH)</li>
+      </ul>
+    </li>
+    <li>Ensure your node has outbound access (including firewall) on these ports:
+      <ul>
+        <li>443 (HTTPS)</li>
+      </ul>
+    </li>
+  </ul>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+SUMMARY:
+
+```bash
+# ~/Development/chef-repo
+ssh -i ~/.ssh/tpetchel.pem root@10.194.15.116 'mkdir -p /etc/chef'
+scp -i ~/.ssh/tpetchel.pem ~/encrypted_data_bag_secret root@10.194.15.116:/etc/chef/encrypted_data_bag_secret
+knife bootstrap 10.194.15.116 --ssh-user root --sudo --identity-file ~/.ssh/tpetchel.pem --node-name acceptance_customers --run-list 'recipe[awesome_customers]'
+
+ssh -i ~/.ssh/tpetchel.pem root@10.194.15.119 'mkdir -p /etc/chef'
+scp -i ~/.ssh/tpetchel.pem ~/encrypted_data_bag_secret root@10.194.15.119:/etc/chef/encrypted_data_bag_secret
+knife bootstrap 10.194.15.119 --ssh-user root --sudo --identity-file ~/.ssh/tpetchel.pem --node-name union_customers --run-list 'recipe[awesome_customers]'
+
+ssh -i ~/.ssh/tpetchel.pem root@10.194.15.117 'mkdir -p /etc/chef'
+scp -i ~/.ssh/tpetchel.pem ~/encrypted_data_bag_secret root@10.194.15.117:/etc/chef/encrypted_data_bag_secret
+knife bootstrap 10.194.15.117 --ssh-user root --sudo --identity-file ~/.ssh/tpetchel.pem --node-name rehearsal_customers --run-list 'recipe[awesome_customers]'
+
+ssh -i ~/.ssh/tpetchel.pem root@10.194.15.120 'mkdir -p /etc/chef'
+scp -i ~/.ssh/tpetchel.pem ~/encrypted_data_bag_secret root@10.194.15.120:/etc/chef/encrypted_data_bag_secret
+knife bootstrap 10.194.15.120 --ssh-user root --sudo --identity-file ~/.ssh/tpetchel.pem --node-name delivered_customers --run-list 'recipe[awesome_customers]'
+
+curl 10.194.15.116
+curl 10.194.15.117
+curl 10.194.15.119
+curl 10.194.15.120
+```
 
 ### deploy.rb (Acceptance, Union, Rehearsal, Delivered)
 
-* Run push job
+```bash
+# ~/Development/build-a-delivery-pipeline-rhel/.delivery
+$ chef generate recipe build-cookbook deploy
+Compiling Cookbooks...
+Recipe: code_generator::recipe
+  * directory[./build-cookbook/spec/unit/recipes] action create (up to date)
+  * cookbook_file[./build-cookbook/spec/spec_helper.rb] action create_if_missing (up to date)
+  * template[./build-cookbook/spec/unit/recipes/deploy_spec.rb] action create_if_missing
+    - create new file ./build-cookbook/spec/unit/recipes/deploy_spec.rb
+    - update content in file ./build-cookbook/spec/unit/recipes/deploy_spec.rb from none to 92ec41
+    (diff output suppressed by config)
+  * template[./build-cookbook/recipes/deploy.rb] action create
+    - create new file ./build-cookbook/recipes/deploy.rb
+    - update content in file ./build-cookbook/recipes/deploy.rb from none to f569c9
+    (diff output suppressed by config)
+```
+
+```ruby
+# ~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/recipes/deploy.rb
+
+```
+
+[COMMENT] If you existing workflow includes [push jobs](), you can use those too...
+
+A common pattern we use here...
+
+```
+if node['delivery']['change']['stage'] == 'delivered'
+  bucket_name = node['delivery']['change']['project'].gsub(/_/, '-')
+  fqdn = "#{site_name}.#{domain_name}"
+else
+  bucket_name = "#{node['delivery']['change']['project'].gsub(/_/, '-')}-#{node['delivery']['change']['stage']}"
+  fqdn = "#{site_name}-#{node['delivery']['change']['stage']}.#{domain_name}"
+end
+```
 
 ### smoke.rb (Acceptance, Union, Rehearsal, Delivered)
 
