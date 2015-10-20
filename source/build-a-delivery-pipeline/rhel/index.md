@@ -5,6 +5,8 @@ platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
 ---
+[PRODNOTE] Should we point the reader to our product/pricing page right away? I wouldn't want someone to invest in this tutorial just to find out it's not within reach...
+
 Chef Delivery is a continuous delivery XXX.
 
 * helps transform your idea from inception to production through automation.

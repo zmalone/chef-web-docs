@@ -7,6 +7,55 @@ sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 90 minutes
 ---
+Open issues:
+
+When to have the user get their starter kit on the prov node or workstation (in workstation setup?, separate section here?)
+
+Tell the user which values we chose for enterprise, org, etc.
+
+Where to have folks run `delivery setup` & `delivery token`? <= IDEA: Transform next page to be about setting up stuff like this (add user, get Starter Kit, etc.) Or move that info to thsi page, as it's part of setup?
+
+Run this from the root workspace directory, for example, <code class="file-path">~/Development</code>.
+
+```bash
+# ~/Development
+$ delivery setup --server=10.194.12.112 --ent=chef --org=chef --user=tpetchel
+Chef Delivery
+Loading configuration from /home/thomaspetchel/Development
+Writing configuration to /home/thomaspetchel/Development/.delivery/cli.toml
+New configuration
+-----------------
+enterprise = "chef"
+git_port = "8989"
+organization = "chef"
+pipeline = "master"
+server = "10.194.12.112"
+user = "tpetchel"
+```
+
+TODO: Cat cli.toml?
+
+```bash
+# ~/Development
+$ delivery token
+Chef Delivery
+Loading configuration from /home/thomaspetchel/Development
+Delivery password:
+token: fM+YwM28r6rE92dulvszj4d76wjTeSxxnNSu+54O734=
+saved API token to: /home/thomaspetchel/.delivery/api-tokens
+```
+
+```bash
+# ~/Development
+$ more ~/.delivery/api-tokens
+10.194.12.112,chef,tpetchel|fM+YwM28r6rE92dulvszj4d76wjTeSxxnNSu+54O734=
+```
+
+Talk about how we're going to use Chef Delivery's internal Git server, and not GitHub, etc.
+Say this before we have the user enter their SSH public key.
+
+-------
+
 Here you'll set up your workstation and install Chef Delivery on your network. Here's the process you'll follow:
 
 Setting up a Chef Delviery installation involves:
@@ -116,18 +165,23 @@ Your delivery cluster includes multiple systems, so it may be helpful to write d
 
 TODO:
 
-* Delivery server IP address, user name, pwd.
-* Chef server IP address, user name, pwd. (delivery:delivery)
+* Delivery server IP address, web ui URL, user name, pwd.
+* Chef server IP address, web ui URL, user name, pwd. (delivery:delivery)
 * Admin user name and password.
 * Builder user name and password.
 * Delivery user name and password.
 * Web application server (Acceptance, Union, Rehearsal, and Delivered stages) IP address, username, pwd.
 
-To help gather this information,
+To help gather this information, run the `rake info:delivery_creds` command from your <code class="file-path">delivery-cluster</code> directory.
 
 ```bash
-$ rake setup:info_creds
-asdfasf
+# ~/Development/delivery-cluster
+$ rake info:delivery_creds
+Created enterprise: chef
+Admin username: admin
+Admin password: Q10IIEJolZ1iZLNOb1Ro7vnHjL/tYxYJkOc=
+Builder Password: fdOPq9kBbqh4RRkKnRK2wdK3IjdXC9zGZGw=
+Web login: https://10.194.12.112/e/chef/
 ```
 
 -- --
