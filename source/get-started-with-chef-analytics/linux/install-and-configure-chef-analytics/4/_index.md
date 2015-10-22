@@ -19,6 +19,8 @@ $ sudo opscode-analytics-ctl preflight-check
 
 If there are any errors in the preflight check, correct them before moving to the next step.
 
+[COMMENT] If the preflight checks fails, trying running<br>`ln -s /usr/bin/curl /opt/opscode-analytics/embedded/bin/curl` on your Analytics server and then run the preflight check again. This will create a symlink to the system `curl`, which is required for the configuration to succeed.<br><br>This is a known issue, and we're working on a permanent fix for it. 
+
 Reconfigure Chef Analytics to use the updated configuration settings.
 
 ```bash
