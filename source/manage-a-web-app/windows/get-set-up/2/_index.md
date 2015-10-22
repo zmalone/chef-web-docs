@@ -9,6 +9,7 @@ All you need to do right now is bring up a clean instance of Windows Server 2012
 <div id="knife-help-modal-windows" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">To prepare your Windows Server node, ensure that:</h3>
   <ul>
+    <li>the knife windows plugin <a href="/manage-a-node/windows/bootstrap-your-node#step3" target="_blank">is installed</a> on your workstation.</li>
     <li>your node's IP address is accessible from your network.</li>
     <li>you have Administrator access on the node.</li>
     <li>your node has inbound access (including firewall) on ports 5985 and 5986 (WinRM), 3389 (RDP), and 80 (HTTP).</li>
