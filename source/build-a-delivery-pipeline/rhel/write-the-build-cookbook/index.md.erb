@@ -7,7 +7,9 @@ sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 ---
-A _build cookbook_ is a xxxx..
+
+[PRODNOTE] Talk about Test Kitchen testing, pt to delivery_build cookbook.
+
 
 [PRODNOTE] Show the Delivery pipeline again here...
 
@@ -15,40 +17,53 @@ Talk about the phases, and how each step below each phase cooresponds to a recip
 
 Point to doc page that lists and describes each recipe.
 
-### Create build-cookbook
+What we're going to do:
+
+* Reference delivery-truck cookbook (explain what it does.)
+* Iteratively build out the pipeline.
+
+## 1. Reference the delivery-truck cookbook
+
+Create a new branch.
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery
-$ chef generate cookbook build-cookbook
+# PATH
+$ git checkout -b add-delivery-truck delivery/master
+Branch add-delivery-truck set up to track remote branch master from delivery.
+Switched to a new branch 'add-delivery-truck'
 ```
+
+Verify new branch.
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery
-$ ls
-build-cookbook  cli.toml  config.json
+# PATH
+$ git branch -v
+  add-delivery-config 2a0293e Add Delivery config
+* add-delivery-truck  b3a48ab Merged change 424c2719-54e4-44c1-97be-ad225fb392d9
+  master              b3a48ab Merged change 424c2719-54e4-44c1-97be-ad225fb392d9
 ```
 
-[PRODNOTE] Remember, cli.toml shouldn't be here, right?
+In [Blah]() tutorial, you learned how to use Berkshelf resolve cookbook dependencies.
 
-### Add Berksfile
-
-[PRODNOTE] Not going with the Policyfile, not yet.
-
-In Chef DK versions prior to 0.9.0, the `chef generate cookbook` command creates a file named <code class="file-path">Berksfile</code> in the cookbook's root directory.
-
-If you're using Chef DK version 0.9.0 or later (you can run the `chef --version` command to verify your version), you'll need to create this file by hand. Create a file named <code class="file-path">Berksfile</code> in the <code class="file-path">~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook</code> directory and add this.
+Modify <code class="file-path">~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/Berksfile</code> like this.
 
 ```ruby
 # ~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/Berksfile
-source "https://supermarket.chef.io"
+source 'https://supermarket.chef.io'
 
 metadata
 
-cookbook 'delivery-truck', git: 'https://github.com/opscode-cookbooks/delivery-truck.git'
-cookbook 'delivery-sugar', github: 'chef-cookbooks/delivery-sugar'
+group :delivery do
+  cookbook 'delivery_build', git: 'https://github.com/chef-cookbooks/delivery_build'
+  cookbook 'delivery-base', git: 'https://github.com/chef-cookbooks/delivery-base'
+  cookbook 'test', path: './test/fixtures/cookbooks/test'
+end
+
+cookbook 'delivery-sugar', git: 'https://github.com/chef-cookbooks/delivery-sugar'
+cookbook 'delivery-truck', git: 'https://github.com/chef-cookbooks/delivery-truck'
 ```
 
-### Add dep to delivery-truck cookbook
+Now modify metadata.rb like this.
 
 ```ruby
 # ~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/metadata.rb
@@ -56,272 +71,220 @@ name 'build-cookbook'
 maintainer 'The Authors'
 maintainer_email 'you@example.com'
 license 'all_rights'
-description 'Installs/Configures build-cookbook'
-long_description 'Installs/Configures build-cookbook'
 version '0.1.0'
 
 depends 'delivery-truck'
 ```
 
-### Modify config file to define a basic build pipeline
+`git status`, `git add`, `git commit`, `delivery review`
 
-Default looks like this.
+[PRODNOTE] Expand these out V.
 
-```ruby
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery/config.json
-{
-  "version": "2",
-  "build_cookbook": {
-    "name": "<your build cookbook name>",
-    "path": "<relative path from project root>"
-  },
-  "skip_phases": []
-}
-```
-
-We'll modify config.json to:
-
-* reference build-cookbook
-* skip all phases
-
-Modify config.json like this.
-
-```ruby
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery/config.json
-{
-  "version": "2",
-  "build_cookbook": {
-      "name": "build-cookbook",
-      "path": ".delivery/build-cookbook"
-  },
-  "skip_phases": [
-    "lint",
-    "unit",
-    "syntax",
-    "quality",
-    "security",
-    "publish",
-    "provision",
-    "deploy",
-    "smoke",
-    "functional"
-  ],
-  "delivery-truck": {
-    "publish": {
-      "chef_server": false
-    }
-  }
-}
-```
-
-### Commit the changes and push for review
+[PRODNOTE] Add callout about pull request vs. `delivery review` when using Chef Delivery's Git server.
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery/
 $ git status
-On branch add-delivery-config
+On branch add-delivery-truck
+Your branch is up-to-date with 'delivery/master'.
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git checkout -- <file>..." to discard changes in working directory)
 
-	modified:   config.json
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-
-	build-cookbook/
-	cli.toml
+	modified:   .delivery/build-cookbook/Berksfile
+	modified:   .delivery/build-cookbook/metadata.rb
 
 no changes added to commit (use "git add" and/or "git commit -a")
-```
-
-```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery
-$ git add .
-$ git commit -m "Verify all phases skipped"
-[add-delivery-config 103244b] Verify all phases skipped
- 14 files changed, 247 insertions(+), 4 deletions(-)
- create mode 100644 .delivery/build-cookbook/.gitignore
- create mode 100644 .delivery/build-cookbook/.kitchen.yml
- create mode 100644 .delivery/build-cookbook/Berksfile
- create mode 100644 .delivery/build-cookbook/Policyfile.rb
- create mode 100644 .delivery/build-cookbook/README.md
- create mode 100644 .delivery/build-cookbook/chefignore
- create mode 100644 .delivery/build-cookbook/metadata.rb
- create mode 100644 .delivery/build-cookbook/recipes/default.rb
- create mode 100644 .delivery/build-cookbook/spec/spec_helper.rb
- create mode 100644 .delivery/build-cookbook/spec/unit/recipes/default_spec.rb
- create mode 100644 .delivery/build-cookbook/test/integration/default/serverspec/default_spec.rb
- create mode 100644 .delivery/build-cookbook/test/integration/helpers/serverspec/spec_helper.rb
- create mode 100644 .delivery/cli.toml
-```
-
-```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery
-$ delivery review
+thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel$ git add .
+thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel$ git commit -m "reference delivery-truck cookbook"
+[add-delivery-truck b3d09fd] reference delivery-truck cookbook
+ 2 files changed, 5 insertions(+)
+thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel$ delivery review
 Chef Delivery
-Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel/.delivery
-Review for change add-delivery-config targeted for pipeline master
-Created
-https://10.194.8.162/e/test/#/organizations/learn-chef/projects/build-a-delivery-pipeline-rhel/changes/28aad937-4c50-4b41-b053-dc4d36b42983
+Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel
+Review for change add-delivery-truck targeted for pipeline master
+Created new patchset
+https://10.194.12.112/e/chef/#/organizations/learn-chef/projects/build-a-delivery-pipeline-rhel/changes/db847625-a045-4d46-9ecc-84e3ef6a2069
 ```
 
-Browser window opens.
+* Review the changes in the web interface. Click **Approve** when all tests pass.
+* You'll notice that unit, lint, and syntax phases still don't do any work &ndash; we've simply included the `delivery-truck` cookbook as part of the build process.
+* The process moves to the Build stage.
+* Watch all tests pass. Again, no real work is done by the provision, deploy, smoke, and functional phases.
+* Don't do **Deliver** just yet &ndash; we'll build up more (meaningful) changes and deliver them as a single unit.
 
-Note that the phases are skipped.
+[PRODNOTE] Do we ever say how the `default` recipe is called as part of each phase?
 
-[PRODNOTE] Show screenshot ^ that's similar to the failure case, but shows the skipped phases.
+[PRODNOTE] For each section, revisit the pipeline and highlight what we're working on.
 
-Have user open Review tab. See the changes.
+## 2. Perform unit, lint, and syntax testing
 
-[PRODNOTE] Show screenshot ^.
-
-We won't approve any changes just yet...
-
--------
-
-Ah shit, forgot some stuff...
-
-Modify your `build-cookbook` cookbook's default.rb like this.
+[PRODNOTE] Say how we skip quality and security checks. Add them to config.json
 
 ```ruby
 # PATH
-# We include the delivery-truck default recipe so any setup that delivery-truck
-# needs gets done.
-include_recipe 'delivery-truck::default'
-
-# We enter client mode, which means we are now talking to the delivery chef server
-# instead of the chef-zero invocation this run was started in context of.
-Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
-
-# Do any other setup here as needed. For example, XXXXXXX.
-
-Chef_Delivery::ClientHelper.leave_client_mode_as_delivery
+{
+  "version": "2",
+  "build_cookbook": {
+    "path": ".delivery/build-cookbook",
+    "name": "build-cookbook"
+  },
+  "skip_phases": ["quality", "security"],
+  "build_nodes": {},
+  "dependencies": []
+}
 ```
 
-[PRODNOTE] Need to see about whether to show enter/leave call...
+In the [Blah]() tutorial, you used ChefSpec to perform unit testing, RuboCop and Foodcritic to perform lint testing. REmember that these kinds of testing are referred to as _static code analytis_ because they analtyze, but don't actually run, your code.
+
+[PRODNOTE] Confirm we need the fetch first...
 
 ```bash
-$ git status
-On branch add-delivery-config
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git checkout -- <file>..." to discard changes in working directory)
-
-	modified:   build-cookbook/recipes/default.rb
-
-no changes added to commit (use "git add" and/or "git commit -a")
-thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel/.delivery$ git add .
-thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel/.delivery$ git commit -m "include delivery-truck::default"
-[add-delivery-config 2dadad4] include delivery-truck::default
- 1 file changed, 11 insertions(+)
-thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel/.delivery$ delivery review
-Chef Delivery
-Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel/.delivery
-Review for change add-delivery-config targeted for pipeline master
-^C
-thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel/.delivery$ delivery review
-Chef Delivery
-Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel/.delivery
-Review for change add-delivery-config targeted for pipeline master
-Created
-https://10.194.8.162/e/test/#/organizations/learn-chef/projects/build-a-delivery-pipeline-rhel/changes/28aad937-4c50-4b41-b053-dc4d36b42983
+$ git fetch
+[SHOW OUTPUT]
 ```
-
-## X. Incorporate lint and unit tests
-
-### lint.rb (Verify, Build)
-
-* Run RuboCop, Foodcritic
-
-`delivery-truck` runs RuboCop and Foodcritic for us!
-
-SHOW CODE SNIPPET.
-
-### unit.rb (Verify, Build)
-
-* Run our ChefSpec tests
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery
-$ chef generate recipe build-cookbook unit
-Compiling Cookbooks...
-Recipe: code_generator::recipe
-  * directory[./build-cookbook/spec/unit/recipes] action create (up to date)
-  * cookbook_file[./build-cookbook/spec/spec_helper.rb] action create_if_missing (up to date)
-  * template[./build-cookbook/spec/unit/recipes/unit_spec.rb] action create_if_missing
-    - create new file ./build-cookbook/spec/unit/recipes/unit_spec.rb
-    - update content in file ./build-cookbook/spec/unit/recipes/unit_spec.rb from none to be7fcd
-    (diff output suppressed by config)
-  * template[./build-cookbook/recipes/unit.rb] action create
-    - create new file ./build-cookbook/recipes/unit.rb
-    - update content in file ./build-cookbook/recipes/unit.rb from none to ecb942
-    (diff output suppressed by config)
+$ git checkout -b add-static-analysis-checks delivery/master
+Branch add-static-analysis-checks set up to track remote branch master from delivery.
+Switched to a new branch 'add-static-analysis-checks'
 ```
+
+The `delivery-truck` cookbook already does what we need. All we need to do is include them from our recipes.
+
+[SHOW BASE UNIT, LINT, SYNTAX]
+
+The `syntax` recipe does something new - [EXPLAIN]
+
+Modify <code class="file-path">unit.rb</code> like this.
 
 ```ruby
-# PATH/unit.rb
-# Run unit tests on the cookbooks that are in cookbooks/
+# PATH
 include_recipe 'delivery-truck::unit'
 ```
 
-```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery
-$ chef generate recipe build-cookbook lint
-[2015-10-15T14:16:23-07:00] WARN: ExpandNodeObject#load_node is deprecated. Please use Chef::PolicyBuilder::Dynamic instead of using ExpandNodeObject directly at /opt/chefdk/embedded/lib/ruby/gems/2.1.0/gems/chef-dk-0.9.0/lib/chef-dk/chef_runner.rb:54:in `policy'
-Compiling Cookbooks...
-Recipe: code_generator::recipe
-  * directory[./build-cookbook/spec/unit/recipes] action create (up to date)
-  * cookbook_file[./build-cookbook/spec/spec_helper.rb] action create_if_missing (up to date)
-  * template[./build-cookbook/spec/unit/recipes/lint_spec.rb] action create_if_missing
-    - create new file ./build-cookbook/spec/unit/recipes/lint_spec.rb
-    - update content in file ./build-cookbook/spec/unit/recipes/lint_spec.rb from none to 2f032f
-    (diff output suppressed by config)
-  * template[./build-cookbook/recipes/lint.rb] action create
-    - create new file ./build-cookbook/recipes/lint.rb
-    - update content in file ./build-cookbook/recipes/lint.rb from none to 8dd63c
-    (diff output suppressed by config)
-```
+Modify <code class="file-path">lint.rb</code> like this.
 
 ```ruby
-# PATH/lint.rb
-# Run lint tests on the cookbooks that are in cookbooks/
+# PATH
 include_recipe 'delivery-truck::lint'
 ```
 
-Add note how we could also lint/unit test the app itself. Out of scope...
+And modfiy <code class="file-path">syntax.rb</code> like this.
 
-### syntax.rb (Verify, Build)
+```ruby
+# PATH
+include_recipe 'delivery-truck::syntax'
+```
 
-* Skip it.
+[PRODNOTE] this is where to say that each phase calls the `default` recipe. So include the base from ours.
 
-## Y.
+```ruby
+# PATH
+include_recipe 'delivery-truck::default'
+```
 
-### Review the change
+```bash
+# PATH
+$ git status
+On branch add-static-analysis-checks
+Your branch is up-to-date with 'delivery/master'.
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+  modified:   .delivery/build-cookbook/recipes/default.rb
+	modified:   .delivery/build-cookbook/recipes/lint.rb
+	modified:   .delivery/build-cookbook/recipes/syntax.rb
+	modified:   .delivery/build-cookbook/recipes/unit.rb
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+```bash
+# PATH
+$ git add .
+```
+
+```bash
+# PATH
+$ git commit -m "add unit, lint, and syntax checks"
+[add-static-analysis-checks e670576] add unit, lint, and syntax checks
+ 3 files changed, 3 insertions(+)
+```
 
 ```bash
 # PATH
 $ delivery review
-Chef Delivery
-Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel/.delivery
-Review for change add-delivery-config targeted for pipeline master
-Created
-https://10.194.8.162/e/test/#/organizations/learn-chef/projects/build-a-delivery-pipeline-rhel/changes/28aad937-4c50-4b41-b053-dc4d36b42983
 ```
 
-Talk about how (and show screenshot) how the pipeline runs and succeeds, but no resources are actually applied.
+* Watch them run.
+* Click **Approve**.
+* Watch **Build** run.
+* We won't deliver the change just yet.
 
-That's because although the _build_ cookbook changed, the cookbook that we're deploying hasn't. So nothing triggered lint/unit to run.
+Notice that no resources were run.
 
-## Y. Publish your changes to the Chef server
+```bash
+#
+Starting Chef Client, version 12.5.1
+resolving cookbooks for run list: ["build-cookbook::unit"]
+Synchronizing Cookbooks:
+  - delivery-truck (1.100.7)
+  - build-cookbook (0.1.0)
+  - delivery-sugar (0.3.1)
+Compiling Cookbooks...
+Converging 0 resources
 
-### quality.rb (Build)
+Running handlers:
+Running handlers complete
+Chef Client finished, 0/0 resources updated in 01 seconds
+
+Job ended at 2015-10-20T02:42:03+00:00 (ran in 24 seconds)
+```
 
-* Skip it
+That's because the `unit` cookbook looks for changes. Nothing's changed in the cookbook since it was originally added in the prior lesson, so the tests weren't run. We'll see the tests run when we later update the cookbook.
 
-### security.rb (Build)
+[PRODNOTE] Kinda weak I must admit ^.
 
-* Skip it
+## 3. Publish your changes to the Chef server
+
+* `publish` recipe uploads to Chef server if the `upload_cookbook_to_chef_server?` method returns true.
+
+https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/publish.rb#L69
+
+`upload_cookbook_to_chef_server?` returns true when the `node['delivery']['config']['delivery-truck']['publish']['chef_server']` node attribute is true.
+
+https://github.com/chef-cookbooks/delivery-truck/blob/94fe1bbf765fb40ae75794de9c9d747a19f927aa/libraries/helpers_publish.rb#L29
+
+```bash
+$ git fetch
+$ git checkout master
+$ git pull delivery master
+$ git checkout -b publish-to-chef-server
+```
+
+[PRODNOTE] Change other example to match ^.
+
+```bash
+# ~/Development/build-a-delivery-pipeline-rhel
+$ chef generate attribute .delivery/build-cookbook default
+[2015-10-19T20:44:06-07:00] WARN: ExpandNodeObject#load_node is deprecated. Please use Chef::PolicyBuilder::Dynamic instead of using ExpandNodeObject directly at /opt/chefdk/embedded/lib/ruby/gems/2.1.0/gems/chef-dk-0.9.0/lib/chef-dk/chef_runner.rb:54:in `policy'
+Compiling Cookbooks...
+Recipe: code_generator::attribute
+  * directory[.delivery/build-cookbook/attributes] action create
+    - create new directory .delivery/build-cookbook/attributes
+  * template[.delivery/build-cookbook/attributes/default.rb] action create
+    - create new file .delivery/build-cookbook/attributes/default.rb
+    - update content in file .delivery/build-cookbook/attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+```ruby
+# .../default.rb
+node['delivery']['config']['delivery-truck']['publish']['chef_server'] = true;
+```
+
+
 
 ### publish.rb (Build)
 
@@ -329,54 +292,6 @@ That's because although the _build_ cookbook changed, the cookbook that we're de
 * Upload data bags
 
 ** Publish to Chef server
-
-Modify config.json like this (remove 'publish' from skip_phases and set `"chef_server": true`)
-
-```ruby
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery/config.json
-{
-  "version": "2",
-  "build_cookbook": {
-      "name": "build-cookbook",
-      "path": ".delivery/build-cookbook"
-  },
-  "skip_phases": [
-    "lint",
-    "unit",
-    "syntax",
-    "quality",
-    "security",
-    "provision",
-    "deploy",
-    "smoke",
-    "functional"
-  ],
-  "delivery-truck": {
-    "publish": {
-      "chef_server": true
-    }
-  }
-}
-```
-
-* Add publish recipe
-
-```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery
-$ chef generate recipe build-cookbook publish
-Compiling Cookbooks...
-Recipe: code_generator::recipe
-  * directory[./build-cookbook/spec/unit/recipes] action create (up to date)
-  * cookbook_file[./build-cookbook/spec/spec_helper.rb] action create_if_missing (up to date)
-  * template[./build-cookbook/spec/unit/recipes/publish_spec.rb] action create_if_missing
-    - create new file ./build-cookbook/spec/unit/recipes/publish_spec.rb
-    - update content in file ./build-cookbook/spec/unit/recipes/publish_spec.rb from none to cb6be1
-    (diff output suppressed by config)
-  * template[./build-cookbook/recipes/publish.rb] action create
-    - create new file ./build-cookbook/recipes/publish.rb
-    - update content in file ./build-cookbook/recipes/publish.rb from none to 2c769d
-    (diff output suppressed by config)
-```
 
 * Write out publish recipe
 
@@ -388,77 +303,54 @@ chef_repo = "#{node['delivery_builder']['repo']}/chef-repo"
 
 execute 'create passwords data bag' do
   cwd chef_repo
-  command 'knife data bag create passwords'
-  not_if "knife data bag list | grep '^passwords$'"
+  command "knife data bag create passwords --config #{delivery_knife_rb}"
+  not_if "knife data bag list --config #{delivery_knife_rb} | grep '^passwords$'"
 end
-
 %w(db_admin_password sql_server_root_password).each do |data_bag_item|
   execute "create #{data_bag_item} data bag item" do
     cwd chef_repo
     command "knife data bag from file passwords #{data_bag_item}.json --config #{delivery_knife_rb}"
   end
 end
-
-# << TODO
-# I dunno dude. delivery-truck::publish doesn't seem to find then my cookbook changes...
-# So I'm copy pastaing and tweaking the base implementation here.
-
-# Create the upload directory where cookbooks to be uploaded will be staged
-cookbook_directory = File.join(node['delivery']['workspace']['cache'], "cookbook-upload")
-directory cookbook_directory do
-  recursive true
-  # We delete the cookbook upload staging directory each time to ensure we
-  # don't have out-of-date cookbooks hanging around from a previous build.
-  action [:delete, :create]
-end
-
-# Upload cookbook to the Chef Server
-execute "berks_vendor_cookbook_awesome_customers" do
-  command "berks vendor #{cookbook_directory}"
-  cwd "#{chef_repo}/cookbooks/awesome_customers"
-end
-
-Dir.glob("#{cookbook_directory}/*").select {|f| File.directory? f}.map {|f| File.basename f}.each do |cookbook|
-  execute "upload_cookbook_#{cookbook}" do
-    command "knife cookbook upload #{cookbook} --freeze --all --force " \
-            "--config #{delivery_knife_rb} " \
-            "--cookbook-path #{cookbook_directory}"
-  end
-end
-
-# TODO
 ```
 
 ```bash
+$ git status
 $ git add .
 $ git commit -m "add publish recipe"
 $ delivery review
 ```
 
-Watch lint and unit pass.
-
-Mash Approve button.
-
-Watch build happen. (incl/ screnshot.)
+Watch Verify pass.
+Click Approve.
+Watch Build pass.
+Won't deliver yet.
 
 Confirm data bag and cookbook are uploaded.
 
-[PRODNOTE] There's a problem here. The awesome_customers cookbook was already uploaded, so no new changes happen, so publish cookbook won't upload it until it's changed again. Need to think about this...
+```bash
+# ~/Development/delivery-cluster
+$ rake info:list_core_services
+2 items found
+
+delivery-server-chef:
+  ipaddress: 10.194.12.112
+
+build-node-chef-1:
+  ipaddress: 10.194.12.91
+
+chef_server_url      'https://10.194.9.114/organizations/chef'
+```
+
+Login as `delivery:delivery`
 
 - Login to Chef server
 
--- see `awesome_customers` cookbook and its deps
 -- see data bag
 
-Alternatively, we could:
-- Have the user logon to the build node and do it from the CLI.
-- Have the user setup their .knife.rb on thier workstation.
+SHOW SCREENSHOT
 
-^ Explain this.
-
-Need to verify what the best flow is....
-
-## Z.
+## 4.
 
 ### provision.rb (Acceptance, Union, Rehearsal, Delivered)
 
@@ -684,3 +576,37 @@ end
 ### functional.rb (Acceptance, Union, Rehearsal, Delivered)
 
 * Run our Serverspec tests
+
+
+
+```ruby
+# old-provision.rb
+# << TODO
+# I dunno dude. delivery-truck::publish doesn't seem to find then my cookbook changes...
+# So I'm copy pastaing and tweaking the base implementation here.
+
+# Create the upload directory where cookbooks to be uploaded will be staged
+cookbook_directory = File.join(node['delivery']['workspace']['cache'], "cookbook-upload")
+directory cookbook_directory do
+  recursive true
+  # We delete the cookbook upload staging directory each time to ensure we
+  # don't have out-of-date cookbooks hanging around from a previous build.
+  action [:delete, :create]
+end
+
+# Upload cookbook to the Chef Server
+execute "berks_vendor_cookbook_awesome_customers" do
+  command "berks vendor #{cookbook_directory}"
+  cwd "#{chef_repo}/cookbooks/awesome_customers"
+end
+
+Dir.glob("#{cookbook_directory}/*").select {|f| File.directory? f}.map {|f| File.basename f}.each do |cookbook|
+  execute "upload_cookbook_#{cookbook}" do
+    command "knife cookbook upload #{cookbook} --freeze --all --force " \
+            "--config #{delivery_knife_rb} " \
+            "--cookbook-path #{cookbook_directory}"
+  end
+end
+
+# TODO
+```

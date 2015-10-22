@@ -82,4 +82,12 @@ Starting with local development and testing gives you confidence that your cookb
 
 [PRODNOTE] Replace the image ^ with one for Delivery.
 
+[PRODNOTE] We should probably add a callout saying where to direct additional questions so we don't get overwhelmed on Disqus.
+
+[PRODNOTE] Judiciously call out that we're testing the `awesome_customers` cookbook and not hte build cookbook.
+
+[PRODNOTE] Mention how you could also test your _app_ code as well &ndash; we're just testing the `awesome_customers` cookbook.
+
+[PRODNOTE] Mention how you might have multiple pipelines &ndash; one for the app code, one for the cookbook. Each would have its own build cookbook.
+
 In this tutorial, you'll use Chef Delivery to build a continuous delivery pipeline that publishes the Customers web application to a fictitious production environment.
