@@ -4,6 +4,7 @@ layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
+meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---
 [PRODNOTE] Should we point the reader to our product/pricing page right away? I wouldn't want someone to invest in this tutorial just to find out it's not within reach...
 
