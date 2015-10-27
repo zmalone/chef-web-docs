@@ -8,111 +8,122 @@ next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---
-A _build cookbook_ xxxx...
+* Summarize where we are so far.
+  * We have a Delivery installation.
+  * You're working from either your workstation or a provisioning node.
+  * Summarize a few features (your installation has an org, a user, etc.)
 
-TODO: Talk about:
-* There are few options:
-  * Existing project vs. new project
+* Describe what you'll do in this lesson.
+  * You'll create a project and a basic pipeline.
+  * The process involves writing a _build cookbook_.
+    * Describe what a build cookbook is.
+  * You'll start by cloning the base project from GitHub.
+  * Then you'll set up the Delivery project and a pipeline.
+  * The initial pipeline will run the default actions, which at first do nothing.
+  * In the next lesson, you'll build out each phase of your build cookbook.
+
+* Describe the options for setting up a project.
+  * Existing project vs. new project.
   * Delivery's Git server vs. existing Git project (e.g. GitHub)
-    * If existing Git project, continuing there or migrating to Delivery's Git server.
+    * If existing Git project, continuing there or migrate to Delivery's Git server.
+  * Can we point to more information in the docs on this?
 
-We're talking the existing project + existing Git project + migrate to Delivery's Git server route.
-
-[PRODNOTE] Show the Delivery pipeline again here...
-
-Talk about the phases, and how each step below each phase cooresponds to a recipe in the build cookbook.
-
-[PRODNOTE] Put this somewhere better:
-
-At this point, you have
-
-* A Chef Delivery installation.
-* A new user and `delivery setup` on workstation.
-
-We've added the code you'll need to this tutorial on GitHub. In this part, you'll clone this GitHub repo locally and connect it to your Chef Delivery installation.
-
-[Describe how you can use Delivery's internal Git server or GitHub. Point to the relevant documentation.]
-
-Although it's possible to connect Chef Delivery to an existing GitHub project, for learning purposes you'll clone the `awesome_customers` cookbook from GitHub to your workstation and create a copy of it on your Chef Delivery's internal Git server.
+* This project will be an existing GitHub project that we migrate to Delivery's Git server.
+  * Describe why: easier for getting started; doesn't require a GitHub account.
 
 ## 1. Clone the GitHub repo to your workstation
 
-(for example, <code class="file-path">~/Development</code>").
+Move to your working directory, for example, <code class="file-path">~/Development</code>.
 
 ```bash
 # ~/Development/delivery-cluster
 $ cd ~/Development
-$ git clone https://github.com/learn-chef/build-a-delivery-pipeline-rhel.git
-Cloning into 'build-a-delivery-pipeline-rhel'...
-remote: Counting objects: 65, done.
-remote: Compressing objects: 100% (45/45), done.
-remote: Total 65 (delta 4), reused 65 (delta 4), pack-reused 0
-Unpacking objects: 100% (65/65), done.
-Checking connectivity... done.
-$ cd build-a-delivery-pipeline-rhel
 ```
 
-## 2. Create an empty default configuration
-
-[GITHUB] THE CODE FOR THIS PART IS IN GITHUB [add-delivery-config]().
-
-The next step is to run `delivery init` to create a default configuration. The `delivery init` command:
-
-* pushes the `master` branch to the Chef Delivery's internal Git server.
-* creates a default pipeline.
-* creates a branch from `master` named `add-delivery-config`.
-* add the a configuration files to the <code class="file-path">.delivery</code> directory.
-* submits the change for review.
+Clone the `deliver-customers-rhel` repo from GitHub.
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel
+# ~/Development
+$ git clone https://github.com/learn-chef/deliver-customers-rhel.git
+Cloning into 'deliver-customers-rhel'...
+remote: Counting objects: 1698, done.
+remote: Compressing objects: 100% (849/849), done.
+remote: Total 1698 (delta 540), reused 0 (delta 0), pack-reused 827
+Receiving objects: 100% (1698/1698), 202.95 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (989/989), done.
+Checking connectivity... done.
+```
+
+Move to the <code class="file-path">deliver-customers-rhel</code> directory.
+
+```bash
+# ~/Development
+$ cd deliver-customers-rhel
+```
+
+## 2. Initialize the project and create a basic pipeline
+
+* The next step is to run `delivery init`. The `delivery init` command:
+  * creates a project in Chef Delivery.
+  * creates a pipeline that targets the `master` branch.
+  * creates a clean branch named `add-delivery-config`. (by 'clean' we mean not based on any other branch; not sure what the jargon is for this.)
+  * creates the <code class="file-path">.delivery</code> directory and adds to it an empty build cookbook and a configuration file.
+  * submits the change for review.
+
+* When `delivery init` creates the `add-delivery-config` branch it creates what's called an _orphan_ branch; that is, a clean branch that has no ancestor. We cloned the GitHub repo to give us a directory to work from, and will incorporate it in later steps after we have a basic pipeline working.
+
+```bash
+# ~/Development/deliver-customers-rhel
 $ delivery init
-token: TItfAIAcmaRD9szirP/3t0sa0oNCo8BWyn1hZiiywU0=
-saved API token to: /home/thomaspetchel/.delivery/api-tokens
-Creating project: build-a-delivery-pipeline-rhel
-The authenticity of host '[10.194.11.99]:8989 ([10.194.11.99]:8989)' can't be established.
-RSA key fingerprint is 11:44:e2:83:e3:ad:5f:3a:24:40:f2:2c:d7:f0:4b:d3.
-Are you sure you want to continue connecting (yes/no)? yes
+Chef Delivery
+Loading configuration from /home/thomaspetchel/Development/deliver-customers-rhel
+Is /home/thomaspetchel/Development/deliver-customers-rhel a git repo?  yes
+adding remote delivery: ssh://tpetchel@test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
+Remote 'delivery' added to git config!
+Creating project: deliver-customers-rhel
 Checking for content on the git remote delivery: No upstream content
 No upstream content; pushing local content to server.
-To ssh://tpetchel@test@10.194.11.99:8989/test/learn-chef/build-a-delivery-pipeline-rhel
+To ssh://tpetchel@test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
 *	refs/heads/master:refs/heads/master	[new branch]
 Branch master set up to track remote branch master from delivery.
 Done
 
-Creating master pipeline for project: build-a-delivery-pipeline-rhel ... done
+Creating master pipeline for project: deliver-customers-rhel ... done
 Generating build cookbook skeleton
 Cached copy of build cookbook generator exists; skipping git clone.
 PCB generate: "chef" "generate" "cookbook" ".delivery/build-cookbook" "-g" "/home/thomaspetchel/.delivery/cache/generator-cookbooks/pcb"
 Git add and commit of build-cookbook
-Writing configuration to /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel/.delivery/config.json
+Writing configuration to /home/thomaspetchel/Development/deliver-customers-rhel/.delivery/config.json
 New delivery configuration
 --------------------------
 {
   "version": "2",
   "build_cookbook": {
-    "path": ".delivery/build-cookbook",
-    "name": "build-cookbook"
+    "name": "build-cookbook",
+    "path": ".delivery/build-cookbook"
   },
   "skip_phases": [],
   "build_nodes": {},
   "dependencies": []
 }Chef Delivery
-Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel
+Loading configuration from /home/thomaspetchel/Development/deliver-customers-rhel
 Review for change add-delivery-config targeted for pipeline master
 Created new patchset
-https://10.194.11.99/e/test/#/organizations/learn-chef/projects/build-a-delivery-pipeline-rhel/changes/12952992-4cab-4a76-a424-fe8dab887d9d
+https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customers-rhel/changes/c469f058-493d-4277-99ba-13f86014a63c
 ```
 
-* A browser window appears. Watch it flow through the pipeline - the default actions happen.
+* A browser window appears.
+* Watch the Verify stage run the unit, lint, and syntax phases.
+* Each phase runs on the build node.
+* Each phase succeeds, but does no work. (show example from output?)
 
 ![](delivery/delivery-init-result.png)
 
-## 3. Move the change through the pipeline
+## 3. Approve the change
 
-![](delivery/delivery-init-approve.png)
+* The next step is to approve the change.
 
-Scroll down to the bottom of the patchset and enter a comment.
+From the **Review** tab, scroll down to the bottom of the patchset and enter a comment.
 
 ![](delivery/delivery-init-add-comment.png)
 
@@ -122,58 +133,51 @@ Scroll back to the top of the patchset and click the **Approve** button.
 
 ![](delivery/delivery-init-approve.png)
 
+Then click **Confirm**.
+
+![](delivery/delivery-init-approve-modal.png)
+
 The **Approve** action merges the `add-delivery-config` branch into the `master` branch and deletes the `add-delivery-config` branch from the server (you can later run the `git branch prune` command to remove the references to the deleted branches from the Git server.)
 
 [COMMENT] You need to first wait for the unit, lint, and syntax phases to complete before you can approve a patchset. This ensures that all tests pass before the change is merged into the target branch (in this case, `master`.)
 
 [PRODNOTE] Users who are new to Git might be all like 'wha?' about the branch merging. Is there an appropriate Git primer we should point users at?
 
-After the change is approved, the process moves to the **Build** stage of the pipeline. This is where the unit, lint, syntax, and quality tests are performed. This time, they're performed on the `master` branch [, which includes the previous `master` plus your changes...].
+## 4. Deliver the change
 
-The **Build** stage also runs the security, and publish phases. Again, all phases are run on your build node.
-
-[PRODNOTE] Mention that U, L, S happen on the build node in **Verify**...
+* After you approve the change, the process moves to the Build stage of the pipeline.
+* The unit, lint, and syntax phases run again on the build node.
+* This time, they're performed on the `master` branch, which verifies that the tests still pass after merging the changes to `master`.
+* The Build stage also runs the quality, security, and publish phases. (what else to say at this point?)
 
 ![](delivery/delivery-init-build.png)
 
-After the **Build** stage completes [say more], press the **Deliver** button to approve [blah to the next stage].
+* After the Build stage completes, the process moves to the Acceptance stage.
+* Describe the Acceptance stage...
+* The Acceptance stage runs the provision, deploy, smoke, and functional phases. (what else to say here?)
 
-[PRODNOTE] I think we're missing something about the **Approval** stage. When you run through it again, note what happens.
+After the Acceptance stage completes, press the **Deliver** button.
+
+![](delivery/delivery-init-deliver.png)
 
 Press the **Confirm** button from the dialog that appears.
 
 ![](delivery/delivery-init-confirm-delivery.png)
 
-[PRODNOTE] This diagram ^ should have just one item. Redo it.
-
-You'll see the process move through the **Union**, **Rehearsal**, and **Delivered** stages. We'll look at these stages more closely later.
-
-Watch the change move through the **Union**, **Rehearsal**, and **Delivered** stages. You'll see the change eventually make it to the **Delivered** stage.
+* You'll see the process move through the Union, Rehearsal, and Delivered stages.
+* Watch the change move through the Union, Rehearsal, and Delivered stages.
 
 ![](delivery/delivery-init-delivered.png)
 
-Congratulations! [mention that we'll talk about this in a moment.]
+Congratulations! You now have a functioning Chef Delivery pipeline. Although it does no work, you now have a working pipeline that you can build on.
 
 [COMMENT] In this tutorial, you approve and deliver your own changes. In practice, you'll need to decide with your organization the criteria for approving and shipping changes. At CHEF, we follow the "four eyes" rule, where a total of four eyes are required to approve a code change. After two people approve a code change, and there are no unresolved comments, the change can be approved and move to the next stage in the pipeline.
 
 ## 4. Integrate the change locally
 
-In this scenario, we're cloning a GitHub project locally and creating a new Git repo that's hosted on our Chef Delivery Server.
+When you approved the change, Chef Delivery merged the `add-delivery-config` branch into `master` on Chef Delivery's Git server. Now you need to merge the updated `master` branch back on your workstation.
 
-Run `git remote -v` to see your remote repositories.
-
-```bash
-# ~/Development/build-a-delivery-pipeline-rhel
-$ git remote -v
-delivery	ssh://tpetchel@chef@10.194.12.112:8989/chef/learn-chef/build-a-delivery-pipeline-rhel (fetch)
-delivery	ssh://tpetchel@chef@10.194.12.112:8989/chef/learn-chef/build-a-delivery-pipeline-rhel (push)
-origin	https://github.com/learn-chef/build-a-delivery-pipeline-rhel.git (fetch)
-origin	https://github.com/learn-chef/build-a-delivery-pipeline-rhel.git (push)
-```
-
-You'll see two remotes &ndash; `delivery` and `origin`. `origin` refers to the original remote on GitHub, and `delivery` refers to our new remote that's hosted on our Chef Delivery server. This enables you to develop new features in the Git repo that Chef Delivery hosts, and later integrate your changes back to GitHub when you're ready. It also enables you to fetch updates from GitHub and integrate them into Chef Delivery's Git system.
-
-You can also connect your Chef Delivery directly to an external Git system, such as GitHub. [FOR MORE INFORMATION, SEE XXX].
+First, run `git branch` to verify that you're currently on the `add-delivery-config` branch.
 
 ```bash
 $ git branch
@@ -181,113 +185,56 @@ $ git branch
   master
 ```
 
+Now run `git fetch delivery` to fetch the changes locally.
+
 ```bash
 $ git fetch delivery
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
 Unpacking objects: 100% (1/1), done.
-From ssh://test@10.194.11.99:8989/test/learn-chef/build-a-delivery-pipeline-rhel
-   0fa1c87..f38711b  master     -> delivery/master
+From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
+   77fe036..a9471ce  master     -> delivery/master
 ```
+
+Run `git checkout master` to switch to the `master` branch.
 
 ```bash
 $ git checkout master
 Switched to branch 'master'
-Your branch is behind 'delivery/master' by 3 commits, and can be fast-forwarded.
+Your branch is behind 'delivery/master' by 2 commits, and can be fast-forwarded.
   (use "git pull" to update your local branch)
 ```
 
+Now run `git pull delivery` to merge the changes into your local copy of `master`.
+
 ```bash
 $ git pull delivery
-Updating 0fa1c87..f38711b
+Updating a4d9499..a9471ce
 Fast-forward
- .delivery/build-cookbook/.kitchen.yml              |  21 +++
- .delivery/build-cookbook/Berksfile                 |   9 ++
- .delivery/build-cookbook/LICENSE                   |   3 +
- .delivery/build-cookbook/README.md                 | 146 +++++++++++++++++++++
- .delivery/build-cookbook/chefignore                |  97 ++++++++++++++
- .../data_bags/keys/delivery_builder_keys.json      |   1 +
- .delivery/build-cookbook/metadata.rb               |   5 +
- .delivery/build-cookbook/recipes/default.rb        |   5 +
- .delivery/build-cookbook/recipes/deploy.rb         |   5 +
- .delivery/build-cookbook/recipes/functional.rb     |   5 +
- .delivery/build-cookbook/recipes/lint.rb           |   5 +
- .delivery/build-cookbook/recipes/provision.rb      |   5 +
- .delivery/build-cookbook/recipes/publish.rb        |   5 +
- .delivery/build-cookbook/recipes/quality.rb        |   5 +
- .delivery/build-cookbook/recipes/security.rb       |   5 +
- .delivery/build-cookbook/recipes/smoke.rb          |   5 +
- .delivery/build-cookbook/recipes/syntax.rb         |   5 +
- .delivery/build-cookbook/recipes/unit.rb           |   5 +
- .delivery/build-cookbook/secrets/fakey-mcfakerton  |   0
- .../test/fixtures/cookbooks/test/metadata.rb       |   2 +
- .../fixtures/cookbooks/test/recipes/default.rb     |   7 +
- .delivery/config.json                              |  10 ++
- 22 files changed, 356 insertions(+)
- create mode 100644 .delivery/build-cookbook/.kitchen.yml
- create mode 100644 .delivery/build-cookbook/Berksfile
- create mode 100644 .delivery/build-cookbook/LICENSE
- create mode 100644 .delivery/build-cookbook/README.md
- create mode 100644 .delivery/build-cookbook/chefignore
- create mode 100644 .delivery/build-cookbook/data_bags/keys/delivery_builder_keys.json
- create mode 100644 .delivery/build-cookbook/metadata.rb
- create mode 100644 .delivery/build-cookbook/recipes/default.rb
- create mode 100644 .delivery/build-cookbook/recipes/deploy.rb
- create mode 100644 .delivery/build-cookbook/recipes/functional.rb
- create mode 100644 .delivery/build-cookbook/recipes/lint.rb
- create mode 100644 .delivery/build-cookbook/recipes/provision.rb
- create mode 100644 .delivery/build-cookbook/recipes/publish.rb
- create mode 100644 .delivery/build-cookbook/recipes/quality.rb
- create mode 100644 .delivery/build-cookbook/recipes/security.rb
- create mode 100644 .delivery/build-cookbook/recipes/smoke.rb
- create mode 100644 .delivery/build-cookbook/recipes/syntax.rb
- create mode 100644 .delivery/build-cookbook/recipes/unit.rb
- create mode 100644 .delivery/build-cookbook/secrets/fakey-mcfakerton
- create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/metadata.rb
- create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/recipes/default.rb
+ .delivery/config.json | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
  create mode 100644 .delivery/config.json
 ```
 
-(the `delivery` part is important because it indicates to pull changes from Chef Delivery's Git server.) <= move this up
+### A note about remotes
 
-Congratulations. Although it's empty, you now have a working pipeline that you can add to...
+* If you're a Git user, you're likely accustomed to working with the `origin` remote.
+* In this lesson, you fetched and pulled from `delivery`.
+* In this scenario, we're cloning a GitHub project locally and creating a new Git repo that's hosted on our Chef Delivery Server.
+* `origin` refers to the original remote on GitHub, and `delivery` refers to our new remote that's hosted on our Chef Delivery server.
 
-## What happened during the process
-
-* TODO: Note how nothing from the `origin` branch (e.g. the `awesome_customers` cookbook) was integrated yet. We'll do that in the next lesson.
-
-* The `delivery init` command created a new project, a new pipeline that targets `master`, the `blah` branch, and an empty build cookbook.
-* It pushed the `blah` branch to Chef Delivery's Git server, which triggered the [integration] process.
-
-* Look at your recipes - they're empty!
-
-* Look at the pipeline stages - you'll see that 0 resources were converged, for example, the Verify/unit phase.
-
-* Clarify that no cookbooks were tested, nothing was delivered,
-
-[PRODNOTE] In scenario overview, say that artifact gets delivered to Chef server, we'll bootstrap the nodes, and run `chef-client` to pick up the changes.
+To see this, run `git remote -v` to see your remote repositories.
 
 ```bash
-[...]
-Running phase unit
-[2015-10-19T23:49:50+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disabled_plugins for ohai.
-Starting Chef Client, version 12.5.1
-resolving cookbooks for run list: ["build-cookbook::unit"]
-Synchronizing Cookbooks:
-  - build-cookbook (0.1.0)
-Compiling Cookbooks...
-Converging 0 resources
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 0/0 resources updated in 01 seconds
+# ~/Development/deliver-customers-rhel
+$ git remote -v
+delivery	ssh://tpetchel@test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel (fetch)
+delivery	ssh://tpetchel@test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel (push)
+origin	https://github.com/learn-chef/deliver-customers-rhel.git (fetch)
+origin	https://github.com/learn-chef/deliver-customers-rhel.git (push)
 ```
 
-In the next lesson, you'll configure each pipeline stage [to do real work.]
-
-[PRODNOTE] Maybe disclose this up-front?
-
-[PRODNOTE] Talk about the created pipeline somewhere...
+* TODO: How do we message this to the reader? Do we say it's mainly for learning purposes? In practice, you might connect an existing Git project directly to Chef Delivery and not use Delivery's internal Git server. Can we point to docs around this?
 
 ## How do delete your project
 
@@ -299,11 +246,11 @@ This command takes your enterprise, organization, and project names as arguments
 $ delivery-ctl delete-project ENTERPRISE ORGANIZATION PROJECT
 ```
 
-TODO: Show how to get delivery creds, ssh, etc. ^^
+TODO: Remind the reader how to get delivery creds, ssh, etc. ^^
 
-For example, for an enterprise named `chef` and an organization named `learn-chef`, you would run this command to delete the `build-a-delivery-pipeline-rhel` project.
+For example, for an enterprise named `chef` and an organization named `learn-chef`, you would run this command to delete the `deliver-customers-rhel` project.
 
 ```bash
-$ sudo delivery-ctl delete-project chef learn-chef build-a-delivery-pipeline-rhel
-Successfully deleted project: 'chef/learn-chef/build-a-delivery-pipeline-rhel'
+$ sudo delivery-ctl delete-project chef learn-chef deliver-customers-rhel
+Successfully deleted project: 'chef/learn-chef/deliver-customers-rhel'
 ```
