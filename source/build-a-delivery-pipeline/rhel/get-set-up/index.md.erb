@@ -74,7 +74,7 @@ BOILERPLATE HERE
 
 If you're unable to set up your workstation for local development, you can skip the verification steps XXX. [A long-term solution] can include using one of Test Kitchen's [cloud drivers]() to run your cookbooks [in the cloud] to XxX.
 
-## 1. Get an Chef Delivery license key
+## 1. Get a Chef Delivery license key
 
 To install Chef Delivery, you'll need a license key. If you don't have a full key, you can get a trial key from us that's good for XX days.
 
@@ -118,15 +118,70 @@ Before you run the cookbook, you'll need to decide how you want to provision, or
 1. If you use Amazon Web Services (AWS), the `delivery-cluster` cookbook can automatically provision the servers on EC2 instances and install the software for you. For AWS users, this is the fastest way to get set up.
 1. Otherwise, use what's called the _SSH provisioner_. This method requires you to bring up the necessary machines and provide SSH access and a passwordless `sudo` account on each. You provide the IP address and logon credentials for each server, and the `delivery-cluster` cookbook installs the software for you. This method can take more time to set up, but gives you complete control over how you provision your cluster.
 
+## 3. Create a working directory
+
+We use ~/Development. If you choose another, be sure to ...
+
 ## 3. Install Chef Delivery
+
+Clarify what to set up:
+
+* Provisioning vs local (workstation) setup
+* We use `test` env name
+* Don't install Supermarket
+* Don't need to set up Analytics
+* Need only only one build node, but more is fine.
+* Create a user - internal is fine.
+* Don't need to validate the installation. We'll do that here.
+* When you add a user, you can give all permissions (Select user privileges.). In practice, you would grant only what you need [Learn more]().
+* When you create an organization, you can enter a name that matches your org (e.g. `dev`), or `learn-chef`.
 
 [BUTTON - INSTALL CHEF DELIVERY]
 
 While Chef Delivery installs, you can follow the steps in the next section to set up your workstation for Chef development.
 
+TODO: Summarize what you'll have after the install process finishes.
+
+TODO: Confirm that the install doc has the user create a org and a user.
+
+## 4. Run delivery setup
+
+If you didn't follow the verification steps in the installation doc, run this command to .
+
+
+```bash
+# ~/Development/delivery-cluster
+$ rake info:delivery_creds
+Created enterprise: test
+Admin username: admin
+Admin password: ZT0lP2DJujgFrskXn6ZIHZvEq5fmtfGwbsk=
+Builder Password: OiULFFI2lqF3xZKvVfiePEMZRYauUkq2o1U=
+Web login: https://10.194.11.99/e/test/
+```
+
+```bash
+# ~/Development/delivery-cluster
+$ cd ~/Development
+$ delivery setup --server=10.194.11.99 --ent=test --org=learn-chef --user=tpetchel
+Chef Delivery
+Loading configuration from /home/thomaspetchel/Development
+Writing configuration to /home/thomaspetchel/Development/.delivery/cli.toml
+New configuration
+-----------------
+api_protocol = "https"
+enterprise = "test"
+git_port = "8989"
+organization = "learn-chef"
+pipeline = "master"
+server = "10.194.11.99"
+user = "tpetchel"
+```
+
 ## 4. Set up your workstation
 
 [CHEFDK BOOTSTRAP BLURB]
+
+* Summarize what the user set up in the install doc. Remove some stuff from below.
 
 ### Install the Chef Development Kit
 
@@ -160,7 +215,7 @@ $ mkdir ~/Development
 $ cd ~/Development
 ```
 
-## 5. Collect facts about your delivery cluster
+## 5. Collect some information about your delivery cluster
 
 Your delivery cluster includes multiple systems, so it may be helpful to write down a few facts about your cluster that you can refer to later.
 
@@ -258,23 +313,7 @@ Web login: https://10.194.8.162/e/test/
 * Create organization (e.g. learn-chef)
 * Create new user (e.g. tpetchel)
 
-* delivery setup
 
-```bash
-# ~/Development
-$ delivery setup --server=10.194.8.122 --ent=test --org=learn-chef --user=tpetchel
-Chef Delivery
-Loading configuration from /home/thomaspetchel/Development
-Writing configuration to /home/thomaspetchel/Development/.delivery/cli.toml
-New configuration
------------------
-enterprise = "test"
-git_port = "8989"
-organization = "learn-chef"
-pipeline = "master"
-server = "10.194.8.122"
-user = "tpetchel"
-```
 
 ## 7. Set up AWS ...
 

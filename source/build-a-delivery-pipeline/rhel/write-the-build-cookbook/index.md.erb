@@ -8,6 +8,19 @@ next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---
+TODO:
+
+The project contains all the code for this tutorial. Start by checking out the `initial` branch to XXX.
+
+```bash
+# ~/Development/delivery-cluster/build-a-delivery-pipeline-rhel
+$ git checkout -b initial origin/initial
+Branch initial set up to track remote branch initial from origin.
+Switched to a new branch 'initial'
+$ git branch
+* initial
+  master
+```
 
 [PRODNOTE] Talk about Test Kitchen testing, pt to delivery_build cookbook.
 
@@ -23,14 +36,26 @@ What we're going to do:
 * Reference delivery-truck cookbook (explain what it does.)
 * Iteratively build out the pipeline.
 
+Familiarize yourself with each stage and phase [link](). In summary:
+* default is called by each.
+* some phases are called by multiple stages. use node attributes or conditional variables to define specific behaviors.
+
 ## 1. Reference the delivery-truck cookbook
+
+[GITHUB] THE CODE FOR THIS PART IS IN GITHUB [add-delivery-truck]().
+
+```bash
+$ git branch
+  add-delivery-config
+  initial
+* master
+```
 
 Create a new branch.
 
 ```bash
 # PATH
-$ git checkout -b add-delivery-truck delivery/master
-Branch add-delivery-truck set up to track remote branch master from delivery.
+$ git checkout -b add-delivery-truck
 Switched to a new branch 'add-delivery-truck'
 ```
 
@@ -38,10 +63,10 @@ Verify new branch.
 
 ```bash
 # PATH
-$ git branch -v
-  add-delivery-config 2a0293e Add Delivery config
-* add-delivery-truck  b3a48ab Merged change 424c2719-54e4-44c1-97be-ad225fb392d9
-  master              b3a48ab Merged change 424c2719-54e4-44c1-97be-ad225fb392d9
+$ git branch
+  add-delivery-config
+* add-delivery-truck
+  master
 ```
 
 In [Blah]() tutorial, you learned how to use Berkshelf resolve cookbook dependencies.
@@ -77,45 +102,471 @@ version '0.1.0'
 depends 'delivery-truck'
 ```
 
-`git status`, `git add`, `git commit`, `delivery review`
+Include each of `delivery-truck` cookbook's recipe in ours.
 
-[PRODNOTE] Expand these out V.
+For example, default.rb:
 
-[PRODNOTE] Add callout about pull request vs. `delivery review` when using Chef Delivery's Git server.
+```ruby
+# default.rb
+include_recipe 'delivery-truck::default'
+```
+
+The remaining recipes look like this.
+
+```ruby
+# deploy.rb
+include_recipe 'delivery-truck::deploy'
+```
+
+```ruby
+# functional.rb
+include_recipe 'delivery-truck::functional'
+```
+
+```ruby
+# lint.rb
+include_recipe 'delivery-truck::lint'
+```
+
+```ruby
+# provision.rb
+include_recipe 'delivery-truck::provision'
+```
+
+```ruby
+# publish.rb
+include_recipe 'delivery-truck::publish'
+```
+
+```ruby
+# quality.rb
+include_recipe 'delivery-truck::quality'
+```
+
+```ruby
+# security.rb
+include_recipe 'delivery-truck::security'
+```
+
+```ruby
+# smoke.rb
+include_recipe 'delivery-truck::smoke'
+```
+
+```ruby
+# syntax.rb
+include_recipe 'delivery-truck::syntax'
+```
+
+```ruby
+# unit.rb
+include_recipe 'delivery-truck::unit'
+```
 
 ```bash
+# ~/Development/build-a-delivery-pipeline-rhel
 $ git status
 On branch add-delivery-truck
-Your branch is up-to-date with 'delivery/master'.
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git checkout -- <file>..." to discard changes in working directory)
 
 	modified:   .delivery/build-cookbook/Berksfile
 	modified:   .delivery/build-cookbook/metadata.rb
+	modified:   .delivery/build-cookbook/recipes/default.rb
+	modified:   .delivery/build-cookbook/recipes/deploy.rb
+	modified:   .delivery/build-cookbook/recipes/functional.rb
+	modified:   .delivery/build-cookbook/recipes/lint.rb
+	modified:   .delivery/build-cookbook/recipes/provision.rb
+	modified:   .delivery/build-cookbook/recipes/publish.rb
+	modified:   .delivery/build-cookbook/recipes/quality.rb
+	modified:   .delivery/build-cookbook/recipes/security.rb
+	modified:   .delivery/build-cookbook/recipes/smoke.rb
+	modified:   .delivery/build-cookbook/recipes/syntax.rb
+	modified:   .delivery/build-cookbook/recipes/unit.rb
 
 no changes added to commit (use "git add" and/or "git commit -a")
-thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel$ git add .
-thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel$ git commit -m "reference delivery-truck cookbook"
-[add-delivery-truck b3d09fd] reference delivery-truck cookbook
- 2 files changed, 5 insertions(+)
-thomaspetchel@ubuntu:~/Development/build-a-delivery-pipeline-rhel$ delivery review
+```
+
+```bash
+# ~/Development/build-a-delivery-pipeline-rhel
+$ git add .
+```
+
+```bash
+# ~/Development/build-a-delivery-pipeline-rhel
+$ git commit -m "pull in delivery-truck cookbook"
+[add-delivery-truck 58e3f50] pull in delivery-truck cookbook
+ 13 files changed, 16 insertions(+)
+```
+
+```bash
+# ~/Development/build-a-delivery-pipeline-rhel
+$ delivery review
 Chef Delivery
 Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel
 Review for change add-delivery-truck targeted for pipeline master
 Created new patchset
-https://10.194.12.112/e/chef/#/organizations/learn-chef/projects/build-a-delivery-pipeline-rhel/changes/db847625-a045-4d46-9ecc-84e3ef6a2069
+https://10.194.11.99/e/test/#/organizations/learn-chef/projects/build-a-delivery-pipeline-rhel/changes/a09401ca-4e39-48e4-96d7-23ed1631f9e0
 ```
+
+[PRODNOTE] Add callout about pull request vs. `delivery review` when using Chef Delivery's Git server.
 
 * Review the changes in the web interface. Click **Approve** when all tests pass.
 * You'll notice that unit, lint, and syntax phases still don't do any work &ndash; we've simply included the `delivery-truck` cookbook as part of the build process.
 * The process moves to the Build stage.
-* Watch all tests pass. Again, no real work is done by the provision, deploy, smoke, and functional phases.
-* Don't do **Deliver** just yet &ndash; we'll build up more (meaningful) changes and deliver them as a single unit.
-
-[PRODNOTE] Do we ever say how the `default` recipe is called as part of each phase?
+* The process moves to teh Acceptance stage.
+* After Acceptance succeeds, press *Deliver*.
+* Watch all phases pass. Again, no real work is done by the provision, deploy, smoke, and functional phases.
 
 [PRODNOTE] For each section, revisit the pipeline and highlight what we're working on.
+
+## 2. Provision your acceptance, union, rehearsal, and delivered environments
+
+* Brief overview / point to [docs](link).
+* We're going to use [Chef provisioning](link).
+
+[PRODNOTE] We're going to use EC2; also figure out SSH route (key-based auth) and use tabs to delinate things.
+
+* The provisioning node or workstation where you created your cluster from already contains an encryption key, located at delivery-cluster/encrypted_data_bag_secret.
+* Create data bag to hold the data.
+* Choose EC2 or SSH.
+  * We're going to use key-based auth for both.
+* Added encrypted data bag item to hold the private key (.pem file).
+* Also encrypt the secret file used to decrypt the database passsword used by the Customers web application.
+* If using EC2:
+  * Add encrypted data bag item to hold the AWS credentials.
+  * Add plain-text data bag item to hold identifiers used to create and manage EC2  instances (AMI ID, security group ID, etc.).
+
+### Create a data bag to hold provisioning data
+
+```bash
+$ cd ~/Development/delivery-cluster
+```
+
+```bash
+# ~/Development/delivery-cluster
+$ knife data bag create provisioning-data
+Created data_bag[provisioning-data]
+```
+
+### Encrypt and upload private key
+
+Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json and add this:
+
+```ruby
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
+{
+  "id": "ssh_key",
+  "name": "YOUR_NAME"
+  "private_key": "YOUR_PRIVATE_KEY"
+}
+```
+
+You'll need to replace each line break with `\n` in your file. So ...
+
+
+```ruby
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
+{
+  "id": "ssh_key",
+  "name": "learn-chef"
+  "private_key": "-----BEGIN RSA PRIVATE KEY-----\ngz5jKCX3TO...j8ErLWsr==\n-----END RSA PRIVATE KEY-----"
+}
+```
+
+Upload item.
+
+```bash
+# ~/Development/delivery-cluster
+$ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/ssh_key.json --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
+Updated data_bag_item[provisioning-data::ssh_key]
+```
+
+Verify you can decrypt it back.
+
+```bash
+# ~/Development/delivery-cluster
+$ knife data bag show provisioning-data ssh_key --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
+Encrypted data bag detected, decrypting with provided secret.
+id:          ssh_key
+name:        learn-chef
+private_key: -----BEGIN RSA PRIVATE KEY-----
+gz5jKCX3TO...
+...j8ErLWsr==
+-----END RSA PRIVATE KEY-----
+```
+
+### EC2 only - Encrypt and upload your AWS credentials
+
+Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json and add this:
+
+```ruby
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
+{
+  "id": "aws_creds",
+  "region": "REGION",
+  "access_key_id": "YOUR_ACCESS_KEY_ID",
+  "secret_access_key": "YOUR_SECRET_ACCESS_KEY"
+}
+```
+
+For example:
+
+```ruby
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
+{
+  "id": "aws_creds",
+  "region": "us-west-2",
+  "access_key_id": "AKIAIOSFODNN7EXAMPLE",
+  "secret_access_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+}
+```
+
+Upload item.
+
+```bash
+# ~/Development/delivery-cluster
+$ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/aws_creds.json --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
+Updated data_bag_item[provisioning-data::aws_creds]
+```
+
+/var/opt/delivery/workspace/10.194.11.99/test/learn-chef/build-a-delivery-pipeline-rhel/master/acceptance/provision/chef/keys, /var/opt/delivery/workspace/10.194.11.99/test/learn-chef/build-a-delivery-pipeline-rhel/master/acceptance/provision/cache/.ssh
+
+Verify you can decrypt it back.
+
+```bash
+# ~/Development/delivery-cluster
+$ knife data bag show provisioning-data aws_creds --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
+Encrypted data bag detected, decrypting with provided secret.
+access_key_id:     AKIAIOSFODNN7EXAMPLE
+secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+id:                aws_creds
+region:            us-west-2
+```
+
+### EC2 only - Upload data used to create and manage EC2 instances
+
+Don't need to encrypt the data because nothing's secret.
+
+Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/ec2_config.json and add this:
+
+```ruby
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/ec2_config.json
+{
+  "id": "ec2_config",
+  "build-a-delivery-pipeline-rhel": {
+    "acceptance": {
+      "instance_type": "INSTANCE_TYPE",
+      "security_group_ids": [SECURITY_GROUP_IDS],
+      "subnet_id": "SUBNET_ID",
+      "image_id": "IMAGE_ID",
+      "ssh_username": "root",
+      "tags": [{ "X-Project": "YOUR_PROJECT_NAME" }],
+      "use_private_ip_for_ssh": TRUE_OR_FALSE,
+    },
+    "union": {
+      "instance_type": "INSTANCE_TYPE",
+      "security_group_ids": [SECURITY_GROUP_IDS],
+      "subnet_id": "SUBNET_ID",
+      "image_id": "IMAGE_ID",
+      "ssh_username": "root",
+      "tags": [{ "X-Project": "YOUR_PROJECT_NAME" }],
+      "use_private_ip_for_ssh": TRUE_OR_FALSE,
+    },
+    "rehearsal": {
+      "instance_type": "INSTANCE_TYPE",
+      "security_group_ids": [SECURITY_GROUP_IDS],
+      "subnet_id": "SUBNET_ID",
+      "image_id": "IMAGE_ID",
+      "ssh_username": "root",
+      "tags": [{ "X-Project": "YOUR_PROJECT_NAME" }],
+      "use_private_ip_for_ssh": TRUE_OR_FALSE,
+    },
+    "delivered": {
+      "instance_type": "INSTANCE_TYPE",
+      "security_group_ids": [SECURITY_GROUP_IDS],
+      "subnet_id": "SUBNET_ID",
+      "image_id": "IMAGE_ID",
+      "ssh_username": "root",
+      "tags": [{ "X-Project": "YOUR_PROJECT_NAME" }],
+      "use_private_ip_for_ssh": TRUE_OR_FALSE,
+    }
+  }
+}
+```
+
+For example:
+
+```ruby
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/ec2_config.json
+{
+  "id": "ec2_config",
+  "build-a-delivery-pipeline-rhel": {
+    "acceptance": {
+      "instance_type": "t2.micro",
+      "security_group_ids": ["sg-cbacf8ae"],
+      "subnet_id": "subnet-19ac017c",
+      "image_id": "ami-09f7d239",
+      "ssh_username": "root",
+      "tags": [{ "X-Project": "Learn Chef" }],
+      "use_private_ip_for_ssh": false
+    },
+    "union": {
+      "instance_type": "t2.micro",
+      "security_group_ids": ["sg-cbacf8ae"],
+      "subnet_id": "subnet-19ac017c",
+      "image_id": "ami-09f7d239",
+      "ssh_username": "root",
+      "tags": [{ "X-Project": "Learn Chef" }],
+      "use_private_ip_for_ssh": false
+    },
+    "rehearsal": {
+      "instance_type": "t2.micro",
+      "security_group_ids": ["sg-cbacf8ae"],
+      "subnet_id": "subnet-19ac017c",
+      "image_id": "ami-09f7d239",
+      "ssh_username": "root",
+      "tags": [{ "X-Project": "Learn Chef" }],
+      "use_private_ip_for_ssh": false
+    },
+    "delivered": {
+      "instance_type": "t2.micro",
+      "security_group_ids": ["sg-cbacf8ae"],
+      "subnet_id": "subnet-19ac017c",
+      "image_id": "ami-09f7d239",
+      "ssh_username": "root",
+      "tags": [{ "X-Project": "Learn Chef" }],
+      "use_private_ip_for_ssh": false
+    }
+  }
+}
+```
+
+* `build-a-delivery-pipeline-rhel` => config for the Customers web application on Red Hat Enterprise Linux family (including CentOS).
+
+We provide data for each environment because [it can vary]. For instance, you might want to run your acceptance environment on a t2.micro instance with all ports open through the fireweall, but your delivered environment might use a larger instance and a more restricted set of ports.
+
+[COMMENT] The `tags` part isn't required, but tagging your instances is a good way to help identify which project a given instance belongs to.
+
+Upload item.
+
+```bash
+# ~/Development/delivery-cluster
+$ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/ec2_config.json
+Updated data_bag_item[provisioning-data::ec2_config]
+```
+
+Verify you can read it back.
+
+```bash
+# ~/Development/delivery-cluster
+$ knife data bag show provisioning-data ec2_config
+Unencrypted data bag detected, ignoring any provided secret options.
+build-a-delivery-pipeline-rhel:
+  acceptance:
+    image_id:               ami-09f7d239
+    instance_type:          t2.micro
+    security_group_ids:     sg-cbacf8ae
+    ssh_username:           root
+    subnet_id:              subnet-19ac017c
+    tags:
+      X-Project: Learn Chef
+    use_private_ip_for_ssh: false
+  delivered:
+    image_id:               ami-09f7d239
+    instance_type:          t2.micro
+    security_group_ids:     sg-cbacf8ae
+    ssh_username:           root
+    subnet_id:              subnet-19ac017c
+    tags:
+      X-Project: Learn Chef
+    use_private_ip_for_ssh: false
+  rehearsal:
+    image_id:               ami-09f7d239
+    instance_type:          t2.micro
+    security_group_ids:     sg-cbacf8ae
+    ssh_username:           root
+    subnet_id:              subnet-19ac017c
+    tags:
+      X-Project: Learn Chef
+    use_private_ip_for_ssh: false
+  union:
+    image_id:               ami-09f7d239
+    instance_type:          t2.micro
+    security_group_ids:     sg-cbacf8ae
+    ssh_username:           root
+    subnet_id:              subnet-19ac017c
+    tags:
+      X-Project: Learn Chef
+    use_private_ip_for_ssh: false
+id:        ec2_config
+```
+
+[COMMENT] The way we set things up assumes all environments run int eh same region. If you require a different region for each environment, you would [do the same thing you did for the ec_config data].
+
+### Encrypt and upload the decryption key for the Customers web application
+
+* Point to previous tutorial where the user set up the decryption key.
+
+Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/customers_key.json and add this:
+
+```ruby
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/customers_key.json
+{
+  "id": "customers_key",
+  "content": "YOUR_DECRYPTION_KEY"
+}
+```
+
+For example:
+
+```ruby
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/customers_key.json
+{
+  "id": "customers_key",
+  "content": "u8eF924qkscvx+edZfynrpMi3JS0fLE1qHoJaN9Yzba0O79H5WQGUjRWaXTqUEaj/TqeEYL4F1j8R4jiwI5hJPmo91hukcWhpgxCrvvw0ajku1e3InKMWWDcOAv8frkHgTwoqLXjkbVJyYJ4A1o9Hc/jHTlweicK39pETi76emkaxVXQCRcq9pi+OxNVYMeRucGqZZrp8kgRChPLYrmzTOpkJ5uaFXq/OVRZSQUA7lAUAcBVwXSvnY5PiisZjsEwF/cOTlLfLjcRGz4820RpM0TyxgqG5o4JsJ/tfKbn8bz2DExaW5rIUhx/EAdaK8xOiihTsP8n67XV7fwAT1wHmeTg4n/aAr57OW3hZk2eAXP2l9hRKy3b8W42jJnUZ92rOKBTIfAz2B7lxBzDphdntrQYtuLO7PmaKjDwZX7U7OoEUNvKjnnp0nTZcyECc3dlF0JSj1w6yobK1uzlyQRoRUcD8TtAOWBazmol3pY9fhLu5ZVhOYoOuKmyDDCYgk8SLSL/rSSHbPKtHo77amqR68IDT9gCK3ZCM7XF97IJBefoK5UYDFwKIYKaX9GYhUoJf0EXZLvHn/GxzEDK8fanFeaIYFU68WBpmONng8IGndYhgBhu6yA3hyrlvQRkZHpf+1pDxjOh1neDv0+A12FusGbehZOKhCfn1I0Q5rQLO7V="
+}
+```
+
+Upload item.
+
+```bash
+# ~/Development/delivery-cluster
+$ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/customers_key.json --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
+Updated data_bag_item[provisioning-data::customers_key]
+```
+
+Verify you can decrypt it back.
+
+```bash
+# ~/Development/delivery-cluster
+$ knife data bag show provisioning-data customers_key --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
+Encrypted data bag detected, decrypting with provided secret.
+content: u8eF924qkscvx+edZfynrpMi3JS0fLE1qHoJaN9Yzba0O79H5WQGUjRWaXTqUEaj/TqeEYL4F1j8R4jiwI5hJPmo91hukcWhpgxCrvvw0ajku1e3InKMWWDcOAv8frkHgTwoqLXjkbVJyYJ4A1o9Hc/jHTlweicK39pETi76emkaxVXQCRcq9pi+OxNVYMeRucGqZZrp8kgRChPLYrmzTOpkJ5uaFXq/OVRZSQUA7lAUAcBVwXSvnY5PiisZjsEwF/cOTlLfLjcRGz4820RpM0TyxgqG5o4JsJ/tfKbn8bz2DExaW5rIUhx/EAdaK8xOiihTsP8n67XV7fwAT1wHmeTg4n/aAr57OW3hZk2eAXP2l9hRKy3b8W42jJnUZ92rOKBTIfAz2B7lxBzDphdntrQYtuLO7PmaKjDwZX7U7OoEUNvKjnnp0nTZcyECc3dlF0JSj1w6yobK1uzlyQRoRUcD8TtAOWBazmol3pY9fhLu5ZVhOYoOuKmyDDCYgk8SLSL/rSSHbPKtHo77amqR68IDT9gCK3ZCM7XF97IJBefoK5UYDFwKIYKaX9GYhUoJf0EXZLvHn/GxzEDK8fanFeaIYFU68WBpmONng8IGndYhgBhu6yA3hyrlvQRkZHpf+1pDxjOh1neDv0+A12FusGbehZOKhCfn1I0Q5rQLO7V=
+id:      customers_key
+```
+
+##
+
+```bash
+# ~/Development/build-a-delivery-pipeline-rhel/.delivery
+$ chef generate attribute build-cookbook default
+Compiling Cookbooks...
+Recipe: code_generator::attribute
+  * directory[./build-cookbook/attributes] action create
+    - create new directory ./build-cookbook/attributes
+  * template[./build-cookbook/attributes/default.rb] action create
+    - create new file ./build-cookbook/attributes/default.rb
+    - update content in file ./build-cookbook/attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+Add this to default.rb
+
+```ruby
+default['build-cookbook']['customers']['driver'] = 'ec2'
+```
 
 ## 2. Perform unit, lint, and syntax testing
 
