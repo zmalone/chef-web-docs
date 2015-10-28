@@ -8,63 +8,46 @@ next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---
-
-* You cloned the Customers web application project from GitHub.
-* You ran `delivery init` to create a Chef Delivery project and create a basic pipeline.
-* You approved and delivered the change.
-* You integrated the change to your local repo.
-
+* Summary of the previous lesson:
+  * You cloned the Customers web application project from GitHub.
+  * You ran `delivery init` to create a Chef Delivery project and create a basic pipeline.
+  * You approved and delivered the change.
+  * You integrated the change to your local repo.
 
 * Show the Delivery pipeline again here.
 
+* Remember, the basic pipeline didn't do any real work.
+* In this lesson, you'll build out the build cookbook to
+  * run your unit, lint, and syntax checks to verify the quality of your cookbook.
+  * publish the `awesome_customers` cookbook to your Chef server.
+  * provision
+* The [delivery-truck] cookbook performs many common tasks for us.
+* We'll use this cookbook as a basis for our build cookbook.
+
+* The `awesome_customers` cookbook already contains unit tests and passes RuboCop and Foodcritic.
+* We'll use [Chef provisioning](https://docs.chef.io/provisioning.html) to provision our Acceptance, Union, Rehearsal, Delivered environments.
+  * Briefly describe Chef provisioning.
+  * Briefly describe Acceptance, Union, Rehearsal, Delivered environments and their role.
+
 * Talk about the phases, and how each step below each phase cooresponds to a recipe in the build cookbook.
+* A phase can run on mutliple stages.
 
-
-The project contains all the code for this tutorial. Start by checking out the `initial` branch to XXX.
-
-```bash
-# ~/Development/delivery-cluster/build-a-delivery-pipeline-rhel
-$ git checkout -b initial origin/initial
-Branch initial set up to track remote branch initial from origin.
-Switched to a new branch 'initial'
-$ git branch
-* initial
-  master
-```
-
-[PRODNOTE] Talk about Test Kitchen testing, pt to delivery_build cookbook.
-
-
-[PRODNOTE] Show the Delivery pipeline again here...
-
-Talk about the phases, and how each step below each phase cooresponds to a recipe in the build cookbook.
-
-Point to doc page that lists and describes each recipe.
-
-What we're going to do:
-
-* Reference delivery-truck cookbook (explain what it does.)
-* Iteratively build out the pipeline.
-
-Familiarize yourself with each stage and phase [link](). In summary:
-* default is called by each.
-* some phases are called by multiple stages. use node attributes or conditional variables to define specific behaviors.
+The `deliver-customers-rhel` project that you cloned from GitHub contains all the code you'll need for this tutorial.
 
 ## 1. Reference the delivery-truck cookbook
 
-[GITHUB] THE CODE FOR THIS PART IS IN GITHUB [add-delivery-truck]().
+* Verify that you're on the `master` branch.
 
 ```bash
 $ git branch
   add-delivery-config
-  initial
 * master
 ```
 
-Create a new branch.
+* Create a new branch.
 
 ```bash
-# PATH
+# ~/Development/deliver-customers-rhel
 $ git checkout -b add-delivery-truck
 Switched to a new branch 'add-delivery-truck'
 ```
@@ -72,19 +55,19 @@ Switched to a new branch 'add-delivery-truck'
 Verify new branch.
 
 ```bash
-# PATH
+# ~/Development/deliver-customers-rhel
 $ git branch
   add-delivery-config
 * add-delivery-truck
   master
 ```
 
-In [Blah]() tutorial, you learned how to use Berkshelf resolve cookbook dependencies.
+In the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, you [learned how to use Berkshelf](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration) to resolve cookbook dependencies.
 
-Modify <code class="file-path">~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/Berksfile</code> like this.
+Modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile</code> like this.
 
 ```ruby
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/Berksfile
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile
 source 'https://supermarket.chef.io'
 
 metadata
@@ -99,10 +82,10 @@ cookbook 'delivery-sugar', git: 'https://github.com/chef-cookbooks/delivery-suga
 cookbook 'delivery-truck', git: 'https://github.com/chef-cookbooks/delivery-truck'
 ```
 
-Now modify metadata.rb like this.
+Now modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb</code> like this.
 
 ```ruby
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/metadata.rb
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb
 name 'build-cookbook'
 maintainer 'The Authors'
 maintainer_email 'you@example.com'
@@ -112,69 +95,25 @@ version '0.1.0'
 depends 'delivery-truck'
 ```
 
-Include each of `delivery-truck` cookbook's recipe in ours.
+* The `delivery-truck` cookbook provides a lot of functionality for us.
+  * For example, the recipe for the unit phase, <code class="file-path">unit.rb</code>, runs ChefSpec tests for any cookbooks that have changed.
+  * TODO: show code example.
 
-For example, default.rb:
+Include each of the `delivery-truck` cookbook's recipe in ours.
+
+For example, make your `build-cookcook` cookbook's default recipe, <code class="file-path">default.rb</code>, look like this.
 
 ```ruby
-# default.rb
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/default.rb
 include_recipe 'delivery-truck::default'
 ```
 
-The remaining recipes look like this.
+Follow the same pattern for your <code class="file-path">deploy.rb</code>, <code class="file-path">functional.rb</code>, <code class="file-path">lint.rb</code>, <code class="file-path">provision.rb</code>, <code class="file-path">publish.rb</code>, <code class="file-path">quality.rb</code>, <code class="file-path">security.rb</code>, <code class="file-path">smoke.rb</code>, and <code class="file-path">unit.rb</code> recipes.
 
-```ruby
-# deploy.rb
-include_recipe 'delivery-truck::deploy'
-```
-
-```ruby
-# functional.rb
-include_recipe 'delivery-truck::functional'
-```
-
-```ruby
-# lint.rb
-include_recipe 'delivery-truck::lint'
-```
-
-```ruby
-# provision.rb
-include_recipe 'delivery-truck::provision'
-```
-
-```ruby
-# publish.rb
-include_recipe 'delivery-truck::publish'
-```
-
-```ruby
-# quality.rb
-include_recipe 'delivery-truck::quality'
-```
-
-```ruby
-# security.rb
-include_recipe 'delivery-truck::security'
-```
-
-```ruby
-# smoke.rb
-include_recipe 'delivery-truck::smoke'
-```
-
-```ruby
-# syntax.rb
-include_recipe 'delivery-truck::syntax'
-```
-
-```ruby
-# unit.rb
-include_recipe 'delivery-truck::unit'
-```
+Run `git status`.
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel
+# ~/Development/deliver-customers-rhel
 $ git status
 On branch add-delivery-truck
 Changes not staged for commit:
@@ -194,61 +133,348 @@ Changes not staged for commit:
 	modified:   .delivery/build-cookbook/recipes/smoke.rb
 	modified:   .delivery/build-cookbook/recipes/syntax.rb
 	modified:   .delivery/build-cookbook/recipes/unit.rb
+	modified:   .delivery/config.json
 
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel
+# ~/Development/deliver-customers-rhel
 $ git add .
 ```
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel
+# ~/Development/deliver-customers-rhel
 $ git commit -m "pull in delivery-truck cookbook"
-[add-delivery-truck 58e3f50] pull in delivery-truck cookbook
- 13 files changed, 16 insertions(+)
+[add-delivery-truck 24f7971] pull in delivery-truck cookbook
+ 14 files changed, 17 insertions(+), 1 deletion(-)
 ```
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel
+# ~/Development/deliver-customers-rhel
 $ delivery review
 Chef Delivery
-Loading configuration from /home/thomaspetchel/Development/build-a-delivery-pipeline-rhel
+Loading configuration from /home/thomaspetchel/Development/deliver-customers-rhel
 Review for change add-delivery-truck targeted for pipeline master
 Created new patchset
-https://10.194.11.99/e/test/#/organizations/learn-chef/projects/build-a-delivery-pipeline-rhel/changes/a09401ca-4e39-48e4-96d7-23ed1631f9e0
+https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customers-rhel/changes/a09401ca-4e39-48e4-96d7-23ed1631f9e0
 ```
 
 [PRODNOTE] Add callout about pull request vs. `delivery review` when using Chef Delivery's Git server.
 
 * Review the changes in the web interface. Click **Approve** when all tests pass.
-* You'll notice that unit, lint, and syntax phases still don't do any work &ndash; we've simply included the `delivery-truck` cookbook as part of the build process.
 * The process moves to the Build stage.
 * The process moves to teh Acceptance stage.
-* After Acceptance succeeds, press *Deliver*.
-* Watch all phases pass. Again, no real work is done by the provision, deploy, smoke, and functional phases.
+* After Acceptance succeeds, press the **Deliver** button.
+* Watch all the Acceptance, Union, Rehearsal, and Delivered stages run.
+* The phases still don't do any work because:
+  * we still haven't added the `awesome_customers` cookbook.
+  * we don't yet have Acceptance, Union, Rehearsal, and Delivered environments.
+* But we're all set up to...
 
-[PRODNOTE] For each section, revisit the pipeline and highlight what we're working on.
+### Integrate the change locally
 
-## 2. Provision your acceptance, union, rehearsal, and delivered environments
+* As we did for the `add-delivery-config` branch, we need to merge the `master` branch locally. Here's a reminder how.
 
-* Brief overview / point to [docs](link).
-* We're going to use [Chef provisioning](link).
+```bash
+# ~/Development/deliver-customers-rhel
+$ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'delivery/master'.
+$ git fetch
+remote: Counting objects: 1, done.
+remote: Total 1 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (1/1), done.
+From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
+   a9471ce..bd8a8b2  master     -> delivery/master
+$ git pull delivery master
+From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
+ * branch            master     -> FETCH_HEAD
+Updating a9471ce..bd8a8b2
+Fast-forward
+ .delivery/build-cookbook/Berksfile             | 3 +++
+ .delivery/build-cookbook/metadata.rb           | 2 ++
+ .delivery/build-cookbook/recipes/default.rb    | 1 +
+ .delivery/build-cookbook/recipes/deploy.rb     | 1 +
+ .delivery/build-cookbook/recipes/functional.rb | 1 +
+ .delivery/build-cookbook/recipes/lint.rb       | 1 +
+ .delivery/build-cookbook/recipes/provision.rb  | 1 +
+ .delivery/build-cookbook/recipes/publish.rb    | 1 +
+ .delivery/build-cookbook/recipes/quality.rb    | 1 +
+ .delivery/build-cookbook/recipes/security.rb   | 1 +
+ .delivery/build-cookbook/recipes/smoke.rb      | 1 +
+ .delivery/build-cookbook/recipes/syntax.rb     | 1 +
+ .delivery/build-cookbook/recipes/unit.rb       | 1 +
+ .delivery/config.json                          | 2 +-
+ 14 files changed, 17 insertions(+), 1 deletion(-)
+```
 
-[PRODNOTE] We're going to use EC2; also figure out SSH route (key-based auth) and use tabs to delinate things.
+[PRODNOTE] Would conceptual images of the pipeline at various stages be useful?
 
-* The provisioning node or workstation where you created your cluster from already contains an encryption key, located at delivery-cluster/encrypted_data_bag_secret.
-* Create data bag to hold the data.
-* Choose EC2 or SSH.
-  * We're going to use key-based auth for both.
-* Added encrypted data bag item to hold the private key (.pem file).
-* Also encrypt the secret file used to decrypt the database passsword used by the Customers web application.
-* If using EC2:
-  * Add encrypted data bag item to hold the AWS credentials.
-  * Add plain-text data bag item to hold identifiers used to create and manage EC2  instances (AMI ID, security group ID, etc.).
+## 2. Publish the awesome_customers cookbook to your Chef server
+
+* The initial `master` branch from GitHub is in Chef Delivery's internal Git server.
+* We need to specify to publish the `awesome_customers` cookbook to Chef server.
+* You could publish to other places (Chef Supermarket, GitHub, etc.). TODO: Point to docs.
+* We'll also increment the `awesome_customers` cookbook's version in its metadata to create a change in the cookbook (and thus trigger the tests and publish phases.)
+
+### Create a branch
+
+First, verify that you're on the `master` branch.
+
+```bash
+# ~/Development/deliver-customers-rhel
+$ git branch
+  add-delivery-config
+  add-delivery-truck
+* master
+```
+
+Run these commands to create the `publish-awesome-customers` branch and verify that you're on that branch.
+
+```bash
+# ~/Development/deliver-customers-rhel
+$ git checkout -b publish-awesome-customers
+Switched to a new branch 'publish-awesome-customers'
+$ git branch
+  add-delivery-config
+  add-delivery-truck
+  master
+* publish-awesome-customers
+```
+
+### Create a default node attributes file
+
+* Move to your <code class="file-path">~/Development/delivery-cluster/.delivery</code> directory.
+
+```bash
+# ~/Development/deliver-customers-rhel/
+$ cd .delivery
+```
+
+* Run this to generate your default node attributes file.
+
+```bash
+# ~/Development/deliver-customers-rhel/.delivery
+$ chef generate attribute build-cookbook default
+Compiling Cookbooks...
+Recipe: code_generator::attribute
+  * directory[./build-cookbook/attributes] action create
+    - create new directory ./build-cookbook/attributes
+  * template[./build-cookbook/attributes/default.rb] action create
+    - create new file ./build-cookbook/attributes/default.rb
+    - update content in file ./build-cookbook/attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+### Set the node attribute to publish to Chef server
+
+To specify that you want to publish your cookbooks to Chef server, you need to set the `node['delivery']['config']['delivery-truck']['publish']['chef_server']` attribute.
+
+To do so, add this to your default node attributes file, <code class="file-path">default.rb</code>.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
+default['delivery']['config']['delivery-truck']['publish']['chef_server'] = true
+```
+
+The `delivery-truck` cookbook reads this attribute and automatically uploads any changed cookbooks to the Chef server during the publish phase, which is run in the Build stage.
+
+### Increment the awesome_customers cookbook's version
+
+* Let's say we've been developing this cookbook locally, and are now ready to deploy it to production.
+* [Semantic Versioning](TODO) says to set the version to 1.0.0.
+
+In your `awesome_customers` cookbook's metadata file, <code class="file-path">metadata.rb</code>, update the `version` field from 0.3.0 to 1.0.0, like this.
+
+```ruby
+# ~/Development/deliver-customers-rhel/cookbooks/awesome_customers/metadata.rb
+name 'awesome_customers'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures awesome_customers'
+long_description 'Installs/Configures awesome_customers'
+version '1.0.0'
+
+depends 'httpd', '~> 0.2.18'
+depends 'selinux', '~> 0.9.0'
+depends 'iptables', '~> 1.0.0'
+depends 'mysql2_chef_gem', '~> 1.0.1'
+depends 'mysql', '~> 6.0.17'
+depends 'database', '~> 4.0.3'
+```
+
+Run these commands to commit your changes.
+
+```bash
+# ~/Development/deliver-customers-rhel
+$ git status
+On branch publish-awesome-customers
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   cookbooks/awesome_customers/metadata.rb
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	.delivery/build-cookbook/attributes/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+$ git add .
+$ git commit -m "publish version 1.0.0 to Chef server"
+[publish-awesome-customers b9b9bf0] publish version 1.0.0 to Chef server
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+ create mode 100644 .delivery/build-cookbook/attributes/default.rb
+```
+
+Now run `delivery review` to submit your changes to the pipeline.
+
+```bash
+# ~/Development/deliver-customers-rhel
+$ delivery review
+Chef Delivery
+Loading configuration from /home/thomaspetchel/Development/deliver-customers-rhel
+Review for change publish-awesome-customers targeted for pipeline master
+Created new patchset
+https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customers-rhel/changes/ac585f79-2d35-4e4d-ae57-c83d1b4922ba
+```
+
+You'll see the unit, lint and syntax phases run on the `awesome_customers` cookbook. For example, the lint phase runs Foodcritic and RuboCop.
+
+![](delivery/delivery-lint.png)
+
+* Review the changes in the web interface. Click **Approve** when all tests pass.
+* The process moves to the Build stage.
+* The process moves to the Acceptance stage.
+* After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them as a single unit.
+
+### Verify the awesome_customers cookbook on your Chef server
+
+* The publish phase uploads your cookbooks and any dependencies that are listed in your <code class="file-path">Berksfile</code>.
+* Let's verify that your cookbook is on the Chef server. There are two ways to do this &ndash; from the command line or from the Chef management console.
+
+#### Verify from the command line
+
+* The `delivery-cluster` cookbook sets up a `knife` configuration file, <code class="file-path">knife.rb</code>, and server certificates to enable you to administer your Chef server from your workstation or provisioning node.
+* Let's use that fact to verify the status of the `awesome_customers` cookbook from the command line.
+
+First, move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
+
+```bash
+# ~/Development/deliver-customers-rhel
+$ cd ~/Development/delivery-cluster/.chef
+```
+
+You'll see your <code class="file-path">knife.rb</code> file and the <code class="file-path">trusted_certs</code> directory, which contains the Chef server's SSL certificates.
+
+```bash
+# ~/Development/delivery-cluster/.chef
+$ ls
+delivery-cluster-data       knife.rb          syntaxcache
+delivery-cluster-data-test  local-mode-cache  trusted_certs
+```
+
+Run the `knife cookbook list` command and search the result for the `awesome_customers` cookbook.
+
+```bash
+# ~/Development/delivery-cluster/.chef
+$ knife cookbook list | grep awesome_customers
+awesome_customers     1.0.0
+```
+
+As expected, version 1.0.0 is on the Chef server.
+
+#### Verify from the Chef management console
+
+When you use the `delivery-cluster` cookbook to set up your Chef server, the cookbook installs the Chef management console for you.
+
+To access the management console, you'll need the Chef server URL and the administrator password. To get the Chef server URL, first move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
+
+```bash
+# ~/Development/delivery-cluster/.chef
+$ cd ~/Development/delivery-cluster
+```
+
+Now run the `rake info:list_core_services` command to see information about your Chef Delivery cluster.
+
+```bash
+# ~/Development/delivery-cluster
+$ rake info:list_core_services
+2 items found
+
+delivery-server-test:
+  ipaddress: 10.194.11.99
+
+build-node-test-1:
+  ipaddress: 10.194.13.122
+
+chef_server_url      'https://10.194.12.65/organizations/test'
+```
+
+Navigate to your `chef_server_url` and login as `delivery`:`delivery`.
+
+From the **Policy** tab, you'll see that the `awesome_customers` cookbook's version listed as 1.0.0.
+
+![](delivery/management-console-customers-cookbook.png)
+
+### Integrate the change locally
+
+* As we did previously, we need to merge the `master` branch locally. Here's a reminder how.
+
+First, move to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
+
+```bash
+# ~/Development/delivery-cluster
+$ cd ~/Development/deliver-customers-rhel
+```
+
+Now run these commands.
+
+```bash
+# ~/Development/deliver-customers-rhel
+$ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'delivery/master'.
+$ git fetch
+remote: Counting objects: 1, done.
+remote: Total 1 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (1/1), done.
+From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
+   bd8a8b2..a100d45  master     -> delivery/master
+$ git pull delivery master
+From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
+ * branch            master     -> FETCH_HEAD
+Updating bd8a8b2..a100d45
+Fast-forward
+ .delivery/build-cookbook/attributes/default.rb           | 1 +
+ cookbooks/awesome_customers/metadata.rb                  | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+ create mode 100644 .delivery/build-cookbook/attributes/default.rb
+```
+
+## 3. Provision your Acceptance, Union, Rehearsal, and Delivered environments
+
+* Brief overview of Acceptance, Union, Rehearsal, and Delivered / point to docs.
+* We're going to use [Chef provisioning](https://docs.chef.io/provisioning.html). Brief recap on the process.
+
+Overview/facts about this section:
+
+* You'll choose whether to use the AWS or SSH Chef provisioner (how do we word these?)
+* For either AWS or SSH, we'll use key-based authentication (it's more secure and it simplifies the process.)
+* When you installed Chef Delivery, the process created an encryption key for you, located at <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/encrypted\_data\_bag\_secret</code>. We'll use that key to:
+  * Encrypt our AWS credentials in a data bag (if using the AWS provisioner).
+  * Encrypt the private key used for SSH authentication in a data bag (for both AWS and SSH).
+  * Encrypt the secret file used to decrypt the database passsword used by the Customers web application.
+* You'll create node attributes in your build cookbook that describe your Acceptance, Union, Rehearsal, and Delivered environments and reference those attributes in your recipe for the provision phase.
+
+[PRODNOTE] I can't get this to work using the SSH driver. I need someone to help fix what's wrong.
 
 ### Create a data bag to hold provisioning data
+
+* In this part, you'll create a data bag to hold your SSH private key and your AWS credentials (if you're using AWS...)
 
 ```bash
 $ cd ~/Development/delivery-cluster
@@ -262,7 +488,13 @@ Created data_bag[provisioning-data]
 
 ### Encrypt and upload private key
 
-Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json and add this:
+* In [Get set up](), you chose whether to use AWS or SSH for your Acceptance, Union, Rehearsal, and Delivered environments environments.
+* In either case, you have a private key file that enables you to connect to the servers over SSH.
+* In this part, you'll encrypt your key and add it to your data bag.
+
+TODO: Go back to get set up and add this ^.
+
+Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json</code> and add this, replacing `YOUR_NAME` and `YOUR_PRIVATE_KEY` with your values.
 
 ```ruby
 # ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
@@ -273,8 +505,7 @@ Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json a
 }
 ```
 
-You'll need to replace each line break with `\n` in your file. So ...
-
+You'll need to replace each line break with `\n` in your file. For example:
 
 ```ruby
 # ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
@@ -285,7 +516,7 @@ You'll need to replace each line break with `\n` in your file. So ...
 }
 ```
 
-Upload item.
+Encrypt and upload the data bag item.
 
 ```bash
 # ~/Development/delivery-cluster
@@ -309,13 +540,12 @@ gz5jKCX3TO...
 
 ### EC2 only - Encrypt and upload your AWS credentials
 
-Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json and add this:
+Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json</code> and add this, replacing `YOUR_ACCESS_KEY_ID` and `YOUR_SECRET_ACCESS_KEY` with your values.
 
 ```ruby
 # ~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
 {
   "id": "aws_creds",
-  "region": "REGION",
   "access_key_id": "YOUR_ACCESS_KEY_ID",
   "secret_access_key": "YOUR_SECRET_ACCESS_KEY"
 }
@@ -333,15 +563,13 @@ For example:
 }
 ```
 
-Upload item.
+Encrypt and upload the data bag item.
 
 ```bash
 # ~/Development/delivery-cluster
 $ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/aws_creds.json --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Updated data_bag_item[provisioning-data::aws_creds]
 ```
-
-/var/opt/delivery/workspace/10.194.11.99/test/learn-chef/build-a-delivery-pipeline-rhel/master/acceptance/provision/chef/keys, /var/opt/delivery/workspace/10.194.11.99/test/learn-chef/build-a-delivery-pipeline-rhel/master/acceptance/provision/cache/.ssh
 
 Verify you can decrypt it back.
 
@@ -352,179 +580,18 @@ Encrypted data bag detected, decrypting with provided secret.
 access_key_id:     AKIAIOSFODNN7EXAMPLE
 secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 id:                aws_creds
-region:            us-west-2
 ```
-
-### EC2 only - Upload data used to create and manage EC2 instances
-
-Don't need to encrypt the data because nothing's secret.
-
-Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/ec2_config.json and add this:
-
-```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/ec2_config.json
-{
-  "id": "ec2_config",
-  "build-a-delivery-pipeline-rhel": {
-    "acceptance": {
-      "instance_type": "INSTANCE_TYPE",
-      "security_group_ids": [SECURITY_GROUP_IDS],
-      "subnet_id": "SUBNET_ID",
-      "image_id": "IMAGE_ID",
-      "ssh_username": "root",
-      "tags": [{ "X-Project": "YOUR_PROJECT_NAME" }],
-      "use_private_ip_for_ssh": TRUE_OR_FALSE,
-    },
-    "union": {
-      "instance_type": "INSTANCE_TYPE",
-      "security_group_ids": [SECURITY_GROUP_IDS],
-      "subnet_id": "SUBNET_ID",
-      "image_id": "IMAGE_ID",
-      "ssh_username": "root",
-      "tags": [{ "X-Project": "YOUR_PROJECT_NAME" }],
-      "use_private_ip_for_ssh": TRUE_OR_FALSE,
-    },
-    "rehearsal": {
-      "instance_type": "INSTANCE_TYPE",
-      "security_group_ids": [SECURITY_GROUP_IDS],
-      "subnet_id": "SUBNET_ID",
-      "image_id": "IMAGE_ID",
-      "ssh_username": "root",
-      "tags": [{ "X-Project": "YOUR_PROJECT_NAME" }],
-      "use_private_ip_for_ssh": TRUE_OR_FALSE,
-    },
-    "delivered": {
-      "instance_type": "INSTANCE_TYPE",
-      "security_group_ids": [SECURITY_GROUP_IDS],
-      "subnet_id": "SUBNET_ID",
-      "image_id": "IMAGE_ID",
-      "ssh_username": "root",
-      "tags": [{ "X-Project": "YOUR_PROJECT_NAME" }],
-      "use_private_ip_for_ssh": TRUE_OR_FALSE,
-    }
-  }
-}
-```
-
-For example:
-
-```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/ec2_config.json
-{
-  "id": "ec2_config",
-  "build-a-delivery-pipeline-rhel": {
-    "acceptance": {
-      "instance_type": "t2.micro",
-      "security_group_ids": ["sg-cbacf8ae"],
-      "subnet_id": "subnet-19ac017c",
-      "image_id": "ami-09f7d239",
-      "ssh_username": "root",
-      "tags": [{ "X-Project": "Learn Chef" }],
-      "use_private_ip_for_ssh": false
-    },
-    "union": {
-      "instance_type": "t2.micro",
-      "security_group_ids": ["sg-cbacf8ae"],
-      "subnet_id": "subnet-19ac017c",
-      "image_id": "ami-09f7d239",
-      "ssh_username": "root",
-      "tags": [{ "X-Project": "Learn Chef" }],
-      "use_private_ip_for_ssh": false
-    },
-    "rehearsal": {
-      "instance_type": "t2.micro",
-      "security_group_ids": ["sg-cbacf8ae"],
-      "subnet_id": "subnet-19ac017c",
-      "image_id": "ami-09f7d239",
-      "ssh_username": "root",
-      "tags": [{ "X-Project": "Learn Chef" }],
-      "use_private_ip_for_ssh": false
-    },
-    "delivered": {
-      "instance_type": "t2.micro",
-      "security_group_ids": ["sg-cbacf8ae"],
-      "subnet_id": "subnet-19ac017c",
-      "image_id": "ami-09f7d239",
-      "ssh_username": "root",
-      "tags": [{ "X-Project": "Learn Chef" }],
-      "use_private_ip_for_ssh": false
-    }
-  }
-}
-```
-
-* `build-a-delivery-pipeline-rhel` => config for the Customers web application on Red Hat Enterprise Linux family (including CentOS).
-
-We provide data for each environment because [it can vary]. For instance, you might want to run your acceptance environment on a t2.micro instance with all ports open through the fireweall, but your delivered environment might use a larger instance and a more restricted set of ports.
-
-[COMMENT] The `tags` part isn't required, but tagging your instances is a good way to help identify which project a given instance belongs to.
-
-Upload item.
-
-```bash
-# ~/Development/delivery-cluster
-$ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/ec2_config.json
-Updated data_bag_item[provisioning-data::ec2_config]
-```
-
-Verify you can read it back.
-
-```bash
-# ~/Development/delivery-cluster
-$ knife data bag show provisioning-data ec2_config
-Unencrypted data bag detected, ignoring any provided secret options.
-build-a-delivery-pipeline-rhel:
-  acceptance:
-    image_id:               ami-09f7d239
-    instance_type:          t2.micro
-    security_group_ids:     sg-cbacf8ae
-    ssh_username:           root
-    subnet_id:              subnet-19ac017c
-    tags:
-      X-Project: Learn Chef
-    use_private_ip_for_ssh: false
-  delivered:
-    image_id:               ami-09f7d239
-    instance_type:          t2.micro
-    security_group_ids:     sg-cbacf8ae
-    ssh_username:           root
-    subnet_id:              subnet-19ac017c
-    tags:
-      X-Project: Learn Chef
-    use_private_ip_for_ssh: false
-  rehearsal:
-    image_id:               ami-09f7d239
-    instance_type:          t2.micro
-    security_group_ids:     sg-cbacf8ae
-    ssh_username:           root
-    subnet_id:              subnet-19ac017c
-    tags:
-      X-Project: Learn Chef
-    use_private_ip_for_ssh: false
-  union:
-    image_id:               ami-09f7d239
-    instance_type:          t2.micro
-    security_group_ids:     sg-cbacf8ae
-    ssh_username:           root
-    subnet_id:              subnet-19ac017c
-    tags:
-      X-Project: Learn Chef
-    use_private_ip_for_ssh: false
-id:        ec2_config
-```
-
-[COMMENT] The way we set things up assumes all environments run int eh same region. If you require a different region for each environment, you would [do the same thing you did for the ec_config data].
 
 ### Encrypt and upload the decryption key for the Customers web application
 
 * Point to previous tutorial where the user set up the decryption key.
 
-Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/customers_key.json and add this:
+Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/database\_passwords\_key.json</code> and add this:
 
 ```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/customers_key.json
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/database_passwords_key.json
 {
-  "id": "customers_key",
+  "id": "database_passwords_key",
   "content": "YOUR_DECRYPTION_KEY"
 }
 ```
@@ -532,543 +599,678 @@ Create ~/Development/delivery-cluster/.chef/delivery-cluster-data/customers_key.
 For example:
 
 ```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/customers_key.json
+# ~/Development/delivery-cluster/.chef/delivery-cluster-data/database_passwords_key.json
 {
-  "id": "customers_key",
+  "id": "database_passwords_key",
   "content": "u8eF924qkscvx+edZfynrpMi3JS0fLE1qHoJaN9Yzba0O79H5WQGUjRWaXTqUEaj/TqeEYL4F1j8R4jiwI5hJPmo91hukcWhpgxCrvvw0ajku1e3InKMWWDcOAv8frkHgTwoqLXjkbVJyYJ4A1o9Hc/jHTlweicK39pETi76emkaxVXQCRcq9pi+OxNVYMeRucGqZZrp8kgRChPLYrmzTOpkJ5uaFXq/OVRZSQUA7lAUAcBVwXSvnY5PiisZjsEwF/cOTlLfLjcRGz4820RpM0TyxgqG5o4JsJ/tfKbn8bz2DExaW5rIUhx/EAdaK8xOiihTsP8n67XV7fwAT1wHmeTg4n/aAr57OW3hZk2eAXP2l9hRKy3b8W42jJnUZ92rOKBTIfAz2B7lxBzDphdntrQYtuLO7PmaKjDwZX7U7OoEUNvKjnnp0nTZcyECc3dlF0JSj1w6yobK1uzlyQRoRUcD8TtAOWBazmol3pY9fhLu5ZVhOYoOuKmyDDCYgk8SLSL/rSSHbPKtHo77amqR68IDT9gCK3ZCM7XF97IJBefoK5UYDFwKIYKaX9GYhUoJf0EXZLvHn/GxzEDK8fanFeaIYFU68WBpmONng8IGndYhgBhu6yA3hyrlvQRkZHpf+1pDxjOh1neDv0+A12FusGbehZOKhCfn1I0Q5rQLO7V="
 }
 ```
 
-Upload item.
+Encrypt and upload the data bag item.
 
 ```bash
 # ~/Development/delivery-cluster
-$ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/customers_key.json --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
-Updated data_bag_item[provisioning-data::customers_key]
+$ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/database_passwords_key.json --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
+Updated data_bag_item[provisioning-data::database_passwords_key]
 ```
 
 Verify you can decrypt it back.
 
 ```bash
 # ~/Development/delivery-cluster
-$ knife data bag show provisioning-data customers_key --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
+$ knife data bag show provisioning-data database_passwords_key --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Encrypted data bag detected, decrypting with provided secret.
 content: u8eF924qkscvx+edZfynrpMi3JS0fLE1qHoJaN9Yzba0O79H5WQGUjRWaXTqUEaj/TqeEYL4F1j8R4jiwI5hJPmo91hukcWhpgxCrvvw0ajku1e3InKMWWDcOAv8frkHgTwoqLXjkbVJyYJ4A1o9Hc/jHTlweicK39pETi76emkaxVXQCRcq9pi+OxNVYMeRucGqZZrp8kgRChPLYrmzTOpkJ5uaFXq/OVRZSQUA7lAUAcBVwXSvnY5PiisZjsEwF/cOTlLfLjcRGz4820RpM0TyxgqG5o4JsJ/tfKbn8bz2DExaW5rIUhx/EAdaK8xOiihTsP8n67XV7fwAT1wHmeTg4n/aAr57OW3hZk2eAXP2l9hRKy3b8W42jJnUZ92rOKBTIfAz2B7lxBzDphdntrQYtuLO7PmaKjDwZX7U7OoEUNvKjnnp0nTZcyECc3dlF0JSj1w6yobK1uzlyQRoRUcD8TtAOWBazmol3pY9fhLu5ZVhOYoOuKmyDDCYgk8SLSL/rSSHbPKtHo77amqR68IDT9gCK3ZCM7XF97IJBefoK5UYDFwKIYKaX9GYhUoJf0EXZLvHn/GxzEDK8fanFeaIYFU68WBpmONng8IGndYhgBhu6yA3hyrlvQRkZHpf+1pDxjOh1neDv0+A12FusGbehZOKhCfn1I0Q5rQLO7V=
-id:      customers_key
+id:      database_passwords_key
 ```
 
-##
+### Create a branch
+
+* Move to your <code class="file-path">~/Development/delivery-cluster</code> directory.
 
 ```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery
-$ chef generate attribute build-cookbook default
-Compiling Cookbooks...
-Recipe: code_generator::attribute
-  * directory[./build-cookbook/attributes] action create
-    - create new directory ./build-cookbook/attributes
-  * template[./build-cookbook/attributes/default.rb] action create
-    - create new file ./build-cookbook/attributes/default.rb
-    - update content in file ./build-cookbook/attributes/default.rb from none to e3b0c4
-    (diff output suppressed by config)
+# ~/Development/delivery-cluster
+$ cd ~/Development/deliver-customers-rhel/
 ```
 
-Add this to default.rb
+First, verify that you're on the `master` branch.
 
-```ruby
-default['build-cookbook']['customers']['driver'] = 'ec2'
+```bash
+# ~/Development/deliver-customers-rhel
+$ git branch
+  add-delivery-config
+  add-delivery-truck
+* master
+  publish-awesome-customers
 ```
 
-## 2. Perform unit, lint, and syntax testing
+Run these commands to create the `provision-environments` branch and verify that you're on that branch.
 
-[PRODNOTE] Say how we skip quality and security checks. Add them to config.json
+```bash
+# ~/Development/deliver-customers-rhel
+$ git checkout -b provision-environments
+Switched to a new branch 'provision-environments'
+$ git branch
+  add-delivery-config
+  add-delivery-truck
+  master
+* provision-environments
+  publish-awesome-customers
+```
+
+### Create node attributes that describe your environments
+
+You've already created a file to hold your default attributes.
+
+Append this to your default node attributes file, <code class="file-paht">default.rb</code>.
 
 ```ruby
-# PATH
-{
-  "version": "2",
-  "build_cookbook": {
-    "path": ".delivery/build-cookbook",
-    "name": "build-cookbook"
-  },
-  "skip_phases": ["quality", "security"],
-  "build_nodes": {},
-  "dependencies": []
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
+default['deliver-customers-rhel']['run_list'] = ['recipe[awesome_customers::default]']
+
+%w(acceptance union rehearsal delivered).each do |stage|
+  default['deliver-customers-rhel'][stage]['driver'] = 'ssh'
+end
+
+%w(acceptance union rehearsal delivered).each do |stage|
+  default['deliver-customers-rhel'][stage]['aws']['config'] = {
+    region: 'us-west-2',
+    profile: 'default',
+    machine_options: {
+      admin: nil,
+      bootstrap_options: {
+        instance_type: 't2.micro',
+        security_group_ids: ['sg-cbacf8ae'],
+        subnet_id: 'subnet-19ac017c',
+        output_key_path: nil,
+        output_key_format: nil
+      },
+      convergence_options: {
+        ssl_verify_mode: :verify_none
+      },
+      image_id: 'ami-09f7d239',
+      ssh_username: 'root',
+      transport_address_location: :private_ip,
+      validator: nil
+    }
+  }
+end
+
+default['deliver-customers-rhel']['acceptance']['ssh']['config'] = {
+  machine_options: {
+    transport_options: {
+      ip_address: '52.27.142.7',
+      username: 'root',
+      ssh_options: {
+        user: 'root'
+      },
+      options: {
+        prefix: 'sudo '
+      }
+    }
+  }
+}
+
+default['deliver-customers-rhel']['union']['ssh']['config'] = {
+  machine_options: {
+    transport_options: {
+      ip_address: '52.89.111.13',
+      username: 'root',
+      ssh_options: {
+        user: 'root'
+      },
+      options: {
+        prefix: 'sudo '
+      }
+    }
+  }
+}
+
+default['deliver-customers-rhel']['rehearsal']['ssh']['config'] = {
+  machine_options: {
+    transport_options: {
+      ip_address: '52.88.245.86',
+      username: 'root',
+      ssh_options: {
+        user: 'root'
+      },
+      options: {
+        prefix: 'sudo '
+      }
+    }
+  }
+}
+
+default['deliver-customers-rhel']['delivered']['ssh']['config'] = {
+  machine_options: {
+    transport_options: {
+      ip_address: '54.69.73.21',
+      username: 'root',
+      ssh_options: {
+        user: 'root'
+      },
+      options: {
+        prefix: 'sudo '
+      }
+    }
+  }
 }
 ```
 
-In the [Blah]() tutorial, you used ChefSpec to perform unit testing, RuboCop and Foodcritic to perform lint testing. REmember that these kinds of testing are referred to as _static code analytis_ because they analtyze, but don't actually run, your code.
+Notes:
 
-[PRODNOTE] Confirm we need the fetch first...
+* This code defines the attributes for both the AWS and SSH drivers. You'll configure the one you're using.
+* `default['deliver-customers-rhel']['run_list']` defines the run-list. (Describe in greater detail.)
+* The second part (lines 3-5) says whether to use the AWS or SSH driver. If you're using the AWS driver, ensure this value is set to `'aws'`.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
+%w(acceptance union rehearsal delivered).each do |stage|
+  default['deliver-customers-rhel'][stage]['driver'] = 'aws'
+end
+```
+  If you're using the SSH driver, ensure that this value is set to `'ssh'`.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
+%w(acceptance union rehearsal delivered).each do |stage|
+  default['deliver-customers-rhel'][stage]['driver'] = 'ssh'
+end
+```
+
+  This code sets each environment to use the same driver, but you can configure it so that different environments use different drivers. For example, here's how you would configure the Acceptance, Union, and Rehearsal environments to use the AWS driver and the Delivered environment to use the SSH driver.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
+%w(acceptance union rehearsal).each do |stage|
+  default['deliver-customers-rhel'][stage]['driver'] = 'aws'
+end
+default['deliver-customers-rhel']['delivered']['driver'] = 'ssh'
+```
+
+* The third part (lines 7-29) describes the configuration for the AWS driver.
+  * For learning purposes, we define each environment the same way. But in practice, you might have differnt configurations for each environment. For example, you might run your Acceptance environment as a t2.micro instance with an open firewall through your security groups. Your Delivered environment might be a larger instance with a more constrained security group setting.
+  * If you're using the AWS driver, replace the following with your values.
+    * `region`
+    * `profile`
+    * `instance_type`
+    * `security_group_ids`
+    * `subnet_id`
+    * `image_id`
+    * `ssh_username`
+    * `transport_address_location`
+  * If you're not using the AWS driver, you can leave these alone.
+* The fourth part (lines 31-89) describes the configuration for the SSH driver.
+  * If you're using the SSH driver, replace the following with your values.
+    * `ip_address`
+    * `username`
+    * `user`
+
+[PRODNOTE] What's the difference between `username` and `user`??.
+
+TODO: ^ Go back to get set up and describe the requirements.
+
+### Write the recipe for the provision phase
+
+Now that our Chef server has the encrypted data bag items that we need to provision our Acceptance, Union, Rehearsal, and Delivered environments, we can write the recipe for the provision phase.
+
+Our requirements are:
+
+* Decrypt the encryption key that decrypts the data bags containing the database passwords. The web part of the Customers application uses these passwords to connect to a database to retrieve customer records. We do this here because Chef provisioning enables us to easily pass that file to the machine when it's provisioned.
+* Decrypt the SSH key that's used to connect to the machine (both AWS and SSH drivers). Chef provisioning uses that key to connect to the machine so it can install and run chef-client.
+* Set up the appropriate library for the Chef provisioning driver, either AWS or SSH.
+* Bring up the machine and bootstrap it to our Chef server, using the driver-specific options that we specified in the default attributes file.
+
+#### Decrypt the encryption key that contains the database passwords
+
+In [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel), we showed how to use `Chef::EncryptedDataBagItem` to load and decrypt the encrypted database passwords from a data bag. For this project, we'll use the [chef-sugar](https://supermarket.chef.io/cookbooks/chef-sugar) cookbook from Chef Supermarket to make the process easier. The `chef-sugar` cookbook provides the `encrypted_data_bag_item_for_environment` helper method to decrypt data bag items.
+
+To load the `chef-sugar` cookbook, add the line `depends 'chef-sugar'` to your cookbook's metadata file, <code class="file-path">metadata.rb</code>, making the entire file look like this.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb
+name 'build-cookbook'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+version '0.1.0'
+
+depends 'delivery-truck'
+depends 'chef-sugar'
+```
+
+In your `provision` recipe, include the `chef-sugar` cookbook's default recipe.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
+include_recipe 'delivery-truck::provision'
+include_recipe 'chef-sugar::default'
+```
+
+Chef Delivery runs build cookbooks in local mode, which means that the cookbook runs with a temporary, in-memory Chef server (we introduced running `chef-client` in local mode [in the first tutorial](/learn-the-basics/rhel/make-your-recipe-more-manageable#step4). In order to access the encrypted data bags that are stored on the Chef server, we need to change `chef-client` to work with our Chef server.
+
+To do that, you call the `Chef_Delivery::ClientHelper.enter_client_mode_as_delivery` helper method. (TODO: SAY MORE).
+
+[PRODNOTE] `Chef_Delivery::ClientHelper.enter_client_mode_as_delivery` is deprecated, and is replaced by `with_server_config`, but I hear that's currently broken. Need to update this once that's available.
+
+Append the call to Chef_Delivery::ClientHelper.enter_client_mode_as_delivery to your `provision` recipe, making the entire recipe look like this.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
+include_recipe 'delivery-truck::provision'
+include_recipe 'chef-sugar::default'
+
+# Switch from using an in-memory Chef server to Chef Delivery's Chef server.
+Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+```
+
+TODO: Say something.
+
+Append this to your `provision` recipe.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
+# Decrypt the encryption key that decrypts the database passwords and save that file to disk.
+database_passwords_key = encrypted_data_bag_item_for_environment('provisioning-data', 'database_passwords_key')
+database_passwords_key_path = File.join(node['delivery']['workspace']['cache'], node['delivery']['change']['project'])
+directory database_passwords_key_path
+file File.join(database_passwords_key_path, 'database_passwords_key') do
+  sensitive true
+  content database_passwords_key['content']
+  owner node['delivery_builder']['build_user']
+  group node['delivery_builder']['build_user']
+  mode '0664'
+end
+```
+
+#### Decrypt the SSH key
+
+TODO: Say something.
+
+Append this to your `provision` recipe.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
+# Decrypt the SSH private key Chef provisioning uses to connect to the machine and save the key to disk.
+ssh_key = encrypted_data_bag_item_for_environment('provisioning-data', 'ssh_key')
+ssh_private_key_path = File.join(node['delivery']['workspace']['cache'], '.ssh')
+directory ssh_private_key_path
+file File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")  do
+  sensitive true
+  content ssh_key['private_key']
+  owner node['delivery_builder']['build_user']
+  group node['delivery_builder']['build_user']
+  mode '0600'
+end
+```
+
+#### Set up the Chef provisioning driver
+
+TODO: Say something.
+
+Before we do so, let's create a few variables that we'll use throughout the recipe:
+
+* the name of the project
+* the current Chef Delivery stage
+* the name of the Chef provisioning driver for this stage
+* the region and profile your AWS credentials are associated with
+
+Append this to your `provision` recipe.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
+# Read common configuration options from node attributes so that we can later access them more easily.
+project = node['delivery']['change']['project'] # for example, 'deliver-customers-rhel'
+stage = node['delivery']['change']['stage'] # for example, 'acceptance' or 'union'
+driver = node[project][stage]['driver'] # for example, 'aws' or 'ssh'
+region = node[project][stage][driver]['config']['region'] # for example, 'us-west-2'
+profile = node[project][stage][driver]['config']['profile'] # for example, 'default'
+```
+
+* Now let's perform driver-specific initialization. We need to:
+  * load the driver library.
+  * set the current driver.
+  * use the driver-specific method for specifying the SSH private key.
+* For AWS, we'll also need to load the AWS credentials from the encrypted data bag.
+* For SSH, we'll need to download and install the `chef-provisioning-ssh` Gem package.
+
+Before we do that, let's write a recipe named `_aws_creds` that decrypts the AWS credentials from the data bag and and writes them to file.
+
+Run the following.
 
 ```bash
-$ git fetch
-[SHOW OUTPUT]
+# ~/Development/deliver-customers-rhel
+$ chef generate recipe .delivery/build-cookbook _aws_creds
+Compiling Cookbooks...
+Recipe: code_generator::recipe
+  * directory[.delivery/build-cookbook/spec/unit/recipes] action create (up to date)
+[...]
+  * template[.delivery/build-cookbook/recipes/_aws_creds.rb] action create
+    - create new file .delivery/build-cookbook/recipes/_aws_creds.rb
+    - update content in file .delivery/build-cookbook/recipes/_aws_creds.rb from none to ea684f
+    (diff output suppressed by config)
 ```
+
+The underscore `_` notation in the file name is a convention that shows that the recipe supports other recipes, and doesn't implement one of the core Chef Delivery phases.
+
+Add this to <code class="file-path">\_aws\_creds.rb</code>.
+
+TODO: Explain it.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/_aws_creds.rb
+# Switch from using an in-memory Chef server to Chef Delivery's Chef server.
+Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+
+# These variables define the current project name and Chef Delivery stage.
+project = node['delivery']['change']['project'] # for example, 'deliver-customers-rhel'
+stage = node['delivery']['change']['stage'] # for example, 'acceptance' or 'union'
+driver = node[project][stage]['driver'] # for example, 'aws' or 'ssh'
+region = node[project][stage][driver]['config']['region'] # for example, 'us-west-2'
+profile = node[project][stage][driver]['config']['profile'] # for example, 'default'
+
+# Decrypt the AWS credentials from the data bag.
+aws_creds = encrypted_data_bag_item_for_environment('provisioning-data', 'aws_creds')
+
+# Create a string to hold the contents of the credentials file.
+aws_config_contents = <<EOF
+[#{profile}]
+region = #{region}
+aws_access_key_id = #{aws_creds['access_key_id']}
+aws_secret_access_key = #{aws_creds['secret_access_key']}
+EOF
+
+# Compute the path to the credentials file.
+# We write it to the root workspace directory on the build node.
+aws_config_filename = File.join(node['delivery']['workspace']['root'], 'aws_config')
+
+# Write the AWS credentials to disk.
+# Alternatively, you can use the template resource.
+file aws_config_filename do
+  sensitive true
+  content aws_config_contents
+end
+
+# Set the AWS_CONFIG_FILE environment variable.
+# Chef provisioning reads this environment variable to access the AWS credentials file.
+ENV['AWS_CONFIG_FILE'] = aws_config_filename
+```
+
+Add this to <code class="file-path">provision.rb</code>.
+
+TODO: Explain.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
+# Perform driver-specific initialization, such as loading the appropriate library.
+# For learning purposes, we'll do that directly in this recipe.
+# In practice, you might abstract this into a helper library.
+case driver
+when 'aws'
+  # Load the AWS driver.
+  require "chef/provisioning/aws_driver"
+  # Load AWS credentials.
+  include_recipe "#{cookbook_name}::_aws_creds"
+  # Set the AWS driver as the current one.
+  with_driver "aws::#{region}::#{profile}"
+  # Use the driver-specific method for specifying the SSH private key.
+  with_machine_options(
+    bootstrap_options: {
+      key_name: ssh_key['name'],
+      key_path: ssh_private_key_path,
+    }
+  )
+when 'ssh'
+  # chef-provisioning-ssh does not come with the Chef DK, so we need to install it manually.
+  # For learning purposes, we'll install it if it's not already installed.
+  # In practice, you might pin it to a specific version and upgrade it periodically.
+  execute 'install the chef-provisioning-ssh gem' do
+    cwd node['delivery_builder']['repo']
+    command 'chef gem install chef-provisioning-ssh'
+    not_if "chef gem list chef-provisioning-ssh | grep 'chef-provisioning-ssh'"
+    user node['delivery_builder']['build_user']
+  end
+  # Load the SSH driver.
+  require "chef/provisioning/ssh_driver"
+  # Set the SSH driver as the current one.
+  with_driver 'ssh'
+  # Use the driver-specific method for specifying the SSH private key.
+  with_machine_options(
+    transport_options: {
+      ssh_options: {
+        keys: [File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")]
+      }
+    }
+  )
+end
+```
+
+#### Bring up the machine
+
+TODO: Explain.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
+# Specify information about our Chef server.
+# Chef provisioning uses this information to bootstrap the machine.
+with_chef_server Chef::Config[:chef_server_url],
+  client_name: Chef::Config[:node_name],
+  signing_key_filename: Chef::Config[:client_key],
+  ssl_verify_mode: :verify_none,
+  verify_api_cert: false
+
+# Ensure that the machine is bootstrapped, has the correct run-list, and is ready to run chef-client.
+# If you're using the AWS driver, this will create the instance if the instance does not exist.
+machine_name = "#{stage}-#{project}-#{driver}"
+machine machine_name do
+  action [:setup]
+  chef_environment delivery_environment
+  converge false
+  files '/etc/chef/encrypted_data_bag_secret' => File.join(database_passwords_key_path, 'database_passwords_key')
+  run_list node[project]['run_list']
+  add_machine_options node[project][stage][driver]['config']['machine_options']
+end
+```
+
+The machine name can be anything you like. A common convention is to concatentate the current stage name and the project name. Here were concatenate the current stage name, the project name, and the driver.
+
+One benefit to including the driver name is that you can switch between the AWS and the SSH driver as you experiment. For example, you can start with the AWS driver to create a machine named ''.
+
+For the Acceptance stage, your machine will be named ``
+
+
+[COMMENT] It's common practice to write your `machine` and other Chef provisioning resources in such a way that they can be used by multiple drivers. For example, here we use node attributes and the `add_machine_options` method to separate driver-specific data from the `machine` resource that defines each environment.<br><br>As your project grows in complexity, you can write helper libraries that abstract driver-specific features even further. A good example is from the `delivery-cluster` cookbook. This cookbook defines the [DeliveryCluster::Provisioning::Base](https://github.com/chef-cookbooks/delivery-cluster/blob/master/libraries/_base.rb) class to abstract away common driver-specific details, such as how to access a machine's IP address. The [DeliveryCluster::Provisioning::Aws](https://github.com/chef-cookbooks/delivery-cluster/blob/master/libraries/aws.rb) and [DeliveryCluster::Provisioning::Ssh](https://github.com/chef-cookbooks/delivery-cluster/blob/master/libraries/ssh.rb) classes fill in the details for the `Base` class. When the cookbook runs, for example to set up [Chef server](https://github.com/chef-cookbooks/delivery-cluster/blob/38123d94ae786caf7222966fcfc1b4747a55ae32/recipes/setup_chef_server.rb) or [Chef Delivery](https://github.com/chef-cookbooks/delivery-cluster/blob/38123d94ae786caf7222966fcfc1b4747a55ae32/recipes/setup_delivery_server.rb), it loads the appropriate helper class that provides the specific details required to set up the server using either the AWS or the SSH Chef provisioning driver.
+
+The complete `provision` recipe looks like this.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
+include_recipe 'delivery-truck::provision'
+include_recipe 'chef-sugar::default'
+
+# Switch from using an in-memory Chef server to Chef Delivery's Chef server.
+Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+
+# Decrypt the encryption key that decrypts the database passwords and save that file to disk.
+database_passwords_key = encrypted_data_bag_item_for_environment('provisioning-data', 'database_passwords_key')
+database_passwords_key_path = File.join(node['delivery']['workspace']['cache'], node['delivery']['change']['project'])
+directory database_passwords_key_path
+file File.join(database_passwords_key_path, 'database_passwords_key') do
+  sensitive true
+  content database_passwords_key['content']
+  owner node['delivery_builder']['build_user']
+  group node['delivery_builder']['build_user']
+  mode '0664'
+end
+
+# Decrypt the SSH private key Chef provisioning uses to connect to the machine and save the key to disk.
+ssh_key = encrypted_data_bag_item_for_environment('provisioning-data', 'ssh_key')
+ssh_private_key_path = File.join(node['delivery']['workspace']['cache'], '.ssh')
+directory ssh_private_key_path
+file File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")  do
+  sensitive true
+  content ssh_key['private_key']
+  owner node['delivery_builder']['build_user']
+  group node['delivery_builder']['build_user']
+  mode '0600'
+end
+
+# Read common configuration options from node attributes so that we can later access them more easily.
+project = node['delivery']['change']['project'] # for example, 'deliver-customers-rhel'
+stage = node['delivery']['change']['stage'] # for example, 'acceptance' or 'union'
+driver = node[project][stage]['driver'] # for example, 'aws' or 'ssh'
+
+# Perform driver-specific initialization, such as loading the appropriate library.
+# For learning purposes, we'll do that directly in this recipe.
+# In practice, you might abstract this into a helper library.
+case driver
+when 'aws'
+  # Load the AWS driver.
+  require "chef/provisioning/aws_driver"
+  # Load AWS credentials.
+  include_recipe "#{cookbook_name}::_aws_creds"
+  # Set the AWS driver as the current one.
+  with_driver "aws::#{region}::#{profile}"
+  # Use the driver-specific method for specifying the SSH private key.
+  with_machine_options(
+    bootstrap_options: {
+      key_name: ssh_key['name'],
+      key_path: ssh_private_key_path,
+    }
+  )
+when 'ssh'
+  # chef-provisioning-ssh does not come with the Chef DK, so we need to install it manually.
+  # For learning purposes, we'll install it if it's not already installed.
+  # In practice, you might pin it to a specific version and upgrade it periodically.
+  execute 'install the chef-provisioning-ssh gem' do
+    cwd node['delivery_builder']['repo']
+    command 'chef gem install chef-provisioning-ssh'
+    not_if "chef gem list chef-provisioning-ssh | grep 'chef-provisioning-ssh'"
+    user node['delivery_builder']['build_user']
+  end
+  # Load the SSH driver.
+  require "chef/provisioning/ssh_driver"
+  # Set the SSH driver as the current one.
+  with_driver 'ssh'
+  # Use the driver-specific method for specifying the SSH private key.
+  with_machine_options(
+    transport_options: {
+      ssh_options: {
+        keys: [File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")]
+      }
+    }
+  )
+end
+
+# Specify information about our Chef server.
+# Chef provisioning uses this information to bootstrap the machine.
+with_chef_server Chef::Config[:chef_server_url],
+  client_name: Chef::Config[:node_name],
+  signing_key_filename: Chef::Config[:client_key],
+  ssl_verify_mode: :verify_none,
+  verify_api_cert: false
+
+# Ensure that the machine is bootstrapped, has the correct run-list, and is ready to run chef-client.
+# If you're using the AWS driver, this will create the instance if the instance does not exist.
+machine_name = "#{stage}-#{project}-#{driver}"
+machine machine_name do
+  action [:setup]
+  chef_environment delivery_environment
+  converge false
+  files '/etc/chef/encrypted_data_bag_secret' => File.join(database_passwords_key_path, 'database_passwords_key')
+  run_list node[project]['run_list']
+  add_machine_options node[project][stage][driver]['config']['machine_options']
+end
+```
+
+### Apply the provision phase
+
+Follow the same process to commit your changes and submit them to the Chef Delivery pipeline.
 
 ```bash
-$ git checkout -b add-static-analysis-checks delivery/master
-Branch add-static-analysis-checks set up to track remote branch master from delivery.
-Switched to a new branch 'add-static-analysis-checks'
-```
-
-The `delivery-truck` cookbook already does what we need. All we need to do is include them from our recipes.
-
-[SHOW BASE UNIT, LINT, SYNTAX]
-
-The `syntax` recipe does something new - [EXPLAIN]
-
-Modify <code class="file-path">unit.rb</code> like this.
-
-```ruby
-# PATH
-include_recipe 'delivery-truck::unit'
-```
-
-Modify <code class="file-path">lint.rb</code> like this.
-
-```ruby
-# PATH
-include_recipe 'delivery-truck::lint'
-```
-
-And modfiy <code class="file-path">syntax.rb</code> like this.
-
-```ruby
-# PATH
-include_recipe 'delivery-truck::syntax'
-```
-
-[PRODNOTE] this is where to say that each phase calls the `default` recipe. So include the base from ours.
-
-```ruby
-# PATH
-include_recipe 'delivery-truck::default'
-```
-
-```bash
-# PATH
+# ~/Development/deliver-customers-rhel
 $ git status
-On branch add-static-analysis-checks
-Your branch is up-to-date with 'delivery/master'.
+On branch provision-environments
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git checkout -- <file>..." to discard changes in working directory)
 
-  modified:   .delivery/build-cookbook/recipes/default.rb
-	modified:   .delivery/build-cookbook/recipes/lint.rb
-	modified:   .delivery/build-cookbook/recipes/syntax.rb
-	modified:   .delivery/build-cookbook/recipes/unit.rb
+	modified:   .delivery/build-cookbook/attributes/default.rb
+	modified:   .delivery/build-cookbook/metadata.rb
+	modified:   .delivery/build-cookbook/recipes/provision.rb
 
 no changes added to commit (use "git add" and/or "git commit -a")
-```
-
-```bash
-# PATH
 $ git add .
-```
-
-```bash
-# PATH
-$ git commit -m "add unit, lint, and syntax checks"
-[add-static-analysis-checks e670576] add unit, lint, and syntax checks
- 3 files changed, 3 insertions(+)
-```
-
-```bash
-# PATH
+$ git commit -m "provision the environments"
+[provision-environments ff7aea3] provision the environments
+ 3 files changed, 186 insertions(+)
 $ delivery review
+Chef Delivery
+Loading configuration from /home/thomaspetchel/Development/deliver-customers-rhel
+Review for change provision-environments targeted for pipeline master
+Created new patchset
+https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customers-rhel/changes/78c5739c-5365-4f92-8b07-c70e7097a59b
 ```
 
-* Watch them run.
-* Click **Approve**.
-* Watch **Build** run.
-* We won't deliver the change just yet.
+#### Review and approve the change
 
-Notice that no resources were run.
+* Review the changes in the web interface. Click **Approve** when all tests pass.
+* The process moves to the Build stage.
+* The process moves to the Acceptance stage.
+* After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them as a single unit.
+
+#### Verify the creation of the Acceptance environment
+
+Now let's verify that the Acceptance environment was successfully created.
+
+One way to do that is to move to your <code class="file-path">~/Development/delivery-cluster/.chef</code> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
+
+First, move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
 
 ```bash
-#
-Starting Chef Client, version 12.5.1
-resolving cookbooks for run list: ["build-cookbook::unit"]
-Synchronizing Cookbooks:
-  - delivery-truck (1.100.7)
-  - build-cookbook (0.1.0)
-  - delivery-sugar (0.3.1)
-Compiling Cookbooks...
-Converging 0 resources
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 0/0 resources updated in 01 seconds
-
-Job ended at 2015-10-20T02:42:03+00:00 (ran in 24 seconds)
+# ~/Development/deliver-customers-rhel
+$ cd ~/Development/delivery-cluster/.chef
 ```
 
-That's because the `unit` cookbook looks for changes. Nothing's changed in the cookbook since it was originally added in the prior lesson, so the tests weren't run. We'll see the tests run when we later update the cookbook.
-
-[PRODNOTE] Kinda weak I must admit ^.
-
-## 3. Publish your changes to the Chef server
-
-* `publish` recipe uploads to Chef server if the `upload_cookbook_to_chef_server?` method returns true.
-
-https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/publish.rb#L69
-
-`upload_cookbook_to_chef_server?` returns true when the `node['delivery']['config']['delivery-truck']['publish']['chef_server']` node attribute is true.
-
-https://github.com/chef-cookbooks/delivery-truck/blob/94fe1bbf765fb40ae75794de9c9d747a19f927aa/libraries/helpers_publish.rb#L29
+Now move back to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
 ```bash
-$ git fetch
+# ~/Development/delivery-cluster/.chef
+$ cd ~/Development/deliver-customers-rhel
+```
+
+#### Merge the change locally
+
+* As we did previously, we need to merge the `master` branch locally. Here's a reminder how.
+
+```bash
+# ~/Development/deliver-customers-rhel
 $ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'delivery/master'.
+$ git fetch
+remote: Counting objects: 1, done.
+remote: Total 1 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (1/1), done.
+From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
+   bd8a8b2..a100d45  master     -> delivery/master
 $ git pull delivery master
-$ git checkout -b publish-to-chef-server
+From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
+ * branch            master     -> FETCH_HEAD
+Updating bd8a8b2..a100d45
+Fast-forward
+ .delivery/build-cookbook/attributes/default.rb           | 1 +
+ cookbooks/awesome_customers/metadata.rb                  | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+ create mode 100644 .delivery/build-cookbook/attributes/default.rb
 ```
 
-[PRODNOTE] Change other example to match ^.
+## 4. Deploy to your Acceptance, Union, Rehearsal, and Delivered environments
 
-```bash
-# ~/Development/build-a-delivery-pipeline-rhel
-$ chef generate attribute .delivery/build-cookbook default
-[2015-10-19T20:44:06-07:00] WARN: ExpandNodeObject#load_node is deprecated. Please use Chef::PolicyBuilder::Dynamic instead of using ExpandNodeObject directly at /opt/chefdk/embedded/lib/ruby/gems/2.1.0/gems/chef-dk-0.9.0/lib/chef-dk/chef_runner.rb:54:in `policy'
-Compiling Cookbooks...
-Recipe: code_generator::attribute
-  * directory[.delivery/build-cookbook/attributes] action create
-    - create new directory .delivery/build-cookbook/attributes
-  * template[.delivery/build-cookbook/attributes/default.rb] action create
-    - create new file .delivery/build-cookbook/attributes/default.rb
-    - update content in file .delivery/build-cookbook/attributes/default.rb from none to e3b0c4
-    (diff output suppressed by config)
-```
+Explain why the repetition - if you have multiple build nodes, each node requires information
 
-```ruby
-# .../default.rb
-node['delivery']['config']['delivery-truck']['publish']['chef_server'] = true;
-```
+### Run smoke tests
 
+### Run functional tests
 
-
-### publish.rb (Build)
-
-* Push to Chef server
-* Upload data bags
-
-** Publish to Chef server
-
-* Write out publish recipe
-
-```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/recipes/publish.rb
-include_recipe 'delivery-truck::publish'
-
-chef_repo = "#{node['delivery_builder']['repo']}/chef-repo"
-
-execute 'create passwords data bag' do
-  cwd chef_repo
-  command "knife data bag create passwords --config #{delivery_knife_rb}"
-  not_if "knife data bag list --config #{delivery_knife_rb} | grep '^passwords$'"
-end
-%w(db_admin_password sql_server_root_password).each do |data_bag_item|
-  execute "create #{data_bag_item} data bag item" do
-    cwd chef_repo
-    command "knife data bag from file passwords #{data_bag_item}.json --config #{delivery_knife_rb}"
-  end
-end
-```
-
-```bash
-$ git status
-$ git add .
-$ git commit -m "add publish recipe"
-$ delivery review
-```
-
-Watch Verify pass.
-Click Approve.
-Watch Build pass.
-Won't deliver yet.
-
-Confirm data bag and cookbook are uploaded.
-
-```bash
-# ~/Development/delivery-cluster
-$ rake info:list_core_services
-2 items found
-
-delivery-server-chef:
-  ipaddress: 10.194.12.112
-
-build-node-chef-1:
-  ipaddress: 10.194.12.91
-
-chef_server_url      'https://10.194.9.114/organizations/chef'
-```
-
-Login as `delivery:delivery`
-
-- Login to Chef server
-
--- see data bag
-
-SHOW SCREENSHOT
-
-## 4.
-
-### provision.rb (Acceptance, Union, Rehearsal, Delivered)
-
-TODO: Talk about how you might use a provisioning node for this...
-
-#### Create a Chef repo
-
-```bash
-# ~/Development
-$ chef generate repo chef-repo
-[...]
-```
-
-#### Download the Starter Kit
-
-TODO: SPELL THIS OUT
-
-Unzip, say Y to overwrite any files.
-
-TODO: Show tabs...
-
-TODO: Is there a flag for `unzip` so it doesn't prompt?
-
-```bash
-# ~/Development
-$ unzip ~/Downloads/chef-starter.zip
-Archive:  /home/thomaspetchel/Downloads/chef-starter.zip
-  inflating: chef-repo/cookbooks/chefignore
-   creating: chef-repo/cookbooks/starter/
-   creating: chef-repo/cookbooks/starter/recipes/
-  inflating: chef-repo/cookbooks/starter/recipes/default.rb
-   creating: chef-repo/cookbooks/starter/attributes/
-  inflating: chef-repo/cookbooks/starter/attributes/default.rb
-   creating: chef-repo/cookbooks/starter/files/
-   creating: chef-repo/cookbooks/starter/files/default/
-  inflating: chef-repo/cookbooks/starter/files/default/sample.txt
-   creating: chef-repo/cookbooks/starter/templates/
-   creating: chef-repo/cookbooks/starter/templates/default/
-  inflating: chef-repo/cookbooks/starter/templates/default/sample.erb
-  inflating: chef-repo/cookbooks/starter/metadata.rb
-replace chef-repo/README.md? [y]es, [n]o, [A]ll, [N]one, [r]ename: A
-  inflating: chef-repo/README.md
-  inflating: chef-repo/.gitignore
-   creating: chef-repo/.chef/
-  inflating: chef-repo/.chef/knife.rb
-  inflating: chef-repo/roles/starter.rb
-  inflating: chef-repo/.chef/delivery.pem
-  inflating: chef-repo/.chef/test-validator.pem
-```
-
-### Move to chef-repo
-
-```bash
-# ~/Development
-$ cd chef-repo
-```
-
-#### Get a node to bootstrap
-
-In [Learn to manage a node](/manage-a-node/rhel/), you bootstrapped a node that we provided. Now it's time to bootstrap a Red Hat Enterprise Linux 6.5 or CentOS 6.5 node that you own to give you experience working with your own infrastructure.
-
-Chef provides ways to provision a node and bootstrap it all in one step &ndash; we'll cover this in a later tutorial. For learning purposes, it's best to start by bringing up your own node manually and bootstrapping it separately.
-
-Remember, your node can be any physical machine, virtual machine, or cloud instance, as long as:
-
-* its IP address is accessible from your network. <= INCLUDING DELIVERY, CHEF SERVER, Etc.
-* it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
-* it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
-* you have root or `sudo` access.
-
-#### Bootstrap your node
-
-BETTER YET, AUTOMATE THIS. MOVE COMMANDS INTO PROVISION RECIPE. SCP DATA BAG SECRET KEY TO BUILD NODE. TALK ABOUT PROVISINING AND PROVISIONING NODE (FOR WHEN YOU NEED ...)
-SHOW BOTH -i AND PASSWORD FLAVORS.
-
-ADD TO DEFAULT ATTRS FILE
-
-```ruby
-default['build-cookbook']['acceptance-env'] = { node_name: 'acceptance_customers', ip_address: '10.194.15.116' }
-default['build-cookbook']['union-env'] = { node_name: 'union_customers', ip_address: '10.194.15.119' }
-default['build-cookbook']['rehearsal-env'] = { node_name: 'rehearsal_customers', ip_address: '10.194.15.117' }
-default['build-cookbook']['delivered-env'] = { node_name: 'delivered_customers', ip_address: '10.194.15.120' }
-
-default['build-cookbook']['user-name'] = 'ubuntu'
-default['build-cookbook']['identity-file'] = 'tpetchel.pem'
-```
-
-[PRODNOTE] Is user name built-in for me already?
-
-Now that you have a node running, it's time to bootstrap it.
-
-In [Learn to manage a node](/manage-a-node/rhel/), we provided you with a virtual machine that uses a user name and password to authenticate. For learning purposes, this is just fine.
-
-In production, we recommend that you use key-based authentication instead of a user name and password because it can be more secure. This option is commonly used with Amazon EC2 instances because EC2 typically works using key-based authentication.
-
-Choose the option below that matches how you can authenticate and bootstrap your node.
-
-##### Option 1: Use a user name and password
-
-This is what we did in [Learn to manage a node](/manage-a-node/rhel/). From your workstation, run this command to bootstrap your node. Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
-
-```bash
-# ~/chef-repo
-$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name acceptance_customers --run-list 'recipe[awesome_customers]'
-```
-
-REPEAT FOR UNION REHEARSAL DELIVERED.
-
-You'll see lots of output as your node installs `chef-client` and runs the `awesome_customers` cookbook.
-
-##### Option 2: Use key-based authentication
-
-From your workstation, run this command to bootstrap your node. Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
-
-```bash
-# ~/chef-repo
-$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name acceptance_customers --run-list 'recipe[awesome_customers]'
-```
-
-REPEAT FOR UNION REHEARSAL DELIVERED.
-
-You'll see lots of output as your node installs `chef-client` and runs the `awesome_customers` cookbook.
-
-<a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
-
-<div id="knife-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-  <h3 id="modalTitle">If the operation times out or fails, here are some things to try</h3>
-  <ul>
-    <li>Ensure that your environment is active before you run <code>knife</code>. For example, CloudShare instances suspend after a period of inactivity. <img class="border" src="/assets/images/rhel/cloudshare-suspend.png"></img></li>
-    <li>Ensure that you run <code>knife</code> commands from your <code class="file-path">chef-repo</code> directory or one of its sub-directories.</li>
-    <li>Ensure you have a <code class="file-path">chef-repo/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and two <code class="file-path">.pem</code> files. If you don't, <a href="/manage-a-node/rhel/set-up-your-chef-server#step2" target="_blank">install the Starter Kit</a>.</li>
-    <li>Ensure that your node's IP address is accessible from your network.</li>
-    <li>Ensure the user name you provide has root or <code>sudo</code> access on the node.</li>
-    <li>Ensure your workstation has outbound access (including firewall) on these ports:
-      <ul>
-        <li>22 (SSH)</li>
-        <li>80 (HTTP)</li>
-        <li>443 (HTTPS)</li>
-      </ul>
-    </li>
-    <li>Ensure your node has inbound access (including firewall) on these ports:
-      <ul>
-        <li>22 (SSH)</li>
-      </ul>
-    </li>
-    <li>Ensure your node has outbound access (including firewall) on these ports:
-      <ul>
-        <li>443 (HTTPS)</li>
-      </ul>
-    </li>
-  </ul>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-</div>
-
-SUMMARY:
-
-```bash
-# ~/Development/chef-repo
-ssh -i ~/.ssh/tpetchel.pem root@10.194.15.116 'mkdir -p /etc/chef'
-scp -i ~/.ssh/tpetchel.pem ~/encrypted_data_bag_secret root@10.194.15.116:/etc/chef/encrypted_data_bag_secret
-knife bootstrap 10.194.15.116 --ssh-user root --sudo --identity-file ~/.ssh/tpetchel.pem --node-name acceptance_customers --run-list 'recipe[awesome_customers]'
-
-ssh -i ~/.ssh/tpetchel.pem root@10.194.15.119 'mkdir -p /etc/chef'
-scp -i ~/.ssh/tpetchel.pem ~/encrypted_data_bag_secret root@10.194.15.119:/etc/chef/encrypted_data_bag_secret
-knife bootstrap 10.194.15.119 --ssh-user root --sudo --identity-file ~/.ssh/tpetchel.pem --node-name union_customers --run-list 'recipe[awesome_customers]'
-
-ssh -i ~/.ssh/tpetchel.pem root@10.194.15.117 'mkdir -p /etc/chef'
-scp -i ~/.ssh/tpetchel.pem ~/encrypted_data_bag_secret root@10.194.15.117:/etc/chef/encrypted_data_bag_secret
-knife bootstrap 10.194.15.117 --ssh-user root --sudo --identity-file ~/.ssh/tpetchel.pem --node-name rehearsal_customers --run-list 'recipe[awesome_customers]'
-
-ssh -i ~/.ssh/tpetchel.pem root@10.194.15.120 'mkdir -p /etc/chef'
-scp -i ~/.ssh/tpetchel.pem ~/encrypted_data_bag_secret root@10.194.15.120:/etc/chef/encrypted_data_bag_secret
-knife bootstrap 10.194.15.120 --ssh-user root --sudo --identity-file ~/.ssh/tpetchel.pem --node-name delivered_customers --run-list 'recipe[awesome_customers]'
-
-curl 10.194.15.116
-curl 10.194.15.117
-curl 10.194.15.119
-curl 10.194.15.120
-```
-
-### deploy.rb (Acceptance, Union, Rehearsal, Delivered)
-
-```bash
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery
-$ chef generate recipe build-cookbook deploy
-Compiling Cookbooks...
-Recipe: code_generator::recipe
-  * directory[./build-cookbook/spec/unit/recipes] action create (up to date)
-  * cookbook_file[./build-cookbook/spec/spec_helper.rb] action create_if_missing (up to date)
-  * template[./build-cookbook/spec/unit/recipes/deploy_spec.rb] action create_if_missing
-    - create new file ./build-cookbook/spec/unit/recipes/deploy_spec.rb
-    - update content in file ./build-cookbook/spec/unit/recipes/deploy_spec.rb from none to 92ec41
-    (diff output suppressed by config)
-  * template[./build-cookbook/recipes/deploy.rb] action create
-    - create new file ./build-cookbook/recipes/deploy.rb
-    - update content in file ./build-cookbook/recipes/deploy.rb from none to f569c9
-    (diff output suppressed by config)
-```
-
-```ruby
-# ~/Development/build-a-delivery-pipeline-rhel/.delivery/build-cookbook/recipes/deploy.rb
-asdf
-```
-
-[COMMENT] If you existing workflow includes [push jobs](), you can use those too...
-
-A common pattern we use here...
-
-```ruby
-if node['delivery']['change']['stage'] == 'delivered'
-  bucket_name = node['delivery']['change']['project'].gsub(/_/, '-')
-  fqdn = "#{site_name}.#{domain_name}"
-else
-  bucket_name = "#{node['delivery']['change']['project'].gsub(/_/, '-')}-#{node['delivery']['change']['stage']}"
-  fqdn = "#{site_name}-#{node['delivery']['change']['stage']}.#{domain_name}"
-end
-```
-
-### smoke.rb (Acceptance, Union, Rehearsal, Delivered)
-
-* `curl` the server
-
-### functional.rb (Acceptance, Union, Rehearsal, Delivered)
-
-* Run our Serverspec tests
-
-
-
-```ruby
-# old-provision.rb
-# << TODO
-# I dunno dude. delivery-truck::publish doesn't seem to find then my cookbook changes...
-# So I'm copy pastaing and tweaking the base implementation here.
-
-# Create the upload directory where cookbooks to be uploaded will be staged
-cookbook_directory = File.join(node['delivery']['workspace']['cache'], "cookbook-upload")
-directory cookbook_directory do
-  recursive true
-  # We delete the cookbook upload staging directory each time to ensure we
-  # don't have out-of-date cookbooks hanging around from a previous build.
-  action [:delete, :create]
-end
-
-# Upload cookbook to the Chef Server
-execute "berks_vendor_cookbook_awesome_customers" do
-  command "berks vendor #{cookbook_directory}"
-  cwd "#{chef_repo}/cookbooks/awesome_customers"
-end
-
-Dir.glob("#{cookbook_directory}/*").select {|f| File.directory? f}.map {|f| File.basename f}.each do |cookbook|
-  execute "upload_cookbook_#{cookbook}" do
-    command "knife cookbook upload #{cookbook} --freeze --all --force " \
-            "--config #{delivery_knife_rb} " \
-            "--cookbook-path #{cookbook_directory}"
-  end
-end
-
-# TODO
-```
+* For completeness, call out that functional phase exists, but we omit it from this tutorial. Need a story why...

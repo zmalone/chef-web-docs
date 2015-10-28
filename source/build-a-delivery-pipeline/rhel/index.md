@@ -54,6 +54,8 @@ In this tutorial, you'll create a pipeline that [flows] the cookbook through eac
 
 This scenario involves two cookbooks &ndash; the `awesome_customers` cookbook that defines how to configure the Customer web application and your build cookbook that defines your build pipeline.
 
+[PRODNOTE] I feel the need to somehow lay this out more clearly. Show diagram that lays out all the pieces? Delivery, Chef server, Build node, the 4 environments (each pointing to the Customers web app (webserver, database, encryption key?))
+
 After completing this tutorial, you'll:
 
 * have a working Chef Delivery installation and have your workstation configured to use it.
