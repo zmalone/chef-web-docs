@@ -8,55 +8,6 @@ next: {heading: Next, partial: next}
 time_to_complete: 90 minutes
 meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---
-Open issues:
-
-When to have the user get their starter kit on the prov node or workstation (in workstation setup?, separate section here?)
-
-Tell the user which values we chose for enterprise, org, etc.
-
-Where to have folks run `delivery setup` & `delivery token`? <= IDEA: Transform next page to be about setting up stuff like this (add user, get Starter Kit, etc.) Or move that info to thsi page, as it's part of setup?
-
-Run this from the root workspace directory, for example, <code class="file-path">~/Development</code>.
-
-```bash
-# ~/Development
-$ delivery setup --server=10.194.12.112 --ent=chef --org=chef --user=tpetchel
-Chef Delivery
-Loading configuration from /home/thomaspetchel/Development
-Writing configuration to /home/thomaspetchel/Development/.delivery/cli.toml
-New configuration
------------------
-enterprise = "chef"
-git_port = "8989"
-organization = "chef"
-pipeline = "master"
-server = "10.194.12.112"
-user = "tpetchel"
-```
-
-TODO: Cat cli.toml?
-
-```bash
-# ~/Development
-$ delivery token
-Chef Delivery
-Loading configuration from /home/thomaspetchel/Development
-Delivery password:
-token: fM+YwM28r6rE92dulvszj4d76wjTeSxxnNSu+54O734=
-saved API token to: /home/thomaspetchel/.delivery/api-tokens
-```
-
-```bash
-# ~/Development
-$ more ~/.delivery/api-tokens
-10.194.12.112,chef,tpetchel|fM+YwM28r6rE92dulvszj4d76wjTeSxxnNSu+54O734=
-```
-
-Talk about how we're going to use Chef Delivery's internal Git server, and not GitHub, etc.
-Say this before we have the user enter their SSH public key.
-
--------
-
 Here you'll set up your workstation and install Chef Delivery on your network. Here's the process you'll follow:
 
 Setting up a Chef Delviery installation involves:
@@ -70,9 +21,11 @@ Setting up a Chef Delviery installation involves:
 
 ## Before you begin
 
-BOILERPLATE HERE
+Ensure that your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS.
 
-If you're unable to set up your workstation for local development, you can skip the verification steps XXX. [A long-term solution] can include using one of Test Kitchen's [cloud drivers]() to run your cookbooks [in the cloud] to XxX.
+If you're using a virtual machine as your workstation through a program such as VMWare Fusion, ensure that nested virtualization is enabled on the virtual machine.
+
+Also ensure that your workstation meets the [system requirements](https://www.virtualbox.org/wiki/End-user_documentation) requirements for running VirtualBox.
 
 ## 1. Get a Chef Delivery license key
 
@@ -82,7 +35,6 @@ To install Chef Delivery, you'll need a license key. If you don't have a full ke
 
 ## 2. Plan your installation
 
-### Understand the
 Read the [Chef documentation]() to understand each pipeline stage.
 
 ### Plan your cluster environment
@@ -99,7 +51,7 @@ This tutorial requires these seven systems:
 
 You can run Chef Delivery, Chef server, and your build node on any [supported platform]().
 
-Your web application servers for the Acceptance, Union, Rehearsal, and Delivered stages must run Red Hat Enterprise Linux because the `awesome_customers` cookbook targets that platform. We recommend that you use Red Hat Enterprise Linux 6.5 or CentOS 6.5. Your web application servers for this tutorial do not need to be as powerful as what you might need in production. If you're using AWS, you can use t2.micro instances, which is a single 2.5GHz CPU, 1 GB of memory, and 8 GB of disk space. You'll also need to ensure that your web application servers have inbound network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+Your web application servers for the Acceptance, Union, Rehearsal, and Delivered stages must run Red Hat Enterprise Linux or CentOS because the `awesome_customers` cookbook targets those platforms. We recommend that you use Red Hat Enterprise Linux 6.5 or CentOS 6.5. Your web application servers for this tutorial do not need to be as powerful as what you might need in production. If you're using AWS, you can use t2.micro instances, which is a single 2.5GHz CPU, 1 GB of memory, and 8 GB of disk space. You'll also need to ensure that your web application servers have inbound network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
 
 This tutorial doesn't require you to set up Chef Analtyics or Chef Supermarket, and you can create just one build node (a complete setup might have up to 3 build nodes). But you can set up these systems in the following step if you [plan to use them.]
 
@@ -120,12 +72,19 @@ Before you run the cookbook, you'll need to decide how you want to provision, or
 
 ## 3. Create a working directory
 
-We use ~/Development. If you choose another, be sure to ...
+We'll use <code class="file-path">~/Development</code>, but you can choose a directory that best suits you. Just remember to change the paths that we show as necessary.
 
-## 3. Install Chef Delivery
+```bash
+# ~
+$ mkdir ~/Development
+$ cd ~/Development
+```
+
+## 4. Install Chef Delivery
 
 Clarify what to set up:
 
+* Use the working directory you just created.
 * Provisioning vs local (workstation) setup
 * We use `test` env name
 * Don't install Supermarket
@@ -144,190 +103,132 @@ TODO: Summarize what you'll have after the install process finishes.
 
 TODO: Confirm that the install doc has the user create a org and a user.
 
-## 4. Run delivery setup
+## 5. Set up your workstation
 
-If you didn't follow the verification steps in the installation doc, run this command to .
+[TIP] This page explains the manual steps to help you understand exactly what software you need to install and how to install it. Alternatively, you can also run the [ChefDK_Bootstrap](https://github.com/Nordstrom/chefdk_bootstrap) script to setup your Windows or Mac workstation for Chef development. The script installs [commonly used development tools](https://github.com/Nordstrom/chefdk_bootstrap#what-does-it-do) such as the Atom text editor, Git, VirtualBox, and Vagrant.
 
-
-```bash
-# ~/Development/delivery-cluster
-$ rake info:delivery_creds
-Created enterprise: test
-Admin username: admin
-Admin password: ZT0lP2DJujgFrskXn6ZIHZvEq5fmtfGwbsk=
-Builder Password: OiULFFI2lqF3xZKvVfiePEMZRYauUkq2o1U=
-Web login: https://10.194.11.99/e/test/
-```
-
-```bash
-# ~/Development/delivery-cluster
-$ cd ~/Development
-$ delivery setup --server=10.194.11.99 --ent=test --org=learn-chef --user=tpetchel
-Chef Delivery
-Loading configuration from /home/thomaspetchel/Development
-Writing configuration to /home/thomaspetchel/Development/.delivery/cli.toml
-New configuration
------------------
-api_protocol = "https"
-enterprise = "test"
-git_port = "8989"
-organization = "learn-chef"
-pipeline = "master"
-server = "10.194.11.99"
-user = "tpetchel"
-```
-
-## 4. Set up your workstation
-
-[CHEFDK BOOTSTRAP BLURB]
-
-* Summarize what the user set up in the install doc. Remove some stuff from below.
-
-### Install the Chef Development Kit
-
-The Chef Development Kit, or ChefDK, BBBBBB.
-
-Although Chef Delivery runs on Linux and you're managing a Red Hat Enterprise Linux server, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
-
-[COMMENT] It's common to use a virtual machine as your workstation. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites).
-
-Install Chef DK on your workstation now if you haven't already.
-
-<a class='accent-button radius' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
-
-[COMMENT] The [Chef documentation](https://docs.chef.io/install_dk.html) describes additional steps that can help you set up your workstation to use Chef more effectively. You don't have to perform all the steps now, but you can refer to it later if you run into problems. For example, if you're running multiple versions of Ruby, the documentation explains [how to use Chef's Ruby](https://docs.chef.io/install_dk.html#set-system-ruby).
-
-### Install Vagrant
-
-[BORROW FROM WINDOWS PROC]
+* The installation instructions for Chef Delivery had you install the Chef DK.
+* In this tutorial, you'll make changes to an application cookbook and verify them locally.
+* To do that, you'll need Vagrant and VirtualBox.
 
 ### Install VirtualBox
 
-[BORROW FROM WINDOWS PROC]
+Install VirtualBox. VirtualBox manages your virtual machine instances.
 
-### Create a working directory
+#### Install VirtualBox on Windows using Chocolatey
 
-We'll use <code class="file-path">~/Development</code>, but you can choose a directory that best suits you. Just remember to change the paths that we show as necessary.
+If you use [Chocolatey](https://chocolatey.org) to manage software packages on Windows, run this command to install VirtualBox.
+
+```ps
+$ choco install virtualbox
+Chocolatey v0.9.9.8
+Installing the following packages:
+virtualbox
+By installing you accept licenses for the packages.
+
+virtualbox v5.0.4.102546
+
+[...]
+
+Chocolatey installed 1/1 package(s). 0 package(s) failed.
+ See the log for details (C:\ProgramData\chocolatey\logs\chocolatey.log).
+```
+
+#### Install VirtualBox using the installer
+
+If you're on a Linux or Mac OS workstation or don't use Chocolatey, download and install VirtualBox from the VirtualBox web site.
+
+<a class='accent-button radius' href='https://www.virtualbox.org/wiki/Downloads' target='_blank'>Install VirtualBox&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+
+<hr>
+
+#### Windows only - Update your PATH environment variable
+
+By default, VirtualBox is installed to <code class="file-path">C:\Program Files\Oracle\VirtualBox</code> on Windows. However, the installer does not add this path to your `PATH` environment variable. Run these commands to add VirtualBox to your system path.
+
+```ps
+$ $path = [Environment]::GetEnvironmentVariable("PATH")
+$ $vbox_path = "C:\Program Files\Oracle\VirtualBox"
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vbox_path")
+```
+
+<hr>
+
+#### Verify the installation
+
+Now run the following command to verify that VirtualBox is installed.
 
 ```bash
 # ~
-$ mkdir ~/Development
-$ cd ~/Development
+$ VBoxManage --version
+5.0.4r102546
 ```
 
-## 5. Collect some information about your delivery cluster
+### Install Vagrant
 
-Your delivery cluster includes multiple systems, so it may be helpful to write down a few facts about your cluster that you can refer to later.
+Next, install Vagrant. Test Kitchen uses Vagrant to communicate with VirtualBox and to configure aspects of the virtual machine such as available memory, host name, and network settings.
 
-TODO:
+#### Install Vagrant on Windows using Chocolatey
 
-* Delivery server IP address, web ui URL, user name, pwd.
-* Chef server IP address, web ui URL, user name, pwd. (delivery:delivery)
-* Admin user name and password.
-* Builder user name and password.
-* Delivery user name and password.
-* Web application server (Acceptance, Union, Rehearsal, and Delivered stages) IP address, username, pwd.
+If you use [Chocolatey](https://chocolatey.org) to manage software packages on Windows, run this command to install Vagrant.
 
-To help gather this information, run the `rake info:delivery_creds` command from your <code class="file-path">delivery-cluster</code> directory.
+```ps
+$ choco install vagrant
+Chocolatey v0.9.9.8
+Installing the following packages:
+vagrant
+By installing you accept licenses for the packages.
 
-```bash
-# ~/Development/delivery-cluster
-$ rake info:delivery_creds
-Created enterprise: chef
-Admin username: admin
-Admin password: Q10IIEJolZ1iZLNOb1Ro7vnHjL/tYxYJkOc=
-Builder Password: fdOPq9kBbqh4RRkKnRK2wdK3IjdXC9zGZGw=
-Web login: https://10.194.12.112/e/chef/
-```
+vagrant v1.7.4
 
--- --
-
-
-[PRODNOTE] Will `apt-get install build-essential` do ^ that for me on Ubuntu?
-
-## X. Install the Delivery command-line tools
-
-```bash
-$ curl https://packagecloud.io/install/repositories/chef/current/script.deb | sudo bash
-```
-
-
-
-
-## 5. Install Chef Delivery
-
-The Chef documentation walks you through the install process.
-
-- overview of what will happen (install Chef DK, git, etc.)
-- ensure you have working directory
-- provisioning node note
-- you can use an existing installation or install fresh just for this tutorial. If you install just for this tutorial (1 build node, no Supermarket, no Analtyics, yes Chef server).
-
-[PRODNOTE] Replace V with install docs on docs.chef.io...
-
-[PRODNOTE] The docs recommend creating a provisioning node. How do we make it super smooth for evaluators? Should we call out that you don't need it, and can provision from your workstation?
-
-```bash
-# ~/Development
-$ git clone https://github.com/chef-cookbooks/delivery-cluster
-$ rake setup:generate_env
 [...]
-# I went the AWS route...
-$ export CHEF_ENV=test
-$ rake setup:cluster
-[...]
-$ rake info:list_core_services
-2 items found
 
-delivery-server-test:
-  ipaddress: 10.194.8.162
-
-build-node-test-1:
-  ipaddress: 10.194.12.90
-
-chef_server_url      'https://10.194.12.255/organizations/test'
-$ rake info:delivery_creds
-Created enterprise: test
-Admin username: admin
-Admin password: vsufq9EkyogkrB3X++uGCvx5Vl0pCTa7owU=
-Builder Password: WoiHtKVKIISdQeEnoDMnrwgephOxZnOi9g8=
-Web login: https://10.194.8.162/e/test/
+Chocolatey installed 1/1 package(s). 0 package(s) failed.
+ See the log for details (C:\ProgramData\chocolatey\logs\chocolatey.log).
 ```
 
-[PRODNOTE] Tell the user how to uninstall, especially important for AWS provisioning.
+#### Install Vagrant using the installer
 
-## 6. Create organization & user
+If you're on a Linux or Mac OS workstation or don't use Chocolatey, download and install Vagrant from the Vagrant web site.
 
-* Login to Delivery server
+<a class='accent-button radius' href='https://www.vagrantup.com/downloads.html' target='_blank'>Install Vagrant&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+
+<hr>
+
+#### Windows only - Update your PATH environment variable
+
+By default, Vagrant is installed to <code class="file-path">C:\HashiCorp\Vagrant\bin</code> on Windows. However, the installer does not add this path to your `PATH` environment variable. Run these commands to add Vagrant to your system path.
+
+```ps
+$ $path = [Environment]::GetEnvironmentVariable("PATH")
+$ $vagrant_path = "C:\HashiCorp\Vagrant\bin"
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vagrant_path")
+```
+
+<hr>
+
+### Verify the installation
+
+Now run the following to verify that Vagrant is installed.
 
 ```bash
-# ~/Development
-$ rake info:delivery_creds
-Created enterprise: test
-Admin username: admin
-Admin password: vsufq9EkyogkrB3X++uGCvx5Vl0pCTa7owU=
-Builder Password: WoiHtKVKIISdQeEnoDMnrwgephOxZnOi9g8=
-Web login: https://10.194.8.162/e/test/
+# ~
+$ vagrant --version
+Vagrant 1.7.4
 ```
 
-* Create organization (e.g. learn-chef)
-* Create new user (e.g. tpetchel)
+## 6. Prepare your Acceptance, Union, Rehearsal, and Delivered environments
 
-
-
-## 7. Set up AWS ...
-
-1. Get your private key
-1. Generate public key `ssh-keygen -f ~/.ssh/tpetchel.pem -y > ~/.ssh/tpetchel.pub`
-1. Download Starter Kit from Chef server
-1. Create data bag
-1. Encrypt data bag items
-1. Upload to Chef server
-
-## 8. Copy encryption key to build node
-
-```bash
-$ scp -i ~/.ssh/tpetchel.pem ~/etc/chef/encrypted_data_bag_secret ubuntu@10.194.12.91:/var/opt/delivery
-```
-
-TODO: ^ Needed to copy to /tmp then ssh on and `sudo mv` it... Need to find a better target location. Is /etc/chef/secrets/awesome_customers/database/encrypted_data_bag_secret overkill?
+* Give some context.
+  * These are nodes you'll bootstrap and run the `awesome_customers` cookbook.
+* If you're using AWS driver, gather this info:
+  * Your AWS credentials (link?), including your profile, region, access key, and secret access key.
+  * An AMI ID in your region for Red Hat Enterprise Linux 6.5 or CentOS 6.5.
+  * Security groups that permit inbound network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+  * Your subnet ID, if [you use a subnet]
+  * Note whether you access EC2 instances by their private or public IP address.
+* If you're using SSH driver, bring up four servers that are accessible from your network.  Requirements:
+  * Red Hat Enterprise Linux 6.5 or CentOS 6.5.
+  * Ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) open to the firewall.
+  * A user who has root or `sudo` access to the machine.
+  * System must use key-based authentication, and not password authentication, to connect over SSH. [This page](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2) explains how to set up your SSH keys.
