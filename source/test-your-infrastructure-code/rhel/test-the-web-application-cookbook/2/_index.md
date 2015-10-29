@@ -470,3 +470,5 @@ Finished in 30.91 seconds (files took 13.31 seconds to load)
 ```
 
 Great work. You now have a set of tests that help validate that the `awesome_customers` cookbook's resources are properly defined. You have a few more tests than you need because the `awesome_customers` cookbook's resources don't define dynamic behaviors, but you now know how to work with encrypted data bag items and use custom matchers in your tests.
+
+[GITHUB] The reference implementation on [GitHub](https://github.com/learn-chef/test-your-infrastructure-code-rhel) contains tests for the other recipes in this cookbook. These tests are minimal and ensure only that the `chef-client` run would complete without raising an error.
