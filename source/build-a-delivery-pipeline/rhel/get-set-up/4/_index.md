@@ -4,7 +4,7 @@ Follow the instructions in the installation procedure. To clarify:
 
 * Use the working directory you created in step 3.
 * Either use a provisioning node or your workstation to install the Delivery cluster.
-* Use test as the environment name.
+* Use `test` as the environment name.
 * Remember that installing Chef Supermarket is optional.
 * Remember that installing Chef Analytics is optional.
 * Remember that, for this tutorial, you only need one build node.
