@@ -35,14 +35,14 @@ The tests within each stage are organized into phases.
 
 Here are the phases for each stage.
 
-| Verify   | Build      | Acceptance | Union      | Rehearsal  | Delivered |
-|----------|------------|------------|------------|------------|-----------|
-| Unit     | Unit       | Provision  | Provision  | Provision  | Provision |
-| Lint     | Lint       | Deploy     | Deploy     | Deploy     | Deploy    |
-| Syntax   | Syntax     | Smoke      | Smoke      | Smoke      | Smoke     |
-| Quality  | Functional | Functional | Functional | Functional |           |
-| Security | | | | |
-| Publish  | | | | |
+| Verify   | Build      | Acceptance | Union      | Rehearsal  | Delivered  |
+|----------|------------|------------|------------|------------|------------|
+| Unit     | Unit       | Provision  | Provision  | Provision  | Provision  |
+| Lint     | Lint       | Deploy     | Deploy     | Deploy     | Deploy     |
+| Syntax   | Syntax     | Smoke      | Smoke      | Smoke      | Smoke      |
+|          | Quality    | Functional | Functional | Functional | Functional |
+|          | Security   |            |            |            |            |
+|          | Publish    |            |            |            |            |
 
 You determine what happens in each phase with a _build cookbook_. Each phase is configured with a recipe in that cookbook. Build cookbooks also control other aspects of the pipeline, such as the types of artifacts you build and where you store them.
 
@@ -60,7 +60,7 @@ This tutorial builds on [Learn to manage a basic Red Hat Enterprise Linux web ap
 
 The Customers application that you've built so far looks like this:
 
-![the Customers web application](/assets/images/misc/webapp_result.png)
+![](delivery/acceptance-customers-verify.png)
 
 You don't have to work through the previous tutorials &ndash; we provide all the code you'll need. We'll provide pointers back to the previous tutorials to help you understand how the pieces work.
 
