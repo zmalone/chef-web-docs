@@ -211,6 +211,8 @@ Fast-forward
 
 [PRODNOTE] Would conceptual images of the pipeline at various stages be useful?
 
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/add-delivery-truck-v1.0.0) (tag `add-delivery-truck-v1.0.0`.)
+
 ## 2. Publish the awesome_customers cookbook to your Chef server
 
 * The initial `master` branch from GitHub is in Chef Delivery's internal Git server.
@@ -218,6 +220,36 @@ Fast-forward
   * You could publish to other places (Chef Supermarket, GitHub, etc.). TODO: Point to docs.
 * We need to also publish the encrypted data bag items that contains the database passwords. The web part of the Customers application uses these passwords to connect to a database to retrieve customer records.
 * We'll also increment the `awesome_customers` cookbook's version in its metadata to create a change in the cookbook (and thus trigger the tests and publish phases.)
+
+[START_MODAL encrypt-data-bag-items I don't have an encryption key]
+
+If you haven't gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, you'll need to create an encryption key and encrypt your data bags items that hold the database passwords.
+
+The first step is to replace the encrypted versions of the data bag items that come with the project with plain-text versions, like this.
+
+```ruby
+# ~/Development/deliver-customers-rhel/data_bags/passwords/db_admin_password.json
+{
+  "id": "db_admin_password",
+  "password": "database_password"
+}
+```
+
+```ruby
+# ~/Development/deliver-customers-rhel/data_bags/passwords/sql_server_root_password.json
+{
+  "id": "sql_server_root_password",
+  "password": "learnchef_mysql"
+}
+```
+
+Next, perform [step 1](/manage-a-web-app/rhel/create-a-password-store#step1) from this previous tutorial lesson to create an encryption key.
+
+Then perform [step 8](/manage-a-web-app/rhel/create-a-password-store#step8) from that same lesson to encrypt the data bag items locally.
+
+You don't have to perform the other steps because you'll write code that uploads your encrypted data bag items to the Chef server in the steps that follow.
+
+[END_MODAL]
 
 ### Create a branch
 
@@ -500,6 +532,8 @@ Fast-forward
  2 files changed, 2 insertions(+), 1 deletion(-)
  create mode 100644 .delivery/build-cookbook/attributes/default.rb
 ```
+
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/publish-customers-app-v1.0.0) (tag `publish-customers-app-v1.0.0`.)
 
 ## 3. Provision your Acceptance, Union, Rehearsal, and Delivered environments
 
@@ -897,7 +931,7 @@ Earlier, you used `with_server_config` to change the behavior of `chef-client` t
 
 We need to follow the same pattern here in order to access the encrypted data bags. But this time we need to call the `Chef_Delivery::ClientHelper.enter_client_mode_as_delivery` helper method. EXPLAIN WHY, I DUNNO.
 
-[PRODNOTE] `with_server_config` is broken here. It just doesn't work with the `machine` resource (you get an SSL error back.) Need to figure out why it doesn't work so I can explain it. Dev team does not have a fix ETA.
+[PRODNOTE] Need to update to `load_delivery_chef_config` before we ship.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
@@ -1332,6 +1366,8 @@ Fast-forward
  create mode 100644 .delivery/build-cookbook/spec/unit/recipes/_aws_creds_spec.rb
 ```
 
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/provision-environments-v1.0.0) (tag `provision-environments-v1.0.0`.)
+
 ## 4. Deploy to your Acceptance environment
 
 * Add into text
@@ -1586,6 +1622,8 @@ Fast-forward
  2 files changed, 95 insertions(+)
 ```
 
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/deploy-customers-app-v1.0.0) (tag `deploy-customers-app-v1.0.0`.)
+
 ## 5. Run smoke tests and deploy to your Union, Rehearsal, and Delivered environemnts
 
 In the previous step, you manually verified your Acceptance environment. In practice, it's common to have some manual verification process to validate that your application or service is up and functioning. For example, if you're deploying a web application, someone will typically test out a new feature manually in a pre-production environment before releasing the feature to production.
@@ -1713,7 +1751,7 @@ If you're using the AWS driver, move to the <code class="file-path">~/Developmen
 $ cd ~/Development/delivery-cluster/.chef
 ```
 
-Now run `knife node show`, providing the name of the node for your Acceptance  environment, and then search for the node's IP address.
+Now run `knife node show`, providing the name of the node for your Delivered  environment, and then search for the node's IP address.
 
 ```bash
 # ~/Development/delivery-cluster/.chef
@@ -1759,6 +1797,8 @@ Fast-forward
  .delivery/build-cookbook/recipes/smoke.rb | 14 ++++++++++++++
  1 file changed, 14 insertions(+)
 ```
+
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/smoke-test-customers-app-v1.0.0) (tag `smoke-test-customers-app-v1.0.0`.)
 
 ## Skipped phases
 
