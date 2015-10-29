@@ -8,30 +8,17 @@ next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---
-* Summarize where we are so far.
-  * We have a Delivery installation.
-  * You're working from either your workstation or a provisioning node.
-  * Summarize a few features (your installation has an org, a user, etc.)
+Chef Delivery uses _projects_ to organize work across multiple teams. You can create as many projects as you need. A common approach is to have one project for each major component of your system.
 
-* Describe what you'll do in this lesson.
-  * You'll create a project and a basic pipeline.
-  * The process involves writing a _build cookbook_.
-    * Describe what a build cookbook is.
-  * You'll start by cloning the base project from GitHub.
-  * Then you'll set up the Delivery project and a pipeline.
-  * The initial pipeline will run the default actions, which at first do nothing.
-  * In the next lesson, you'll build out each phase of your build cookbook.
+Each project has its own Git repository. Chef Delivery can host the Git repository for you or you can connect Chef Delivery to an existing Git project, such as one on GitHub.
 
-* Describe the options for setting up a project.
-  * Existing project vs. new project.
-  * Delivery's Git server vs. existing Git project (e.g. GitHub)
-    * If existing Git project, continuing there or migrate to Delivery's Git server.
-  * Can we point to more information in the docs on this?
+To save you the need to maintain your own Git repository, for example, in GitHub, we'll use Delivery's Git server. You'll start by cloning a repository that contains the `awesome_customers` cookbook to your workstation. Then you'll run the `delivery init` command from your workstation. This command creates a new project, a Git repository, a pipeline, and an initial `master` branch that's based off of the existing `master` branch.
 
-* This project will be an existing GitHub project that we migrate to Delivery's Git server.
-  * Describe why: easier for getting started; doesn't require a GitHub account.
+[COMMENT] Another way to start would be to create the project from the Chef Delivery web interface and run the `delivery clone` command to pull the empty repository down to your workstation.
 
 ## 1. Clone the GitHub repo to your workstation
+
+In this step, you'll clone the repository from GitHub and move to your local repository directory.
 
 Move to your working directory, for example, <code class="file-path">~/Development</code>.
 
@@ -61,14 +48,18 @@ Move to the <code class="file-path">deliver-customers-rhel</code> directory.
 $ cd deliver-customers-rhel
 ```
 
-## 2. Initialize the project and create a basic pipeline
+## 2. Create the project and the pipeline
 
-* The next step is to run `delivery init`. The `delivery init` command:
-  * creates a project in Chef Delivery.
-  * creates a pipeline that targets the `master` branch.
-  * creates a branch named `add-delivery-config`, based off of `master`.
-  * creates the <code class="file-path">.delivery</code> directory and adds to it an empty build cookbook and a configuration file.
-  * submits the change for review.
+The next step is to run `delivery init`. This command:
+
+* creates a project in Chef Delivery, which includes a new Git repository.
+* initializes the `master` branch from the existing `master` branch (in this case, the `master` branch contains the `awesome_customers` cookbook.)
+* creates a pipeline that targets `master`.
+* creates a branch named `add-delivery-config`, which is based off of `master`.
+* creates the <code class="file-path">.delivery</code> directory and adds to it an empty build cookbook and a configuration file.
+* submits the change for review.
+
+Run `delivery init` from your local repository directory.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -110,18 +101,21 @@ Created new patchset
 https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customers-rhel/changes/c469f058-493d-4277-99ba-13f86014a63c
 ```
 
-* A browser window appears.
-* Watch the Verify stage run the unit, lint, and syntax phases.
-* Each phase runs on the build node.
-* Each phase succeeds, but does no work. (show example from output?)
+### Watch the Verify stage run
+
+When you run `delivery init`, a browser window appears. The page you see shows the pipeline's current status. Listed beneath each stage (Verify, Build, Acceptance, Union, Rehearsal, Delivered) are the phases that make up that stage.
 
 ![](delivery/delivery-init-result.png)
 
+The process moves directly to the Verify stage. The Verify stage performs  unit, lint, and syntax checks on your code. The build node merges your changes  into `master` on a temporary copy of the main repository and run the tests against `master`.
+
+Each phase runs on a build node. If you have multiple build nodes, multiple phases can be run in parallel.
+
 ## 3. Approve the change
 
-* The next step is to approve the change.
+The next step is to approve the change. This is a manual step, where people on your team have a chance to review the code and promote it to the Build stage.
 
-From the **Review** tab, scroll down to the bottom of the patchset and enter a comment.
+Watch the unit, lint, and syntax phases succeed. Then from the **Review** tab, scroll down to the bottom of the patchset and enter a comment.
 
 ![](delivery/delivery-init-add-comment.png)
 
@@ -135,26 +129,26 @@ Then click **Confirm**.
 
 ![](delivery/delivery-init-approve-modal.png)
 
-The **Approve** action merges the `add-delivery-config` branch into the `master` branch and deletes the `add-delivery-config` branch from the server (you can later run the `git branch prune` command to remove the references to the deleted branches from the Git server.)
+The **Approve** action merges the `add-delivery-config` branch into the `master` branch and deletes the `add-delivery-config` branch from the server.
 
-[COMMENT] You need to first wait for the unit, lint, and syntax phases to complete before you can approve a patchset. This ensures that all tests pass before the change is merged into the target branch (in this case, `master`.)
-
-[PRODNOTE] Users who are new to Git might be all like 'wha?' about the branch merging. Is there an appropriate Git primer we should point users at?
+[COMMENT] You need to first wait for the unit, lint, and syntax phases to complete before you can approve a patchset. This ensures that all tests pass before the change is merged into the target branch.
 
 ## 4. Deliver the change
 
-* After you approve the change, the process moves to the Build stage of the pipeline.
-* The unit, lint, and syntax phases run again on the build node.
-* This time, they're performed on the `master` branch, which verifies that the tests still pass after merging the changes to `master`.
-* The Build stage also runs the quality, security, and publish phases. (what else to say at this point?)
+After you approve the change, the process moves to the Build stage.
+* The unit, lint, and syntax phases run again on the build node. The tests run again in the Build stage to ensure that they continue to pass after the change is merged to `master`.
+
+The Build stage also runs the quality and security phases. If these pass, then the publish phase runs. This phase creates an artifact (in our case, a cookbook) that is a release candidate.
 
 ![](delivery/delivery-init-build.png)
 
-* After the Build stage completes, the process moves to the Acceptance stage.
-* Describe the Acceptance stage...
-* The Acceptance stage runs the provision, deploy, smoke, and functional phases. (what else to say here?)
+After the Build stage completes, the process moves to the Acceptance stage.
 
-After the Acceptance stage completes, press the **Deliver** button.
+Beginning with the Acceptance stage, the pipeline switches from analyzing the project’s source code to verifying the artifacts produced in the Build stage. The goal of the Acceptance stage is for the team to make a decision about whether the change should go all the way out to production or not.
+
+The Acceptance stage runs the provision, deploy, smoke, and functional phases. The provision phase sets up any infrastructure needed to test the artifacts. The deploy phase deploys the artifact created in the Build stage.
+
+After the Acceptance stage completes, press the **Deliver** button. Pressing the **Deliver** button is a confirmation that the artifact can be released. The artifact will move through the next three pipeline stages automatically.
 
 ![](delivery/delivery-init-deliver.png)
 
@@ -162,18 +156,31 @@ Press the **Confirm** button from the dialog that appears.
 
 ![](delivery/delivery-init-confirm-delivery.png)
 
-* You'll see the process move through the Union, Rehearsal, and Delivered stages.
-* Watch the change move through the Union, Rehearsal, and Delivered stages.
+You'll see the process move through the Union, Rehearsal, and Delivered stages.
+
+The Union, Rehearsal, and Delivered form a shared pipeline, where all the projects that make up the entire system come together. All three stages have the same phases.
+
+The Union stage assesses the impact of the change in the context of a complete (or as close as possible) installation of the set of projects that comprise the entire system. Union is where you test for interactions between interdependent projects.
+
+If all phases of Union succeed, then the Rehearsal stage is triggered. Rehearsal increases confidence in the artifacts and the deployment by repeating the process that occurred in Union in a different environment.
+
+If a failure occurs in Union, Rehearsal serves a different purpose. When you submit a new change and it fixes the break in Union, you know that a sequence of two changes, one that breaks the system, and one that comes after and fixes it, results in a healthy system. You do not yet know what happens when you apply the cumulative change to an environment that never saw the failure. The Rehearsal stage tests the change in an environment that didn’t see the failure.
+
+Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean publishing a set of artifacts so they are accessible for your customers.
+
+Watch the change move through the Union, Rehearsal, and Delivered stages.
 
 ![](delivery/delivery-init-delivered.png)
 
-Congratulations! You now have a functioning Chef Delivery pipeline. Although it does no work, you now have a working pipeline that you can build on.
+Congratulations! You now have a functioning Chef Delivery pipeline.
 
-[COMMENT] In this tutorial, you approve and deliver your own changes. In practice, you'll need to decide with your organization the criteria for approving and shipping changes. At CHEF, we follow the "four eyes" rule, where a total of four eyes are required to approve a code change. After two people approve a code change, and there are no unresolved comments, the change can be approved and move to the next stage in the pipeline.
+Note that the pipeline did no real work &ndash; the recipe that defines each phase in your build cookbook is empty. No actual unit or syntax checks were made, and no artifacts were published. However, your `master` branch is now integrated in the system and you have a foundation to build upon. You'll add functionality to the build cookbook in the next lesson.
+
+[COMMENT] In this tutorial, you approved and delivered your own changes. In practice, you'll need to decide with your organization the criteria for approving and shipping changes. At CHEF, we follow the "four eyes" rule, where a total of four eyes is required to approve a code change. After two people approve a code change, and there are no unresolved issues, the change can be approved and move to the next pipeline stage.
 
 ## 4. Integrate the change locally
 
-When you approved the change, Chef Delivery merged the `add-delivery-config` branch into `master` on Chef Delivery's Git server. Now you need to merge the updated `master` branch back on your workstation.
+When you clicked **Approve**, Chef Delivery merged the `add-delivery-config` branch into `master` on Chef Delivery's Git server. Now you need to merge the updated `master` branch back to your local repository.
 
 First, run `git branch` to verify that you're currently on the `add-delivery-config` branch.
 
@@ -183,7 +190,7 @@ $ git branch
   master
 ```
 
-Now run `git fetch delivery` to fetch the changes locally.
+Now run `git fetch delivery` to download the changes from the remote delivery repo on the Chef Delivery server to your local repo.
 
 ```bash
 $ git fetch delivery
@@ -216,10 +223,11 @@ Fast-forward
 
 ### A note about remotes
 
-* If you're a Git user, you're likely accustomed to working with the `origin` remote.
-* In this lesson, you fetched and pulled from `delivery`.
-* In this scenario, we're cloning a GitHub project locally and creating a new Git repo that's hosted on our Chef Delivery Server.
-* `origin` refers to the original remote on GitHub, and `delivery` refers to our new remote that's hosted on our Chef Delivery server.
+If you're a Git user, you're likely accustomed to working with the `origin` remote, but in this lesson, you fetched and pulled from `delivery`.
+
+You pulled from `delivery` because we're cloning an existing GitHub project locally and creating a new Git repo that's hosted on our Chef Delivery Server.
+
+`origin` refers to the original remote on GitHub, and `delivery` refers to our new remote that's hosted on our Chef Delivery server.
 
 To see this, run `git remote -v` to see your remote repositories.
 
@@ -232,11 +240,11 @@ origin	https://github.com/learn-chef/deliver-customers-rhel.git (fetch)
 origin	https://github.com/learn-chef/deliver-customers-rhel.git (push)
 ```
 
-* TODO: How do we message this to the reader? Do we say it's mainly for learning purposes? In practice, you might connect an existing Git project directly to Chef Delivery and not use Delivery's internal Git server. Can we point to docs around this?
+Remember, you don't have to use Chef Delivery's Git server. We do so for learning purposes and because using the Git server that Chef Delivery already provides is the easiest way to get started.
 
-[GITHUB] For reference, you can find the `add-delivery-config` branch on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/add-delivery-config).
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/add-delivery-config-v1.0.0) (tag `add-delivery-config-v1.0.0`.)
 
-## How do delete your project
+## How to delete your project
 
 If you ever need to start over, or you complete the tutorial and want to delete this project, login to your Chef Delivery server and run the `delivery-ctl delete-project` command.
 
@@ -246,11 +254,33 @@ This command takes your enterprise, organization, and project names as arguments
 $ delivery-ctl delete-project ENTERPRISE ORGANIZATION PROJECT
 ```
 
-TODO: Remind the reader how to get delivery creds, ssh, etc. ^^
-
 For example, for an enterprise named `chef` and an organization named `learn-chef`, you would run this command to delete the `deliver-customers-rhel` project.
 
 ```bash
 $ sudo delivery-ctl delete-project chef learn-chef deliver-customers-rhel
 Successfully deleted project: 'chef/learn-chef/deliver-customers-rhel'
+```
+
+You can get the IP address for your Chef Delivery server by running `rake info:list_core_services` from your <code class="file-path">~/Development/delivery-cluster</code> directory.
+
+```bash
+# ~
+$ cd ~/Development/delivery-cluster
+$ rake info:list_core_services
+2 items found
+
+delivery-server-test:
+  ipaddress: 10.194.11.99
+
+build-node-test-1:
+  ipaddress: 10.194.13.122
+
+chef_server_url      'https://10.194.12.65/organizations/test'
+```
+
+From there, you can connect to the server over SSH. For example, if you created your Delivery cluster on AWS, you can connect like this.
+
+```bash
+# ~/Development/delivery-cluster
+$ ssh -i ~/.ssh/learn_chef.pem ubuntu@10.194.11.99
 ```
