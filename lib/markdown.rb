@@ -136,6 +136,9 @@ module ZurbFoundation
   def extras
       content.gsub!(/<p>\[TIMETOCOMPLETE\] (.+)<\/p>/) {
       "<div style='float:right; border:1px solid #666; display: inline-block; padding:5px; border-radius:5px; margin:15px;'><center><i class='fa fa-clock-o fa-3x blueiconcolor'></i><br><b>#{$1} minutes</b></center></div>" }
+
+      content.gsub!(/<p>\[START_BOX\]<\/p>\s*(.+?)\s*<p>\[END_BOX\]<\/p>/m) {
+      "<div class='box'>#{$1}</div>" }
   end
 
   def render(string)
