@@ -8,35 +8,40 @@ next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---
-* Summary of the previous lesson:
-  * You cloned the Customers web application project from GitHub.
-  * You ran `delivery init` to create a Chef Delivery project and create a basic pipeline.
-  * You approved and delivered the change.
-  * You integrated the change to your local repo.
+So far, you have a functional, yet empty, build cookbook. In this lesson, you'll add functionality to the phases highlighted here:
 
-* Show the Delivery pipeline again here.
+| Verify     | Build      | Acceptance    | Union         | Rehearsal     | Delivered     |
+|------------|------------|---------------|---------------|---------------|---------------|
+| **Unit**   | **Unit**   | **Provision** | **Provision** | **Provision** | **Provision** |
+| **Lint**   | **Lint**   | **Deploy**    | **Deploy**    | **Deploy**    | **Deploy**    |
+| **Syntax** | **Syntax** | **Smoke**     | **Smoke**     | **Smoke**     | **Smoke**     |
+|            | Quality    | Functional    | Functional    | Functional    | Functional    |
+|            | Security   |               |               |               |               |
+|            | **Publish**|               |               |               |               |
 
-* Remember, the basic pipeline didn't do any real work.
-* In this lesson, you'll build out the build cookbook to
-  * run your unit, lint, and syntax checks to verify the quality of your cookbook.
-  * publish the `awesome_customers` cookbook to your Chef server.
-  * provision
-* The [delivery-truck] cookbook performs many common tasks for us.
-* We'll use this cookbook as a basis for our build cookbook.
+Your build cookbook consists of recipes. Each recipe corresponds to a phase, such as lint or syntax. Any time that a phase runs, no matter in which stage, it uses the same recipe. For example, the recipe for the lint phase runs in the Verify and Build stages. You can use conditional logic to customize how the recipe behaves for a given stage.
 
-* The `awesome_customers` cookbook already contains unit tests and passes RuboCop and Foodcritic.
-* We'll use [Chef provisioning](https://docs.chef.io/provisioning.html) to provision our Acceptance, Union, Rehearsal, Delivered environments.
-  * Briefly describe Chef provisioning.
-  * Briefly describe Acceptance, Union, Rehearsal, Delivered environments and their role.
+How you define each phase depends on your type of project and its requirements. For example, if your project contains JavaScript, you might run JSLint as part of the lint phase. If you don't currently run lint tests on your code, you can leave the phase empty or configure Chef Delivery to skip it.
 
-* Talk about the phases, and how each step below each phase cooresponds to a recipe in the build cookbook.
-* A phase can run on mutliple stages.
+Our project is the `awesome_customers` cookbook. Most phases will perform actions on the cookbook that you're already familiar with. Here's a brief summary of what each phase will accomplish.
 
-The `deliver-customers-rhel` project that you cloned from GitHub contains all the code you'll need for this tutorial.
+* **unit** &ndash; runs ChefSpec.
+* **lint** &ndash; runs Foodcritic and RuboCop.
+* **syntax** &ndash; runs `knife cookbook test`.
+* **publish** &ndash; uploads `awesome_customers` and the cookbooks it depends on to the Chef server.
+* **provision** &ndash; uses Chef provisioning to bootstrap the web application server. The server will have the `awesome_customers` cookbook in its run-list. For AWS, the phase also brings up the instance if it is not yet created.
+* **deploy** &ndash; runs `chef-client` on the web application server.
+* **smoke** &ndash; verifies that the web server is at least minimially functional.
 
-## 1. Reference the delivery-truck cookbook
+To help implement these steps, we'll use the [delivery-truck](https://github.com/chef-cookbooks/delivery-truck) cookbook. This cookbook performs tasks that are typical for a cookbook project. For example, its `unit` recipe runs ChefSpec and its `lint` recipe runs Foodcritic and RuboCop.
 
-* Verify that you're on the `master` branch.
+You'll start by adding `delivery-truck` as a dependency to your build cookbook. Then you'll gradually incorporate each phase into your build cookbook.
+
+## 1. Incorporate the delivery-truck cookbook
+
+In this part you'll add a dependency on the `delivery-truck` cookbook and run each of its phases.
+
+First, verify that you're on the `master` branch.
 
 ```bash
 $ git branch
@@ -44,7 +49,7 @@ $ git branch
 * master
 ```
 
-* Create a new branch.
+Create a new branch named `add-delivery-truck`.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -52,7 +57,7 @@ $ git checkout -b add-delivery-truck
 Switched to a new branch 'add-delivery-truck'
 ```
 
-Verify new branch.
+Verify that you're on the new branch.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -62,9 +67,24 @@ $ git branch
   master
 ```
 
-In the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, you [learned how to use Berkshelf](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration) to resolve cookbook dependencies.
+### Add the dependency
 
-Modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile</code> like this.
+Now modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb</code> like this. The metadata file lists which cookbooks the build cookbook depends on.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb
+name 'build-cookbook'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+version '0.1.0'
+
+depends 'delivery-truck'
+```
+
+Now modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile</code> like this. The <code class="file-path">Berksfile</code> describes where to get dependent cookbooks.
+
+The [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, [explains the process](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration) in more detail.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile
@@ -82,24 +102,11 @@ cookbook 'delivery-sugar', git: 'https://github.com/chef-cookbooks/delivery-suga
 cookbook 'delivery-truck', git: 'https://github.com/chef-cookbooks/delivery-truck'
 ```
 
-Now modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb</code> like this.
+[PRODNOTE] `delivery-truck` depends on `delivery-sugar`, but the build process complained about not having it. Maybe I did something wrong. Can someone try omitting the dep on `delivery-sugar` and let me know what happens?
 
-```ruby
-# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb
-name 'build-cookbook'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
-license 'all_rights'
-version '0.1.0'
+### Include the delivery-truck cookbook's recipes
 
-depends 'delivery-truck'
-```
-
-* The `delivery-truck` cookbook provides a lot of functionality for us.
-  * For example, the recipe for the unit phase, <code class="file-path">unit.rb</code>, runs ChefSpec tests for any cookbooks that have changed.
-  * TODO: show code example.
-
-Include each of the `delivery-truck` cookbook's recipe in ours.
+Now you'll include each of the `delivery-truck` cookbook's recipes from your recipes.
 
 For example, make your `build-cookcook` cookbook's default recipe, <code class="file-path">default.rb</code>, look like this.
 
@@ -108,9 +115,11 @@ For example, make your `build-cookcook` cookbook's default recipe, <code class="
 include_recipe 'delivery-truck::default'
 ```
 
-Follow the same pattern for your <code class="file-path">deploy.rb</code>, <code class="file-path">functional.rb</code>, <code class="file-path">lint.rb</code>, <code class="file-path">provision.rb</code>, <code class="file-path">publish.rb</code>, <code class="file-path">quality.rb</code>, <code class="file-path">security.rb</code>, <code class="file-path">smoke.rb</code>, and <code class="file-path">unit.rb</code> recipes.
+Follow the same pattern for the remaining recipes: <code class="file-path">deploy.rb</code>, <code class="file-path">functional.rb</code>, <code class="file-path">lint.rb</code>, <code class="file-path">provision.rb</code>, <code class="file-path">publish.rb</code>, <code class="file-path">quality.rb</code>, <code class="file-path">security.rb</code>, <code class="file-path">smoke.rb</code>, and <code class="file-path">unit.rb</code>.
 
-Run `git status`.
+### Commit the changes
+
+Run `git status` to see the unstaged changes.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -138,10 +147,14 @@ Changes not staged for commit:
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
+Now run `git add .` to stage them for commit.
+
 ```bash
 # ~/Development/deliver-customers-rhel
 $ git add .
 ```
+
+Finally, commit the changes.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -149,6 +162,12 @@ $ git commit -m "pull in delivery-truck cookbook"
 [add-delivery-truck 24f7971] pull in delivery-truck cookbook
  14 files changed, 17 insertions(+), 1 deletion(-)
 ```
+
+### Submit the change for review
+
+When you set up the project, you ran `delivery init` to create the project and move it through the pipeline.
+
+This time, run `delivery review` to submit your change as a candidate to be merged into the project's `master` branch.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -160,21 +179,22 @@ Created new patchset
 https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customers-rhel/changes/a09401ca-4e39-48e4-96d7-23ed1631f9e0
 ```
 
-[PRODNOTE] Add callout about pull request vs. `delivery review` when using Chef Delivery's Git server.
+[COMMENT] If you use GitHub, you know that pull requests let you tell others about your changes. The `delivery review` command follows a similar concept. It allows others to review your changes. Once approved, your changes can be merged into `master` and continue through the rest of the pipeline.
 
-* Review the changes in the web interface. Click **Approve** when all tests pass.
-* The process moves to the Build stage.
-* The process moves to teh Acceptance stage.
-* After Acceptance succeeds, press the **Deliver** button.
-* Watch all the Acceptance, Union, Rehearsal, and Delivered stages run.
-* The phases still don't do any work because:
-  * we still haven't added the `awesome_customers` cookbook.
-  * we don't yet have Acceptance, Union, Rehearsal, and Delivered environments.
-* But we're all set up to...
+The first stage of the pipeline, Verify, begins and the Delivery UI appears. Trace the change's progress through the pipeline as you did when you set up the project.
+
+1. Review the changes in the web interface. Click **Approve** when all tests pass.
+1. Watch the change progress through the Build and Acceptance stages.
+1. After the Acceptance completes, press the **Deliver** button.
+1. Watch the change progress through the Acceptance, Union, Rehearsal, and Delivered stages.
+
+[PRODNOTE] Need to go back through and see exactly what happens at each phase. For example, I don't think unit does anything because the cookbook hasn't yet changed. Verify and talk about it here...
+
+Great work. You've successfully incorporated the `delivery-truck` cookbook into your build cookbook.
 
 ### Integrate the change locally
 
-* As we did for the `add-delivery-config` branch, we need to merge the `master` branch locally. Here's a reminder how.
+Just as you did for the initial `add-delivery-config` branch that set up the project, you now need to merge the `master` branch to your local repository. Here's how.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -209,47 +229,15 @@ Fast-forward
  14 files changed, 17 insertions(+), 1 deletion(-)
 ```
 
-[PRODNOTE] Would conceptual images of the pipeline at various stages be useful?
-
 [GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/add-delivery-truck-v1.0.0) (tag `add-delivery-truck-v1.0.0`.)
 
 ## 2. Publish the awesome_customers cookbook to your Chef server
 
-* The initial `master` branch from GitHub is in Chef Delivery's internal Git server.
-* We need to specify to publish the `awesome_customers` cookbook to Chef server.
-  * You could publish to other places (Chef Supermarket, GitHub, etc.). TODO: Point to docs.
-* We need to also publish the encrypted data bag items that contains the database passwords. The web part of the Customers application uses these passwords to connect to a database to retrieve customer records.
-* We'll also increment the `awesome_customers` cookbook's version in its metadata to create a change in the cookbook (and thus trigger the tests and publish phases.)
+Where you publish your projects is up to you. You might publish a cookbook project to Chef server, Chef Supermarket, GitHub, or all of the above.
 
-[START_MODAL encrypt-data-bag-items I don't have an encryption key]
+In this tutorial, you'll publish the `awesome_customers` cookbook to Chef server. You'll also need to publish two data bag items. These data bag items contain encrypted database passwords that the `awesome_customers` requires to set up the web application ([learn more about the process](/manage-a-web-app/rhel/create-a-password-store/).)
 
-If you haven't gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, you'll need to create an encryption key and encrypt your data bags items that hold the database passwords.
-
-The first step is to replace the encrypted versions of the data bag items that come with the project with plain-text versions, like this.
-
-```ruby
-# ~/Development/deliver-customers-rhel/data_bags/passwords/db_admin_password.json
-{
-  "id": "db_admin_password",
-  "password": "database_password"
-}
-```
-
-```ruby
-# ~/Development/deliver-customers-rhel/data_bags/passwords/sql_server_root_password.json
-{
-  "id": "sql_server_root_password",
-  "password": "learnchef_mysql"
-}
-```
-
-Next, perform [step 1](/manage-a-web-app/rhel/create-a-password-store#step1) from this previous tutorial lesson to create an encryption key.
-
-Then perform [step 8](/manage-a-web-app/rhel/create-a-password-store#step8) from that same lesson to encrypt the data bag items locally.
-
-You don't have to perform the other steps because you'll write code that uploads your encrypted data bag items to the Chef server in the steps that follow.
-
-[END_MODAL]
+The `delivery-truck` cookbook's `publish` recipe is already set up to publish your cookbook to Chef server, Chef Supermarket, and GitHub. All you need to do is set a node attribute to tell `delivery-truck` that you want to publish your cookbook to Chef server.
 
 ### Create a branch
 
@@ -276,9 +264,41 @@ $ git branch
 * publish-customers-app
 ```
 
+### Prepare your encryption key and encrypted data bag items
+
+If you've gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, copy your encrypted data bag items, <code class="file-path">db_admin_password.json</code> and <code class="file-path">sql_server_root_password.json</code> to the <code class="file-path">~/Development/deliver-customers-rhel/data_bags/passwords</code> directory. You can then move to the next step.
+
+If you haven't gone through this tutorial, or no longer have your encrypted data bag items or your  encryption key, you'll create them now.
+
+The first step is to replace the encrypted versions of the data bag items that come with the project with plain-text versions, like this.
+
+```ruby
+# ~/Development/deliver-customers-rhel/data_bags/passwords/db_admin_password.json
+{
+  "id": "db_admin_password",
+  "password": "database_password"
+}
+```
+
+```ruby
+# ~/Development/deliver-customers-rhel/data_bags/passwords/sql_server_root_password.json
+{
+  "id": "sql_server_root_password",
+  "password": "learnchef_mysql"
+}
+```
+
+Next, perform [step 1](/manage-a-web-app/rhel/create-a-password-store#step1) from this previous tutorial lesson to create an encryption key.
+
+Then perform [step 8](/manage-a-web-app/rhel/create-a-password-store#step8) from that same lesson to encrypt the data bag items locally.
+
+You don't have to perform the other steps because you'll write code that uploads your encrypted data bag items to the Chef server in a later step.
+
 ### Create a default node attributes file
 
-* Run this to generate your default node attributes file.
+To enable the `delivery-truck` cookbook to upload your cookbook to Chef server, you need set a node attribute. First, you need to create a default node attributes file.
+
+Run this command to generate your default node attributes file.
 
 ```bash
 # ~/Development/deliver-customers-rhel/.delivery
@@ -295,30 +315,26 @@ Recipe: code_generator::attribute
 
 ### Set the node attribute to publish to Chef server
 
-To specify that you want to publish your cookbooks to Chef server, you need to set the `node['delivery']['config']['delivery-truck']['publish']['chef_server']` attribute.
+To specify to the `delivery-truck` cookbook that you want to publish your cookbooks to Chef server, you need to set the `node['delivery']['config']['delivery-truck']['publish']['chef_server']` attribute.
 
-To do so, add this to your default node attributes file, <code class="file-path">default.rb</code>.
+Add this to your default node attributes file, <code class="file-path">default.rb</code>.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
 default['delivery']['config']['delivery-truck']['publish']['chef_server'] = true
 ```
 
-The `delivery-truck` cookbook reads this attribute and automatically uploads any changed cookbooks to the Chef server during the publish phase, which is run in the Build stage.
+The `delivery-truck` cookbook reads this attribute and automatically uploads any changed cookbooks to the Chef server during the publish phase, which is run from the Build stage.
 
 ### Upload the encrypted data bag items
 
-* The `delivery-truck` cookbook's `publish` recipe takes care of uploading the `awesome_customers` cookbook to Chef server for us &ndash; all we needed to do was set the node attribute and include the `delivery-truck::publish` recipe from our build cookbook's `publish` recipe.
-* We need to upload the data bags manually.
-* Chef Delivery runs build cookbooks in local mode, which means that the cookbook runs with a temporary, in-memory Chef server (we introduced running `chef-client` in local mode [in the first tutorial](/learn-the-basics/rhel/make-your-recipe-more-manageable#step4). In order to upload the encrypted data bags to the Chef server, we need to change the behavior of `chef-client` to work with our Chef server.
+The `delivery-truck` cookbook's `publish` recipe takes care of uploading the `awesome_customers` cookbook to Chef server for us. We need to now set up the build cookbook's `publish` recipe to upload the data bag items.
+
+The build node the build cookbook in local mode, which means that the cookbook runs with a temporary, in-memory Chef server (we introduced running `chef-client` in local mode [in the first tutorial](/learn-the-basics/rhel/make-your-recipe-more-manageable#step4). In order to upload the encrypted data bags to the Chef server, we need to change the behavior of `chef-client` to work with our Chef server.
 
 To do that, you call the `with_server_config` helper method. This helper method sets the Chef server configuration, calls the provided block, and then restores the previous configuration.
 
-* To upload the encrypted data bag items, we'll use the built-in `execute` resource to run the `knife` command.
-* We need to both create the data bag and then upload our two data bag items (the database root password and the administrator password.)
-* Explain why we need `--config` (see note below).
-* We use a `not_if` guard to ensure that the data bag is created only when it doesn't exist.
-* We upload the data bag items each time in case they ever change.
+To upload the encrypted data bag items, we'll use the built-in `execute` resource to run the `knife` command. We need to both create the data bag and then upload our two data bag items.
 
 [PRODNOTE] Why do we need `--config` if we're already saying `with_server_config`? It seeme redundant, but it's the only way that works.
 
@@ -343,10 +359,13 @@ with_server_config do
 end
 ```
 
+The first `execute` resource uses a `not_if` guard to ensure that the data bag is created only if it doesn't exist. The second `execute` resource uploads the data bag items each time in case they ever change.
+
 ### Increment the awesome_customers cookbook's version
 
-* Let's say we've been developing this cookbook locally, and are now ready to deploy it to production.
-* [Semantic Versioning](TODO) says to set the version to 1.0.0.
+The `delivery-truck` cookbook acts only on cookbooks that have changed (in other words, only on cookbooks that have files that are part of the current Git commit.) This enables the pipeline to move more quickly by performing only necessary work.
+
+Let's make a basic change to trigger the unit, lint, syntax, and publish phases to run. You'll increment the `awesome_customers` cookbook's version from 0.3.0 to 1.0.0, which, which according to [Semantic Versioning](http://semver.org), marks the cookbook as ready for production.
 
 In your `awesome_customers` cookbook's metadata file, <code class="file-path">metadata.rb</code>, update the `version` field from 0.3.0 to 1.0.0, like this.
 
@@ -409,22 +428,24 @@ You'll see the unit, lint and syntax phases run on the `awesome_customers` cookb
 
 ![](delivery/delivery-lint.png)
 
-* Review the changes in the web interface. Click **Approve** when all tests pass.
-* The process moves to the Build stage.
-* The process moves to the Acceptance stage.
-* After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them as a single unit.
+Trace the change's progress through the pipeline to the Acceptance stage, as you did previously.
+
+1. Review the changes in the web interface. Click **Approve** when all tests pass.
+1. Watch the change progress through the Build and Acceptance stages.
+
+After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them all as a single unit.
 
 ### Verify the awesome_customers cookbook and your data bag on your Chef server
 
-* The publish phase uploads your cookbooks and any dependencies that are listed in your <code class="file-path">Berksfile</code>.
-* Let's verify that your cookbook is on the Chef server. There are two ways to do this &ndash; from the command line or from the Chef management console.
+The publish phase uploads your cookbooks and any dependencies that are listed in your <code class="file-path">Berksfile</code>.
+
+Let's verify that your cookbook is on the Chef server. There are two ways to do this &ndash; from the command line or from the Chef management console.
 
 #### Verify from the command line
 
-* The `delivery-cluster` cookbook sets up a `knife` configuration file, <code class="file-path">knife.rb</code>, and server certificates to enable you to administer your Chef server from your workstation or provisioning node.
-* Let's use that fact to verify the status of the `awesome_customers` cookbook from the command line.
+The `delivery-cluster` cookbook sets up a `knife` configuration file, <code class="file-path">knife.rb</code>, and server certificates to enable you to administer your Chef server from your workstation or provisioning node.
 
-First, move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
+To verify the status of the `awesome_customers` cookbook from the command line, first, move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -440,7 +461,7 @@ delivery-cluster-data       knife.rb          syntaxcache
 delivery-cluster-data-test  local-mode-cache  trusted_certs
 ```
 
-Run the `knife cookbook list` command and search the result for the `awesome_customers` cookbook.
+Run the `knife cookbook list` command to list all cookbooks and then search the result for the `awesome_customers` cookbook.
 
 ```bash
 # ~/Development/delivery-cluster/.chef
@@ -500,7 +521,7 @@ Choose **Data Bags** from the menu on the left, then select **passwords**. You'l
 
 ### Integrate the change locally
 
-* As we did previously, we need to merge the `master` branch locally. Here's a reminder how.
+As we did previously, we need to merge the remote `master` branch to your local repo. Here's a reminder of how to do this.
 
 First, move to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
@@ -535,10 +556,7 @@ Fast-forward
 
 [GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/publish-customers-app-v1.0.0) (tag `publish-customers-app-v1.0.0`.)
 
-## 3. Provision your Acceptance, Union, Rehearsal, and Delivered environments
-
-* Brief overview of Acceptance, Union, Rehearsal, and Delivered / point to docs.
-* We're going to use [Chef provisioning](https://docs.chef.io/provisioning.html). Brief recap on the process.
+## 3. Provision your Acceptance, Union, Rehearsal, and Delivered stages
 
 Overview/facts about this section:
 
@@ -547,8 +565,8 @@ Overview/facts about this section:
 * When you installed Chef Delivery, the process created an encryption key for you, located at <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/encrypted\_data\_bag\_secret</code>. We'll use that key to:
   * Encrypt our AWS credentials in a data bag (if using the AWS provisioner).
   * Encrypt the private key used for SSH authentication in a data bag (for both AWS and SSH).
-  * Encrypt the secret file used to decrypt the database passsword used by the Customers web application.
-* You'll create node attributes in your build cookbook that describe your Acceptance, Union, Rehearsal, and Delivered environments and reference those attributes in your recipe for the provision phase.
+  * Encrypt the secret file used to decrypt the database password used by the Customers web application.
+* You'll create node attributes in your build cookbook that describe your Acceptance, Union, Rehearsal, and Delivered stages and reference those attributes in your recipe for the provision phase.
 
 [PRODNOTE] I can't get this to work using the SSH driver. I need someone to help fix what's wrong.
 
@@ -568,11 +586,9 @@ Created data_bag[provisioning-data]
 
 ### Encrypt and upload private key
 
-* In [Get set up](), you chose whether to use AWS or SSH for your Acceptance, Union, Rehearsal, and Delivered environments environments.
+* In [Get set up](/build-a-delivery-pipeline/rhel/get-set-up/), you chose whether to use AWS or SSH for your Acceptance, Union, Rehearsal, and Delivered stages.
 * In either case, you have a private key file that enables you to connect to the servers over SSH.
 * In this part, you'll encrypt your key and add it to your data bag.
-
-TODO: Go back to get set up and add this ^.
 
 Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json</code> and add this, replacing `YOUR_NAME` and `YOUR_PRIVATE_KEY` with your values.
 
@@ -665,6 +681,7 @@ id:                aws_creds
 ### Encrypt and upload the decryption key for the Customers web application
 
 * Point to previous tutorial where the user set up the decryption key.
+* Also need to say that you get your encryption key either from when you ran through the previous tutorial or in the step above when you set up the publish recipe.
 
 Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/database\_passwords\_key.json</code> and add this:
 
@@ -858,7 +875,7 @@ end
 end
 ```
 
-  This code sets each environment to use the same driver, but you can configure it so that different environments use different drivers. For example, here's how you would configure the Acceptance, Union, and Rehearsal environments to use the AWS driver and the Delivered environment to use the SSH driver.
+  This code sets each stage to use the same driver, but you can configure it so that different stages use different drivers. For example, here's how you would configure the Acceptance, Union, and Rehearsal stages to use the AWS driver and the Delivered stage to use the SSH driver.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
@@ -869,7 +886,7 @@ default['deliver-customers-rhel']['delivered']['driver'] = 'ssh'
 ```
 
 * The third part (lines 7-29) describes the configuration for the AWS driver.
-  * For learning purposes, we define each environment the same way. But in practice, you might have differnt configurations for each environment. For example, you might run your Acceptance environment as a t2.micro instance with an open firewall through your security groups. Your Delivered environment might be a larger instance with a more constrained security group setting.
+  * For learning purposes, we define each stage the same way. But in practice, you might have different configurations for each stage. For example, you might run your Acceptance stage as a t2.micro instance with an open firewall through your security groups. Your Delivered stage might be a larger instance with a more constrained security group setting.
   * If you're using the AWS driver, replace the following with your values.
     * `region`
     * `profile`
@@ -892,7 +909,7 @@ TODO: ^ Go back to get set up and describe the requirements.
 
 ### Write the recipe for the provision phase
 
-Now that our Chef server has the encrypted data bag items that we need to provision our Acceptance, Union, Rehearsal, and Delivered environments, we can write the recipe for the provision phase.
+Now that our Chef server has the encrypted data bag items that we need to provision our Acceptance, Union, Rehearsal, and Delivered stages, we can write the recipe for the provision phase.
 
 Our requirements are:
 
@@ -1150,11 +1167,11 @@ machine machine_name do
 end
 ```
 
-TODO: Explain how `:setup` just brings up the machine..
+TODO: Explain how `:setup` just brings up the machine.
 
-The machine name can be anything you like. A common convention is to concatentate the current stage name and the project name. Here were concatenate the current stage name, the project name, and the driver.
+The machine name can be anything you like. A common convention is to concatenate the current stage name and the project name. Here were concatenate the current stage name, the project name, and the driver.
 
-For the Acceptance environment, the name will be either 'acceptance-deliver-customers-rhel-aws' or 'acceptance-deliver-customers-rhel-ssh', depending on which driver you're using.
+For the Acceptance stage, the name will be either 'acceptance-deliver-customers-rhel-aws' or 'acceptance-deliver-customers-rhel-ssh', depending on which driver you're using.
 
 One benefit to including the driver name is that you can switch between the AWS and the SSH driver as you experiment. For example, you can start with the AWS driver to create a machine named ''.
 
@@ -1292,16 +1309,18 @@ https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customer
 
 #### Review and approve the change
 
-* Review the changes in the web interface. Click **Approve** when all tests pass.
-* The process moves to the Build stage.
-* The process moves to the Acceptance stage.
-* After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them as a single unit.
+Trace the change's progress through the pipeline to the Acceptance stage, as you did previously.
 
-#### Verify the creation of the Acceptance environment
+1. Review the changes in the web interface. Click **Approve** when all tests pass.
+1. Watch the change progress through the Build and Acceptance stages.
 
-Now let's verify that the Acceptance environment was successfully created. We'll run the `awesome_customers` cookbook in that environment when we write the recipe for the deploy phase in the next step.
+After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them all as a single unit.
 
-One way to verify the Acceptance environment is to move to your <code class="file-path">~/Development/delivery-cluster/.chef</code> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
+#### Verify the creation of the Acceptance stage
+
+Now let's verify that the infrastructure environment for the Acceptance stage was successfully created. We'll run the `awesome_customers` cookbook in that infrastructure nvironment when we write the recipe for the deploy phase in the next step.
+
+One way to verify the Acceptance stage is to move to your <code class="file-path">~/Development/delivery-cluster/.chef</code> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
 
 First, move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
 
@@ -1310,7 +1329,7 @@ First, move to the <code class="file-path">~/Development/delivery-cluster/.chef<
 $ cd ~/Development/delivery-cluster/.chef
 ```
 
-The machine name is the same as the node name. Recall that for the Acceptance environment, the name will be either 'acceptance-deliver-customers-rhel-aws' or 'acceptance-deliver-customers-rhel-ssh', depending on which driver you're using.
+The machine name is the same as the node name. Recall that for the Acceptance stage, the name will be either 'acceptance-deliver-customers-rhel-aws' or 'acceptance-deliver-customers-rhel-ssh', depending on which driver you're using.
 
 Now run `knife node list` and search for your acceptance environemnt.
 
@@ -1320,7 +1339,7 @@ $ knife node list | grep acceptance-deliver-customers-rhel-
 acceptance-deliver-customers-rhel-aws
 ```
 
-As expected, the Acceptance environment appears in the node list.
+As expected, the infrastructure environment for the Acceptance stage appears in the node list.
 
 Now move back to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
@@ -1368,7 +1387,7 @@ Fast-forward
 
 [GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/provision-environments-v1.0.0) (tag `provision-environments-v1.0.0`.)
 
-## 4. Deploy to your Acceptance environment
+## 4. Deploy to the infrastructure environment for the Acceptance stage
 
 * Add into text
 
@@ -1419,10 +1438,10 @@ machine machine_name do
 end
 ```
 
-* The provision and deploy phases run on each of the Acceptance, Union, Rehearsal, and Delivered environments.
-* When the recipe runs in each environemnt, the machine is tagged for the current environment.
+* The provision and deploy phases run on each of the Acceptance, Union, Rehearsal, and Delivered stages.
+* When the recipe runs in each environemnt, the machine is tagged for the current Chef environment.
 * We use this fact in our deploy recipe.
-* Use [search](https://docs.chef.io/chef_search.html) to find all nodes in the current environment.
+* Use [search](https://docs.chef.io/chef_search.html) to find all nodes in the current Chef environment.
 * Use a similar `machine` resource and apply the `:converge_only` action to run `chef-client` on the node.
 * The node will pull the latest cookbooks from its run-list from Chef server and apply them.
 
@@ -1528,7 +1547,7 @@ end
 ```
 
 * You'll notice that this recipe repeats many of the steps that the `provision` recipe performs. One reason for this is to accomodate multiple build nodes.
-  * Say you have two build nodes. Each build node might run a different phase. Say the first build node runs the provision phase and the second build node runs the deploy phase. The second build node requires the SSH private key to connect to the node and run `chef-client`, so it needs to perform the same work to load the key from the encrypted data bag and write the key file to disk.
+  * Say you have two build nodes. Each build node might run a different phase. For example, the first build node might run the provision phase and the second build node might run the deploy phase. The second build node requires the SSH private key to connect to the node and run `chef-client`, so it needs to perform the same work to load the key from the encrypted data bag and write the key file to disk.
 * In practice, you can write helper recipes and use node attributes to share data between the helper and the main recipe, or you can write a [library](https://docs.chef.io/libraries.html) that abstracts common functionality.
 
 ### Review and approve the change
@@ -1561,9 +1580,9 @@ Review for change deploy-customers-app targeted for pipeline master
 * The process moves to the Acceptance stage.
 * After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them as a single unit.
 
-### Verify the change in the Acceptance environment
+### Verify the change in the infrastructure environment for the Acceptance stage
 
-* Let's verify that the `awesome_customers` cookbook successfully deployed to your Acceptance environment.
+* Let's verify that the `awesome_customers` cookbook successfully deployed to your Acceptance stage.
 * To do that, you'll need the IP address of your server.
 * If you're using the SSH driver, you already have it.
 * If you're using the AWS driver, you can get its IP address from its node attributes.
@@ -1575,7 +1594,7 @@ If you're using the AWS driver, move to the <code class="file-path">~/Developmen
 $ cd ~/Development/delivery-cluster/.chef
 ```
 
-Now run `knife node show`, providing the name of the node for your Acceptance  environment, and then search for the node's IP address.
+Now run `knife node show`, providing the name of the node for your Acceptance stage, and then search for the node's IP address.
 
 ```bash
 # ~/Development/delivery-cluster/.chef
@@ -1594,7 +1613,7 @@ From a web browser, navigate to your node's IP address.
 
 ![](delivery/acceptance-customers-verify.png)
 
-Congratulations! You've successfully deployed the Customers web application to your Acceptance environment!
+Congratulations! You've successfully deployed the Customers web application to Acceptance!
 
 ### Integrate the change locally
 
@@ -1626,11 +1645,9 @@ Fast-forward
 
 ## 5. Run smoke tests and deploy to your Union, Rehearsal, and Delivered environemnts
 
-In the previous step, you manually verified your Acceptance environment. In practice, it's common to have some manual verification process to validate that your application or service is up and functioning. For example, if you're deploying a web application, someone will typically test out a new feature manually in a pre-production environment before releasing the feature to production.
+In the previous step, you manually verified Acceptance. In practice, it's common to have some manual verification process to validate that your application or service is up and functioning. For example, if you're deploying a web application, someone will typically test out a new feature manually on a pre-production server before releasing the feature to production.
 
-However, you can also write _smoke tests_ to help quickly validate that the application or service is running and functional. If the smoke tests fail, you know that the application or service has failed and requires investigation.
-
-* Say what you'll do here...
+However, you can also write _smoke tests_ to help quickly validate that the application or service is running and functional. If the smoke tests fail, you know that the application or service has failed.
 
 ### Create a branch
 
@@ -1665,7 +1682,7 @@ $ git branch
 
 ### Write the smoke recipe
 
-Smoke tests are meant to be fast so that you react more quickly if the applicaton or service is not functional. For the Customers web application, we'll simply run cURL to verify that the home page comes up and that the server responds with 200 (OK) HTTP status code.
+Smoke tests are meant to be fast so that you quickly receive feedback that the application or service is not working. For the Customers web application, we'll simply run cURL to verify that the home page comes up and that the server responds with 200 (OK) HTTP status code.
 
 Write out your `smoke` recipe like this.
 
@@ -1732,13 +1749,9 @@ https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customer
 
 ![](delivery/customers-delivered.png)
 
-[PRODNOTE] We dont' really talk about Union, Rehearsal, or Delivered. Ensure we point to the right background info.
+### Verify the change in the infrastructure environment for the Delivered stage
 
-[PRODNOTE] Where should we say that each project has a unique Acceptance environment, but and org shares its Union, Rehearsal, and Delivered envs?
-
-### Verify the change in the Delivered environment
-
-* Let's verify that the `awesome_customers` cookbook successfully deployed to your Delivered environment.
+* Let's verify that the `awesome_customers` cookbook successfully deployed to your Delivered stage.
 
 * As before, you'll need the IP address of your server.
 * If you're using the SSH driver, you already have it.
@@ -1751,7 +1764,7 @@ If you're using the AWS driver, move to the <code class="file-path">~/Developmen
 $ cd ~/Development/delivery-cluster/.chef
 ```
 
-Now run `knife node show`, providing the name of the node for your Delivered  environment, and then search for the node's IP address.
+Now run `knife node show`, providing the name of the node for your Delivered stage, and then search for the node's IP address.
 
 ```bash
 # ~/Development/delivery-cluster/.chef
@@ -1770,9 +1783,7 @@ From a web browser, navigate to your node's IP address.
 
 ![](delivery/delivered-customers-verify.png)
 
-Congratulations! You've successfully deployed the Customers web application to your Delivered environment!
-
-[PRODNOTE] We don't call out you can think of Delivered as production. Need to ensure we convey the right message...
+Congratulations! You've successfully delivered the Customers web application!
 
 ### Integrate the change locally
 
@@ -1802,4 +1813,8 @@ Fast-forward
 
 ## Skipped phases
 
-* TODO: for completeness, call out that the quality, security, and functional phases exist, but we omit it from this tutorial. Need a story why...
+There are many other types of tests you can run that we haven't discussed here. For example, the Build stage has a quality phase. You can use this phase to run additional test suites and code analysis tools that are too time consuming to run in the Verify stage. You don't want to run these tests until you know the code is approved.
+
+In many organizations, a suite of security tests must be run before a change can be deployed. The Build phase is a good place to run these tests, as well.
+
+Functional tests can run in the Acceptance, Union, Rehearsal and Delivered stages. These tests should give you confidence that the system is meeting its business requirements.

@@ -2,7 +2,7 @@
 
 The Acceptance, Union, Rehearsal and Delivered stages are where you'll run the `awesome_customers` cookbook. In other words, these stages host the web application. In this scenario, the web application runs on Red Hat Enterprise Linux 6.5 or CentOS 6.5.
 
-The `delivery-cluster` cookbook sets up your Chef Delivery server and Chef server &ndash; you'll set up the stages in your build cookbook. If you want to run your stages on AWS, you'll need to provide information about your AWS environment. If you prefer to bring up your stages manually, you'll do that now.
+The `delivery-cluster` cookbook sets up your Chef Delivery server and Chef server &ndash; you'll set up the stages in your build cookbook. If you want to run your stages on AWS, you'll need to provide information about your AWS environment. If you prefer to bring up your stages manually, see the requirements listed [below](#ifyou39rebringingupyourstagesmanually).
 
 ### If you're using AWS to bring up your stages
 
