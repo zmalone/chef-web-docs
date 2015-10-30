@@ -948,7 +948,7 @@ Earlier, you used `with_server_config` to change the behavior of `chef-client` t
 
 We need to follow the same pattern here in order to access the encrypted data bags. But this time we need to call the `Chef_Delivery::ClientHelper.enter_client_mode_as_delivery` helper method. EXPLAIN WHY, I DUNNO.
 
-[PRODNOTE] Need to update to `load_delivery_chef_config` before we ship.
+[PRODNOTE] Can a reviewer try replacing `Chef_Delivery::ClientHelper.enter_client_mode_as_delivery` with `load_delivery_chef_config`? It's a new helper method that's now preferred. Hot off the presses.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
@@ -1580,7 +1580,7 @@ Review for change deploy-customers-app targeted for pipeline master
 * The process moves to the Acceptance stage.
 * After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them as a single unit.
 
-### Verify the change in the infrastructure environment for the Acceptance stage
+### Verify the change in Acceptance
 
 * Let's verify that the `awesome_customers` cookbook successfully deployed to your Acceptance stage.
 * To do that, you'll need the IP address of your server.
@@ -1749,7 +1749,7 @@ https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customer
 
 ![](delivery/customers-delivered.png)
 
-### Verify the change in the infrastructure environment for the Delivered stage
+### Verify the change was successfully delivered
 
 * Let's verify that the `awesome_customers` cookbook successfully deployed to your Delivered stage.
 
