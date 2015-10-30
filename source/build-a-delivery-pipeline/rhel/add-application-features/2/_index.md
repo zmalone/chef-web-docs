@@ -165,7 +165,7 @@ When the Delivery UI appears, trace the change's progress through the pipeline.
 
 1. Review the changes in the web interface. Click **Approve** when all tests pass.
 1. Watch the change progress through the Build and Acceptance stages.
-1. After the Acceptance completes, press the **Deliver** button.
+1. After the Acceptance stage completes, press the **Deliver** button.
 1. Watch the change progress through the Acceptance, Union, Rehearsal, and Delivered stages.
 
 ![](delivery/customers-visualize-data-delivered-pipeline.png)

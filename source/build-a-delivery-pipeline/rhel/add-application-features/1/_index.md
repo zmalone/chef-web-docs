@@ -281,7 +281,7 @@ After the Delivery UI appears, trace the change's progress through the pipeline 
 
 After Acceptance succeeds, don't press the **Deliver** button. We'll queue up our second feature and deliver them both to Union as a single unit.
 
-### Verify the change in Acceptance
+### Verify the deployment to the Acceptance stage
 
 Let's verify that the Customers web application successfully deployed to your Acceptance stage.
 
