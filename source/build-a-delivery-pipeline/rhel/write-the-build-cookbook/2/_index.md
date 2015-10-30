@@ -65,7 +65,7 @@ The `delivery-truck` cookbook reads this attribute and automatically uploads any
 
 ### Prepare your encryption key and encrypted data bag items
 
-If you've gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, copy your encrypted data bag items, <code class="file-path">db_admin_password.json</code> and <code class="file-path">sql_server_root_password.json</code> to the <code class="file-path">~/Development/deliver-customers-rhel/data_bags/passwords</code> directory. You can then move to the next step.
+If you've gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, copy your encrypted data bag items, <code class="file-path">db\_admin\_password.json</code> and <code class="file-path">sql\_server\_root\_password.json</code> to the <code class="file-path">~/Development/deliver-customers-rhel/data\_bags/passwords</code> directory. You can then move to the next step.
 
 If you haven't gone through this tutorial, or no longer have your encrypted data bag items or your encryption key, you'll create them now.
 
@@ -285,6 +285,8 @@ From the **Policy** tab, you'll see that the `awesome_customers` cookbook's vers
 Choose **Data Bags** from the menu on the left, then select **passwords**. You'll see the items for the database administrator and root passwords.
 
 ![](delivery/management-console-passwords-data-bag.png)
+
+[WARN] Use caution when downloading the Starter Kit from Chef server. Downloading the Starter Kit resets its keys, which would need to be redeployed across your Delivery cluster.<br><br>We recommend that you administer your Chef server from the workstation or provisioning node that you installed Chef Delivery from.<br><br>You should only download the Starter Kit in the case of a security breach, for instance, in the case of leaked or otherwise comprised keys.
 
 ### Integrate the change locally
 

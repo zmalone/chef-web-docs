@@ -6,7 +6,7 @@ logo: redhat.svg
 order: 1
 meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---
-Chef Delivery manages changes to both infrastructure and application code, giving your operations and development teams a common platform for developing, testing, and deploying cookbooks, applications, and more.
+Chef Delivery manages changes to both infrastructure and application code, giving your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more.
 
 It provides a proven, reproducible workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production.
 
@@ -17,13 +17,13 @@ Chef Delivery handles many types of software systems. You can use it to:
 * release source code or build artifacts to a repository such as GitHub.
 * push build artifacts to production servers in real time.
 
-[COMMENT] Chef Delivery relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. If you're unfamiliar with Git, you might want to check out the documentation.
+[COMMENT] Chef Delivery relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. If you're unfamiliar with Git, you might want to check out the [documentation](https://git-scm.com/doc).
 
 [START_BOX]
 
 ## Pipelines
 
-A _pipeline_ is series of automated and manual quality gates that take software changes from development to delivery. Pipelines in Chef Delivery have six stages: Verify, Build, Acceptance, Union, Rehearsal, and Delivered. Changes progress from one stage to another by passing a suite of automated tests. For the Verify and Acceptance stages, explicit approval by a designated person is required (in addition to the tests.)
+A _pipeline_ is series of automated and manual quality gates that take software changes from development to delivery. Pipelines in Chef Delivery have six stages: Verify, Build, Acceptance, Union, Rehearsal, and Delivered. Changes progress from one stage to another by passing a suite of automated tests. To advance from the Verify and Acceptance stages, explicit approval by a designated person is required (in addition to completion of the associated tests.)
 
 [END_BOX]
 
