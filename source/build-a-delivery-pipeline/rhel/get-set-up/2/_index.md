@@ -13,9 +13,7 @@ For this tutorial, your Delivery cluster will consist of:
 
 This tutorial doesn't require you to set up Chef Analytics or Chef Supermarket, or to have three build nodes, as is described in the installation procedure. They are optional.
 
-You can run Chef Delivery, Chef server, and your build node on any [supported platform]().
-
-[PRODNOTE] Link to docs above.
+You can run Chef Delivery, Chef server, and your build node on any [supported platform](https://docs.chef.io/install_delivery_cluster.html#prerequisites).
 
 Your web application servers for the Acceptance, Union, Rehearsal, and Delivered stages must run Red Hat Enterprise Linux or CentOS because the `awesome_customers` cookbook targets those platforms. We recommend that you use Red Hat Enterprise Linux 6.5 or CentOS 6.5.
 

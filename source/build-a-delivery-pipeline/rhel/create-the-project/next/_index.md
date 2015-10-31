@@ -1,1 +1,1 @@
-xxxx
+Next, you'll add functionality to your build cookbook, including running unit and syntax tests, publishing the `awesome_customers` cookbook to your Chef server, and delivering the Customers web application.

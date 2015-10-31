@@ -1,10 +1,11 @@
 ## 5. Integrate the change locally
 
-When you clicked **Approve**, Chef Delivery merged the `add-delivery-config` branch into `master` on Chef Delivery's Git server. Now you need to merge the updated `master` branch back to your local repository.
+When you clicked **Approve**, Chef Delivery merged the `add-delivery-config` branch into `master` on Delivery's Git server. Now you need to pull Delivery's updated `master` into your `master` branch.
 
 First, run `git branch` to verify that you're currently on the `add-delivery-config` branch.
 
 ```bash
+# ~/Development/deliver-customers-rhel
 $ git branch
 * add-delivery-config
   master
@@ -13,6 +14,7 @@ $ git branch
 Now run `git fetch delivery` to download the changes from the remote delivery repo on the Chef Delivery server to your local repo.
 
 ```bash
+# ~/Development/deliver-customers-rhel
 $ git fetch delivery
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
@@ -24,6 +26,7 @@ From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
 Run `git checkout master` to switch to the `master` branch.
 
 ```bash
+# ~/Development/deliver-customers-rhel
 $ git checkout master
 Switched to branch 'master'
 Your branch is behind 'delivery/master' by 2 commits, and can be fast-forwarded.
@@ -33,6 +36,7 @@ Your branch is behind 'delivery/master' by 2 commits, and can be fast-forwarded.
 Now run `git pull delivery` to merge the changes into your local copy of `master`.
 
 ```bash
+# ~/Development/deliver-customers-rhel
 $ git pull delivery
 Updating a4d9499..a9471ce
 Fast-forward

@@ -108,13 +108,9 @@ This moves the change through the Union, Rehearsal, and Delivered stages.
 
 ### Verify the change was successfully delivered
 
-* Let's verify that the `awesome_customers` cookbook successfully deployed to your Delivered stage.
+Let's verify that the Customers web application was successfully delivered.
 
-* As before, you'll need the IP address of your server.
-* If you're using the SSH driver, you already have it.
-* If you're using the AWS driver, you can get its IP address from its node attributes.
-
-If you're using the AWS driver, move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
+As before, you'll need the IP address of your server. Move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -125,7 +121,7 @@ Now run `knife node show`, providing the name of the node for your Delivered sta
 
 ```bash
 # ~/Development/delivery-cluster/.chef
-$ knife node show delivered-deliver-customers-rhel-aws | grep IP:
+$ knife node show delivered-deliver-customers-rhel | grep IP:
 IP:          10.194.15.90
 ```
 

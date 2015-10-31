@@ -9,6 +9,4 @@ Now that you've worked with the basics, here's your chance to make Chef Delivery
 * If you use Chef Supermarket, integrate Chef Delivery with your Supermarket server. The `delivery-truck` cookbook makes it easy to publish your cookbooks not only to Chef server, but to Supermarket as well.
 * Clone an existing project &ndash; this can be a cookbook, application, or service &ndash; into Chef Delivery's integrated Git server. Write a build cookbook that's tailored to how you test and verify new features, build and publish your artifacts, and deploy to your infrastructure environments. Once you have a solid pipeline in place, you can integrate Chef Delivery with your existing source control system.
 
-Have questions or suggestions on how Chef Delivery can better fit your workflow? Join us on [Discourse](TODO).
-
-[PRODNOTE] Add Discourse link.
+Have questions or suggestions on how Chef Delivery can better fit your workflow? Join us on [Discourse](https://discourse.chef.io/c/delivery).

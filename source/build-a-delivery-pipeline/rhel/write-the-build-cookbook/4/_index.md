@@ -16,7 +16,7 @@ $ git branch
   publish-customers-app
 ```
 
-Run these commands to create the `publish-customers-app` branch and verify that you're on that branch.
+Run these commands to create the `deploy-customers-app` branch and verify that you're on that branch.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -38,28 +38,32 @@ In the provision phase, we set the `chef_environment` attribute to associate the
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
 # [...]
-machine machine_name do
+machine "#{stage}-#{project}" do
   action [:setup]
   chef_environment delivery_environment
   converge false
   files '/etc/chef/encrypted_data_bag_secret' => File.join(database_passwords_key_path, 'database_passwords_key')
   run_list node[project]['run_list']
-  add_machine_options node[project][stage][driver]['config']['machine_options']
+  add_machine_options bootstrap_options: {
+    key_name: ssh_key['name'],
+    key_path: ssh_private_key_path,
+  }
+  add_machine_options node[project][stage]['aws']['config']['machine_options']
 end
 ```
 
 The provision and deploy phases run the Acceptance, Union, Rehearsal, and Delivered stages. When the recipe runs in each stage, the machine is tagged for the current Chef environment.
 
-In the deploy phase, we can use [search](https://docs.chef.io/chef_search.html) to find the names of every node in the current Chef environment (see lines 75 through 82, below.) This technique is useful when you associate multiple infrastructure nodes with a stage, such as in a multi-tier application.
+In the deploy phase, we can use [search](https://docs.chef.io/chef_search.html) to find the names of every node in the current Chef environment (see lines 39 through 45, below.) This technique is useful when you associate multiple infrastructure nodes with a stage, such as in a multi-tier application.
 
 Write out your `deploy` recipe like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/deploy.rb
 include_recipe 'delivery-truck::deploy'
-include_recipe 'chef-sugar::default'
+include_recipe 'chef-sugar'
 
-Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+load_delivery_chef_config
 
 # Decrypt the SSH private key Chef provisioning uses to connect to the machine and save the key to disk.
 ssh_key = encrypted_data_bag_item_for_environment('provisioning-data', 'ssh_key')
@@ -73,54 +77,17 @@ file File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")  do
   mode '0600'
 end
 
-# Read common configuration options from node attributes so that we can later access them more easily.
+# Read common configuration options from node attributes.
 project = node['delivery']['change']['project'] # for example, 'deliver-customers-rhel'
 stage = node['delivery']['change']['stage'] # for example, 'acceptance' or 'union'
-driver = node[project][stage]['driver'] # for example, 'aws' or 'ssh'
-region = node[project][stage][driver]['config']['region'] # for example, 'us-west-2'
-profile = node[project][stage][driver]['config']['profile'] # for example, 'default'
 
-# Perform driver-specific initialization, such as loading the appropriate library.
-# For learning purposes, we'll do that directly in this recipe.
-# In practice, you might abstract this into a helper library.
-case driver
-when 'aws'
-  # Load the AWS driver.
-  require "chef/provisioning/aws_driver"
-  # Load AWS credentials.
-  include_recipe "#{cookbook_name}::_aws_creds"
-  # Set the AWS driver as the current one.
-  with_driver "aws::#{region}::#{profile}"
-  # Use the driver-specific method for specifying the SSH private key.
-  with_machine_options(
-    bootstrap_options: {
-      key_name: ssh_key['name'],
-      key_path: ssh_private_key_path,
-    }
-  )
-when 'ssh'
-  # chef-provisioning-ssh does not come with the Chef DK, so we need to install it manually.
-  # For learning purposes, we'll install it if it's not already installed.
-  # In practice, you might pin it to a specific version and upgrade it periodically.
-  execute 'install the chef-provisioning-ssh gem' do
-    cwd node['delivery_builder']['repo']
-    command 'chef gem install chef-provisioning-ssh'
-    not_if "chef gem list chef-provisioning-ssh | grep 'chef-provisioning-ssh'"
-    user node['delivery_builder']['build_user']
-  end
-  # Load the SSH driver.
-  require "chef/provisioning/ssh_driver"
-  # Set the SSH driver as the current one.
-  with_driver 'ssh'
-  # Use the driver-specific method for specifying the SSH private key.
-  with_machine_options(
-    transport_options: {
-      ssh_options: {
-        keys: [File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")]
-      }
-    }
-  )
-end
+# Load AWS credentials.
+include_recipe "#{cookbook_name}::_aws_creds"
+
+# Load the AWS driver.
+require 'chef/provisioning/aws_driver'
+# Set the AWS driver as the current one.
+with_driver 'aws'
 
 # Specify information about our Chef server.
 # Chef provisioning uses this information to bootstrap the machine.
@@ -146,12 +113,16 @@ nodes.each do |name|
     chef_environment delivery_environment
     converge true
     run_list node[project]['run_list']
-    add_machine_options node[project][stage][driver]['config']['machine_options']
+    add_machine_options bootstrap_options: {
+      key_name: ssh_key['name'],
+      key_path: ssh_private_key_path,
+    }
+    add_machine_options node[project][stage]['aws']['config']['machine_options']
   end
 end
 ```
 
-The `machine` resource resembles the one you used in your provision phase, except that it uses the `:converge_only` action to run `chef-client` on the node. The node pulls the latest cookbooks from its run-list from Chef server and apply them.
+The `machine` resource resembles the one you used in your provision phase, except that it uses the `:converge_only` action to run `chef-client` on the node. The node pulls the latest cookbooks from its run-list from Chef server and applies them.
 
 You'll notice that this recipe repeats many of the steps that the `provision` recipe performs. One reason for this is to accommodate multiple build nodes.
 
@@ -189,15 +160,13 @@ Trace the change's progress through the pipeline to the Acceptance stage, as you
 1. Review the changes in the web interface. Click **Approve** when all tests pass.
 1. Watch the change progress through the Build and Acceptance stages.
 
-After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them as a single unit.
+After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them to Union as a single unit.
 
 ### Verify the deployment to the Acceptance stage
 
-Let's verify that the `awesome_customers` cookbook successfully deployed to your Acceptance stage. To do that, you'll need the IP address of your server.
+Let's verify that the `awesome_customers` cookbook successfully deployed to your Acceptance stage. To do that, you'll need the IP address of your server. You can get its IP address from its node attributes.
 
-If you're using the SSH driver, you already have it. If you're using the AWS driver, you can get its IP address from its node attributes.
-
-If you're using the AWS driver, move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
+Move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -208,7 +177,7 @@ Now run `knife node show`, providing the name of the node for your Acceptance st
 
 ```bash
 # ~/Development/delivery-cluster/.chef
-$ knife node show acceptance-deliver-customers-rhel-aws | grep IP:
+$ knife node show acceptance-deliver-customers-rhel | grep IP:
 IP:          10.194.12.61
 ```
 

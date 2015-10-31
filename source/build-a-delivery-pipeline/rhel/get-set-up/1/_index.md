@@ -9,3 +9,5 @@ You will need a Delivery license key for this tutorial. Click the button below, 
 <script>MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438);</script>
 
 [END_MODAL]
+
+If you already have Chef Delivery installed on your network, you can also use your existing license key to set up a second installation for evaluation and learning purposes.

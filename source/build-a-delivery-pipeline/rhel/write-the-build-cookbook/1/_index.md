@@ -30,7 +30,7 @@ $ git branch
 
 ### Add the dependency
 
-Now modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb</code> like this. The metadata file lists which cookbooks the build cookbook depends on.
+Modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb</code> like this. The metadata file lists which cookbooks the build cookbook depends on.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb
@@ -44,8 +44,6 @@ depends 'delivery-truck'
 ```
 
 Now modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile</code> like this. The <code class="file-path">Berksfile</code> describes where to get dependent cookbooks.
-
-The [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, [explains the process](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration) in more detail.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile
@@ -63,7 +61,9 @@ cookbook 'delivery-sugar', git: 'https://github.com/chef-cookbooks/delivery-suga
 cookbook 'delivery-truck', git: 'https://github.com/chef-cookbooks/delivery-truck'
 ```
 
-[PRODNOTE] `delivery-truck` depends on `delivery-sugar`, but the build process complained about not having it. Maybe I did something wrong. Can someone try omitting the dep on `delivery-sugar` and let me know what happens?
+We also specify where to get the `delivery-sugar`, which is a cookbook that `delivery-truck` depends on.
+
+The [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial [explains Berkshelf in greater detail](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration).
 
 ### Include the delivery-truck cookbook's recipes
 
@@ -103,7 +103,6 @@ Changes not staged for commit:
 	modified:   .delivery/build-cookbook/recipes/smoke.rb
 	modified:   .delivery/build-cookbook/recipes/syntax.rb
 	modified:   .delivery/build-cookbook/recipes/unit.rb
-	modified:   .delivery/config.json
 
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
@@ -121,7 +120,7 @@ Finally, commit the changes.
 # ~/Development/deliver-customers-rhel
 $ git commit -m "pull in delivery-truck cookbook"
 [add-delivery-truck 24f7971] pull in delivery-truck cookbook
- 14 files changed, 17 insertions(+), 1 deletion(-)
+ 13 files changed, 15 insertions(+)
 ```
 
 ### Submit the change for review
@@ -149,13 +148,39 @@ The first stage of the pipeline, Verify, begins and the Delivery UI appears. Tra
 1. After the Acceptance stage completes, press the **Deliver** button.
 1. Watch the change progress through the Acceptance, Union, Rehearsal, and Delivered stages.
 
-[PRODNOTE] Need to go back through and see exactly what happens at each phase. For example, I don't think unit does anything because the cookbook hasn't yet changed. Verify and talk about it here...
+As each stage runs, notice that they still don't do much work, even though the `awesome_customers` cookbook is part of the Git repo.
 
-Great work. You've successfully incorporated the `delivery-truck` cookbook into your build cookbook.
+For example, the `delivery-truck` cookbook's `lint` recipe runs Foodcritic and RuboCop ([source code](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/lint.rb)).
+
+```ruby
+# lint.rb
+changed_cookbooks.each do |cookbook|
+  # Run Foodcritic against any cookbooks that were modified.
+  execute "lint_foodcritic_#{cookbook.name}" do
+    command "foodcritic -f correctness #{foodcritic_tags} #{foodcritic_excludes} #{cookbook.path}"
+  end
+
+  # Run Rubocop against any cookbooks that were modified.
+  execute "lint_rubocop_#{cookbook.name}" do
+    command "rubocop #{cookbook.path}"
+    only_if { File.exist?(File.join(cookbook.path, '.rubocop.yml')) }
+  end
+end
+```
+
+But you'll see in the Delivery UI that 0 resources updated during the lint phase.
+
+![](delivery/lint-no-action.png)
+
+That's because the `delivery-truck` cookbook acts only on cookbooks that have _changed_ as part of the current Git commit. This enables the pipeline to move more quickly by performing only necessary work.
+
+The `changed_cookbooks` method, which the `delivery-sugar` cookbook defines, detects which cookbooks in the repo's <code class="file-path">cookbooks</code> directory have changed. Your build cookbook changed, but the `awesome_customers` cookbook did not.
+
+Although the phases did no real work, this is a good indication that the `delivery-truck` cookbook is properly integrated.
 
 ### Integrate the change locally
 
-Just as you did for the initial `add-delivery-config` branch that set up the project, you now need to merge the `master` branch to your local repository. Here's how.
+Just as you did for the initial `add-delivery-config` branch that set up the project, you now need to pull Delivery's `master` branch locally. Here's how.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -186,8 +211,7 @@ Fast-forward
  .delivery/build-cookbook/recipes/smoke.rb      | 1 +
  .delivery/build-cookbook/recipes/syntax.rb     | 1 +
  .delivery/build-cookbook/recipes/unit.rb       | 1 +
- .delivery/config.json                          | 2 +-
- 14 files changed, 17 insertions(+), 1 deletion(-)
+ 13 files changed, 16 insertions(+)
 ```
 
 [GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/add-delivery-truck-v1.0.0) (tag `add-delivery-truck-v1.0.0`.)
