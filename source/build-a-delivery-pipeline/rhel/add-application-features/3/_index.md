@@ -11,12 +11,14 @@ The code for this feature is already in GitHub. Run these commands to fetch and 
 $ git checkout -b visualize_data origin/visualize_data
 Branch visualize_data set up to track remote branch visualize_data from origin.
 Switched to a new branch 'visualize_data'
-thomaspetchel@ubuntu:~/Development/deliver-customers-rhel$ git merge master
+$ git merge master
 Merge made by the 'recursive' strategy.
  .delivery/build-cookbook/.kitchen.yml              |  21 +++
  .delivery/build-cookbook/Berksfile                 |  12 ++
  .delivery/build-cookbook/LICENSE                   |   3 +
 [...]
+ create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/recipes/default.rb
+ create mode 100644 .delivery/config.json
 ```
 
 ### Run lint, syntax, and unit tests
