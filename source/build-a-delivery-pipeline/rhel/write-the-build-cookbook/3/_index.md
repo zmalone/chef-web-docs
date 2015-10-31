@@ -1,20 +1,24 @@
 ## 3. Provision your Acceptance, Union, Rehearsal, and Delivered stages
 
-In this part, we'll provision the last four stages of your pipeline with the infrastructure they need to run the awesome_customers cookbook. Just as you did when you installed Chef Delivery, you can choose to use AWS to provision the stages or to provision them manually, via SSH. No matter which one you select, we'll use key-based authentication because it's more secure than password authentication and it's simpler to use.
+In this part, we'll provision the last four stages of your pipeline with the infrastructure they need to run the `awesome_customers` cookbook. Here you'll use automated provisioning with AWS to bring up these infrastructure pieces.
 
-When you installed Chef Delivery, the installer created an encryption key for you, located at  <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/encrypted\_data\_bag\_secret</code>. We'll use that key to:
+[AWS] Remember, if you prefer to use another cloud provider or want to run your infrastructure on-prem, feel free to adapt the code you see. If you have questions, join us on [Discourse](https://discourse.chef.io/c/delivery).
 
-  * Encrypt our AWS credentials in a data bag if you're using the AWS provisioner.
-  * Encrypt the private key used for SSH authentication in a data bag for both AWS and SSH.
-  * Encrypt the secret file used to decrypt the database password used by the Customers web application.
+When you installed Chef Delivery, the installer created an encryption key for you, located at<br>  <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/encrypted\_data\_bag\_secret</code>. That encryption key gets copied to the build node each time it performs a job. That means you can use it to encrypt data on your workstation or provisioning node and decrypt it when the build-cookbook runs.
+
+You'll use the key to encrypt these items in a data bag:
+
+  * Your AWS credentials.
+  * Your private key used for SSH authentication to EC2 instances.
+  * Your secret file that's used to decrypt the database password used by the Customers web application.
+
+[COMMENT] In this scenario, there are two files named <code class="file-path">encrypted\_data\_bag\_secret</code> &ndash; the one that Chef Delivery provides for you to encrypt additional data and the one that the `awesome_customers` cookbook uses to decrypt database passwords. Here, you're using the first encryption key to encrypt the second.
 
 You'll create node attributes in your build cookbook that describe your Acceptance, Union, Rehearsal, and Delivered stages and reference those attributes in your recipe for the provision phase.
 
-[PRODNOTE] I can't get this to work using the SSH driver. I need someone to help fix what's wrong.
-
 ### Create a data bag to hold provisioning data
 
-In this part, you'll create a data bag to hold your SSH private key. You'll also encrypt your AWS credentials in a data bag if you're using AWS.
+In this part, you'll create a data bag to hold your SSH private key. You'll also encrypt your AWS credentials in the data bag.
 
 ```bash
 $ cd ~/Development/delivery-cluster
@@ -26,18 +30,20 @@ $ knife data bag create provisioning-data
 Created data_bag[provisioning-data]
 ```
 
-### Encrypt and upload your private key
+### Encrypt and upload your SSH private key
 
-In [Get set up](/build-a-delivery-pipeline/rhel/get-set-up/), you chose whether to use AWS or SSH to provision your Acceptance, Union, Rehearsal, and Delivered stages. In either case, you have a private key file that enables you to connect to the servers over SSH. In this part, you'll encrypt your key and add it to your data bag.
+In this part, you'll encrypt your SSH private key and add it to your data bag.
 
-Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json</code> and add this, replacing `YOUR_NAME` and `YOUR_PRIVATE_KEY` with your values.
+Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json</code> and add this, replacing `YOUR_NAME` and `YOUR_PRIVATE_KEY` with your values (`YOUR_NAME` should not include .pem or any file extension.)
 
 ```ruby
 # ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
 {
   "id": "ssh_key",
-  "name": "YOUR_NAME"
-  "private_key": "YOUR_PRIVATE_KEY"
+  "default": {
+    "name": "YOUR_NAME",
+    "private_key": "YOUR_PRIVATE_KEY"
+  }
 }
 ```
 
@@ -47,10 +53,14 @@ You'll need to replace each line break with `\n` in your file. For example:
 # ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
 {
   "id": "ssh_key",
-  "name": "learn-chef"
-  "private_key": "-----BEGIN RSA PRIVATE KEY-----\ngz5jKCX3TO...j8ErLWsr==\n-----END RSA PRIVATE KEY-----"
+  "default": {
+    "name": "learn-chef",
+    "private_key": "-----BEGIN RSA PRIVATE KEY-----\ngz5jKCX3TO...j8ErLWsr==\n-----END RSA PRIVATE KEY-----"
+  }
 }
 ```
+
+The format of the data bag item matches what's required to use the [encrypted\_data\_bag\_item\_for\_environment](https://github.com/sethvargo/chef-sugar/blob/a9c3260bd1ead486465411f23812ccc4d03a69e7/lib/chef/sugar/data_bag.rb#L83) helper method, which we'll later use to decrypt the data bag.
 
 Encrypt and upload the data bag item.
 
@@ -66,24 +76,29 @@ Verify you can decrypt it back.
 # ~/Development/delivery-cluster
 $ knife data bag show provisioning-data ssh_key --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Encrypted data bag detected, decrypting with provided secret.
-id:          ssh_key
-name:        learn-chef
-private_key: -----BEGIN RSA PRIVATE KEY-----
-gz5jKCX3TO...
-...j8ErLWsr==
------END RSA PRIVATE KEY-----
+default:
+  name:        learn-chef
+  private_key: -----BEGIN RSA PRIVATE KEY-----
+  gz5jKCX3TO...
+  ...j8ErLWsr==
+  -----END RSA PRIVATE KEY-----
+id:      ssh_key
 ```
 
-### EC2 only - Encrypt and upload your AWS credentials
+### Encrypt and upload your AWS credentials
 
 Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json</code> and add this, replacing `YOUR_ACCESS_KEY_ID` and `YOUR_SECRET_ACCESS_KEY` with your values.
 
 ```ruby
 # ~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
 {
-  "id": "aws_creds",
-  "access_key_id": "YOUR_ACCESS_KEY_ID",
-  "secret_access_key": "YOUR_SECRET_ACCESS_KEY"
+  "default": {
+    "profile": "PROFILE",
+    "region": "REGION",
+    "access_key_id": "YOUR_ACCESS_KEY_ID",
+    "secret_access_key": "YOUR_SECRET_ACCESS_KEY"
+  },
+  "id": "aws_creds"
 }
 ```
 
@@ -92,10 +107,13 @@ For example:
 ```ruby
 # ~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
 {
-  "id": "aws_creds",
-  "region": "us-west-2",
-  "access_key_id": "AKIAIOSFODNN7EXAMPLE",
-  "secret_access_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+  "default": {
+    "profile": "default",
+    "region": "us-west-2",
+    "access_key_id": "AKIAIOSFODNN7EXAMPLE",
+    "secret_access_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+  },
+  "id": "aws_creds"
 }
 ```
 
@@ -113,22 +131,27 @@ Verify you can decrypt it back.
 # ~/Development/delivery-cluster
 $ knife data bag show provisioning-data aws_creds --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Encrypted data bag detected, decrypting with provided secret.
-access_key_id:     AKIAIOSFODNN7EXAMPLE
-secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-id:                aws_creds
+default:
+  access_key_id:     AKIAIOSFODNN7EXAMPLE
+  profile:           default
+  region:            us-west-2
+  secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+id:      aws_creds
 ```
 
 ### Encrypt and upload the decryption key for the Customers web application
 
-In this step, you'll encrypt and upload the decryption key for the Customers web application. You can either use the key you generated in [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel/), or the one you generated in the [Encrypt and upload your private key](/build-a-delivery-pipeline/rhel/write-the-build-cookbook#encryptanduploadyourprivatekey) portion of this tutorial.
+In this step, you'll encrypt and upload the decryption key for the Customers web application. You can either use the key you generated in [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel/), or the one you generated in the [Prepare your encryption key and encrypted data bag items](#prepareyourencryptionkeyandencrypteddatabagitems) portion of this tutorial.
 
 Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/database\_passwords\_key.json</code> and add this:
 
 ```ruby
 # ~/Development/delivery-cluster/.chef/delivery-cluster-data/database_passwords_key.json
 {
-  "id": "database_passwords_key",
-  "content": "YOUR_DECRYPTION_KEY"
+  "default": {
+    "content": "YOUR_DECRYPTION_KEY"
+  },
+  "id": "database_passwords_key"  
 }
 ```
 
@@ -137,8 +160,10 @@ For example:
 ```ruby
 # ~/Development/delivery-cluster/.chef/delivery-cluster-data/database_passwords_key.json
 {
-  "id": "database_passwords_key",
-  "content": "u8eF924qkscvx+edZfynrpMi3JS0fLE1qHoJaN9Yzba0O79H5WQGUjRWaXTqUEaj/TqeEYL4F1j8R4jiwI5hJPmo91hukcWhpgxCrvvw0ajku1e3InKMWWDcOAv8frkHgTwoqLXjkbVJyYJ4A1o9Hc/jHTlweicK39pETi76emkaxVXQCRcq9pi+OxNVYMeRucGqZZrp8kgRChPLYrmzTOpkJ5uaFXq/OVRZSQUA7lAUAcBVwXSvnY5PiisZjsEwF/cOTlLfLjcRGz4820RpM0TyxgqG5o4JsJ/tfKbn8bz2DExaW5rIUhx/EAdaK8xOiihTsP8n67XV7fwAT1wHmeTg4n/aAr57OW3hZk2eAXP2l9hRKy3b8W42jJnUZ92rOKBTIfAz2B7lxBzDphdntrQYtuLO7PmaKjDwZX7U7OoEUNvKjnnp0nTZcyECc3dlF0JSj1w6yobK1uzlyQRoRUcD8TtAOWBazmol3pY9fhLu5ZVhOYoOuKmyDDCYgk8SLSL/rSSHbPKtHo77amqR68IDT9gCK3ZCM7XF97IJBefoK5UYDFwKIYKaX9GYhUoJf0EXZLvHn/GxzEDK8fanFeaIYFU68WBpmONng8IGndYhgBhu6yA3hyrlvQRkZHpf+1pDxjOh1neDv0+A12FusGbehZOKhCfn1I0Q5rQLO7V="
+  "default": {
+    "content": "u8eF924qkscvx+edZfynrpMi3JS0fLE1qHoJaN9Yzba0O79H5WQGUjRWaXTqUEaj/TqeEYL4F1j8R4jiwI5hJPmo91hukcWhpgxCrvvw0ajku1e3InKMWWDcOAv8frkHgTwoqLXjkbVJyYJ4A1o9Hc/jHTlweicK39pETi76emkaxVXQCRcq9pi+OxNVYMeRucGqZZrp8kgRChPLYrmzTOpkJ5uaFXq/OVRZSQUA7lAUAcBVwXSvnY5PiisZjsEwF/cOTlLfLjcRGz4820RpM0TyxgqG5o4JsJ/tfKbn8bz2DExaW5rIUhx/EAdaK8xOiihTsP8n67XV7fwAT1wHmeTg4n/aAr57OW3hZk2eAXP2l9hRKy3b8W42jJnUZ92rOKBTIfAz2B7lxBzDphdntrQYtuLO7PmaKjDwZX7U7OoEUNvKjnnp0nTZcyECc3dlF0JSj1w6yobK1uzlyQRoRUcD8TtAOWBazmol3pY9fhLu5ZVhOYoOuKmyDDCYgk8SLSL/rSSHbPKtHo77amqR68IDT9gCK3ZCM7XF97IJBefoK5UYDFwKIYKaX9GYhUoJf0EXZLvHn/GxzEDK8fanFeaIYFU68WBpmONng8IGndYhgBhu6yA3hyrlvQRkZHpf+1pDxjOh1neDv0+A12FusGbehZOKhCfn1I0Q5rQLO7V="
+  },
+  "id": "database_passwords_key"  
 }
 ```
 
@@ -156,20 +181,23 @@ Verify you can decrypt it back.
 # ~/Development/delivery-cluster
 $ knife data bag show provisioning-data database_passwords_key --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Encrypted data bag detected, decrypting with provided secret.
-content: u8eF924qkscvx+edZfynrpMi3JS0fLE1qHoJaN9Yzba0O79H5WQGUjRWaXTqUEaj/TqeEYL4F1j8R4jiwI5hJPmo91hukcWhpgxCrvvw0ajku1e3InKMWWDcOAv8frkHgTwoqLXjkbVJyYJ4A1o9Hc/jHTlweicK39pETi76emkaxVXQCRcq9pi+OxNVYMeRucGqZZrp8kgRChPLYrmzTOpkJ5uaFXq/OVRZSQUA7lAUAcBVwXSvnY5PiisZjsEwF/cOTlLfLjcRGz4820RpM0TyxgqG5o4JsJ/tfKbn8bz2DExaW5rIUhx/EAdaK8xOiihTsP8n67XV7fwAT1wHmeTg4n/aAr57OW3hZk2eAXP2l9hRKy3b8W42jJnUZ92rOKBTIfAz2B7lxBzDphdntrQYtuLO7PmaKjDwZX7U7OoEUNvKjnnp0nTZcyECc3dlF0JSj1w6yobK1uzlyQRoRUcD8TtAOWBazmol3pY9fhLu5ZVhOYoOuKmyDDCYgk8SLSL/rSSHbPKtHo77amqR68IDT9gCK3ZCM7XF97IJBefoK5UYDFwKIYKaX9GYhUoJf0EXZLvHn/GxzEDK8fanFeaIYFU68WBpmONng8IGndYhgBhu6yA3hyrlvQRkZHpf+1pDxjOh1neDv0+A12FusGbehZOKhCfn1I0Q5rQLO7V=
+default:
+  content: u8eF924qkscvx+edZfynrpMi3JS0fLE1qHoJaN9Yzba0O79H5WQGUjRWaXTqUEaj/TqeEYL4F1j8R4jiwI5hJPmo91hukcWhpgxCrvvw0ajku1e3InKMWWDcOAv8frkHgTwoqLXjkbVJyYJ4A1o9Hc/jHTlweicK39pETi76emkaxVXQCRcq9pi+OxNVYMeRucGqZZrp8kgRChPLYrmzTOpkJ5uaFXq/OVRZSQUA7lAUAcBVwXSvnY5PiisZjsEwF/cOTlLfLjcRGz4820RpM0TyxgqG5o4JsJ/tfKbn8bz2DExaW5rIUhx/EAdaK8xOiihTsP8n67XV7fwAT1wHmeTg4n/aAr57OW3hZk2eAXP2l9hRKy3b8W42jJnUZ92rOKBTIfAz2B7lxBzDphdntrQYtuLO7PmaKjDwZX7U7OoEUNvKjnnp0nTZcyECc3dlF0JSj1w6yobK1uzlyQRoRUcD8TtAOWBazmol3pY9fhLu5ZVhOYoOuKmyDDCYgk8SLSL/rSSHbPKtHo77amqR68IDT9gCK3ZCM7XF97IJBefoK5UYDFwKIYKaX9GYhUoJf0EXZLvHn/GxzEDK8fanFeaIYFU68WBpmONng8IGndYhgBhu6yA3hyrlvQRkZHpf+1pDxjOh1neDv0+A12FusGbehZOKhCfn1I0Q5rQLO7V=
 id:      database_passwords_key
 ```
 
 ### Create a branch
 
-* Move to your <code class="file-path">~/Development/delivery-cluster</code> directory.
+Now you'll create a branch for your changes to the `provision` recipe.
+
+First, move to your <code class="file-path">~/Development/delivery-cluster</code> directory.
 
 ```bash
 # ~/Development/delivery-cluster
-$ cd ~/Development/deliver-customers-rhel/
+$ cd ~/Development/deliver-customers-rhel
 ```
 
-First, verify that you're on the `master` branch.
+Verify that you're on the `master` branch.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -198,20 +226,16 @@ $ git branch
 
 You've already created a file to hold your default attributes.
 
-Append this code to your default node attributes file, <code class="file-path">default.rb</code>.
+Make your default node attributes file, <code class="file-path">default.rb</code>, look like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
+default['delivery']['config']['delivery-truck']['publish']['chef_server'] = true
+
 default['deliver-customers-rhel']['run_list'] = ['recipe[awesome_customers::default]']
 
 %w(acceptance union rehearsal delivered).each do |stage|
-  default['deliver-customers-rhel'][stage]['driver'] = 'ssh'
-end
-
-%w(acceptance union rehearsal delivered).each do |stage|
   default['deliver-customers-rhel'][stage]['aws']['config'] = {
-    region: 'us-west-2',
-    profile: 'default',
     machine_options: {
       admin: nil,
       bootstrap_options: {
@@ -231,106 +255,23 @@ end
     }
   }
 end
-
-default['deliver-customers-rhel']['acceptance']['ssh']['config'] = {
-  machine_options: {
-    transport_options: {
-      ip_address: '52.27.142.7',
-      username: 'root',
-      ssh_options: {
-        user: 'root'
-      },
-      options: {
-        prefix: 'sudo '
-      }
-    }
-  }
-}
-
-default['deliver-customers-rhel']['union']['ssh']['config'] = {
-  machine_options: {
-    transport_options: {
-      ip_address: '52.89.111.13',
-      username: 'root',
-      ssh_options: {
-        user: 'root'
-      },
-      options: {
-        prefix: 'sudo '
-      }
-    }
-  }
-}
-
-default['deliver-customers-rhel']['rehearsal']['ssh']['config'] = {
-  machine_options: {
-    transport_options: {
-      ip_address: '52.88.245.86',
-      username: 'root',
-      ssh_options: {
-        user: 'root'
-      },
-      options: {
-        prefix: 'sudo '
-      }
-    }
-  }
-}
-
-default['deliver-customers-rhel']['delivered']['ssh']['config'] = {
-  machine_options: {
-    transport_options: {
-      ip_address: '54.69.73.21',
-      username: 'root',
-      ssh_options: {
-        user: 'root'
-      },
-      options: {
-        prefix: 'sudo '
-      }
-    }
-  }
-}
 ```
 
-This code defines the attributes of both the AWS and SSH drivers. You'll configure the one you're using.
+Line 1 contains the node attribute you defined previously. It tells the `delivery-truck` cookbook's publish phase to publish your cookbooks to Chef server.
 
-In line 1, `default['deliver-customers-rhel']['run_list']` specifies the run-list that configures the Customers web application. You'll use this attribute later when you provision the stages's infrastructure environments.
+Line 3 specifies the run-list that configures the Customers web application. This node attribute makes the code you'll write later to provision your stage's infrastructure environment more reusable.
 
-Lines 3-5 set the stages to use either the AWS or SSH driver. The example sets up the stages to use SSH. If you're using the AWS driver, ensure this value is set to 'aws' rather than 'ssh'. The code sets each stage to use the same driver, but you can configure it so that different stages use different drivers. For example, here's how you would configure the Acceptance, Union, and Rehearsal stages to use the AWS driver and the Delivered stage to use the SSH driver.
+Lines 5-25 describe the configuration of the AWS driver. For simplicity, we define each stage the same way. And for many cases this makes sense because you'll typically want your verification stages to match your production environment. However, perhaps for a web application you'll need to allow access to your Acceptance stage's firewall on certain ports through your security groups for verification purposes. Your Delivered stage might use more constrained security group settings.
 
-```ruby
-# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
-%w(acceptance union rehearsal).each do |stage|
-  default['deliver-customers-rhel'][stage]['driver'] = 'aws'
-end
-default['deliver-customers-rhel']['delivered']['driver'] = 'ssh'
-```
+Replace the following with the values you [gathered earlier](/build-a-delivery-pipeline/rhel/get-set-up#step4).
 
-Lines 7-29 describe the configuration of the AWS driver.
-
-For simplicity, define each stage the same way. But in practice, you might have different configurations for each stage. For example, you might run your Acceptance stage as a t2.micro instance with an open firewall through your security groups. Your Delivered stage might be a larger instance with a more constrained security group setting.
-
-If you're using the AWS driver, replace the following with your values.
-
-* `region`
-* `profile`
 * `instance_type`
 * `security_group_ids`
 * `subnet_id`
 * `image_id`
 * `ssh_username`
-* `transport_address_location`
 
-If you're not using the AWS driver, you can ignore this section of the file.
-
-Lines 31-89 describes the configuration of the SSH driver. If you're using the SSH driver, replace the following with your values.
-
-* `ip_address`
-* `username`
-* `user`
-
-[PRODNOTE] What's the difference between `username` and `user`??.
+If you connect to your EC2 instances using their private IP addresses, specify `:private_ip` for `transport_address_location`. If you connect using their public addresses, specify `:public_ip`.
 
 ### Write the recipe for the provision phase
 
@@ -338,11 +279,9 @@ Now that our Chef server has the encrypted data bag items that we need to provis
 
 We need to:
 
-* Decrypt the encryption key that decrypts the data bags containing the database passwords. The Customers application uses these passwords to connect to the database in order to retrieve customer records. We perform this step in this recipe because Chef provisioning enables us to easily pass that file to the machine when it's provisioned.
-* Decrypt the SSH key that's used to connect to the machine (for both the AWS and SSH drivers). Chef provisioning uses that key to connect to the machine so it can install and run chef-client.
-* Set up the appropriate library for the Chef provisioning driver, which can be either AWS or SSH.
-* Bring up the machine and bootstrap it to our Chef server, using the driver-specific options that we specified in the default attributes file.
-
+* Decrypt the secret key that decrypts the database passwords. The Customers application uses these passwords to connect to the database in order to retrieve customer records. We perform this step in this recipe because Chef provisioning enables us to easily pass files to a machine when it's provisioned.
+* Decrypt the private SSH key that's used to connect to the EC2 instance. Chef provisioning uses that key to connect to the machine so it can install and run chef-client.
+* Bring up the machine and bootstrap it to our Chef server, using the options that we specified in the default attributes file.
 
 #### Decrypt the encryption key that contains the database passwords
 
@@ -372,9 +311,7 @@ include_recipe 'chef-sugar::default'
 
 Earlier, you used `with_server_config` to change the behavior of `chef-client` to work with your Chef server rather than with a temporary in-memory version.
 
-We need to follow the same pattern here in order to access the encrypted data bags. But this time we need to call the `Chef_Delivery::ClientHelper.enter_client_mode_as_delivery` helper method. This is because `with_server_config` takes a block, and when that block completes, the previous Chef server configuration (the one for the in-memory version) is restored. Chef provisioning requires the real Chef server context for longer because it can perform additional processing in the background.
-
-[PRODNOTE] Can a reviewer try replacing `Chef_Delivery::ClientHelper.enter_client_mode_as_delivery` with `load_delivery_chef_config` and report back to me? It's a new helper method that's now preferred. Hot off the presses, in fact.
+We need to follow the same pattern here in order to access the encrypted data bags. But this time we need to call the `load_delivery_chef_config` helper method. This is because `with_server_config` takes a block, and when that block completes, `with_server_config` restores the previous Chef server configuration (the one for the in-memory version.) Chef provisioning requires your real Chef server context for longer because it performs additional processing in the background. The `load_delivery_chef_config` does not restore the previous Chef server configuration.
 
 Add this to your `provision` recipe.
 
@@ -383,7 +320,7 @@ Add this to your `provision` recipe.
 include_recipe 'delivery-truck::provision'
 include_recipe 'chef-sugar::default'
 
-Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+load_delivery_chef_config
 ```
 
 Now append this to your `provision` recipe to decrypt the data bag that holds the database passwords.
@@ -422,37 +359,27 @@ file File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")  do
 end
 ```
 
-#### Set up the Chef provisioning driver
+#### Create variables to make the recipe more readable
 
-In this step, we configure the Chef provisioning driver. We include both AWS- and SSH-specific details in the same recipe.
-
-Before we do so, let's create a few variables that we'll use throughout the recipe:
+Let's create two variables that we'll use throughout the recipe:
 
 * the name of the project
 * the current Chef Delivery stage
-* the name of the Chef provisioning driver for this stage
-* the region and profile your AWS credentials are associated with
 
 Append this to your `provision` recipe.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
-# Read common configuration options from node attributes so that we can later access them more easily.
+# Read common configuration options from node attributes.
 project = node['delivery']['change']['project'] # for example, 'deliver-customers-rhel'
 stage = node['delivery']['change']['stage'] # for example, 'acceptance' or 'union'
-driver = node[project][stage]['driver'] # for example, 'aws' or 'ssh'
-region = node[project][stage][driver]['config']['region'] # for example, 'us-west-2'
-profile = node[project][stage][driver]['config']['profile'] # for example, 'default'
 ```
 
-* Now let's perform driver-specific initialization. We need to:
-  * load the driver library.
-  * set the current driver.
-  * use the driver-specific method for specifying the SSH private key.
-* For AWS, we'll also need to load the AWS credentials from the encrypted data bag.
-* For SSH, we'll need to download and install the `chef-provisioning-ssh` Gem package.
+#### Write your AWS credentials file to the build node
 
-Before we do that, let's write a recipe named `_aws_creds` that decrypts the AWS credentials from the data bag and and writes them to file.
+In this part, you'll write your AWS credentials file to disk on your build node. Chef provisioning uses this file to authenticate requests to create and manage EC2 instances.
+
+First, let's write a recipe named `_aws_creds` that decrypts the AWS credentials from the data bag and writes them to file.
 
 Run the following.
 
@@ -473,25 +400,16 @@ The underscore `_` notation in the file name is a convention that shows that the
 
 Add this to <code class="file-path">\_aws\_creds.rb</code>.
 
-TODO: Explain it.
-
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/_aws_creds.rb
 with_server_config do
-  # Read common configuration options from node attributes so that we can later access them more easily.
-  project = node['delivery']['change']['project'] # for example, 'deliver-customers-rhel'
-  stage = node['delivery']['change']['stage'] # for example, 'acceptance' or 'union'
-  driver = node[project][stage]['driver'] # for example, 'aws' or 'ssh'
-  region = node[project][stage][driver]['config']['region'] # for example, 'us-west-2'
-  profile = node[project][stage][driver]['config']['profile'] # for example, 'default'
-
   # Decrypt the AWS credentials from the data bag.
   aws_creds = encrypted_data_bag_item_for_environment('provisioning-data', 'aws_creds')
 
   # Create a string to hold the contents of the credentials file.
   aws_config_contents = <<-EOF
-  [#{profile}]
-  region = #{region}
+  [#{aws_creds['profile']}]
+  region = #{aws_creds['region']}
   aws_access_key_id = #{aws_creds['access_key_id']}
   aws_secret_access_key = #{aws_creds['secret_access_key']}
   EOF
@@ -515,53 +433,33 @@ with_server_config do
 end
 ```
 
-Add this to <code class="file-path">provision.rb</code>.
+This code:
 
-TODO: Explain.
+* calls `with_server_config` to switch `chef-client` to work with your Chef server rather than with a temporary in-memory version.
+* decrypts the data bag item containing the AWS credentials.
+* writes the credentials file to a workspace location on disk.
+* sets the `AWS_CONFIG_FILE` environment variable. This environment variable tells Chef provisioning where the AWS credentials file is located.
+
+Now run your <code class="file-path">\_aws\_creds</code> recipe from your `provision` recipe. Add the following.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
-# Perform driver-specific initialization, such as loading the appropriate library.
-# For learning purposes, we'll do that directly in this recipe.
-# In practice, you might abstract this into a helper library.
-case driver
-when 'aws'
-  # Load the AWS driver.
-  require "chef/provisioning/aws_driver"
-  # Load AWS credentials.
-  include_recipe "#{cookbook_name}::_aws_creds"
-  # Set the AWS driver as the current one.
-  with_driver "aws::#{region}::#{profile}"
-  # Use the driver-specific method for specifying the SSH private key.
-  with_machine_options(
-    bootstrap_options: {
-      key_name: ssh_key['name'],
-      key_path: ssh_private_key_path,
-    }
-  )
-when 'ssh'
-  # chef-provisioning-ssh does not come with the Chef DK, so we need to install it manually.
-  # For learning purposes, we'll install it if it's not already installed.
-  # In practice, you might pin it to a specific version and upgrade it periodically.
-  execute 'install the chef-provisioning-ssh gem' do
-    cwd node['delivery_builder']['repo']
-    command 'chef gem install chef-provisioning-ssh'
-    not_if "chef gem list chef-provisioning-ssh | grep 'chef-provisioning-ssh'"
-    user node['delivery_builder']['build_user']
-  end
-  # Load the SSH driver.
-  require "chef/provisioning/ssh_driver"
-  # Set the SSH driver as the current one.
-  with_driver 'ssh'
-  # Use the driver-specific method for specifying the SSH private key.
-  with_machine_options(
-    transport_options: {
-      ssh_options: {
-        keys: [File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")]
-      }
-    }
-  )
-end
+# Load AWS credentials.
+include_recipe "#{cookbook_name}::_aws_creds"
+```
+
+#### Set up the Chef provisioning driver
+
+Chef provisioning uses [drivers](https://docs.chef.io/provisioning.html#drivers) to connect to various cloud and virtualization providers. In this part, we need to initialize the AWS driver.
+
+Add this to <code class="file-path">provision.rb</code>.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
+# Load the AWS driver.
+require 'chef/provisioning/aws_driver'
+# Set the AWS driver as the current one.
+with_driver 'aws'
 ```
 
 #### Bring up the machine
@@ -582,37 +480,37 @@ with_chef_server Chef::Config[:chef_server_url],
   ssl_verify_mode: :verify_none,
   verify_api_cert: false
 
-# Ensure that the machine is bootstrapped, has the correct run-list, and is ready to run chef-client.
-# If you're using the AWS driver, this will create the instance if the instance does not exist.
-machine_name = "#{stage}-#{project}-#{driver}"
-machine machine_name do
+# Ensure that the machine exists, is bootstrapped, has the correct run-list, and is ready to run chef-client.
+machine "#{stage}-#{project}" do
   action [:setup]
   chef_environment delivery_environment
   converge false
   files '/etc/chef/encrypted_data_bag_secret' => File.join(database_passwords_key_path, 'database_passwords_key')
   run_list node[project]['run_list']
-  add_machine_options node[project][stage][driver]['config']['machine_options']
+  add_machine_options bootstrap_options: {
+    key_name: ssh_key['name'],
+    key_path: ssh_private_key_path,
+  }
+  add_machine_options node[project][stage]['aws']['config']['machine_options']
 end
 ```
 
 The [:setup](https://docs.chef.io/resource_machine.html#actions) action gets the machine ready to use with Chef by bootstrapping it to your Chef server and installing `chef-client`. It does not apply the run-list.
 
-The machine name can be anything you like. A common convention is to concatenate the current stage name and the project name. In this tutorial, were concatenate the current stage name, the project name, and the driver.
+The machine name can be anything you like. We follow a common convention, which is to concatenate the current stage name and the project name.
 
-For the Acceptance stage, the name will be either 'acceptance-deliver-customers-rhel-aws' or 'acceptance-deliver-customers-rhel-ssh', depending on which driver you're using.
+The `files` attribute copies the secret file that decrypts the database passwords to <code class="file-path">/etc/chef/encrypted\_data\_bag\_secret</code> on the machine.
 
-One benefit to including the driver name is that you can switch between the AWS and the SSH driver as you experiment. For example, you can start with the AWS driver to create a machine named 'acceptance-deliver-customers-rhel-aws'. If you later switch the SSH driver by setting the `node['deliver-customers-rhel'][stage]['driver']` node attribute to 'ssh', Chef provisioning will switch over to the machine named 'acceptance-deliver-customers-rhel-ssh'.
-
-[COMMENT] It's common practice to write your `machine` and other Chef provisioning resources so that they can be used by multiple drivers. For example, here we use node attributes and the `add_machine_options` method to separate driver-specific data from the `machine` resource that defines each environment.<br><br>As your project grows in complexity, you can write helper libraries that abstract driver-specific features even further. A good example is from the `delivery-cluster` cookbook. This cookbook defines the [DeliveryCluster::Provisioning::Base](https://github.com/chef-cookbooks/delivery-cluster/blob/master/libraries/_base.rb) class to abstract away common driver-specific details, such as how to access a machine's IP address. The [DeliveryCluster::Provisioning::Aws](https://github.com/chef-cookbooks/delivery-cluster/blob/master/libraries/aws.rb) and [DeliveryCluster::Provisioning::Ssh](https://github.com/chef-cookbooks/delivery-cluster/blob/master/libraries/ssh.rb) classes fill in the details for the `Base` class. When the cookbook runs, for example to set up [Chef server](https://github.com/chef-cookbooks/delivery-cluster/blob/38123d94ae786caf7222966fcfc1b4747a55ae32/recipes/setup_chef_server.rb) or [Chef Delivery](https://github.com/chef-cookbooks/delivery-cluster/blob/38123d94ae786caf7222966fcfc1b4747a55ae32/recipes/setup_delivery_server.rb), it loads the appropriate helper class that provides the specific details required to set up the server using either the AWS or the SSH provisioning driver.
+The code uses `add_machine_options` to first specify details about the SSH private key that Chef provisioning will use to connect to the machine and then it specifies the options that you specified in your default attributes file (the AMI ID, subnet ID, and so on.)
 
 The complete `provision` recipe looks like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
 include_recipe 'delivery-truck::provision'
-include_recipe 'chef-sugar::default'
+include_recipe 'chef-sugar'
 
-Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+load_delivery_chef_config
 
 # Decrypt the encryption key that decrypts the database passwords and save that file to disk.
 database_passwords_key = encrypted_data_bag_item_for_environment('provisioning-data', 'database_passwords_key')
@@ -638,52 +536,17 @@ file File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")  do
   mode '0600'
 end
 
-# Read common configuration options from node attributes so that we can later access them more easily.
+# Read common configuration options from node attributes.
 project = node['delivery']['change']['project'] # for example, 'deliver-customers-rhel'
 stage = node['delivery']['change']['stage'] # for example, 'acceptance' or 'union'
-driver = node[project][stage]['driver'] # for example, 'aws' or 'ssh'
 
-# Perform driver-specific initialization, such as loading the appropriate library.
-# For learning purposes, we'll do that directly in this recipe.
-# In practice, you might abstract this into a helper library.
-case driver
-when 'aws'
-  # Load the AWS driver.
-  require "chef/provisioning/aws_driver"
-  # Load AWS credentials.
-  include_recipe "#{cookbook_name}::_aws_creds"
-  # Set the AWS driver as the current one.
-  with_driver "aws::#{region}::#{profile}"
-  # Use the driver-specific method for specifying the SSH private key.
-  with_machine_options(
-    bootstrap_options: {
-      key_name: ssh_key['name'],
-      key_path: ssh_private_key_path,
-    }
-  )
-when 'ssh'
-  # chef-provisioning-ssh does not come with the Chef DK, so we need to install it manually.
-  # For learning purposes, we'll install it if it's not already installed.
-  # In practice, you might pin it to a specific version and upgrade it periodically.
-  execute 'install the chef-provisioning-ssh gem' do
-    cwd node['delivery_builder']['repo']
-    command 'chef gem install chef-provisioning-ssh'
-    not_if "chef gem list chef-provisioning-ssh | grep 'chef-provisioning-ssh'"
-    user node['delivery_builder']['build_user']
-  end
-  # Load the SSH driver.
-  require "chef/provisioning/ssh_driver"
-  # Set the SSH driver as the current one.
-  with_driver 'ssh'
-  # Use the driver-specific method for specifying the SSH private key.
-  with_machine_options(
-    transport_options: {
-      ssh_options: {
-        keys: [File.join(ssh_private_key_path, "#{ssh_key['name']}.pem")]
-      }
-    }
-  )
-end
+# Load AWS credentials.
+include_recipe "#{cookbook_name}::_aws_creds"
+
+# Load the AWS driver.
+require 'chef/provisioning/aws_driver'
+# Set the AWS driver as the current one.
+with_driver 'aws'
 
 # Specify information about our Chef server.
 # Chef provisioning uses this information to bootstrap the machine.
@@ -693,16 +556,18 @@ with_chef_server Chef::Config[:chef_server_url],
   ssl_verify_mode: :verify_none,
   verify_api_cert: false
 
-# Ensure that the machine is bootstrapped, has the correct run-list, and is ready to run chef-client.
-# If you're using the AWS driver, this will create the instance if the instance does not exist.
-machine_name = "#{stage}-#{project}-#{driver}"
-machine machine_name do
+# Ensure that the machine exists, is bootstrapped, has the correct run-list, and is ready to run chef-client.
+machine "#{stage}-#{project}" do
   action [:setup]
   chef_environment delivery_environment
   converge false
   files '/etc/chef/encrypted_data_bag_secret' => File.join(database_passwords_key_path, 'database_passwords_key')
   run_list node[project]['run_list']
-  add_machine_options node[project][stage][driver]['config']['machine_options']
+  add_machine_options bootstrap_options: {
+    key_name: ssh_key['name'],
+    key_path: ssh_private_key_path,
+  }
+  add_machine_options node[project][stage]['aws']['config']['machine_options']
 end
 ```
 
@@ -722,11 +587,20 @@ Changes not staged for commit:
 	modified:   .delivery/build-cookbook/metadata.rb
 	modified:   .delivery/build-cookbook/recipes/provision.rb
 
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	.delivery/build-cookbook/recipes/_aws_creds.rb
+	.delivery/build-cookbook/spec/
+
 no changes added to commit (use "git add" and/or "git commit -a")
 $ git add .
 $ git commit -m "provision the environments"
-[provision-environments ff7aea3] provision the environments
- 3 files changed, 186 insertions(+)
+[provision-environments f916771] provision the environments
+ 6 files changed, 147 insertions(+)
+ create mode 100644 .delivery/build-cookbook/recipes/_aws_creds.rb
+ create mode 100644 .delivery/build-cookbook/spec/spec_helper.rb
+ create mode 100644 .delivery/build-cookbook/spec/unit/recipes/_aws_creds_spec.rb
 $ delivery review
 Chef Delivery
 Loading configuration from /home/thomaspetchel/Development/deliver-customers-rhel
@@ -742,7 +616,7 @@ Trace the change's progress through the pipeline to the Acceptance stage, as you
 1. Review the changes in the web interface. Click **Approve** when all tests pass.
 1. Watch the change progress through the Build and Acceptance stages.
 
-After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them as a single unit.
+After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them to Union as a single unit.
 
 #### Verify the creation of the Acceptance stage
 
@@ -763,8 +637,8 @@ Now run `knife node list` and search for your Acceptance stage.
 
 ```bash
 # ~/Development/delivery-cluster/.chef
-$ knife node list | grep acceptance-deliver-customers-rhel-
-acceptance-deliver-customers-rhel-aws
+$ knife node list | grep acceptance-deliver-customers-rhel
+acceptance-deliver-customers-rhel
 ```
 
 As expected, the infrastructure environment for the Acceptance stage appears in the node list.
@@ -778,8 +652,7 @@ $ cd ~/Development/deliver-customers-rhel
 
 #### Merge the change locally
 
-* Let's commit our work back to our local `master` branch.
-* As we did previously, we need to merge the `master` branch locally. Here's a reminder how.
+As before, we need to pull Delivery's `master` branch down to ours. Here's how.
 
 ```bash
 # ~/Development/deliver-customers-rhel

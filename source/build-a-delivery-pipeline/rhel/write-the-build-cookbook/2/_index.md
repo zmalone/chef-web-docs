@@ -4,7 +4,7 @@ Where you publish your projects is up to you. You might publish a cookbook proje
 
 In this tutorial, you'll publish the `awesome_customers` cookbook to Chef server. You'll also need to publish an encrypted data bag to Chef server. This data bag contains encrypted database passwords that the `awesome_customers` requires to set up the web application ([learn more about the process](/manage-a-web-app/rhel/create-a-password-store/).)
 
-The `delivery-truck` cookbook's `publish` recipe is already set up to publish your cookbook to Chef server, Chef Supermarket, and GitHub. All you need to do is set a node attribute.
+The `delivery-truck` cookbook's `publish` recipe is already set up to publish your cookbook to Chef server, Chef Supermarket, and GitHub. You set node attributes to specify which targets to publish to.
 
 ### Create a branch
 
@@ -38,7 +38,7 @@ To enable the `delivery-truck` cookbook to upload your cookbook to Chef server, 
 Run this command to generate the file.
 
 ```bash
-# ~/Development/deliver-customers-rhel/.delivery
+# ~/Development/deliver-customers-rhel
 $ chef generate attribute .delivery/build-cookbook default
 Compiling Cookbooks...
 Recipe: code_generator::attribute
@@ -65,7 +65,7 @@ The `delivery-truck` cookbook reads this attribute and automatically uploads any
 
 ### Prepare your encryption key and encrypted data bag items
 
-If you've gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, copy your encrypted data bag items, <code class="file-path">db\_admin\_password.json</code> and <code class="file-path">sql\_server\_root\_password.json</code> to the <code class="file-path">~/Development/deliver-customers-rhel/data\_bags/passwords</code> directory. You can then move to the next step.
+If you've gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, copy your encrypted data bag items, <code class="file-path">db\_admin\_password.json</code> and <code class="file-path">sql\_server\_root\_password.json</code> to the <code class="file-path">~/Development/deliver-customers-rhel/data\_bags/passwords</code> directory. You can then move to the next step. You'll handle getting your data bag encryption key to the Chef server a bit later.
 
 If you haven't gone through this tutorial, or no longer have your encrypted data bag items or your encryption key, you'll create them now.
 
@@ -103,8 +103,6 @@ To do that, you call the `with_server_config` helper method. This helper method 
 
 To upload the encrypted data bag items, we'll use the built-in `execute` resource to run the `knife` command. We need to both create the data bag and then upload our two data bag items.
 
-[PRODNOTE] Why do we need `--config` if we're already saying `with_server_config`? It seeme redundant, but it's the only way that works.
-
 Write out your build cookbook's `publish` recipe like this.
 
 ```ruby
@@ -130,9 +128,9 @@ The first `execute` resource uses a `not_if` guard to ensure that the data bag i
 
 ### Increment the awesome_customers cookbook's version
 
-The `delivery-truck` cookbook acts only on cookbooks that have changed (in other words, only on cookbooks that have files that are part of the current Git commit.) This enables the pipeline to move more quickly by performing only necessary work.
+Recall that the `delivery-truck` cookbook acts only on cookbooks that have changed to enable the pipeline to move more quickly.
 
-Let's make a basic change to trigger the unit, lint, syntax, and publish phases to run. You'll increment the `awesome_customers` cookbook's version from 0.3.0 to 1.0.0, which, according to [Semantic Versioning](http://semver.org), marks the cookbook as ready for production.
+Let's make a basic change to `awesome_customers` to trigger the unit, lint, syntax, and publish phases to run. You'll increment the `awesome_customers` cookbook's version from 0.3.0 to 1.0.0, which, according to [Semantic Versioning](http://semver.org), marks the cookbook as ready for production.
 
 In your `awesome_customers` cookbook's metadata file, <code class="file-path">metadata.rb</code>, update the `version` field from 0.3.0 to 1.0.0, like this.
 
@@ -164,6 +162,7 @@ Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git checkout -- <file>..." to discard changes in working directory)
 
+	modified:   .delivery/build-cookbook/recipes/publish.rb
 	modified:   cookbooks/awesome_customers/metadata.rb
 
 Untracked files:
@@ -174,8 +173,8 @@ Untracked files:
 no changes added to commit (use "git add" and/or "git commit -a")
 $ git add .
 $ git commit -m "publish version 1.0.0 to Chef server"
-[publish-customers-app b9b9bf0] publish version 1.0.0 to Chef server
- 2 files changed, 2 insertions(+), 1 deletion(-)
+[publish-customers-app 148aac2] publish version 1.0.0 to Chef server
+ 3 files changed, 16 insertions(+), 1 deletion(-)
  create mode 100644 .delivery/build-cookbook/attributes/default.rb
 ```
 
@@ -191,7 +190,7 @@ Created new patchset
 https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customers-rhel/changes/ac585f79-2d35-4e4d-ae57-c83d1b4922ba
 ```
 
-You'll see the unit, lint and syntax phases test the `awesome_customers` cookbook. For example, the lint phase runs Foodcritic and RuboCop.
+Because we changed the `awesome_customers` cookbook, you'll see the unit, lint and syntax phases test the `awesome_customers` cookbook. For example, the lint phase now runs Foodcritic and RuboCop.
 
 ![](delivery/delivery-lint.png)
 
@@ -200,7 +199,7 @@ Trace the change's progress through the pipeline to the Acceptance stage, as you
 1. Review the changes in the web interface. Click **Approve** when all tests pass.
 1. Watch the change progress through the Build and Acceptance stages.
 
-After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them as a single unit.
+After Acceptance succeeds, don't press the **Deliver** button. We'll queue up additional changes and deliver them to Union as a single unit.
 
 ### Verify that the awesome_customers cookbook and the data bag are on your Chef server
 
@@ -290,7 +289,7 @@ Choose **Data Bags** from the menu on the left, then select **passwords**. You'l
 
 ### Integrate the change locally
 
-As we did previously, we need to merge the remote `master` branch to your local repo. Here's a reminder of how to do this.
+As we did previously, we need to pull Delivery's `master` branch locally. Here's a reminder how.
 
 First, move to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
@@ -317,9 +316,10 @@ From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
  * branch            master     -> FETCH_HEAD
 Updating bd8a8b2..a100d45
 Fast-forward
- .delivery/build-cookbook/attributes/default.rb           | 1 +
- cookbooks/awesome_customers/metadata.rb                  | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ .delivery/build-cookbook/attributes/default.rb |  1 +
+ .delivery/build-cookbook/recipes/publish.rb    | 14 ++++++++++++++
+ cookbooks/awesome_customers/metadata.rb        |  2 +-
+ 3 files changed, 16 insertions(+), 1 deletion(-)
  create mode 100644 .delivery/build-cookbook/attributes/default.rb
 ```
 
