@@ -76,7 +76,14 @@ For example, make your `build-cookcook` cookbook's default recipe, <code class="
 include_recipe 'delivery-truck::default'
 ```
 
-Follow the same pattern for the remaining recipes: <code class="file-path">deploy.rb</code>, <code class="file-path">functional.rb</code>, <code class="file-path">lint.rb</code>, <code class="file-path">provision.rb</code>, <code class="file-path">publish.rb</code>, <code class="file-path">quality.rb</code>, <code class="file-path">security.rb</code>, <code class="file-path">smoke.rb</code>, <code class="file-path">syntax.rb</code>, and <code class="file-path">unit.rb</code>.
+Make your `lint` recipe, <code class="file-path">lint.rb</code>, look like this.
+
+```ruby
+# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/lint.rb
+include_recipe 'delivery-truck::lint'
+```
+
+Follow the same pattern for all recipes: <code class="file-path">default.rb</code>, <code class="file-path">deploy.rb</code>, <code class="file-path">functional.rb</code>, <code class="file-path">lint.rb</code>, <code class="file-path">provision.rb</code>, <code class="file-path">publish.rb</code>, <code class="file-path">quality.rb</code>, <code class="file-path">security.rb</code>, <code class="file-path">smoke.rb</code>, <code class="file-path">syntax.rb</code>, and <code class="file-path">unit.rb</code>.
 
 ### Commit the changes
 
