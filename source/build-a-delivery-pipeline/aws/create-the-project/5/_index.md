@@ -66,4 +66,4 @@ In practice, you won't necessarily have multiple remotes. The `origin` remote ex
 
 Also remember that you don't have to use Delivery's Git server. We do so for learning purposes and because using the Git server that Delivery already provides is the easiest way to get started.
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/add-delivery-config-v1.0.0) (tag `add-delivery-config-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-add-delivery-config-v1.0.0) (tag `ref-add-delivery-config-v1.0.0`.)

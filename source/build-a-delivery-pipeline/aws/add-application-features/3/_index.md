@@ -182,4 +182,4 @@ Here's what you'll see.
 
 ![](delivery/customers-visualize-data-delivered.png)
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/visualize_data_delivery-v1.0.0) (tag `visualize_data_delivery-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-visualize_data_delivery-v1.0.0) (tag `ref-visualize_data_delivery-v1.0.0`.)

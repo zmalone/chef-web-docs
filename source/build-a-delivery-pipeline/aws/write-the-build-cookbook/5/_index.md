@@ -162,4 +162,4 @@ Fast-forward
  1 file changed, 14 insertions(+)
 ```
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/smoke-test-customers-app-v1.0.0) (tag `smoke-test-customers-app-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-smoke-test-customers-app-v1.0.0) (tag `ref-smoke-test-customers-app-v1.0.0`.)

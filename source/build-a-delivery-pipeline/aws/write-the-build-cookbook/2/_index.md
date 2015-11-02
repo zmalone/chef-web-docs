@@ -323,4 +323,4 @@ Fast-forward
  create mode 100644 .delivery/build-cookbook/attributes/default.rb
 ```
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/publish-customers-app-v1.0.0) (tag `publish-customers-app-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-publish-customers-app-v1.0.0) (tag `ref-publish-customers-app-v1.0.0`.)

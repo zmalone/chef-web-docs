@@ -694,4 +694,4 @@ Fast-forward
  create mode 100644 .delivery/build-cookbook/spec/unit/recipes/_aws_creds_spec.rb
 ```
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/provision-environments-v1.0.0) (tag `provision-environments-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-provision-environments-v1.0.0) (tag `ref-provision-environments-v1.0.0`.)
