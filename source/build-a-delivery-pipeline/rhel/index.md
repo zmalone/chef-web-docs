@@ -1,7 +1,7 @@
 ---
-title: 'Build a continuous delivery pipeline for Red Hat Enterprise Linux with Chef Delivery'
+title: 'Build a continuous delivery pipeline with Chef Delivery on AWS'
 layout: lesson-overview
-platform: Red Hat Enterprise Linux
+platform: Get started with Chef Delivery on AWS
 logo: redhat.svg
 order: 1
 meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
