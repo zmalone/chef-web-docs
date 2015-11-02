@@ -8,16 +8,10 @@ For this tutorial, your Delivery cluster will consist of:
 
 * a Chef Delivery server.
 * a Chef server.
-* a build node to run the Verify and Build stages.
-* a server to run each of the Acceptance, Union, Rehearsal, and Delivered stages, which host the Customers web application. 
+* a build node.
+* a server to run each of the Acceptance, Union, Rehearsal, and Delivered stages, which host the Customers web application.
 
 This tutorial doesn't require you to set up Chef Analytics or Chef Supermarket, or to have three build nodes, as is described in the installation procedure. They are optional.
-
-You can run Chef Delivery, Chef server, and your build node on any [supported platform](https://docs.chef.io/install_delivery_cluster.html#prerequisites).
-
-Your web application servers for the Acceptance, Union, Rehearsal, and Delivered stages must run Red Hat Enterprise Linux or CentOS because the `awesome_customers` cookbook targets those platforms. We recommend that you use Red Hat Enterprise Linux 6.5 or CentOS 6.5.
-
-Your web application servers for this tutorial do not need to be as powerful as what you might need in production. If you're using AWS, you can use t2.micro instances, which is a single 2.5GHz CPU, 1 GB of memory, and 8 GB of disk space. You'll also need to ensure that your web application servers have inbound network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
 
 ### Plan whether to use a provisioning node or your workstation to install Chef Delivery
 
