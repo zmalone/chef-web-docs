@@ -60,6 +60,14 @@ You'll need to replace each line break with `\n` in your file. For example:
 }
 ```
 
+An easy way to replace the line breaks is to run a command similar to this one and copy the output to your file.
+
+```bash
+$ cat ~/.ssh/learn-chef.pem | tr '\r\n' '\\n'
+-----BEGIN RSA PRIVATE KEY-----\ngz5jKCX3TO...j8ErLWsr==\n-----END RSA PRIVATE KEY-----
+```
+
+
 The format of the data bag item matches what's required to use the [encrypted\_data\_bag\_item\_for\_environment](https://github.com/sethvargo/chef-sugar/blob/a9c3260bd1ead486465411f23812ccc4d03a69e7/lib/chef/sugar/data_bag.rb#L83) helper method, which we'll later use to decrypt the data bag.
 
 Encrypt and upload the data bag item.

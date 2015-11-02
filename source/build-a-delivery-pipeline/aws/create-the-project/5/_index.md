@@ -45,7 +45,7 @@ Fast-forward
  create mode 100644 .delivery/config.json
 ```
 
-### A note about remotes
+### A note about Git remotes
 
 To help distinguish between remotes pulled from other servers, Delivery and the delivery command line tool look for a remote named `delivery` to identify the remote associated with Delivery's repository for this project. The `delivery init` command sets up the `delivery` remote for you.
 
