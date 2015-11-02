@@ -47,11 +47,9 @@ Fast-forward
 
 ### A note about remotes
 
-If you're a Git user, you're likely accustomed to working with the `origin` remote, but in this lesson, you fetched and pulled from `delivery`.
+To help distinguish between remotes pulled from other servers, Delivery and the delivery command line tool look for a remote named `delivery` to identify the remote associated with Delivery's repository for this project. The `delivery init` command sets up the `delivery` remote for you.
 
-You pulled from `delivery` because we're cloning an existing GitHub project locally and creating a new Git repo that's hosted on our Chef Delivery Server.
-
-`origin` refers to the original remote on GitHub, and `delivery` refers to our new remote that's hosted on our Chef Delivery server.
+`origin` refers to the original remote on GitHub and `delivery` refers to the new remote that's hosted on Delivery's Git server. Delivery does not interact with the `origin` remote.
 
 To see this, run `git remote -v` to see your remote repositories.
 
@@ -64,6 +62,8 @@ origin	https://github.com/learn-chef/deliver-customers-rhel.git (fetch)
 origin	https://github.com/learn-chef/deliver-customers-rhel.git (push)
 ```
 
-Remember, you don't have to use Chef Delivery's Git server. We do so for learning purposes and because using the Git server that Chef Delivery already provides is the easiest way to get started.
+In practice, you won't necessarily have multiple remotes. The `origin` remote exists as a way for you to obtain starter code that we provide for you.
+
+Also remember that you don't have to use Delivery's Git server. We do so for learning purposes and because using the Git server that Delivery already provides is the easiest way to get started.
 
 [GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/add-delivery-config-v1.0.0) (tag `add-delivery-config-v1.0.0`.)

@@ -275,7 +275,7 @@ build-node-test-1:
 chef_server_url      'https://10.194.12.65/organizations/test'
 ```
 
-Navigate to your `chef_server_url` and login as `delivery`:`delivery`.
+Navigate to your `chef_server_url` and login with username `delivery` and password `delivery`.
 
 From the **Policy** tab, you'll see that the `awesome_customers` cookbook's version is listed as 1.0.0.
 

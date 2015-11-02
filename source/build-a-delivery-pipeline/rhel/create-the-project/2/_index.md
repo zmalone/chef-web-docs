@@ -9,7 +9,7 @@ The next step is to run `delivery init`. This command:
 * creates the <code class="file-path">.delivery</code> directory and adds to it an empty build cookbook and a configuration file.
 * submits the change for review.
 
-Run `delivery init` from your local repository directory.
+Run `delivery init` from your local repository directory. When prompted for a password, use the one for the user you specified when you ran `delivery setup` to configure the Delivery command-line tools during the installation procedure.
 
 ```bash
 # ~/Development/deliver-customers-rhel
