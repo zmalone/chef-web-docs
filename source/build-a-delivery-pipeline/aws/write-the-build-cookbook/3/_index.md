@@ -622,13 +622,13 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 Now let's verify that the infrastructure environment for the Acceptance stage was successfully created. We'll run the `awesome_customers` cookbook in that infrastructure environment when we write the recipe for the deploy phase in the next step.
 
-One way to verify the Acceptance stage is to move to your <code class="file-path">~/Development/delivery-cluster/.chef</code> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
+One way to verify the Acceptance stage is to move to your <code class="file-path">~/Development/delivery-cluster</code> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
 
-First, move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
+First, move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
 
 ```bash
 # ~/Development/deliver-customers-rhel
-$ cd ~/Development/delivery-cluster/.chef
+$ cd ~/Development/delivery-cluster
 ```
 
 The machine name is the same as the node name. Recall that for the Acceptance stage, the machine's name is 'acceptance-deliver-customers-rhel'.
@@ -636,7 +636,7 @@ The machine name is the same as the node name. Recall that for the Acceptance st
 Now run `knife node list` and search for your Acceptance stage.
 
 ```bash
-# ~/Development/delivery-cluster/.chef
+# ~/Development/delivery-cluster
 $ knife node list | grep acceptance-deliver-customers-rhel
 acceptance-deliver-customers-rhel
 ```
@@ -646,7 +646,7 @@ As expected, the infrastructure environment for the Acceptance stage appears in 
 Now move back to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
 ```bash
-# ~/Development/delivery-cluster/.chef
+# ~/Development/delivery-cluster
 $ cd ~/Development/deliver-customers-rhel
 ```
 
