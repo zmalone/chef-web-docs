@@ -166,17 +166,17 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 Let's verify that the `awesome_customers` cookbook successfully deployed to your Acceptance stage. To do that, you'll need the IP address of your server. You can get its IP address from its node attributes.
 
-Move to the <code class="file-path">~/Development/delivery-cluster/.chef</code> directory.
+Move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
 
 ```bash
 # ~/Development/deliver-customers-rhel
-$ cd ~/Development/delivery-cluster/.chef
+$ cd ~/Development/delivery-cluster
 ```
 
 Now run `knife node show`, providing the name of the node for your Acceptance stage, and then search for the node's IP address.
 
 ```bash
-# ~/Development/delivery-cluster/.chef
+# ~/Development/delivery-cluster
 $ knife node show acceptance-deliver-customers-rhel | grep IP:
 IP:          10.194.12.61
 ```
@@ -184,7 +184,7 @@ IP:          10.194.12.61
 Now move back to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
 ```bash
-# ~/Development/delivery-cluster/.chef
+# ~/Development/delivery-cluster
 $ cd ~/Development/deliver-customers-rhel
 ```
 
@@ -220,4 +220,4 @@ Fast-forward
  2 files changed, 95 insertions(+)
 ```
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/deploy-customers-app-v1.0.0) (tag `deploy-customers-app-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-deploy-customers-app-v1.0.0) (tag `ref-deploy-customers-app-v1.0.0`.)

@@ -2,7 +2,7 @@
 title: 'Build a continuous delivery pipeline with Chef Delivery on AWS'
 layout: lesson-overview
 platform: Get started with Chef Delivery on AWS
-logo: redhat.svg
+logo: delivery.svg
 order: 1
 meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---

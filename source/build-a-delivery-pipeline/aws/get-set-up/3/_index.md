@@ -16,7 +16,7 @@ Follow the instructions in the installation procedure. To clarify:
 
 ### Authenticate access to Chef Delivery's Git server
 
-After the installation completes, we recommend that you authenticate access to your Chef Delivery's Git server, which by default runs on port 8989.
+After the installation completes, you must authenticate access to your Chef Delivery's Git server, which by default runs on port 8989.
 
 First, get your Delivery server's IP address. An easy way to do that is to run `rake info:list_core_services` from your <code class="file-path">~/Development/delivery-cluster</code> directory.
 
