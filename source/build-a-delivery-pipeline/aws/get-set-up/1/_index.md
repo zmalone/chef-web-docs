@@ -13,18 +13,3 @@ You will need a Delivery license key for this tutorial. Click the button below, 
 If you already have Chef Delivery installed on your network, you can also use your existing license key to set up a second installation for evaluation and learning purposes.
 
 The license key, named <code class="file-path">delivery.license</code>, will be downloaded by your web browser to the <code class="file-path">Downloads</code> directory. You'll need to move the file to your home directory. The file should be <code class="file-path">~/delivery.license</code>.
-
-Also verify that the license file is readable by everyone. For example, on Linux and Mac OS, run this.
-
-```bash
-# ~
-$ ls -la ~/delivery.license
--rw-rw-r-- 1 user user 2560 Oct 14 22:21 /home/user/delivery.license
-```
-
-If you don't see `-rw-rw-r--`, run this to update the file permissions.
-
-```bash
-# ~
-$ chmod a+r ~/delivery.license
-```
