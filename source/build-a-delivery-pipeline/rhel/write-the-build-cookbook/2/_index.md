@@ -2,7 +2,7 @@
 
 Where you publish your projects is up to you. You might publish a cookbook project to Chef server, Chef Supermarket, GitHub, or all of the above.
 
-In this tutorial, you'll publish the `awesome_customers` cookbook to Chef server. You'll also need to publish an encrypted data bag to Chef server. This data bag contains encrypted database passwords that the `awesome_customers` requires to set up the web application ([learn more about the process](/manage-a-web-app/rhel/create-a-password-store/).)
+In this tutorial, you'll publish the `awesome_customers` cookbook to Chef server. You'll also need to publish an encrypted data bag to Chef server. This data bag contains encrypted database passwords that `awesome_customers` requires to set up the web application ([learn more about the process](/manage-a-web-app/rhel/create-a-password-store/).)
 
 The `delivery-truck` cookbook's `publish` recipe is already set up to publish your cookbook to Chef server, Chef Supermarket, and GitHub. You set node attributes to specify which targets to publish to.
 
@@ -33,7 +33,7 @@ $ git branch
 
 ### Create a default node attributes file
 
-To enable the `delivery-truck` cookbook to upload your cookbook to Chef server, you need set a node attribute. First, create a default node attributes file.
+To enable the `delivery-truck` cookbook to upload your cookbook to Chef server, you need to set a node attribute. First, create a default node attributes file.
 
 Run this command to generate the file.
 

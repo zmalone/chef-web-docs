@@ -61,7 +61,7 @@ cookbook 'delivery-sugar', git: 'https://github.com/chef-cookbooks/delivery-suga
 cookbook 'delivery-truck', git: 'https://github.com/chef-cookbooks/delivery-truck'
 ```
 
-We also specify where to get the `delivery-sugar`, which is a cookbook that `delivery-truck` depends on.
+We also specify where to get `delivery-sugar`, which is a cookbook that `delivery-truck` depends on.
 
 The [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial [explains Berkshelf in greater detail](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration).
 
@@ -139,7 +139,7 @@ Created new patchset
 https://10.194.11.99/e/test/#/organizations/learn-chef/projects/deliver-customers-rhel/changes/a09401ca-4e39-48e4-96d7-23ed1631f9e0
 ```
 
-[COMMENT] If you use GitHub, you know that pull requests let you tell others about your changes. The `delivery review` command is similar. It allows others to review your changes. Once approved, your changes can be merged into `master` and continue through the rest of the pipeline.
+[COMMENT] If you use GitHub, you know that pull requests let you tell others about your changes. The `delivery review` command is similar. It allows others to review your changes. Once approved, Delivery merges your changes into `master` and continues through the rest of the pipeline.
 
 The first stage of the pipeline, Verify, begins and the Delivery UI appears. Trace the change's progress through the pipeline just as you did when you validated the pipeline.
 

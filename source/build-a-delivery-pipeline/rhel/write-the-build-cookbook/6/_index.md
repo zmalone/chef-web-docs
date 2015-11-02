@@ -6,7 +6,7 @@ In many organizations, a suite of security tests must be run before a change can
 
 Functional tests can run in the Acceptance, Union, Rehearsal and Delivered stages. These tests should give you confidence that the system is meeting its business requirements.
 
-Even when a phase does no work, it still takes time for its recipe to run. You can omit phases entirely from the pipeline by including them in the `skip_phases` portion of your project's configuration file.
+Even when a phase does no work, it still takes time for its recipe to run. You can omit phases entirely from the pipeline by including them in the `skip_phases` portion of your project's configuration file, located at <code class="file-path">~/Development/deliver-customers-rhel/.delivery/config.json</code>.
 
 Here's an example that skips the phases we haven't discussed here &ndash; quality, security, and functional.
 

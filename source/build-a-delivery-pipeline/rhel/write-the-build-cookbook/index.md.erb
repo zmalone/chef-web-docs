@@ -29,8 +29,8 @@ Our project is the `awesome_customers` cookbook. Here's a brief summary of what 
 * **lint** &ndash; runs Foodcritic and RuboCop.
 * **syntax** &ndash; runs `knife cookbook test`.
 * **publish** &ndash; uploads `awesome_customers` and the cookbooks it depends on to the Chef server.
-* **provision** &ndash; uses Chef provisioning to bootstrap the web application server. The server will have the `awesome_customers` cookbook in its run-list. For AWS, the phase also brings up the instance if it is not yet created.
-* **deploy** &ndash; runs `chef-client` on the web application server.
+* **provision** &ndash; uses Chef provisioning to create the infrastructure needed to test the artifacts (on first use) and to bootstrap the web application server. This phase also brings up the AWS instance if it doesn't already exist.
+* **deploy** &ndash; runs `chef-client` on the web application server. This phase deploys the artifacts that were published during the Build stage to the infrastructure you set up during the provision phase.
 * **smoke** &ndash; verifies that the web server is at least minimally functional.
 
 To help implement these steps, we'll use the [delivery-truck](https://github.com/chef-cookbooks/delivery-truck) cookbook. This cookbook performs tasks that are typical for a cookbook project. For example, its `unit` recipe runs ChefSpec and its `lint` recipe runs Foodcritic and RuboCop. You'll start by adding `delivery-truck` as a dependency to your build cookbook. Then, step-by-step, you'll add the recipes for each phase.

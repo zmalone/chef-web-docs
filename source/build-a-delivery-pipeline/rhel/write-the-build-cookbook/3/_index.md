@@ -261,7 +261,7 @@ Line 1 contains the node attribute you defined previously. It tells the `deliver
 
 Line 3 specifies the run-list that configures the Customers web application. This node attribute makes the code you'll write later to provision your stage's infrastructure environment more reusable.
 
-Lines 5-25 describe the configuration of the AWS driver. For simplicity, we define each stage the same way. And for many cases this makes sense because you'll typically want your verification stages to match your production environment. However, perhaps for a web application you'll need to allow access to your Acceptance stage's firewall on certain ports through your security groups for verification purposes. Your Delivered stage might use more constrained security group settings.
+Lines 5-25 describe the configuration of the AWS driver. For simplicity, we define each stage the same way. For many cases this makes sense because you'll typically want your verification stages to match your production environment. However, perhaps for a web application, you'll need to allow access to your Acceptance stage's firewall on certain ports through your security groups for verification purposes. Your Delivered stage might use more constrained security group settings.
 
 Replace the following with the values you [gathered earlier](/build-a-delivery-pipeline/rhel/get-set-up#step4).
 
@@ -379,7 +379,7 @@ stage = node['delivery']['change']['stage'] # for example, 'acceptance' or 'unio
 
 In this part, you'll write your AWS credentials file to disk on your build node. Chef provisioning uses this file to authenticate requests to create and manage EC2 instances.
 
-First, let's write a recipe named `_aws_creds` that decrypts the AWS credentials from the data bag and writes them to file.
+First, let's write a recipe named `_aws_creds` that decrypts the AWS credentials from the data bag and writes them to a file.
 
 Run the following.
 
@@ -631,7 +631,7 @@ First, move to the <code class="file-path">~/Development/delivery-cluster/.chef<
 $ cd ~/Development/delivery-cluster/.chef
 ```
 
-The machine name is the same as the node name. Recall that for the Acceptance stage, the name will be either 'acceptance-deliver-customers-rhel-aws' or 'acceptance-deliver-customers-rhel-ssh', depending on which driver you're using.
+The machine name is the same as the node name. Recall that for the Acceptance stage, the machine's name is 'acceptance-deliver-customers-rhel'.
 
 Now run `knife node list` and search for your Acceptance stage.
 
