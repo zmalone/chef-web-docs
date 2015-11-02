@@ -1,6 +1,6 @@
 ## 2. Plan your Delivery cluster
 
-We use the term _Delivery cluster_ to define the collection of machines that make up a Chef Delivery setup.
+Recall that we use the term _Delivery cluster_ to define the collection of machines that make up a Chef Delivery setup.
 
 The installation procedure you'll use explains how to create a Delivery cluster suitable for most production environments. However, this tutorial requires a less complex configuration, which you can use if you prefer.
 
@@ -9,7 +9,7 @@ For this tutorial, your Delivery cluster will consist of:
 * a Chef Delivery server.
 * a Chef server.
 * a build node to run the Verify and Build stages.
-* a server to run each of the Acceptance, Union, Rehearsal, and Delivered stages, which host the Customers web application.
+* a server to run each of the Acceptance, Union, Rehearsal, and Delivered stages, which host the Customers web application. 
 
 This tutorial doesn't require you to set up Chef Analytics or Chef Supermarket, or to have three build nodes, as is described in the installation procedure. They are optional.
 
