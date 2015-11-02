@@ -190,7 +190,7 @@ id:      database_passwords_key
 
 Now you'll create a branch for your changes to the `provision` recipe.
 
-First, move to your <code class="file-path">~/Development/delivery-cluster</code> directory.
+First, move to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
 ```bash
 # ~/Development/delivery-cluster

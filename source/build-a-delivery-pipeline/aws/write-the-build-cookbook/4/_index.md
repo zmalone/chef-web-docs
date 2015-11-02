@@ -52,7 +52,7 @@ machine "#{stage}-#{project}" do
 end
 ```
 
-The provision and deploy phases run the Acceptance, Union, Rehearsal, and Delivered stages. When the recipe runs in each stage, the machine is tagged for the current Chef environment.
+The provision and deploy phases run the Acceptance, Union, Rehearsal, and Delivered stages. When the recipe runs in each stage, Chef provisioning assigns the machine to the current Chef environment.
 
 In the deploy phase, we can use [search](https://docs.chef.io/chef_search.html) to find the names of every node in the current Chef environment (see lines 39 through 45, below.) This technique is useful when you associate multiple infrastructure nodes with a stage, such as in a multi-tier application.
 

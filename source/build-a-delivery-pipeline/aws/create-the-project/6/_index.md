@@ -2,19 +2,6 @@
 
 If you ever need to start over, or you complete the tutorial and want to delete this project, login to your Chef Delivery server and run the `delivery-ctl delete-project` command.
 
-This command takes your enterprise, organization, and project names as arguments, like this.
-
-```bash
-$ delivery-ctl delete-project ENTERPRISE ORGANIZATION PROJECT
-```
-
-For example, for an enterprise named `chef` and an organization named `learn-chef`, you would run this command to delete the `deliver-customers-rhel` project.
-
-```bash
-$ sudo delivery-ctl delete-project chef learn-chef deliver-customers-rhel
-Successfully deleted project: 'chef/learn-chef/deliver-customers-rhel'
-```
-
 You can get the IP address for your Chef Delivery server by running `rake info:list_core_services` from your <code class="file-path">~/Development/delivery-cluster</code> directory.
 
 ```bash
@@ -37,4 +24,17 @@ From there, you can connect to the server over SSH. For example, if you created 
 ```bash
 # ~/Development/delivery-cluster
 $ ssh -i ~/.ssh/learn_chef.pem ubuntu@10.194.11.99
+```
+
+The `delivery-ctl delete-project` command takes your enterprise, organization, and project names as arguments, like this.
+
+```bash
+$ delivery-ctl delete-project ENTERPRISE ORGANIZATION PROJECT
+```
+
+For example, for an enterprise named `chef` and an organization named `learn-chef`, you would run this command to delete the `deliver-customers-rhel` project.
+
+```bash
+$ sudo delivery-ctl delete-project chef learn-chef deliver-customers-rhel
+Successfully deleted project: 'chef/learn-chef/deliver-customers-rhel'
 ```

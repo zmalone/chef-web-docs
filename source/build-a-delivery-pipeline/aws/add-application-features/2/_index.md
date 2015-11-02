@@ -68,6 +68,8 @@ Now run `git add` to resolve the merge conflict.
 $ git add cookbooks/awesome_customers/metadata.rb
 ```
 
+[COMMENT] We resolve the conflict this way for simplicity, but you can use Git's more advanced features to fit your workflow. For example, to avoid the merge conflict, you could [squash the branch](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Squashing-Commits) into a single commit and [cherry pick](https://git-scm.com/docs/git-cherry-pick) the changes you want.
+
 ### Run lint, syntax, and unit tests
 
 Let's run the same lint, syntax, and unit tests that our build cookbook performs. That will help ensure that your change moves through the pipeline smoothly.

@@ -69,7 +69,7 @@ If you've gone through the [Learn to manage a basic Red Hat Enterprise Linux web
 
 If you haven't gone through this tutorial, or no longer have your encrypted data bag items or your encryption key, you'll create them now.
 
-The first step is to replace the encrypted versions of the data bag items that come with the project with plain-text versions, like this.
+The first step is to replace the encrypted versions of the data bag items that come with the project with plain-text versions, like this. The passwords can be anything you want.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/data_bags/passwords/db_admin_password.json
