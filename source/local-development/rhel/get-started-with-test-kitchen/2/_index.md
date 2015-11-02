@@ -12,21 +12,8 @@ The default <code class="file-path">.kitchen.yml</code> file looks like this.
 driver:
   name: vagrant
 
-## The forwarded_port port feature lets you connect to ports on the VM guest via
-## localhost on the host.
-## see also: https://docs.vagrantup.com/v2/networking/forwarded_ports.html
-
-#  network:
-#    - ["forwarded_port", {guest: 80, host: 8080}]
-
 provisioner:
-  name: policyfile_zero
-
-## require_chef_omnibus specifies a specific chef version to install. You can
-## also set this to `true` to always use the latest version.
-## see also: https://docs.chef.io/config_yml_kitchen.html
-
-#  require_chef_omnibus: 12.5.0
+  name: chef_zero
 
 platforms:
   - name: ubuntu-14.04
@@ -34,6 +21,8 @@ platforms:
 
 suites:
   - name: default
+    run_list:
+      - recipe[motd::default]
     attributes:
 ```
 
