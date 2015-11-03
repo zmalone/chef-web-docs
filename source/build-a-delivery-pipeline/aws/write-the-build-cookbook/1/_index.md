@@ -155,7 +155,7 @@ The first stage of the pipeline, Verify, begins and the Delivery UI appears. Tra
 1. After the Acceptance stage completes, press the **Deliver** button.
 1. Watch the change progress through the Acceptance, Union, Rehearsal, and Delivered stages.
 
-As each stage runs, notice that they still don't do much work, even though the `awesome_customers` cookbook is part of the Git repo.
+As each stage runs, notice that it still doesn't do much work, even though the `awesome_customers` cookbook is part of the Git repo.
 
 For example, the `delivery-truck` cookbook's `lint` recipe runs Foodcritic and RuboCop ([source code](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/lint.rb)).
 

@@ -4,7 +4,6 @@ layout: lesson-overview
 platform: Get started with Chef Delivery on AWS
 logo: delivery.svg
 order: 1
-meta_tags: [{name: 'robots', content: 'noindex, nofollow'}]
 ---
 Chef Delivery manages changes to both infrastructure and application code, giving your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more.
 
@@ -77,7 +76,7 @@ After completing this tutorial, you'll:
 
 You'll get started by setting up a Chef Delivery system and configuring your workstation.
 
-[COMMENT] Chef Delivery requires a license key. We'll invite you to download an evaluation key on the next page.
+[COMMENT] Chef Delivery requires a license key. On the next page, we'll invite you to download a temporary license key for use with this tutorial.
 
 [GITHUB] After you complete this tutorial, you can refer back to the final version of the code on [GitHub](https://github.com/learn-chef/deliver-customers-rhel).
 
