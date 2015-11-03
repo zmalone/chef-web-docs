@@ -122,7 +122,7 @@ nodes.each do |name|
 end
 ```
 
-The `machine` resource resembles the one you used in your provision phase, except that it uses the `:converge_only` action to run `chef-client` on the node. The node pulls the latest cookbooks from its run-list from Chef server and applies them.
+The `machine` resource resembles the one you used in your provision phase, except that it uses the `:converge_only` action to run `chef-client` on the node. The node pulls the latest cookbooks from Chef server and applies them.
 
 You'll notice that this recipe repeats many of the steps that the `provision` recipe performs. One reason for this is to accommodate multiple build nodes.
 

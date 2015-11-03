@@ -59,6 +59,6 @@ When you run `delivery init`, two things happen. The first stage of the pipeline
 
 Ordinarily, the Verify stage runs unit, lint and syntax tests but we haven't added them yet because our purpose is to validate that the pipeline works.
 
-The build node that's running Verify merges your changes into `master` on a temporary copy of the main repository and run the tests against `master`.
+The build node that's running Verify merges your changes into `master` on a temporary copy of the main repository and runs the tests against `master`.
 
 Each phase runs on a build node. If you have multiple build nodes, multiple phases can be run in parallel.
