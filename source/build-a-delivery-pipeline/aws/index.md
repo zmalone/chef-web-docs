@@ -45,7 +45,7 @@ Here are the phases for each stage.
 
 You determine what happens in each phase with a _build cookbook_. Each phase is configured with a recipe in that cookbook. Build cookbooks also control other aspects of the pipeline, such as the types of artifacts you build and where you store them.
 
-For a complete description of Chef Delivery, see the [Chef documentation](https://docs.chef.io/delivery_overview.html).
+For a complete description of Chef Delivery, see the [Chef documentation](https://docs.chef.io/release/delivery_1-0/).
 
 [END_BOX]
 
