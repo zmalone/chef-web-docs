@@ -32,4 +32,4 @@ Move to the <code class="file-path">deliver-customers-rhel</code> directory.
 $ cd deliver-customers-rhel
 ```
 
-[COMMENT] You're cloning an existing Git project to obtain starter code. You can configure Chef Delivery to connect directly with your existing Git projects, import code from another source control system, or create a new repository from scratch.
+[COMMENT] Remember, you're cloning an existing Git project to obtain starter code. You can configure Chef Delivery to connect directly with your existing Git projects, import code from another source control system, or create a new repository from scratch.
