@@ -1,1 +1,1 @@
-You're ready to use Chef Delivery for what it was intended &ndash; moving changes quickly and safely all the way from your workstation to production.
+Next, you'll add features to the Customers web application and watch the changes move quickly and safely all the way from your workstation to production.

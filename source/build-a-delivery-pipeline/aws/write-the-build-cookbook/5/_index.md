@@ -37,7 +37,7 @@ $ git branch
 
 ### Write the smoke recipe
 
-Smoke tests are meant to be fast so that you quickly receive feedback if the application or service is not working. For the Customers web application, we'll simply run cURL to verify that the home page comes up and that the server responds with 200 (OK) HTTP status code.
+Smoke tests are meant to be fast so that you quickly receive feedback if the application or service is not working. For the Customers web application, we'll simply run cURL to verify that the home page comes up and that the server responds with a 200 (OK) HTTP status code.
 
 Write your `smoke` recipe like this.
 
@@ -60,14 +60,14 @@ nodes.each do |node|
 end
 ```
 
-This code performs a similar query as the deploy phase. For each node in the environment (we expect only one), we use the `execute` resource to run `curl` with the `-IL` flag and search for the expected response code.
+This code performs a similar query as the deploy phase. For each node in the environment (we expect only one), we use the `execute` resource to run `curl` with the `-IL` flag (fetch HTTP reader only and follow any redirects) and search for the expected response code.
 
 ### Review and approve the change
 
 Let's try out our smoke test. Follow the same steps as before to submit your change and trigger the pipeline.
 
 ```bash
-~/Development/deliver-customers-rhel
+# ~/Development/deliver-customers-rhel
 $ git status
 On branch smoke-test-customers-app
 Changes not staged for commit:

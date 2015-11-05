@@ -135,7 +135,7 @@ In practice, you can write helper recipes and use node attributes to share data 
 Let's try out our recipe. Follow the same steps as before to submit your change and trigger the pipeline.
 
 ```bash
-~/Development/deliver-customers-rhel
+# ~/Development/deliver-customers-rhel
 $ git status
 On branch deploy-customers-app
 Changes not staged for commit:
@@ -196,28 +196,24 @@ Congratulations! You've successfully deployed the Customers web application to A
 
 ### Integrate the change locally
 
-As we did previously, let's merge the `master` branch locally. Here's a reminder how.
+As we did previously, let's update the `master` branch locally. Here's a reminder how.
 
 ```bash
 # ~/Development/deliver-customers-rhel
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
-$ git fetch
-remote: Counting objects: 3, done.
-remote: Compressing objects: 100% (3/3), done.
-remote: Total 3 (delta 0), reused 0 (delta 0)
-Unpacking objects: 100% (3/3), done.
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
-   dfc7a5d..ee4ff54  master     -> delivery/master
-$ git pull delivery master
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
- * branch            master     -> FETCH_HEAD
-Updating dfc7a5d..ee4ff54
+$ git pull --prune
+From ssh://test2@10.194.13.148:8989/test2/learn-chef/deliver-customers-rhel
+ x [deleted]         (none)     -> delivery/_for/master/deploy-customers-app
+remote: Counting objects: 1, done.
+remote: Total 1 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (1/1), done.
+   c206d49..7c3b1f1  master     -> delivery/master
+Updating c206d49..7c3b1f1
 Fast-forward
- .delivery/build-cookbook/recipes/_aws_creds.rb |  3 +
- .delivery/build-cookbook/recipes/deploy.rb     | 92 ++++++++++++++++++++++++++
- 2 files changed, 95 insertions(+)
+ .delivery/build-cookbook/recipes/deploy.rb | 59 ++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 ```
 
 [GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-deploy-customers-app-v1.0.0) (tag `ref-deploy-customers-app-v1.0.0`.)

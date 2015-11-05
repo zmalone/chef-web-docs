@@ -2,7 +2,7 @@
 
 In this part, we'll provision the last four stages of your pipeline with the infrastructure they need to run the `awesome_customers` cookbook. Here you'll use automated provisioning with AWS to bring up these infrastructure pieces.
 
-[AWS] Remember, if you prefer to use another cloud provider or want to run your infrastructure on-prem, feel free to adapt the code you see. If you have questions, join us on [Discourse](https://discourse.chef.io/c/delivery).
+[COMMENT] Remember, if you prefer to use another cloud provider or want to run your infrastructure on-prem, feel free to adapt the code you see. If you have questions, join us on [Discourse](https://discourse.chef.io/c/delivery).
 
 When you installed Chef Delivery, the installer created an encryption key for you, located at<br>  <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/encrypted\_data\_bag\_secret</code>. That encryption key gets copied to the build node each time it performs a job. That means you can use it to encrypt data on your workstation or provisioning node and decrypt it when the build-cookbook runs.
 
@@ -230,56 +230,59 @@ $ git branch
   publish-customers-app
 ```
 
-### Create node attributes that describe your environments
+### Create a default node attributes file
 
-You've already created a file to hold your default attributes.
+In this part, you'll use node attributes to describe the infrastructure requirements for the last four stages of the pipeline &ndash; the servers that will run the `awesome_customers` cookbook. For example, you'll define their instance sizes and security group IDs.
 
-Make your default node attributes file, <code class="file-path">default.rb</code>, look like this.
+Although you could define these requirements directly when you write the recipes for the provision and deploy phases, defining them through node attributes enables you to better separate your policy &ndash; the logical actions you want to take &ndash; from your data &ndash; the details that are specific to your environment. Separating policy from data makes your recipes more reusable.
+
+Run this command to add a default attributes file to your build cookbook.
+
+```bash
+# ~/Development/deliver-customers-rhel
+$ chef generate attribute .delivery/build-cookbook default
+Compiling Cookbooks...
+Recipe: code_generator::attribute
+  * directory[./.delivery/build-cookbook/attributes] action create
+    - create new directory ./.delivery/build-cookbook/attributes
+  * template[./.delivery/build-cookbook/attributes/default.rb] action create
+    - create new file ./.delivery/build-cookbook/attributes/default.rb
+    - update content in file ./.delivery/build-cookbook/attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+### Add node attributes that describe your environments
+
+Add this to your default node attributes file, <code class="file-path">default.rb</code>. Replace `security_group_ids`, `subnet_id`, `image_id`, and `ssh_username` with your values.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
-default['delivery']['config']['delivery-truck']['publish']['chef_server'] = true
-
 default['deliver-customers-rhel']['run_list'] = ['recipe[awesome_customers::default]']
 
 %w(acceptance union rehearsal delivered).each do |stage|
   default['deliver-customers-rhel'][stage]['aws']['config'] = {
     machine_options: {
-      admin: nil,
       bootstrap_options: {
         instance_type: 't2.micro',
         security_group_ids: ['sg-cbacf8ae'],
-        subnet_id: 'subnet-19ac017c',
-        output_key_path: nil,
-        output_key_format: nil
+        subnet_id: 'subnet-19ac017c'
       },
       convergence_options: {
         ssl_verify_mode: :verify_none
       },
       image_id: 'ami-09f7d239',
       ssh_username: 'root',
-      transport_address_location: :private_ip,
-      validator: nil
+      transport_address_location: :private_ip
     }
   }
 end
 ```
 
-Line 1 contains the node attribute you defined previously. It tells the `delivery-truck` cookbook's publish phase to publish your cookbooks to Chef server.
+Line 1 specifies the run-list that configures the Customers web application.
 
-Line 3 specifies the run-list that configures the Customers web application. This node attribute makes the code you'll write later to provision your stage's infrastructure environment more reusable.
+Lines 3-19 describe the AWS infrastructure requirements for the stages. We define each stage the same way, and for many cases this makes sense because you typically want your verification stages to match your production environment.
 
-Lines 5-25 describe the configuration of the AWS driver. For simplicity, we define each stage the same way. For many cases this makes sense because you'll typically want your verification stages to match your production environment. However, perhaps for a web application, you'll need to allow access to your Acceptance stage's firewall on certain ports through your security groups for verification purposes. Your Delivered stage might use more constrained security group settings.
-
-Replace the following with the values you [gathered earlier](/build-a-delivery-pipeline/rhel/get-set-up#step4).
-
-* `instance_type`
-* `security_group_ids`
-* `subnet_id`
-* `image_id`
-* `ssh_username`
-
-If you connect to your EC2 instances using their private IP addresses, specify `:private_ip` for `transport_address_location`. If you connect using their public addresses, specify `:public_ip`.
+The Delivered stage represents the environment that your end users access. You can imagine that the Customers web application is suited only for employees in your company because it displays customer data. So for this project it's OK for all stages to be accessible only from the private network. However, perhaps for a retail shopping application, you might set up the Delivered stage to be accessible from the Internet and the other stages only from the private network.
 
 ### Write the recipe for the provision phase
 
@@ -287,9 +290,9 @@ Now that our Chef server has the encrypted data bag items that we need to provis
 
 We need to:
 
-* Decrypt the secret key that decrypts the database passwords. The Customers application uses these passwords to connect to the database in order to retrieve customer records. We perform this step in this recipe because Chef provisioning enables us to easily pass files to a machine when it's provisioned.
-* Decrypt the private SSH key that's used to connect to the EC2 instance. Chef provisioning uses that key to connect to the machine so it can install and run chef-client.
-* Bring up the machine and bootstrap it to our Chef server, using the options that we specified in the default attributes file.
+* decrypt the secret key that decrypts the database passwords. The Customers application uses these passwords to connect to the database in order to retrieve customer records. We perform this step in this recipe because Chef provisioning enables us to easily transfer files to a machine when it's provisioned.
+* decrypt the private SSH key that's used to connect to the EC2 instance. Chef provisioning uses that key to connect to the machine so it can install and run chef-client.
+* bring up the machine and bootstrap it to our Chef server, using the options that we specified in the default attributes file.
 
 #### Decrypt the encryption key that contains the database passwords
 
@@ -591,21 +594,22 @@ Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git checkout -- <file>..." to discard changes in working directory)
 
-	modified:   .delivery/build-cookbook/attributes/default.rb
 	modified:   .delivery/build-cookbook/metadata.rb
 	modified:   .delivery/build-cookbook/recipes/provision.rb
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
 
+	.delivery/build-cookbook/attributes/
 	.delivery/build-cookbook/recipes/_aws_creds.rb
 	.delivery/build-cookbook/spec/
 
 no changes added to commit (use "git add" and/or "git commit -a")
 $ git add .
 $ git commit -m "provision the environments"
-[provision-environments f916771] provision the environments
- 6 files changed, 147 insertions(+)
+[provision-environments 149ed27] provision the environments
+ 6 files changed, 110 insertions(+)
+ create mode 100644 .delivery/build-cookbook/attributes/default.rb
  create mode 100644 .delivery/build-cookbook/recipes/_aws_creds.rb
  create mode 100644 .delivery/build-cookbook/spec/spec_helper.rb
  create mode 100644 .delivery/build-cookbook/spec/unit/recipes/_aws_creds_spec.rb
@@ -639,9 +643,9 @@ First, move to the <code class="file-path">~/Development/delivery-cluster</code>
 $ cd ~/Development/delivery-cluster
 ```
 
-The machine name is the same as the node name. Recall that for the Acceptance stage, the machine's name is 'acceptance-deliver-customers-rhel'.
+The machine name is the same as the node name. Recall that we name the machine by combining the stage name with the project name. So for the Acceptance stage, the machine's name is 'acceptance-deliver-customers-rhel'.
 
-Now run `knife node list` and search for your Acceptance stage.
+Run `knife node list` and search for your Acceptance stage.
 
 ```bash
 # ~/Development/delivery-cluster
@@ -667,30 +671,26 @@ As before, we need to pull Delivery's `master` branch down to ours. Here's how.
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
-$ git fetch
-remote: Counting objects: 21, done.
-remote: Compressing objects: 100% (19/19), done.
-remote: Total 21 (delta 7), reused 3 (delta 2)
-Unpacking objects: 100% (21/21), done.
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
-   a100d45..dfc7a5d  master     -> delivery/master
-$ git pull delivery master
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
- * branch            master     -> FETCH_HEAD
-Updating a100d45..dfc7a5d
+$ git pull --prune
+From ssh://test2@10.194.13.148:8989/test2/learn-chef/deliver-customers-rhel
+ x [deleted]         (none)     -> delivery/_for/master/provision-environments
+remote: Counting objects: 2, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 2 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (2/2), done.
+   889fc05..c206d49  master     -> delivery/master
+Updating 889fc05..c206d49
 Fast-forward
- .delivery/build-cookbook/attributes/default.rb     | 90 ++++++++++++++++++++
+ .delivery/build-cookbook/attributes/default.rb     | 19 +++++++
  .delivery/build-cookbook/metadata.rb               |  1 +
- .delivery/build-cookbook/recipes/_aws_creds.rb     | 38 +++++++++
- .delivery/build-cookbook/recipes/provision.rb      | 96 ++++++++++++++++++++++
- .delivery/build-cookbook/recipes/publish.rb        | 14 ++++
+ .delivery/build-cookbook/recipes/_aws_creds.rb     | 34 ++++++++++++
+ .delivery/build-cookbook/recipes/provision.rb      | 61 ++++++++++++++++++++++
  .delivery/build-cookbook/spec/spec_helper.rb       |  2 +
- .../spec/unit/recipes/_aws_creds.rb_spec.rb        | 20 +++++
- .../spec/unit/recipes/_aws_creds_spec.rb           | 20 +++++
- 8 files changed, 281 insertions(+)
+ .../spec/unit/recipes/_aws_creds_spec.rb           | 20 +++++++
+ 6 files changed, 137 insertions(+)
+ create mode 100644 .delivery/build-cookbook/attributes/default.rb
  create mode 100644 .delivery/build-cookbook/recipes/_aws_creds.rb
  create mode 100644 .delivery/build-cookbook/spec/spec_helper.rb
- create mode 100644 .delivery/build-cookbook/spec/unit/recipes/_aws_creds.rb_spec.rb
  create mode 100644 .delivery/build-cookbook/spec/unit/recipes/_aws_creds_spec.rb
 ```
 
