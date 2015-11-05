@@ -147,19 +147,18 @@ As we did previously, let's merge the `master` branch locally. Here's a reminder
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
-$ git fetch
-remote: Counting objects: 1, done.
-remote: Total 1 (delta 0), reused 0 (delta 0)
-Unpacking objects: 100% (1/1), done.
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
-   ee4ff54..e46f7b2  master     -> delivery/master
-$ git pull delivery master
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
- * branch            master     -> FETCH_HEAD
-Updating ee4ff54..e46f7b2
+$ git pull --prune
+From ssh://test2@10.194.13.148:8989/test2/learn-chef/deliver-customers-rhel
+ x [deleted]         (none)     -> delivery/_for/master/smoke-test-customers-app
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 3 (delta 1), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+   7c3b1f1..225f1e0  master     -> delivery/master
+Updating 7c3b1f1..225f1e0
 Fast-forward
- .delivery/build-cookbook/recipes/smoke.rb | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ .delivery/build-cookbook/recipes/smoke.rb          | 14 ++++++++++
+ 1 files changed, 14 insertions(+)
 ```
 
 [GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-smoke-test-customers-app-v1.0.0) (tag `ref-smoke-test-customers-app-v1.0.0`.)

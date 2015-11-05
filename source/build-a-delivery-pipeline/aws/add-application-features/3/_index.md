@@ -16,9 +16,76 @@ Merge made by the 'recursive' strategy.
  .delivery/build-cookbook/.kitchen.yml              |  21 +++
  .delivery/build-cookbook/Berksfile                 |  12 ++
  .delivery/build-cookbook/LICENSE                   |   3 +
-[...]
+ .delivery/build-cookbook/README.md                 | 146 +++++++++++++++++++++
+ .delivery/build-cookbook/attributes/default.rb     |  19 +++
+ .delivery/build-cookbook/chefignore                |  97 ++++++++++++++
+ .../data_bags/keys/delivery_builder_keys.json      |   1 +
+ .delivery/build-cookbook/metadata.rb               |   8 ++
+ .delivery/build-cookbook/recipes/_aws_creds.rb     |  34 +++++
+ .delivery/build-cookbook/recipes/default.rb        |   6 +
+ .delivery/build-cookbook/recipes/deploy.rb         |  65 +++++++++
+ .delivery/build-cookbook/recipes/functional.rb     |   6 +
+ .delivery/build-cookbook/recipes/lint.rb           |   6 +
+ .delivery/build-cookbook/recipes/provision.rb      |  67 ++++++++++
+ .delivery/build-cookbook/recipes/publish.rb        |  20 +++
+ .delivery/build-cookbook/recipes/quality.rb        |   6 +
+ .delivery/build-cookbook/recipes/security.rb       |   6 +
+ .delivery/build-cookbook/recipes/smoke.rb          |  20 +++
+ .delivery/build-cookbook/recipes/syntax.rb         |   6 +
+ .delivery/build-cookbook/recipes/unit.rb           |   6 +
+ .delivery/build-cookbook/secrets/fakey-mcfakerton  |   0
+ .delivery/build-cookbook/spec/spec_helper.rb       |   2 +
+ .../spec/unit/recipes/_aws_creds_spec.rb           |  20 +++
+ .../test/fixtures/cookbooks/test/metadata.rb       |   2 +
+ .../fixtures/cookbooks/test/recipes/default.rb     |   7 +
+ .delivery/config.json                              |  15 +++
+ 26 files changed, 601 insertions(+)
+ create mode 100644 .delivery/build-cookbook/.kitchen.yml
+ create mode 100644 .delivery/build-cookbook/Berksfile
+ create mode 100644 .delivery/build-cookbook/LICENSE
+ create mode 100644 .delivery/build-cookbook/README.md
+ create mode 100644 .delivery/build-cookbook/attributes/default.rb
+ create mode 100644 .delivery/build-cookbook/chefignore
+ create mode 100644 .delivery/build-cookbook/data_bags/keys/delivery_builder_keys.json
+ create mode 100644 .delivery/build-cookbook/metadata.rb
+ create mode 100644 .delivery/build-cookbook/recipes/_aws_creds.rb
+ create mode 100644 .delivery/build-cookbook/recipes/default.rb
+ create mode 100644 .delivery/build-cookbook/recipes/deploy.rb
+ create mode 100644 .delivery/build-cookbook/recipes/functional.rb
+ create mode 100644 .delivery/build-cookbook/recipes/lint.rb
+ create mode 100644 .delivery/build-cookbook/recipes/provision.rb
+ create mode 100644 .delivery/build-cookbook/recipes/publish.rb
+ create mode 100644 .delivery/build-cookbook/recipes/quality.rb
+ create mode 100644 .delivery/build-cookbook/recipes/security.rb
+ create mode 100644 .delivery/build-cookbook/recipes/smoke.rb
+ create mode 100644 .delivery/build-cookbook/recipes/syntax.rb
+ create mode 100644 .delivery/build-cookbook/recipes/unit.rb
+ create mode 100644 .delivery/build-cookbook/secrets/fakey-mcfakerton
+ create mode 100644 .delivery/build-cookbook/spec/spec_helper.rb
+ create mode 100644 .delivery/build-cookbook/spec/unit/recipes/_aws_creds_spec.rb
+ create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/metadata.rb
  create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/recipes/default.rb
  create mode 100644 .delivery/config.json
+```
+
+As you did previously, update the version number to indicate the added functionality. The version number is now 1.2.0.
+
+```ruby
+# ~/Development/deliver-customers-rhel/cookbooks/awesome_customers/metadata.rb
+name 'awesome_customers'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures awesome_customers'
+long_description 'Installs/Configures awesome_customers'
+version '1.2.0'
+
+depends 'httpd', '~> 0.2.18'
+depends 'selinux', '~> 0.9.0'
+depends 'iptables', '~> 1.0.0'
+depends 'mysql2_chef_gem', '~> 1.0.1'
+depends 'mysql', '~> 6.0.17'
+depends 'database', '~> 4.0.3'
 ```
 
 ### Run lint, syntax, and unit tests
@@ -140,15 +207,29 @@ All tests pass. You're now ready to submit your change to the pipeline.
 
 ### Submit your change to the pipeline
 
-Run `git status` to see the committed changes.
+Run `git status` to see the uncommitted changes.
 
 ```bash
 # ~/Development/deliver-customers-rhel/cookbooks
 $ git status
-On branch visualize_data
-Your branch is ahead of 'origin/visualize_data' by 51 commits.
-  (use "git push" to publish your local commits)
-nothing to commit, working directory clean
+On branch ref-visualize_data_delivery
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   cookbooks/awesome_customers/metadata.rb
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+Run `git add` and then `git commit` to commit the change to your local `add_sample_data` branch.
+
+```bash
+# ~/Development/deliver-customers-rhel
+$ git add .
+$ git commit -m "add data visualization"
+[visualize_data 7c05d51] add data visualization
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 ```
 
 Now run `delivery review` to submit your changes to the pipeline.
