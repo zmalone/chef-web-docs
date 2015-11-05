@@ -672,7 +672,7 @@ $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
 $ git pull --prune
-From ssh://test2@10.194.13.148:8989/test2/learn-chef/deliver-customers-rhel
+From ssh://test@10.194.13.148:8989/test/learn-chef/deliver-customers-rhel
  x [deleted]         (none)     -> delivery/_for/master/provision-environments
 remote: Counting objects: 2, done.
 remote: Compressing objects: 100% (2/2), done.

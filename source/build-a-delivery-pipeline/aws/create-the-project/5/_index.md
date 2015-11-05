@@ -17,7 +17,7 @@ Now pull the latest from Delivery to your local repo.
 ```bash
 # ~/Development/deliver-customers-rhel
 $ git pull --prune
-From ssh://test2@10.194.13.148:8989/test2/learn-chef/deliver-customers-rhel
+From ssh://test@10.194.13.148:8989/test/learn-chef/deliver-customers-rhel
  x [deleted]         (none)     -> delivery/_for/master/add-delivery-config
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
