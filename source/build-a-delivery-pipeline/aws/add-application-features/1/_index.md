@@ -1,8 +1,8 @@
 ## 1. Set up your workstation for local development
 
-In this part, you'll add new features to an existing web application. Before you submit your features to the pipeline, you'll use [Test Kitchen](http://kitchen.ci) to verify your work on a virtual machine that resembles your production environment.
+Let's begin by installing [VirtualBox](https://www.virtualbox.org) and [Vagrant](https://www.vagrantup.com), which will enable you to verify your work on a local virtual machine.
 
-The installation procedure had you install the Chef Development Kit, or Chef DK. You'll also need to install Vagrant and VirtualBox to enable you to verify new features before you submit them to the pipeline.
+The Delivery installation procedure had you install the Chef Development Kit, or Chef DK. You'll also need to install Vagrant and VirtualBox to enable you to verify new features before you submit them to the pipeline.
 
 [TIP] This section explains the manual steps to help you understand exactly what software you need to install and how to install it. Alternatively, you can also run the [ChefDK_Bootstrap](https://github.com/Nordstrom/chefdk_bootstrap) script to setup your Windows or Mac workstation for Chef development. The script installs [commonly used development tools](https://github.com/Nordstrom/chefdk_bootstrap#what-does-it-do) such as the Atom text editor, Git, VirtualBox, and Vagrant.
 
