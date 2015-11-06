@@ -4,7 +4,7 @@ In this step, you'll add more rows of data to the database and you'll also add e
 
 ### Get the branch
 
-The code for this feature is already in GitHub. Run these commands to fetch and merge the branch to your local repo.
+The code for this feature is already in GitHub in a branch named `add_sample_data`. Run these commands to fetch that and merge it with your `master` branch.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -12,12 +12,67 @@ $ git checkout -b add_sample_data origin/add_sample_data
 Branch add_sample_data set up to track remote branch add_sample_data from origin.
 Switched to a new branch 'add_sample_data'
 $ git merge master
-Auto-merging cookbooks/awesome_customers/metadata.rb
-CONFLICT (content): Merge conflict in cookbooks/awesome_customers/metadata.rb
-Automatic merge failed; fix conflicts and then commit the result.
+Updating 7ce3398..9fabbe3
+Fast-forward
+ .delivery/build-cookbook/.kitchen.yml              |  21 +++
+ .delivery/build-cookbook/Berksfile                 |  12 ++
+ .delivery/build-cookbook/LICENSE                   |   3 +
+ .delivery/build-cookbook/README.md                 | 146 +++++++++++++++++++++
+ .delivery/build-cookbook/attributes/default.rb     |  19 +++
+ .delivery/build-cookbook/chefignore                |  97 ++++++++++++++
+ .../data_bags/keys/delivery_builder_keys.json      |   1 +
+ .delivery/build-cookbook/metadata.rb               |   8 ++
+ .delivery/build-cookbook/recipes/_aws_creds.rb     |  34 +++++
+ .delivery/build-cookbook/recipes/default.rb        |   6 +
+ .delivery/build-cookbook/recipes/deploy.rb         |  65 +++++++++
+ .delivery/build-cookbook/recipes/functional.rb     |   6 +
+ .delivery/build-cookbook/recipes/lint.rb           |   6 +
+ .delivery/build-cookbook/recipes/provision.rb      |  67 ++++++++++
+ .delivery/build-cookbook/recipes/publish.rb        |  20 +++
+ .delivery/build-cookbook/recipes/quality.rb        |   6 +
+ .delivery/build-cookbook/recipes/security.rb       |   6 +
+ .delivery/build-cookbook/recipes/smoke.rb          |   6 +
+ .delivery/build-cookbook/recipes/syntax.rb         |   6 +
+ .delivery/build-cookbook/recipes/unit.rb           |   6 +
+ .delivery/build-cookbook/secrets/fakey-mcfakerton  |   0
+ .delivery/build-cookbook/spec/spec_helper.rb       |   2 +
+ .../spec/unit/recipes/_aws_creds_spec.rb           |  20 +++
+ .../test/fixtures/cookbooks/test/metadata.rb       |   2 +
+ .../fixtures/cookbooks/test/recipes/default.rb     |   7 +
+ .delivery/config.json                              |  15 +++
+ cookbooks/awesome_customers/metadata.rb            |   2 +-
+ 27 files changed, 588 insertions(+), 1 deletion(-)
+ create mode 100644 .delivery/build-cookbook/.kitchen.yml
+ create mode 100644 .delivery/build-cookbook/Berksfile
+ create mode 100644 .delivery/build-cookbook/LICENSE
+ create mode 100644 .delivery/build-cookbook/README.md
+ create mode 100644 .delivery/build-cookbook/attributes/default.rb
+ create mode 100644 .delivery/build-cookbook/chefignore
+ create mode 100644 .delivery/build-cookbook/data_bags/keys/delivery_builder_keys.json
+ create mode 100644 .delivery/build-cookbook/metadata.rb
+ create mode 100644 .delivery/build-cookbook/recipes/_aws_creds.rb
+ create mode 100644 .delivery/build-cookbook/recipes/default.rb
+ create mode 100644 .delivery/build-cookbook/recipes/deploy.rb
+ create mode 100644 .delivery/build-cookbook/recipes/functional.rb
+ create mode 100644 .delivery/build-cookbook/recipes/lint.rb
+ create mode 100644 .delivery/build-cookbook/recipes/provision.rb
+ create mode 100644 .delivery/build-cookbook/recipes/publish.rb
+ create mode 100644 .delivery/build-cookbook/recipes/quality.rb
+ create mode 100644 .delivery/build-cookbook/recipes/security.rb
+ create mode 100644 .delivery/build-cookbook/recipes/smoke.rb
+ create mode 100644 .delivery/build-cookbook/recipes/syntax.rb
+ create mode 100644 .delivery/build-cookbook/recipes/unit.rb
+ create mode 100644 .delivery/build-cookbook/secrets/fakey-mcfakerton
+ create mode 100644 .delivery/build-cookbook/spec/spec_helper.rb
+ create mode 100644 .delivery/build-cookbook/spec/unit/recipes/_aws_creds_spec.rb
+ create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/metadata.rb
+ create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/recipes/default.rb
+ create mode 100644 .delivery/config.json
 ```
 
-You'll notice there was a merge conflict. That's because your history has diverged from the GitHub repo, and Git doesn't know which version to accept.
+Your `add_sample_data` now contains the new feature as well as your build cookbook.
+
+It's recommended to always update your cookbook's version metadata to ensure that each version is tied to a specific set of functionality. In <code class="file-path">metadata.rb</code>, update the `awesome_customers` cookbook's version from 1.0.0 to 1.1.0, like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/cookbooks/awesome_customers/metadata.rb
@@ -27,30 +82,6 @@ maintainer_email 'you@example.com'
 license 'all_rights'
 description 'Installs/Configures awesome_customers'
 long_description 'Installs/Configures awesome_customers'
-<<<<<<< HEAD
-version '1.1.0'
-=======
-version '1.0.0'
->>>>>>> master
-
-depends 'httpd', '~> 0.2.18'
-depends 'selinux', '~> 0.9.0'
-depends 'iptables', '~> 1.0.0'
-depends 'mysql2_chef_gem', '~> 1.0.1'
-depends 'mysql', '~> 6.0.17'
-depends 'database', '~> 4.0.3'
-```
-
-Take the `HEAD` version (the one from the `add_sample_data` branch) by modifying <code class="file-path">metadata.rb</code> like this.
-
-```ruby
-# ~/Development/deliver-customers-rhel/cookbooks/awesome_customers/metadata.rb
-name 'awesome_customers'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
-license 'all_rights'
-description 'Installs/Configures awesome_customers'
-long_description 'Installs/Configures awesome_customers'
 version '1.1.0'
 
 depends 'httpd', '~> 0.2.18'
@@ -60,15 +91,6 @@ depends 'mysql2_chef_gem', '~> 1.0.1'
 depends 'mysql', '~> 6.0.17'
 depends 'database', '~> 4.0.3'
 ```
-
-Now run `git add` to resolve the merge conflict.
-
-```bash
-# ~/Development/deliver-customers-rhel
-$ git add cookbooks/awesome_customers/metadata.rb
-```
-
-[COMMENT] We resolve the conflict this way for simplicity, but you can use Git's more advanced features to fit your workflow. For example, to avoid the merge conflict, you could [squash the branch](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Squashing-Commits) into a single commit and [cherry pick](https://git-scm.com/docs/git-cherry-pick) the changes you want.
 
 ### Run lint, syntax, and unit tests
 
@@ -78,7 +100,7 @@ First, move to the `awesome_customers` cookbook directory, <code class="file-pat
 
 ```bash
 # ~/Development/deliver-customers-rhel
-$ cd cookbooks/awesome_customers/
+$ cd cookbooks/awesome_customers
 ```
 
 Run Foodcritic.
@@ -219,55 +241,30 @@ Run `git status` to see the staged changes.
 # ~/Development/deliver-customers-rhel/cookbooks
 $ git status
 On branch add_sample_data
-Your branch is up-to-date with 'origin/add_sample_data'.
-All conflicts fixed but you are still merging.
-  (use "git commit" to conclude merge)
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
 
-Changes to be committed:
+	modified:   metadata.rb
 
-	new file:   .delivery/build-cookbook/.kitchen.yml
-	new file:   .delivery/build-cookbook/Berksfile
-	new file:   .delivery/build-cookbook/LICENSE
-	new file:   .delivery/build-cookbook/README.md
-	new file:   .delivery/build-cookbook/attributes/default.rb
-	new file:   .delivery/build-cookbook/chefignore
-	new file:   .delivery/build-cookbook/data_bags/keys/delivery_builder_keys.json
-	new file:   .delivery/build-cookbook/metadata.rb
-	new file:   .delivery/build-cookbook/recipes/_aws_creds.rb
-	new file:   .delivery/build-cookbook/recipes/default.rb
-	new file:   .delivery/build-cookbook/recipes/deploy.rb
-	new file:   .delivery/build-cookbook/recipes/functional.rb
-	new file:   .delivery/build-cookbook/recipes/lint.rb
-	new file:   .delivery/build-cookbook/recipes/provision.rb
-	new file:   .delivery/build-cookbook/recipes/publish.rb
-	new file:   .delivery/build-cookbook/recipes/quality.rb
-	new file:   .delivery/build-cookbook/recipes/security.rb
-	new file:   .delivery/build-cookbook/recipes/smoke.rb
-	new file:   .delivery/build-cookbook/recipes/syntax.rb
-	new file:   .delivery/build-cookbook/recipes/unit.rb
-	new file:   .delivery/build-cookbook/secrets/fakey-mcfakerton
-	new file:   .delivery/build-cookbook/spec/spec_helper.rb
-	new file:   .delivery/build-cookbook/spec/unit/recipes/_aws_creds.rb_spec.rb
-	new file:   .delivery/build-cookbook/spec/unit/recipes/_aws_creds_spec.rb
-	new file:   .delivery/build-cookbook/test/fixtures/cookbooks/test/metadata.rb
-	new file:   .delivery/build-cookbook/test/fixtures/cookbooks/test/recipes/default.rb
-	new file:   .delivery/config.json
+no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
-In practice, you would verify that each file should be staged for commit.
-
-Run `git commit` to commit the changes to your local `add_sample_data` branch.
+Run `git add` and then `git commit` to commit the change to your local `add_sample_data` branch.
 
 ```bash
 # ~/Development/deliver-customers-rhel/cookbooks
+$ git add .
 $ git commit -m "add sample data"
 [add_sample_data 6236ee8] add sample data
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 ```
 
 Now run `delivery review` to submit your changes to the pipeline.
 
 ```bash
 # ~/Development/deliver-customers-rhel/cookbooks
+$ cd ~/Development/deliver-customers-rhel
 $ delivery review
 Chef Delivery
 Loading configuration from /home/thomaspetchel/Development/deliver-customers-rhel
@@ -287,7 +284,7 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ou
 
 Let's verify that the Customers web application successfully deployed to your Acceptance stage.
 
-Follow the [same steps](/build-a-delivery-pipeline/rhel/write-the-build-cookbook#verifythechangeinacceptance) as you did previously to obtain the web server's IP address and then navigate to your home page.
+Follow the [same steps](write-the-build-cookbook#verifythedeploymenttotheacceptancestage) as you did previously to obtain the web server's IP address and then navigate to your home page.
 
 Here's what you'll see.
 
@@ -295,23 +292,22 @@ Here's what you'll see.
 
 ### Integrate the change
 
-Like before, switch to your `master` branch, then fetch and pull the remote `master` branch.
+Like before, switch to your `master` branch, then pull Delivery's `master` branch.
 
 ```bash
 # ~/Development/deliver-customers-rhel
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
-$ git fetch
-remote: Counting objects: 1, done.
-remote: Total 1 (delta 0), reused 0 (delta 0)
-Unpacking objects: 100% (1/1), done.
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
-   e46f7b2..4fd27ce  master     -> delivery/master
-$ git pull delivery master
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
- * branch            master     -> FETCH_HEAD
-Updating e46f7b2..4fd27ce
+$ git pull --prune
+From ssh://test@10.194.13.148:8989/test/learn-chef/deliver-customers-rhel
+ x [deleted]         (none)     -> delivery/_for/master/ref-add_sample_data_delivery
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 3 (delta 1), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+   7c3b1f1..225f1e0  master     -> delivery/master
+Updating 7c3b1f1..225f1e0
 Fast-forward
  cookbooks/awesome_customers/attributes/default.rb  |  2 ++
  .../files/default/add-sample-data.sql              | 25 +++++++++++++++++
@@ -320,7 +316,7 @@ Fast-forward
  cookbooks/awesome_customers/metadata.rb            |  2 +-
  cookbooks/awesome_customers/recipes/database.rb    | 32 +++++++++++++++++++++-
  .../spec/unit/recipes/database_spec.rb             |  2 ++
- 7 files changed, 65 insertions(+), 6 deletions(-)
+ 8 files changed, 65 insertions(+), 6 deletions(-)
  create mode 100644 cookbooks/awesome_customers/files/default/add-sample-data.sql
  create mode 100644 cookbooks/awesome_customers/files/default/drop-tables.sql
 ```

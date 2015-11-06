@@ -37,7 +37,7 @@ $ git branch
 
 ### Write the smoke recipe
 
-Smoke tests are meant to be fast so that you quickly receive feedback if the application or service is not working. For the Customers web application, we'll simply run cURL to verify that the home page comes up and that the server responds with 200 (OK) HTTP status code.
+Smoke tests are meant to be fast so that you quickly receive feedback if the application or service is not working. For the Customers web application, we'll simply run cURL to verify that the home page comes up and that the server responds with a 200 (OK) HTTP status code.
 
 Write your `smoke` recipe like this.
 
@@ -60,14 +60,14 @@ nodes.each do |node|
 end
 ```
 
-This code performs a similar query as the deploy phase. For each node in the environment (we expect only one), we use the `execute` resource to run `curl` with the `-IL` flag and search for the expected response code.
+This code performs a similar query as the deploy phase. For each node in the environment (we expect only one), we use the `execute` resource to run `curl` with the `-IL` flag (fetch HTTP reader only and follow any redirects) and search for the expected response code.
 
 ### Review and approve the change
 
 Let's try out our smoke test. Follow the same steps as before to submit your change and trigger the pipeline.
 
 ```bash
-~/Development/deliver-customers-rhel
+# ~/Development/deliver-customers-rhel
 $ git status
 On branch smoke-test-customers-app
 Changes not staged for commit:
@@ -110,26 +110,19 @@ This moves the change through the Union, Rehearsal, and Delivered stages.
 
 Let's verify that the Customers web application was successfully delivered.
 
-As before, you'll need the IP address of your server. Move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
+As before, you'll need the IP address of your server. From the administrator's workstation or provisioning node, move to the <code class="file-path">~/delivery-cluster</code> directory.
 
 ```bash
-# ~/Development/deliver-customers-rhel
-$ cd ~/Development/delivery-cluster
+# ~
+$ cd ~/delivery-cluster
 ```
 
 Now run `knife node show`, providing the name of the node for your Delivered stage, and then search for the node's IP address.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife node show delivered-deliver-customers-rhel | grep IP:
 IP:          10.194.15.90
-```
-
-Now move back to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
-
-```bash
-# ~/Development/delivery-cluster
-$ cd ~/Development/deliver-customers-rhel
 ```
 
 From a web browser, navigate to your node's IP address.
@@ -147,19 +140,18 @@ As we did previously, let's merge the `master` branch locally. Here's a reminder
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
-$ git fetch
-remote: Counting objects: 1, done.
-remote: Total 1 (delta 0), reused 0 (delta 0)
-Unpacking objects: 100% (1/1), done.
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
-   ee4ff54..e46f7b2  master     -> delivery/master
-$ git pull delivery master
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
- * branch            master     -> FETCH_HEAD
-Updating ee4ff54..e46f7b2
+$ git pull --prune
+From ssh://test@10.194.13.148:8989/test/learn-chef/deliver-customers-rhel
+ x [deleted]         (none)     -> delivery/_for/master/smoke-test-customers-app
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 3 (delta 1), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+   7c3b1f1..225f1e0  master     -> delivery/master
+Updating 7c3b1f1..225f1e0
 Fast-forward
- .delivery/build-cookbook/recipes/smoke.rb | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ .delivery/build-cookbook/recipes/smoke.rb          | 14 ++++++++++
+ 1 files changed, 14 insertions(+)
 ```
 
 [GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-smoke-test-customers-app-v1.0.0) (tag `ref-smoke-test-customers-app-v1.0.0`.)

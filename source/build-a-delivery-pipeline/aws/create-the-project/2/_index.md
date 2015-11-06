@@ -3,8 +3,7 @@
 The next step is to run `delivery init`. This command:
 
 * creates a project in Chef Delivery, which includes a new Git repository.
-* initializes the `master` branch from the existing `master` branch (in this case, the `master` branch contains the `awesome_customers` cookbook.)
-* creates a pipeline that targets `master`.
+* initializes the `master` branch in Delivery's Git repo from the existing `master` branch that you just cloned.
 * creates a branch named `add-delivery-config`, which is based off of `master`.
 * creates the <code class="file-path">.delivery</code> directory and adds to it an empty build cookbook and a configuration file.
 * submits the change for review.
@@ -61,4 +60,4 @@ Ordinarily, the Verify stage runs unit, lint and syntax tests but we haven't add
 
 The build node that's running Verify merges your changes into `master` on a temporary copy of the main repository and runs the tests against `master`.
 
-Each phase runs on a build node. If you have multiple build nodes, multiple phases can be run in parallel.
+Each phase runs on a build node. If you have multiple build nodes, phases can be run in parallel.

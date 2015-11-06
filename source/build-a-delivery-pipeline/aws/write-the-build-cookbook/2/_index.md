@@ -31,37 +31,33 @@ $ git branch
 * publish-customers-app
 ```
 
-### Create a default node attributes file
 
-To enable the `delivery-truck` cookbook to upload your cookbook to Chef server, you need to set a node attribute. First, create a default node attributes file.
+### Configure the build cookbook to publish to Chef server
 
-Run this command to generate the file.
+To tell the `delivery-truck` cookbook that you want to publish your cookbooks to Chef server, you need to set the `node['delivery']['config']['delivery-truck']['publish']['chef_server']` attribute. The `delivery-truck` cookbook reads this attribute and automatically uploads any changed cookbooks to the Chef server during the publish phase, which is part of the Build stage.
 
-```bash
-# ~/Development/deliver-customers-rhel
-$ chef generate attribute .delivery/build-cookbook default
-Compiling Cookbooks...
-Recipe: code_generator::attribute
-  * directory[./.delivery/build-cookbook/attributes] action create
-    - create new directory ./.delivery/build-cookbook/attributes
-  * template[./.delivery/build-cookbook/attributes/default.rb] action create
-    - create new file ./.delivery/build-cookbook/attributes/default.rb
-    - update content in file ./.delivery/build-cookbook/attributes/default.rb from none to e3b0c4
-    (diff output suppressed by config)
-```
-
-### Set the node attribute to publish to Chef server
-
-To tell the `delivery-truck` cookbook that you want to publish your cookbooks to Chef server, you need to set the `node['delivery']['config']['delivery-truck']['publish']['chef_server']` attribute.
-
-Add this to your default node attributes file, <code class="file-path">default.rb</code>.
+An easy way to set this attribute is from your project's configuration file, located at<br><code class="file-path">~/Development/deliver-customers-rhel/.delivery/config.json</code>. Modify yours like this.
 
 ```ruby
-# ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
-default['delivery']['config']['delivery-truck']['publish']['chef_server'] = true
+# ~/Development/deliver-customers-rhel/.delivery/config.json
+{
+  "version": "2",
+  "build_cookbook": {
+    "path": ".delivery/build-cookbook",
+    "name": "build-cookbook"
+  },
+  "skip_phases": [],
+  "build_nodes": {},
+  "dependencies": [],
+  "delivery-truck": {
+    "publish": {
+      "chef_server": true
+    }
+  }
+}
 ```
 
-The `delivery-truck` cookbook reads this attribute and automatically uploads any changed cookbooks to the Chef server during the publish phase, which is part of the Build stage.
+Lines 10-14 specify the required node attribute.
 
 ### Prepare your encryption key and encrypted data bag items
 
@@ -163,19 +159,14 @@ Changes not staged for commit:
   (use "git checkout -- <file>..." to discard changes in working directory)
 
 	modified:   .delivery/build-cookbook/recipes/publish.rb
+	modified:   .delivery/config.json
 	modified:   cookbooks/awesome_customers/metadata.rb
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-
-	.delivery/build-cookbook/attributes/
 
 no changes added to commit (use "git add" and/or "git commit -a")
 $ git add .
 $ git commit -m "publish version 1.0.0 to Chef server"
-[publish-customers-app 148aac2] publish version 1.0.0 to Chef server
- 3 files changed, 16 insertions(+), 1 deletion(-)
- create mode 100644 .delivery/build-cookbook/attributes/default.rb
+[publish-customers-app 9732850] publish version 1.0.0 to Chef server
+ 3 files changed, 22 insertions(+), 3 deletions(-)
 ```
 
 Now run `delivery review` to submit your changes to the pipeline.
@@ -211,17 +202,17 @@ Let's verify that your cookbook is on the Chef server. There are two ways to do 
 
 The `delivery-cluster` cookbook sets up a `knife` configuration file, <code class="file-path">knife.rb</code>, and server certificates to enable you to administer your Chef server from your workstation or provisioning node.
 
-To verify the status of the `awesome_customers` cookbook from the command line, first, move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
+To verify the status of the `awesome_customers` cookbook from the command line, first, move to the <code class="file-path">~/delivery-cluster</code> directory.
 
 ```bash
 # ~/Development/deliver-customers-rhel
-$ cd ~/Development/delivery-cluster
+$ cd ~/delivery-cluster
 ```
 
 You'll see your <code class="file-path">knife.rb</code> file and the <code class="file-path">trusted_certs</code> directory, which contains the Chef server's SSL certificates.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ ls .chef
 delivery-cluster-data       knife.rb          syntaxcache
 delivery-cluster-data-test  local-mode-cache  trusted_certs
@@ -230,7 +221,7 @@ delivery-cluster-data-test  local-mode-cache  trusted_certs
 Run the `knife cookbook list` command to list all cookbooks and then search the result for the `awesome_customers` cookbook.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife cookbook list | grep awesome_customers
 awesome_customers     1.0.0
 ```
@@ -240,7 +231,7 @@ As expected, version 1.0.0 is on the Chef server.
 Now run `knife data bag show passwords` to list the contents of the passwords data bag.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife data bag show passwords
 db_admin_password
 sql_server_root_password
@@ -252,17 +243,17 @@ As expected, the data bag exists and contains the database administrator and roo
 
 When you use the `delivery-cluster` cookbook to set up your Chef server, the cookbook installs the Chef management console.
 
-To access the management console, you'll need the Chef server URL and the administrator password. To get the Chef server URL, first move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
+To access the management console, you'll need the Chef server URL and the administrator password. To get the Chef server URL, first move to the <code class="file-path">~/delivery-cluster</code> directory.
 
 ```bash
-# ~/Development/delivery-cluster
-$ cd ~/Development/delivery-cluster
+# ~/delivery-cluster
+$ cd ~/delivery-cluster
 ```
 
 Now run the `rake info:list_core_services` command to see information about your Chef Delivery cluster.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ rake info:list_core_services
 2 items found
 
@@ -294,7 +285,7 @@ As we did previously, we need to pull Delivery's `master` branch locally. Here's
 First, move to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ cd ~/Development/deliver-customers-rhel
 ```
 
@@ -305,22 +296,19 @@ Now run these commands.
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
-$ git fetch
+$ git pull --prune
+From ssh://test@10.194.13.148:8989/test/learn-chef/deliver-customers-rhel
+ x [deleted]         (none)     -> delivery/_for/master/publish-customers-app
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
 Unpacking objects: 100% (1/1), done.
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
-   bd8a8b2..a100d45  master     -> delivery/master
-$ git pull delivery master
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
- * branch            master     -> FETCH_HEAD
-Updating bd8a8b2..a100d45
+   c7b5796..889fc05  master     -> delivery/master
+Updating c7b5796..889fc05
 Fast-forward
- .delivery/build-cookbook/attributes/default.rb |  1 +
- .delivery/build-cookbook/recipes/publish.rb    | 14 ++++++++++++++
- cookbooks/awesome_customers/metadata.rb        |  2 +-
- 3 files changed, 16 insertions(+), 1 deletion(-)
- create mode 100644 .delivery/build-cookbook/attributes/default.rb
+ .delivery/build-cookbook/recipes/publish.rb | 14 ++++++++++++++
+ .delivery/config.json                       |  9 +++++++--
+ cookbooks/awesome_customers/metadata.rb     |  2 +-
+ 3 files changed, 22 insertions(+), 3 deletions(-)
 ```
 
 [GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-publish-customers-app-v1.0.0) (tag `ref-publish-customers-app-v1.0.0`.)

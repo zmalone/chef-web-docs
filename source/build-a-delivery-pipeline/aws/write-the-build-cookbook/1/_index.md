@@ -30,7 +30,7 @@ $ git branch
 
 ### Add the dependency
 
-Modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb</code> like this. The metadata file lists which cookbooks the build cookbook depends on.
+The build cookbook exists in the <code class="file-path">.delivery</code> directory. Modify<br><code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb</code> like this. The metadata file lists which cookbooks the build cookbook depends on.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb
@@ -127,7 +127,7 @@ Finally, commit the changes.
 # ~/Development/deliver-customers-rhel
 $ git commit -m "pull in delivery-truck cookbook"
 [add-delivery-truck 24f7971] pull in delivery-truck cookbook
- 13 files changed, 15 insertions(+)
+ 13 files changed, 16 insertions(+)
 ```
 
 ### Submit the change for review
@@ -194,16 +194,14 @@ Just as you did for the initial `add-delivery-config` branch that set up the pro
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
-$ git fetch
+$ git pull --prune
+From ssh://test@10.194.13.148:8989/test/learn-chef/deliver-customers-rhel
+ x [deleted]         (none)     -> delivery/_for/master/add-delivery-truck
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
 Unpacking objects: 100% (1/1), done.
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
-   a9471ce..bd8a8b2  master     -> delivery/master
-$ git pull delivery master
-From ssh://test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel
- * branch            master     -> FETCH_HEAD
-Updating a9471ce..bd8a8b2
+   eb8e5b7..c7b5796  master     -> delivery/master
+Updating eb8e5b7..c7b5796
 Fast-forward
  .delivery/build-cookbook/Berksfile             | 3 +++
  .delivery/build-cookbook/metadata.rb           | 2 ++
