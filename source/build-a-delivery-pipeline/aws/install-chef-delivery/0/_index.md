@@ -2,7 +2,7 @@
 
 This tutorial creates infrastructure in AWS and depends on at least one local workstation outside of AWS. Here's a diagram:
 
-![](delivery/delivery-scenario-architecture.svg)
+<img style="box-shadow:none;" src="/assets/images/delivery/delivery-scenario-architecture.png"></img>
 
 The diagram breaks down into these parts:
 
