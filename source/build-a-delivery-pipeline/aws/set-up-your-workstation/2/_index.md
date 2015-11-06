@@ -1,8 +1,8 @@
 ## 2. Update your Delivery user with an SSH public key
 
-You need to associate your public SSH key with your Delivery user name.
+You need to associate your public SSH key with your Delivery user.
 
-Start by generating an SSH key. You can skip this step if you already have one, for example, a file named <code class="file-path">~/.ssh/id_rsa.pub</code>.
+Start by generating an SSH key. You can skip this step if you already have an SSH public key that you can use, for example, <code class="file-path">~/.ssh/id_rsa.pub</code>.
 
 ```bash
 # ~
@@ -61,6 +61,6 @@ OcF6EvTYYO4RmISD8G+6dm1m4MlxLS53aZQWgYWvRdfNB1DA
 Zo3h9Q== you@example.com
 ```
 
-Log into the Chef Delivery server using the URL from the previous lesson. From the login page, enter your Chef Delivery user name and password.
+Log into the Chef Delivery web interface.
 
-Open your user profile and paste the output from your terminal window into the text area lableled **Public SSH**. If you were assigned a default password, change it and save your profile.
+Open your user profile (select **Users** from the drop-down menu on the upper right, then navigate to your profile) and paste the output from your terminal window into the large text area under **Security Information**. If you were assigned an initial password, change it and save your profile.

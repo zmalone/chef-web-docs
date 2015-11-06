@@ -110,26 +110,19 @@ This moves the change through the Union, Rehearsal, and Delivered stages.
 
 Let's verify that the Customers web application was successfully delivered.
 
-As before, you'll need the IP address of your server. Move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
+As before, you'll need the IP address of your server. From the administrator's workstation or provisioning node, move to the <code class="file-path">~/delivery-cluster</code> directory.
 
 ```bash
-# ~/Development/deliver-customers-rhel
-$ cd ~/Development/delivery-cluster
+# ~
+$ cd ~/delivery-cluster
 ```
 
 Now run `knife node show`, providing the name of the node for your Delivered stage, and then search for the node's IP address.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife node show delivered-deliver-customers-rhel | grep IP:
 IP:          10.194.15.90
-```
-
-Now move back to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
-
-```bash
-# ~/Development/delivery-cluster
-$ cd ~/Development/deliver-customers-rhel
 ```
 
 From a web browser, navigate to your node's IP address.

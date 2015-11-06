@@ -1,6 +1,6 @@
 ## How to delete your project
 
-If you ever need to start over, or you complete the tutorial and want to delete this project, your administrator needs to login to the Chef Delivery server and run the `delivery-ctl delete-project` command.
+If you ever need to start over, or you complete the tutorial and want to delete this project, your administrator needs to login to the Chef Delivery server (for example, over SSH) and run the `delivery-ctl delete-project` command.
 
 The `delivery-ctl delete-project` command takes your enterprise, organization, and project names as arguments, like this.
 

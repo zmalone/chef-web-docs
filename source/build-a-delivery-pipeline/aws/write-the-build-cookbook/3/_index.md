@@ -2,9 +2,9 @@
 
 In this part, we'll provision the last four stages of your pipeline with the infrastructure they need to run the `awesome_customers` cookbook. Here you'll use automated provisioning with AWS to bring up these infrastructure pieces.
 
-[COMMENT] Remember, if you prefer to use another cloud provider or want to run your infrastructure on-prem, feel free to adapt the code you see. If you have questions, join us on [Discourse](https://discourse.chef.io/c/delivery).
+When you or your administrator installed Chef Delivery, the procedure created an encryption key for you, located at<br>  <code class="file-path">~/delivery-cluster/.chef/delivery-cluster-data/encrypted\_data\_bag\_secret</code>. That encryption key gets copied to the build node each time it performs a job. That means you can use it to encrypt data on your administrator's workstation or provisioning node and decrypt it when the build-cookbook runs.
 
-When you installed Chef Delivery, the installer created an encryption key for you, located at<br>  <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/encrypted\_data\_bag\_secret</code>. That encryption key gets copied to the build node each time it performs a job. That means you can use it to encrypt data on your workstation or provisioning node and decrypt it when the build-cookbook runs.
+[COMMENT] In practice, you'll need to decide which users have access to the encryption key. If you installed Chef Delivery from your workstation, then you'll have access to both the encryption key and the unencrypted data. For this tutorial, you can work with your administrator to encrypt and upload the data if you did not perform the installation.
 
 You'll use the key to encrypt these items in a data bag:
 
@@ -20,12 +20,16 @@ You'll create node attributes in your build cookbook that describe your Acceptan
 
 In this part, you'll create a data bag to hold your SSH private key. You'll also encrypt your AWS credentials in the data bag.
 
-```bash
-$ cd ~/Development/delivery-cluster
-```
+Move to the <code class="file-path">~/delivery-cluster</code> directory on the administrator's workstation or provisioning node.
 
 ```bash
-# ~/Development/delivery-cluster
+$ cd ~/delivery-cluster
+```
+
+Now run the following command to create a data bag named `provisioning-data`.
+
+```bash
+# ~/delivery-cluster
 $ knife data bag create provisioning-data
 Created data_bag[provisioning-data]
 ```
@@ -34,10 +38,10 @@ Created data_bag[provisioning-data]
 
 In this part, you'll encrypt your SSH private key and add it to your data bag.
 
-Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json</code> and add this, replacing `YOUR_NAME` and `YOUR_PRIVATE_KEY` with your values (`YOUR_NAME` should not include .pem or any file extension.)
+Create <code class="file-path">~/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json</code> and add this, replacing `YOUR_NAME` and `YOUR_PRIVATE_KEY` with your values (`YOUR_NAME` should not include .pem or any file extension.)
 
 ```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
+# ~/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
 {
   "id": "ssh_key",
   "default": {
@@ -50,7 +54,7 @@ Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-clu
 You'll need to replace each line break with `\n` in your file. For example:
 
 ```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
+# ~/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
 {
   "id": "ssh_key",
   "default": {
@@ -63,6 +67,7 @@ You'll need to replace each line break with `\n` in your file. For example:
 An easy way to replace the line breaks is to run a command similar to this one and copy the output to your file.
 
 ```bash
+# ~/delivery-cluster
 $ cat ~/.ssh/learn-chef.pem | tr '\r\n' '\\n'
 -----BEGIN RSA PRIVATE KEY-----\ngz5jKCX3TO...j8ErLWsr==\n-----END RSA PRIVATE KEY-----
 ```
@@ -73,7 +78,7 @@ The format of the data bag item matches what's required to use the [encrypted\_d
 Encrypt and upload the data bag item.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/ssh_key.json --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Updated data_bag_item[provisioning-data::ssh_key]
 ```
@@ -81,7 +86,7 @@ Updated data_bag_item[provisioning-data::ssh_key]
 Verify you can decrypt it back.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife data bag show provisioning-data ssh_key --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Encrypted data bag detected, decrypting with provided secret.
 default:
@@ -95,10 +100,10 @@ id:      ssh_key
 
 ### Encrypt and upload your AWS credentials
 
-Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json</code> and add this, replacing `YOUR_ACCESS_KEY_ID` and `YOUR_SECRET_ACCESS_KEY` with your values.
+Create <code class="file-path">~/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json</code> and add this, replacing `YOUR_ACCESS_KEY_ID` and `YOUR_SECRET_ACCESS_KEY` with your values.
 
 ```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
+# ~/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
 {
   "default": {
     "profile": "PROFILE",
@@ -113,7 +118,7 @@ Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-clu
 For example:
 
 ```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
+# ~/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
 {
   "default": {
     "profile": "default",
@@ -128,7 +133,7 @@ For example:
 Encrypt and upload the data bag item.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/aws_creds.json --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Updated data_bag_item[provisioning-data::aws_creds]
 ```
@@ -136,7 +141,7 @@ Updated data_bag_item[provisioning-data::aws_creds]
 Verify you can decrypt it back.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife data bag show provisioning-data aws_creds --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Encrypted data bag detected, decrypting with provided secret.
 default:
@@ -151,10 +156,10 @@ id:      aws_creds
 
 In this step, you'll encrypt and upload the decryption key for the Customers web application. You can either use the key you generated in [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel/), or the one you generated in the [Prepare your encryption key and encrypted data bag items](#prepareyourencryptionkeyandencrypteddatabagitems) portion of this tutorial.
 
-Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-cluster-data/database\_passwords\_key.json</code> and add this:
+Create <code class="file-path">~/delivery-cluster/.chef/delivery-cluster-data/database\_passwords\_key.json</code> and add this:
 
 ```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/database_passwords_key.json
+# ~/delivery-cluster/.chef/delivery-cluster-data/database_passwords_key.json
 {
   "default": {
     "content": "YOUR_DECRYPTION_KEY"
@@ -166,7 +171,7 @@ Create <code class="file-path">~/Development/delivery-cluster/.chef/delivery-clu
 For example:
 
 ```ruby
-# ~/Development/delivery-cluster/.chef/delivery-cluster-data/database_passwords_key.json
+# ~/delivery-cluster/.chef/delivery-cluster-data/database_passwords_key.json
 {
   "default": {
     "content": "u8eF924qkscvx+edZfynrpMi3JS0fLE1qHoJaN9Yzba0O79H5WQGUjRWaXTqUEaj/TqeEYL4F1j8R4jiwI5hJPmo91hukcWhpgxCrvvw0ajku1e3InKMWWDcOAv8frkHgTwoqLXjkbVJyYJ4A1o9Hc/jHTlweicK39pETi76emkaxVXQCRcq9pi+OxNVYMeRucGqZZrp8kgRChPLYrmzTOpkJ5uaFXq/OVRZSQUA7lAUAcBVwXSvnY5PiisZjsEwF/cOTlLfLjcRGz4820RpM0TyxgqG5o4JsJ/tfKbn8bz2DExaW5rIUhx/EAdaK8xOiihTsP8n67XV7fwAT1wHmeTg4n/aAr57OW3hZk2eAXP2l9hRKy3b8W42jJnUZ92rOKBTIfAz2B7lxBzDphdntrQYtuLO7PmaKjDwZX7U7OoEUNvKjnnp0nTZcyECc3dlF0JSj1w6yobK1uzlyQRoRUcD8TtAOWBazmol3pY9fhLu5ZVhOYoOuKmyDDCYgk8SLSL/rSSHbPKtHo77amqR68IDT9gCK3ZCM7XF97IJBefoK5UYDFwKIYKaX9GYhUoJf0EXZLvHn/GxzEDK8fanFeaIYFU68WBpmONng8IGndYhgBhu6yA3hyrlvQRkZHpf+1pDxjOh1neDv0+A12FusGbehZOKhCfn1I0Q5rQLO7V="
@@ -178,7 +183,7 @@ For example:
 Encrypt and upload the data bag item.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife data bag from file provisioning-data ./.chef/delivery-cluster-data/database_passwords_key.json --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Updated data_bag_item[provisioning-data::database_passwords_key]
 ```
@@ -186,7 +191,7 @@ Updated data_bag_item[provisioning-data::database_passwords_key]
 Verify you can decrypt it back.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife data bag show provisioning-data database_passwords_key --secret-file .chef/delivery-cluster-data/encrypted_data_bag_secret
 Encrypted data bag detected, decrypting with provided secret.
 default:
@@ -201,7 +206,7 @@ Now you'll create a branch for your changes to the `provision` recipe.
 First, move to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ cd ~/Development/deliver-customers-rhel
 ```
 
@@ -634,13 +639,13 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 Now let's verify that the infrastructure environment for the Acceptance stage was successfully created. We'll run the `awesome_customers` cookbook in that infrastructure environment when we write the recipe for the deploy phase in the next step.
 
-One way to verify the Acceptance stage is to move to your <code class="file-path">~/Development/delivery-cluster</code> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
+One way to verify the Acceptance stage is to move to your <code class="file-path">~/delivery-cluster</code> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
 
-First, move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
+First, from the administrator's workstation or provisioning node, move to the <code class="file-path">~/delivery-cluster</code> directory.
 
 ```bash
-# ~/Development/deliver-customers-rhel
-$ cd ~/Development/delivery-cluster
+# ~
+$ cd ~/delivery-cluster
 ```
 
 The machine name is the same as the node name. Recall that we name the machine by combining the stage name with the project name. So for the Acceptance stage, the machine's name is 'acceptance-deliver-customers-rhel'.
@@ -648,19 +653,12 @@ The machine name is the same as the node name. Recall that we name the machine b
 Run `knife node list` and search for your Acceptance stage.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife node list | grep acceptance-deliver-customers-rhel
 acceptance-deliver-customers-rhel
 ```
 
 As expected, the infrastructure environment for the Acceptance stage appears in the node list.
-
-Now move back to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
-
-```bash
-# ~/Development/delivery-cluster
-$ cd ~/Development/deliver-customers-rhel
-```
 
 #### Merge the change locally
 

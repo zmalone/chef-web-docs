@@ -166,26 +166,19 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 Let's verify that the `awesome_customers` cookbook successfully deployed to your Acceptance stage. To do that, you'll need the IP address of your server. You can get its IP address from its node attributes.
 
-Move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
+From the administrator's workstation or provisioning node, move to the <code class="file-path">~/delivery-cluster</code> directory.
 
 ```bash
-# ~/Development/deliver-customers-rhel
-$ cd ~/Development/delivery-cluster
+# ~
+$ cd ~/delivery-cluster
 ```
 
 Now run `knife node show`, providing the name of the node for your Acceptance stage, and then search for the node's IP address.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife node show acceptance-deliver-customers-rhel | grep IP:
 IP:          10.194.12.61
-```
-
-Now move back to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
-
-```bash
-# ~/Development/delivery-cluster
-$ cd ~/Development/deliver-customers-rhel
 ```
 
 From a web browser, navigate to your node's IP address.

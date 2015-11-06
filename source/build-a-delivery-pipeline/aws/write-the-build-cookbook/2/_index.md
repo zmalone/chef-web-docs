@@ -202,17 +202,17 @@ Let's verify that your cookbook is on the Chef server. There are two ways to do 
 
 The `delivery-cluster` cookbook sets up a `knife` configuration file, <code class="file-path">knife.rb</code>, and server certificates to enable you to administer your Chef server from your workstation or provisioning node.
 
-To verify the status of the `awesome_customers` cookbook from the command line, first, move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
+To verify the status of the `awesome_customers` cookbook from the command line, first, move to the <code class="file-path">~/delivery-cluster</code> directory.
 
 ```bash
 # ~/Development/deliver-customers-rhel
-$ cd ~/Development/delivery-cluster
+$ cd ~/delivery-cluster
 ```
 
 You'll see your <code class="file-path">knife.rb</code> file and the <code class="file-path">trusted_certs</code> directory, which contains the Chef server's SSL certificates.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ ls .chef
 delivery-cluster-data       knife.rb          syntaxcache
 delivery-cluster-data-test  local-mode-cache  trusted_certs
@@ -221,7 +221,7 @@ delivery-cluster-data-test  local-mode-cache  trusted_certs
 Run the `knife cookbook list` command to list all cookbooks and then search the result for the `awesome_customers` cookbook.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife cookbook list | grep awesome_customers
 awesome_customers     1.0.0
 ```
@@ -231,7 +231,7 @@ As expected, version 1.0.0 is on the Chef server.
 Now run `knife data bag show passwords` to list the contents of the passwords data bag.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ knife data bag show passwords
 db_admin_password
 sql_server_root_password
@@ -243,17 +243,17 @@ As expected, the data bag exists and contains the database administrator and roo
 
 When you use the `delivery-cluster` cookbook to set up your Chef server, the cookbook installs the Chef management console.
 
-To access the management console, you'll need the Chef server URL and the administrator password. To get the Chef server URL, first move to the <code class="file-path">~/Development/delivery-cluster</code> directory.
+To access the management console, you'll need the Chef server URL and the administrator password. To get the Chef server URL, first move to the <code class="file-path">~/delivery-cluster</code> directory.
 
 ```bash
-# ~/Development/delivery-cluster
-$ cd ~/Development/delivery-cluster
+# ~/delivery-cluster
+$ cd ~/delivery-cluster
 ```
 
 Now run the `rake info:list_core_services` command to see information about your Chef Delivery cluster.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ rake info:list_core_services
 2 items found
 
@@ -285,7 +285,7 @@ As we did previously, we need to pull Delivery's `master` branch locally. Here's
 First, move to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
 
 ```bash
-# ~/Development/delivery-cluster
+# ~/delivery-cluster
 $ cd ~/Development/deliver-customers-rhel
 ```
 

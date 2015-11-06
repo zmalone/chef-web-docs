@@ -20,7 +20,7 @@ Be sure to set the system Ruby; for details, see [Add Ruby to $PATH](https://doc
 
 ### 1.3. Install the knife push plugin
 
-The `knife push` plugin enables you to view the status of the build nodes in your Delivery cluster.
+The `knife push` plugin enables you to view the status of the build nodes in your Delivery cluster. Install the plugin like this.
 
 ```bash
 $ chef gem install knife-push
@@ -28,7 +28,7 @@ $ chef gem install knife-push
 
 ### 1.4. Install the Delivery CLI
 
-You'll use the `delivery` command line interface (CLI) to interact with Chef Delivery.
+You'll use the `delivery` command line interface (CLI) to interact with Chef Delivery. Follow the procedure that matches your workstation OS.
 
 [START_TABS cli Mac OS X, RHEL, Ubuntu, Windows]
 
@@ -66,7 +66,7 @@ $ sudo yum install delivery-cli.rpm
 
 [START_TAB cliUbuntu]
 
-Run this command to add packagecloud.io repository to your `apt` sources list.
+Run this command to add packagecloud.io's repository to your `apt` sources list.
 
 ```bash
 # ~
