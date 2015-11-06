@@ -212,7 +212,7 @@ Run `git status` to see the uncommitted changes.
 ```bash
 # ~/Development/deliver-customers-rhel/cookbooks
 $ git status
-On branch ref-visualize_data_delivery
+On branch visualize_data_delivery
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git checkout -- <file>..." to discard changes in working directory)

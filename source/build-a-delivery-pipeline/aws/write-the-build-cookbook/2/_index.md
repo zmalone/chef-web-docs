@@ -200,12 +200,12 @@ Let's verify that your cookbook is on the Chef server. There are two ways to do 
 
 #### Verify from the command line
 
-The `delivery-cluster` cookbook sets up a `knife` configuration file, <code class="file-path">knife.rb</code>, and server certificates to enable you to administer your Chef server from your workstation or provisioning node.
+On the administrator's workstation or provisioning node, the `delivery-cluster` cookbook sets up a `knife` configuration file, <code class="file-path">knife.rb</code>, and server certificates to enable you to administer your Chef server from your workstation or provisioning node.
 
-To verify the status of the `awesome_customers` cookbook from the command line, first, move to the <code class="file-path">~/delivery-cluster</code> directory.
+To verify the status of the `awesome_customers` cookbook from the command line, first, move to the <code class="file-path">~/delivery-cluster</code> directory on the administrator's workstation or provisioning node.
 
 ```bash
-# ~/Development/deliver-customers-rhel
+# ~
 $ cd ~/delivery-cluster
 ```
 
@@ -243,30 +243,7 @@ As expected, the data bag exists and contains the database administrator and roo
 
 When you use the `delivery-cluster` cookbook to set up your Chef server, the cookbook installs the Chef management console.
 
-To access the management console, you'll need the Chef server URL and the administrator password. To get the Chef server URL, first move to the <code class="file-path">~/delivery-cluster</code> directory.
-
-```bash
-# ~/delivery-cluster
-$ cd ~/delivery-cluster
-```
-
-Now run the `rake info:list_core_services` command to see information about your Chef Delivery cluster.
-
-```bash
-# ~/delivery-cluster
-$ rake info:list_core_services
-2 items found
-
-delivery-server-test:
-  ipaddress: 10.194.11.99
-
-build-node-test-1:
-  ipaddress: 10.194.13.122
-
-chef_server_url      'https://10.194.12.65/organizations/test'
-```
-
-Navigate to your `chef_server_url` and login with username `delivery` and password `delivery`.
+Navigate to your Chef server URL and login with username `delivery` and password `delivery`.
 
 From the **Policy** tab, you'll see that the `awesome_customers` cookbook's version is listed as 1.0.0.
 
