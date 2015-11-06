@@ -1,13 +1,85 @@
-## 1. Get a Chef Delivery license key
+## 1. Install components
 
-Click the button below, fill out the short form, and check your email for a link to a temporary license key for this tutorial.
+[TIP] If you installed Chef Delivery from your workstation, you can continue to use that same workstation. You can also move on to [step 2](#step2).
 
-[START_MODAL get-a-license-key Get a license key]
+### 1.1. Install Git
 
-<script src="//app-sj05.marketo.com/js/forms2/js/forms2.min.js"></script>
-<form id="mktoForm_1438"></form>
-<script>MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438);</script>
+You'll need [Git](https://git-scm.com/downloads) to obtain starter code for your project and to interact with Delivery's Git server.
 
-[END_MODAL]
+[WINDOWS] On Windows, Git 2.6 is not currently supported for use with Chef Delivery.
 
-After you click the link in the email, the license file named <code class="file-path">delivery.license</code> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <code class="file-path">~/delivery.license</code>.
+[WINDOWS] Many Windows users use Git BASH, which is part of [Git for Windows](https://git-for-windows.github.io). [posh-git](https://github.com/dahlbyk/posh-git) is another popular option, which provides access to Git from Windows PowerShell.
+
+### 1.2. Install the Chef Development Kit
+
+The Chef Development Kit, or Chef DK, gives you the tools needed to write Chef code from your workstation.
+
+[Install the Chef DK](https://downloads.chef.io/chef-dk/) now if you haven't already.
+
+Be sure to set the system Ruby; for details, see [Add Ruby to $PATH](https://docs.chef.io/install_dk.html#add-ruby-to-path).
+
+### 1.3. Install the knife push plugin
+
+The `knife push` plugin enables you to view the status of the build nodes in your Delivery cluster.
+
+```bash
+$ chef gem install knife-push
+```
+
+### 1.4. Install the Delivery CLI
+
+You'll use the `delivery` command line interface (CLI) to interact with Chef Delivery.
+
+[START_TABS cli Mac OS X, RHEL, Ubuntu, Windows]
+
+[START_TAB cliMacOSX active]
+
+1. [Download the package](https://s3.amazonaws.com/delivery-packages/cli/deliverycli-0.0.0%2B20151021130322-1.pkg).
+1. Click the package and install.
+1. You may need to allow the package on the machine. To do this, open **System Preferences** > **Security & Privacy**, and click **Allow**. You may also go to your <code class="file-path">~/Downloads</code> folder and right-click the package to open the installer. Accept the agreement to install the package.
+
+[END_TAB]
+
+[START_TAB cliWindows]
+
+1. [Download the Delivery CLI installer](https://s3.amazonaws.com/delivery-packages/cli/delivery-cli-0.0.0%2B20151020165859-1-x64.msi).
+1. Click the package and install.
+1. Modify your `PATH` environment variable to include the path to the `delivery` executable. For example: <code class="file-path">C:\\chef\\delivery-cli\\bin</code>.
+
+[END_TAB]
+
+[START_TAB cliRHEL]
+
+Download the Delivery CLI package like this.
+
+```bash
+$ curl -o delivery-cli.rpm https://s3.amazonaws.com/delivery-packages/cli/delivery-cli-20150408004719-1.x86_64.rpm
+```
+
+Then run this to install it.
+
+```bash
+$ sudo yum install delivery-cli.rpm
+```
+
+[END_TAB]
+
+[START_TAB cliUbuntu]
+
+Run this command to add packagecloud.io repository to your `apt` sources list.
+
+```bash
+# ~
+$ curl https://packagecloud.io/install/repositories/chef/current/script.deb.sh | sudo bash
+```
+
+Then run this command to install the Delivery CLI package.
+
+```bash
+# ~
+$ sudo apt-get install delivery-cli
+```
+
+[END_TAB]
+
+[END_TABS]

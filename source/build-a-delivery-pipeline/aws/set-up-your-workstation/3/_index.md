@@ -1,56 +1,29 @@
-## 3. Install Chef Delivery
+## 3. Connect the Delivery CLI to the Chef Delivery server
 
-Follow the instructions in the installation procedure. To clarify:
+Next, you'll run the `delivery setup` command to create a file that configures the `delivery` command line interface (CLI) to contact the Chef Delivery server. The command you'll run creates a configuration file named <code class="file-path">.delivery/cli.toml</code>.
 
-* Either use a provisioning node or your workstation to install the Delivery cluster.
-* Remember that installing Chef Supermarket is optional.
-* Remember that installing Chef Analytics is optional.
-* Remember that, for this tutorial, you only need one build node.
-* Creating an internal user is fine.
-* When you add a user, you can give all permissions.
-* When you create an organization, you can enter a name that matches your org (for example, `dev`), or `learn-chef`.
-* You don't need to validate the installation. We'll do that here.
-* This tutorial uses <code class="file-path">~/Development</code> as its working directory, but you can choose a directory that best suits you. Just remember to change the paths that we show as necessary.
+The placement of the `.delivery` directory in your file hierarchy is significant. Like Git, Chef Delivery searches the current directory and parent directories for its server settings. Because server settings are unique to an organization, we recommend that you create a directory for each organization you belong to and run the `delivery setup` command from that directory.
 
-<a class='accent-button radius' href='https://docs.chef.io/install_delivery.html' target='_blank'>Install Chef Delivery&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
-
-### Authenticate access to Chef Delivery's Git server
-
-After the installation completes, you must authenticate access to your Chef Delivery's Git server, which by default runs on port 8989.
-
-First, get your Delivery server's IP address. An easy way to do that is to run `rake info:list_core_services` from your <code class="file-path">~/Development/delivery-cluster</code> directory.
+Create a working directory for your organization. This tutorial uses `Development`. You can also use <code class="file-path">~/Development</code> for purposes of this tutorial, or you can use your organization name. Just remember to change the paths you see throughout the tutorial.
 
 ```bash
-# ~/Development/delivery-cluster
-$ rake info:list_core_services
-2 items found
-
-delivery-server-test:
-  ipaddress: 10.194.11.99
-
-build-node-test-1:
-  ipaddress: 10.194.13.122
-
-chef_server_url      'https://10.194.12.65/organizations/test'
+$ cd ~
+$ mkdir Development
+$ cd Development
 ```
 
-Then run the `ssh` command like this.
+From your workstation terminal, configure the `delivery` command line interface (CLI) to contact the Chef Delivery server at `DELIVERY_SERVER`, with your `ENTERPRISE`, `ORGANIZATION` and `USERNAME`. In this tutorial, use the IP address of your Chef Delivery server for the `--server` argument.
 
 ```bash
-# ~/Development/delivery-cluster
-$ ssh -l USER@ENTERPRISE -p 8989 IP_ADDRESS
+# ~/Development
+$ delivery setup --server=DELIVERY_SERVER --ent=ENTERPRISE --org=ORGANIZATION --user=USERNAME
 ```
 
-Here's an example for a user named `sally` and an enterprise named `chef`.
+Here's an example.
 
 ```bash
-# ~/Development/delivery-cluster
-$ ssh -l sally@chef -p 8989 10.194.11.99
-The authenticity of host '[10.194.11.99]:8989 ([10.194.11.99]:8989)' can't be established.
-RSA key fingerprint is ba:db:0c:97:f8:d4:6d:0f:0b:57:0d:0f:0e:a4:15:01.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '[10.194.11.99]:8989' (RSA) to the list of known hosts.
-channel 0: protocol error: close rcvd twice
-Hi sally@chef! You've successfully authenticated, but Chef Delivery does not provide shell access.
-                      Connection to 10.194.11.99 closed.
+# ~/Development
+$ delivery setup --server=10.194.11.99 --ent=chef --org=Development --user=sally
 ```
+
+This example produces this <code class="file-path">.delivery/cli.toml</code> file.

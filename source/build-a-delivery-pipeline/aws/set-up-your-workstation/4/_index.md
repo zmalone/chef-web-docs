@@ -1,29 +1,26 @@
-## 4. Prepare your Acceptance, Union, Rehearsal, and Delivered stages
+## 4. Authenticate access to Delivery's Git server
 
-The Acceptance, Union, Rehearsal and Delivered stages are where you'll run the `awesome_customers` cookbook. In other words, these stages host the web application. In this scenario, the web application runs on Red Hat Enterprise Linux 6.5 or CentOS 6.5.
+You must authenticate access to your Chef Delivery's Git server, which by default runs on port 8989.
 
-The `delivery-cluster` cookbook sets up your Chef Delivery server and Chef server &ndash; you'll set up the stages in your build cookbook.
+Then run the `ssh` command like this. Enter 'yes' when prompted.
 
-When you write your build cookbook, you'll use [Chef provisioning](https://docs.chef.io/provisioning.html)'s ability to create AWS instances and bootstrap them to your Chef sever. All you need to provide is some information about your AWS environment.
-
-Gather this information about your AWS environment. You'll use it later on.
-
-* Your AWS credentials and the private key you use to connect to EC2 instances.
-
-  Your AWS credentials file is often named <code class="file-path">credentials</code> and looks like this.
-
-  ```ruby
-# credentials
-[default]
-aws_access_key_id=AKIAIOSFODNN7EXAMPLE
-aws_secret_access_key=wJalrXUtnFEMIqK7MDENGabPxRfiCYEXAMPLEKEY
+```bash
+# ~/Development
+$ ssh -l USER@ENTERPRISE -p 8989 IP_ADDRESS
 ```
 
-  Your private key is typically in .pem format.
+Here's an example for a user named `sally` and an enterprise named `chef`.
 
-* A region that your credentials file is configured to use, for example, us-west-2.
-* An AMI ID in your region for Red Hat Enterprise Linux 6.5 or CentOS 6.5, for example, ami-09f7d239.
-* The public or private subnet ID that you use to address EC2 instances. Your subnet must be reachable from your Delivery cluster and your workstation or provisioning node. An example subnet ID is subnet-19ac017c. Also note whether you access EC2 instances by their private or public IP addresses.
-* A security group ID (or multiple IDs) that permit inbound network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS). An example security group ID is sg-cbacf8ae.
+```bash
+# ~/Development
+$ ssh -l sally@chef -p 8989 10.194.11.99
+The authenticity of host '[10.194.11.99]:8989 ([10.194.11.99]:8989)' can't be established.
+RSA key fingerprint is ba:db:0c:97:f8:d4:6d:0f:0b:57:0d:0f:0e:a4:15:01.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '[10.194.11.99]:8989' (RSA) to the list of known hosts.
+channel 0: protocol error: close rcvd twice
+Hi sally@chef! You've successfully authenticated, but Chef Delivery does not provide shell access.
+                      Connection to 10.194.11.99 closed.
+```
 
-You can create a test Red Hat Enterprise Linux 6.5 or CentOS 6.5 instance to verify that your settings work together.
+Your workstation is now set up for use with Chef Delivery.

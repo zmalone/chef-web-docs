@@ -1,29 +1,66 @@
-## 2. Plan your Delivery cluster
+## 2. Update your Delivery user with an SSH public key
 
-Recall that we use the term _Delivery cluster_ to define the collection of machines that make up a Chef Delivery setup.
+You need to associate your public SSH key with your Delivery user name.
 
-The installation procedure you'll use explains how to create a Delivery cluster suitable for most production environments. However, this tutorial requires a less complex configuration, which you can use if you prefer.
+Start by generating an SSH key. You can skip this step if you already have one, for example, a file named <code class="file-path">~/.ssh/id_rsa.pub</code>.
 
-For this tutorial, your Delivery cluster will consist of:
+```bash
+# ~
+$ ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
 
-* a Chef Delivery server.
-* a Chef server.
-* a build node.
-* a server to run each of the Acceptance, Union, Rehearsal, and Delivered stages, which host the Customers web application.
+The output is similar to:
 
-This tutorial doesn't require you to set up Chef Analytics or Chef Supermarket, or to have three build nodes, as is described in the installation procedure. They are optional.
+```bash
+# ~
+Generating public/private rsa key pair.
+Enter file in which to save the key (/Users/username/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /Users/path/to/.ssh/id_rsa.
+Your public key has been saved in /Users/path/to/.ssh/id_rsa.pub.
+The key fingerprint is:
+ac:8a:57:90:58:c1:cd:34:32:18:9d:f3:79:60:f3:41 you@example.com
+The key's randomart image is:
++--[ RSA 4096]----+
+|  .==*o.E        |
+|  . *o*..        |
+|   o + = .       |
+|  . o o.o        |
+|     . ..S       |
+|      ..         |
+|     ..          |
+|   .*o*.         |
+|  ...            |
++-----------------+
+```
 
-### Plan whether to use a provisioning node or your workstation to install Chef Delivery
+Now print your SSH key to the console, like this.
 
-The installation procedure recommends that you set up a dedicated _provisioning node_ and install the Delivery cluster from there. In general, having a provisioning node gives you a persistent node in your production environment that you can always use to install and administer your Delivery cluster.
+```bash
+# ~
+$ cat ~/.ssh/id_rsa.pub
+```
 
-However, for evaluation and learning purposes, you can provision your cluster from your workstation. You can even provision your Delivery cluster from a virtual machine running on your workstation. Just ensure that your system meets the [prerequisites](https://docs.chef.io/install_dk.html#review-prerequisites) for running the Chef Development Kit.
+The output is similar to:
 
-### Plan how you'll bring up your cluster
+```bash
+# ~
+ssh-rsa
+AAAAB3NzaC1yc2EAAAADAQABAAACAQDa8BR/9bj5lVUfQP9Rsqon5qJMkiVm+JAtGi
+wnhxqgyRhkYLIzm6+gcifDgMOMuwZA88Ib5WNRhxjlmTseapower4rH/jAAczdp1h1
+7xLEEbUfQfkcqiy/Drp3k12345678ad234fgvdsasdfasdfR9ddNIeNvQ7OIpOCfLE
+PCyFz3aRRuhpM/5cySFT7bl1O44bNgfiuqRzcXFscZb03WPlhaPwCvL2uxaRzdrAGQ
+mE5jzCo6nORvKoGdVDa2++def33f3xPZCo3oJ08Q9XJ2CnfJlmyNe1hwI2NOQ3yRbc
+nfSMona7ccSyHRWGs5bS//u6P0NK5AqH5jK8pg3XwtHZqLwUVy1wX0WnnJWg9IWXf3
+2g3P4O4NJGVUeX33Czv32GK8YphuEweqFu/Ej7kQp1ppIxkEtrpBfMi3na0QqZlk6w
+wghZLa++DUfWOhGsuuBgnsocAR5rLGy+gkypdie1Ydoe8qjLVZR/jKybQfQjuZOS30
+fZnwJhl2ZaeraPfkEXlVhK02/8PIALGfeXdt9KvQN0p5c6lRoDxqBqslM+1KbKKcGd
+lSGEsAIP9OOWBECRxlOwqlqGHtrgWKOr376dntMIy2+fFD/74tJMjRwbRzm8IGWmj6
+OcF6EvTYYO4RmISD8G+6dm1m4MlxLS53aZQWgYWvRdfNB1DA
+Zo3h9Q== you@example.com
+```
 
-The installation procedure shows you how to use the `delivery-cluster` cookbook to install Chef Delivery, either from your provisioning node or your workstation. You'll be asked how you want your cluster set up (for example, whether to use your existing Chef server or to create a new one) and the installer takes the appropriate actions.
+Log into the Chef Delivery server using the URL from the previous lesson. From the login page, enter your Chef Delivery user name and password.
 
-Before you run the cookbook, you'll need to decide how you want to provision, or bring up, the machines you'll need. The `delivery-cluster` cookbook provides two options.
-
-1. If you use Amazon Web Services (AWS), use the _AWS provisioner_. The `delivery-cluster` automatically provisions the servers on EC2 instances and installs the software for you. For AWS users, this is the fastest way to get set up.
-1. Otherwise, use what's called the _SSH provisioner_. This method requires you to bring up the necessary machines and provide SSH access and a passwordless `sudo` account on each. You provide the IP address and logon credentials for each server, and the `delivery-cluster` cookbook installs the software for you. This method can take more time to set up, but gives you complete control over how you provision your cluster.
+Open your user profile and paste the output from your terminal window into the text area lableled **Public SSH**. If you were assigned a default password, change it and save your profile.
