@@ -49,7 +49,7 @@ $ chef gem install knife-push
 
 #### 2.1.5. Install Rake
 
-The automation project uses [Rake](http://rake.rubyforge.org/) tasks to perform installation tasks.
+The automation project uses [Rake](http://rake.rubyforge.org/) tasks to perform installation tasks. Run this to install it.
 
 ```bash
 $ chef gem install rake
@@ -57,11 +57,18 @@ $ chef gem install rake
 
 #### 2.1.6. Clone the Git repository for the Chef Delivery cluster
 
-Run this command from your home directory.
+Run this command from your home directory. This will create a local copy of the `delivery-cluster` cookbook on your system. You'll run it later to automate the Chef Delivery installation.
 
 ```bash
 $ cd ~
 $ git clone https://github.com/opscode-cookbooks/delivery-cluster.git
+Cloning into 'delivery-cluster'...
+remote: Counting objects: 3199, done.
+remote: Compressing objects: 100% (6/6), done.
+Receiving objects: 100% (3199/3199), 621.11 KiB | 0 bytes/s, done.
+remote: Total 3199 (delta 0), reused 0 (delta 0), pack-reused 3193
+Resolving deltas: 100% (1921/1921), done.
+Checking connectivity... done.
 ```
 
 #### 2.1.7. Set up your AWS credentials
@@ -105,7 +112,16 @@ $ cd ~/delivery-cluster
 $ rake setup:generate_env
 ```
 
-The command starts the interaction that is shown below. Variables you must enter are shown in ALL CAPs. Default values are shown in square brackets; pressing Enter uses the default value.
+The command starts the interaction that is shown below. Here are some guidelines:
+
+* Variables you must enter are shown in ALL CAPs.
+* Default values are shown in square brackets; pressing Enter uses the default value.
+* **Environment Name** specifies the filename that is created. It should be alphanumeric without capital letters, for example, `my-enterprise`.
+* For **Driver Name**, specify `aws`.
+* **Key Name** specifies the name of your AWS SSH private key, minus any file extension, for example `tpetchel`.
+* For **SSH Username**, `ubuntu` is typical for use with Ubuntu; `root` is typical for Red Hat Enterprise Linux.
+* **Image ID**, **Subnet ID**, and **Security Group ID** are the IDs for the AWS environment that you chose in the [previous step](#step1).
+* For **Number of Build Nodes**, enter a value between 1 and 3. Specifying more than one build node enables phases to be run in parallel.
 
 ```bash
 # ~/delivery-cluster
@@ -121,11 +137,11 @@ Available Drivers: [ aws | ssh | vagrant ]
 Driver Name [vagrant]: aws
 
 Driver Information [aws]
-Key Name: MY-KEY-NAME
-SSH Username [ubuntu]:
-Image ID [ami-3d50120d]:
-Subnet ID [subnet-19ac017c]:
-Security Group ID [sg-cbacf8ae]:
+Key Name: YOUR_KEY_NAME
+SSH Username [ubuntu]: YOUR_SSH_USERNAME
+Image ID [ami-3d50120d]: YOUR_AMI_ID
+Subnet ID [subnet-19ac017c]: YOUR_SUBNET_ID
+Security Group ID [sg-cbacf8ae]: YOUR_SECURITY_GROUP_ID
 Use private ip for ssh? [yes]:
 Would you like to configure Proxy Settings? [no]:
 
@@ -137,72 +153,72 @@ Flavor [c3.xlarge]:
 Delivery Server
 Package Version [latest]:
 Enterprise Name [test]:
-License File [/Users/YOUR-NAME/delivery.license]:
+License File [/home/tpetchel/delivery.license]:
 Flavor [c3.xlarge]:
 
 Analytics Server
 Enable Analytics? [no]:
 
 Supermarket Server
-Enable Supermarket? [no]: yes
-Flavor [c3.xlarge]:
+Enable Supermarket? [no]:
 
 Build Nodes
-Number of Build Nodes [1]: 3
+Number of Build Nodes [1]:
 Flavor [c3.large]:
 Specify a delivery-cli artifact? [no]:
 
 Rendering Environment => environments/test.json
+
+{
+  "name": "test",
+  "description": "Delivery Cluster Environment",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "override_attributes": {
+    "delivery-cluster": {
+      "id": "test",
+      "driver": "aws",
+      "aws": {
+        "key_name": "tpetchel",
+        "ssh_username": "ubuntu",
+        "image_id": "ami-3d50120d",
+        "subnet_id": "subnet-19ac017c",
+        "security_group_ids": "sg-cbacf8ae",
+        "use_private_ip_for_ssh": true
+      },
+      "chef-server": {
+        "organization": "test",
+        "existing": false,
+        "flavor": "c3.xlarge"
+      },
+      "delivery": {
+        "version": "latest",
+        "enterprise": "test",
+        "license_file": "/home/thomaspetchel/delivery.license",
+        "flavor": "c3.xlarge"
+      },
+      "builders": {
+        "count": "1",
+        "flavor": "c3.large"
+      }
+    }
+  }
+}
+
+Export your new environment by executing:
+  # export CHEF_ENV=test
 ```
 
-TODO: Fix the preceding console output. It does not match the current delivery-cluster cookbook. Also, fix the notes below. They also do not match the questions asked.
-
-Answer the questions using these guidelines:
-
-**Environment Name**
-Enter the name for `.json` file that you are creating. It should be alphanumeric without capital letters, for example, "my-enterprise". [TODO: verify accuracy]
-
-**Cluster ID** Enter the name for the Chef Delivery enterprise. It should be alphanumeric without capital letters, for example, "my-enterprise". [TODO: verify accuracy]
-
-**Key Name**
-Enter name of your Amazon Web Services (AWS) ``.pem`` credential file. Enter only the name, without the extension.
-
-**Image ID**
-Enter AMI for the servers to be created, taken from the table shown earlier. The AMI must match your AWS region in the table.
-
-**Subnet ID**
-Enter the private subnet id for your AWS VPC.
-
-**Security Group ID**
-Enter the ID of security group you created using the table shown above.
-
-**Use existing chef-server**
-Accept the default: ``no``.
-
-**License File**
-Accept the default.
-
-**Enable Supermarket**
-Enter "no"
-
-TODO: Correct this list and the output. The doc no longer matches the output of the delivery-cluster command.
-
-Export the environment by executing the following:
+Next, export the environment by executing the following:
 
 ```bash
 # ~/delivery-cluster
-$ export CHEF_ENV=my-enterprise
+$ export CHEF_ENV=test
 ```
 
-where `my-enterprise` is the name of the environment you provided earlier.
+where `test` is the name of the environment you provided. You can manage more than one Delivery installation from your workstation. The `CHEF_ENV` environment variable tells `delivery-cluster` which environment to perform installation and maintenance tasks on.
 
-Examine the <code class="file-path">environments/ENV.json</code> file to check that it contains what you want. Here's an example:
-
-
-```ruby
-# ~/delivery-cluster/environments/test.json
-TODO
-```
+Verify that your <code class="file-path">environments/ENV.json</code> file exists and contains the values you want.
 
 ### 2.3. Create the cluster
 
@@ -218,44 +234,64 @@ When the `rake setup:cluster` command finishes, you can look in the AWS Console 
 
 Then, do these steps to check that everything worked:
 
-1. Run the following command:
+1. Run the following command and record the output. You will need this information later.
 
   ```bash
-# ~/delivery-cluster
-$ cd ~/delivery-cluster
-$ rake info:list_core_services
-```
+  # ~/delivery-cluster
+  $ cd ~/delivery-cluster
+  $ rake info:list_core_services
+  4 items found
 
-  Record the output. You will need this information later.
+  delivery-server-test:
+    ipaddress: 10.194.9.174
 
-  TODO: paste in example of the output of this command.
+  build-node-test-2:
+    ipaddress: 10.194.11.102
 
-1.  Navigate to your `CHEF_SERVER_URL`, and then login to your Chef server with user name `delivery` and password `delivery`.
+  build-node-test-3:
+    ipaddress: 10.194.12.81
+
+  build-node-test-1:
+    ipaddress: 10.194.15.78
+
+  chef_server_url      'https://10.194.13.167/organizations/test'
+  ```
+
+1. Navigate to your `chef_server_url` login to your Chef server with user name `delivery` and password `delivery`.
 
 1. Click on **Nodes**. You’ll see your Chef Delivery server and your build nodes.
 
+  ![](delivery/chef-server-nodes-cluster.png)
+
 1. Run the following command:
 
   ```bash
-# ~/delivery-cluster
-$ rake info:delivery_creds
-```
-
-  TODO: show example output
+  # ~/delivery-cluster
+  $ rake info:delivery_creds
+  Created enterprise: test
+  Admin username: admin
+  Admin password: GQZUUvJK5xjLdKH5IZyR/QDJE8fzQNlKIuR=
+  Builder Password: X+ltuOAZ0kfdZU79p2+sSlGW8sjo+UjJ2ZY=
+  Web login: https://10.194.9.174/e/test/
+  ```
 
   The result shows the admin login credentials that were created by the `delivery-cluster` cookbook. Record the output. You will need this information later.
 
-1. Navigate to the Delivery web page and use the `admin` credentials to log in.
-
-  [TODO: add a little bit more about which URL to use.]
-
 1. Run the following command:
 
   ```bash
-$ knife node status
-```
+  # ~/delivery-cluster
+  $ knife node status
+  build-node-test-1	available
+  build-node-test-2	available
+  build-node-test-3	available
+  ```
 
   All build nodes should report available.
+
+1. Navigate to the Delivery web page (**Web login**) and use the `admin` credentials (**Admin username** and **Admin password**) to log in. You'll see the Delivery dashboard.
+
+  ![](delivery/delivery-dashboard.png)
 
 ### 2.4. Finalize the configuration
 
@@ -275,7 +311,7 @@ Log into the Chef Delivery web UI using the `admin` user. Then, for each user yo
 1. Select user **Roles Within the Enterprise**.
 1. Click **Save and Close**, or **Cancel** to discard the operation.
 
-TODO: Check that the bug where the user details must be saved twice has been fixed. If not, add text for a workaround.
+[COMMENT] If you are creating a user on behalf of another person, you can set a temporary password and have that user update it the first time he or she logs in.
 
 #### 2.4.2. Create an organization
 
@@ -283,6 +319,6 @@ Create an organization for the tutorial.
 
 1. Select **Organizations** from the drop-down menu on the upper right. The organizations list page opens.
 1. Click the plus sign (**+**) next to **Add a New Organization**.
-1. Enter an organization name in the text area, such as `my-org` or `learn-chef`, and then click **Save & Close**.
+1. Enter an organization name in the text area, such as `Development`, and then click **Save & Close**.
 
 At this point, Chef Delivery is ready to use for a new project.

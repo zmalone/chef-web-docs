@@ -9,6 +9,7 @@ In addition to an AWS subnet ID that is reachable by a VPN connection from your 
 * Private key-pair name and private key
 * AWS AMIs and instance types
 * An AWS security group
+* An AWS subnet
 
 ### AWS region
 
@@ -106,3 +107,7 @@ For your Acceptance, Union, Rehearsal, and Delivered environments, which you'll 
 | 22          |	tcp      | 0.0.0.0/0 |
 | 80          | tcp      | 0.0.0.0/0 |
 | 443         |	tcp      | 0.0.0.0/0 |
+
+### AWS subnet
+
+Choose a private [subnet](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html) that exists in your VPC and availability zone and get its ID. An example subnet ID is subnet-19ac017c.

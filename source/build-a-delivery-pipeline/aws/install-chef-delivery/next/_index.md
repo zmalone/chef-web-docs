@@ -1,1 +1,1 @@
-Next, you'll set up your workstation to access Delivery.
+Next, users will set up their workstations to interact with Delivery.
