@@ -98,7 +98,7 @@ Before you install, you'll need to create an AWS security group with these setti
 | 3269        | tcp      | 0.0.0.0/0 |
 | 1337        | tcp      | 0.0.0.0/0 |
 
-[WARN] This security group does not use "least privilege." In other words, the automation you'll run applies the same security group to all systems. It is only appropriate for use within a private subnet of a VPC.
+[WARN] This security group does not use "least privileged" configuration. In other words, the automation you'll run applies the same security group to all systems. It is only appropriate for use within a private subnet of a VPC.
 
 For your Acceptance, Union, Rehearsal, and Delivered environments, which you'll create later in this tutorial, you can use the security group that you just created, or create a new one that permits inbound network access on these ports:
 
