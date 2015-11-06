@@ -5,3 +5,5 @@ You'll need some information from the previous lesson. You can get this informat
 * The URL to the Chef Delivery web interface.
 * The Delivery server's IP address (you can obtain this from the URL.)
 * Your Delivery user name and password.
+
+Also ensure that you are connected to the VPN that can access your Delivery cluster on AWS.

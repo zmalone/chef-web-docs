@@ -77,45 +77,12 @@ Chef Delivery is team oriented, and so is this tutorial. As a result, there are 
 
 If you are most interested in using Chef Delivery in a project, you might want to get a system administrator in your company to help with the [installation and network configuration](/build-a-delivery-pipeline/aws/install-chef-delivery) that are the first part of the tutorial. If you're a project leader, you might find that the lesson that [sets up a new project](/build-a-delivery-pipeline/aws/create-the-project) is a good place to start. If your interest is primarily day-to-day use of Delivery, then the part of the tutorial that [walks through delivering changes](/build-a-delivery-pipeline/aws/write-the-build-cookbook) might be of the most interest. In other words, it's possible to go this tutorial as a team, with different members of the team doing parts of the tutorial that most closely map to their job roles. Of course, you can go through all tutorial steps as an individual.
 
-Here's
-
-* [Install Chef Delivery](/build-a-delivery-pipeline/aws/install-chef-delivery)
-
-  
-
-adsf
-
-* [Setup your workstation](/build-a-delivery-pipeline/aws/setup-your-workstation)
-
-  You'll set up a development workstation. You'll set up Delivery for local use, install its command-line interface, and join the project as a new team member.
-
-* [Create the project](/build-a-delivery-pipeline/aws/create-the-project)
-
-  You'll download starter code and create a basic yet functional delivery pipeline that you can build upon.
-
-zxcv
-
-* [Setup your workstation](/build-a-delivery-pipeline/aws/setup-your-workstation)
-
-  You'll set up a development workstation. You'll set up Delivery for local use, install its command-line interface, and join the project as a new team member.
-
-* [Write the build cookbook](/build-a-delivery-pipeline/aws/write-the-build-cookbook)
-
-  Step-by-step, you'll write recipes  in your build cookbook's recipes
-
-* [Add application features](/build-a-delivery-pipeline/aws/add-application-features)
-
-
-
-
-TODO: add more text to talk about creating a project, joining as a new team member, and making changes with Delivery.
-
 After completing this tutorial, you'll:
 
 * have a working Chef Delivery installation and users who are set up to use it.
-* know how to write a build cookbook that configures the pipeline.
 * understand each of the stages and phases that make up a Chef Delivery pipeline.
-* understand how to develop and test new features on your workstation before you submit them to the pipeline.
+* know how to write a build cookbook that configures the pipeline.
+* understand how to develop and test new features on your workstation before you submit them.
 
 [GITHUB] After you complete this tutorial, you can refer back to the final version of the code on [GitHub](https://github.com/learn-chef/deliver-customers-rhel).
 

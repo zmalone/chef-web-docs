@@ -7,13 +7,13 @@ The installation consists of four steps:
 1. Run the installation automation to create the cluster.
 1. Verify the installation and perform final configuration.
 
-### 2.1 Set up the provisioning node
+### 2.1. Set up the provisioning node
 
 In order to create the AWS infrastructure, you'll use automation provided by the [delivery-cluster cookbook](https://github.com/chef-cookbooks/delivery-cluster). You'll need a machine to run the provisioning recipes. This can be an administrator's workstation or a server on AWS with SSH access. If you are working through the whole tutorial by yourself, you can use the same workstation as a provisioning node that you'll use later for creating changes in Chef Delivery. No matter which of these options you choose, we'll refer to the machine you use to run the installation automation as the cluster's _provisioning node_.
 
 Choose a machine that will run the automation recipes. It can run any OS that meets these [system requirements](https://docs.chef.io/supported_platforms.html#chef-dk-title). Prepare this machine using the following steps:
 
-#### 2.1.1 Download a temporary Chef Delivery license key
+#### 2.1.1. Download a temporary Chef Delivery license key
 
 Chef Delivery requires a license key. If you don't have one, click the button below, fill out the short form, and check your email for a link to a temporary license key for this tutorial.
 
@@ -27,19 +27,19 @@ Chef Delivery requires a license key. If you don't have one, click the button be
 
 After you click the link in the email, the license file named <code class="file-path">delivery.license</code> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <code class="file-path">~/delivery.license</code>.
 
-#### 2.1.2 Install Git
+#### 2.1.2. Install Git
 
 You'll need [Git](https://git-scm.com/downloads) to obtain the automation project that installs Chef Delivery.
 
 [WINDOWS] Many Windows users use Git BASH, which is part of [Git for Windows](https://git-for-windows.github.io). [posh-git](https://github.com/dahlbyk/posh-git) is another popular option, which provides access to Git from Windows PowerShell.
 
-#### 2.1.3 Install the Chef Development Kit
+#### 2.1.3. Install the Chef Development Kit
 
 The automation project uses the Chef tools to install Chef Delivery. The easiest way to get these tools is to [install the Chef Development Kit](https://downloads.chef.io/chef-dk/), or Chef DK.
 
 Be sure to set the system Ruby; for details, see [Add Ruby to $PATH](https://docs.chef.io/install_dk.html#add-ruby-to-path).
 
-#### 2.1.4 Install the knife push plugin
+#### 2.1.4. Install the knife push plugin
 
 The `knife push` plugin enables you to view the status of the build nodes in your Delivery cluster.
 
@@ -47,7 +47,7 @@ The `knife push` plugin enables you to view the status of the build nodes in you
 $ chef gem install knife-push
 ```
 
-#### 2.1.5 Install Rake
+#### 2.1.5. Install Rake
 
 The automation project uses [Rake](http://rake.rubyforge.org/) tasks to perform installation tasks.
 
@@ -55,7 +55,7 @@ The automation project uses [Rake](http://rake.rubyforge.org/) tasks to perform 
 $ chef gem install rake
 ```
 
-#### 2.1.6 Clone the Git repository for the Chef Delivery cluster
+#### 2.1.6. Clone the Git repository for the Chef Delivery cluster
 
 Run this command from your home directory.
 
@@ -64,7 +64,7 @@ $ cd ~
 $ git clone https://github.com/opscode-cookbooks/delivery-cluster.git
 ```
 
-#### 2.1.7 Set up your AWS credentials
+#### 2.1.7. Set up your AWS credentials
 
 Place your AWS key credentials in two files, <code class="file-path">~/.aws/config</code> and <code class="file-path">~/.aws/credentials</code> using the text editor of your choice.
 
@@ -92,11 +92,11 @@ aws_secret_access_key = YOUR_SECRET_KEY
 
 Replace `YOUR_ACCESS_KEY_ID` and `YOUR_SECRET_KEY` with your access keys.
 
-#### 2.1.8 Set up your AWS SSH private key
+#### 2.1.8. Set up your AWS SSH private key
 
 Transfer the private key of the key pair that you will use to create the servers in AWS to <code class="file-path">~/.ssh</code> on the provisioning node. If you do not have one already, use this link and create a key pair: [Amazon EC2 Key Pairs](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
 
-### 2.2 Create a configuration file to drive Chef provisioning
+### 2.2. Create a configuration file to drive Chef provisioning
 
 The next step is to run a command on the provisioning node that creates an `environments/ENV_NAME.json` file that contains the details of the cluster to be created. This step only creates the configuration file. It doesn't connect to AWS. Run this command:
 
@@ -204,7 +204,7 @@ Examine the <code class="file-path">environments/ENV.json</code> file to check t
 TODO
 ```
 
-### 2.3 Create the cluster
+### 2.3. Create the cluster
 
 Now you're ready to create the Chef Delivery cluster. Run the following command:
 
@@ -257,13 +257,13 @@ $ knife node status
 
   All build nodes should report available.
 
-### 2.4 Finalize the configuration
+### 2.4. Finalize the configuration
 
 In Chef Delivery there are enterprises, organizations, and projects. The provisioning step created the initial enterprise you specified in your environment file. You still need to finalize the set up by adding adding users and organizations. (The `admin` user is intended only for installation and maintenance.)
 
 Add a user for each team member, or add a single user if you are doing this tutorial independently.
 
-#### 2.4.1 Add a user
+#### 2.4.1. Add a user
 
 Log into the Chef Delivery web UI using the `admin` user. Then, for each user you want to create, do the following:
 
@@ -277,7 +277,7 @@ Log into the Chef Delivery web UI using the `admin` user. Then, for each user yo
 
 TODO: Check that the bug where the user details must be saved twice has been fixed. If not, add text for a workaround.
 
-#### 2.4.2 Create an organization
+#### 2.4.2. Create an organization
 
 Create an organization for the tutorial.
 
