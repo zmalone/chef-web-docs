@@ -1,5 +1,7 @@
 ## 5. Verify your Chef Analytics configuration
 
+[CALLOUT rhel/platform-logos/chef-analytics.svg] Perform this part from your Chef Analytics server.
+
 Finally, verify your Chef Analytics configuration.
 
 ```bash

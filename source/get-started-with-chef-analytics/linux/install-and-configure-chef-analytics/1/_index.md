@@ -1,5 +1,7 @@
 ## 1. Install Chef Analytics on its own server
 
+[CALLOUT rhel/platform-logos/chef-analytics.svg] Perform this part from your Chef Analytics server.
+
 Click the button to get the Chef Analytics package for Red Hat Enterprise Linux, CentOS or Ubuntu.
 
 <a class='accent-button radius' href='https://downloads.chef.io/analytics/' target='_blank'>Install Chef Analytics&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>

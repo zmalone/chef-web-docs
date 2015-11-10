@@ -1,5 +1,7 @@
 ## 2. Create a notification
 
+[CALLOUT rhel/platform-logos/chef-analytics.svg,networks/workstation.png] Connect to the Chef Analytics web interface from your workstation.
+
 Now you're ready to create a notification. From the Chef Analytics home page, click on **Notifications**. Then click **+** and then **E-mail**.
 
 ![Adding an email notification](chef-analytics/add-email-notification.png)

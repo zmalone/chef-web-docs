@@ -1,5 +1,7 @@
 ## 3. Copy the configuration files to your Chef Analytics server
 
+[CALLOUT rhel/platform-logos/chef-server.svg,rhel/platform-logos/chef-analytics.svg] You'll begin on your Chef server and then move to your Chef Analytics server.
+
 When you prepared your Chef server to work with Chef Analytics, the Chef server generated files that Chef Analytics needs. In this step, you'll copy these files to your Chef Analytics server and configure Chef Analytics to work with your Chef server.
 
 First, you need to copy the files in the <code class="file-path">/etc/opscode-analytics</code> directory from your Chef server to your Chef Analytics server. The way you do this depends on how you access your servers. For example, if you're using key-based authentication, then you might not be able to connect directly from one server to the other.
