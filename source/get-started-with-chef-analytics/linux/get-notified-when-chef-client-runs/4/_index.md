@@ -1,5 +1,7 @@
 ## 4. Run chef-client to trigger your rule
 
+[CALLOUT networks/workstation.png] Perform this part from your workstation.
+
 Now let's run `chef-client` on your node and confirm that the notification is sent.
 
 <a class="help-button radius" href="#" data-reveal-id="chef-client-cheat-help-modal">Remind me how!</a>

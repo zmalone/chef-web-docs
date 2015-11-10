@@ -1,5 +1,7 @@
 ## 2. Connect your Chef server to Chef Analytics
 
+[CALLOUT rhel/platform-logos/chef-server.svg] Perform this part from your Chef server.
+
 You need to provide some information about your Chef Analytics server to your Chef server. In this step, you'll work from your Chef server.
 
 First, stop your Chef server.

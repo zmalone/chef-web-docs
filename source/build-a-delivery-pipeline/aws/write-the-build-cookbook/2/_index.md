@@ -194,6 +194,8 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 ### Verify that the awesome_customers cookbook and the data bag are on your Chef server
 
+[CALLOUT networks/admin-workstation.svg,networks/chef-server.svg] In this part, you connect to Chef server from the administrator's workstation.
+
 The publish phase uploads your cookbooks and any dependencies that are listed in your <code class="file-path">Berksfile</code>.
 
 Let's verify that your cookbook is on the Chef server. There are two ways to do this &ndash; from the command line or from the Chef management console.
@@ -256,6 +258,8 @@ Choose **Data Bags** from the menu on the left, then select **passwords**. You'l
 [WARN] Use caution when downloading the Starter Kit from Chef server. Downloading the Starter Kit resets its keys, which would need to be redeployed across your Delivery cluster.<br><br>We recommend that you administer your Chef server from the workstation or provisioning node that you installed Chef Delivery from.<br><br>You should only download the Starter Kit in the case of a security breach, for instance, in the case of leaked or otherwise comprised keys.
 
 ### Integrate the change locally
+
+[CALLOUT networks/team-members-workstation.svg] Now move back to the team member's workstation.
 
 As we did previously, we need to pull Delivery's `master` branch locally. Here's a reminder how.
 

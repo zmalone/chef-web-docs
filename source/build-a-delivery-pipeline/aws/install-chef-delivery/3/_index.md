@@ -1,5 +1,7 @@
 ## 3. Gather information for your team
 
+[CALLOUT networks/admin-workstation.svg] Perform this part from the administrator's workstation.
+
 If you're setting up Chef Delivery for your team, prepare the following information for each user. If you're going through all tutorial steps as an individual, it's still a good idea to note these items for later.
 
 * The Chef server URL, for example, https://10.194.13.167/organizations/test, and logon information.

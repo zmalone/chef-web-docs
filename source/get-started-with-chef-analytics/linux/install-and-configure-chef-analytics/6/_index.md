@@ -1,5 +1,7 @@
 ## 6. Sign in to Analytics server
 
+[CALLOUT networks/workstation.png] Perform this part from your workstation.
+
 From your web browser, navigate to the URL for your Chef Analytics server. Click the **Start Analytics** button and you'll be temporarily redirected to your Chef server logon page.
 
 ![The Chef Analytics sign-in page](chef-analytics/sign-in.png)

@@ -1,5 +1,7 @@
 ## 3. Create a rule
 
+[CALLOUT rhel/platform-logos/chef-analytics.svg,networks/workstation.png] Connect to the Chef Analytics web interface from your workstation.
+
 Rules are essentially conditional (_if this, then that_) logic for your infrastructure events. The general syntax of a rule is:
 
 ```ruby
