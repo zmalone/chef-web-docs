@@ -69,6 +69,12 @@ module ZurbFoundation
     content.gsub!(/<p>\[CLOUD\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-cloud blueiconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[TRAINING\] (.+)<\/p>/)  { "<div class=\"alert-box training\"><i class=\"fa fa-2x fa-laptop training-icon\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[PRODNOTE\] (.+)<\/p>/)  { "<div class=\"alert-box prod-note\"><i class=\"fa fa-2x fa-sticky-note-o prod-note-icon\"></i>&nbsp; <span class=\"prod-note-label\">PRODUCTION:</span>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[CALLOUT (.+)\] (.+)<\/p>/) {
+      images = $1.split(',').map {|image|
+        "<img class='alert-box-icon-large' src='/assets/images/#{image}'></img>"
+      }
+      "<div class='alert-box callout'>#{images.join}&nbsp; #{$2}</div>"
+    }
   end
 
   # we currently can't have ERB in partials, so we subsitute text for now.

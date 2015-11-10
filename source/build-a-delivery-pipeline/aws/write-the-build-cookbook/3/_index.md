@@ -18,6 +18,8 @@ You'll create node attributes in your build cookbook that describe your Acceptan
 
 ### Create a data bag to hold provisioning data
 
+[CALLOUT networks/admin-workstation.svg] Perform this part from the administrator's workstation.
+
 In this part, you'll create a data bag to hold your SSH private key. You'll also encrypt your AWS credentials in the data bag.
 
 Move to the <code class="file-path">~/delivery-cluster</code> directory on the administrator's workstation or provisioning node.
@@ -200,6 +202,8 @@ id:      database_passwords_key
 ```
 
 ### Create a branch
+
+[CALLOUT networks/team-members-workstation.svg] Perform this part from a team member's workstation.
 
 Now you'll create a branch for your changes to the `provision` recipe.
 
@@ -637,6 +641,8 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 #### Verify the creation of the Acceptance stage
 
+[CALLOUT networks/admin-workstation.svg] Perform this part from the administrator's workstation.
+
 Now let's verify that the infrastructure environment for the Acceptance stage was successfully created. We'll run the `awesome_customers` cookbook in that infrastructure environment when we write the recipe for the deploy phase in the next step.
 
 One way to verify the Acceptance stage is to move to your <code class="file-path">~/delivery-cluster</code> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
@@ -661,6 +667,8 @@ acceptance-deliver-customers-rhel
 As expected, the infrastructure environment for the Acceptance stage appears in the node list.
 
 #### Merge the change locally
+
+[CALLOUT networks/team-members-workstation.svg] Now move back to a team member's workstation.
 
 As before, we need to pull Delivery's `master` branch down to ours. Here's how.
 
