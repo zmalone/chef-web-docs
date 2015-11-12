@@ -25,7 +25,14 @@ Chef Delivery requires a license key. If you don't have one, click the button be
 <form id="mktoForm_1438">
   <h3>Get a Delivery License Key</h3>
 </form>
-<script>MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438);</script>
+<script>
+MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438, function(form) {
+  form.onSuccess(function(values, followUpUrl) {
+    $('a.close-reveal-modal').trigger('click'); // close modal.
+    return false; // don't navigate to follow-up URL.
+  });
+});
+</script>
 
 [END_MODAL]
 
