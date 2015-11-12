@@ -12,7 +12,7 @@ $ mkdir Development
 $ cd Development
 ```
 
-From your workstation terminal, configure the `delivery` command line interface (CLI) to contact the Chef Delivery server at `DELIVERY_SERVER`, with your `ENTERPRISE`, `ORGANIZATION` and `USERNAME`. In this tutorial, use the IP address of your Chef Delivery server for the `--server` argument.
+From your workstation terminal, configure the `delivery` command line interface (CLI) to contact the Chef Delivery server at <code class="placeholder">DELIVERY_SERVER</code>, with your <code class="placeholder">ENTERPRISE</code>, <code class="placeholder">ORGANIZATION</code> and <code class="placeholder">USERNAME</code>. In this tutorial, use the IP address of your Chef Delivery server for the `--server` argument.
 
 ```bash
 # ~/Development
