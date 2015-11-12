@@ -90,7 +90,7 @@ aws_access_key_id = YOUR_ACCESS_KEY_ID
 aws_secret_access_key = YOUR_SECRET_KEY
 ```
 
-Replace `us-west-2` with your AWS region, and `YOUR_ACCESS_KEY_ID` and `YOUR_SECRET_KEY` with your access keys.
+Replace <code class="placeholder">us-west-2</code> with your AWS region, and <code class="placeholder">YOUR\_ACCESS\_KEY\_ID</code> and <code class="placeholder">YOUR\_SECRET\_KEY</code> with your access keys.
 
 For <code class="file-path">~/.aws/credentials</code>:
 
@@ -100,8 +100,6 @@ For <code class="file-path">~/.aws/credentials</code>:
 aws_access_key_id = YOUR_ACCESS_KEY_ID
 aws_secret_access_key = YOUR_SECRET_KEY
 ```
-
-Replace `YOUR_ACCESS_KEY_ID` and `YOUR_SECRET_KEY` with your access keys.
 
 #### 2.1.8. Set up your AWS SSH private key
 
@@ -314,7 +312,7 @@ Log into the Chef Delivery web UI using the `admin` user. Then, for each user yo
 1. In the Add New a User text area, select **Internal**.
 1. Text boxes for first name, last name, email address, a login name and password appear.
   Fill in the text boxes but leave the **SSH Public Key** area blank. The user must log in and enter this information.
-1. Select user **Roles Within the Enterprise**.
+1. Select user **Roles Within the Enterprise**. The [documentation](https://docs.chef.io/delivery_users_and_roles.html#roles-and-permissions) describes each available role. Any user who creates a project requires the **Admin** role.
 1. Click **Save and Close**, or **Cancel** to discard the operation.
 
 [COMMENT] If you are creating a user on behalf of another person, you can set a temporary password and have that user update it the first time he or she logs in.

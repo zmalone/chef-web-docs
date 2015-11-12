@@ -2,6 +2,8 @@
 
 All of the servers and workstations will be in the same private network. The easiest way to achieve this is to use a VPN connection to an [AWS Virtual Private Cloud (VPC) subnet](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-a-vpc). Many companies already have a VPN in place to AWS. It is not recommended that you use a public AWS subnet with this tutorial.
 
+[TIP] In addition to being more secure, an added benefit to using a private network is that you can temporarily stop your AWS instances when you're done for the day as you evaluate Chef Delivery. When you restart the instances, they will retain their private IP addresses.<br><br>In a complete setup, you'll likely want to keep your instances running so that users can access Delivery at any time.
+
 In addition to an AWS subnet ID that is reachable by a VPN connection from your workstation, you'll also need the following AWS information to perform the installation:
 
 * Your AWS region
