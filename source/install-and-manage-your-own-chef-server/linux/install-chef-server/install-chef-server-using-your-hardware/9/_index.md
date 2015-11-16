@@ -5,7 +5,7 @@ From your workstation, run `knife client list` to verify that you can authentica
 ```bash
 # ~/chef-repo
 $ knife client list
-learnchef-validator
+4thcoffee-validator
 ```
 
 <a class="help-button radius" href="#" data-reveal-id="chef-server-connect-help-modal">I got an error!</a>
