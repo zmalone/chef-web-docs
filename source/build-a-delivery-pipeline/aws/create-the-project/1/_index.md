@@ -1,6 +1,6 @@
 ## 1. Clone the GitHub repo to your workstation
 
-In this step, you'll clone the repository from GitHub and move to your local repository directory.
+In this step, you'll clone the repository from GitHub and move to your local repository directory. This repository contains the `awesome_customers` cookbook, which configures the Customers web application.
 
 Move to your working directory, for example, <code class="file-path">~/Development</code>.
 
