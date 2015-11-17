@@ -1,5 +1,7 @@
 ## 2. Apply the webserver cookbook to a node
 
+[CALLOUT networks/workstation.png] Perform this step from your workstation.
+
 Next, let's apply the `webserver` cookbook to your node.
 
 If you already have an Ubuntu 14.04 node that's bootstrapped to your Chef server, you can continue to use it by updating its run-list to include the `webserver` and `audit` cookbooks (option 1.)

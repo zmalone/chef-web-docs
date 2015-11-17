@@ -1,4 +1,4 @@
-## 2. Set up your workstation, Chef server, a node to manage, and Chef Analytics
+## 2. Set up Chef server, a node to manage, and Chef Analytics
 
 The second part of this tutorial uses your own Chef server, an Ubuntu 14.04 node, and a Chef Analytics server that runs in your infrastructure.
 

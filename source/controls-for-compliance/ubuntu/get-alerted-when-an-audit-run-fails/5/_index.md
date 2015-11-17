@@ -1,5 +1,7 @@
 ## 5. Add a new control
 
+[CALLOUT networks/workstation.png,rhel/platform-logos/chef-analytics.svg] In this part, you'll run commands from your workstation and then move to the Chef Analytics web interface.
+
 Now let's add a new control that verifies that Ubuntu's default firewall, [UFW](https://help.ubuntu.com/community/UFW), or Uncomplicated Firewall, is enabled on every node.
 
 ### Add the control to the audit cookbook

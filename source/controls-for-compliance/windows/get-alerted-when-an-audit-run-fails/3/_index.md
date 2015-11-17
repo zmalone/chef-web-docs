@@ -1,5 +1,7 @@
 ## 3. Add rules that trigger an alert when an audit fails
 
+[CALLOUT rhel/platform-logos/chef-analytics.svg] In this step, you'll access Chef Analytics through the web interface from your workstation.
+
 In [Get started with Chef Analytics](/get-started-with-chef-analytics/linux/), you created an email notification that is sent in response to a condition, or rule. In this tutorial, instead of using a notification to respond to an event, you'll create an alert. An _alert_ enables you to capture important events that you want to take action on, such as when an audit fails.
 
 You access the alert history through the Chef Analytics web interface. Like a notification, an alert is raised from a rule. You can generate an alert and a notification from the same rule.
