@@ -124,6 +124,7 @@ end
 fastly_header 'Strict-Transport-Security' do
   api_key fastly_creds['api_key']
   service fastly_service.name
+  type 'response'
   dst 'http.Strict-Transport-Security'
   src 'max-age= 7776000; includeSubDomains'
   sensitive true
@@ -133,6 +134,7 @@ end
 fastly_header 'X-Frame-Options' do
   api_key fastly_creds['api_key']
   service fastly_service.name
+  type 'response'
   dst 'http.X-Frame-Options'
   src 'SAMEORIGIN'
   sensitive true
