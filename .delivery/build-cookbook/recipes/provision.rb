@@ -179,7 +179,7 @@ end
 fastly_header 'Old Learn' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  response_condition old_learn_301
+  response_condition old_learn_301.name
   type 'response'
   dst 'http.location'
   src '"https://learn.chef.io" req.url'
