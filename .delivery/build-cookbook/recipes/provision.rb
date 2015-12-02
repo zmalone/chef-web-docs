@@ -171,7 +171,7 @@ old_learn_301 = fastly_condition 'Old Learn 301' do
   api_key fastly_creds['api_key']
   service fastly_service.name
   statement 'req.http.host ~ "learn.getchef.com$" && resp.status == 301'
-  type 'request'
+  type 'response'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
