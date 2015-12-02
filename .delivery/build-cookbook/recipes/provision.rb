@@ -12,7 +12,7 @@ require 'chef/provisioning/aws_driver'
 with_driver 'aws'
 
 site_name = 'learn'
-domain_name = 'chef.io'      
+domain_name = 'chef.io'
 
 if node['delivery']['change']['stage'] == 'delivered'
   bucket_name = node['delivery']['change']['project'].gsub(/_/, '-')
@@ -137,6 +137,52 @@ fastly_header 'X-Frame-Options' do
   type 'response'
   dst 'http.X-Frame-Options'
   src '"SAMEORIGIN"'
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+### Fastly learn.getchef.com Redirects
+fastly_domain 'learn.getchef.com' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+old_learn_redirect = fastly_condition 'Old Learn Domain' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  statement 'req.http.host ~ "learn.getchef.com$"'
+  type 'request'
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+fastly_response 'Redirect old Learn' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  request_condition old_learn_redirect.name
+  status 301
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+old_learn_301 = fastly_condition 'Old Learn 301' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  statement 'req.http.host ~ "learn.getchef.com$" && resp.status == 301'
+  type 'response'
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+fastly_header 'Old Learn' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  response_condition old_learn_301
+  type 'response'
+  dst 'http.location'
+  src '"https://learn.chef.io" req.url'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
