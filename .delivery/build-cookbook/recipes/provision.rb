@@ -2,7 +2,7 @@ include_recipe 'build-cookbook::_handler'
 include_recipe 'chef-sugar::default'
 include_recipe 'delivery-truck::provision'
 
-Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+load_delivery_chef_config
 
 fastly_creds = encrypted_data_bag_item_for_environment('cia-creds','fastly')
 
@@ -142,23 +142,23 @@ fastly_header 'X-Frame-Options' do
 end
 
 ### Fastly learn.getchef.com Redirects
-fastly_domain 'learn.getchef.com' do
+fastly_domain "learn-#{node['delivery']['change']['stage']}.getchef.com" do
   api_key fastly_creds['api_key']
   service fastly_service.name
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-old_learn_redirect = fastly_condition 'Old Learn Domain' do
+old_learn_redirect = fastly_condition 'Old_Learn_Domain' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  statement 'req.http.host ~ "learn.getchef.com$"'
+  statement "req.http.host ~ \"learn-#{node['delivery']['change']['stage']}.getchef.com$\""
   type 'request'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-fastly_response 'Redirect old Learn' do
+fastly_response 'Redirect_old_Learn' do
   api_key fastly_creds['api_key']
   service fastly_service.name
   request_condition old_learn_redirect.name
@@ -167,22 +167,22 @@ fastly_response 'Redirect old Learn' do
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-old_learn_301 = fastly_condition 'Old Learn 301' do
+old_learn_301 = fastly_condition 'Old_Learn_301' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  statement 'req.http.host ~ "learn.getchef.com$" && resp.status == 301'
+  statement "req.http.host ~ \"learn-#{node['delivery']['change']['stage']}.getchef.com$\" && resp.status == 301"
   type 'response'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-fastly_header 'Old Learn' do
+fastly_header 'Old_Learn' do
   api_key fastly_creds['api_key']
   service fastly_service.name
   response_condition old_learn_301.name
   type 'response'
   dst 'http.location'
-  src '"https://learn.chef.io" req.url'
+  src "\"https://learn-#{node['delivery']['change']['stage']}.chef.io\" req.url"
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
