@@ -7,6 +7,11 @@
 
 Chef::Resource.send(:include, Chef::Mixin::ShellOut)
 
+# Set some constants
+SITE_NAME = 'learn'
+DOMAIN_NAME = 'chef.io'
+OLD_DOMAIN_NAME = 'getchef.com'
+
 def bundler_cache_dir
   File.join(
     node['delivery']['workspace']['root'],
@@ -62,4 +67,32 @@ def next_stage(stage)
   when 'delivered'
     nil
   end
+end
+
+def bucket_name
+  if stage_delivered?
+    node['delivery']['change']['project'].gsub(/_/, '-')
+  else
+    "#{node['delivery']['change']['project'].gsub(/_/, '-')}-#{node['delivery']['change']['stage']}"
+  end
+end
+
+def fqdn
+  if stage_delivered?
+    "#{SITE_NAME}.#{DOMAIN_NAME}"
+  else
+    "#{SITE_NAME}-#{node['delivery']['change']['stage']}.#{DOMAIN_NAME}"
+  end
+end
+
+def old_learn_fqdn
+  if stage_delivered?
+    "#{SITE_NAME}.#{OLD_DOMAIN_NAME}"
+  else
+    "#{SITE_NAME}-#{node['delivery']['change']['stage']}.#{OLD_DOMAIN_NAME}"
+  end
+end
+
+def stage_delivered?
+  node['delivery']['change']['stage'] == 'delivered'
 end

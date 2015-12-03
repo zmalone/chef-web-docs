@@ -2,7 +2,7 @@ include_recipe 'build-cookbook::_handler'
 include_recipe 'chef-sugar::default'
 include_recipe 'delivery-truck::provision'
 
-Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+load_delivery_chef_config
 
 fastly_creds = encrypted_data_bag_item_for_environment('cia-creds','fastly')
 
@@ -10,17 +10,6 @@ ENV['AWS_CONFIG_FILE'] = File.join(node['delivery']['workspace']['root'], 'aws_c
 
 require 'chef/provisioning/aws_driver'
 with_driver 'aws'
-
-site_name = 'learn'
-domain_name = 'chef.io'
-
-if node['delivery']['change']['stage'] == 'delivered'
-  bucket_name = node['delivery']['change']['project'].gsub(/_/, '-')
-  fqdn = "#{site_name}.#{domain_name}"
-else
-  bucket_name = "#{node['delivery']['change']['project'].gsub(/_/, '-')}-#{node['delivery']['change']['stage']}"
-  fqdn = "#{site_name}-#{node['delivery']['change']['stage']}.#{domain_name}"
-end
 
 aws_s3_bucket bucket_name do
   enable_website_hosting true
@@ -142,23 +131,23 @@ fastly_header 'X-Frame-Options' do
 end
 
 ### Fastly learn.getchef.com Redirects
-fastly_domain 'learn.getchef.com' do
+fastly_domain old_learn_fqdn do
   api_key fastly_creds['api_key']
   service fastly_service.name
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-old_learn_redirect = fastly_condition 'Old Learn Domain' do
+old_learn_redirect = fastly_condition 'Old_Learn_Domain' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  statement 'req.http.host ~ "learn.getchef.com$"'
+  statement "req.http.host ~ \"#{old_learn_fqdn}$\""
   type 'request'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-fastly_response 'Redirect old Learn' do
+fastly_response 'Redirect_old_Learn' do
   api_key fastly_creds['api_key']
   service fastly_service.name
   request_condition old_learn_redirect.name
@@ -167,22 +156,22 @@ fastly_response 'Redirect old Learn' do
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-old_learn_301 = fastly_condition 'Old Learn 301' do
+old_learn_301 = fastly_condition 'Old_Learn_301' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  statement 'req.http.host ~ "learn.getchef.com$" && resp.status == 301'
+  statement "req.http.host ~ \"#{old_learn_fqdn}$\" && resp.status == 301"
   type 'response'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-fastly_header 'Old Learn' do
+fastly_header 'Old_Learn' do
   api_key fastly_creds['api_key']
   service fastly_service.name
   response_condition old_learn_301.name
   type 'response'
   dst 'http.location'
-  src '"https://learn.chef.io" req.url'
+  src "\"https://#{fqdn}\" req.url"
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
