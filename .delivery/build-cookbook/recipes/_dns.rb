@@ -22,8 +22,8 @@ route53_record fqdn do
   sensitive true
 end
 
-route53_record "learn-#{node['delivery']['change']['stage']}.getchef.com" do
-  name "learn-#{node['delivery']['change']['stage']}.getchef.com."
+route53_record old_learn_fqdn do
+  name "#{old_learn_fqdn}."
   value 'g.global-ssl.fastly.net'
   aws_access_key_id aws_creds['access_key_id']
   aws_secret_access_key aws_creds['secret_access_key']
