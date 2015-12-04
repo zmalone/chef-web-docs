@@ -172,6 +172,7 @@ fastly_header 'Old_Learn' do
   type 'response'
   dst 'http.location'
   src "\"https://#{fqdn}\" req.url"
+  priority 10
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
