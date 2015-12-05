@@ -125,7 +125,6 @@ localhost Chef Client finished, 1/5 resources updated in 04 seconds
 <div id="knife-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">If the operation times out or fails, here are some things to try</h3>
   <ul>
-    <li>Ensure that your environment is active before you run <code>knife</code>. For example, CloudShare instances suspend after a period of inactivity. <img class="border" src="/assets/images/rhel/cloudshare-suspend.png"></img></li>
     <li>Ensure that you run <code>knife</code> commands from your <code class="file-path">learn-chef</code> directory or one of its sub-directories.</li>
     <li>Ensure you have a <code class="file-path">learn-chef/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and your RSA private key file. If you don't, <a href="/manage-a-node/rhel/set-up-your-chef-server#step2" target="_blank">configure your workstation to communicate with Chef server</a>.</li>
     <li>Ensure that your node's IP address is accessible from your network.</li>

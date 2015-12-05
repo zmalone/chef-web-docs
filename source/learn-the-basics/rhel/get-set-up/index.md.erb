@@ -10,23 +10,13 @@ In practice, you use Chef to manage your servers remotely, typically from a Linu
 
 [START_BOX]
 
-## 1. Get a virtual machine
+## 1. Get a Red Hat Enterprise Linux or CentOS server
 
-Because you'll directly modify the state of your machine, we strongly suggest that you work through this tutorial in a disposable environment such as a Red Hat Enterprise Linux or CentOS virtual machine. There are two ways to get started &ndash; you can use a free virtual machine that we provide or you can use your own virtual machine.
+Because you'll directly modify the state of your server, we strongly suggest that you work through this tutorial in a disposable environment such as a Red Hat Enterprise Linux or CentOS virtual machine.
 
-[TIP] To experience Chef quickly, you can first complete this tutorial using the virtual machine that we provide. Then you can then go back a second time using your own virtual machine to learn how to set up the Chef tools in your environment.
+To ensure that the output you see matches the sample output that's shown, we recommend that you run Red Hat Enterprise Linux 6.5 or CentOS 6.5 on your virtual machine. Ensure that you have `sudo` or root access to the instance.
 
-### Option 1: Use a virtual machine that we provide
-
-Let us provide a CentOS virtual machine with the Chef development kit (Chef DK) installed for you. The virtual machine runs in a browser window, so you don't have to worry about proxy settings. Just click the button below.
-
-<%= partial 'layouts/provisioner', locals: { title: 'CentOS', type: 'rhel-localmode' } %>
-
-### Option 2: Use your own virtual machine
-
-You can also use your own virtual machine. To ensure that the output you see matches the sample output that's shown, we recommend that you run Red Hat Enterprise Linux 6.5 or CentOS 6.5 on your virtual machine. Also ensure that you have `sudo` or root access to the instance.
-
-If you don't have a preferred way to set up a virtual machine, here are some popular options.
+If you don't have a preferred way to set up a server, here are some popular options.
 
 <% accordion('vm-aws', 'Amazon Web Services') do %>
 
@@ -36,7 +26,7 @@ AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_camp
 
 If you're new to AWS, their [getting started guide](https://aws.amazon.com/getting-started/launch-a-virtual-machine/) walks you through the creation of your first Linux virtual machine.
 
-When you're ready to continue with this tutorial, visit the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00IOYDTV6) to create a CentOS 6.5 instance. Be sure to create a [security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#creating-security-group) that enables inbound access on ports 22 (SSH) and 80 (HTTP).
+When you're ready to continue with this tutorial, visit the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00IOYDTV6) to create a CentOS 6.5 instance. Be sure to create a [security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#creating-security-group) that enables inbound access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
 
 <% end %>
 
@@ -48,7 +38,7 @@ When you're ready to continue with this tutorial, visit the [AWS Marketplace](ht
 
 Azure is offers a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
 
-When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) to create your Linux virtual machine. At the step where you choose the VM image, search for **CentOS-based 6.5**, published by OpenLogic. Also ensure that your VM enables inbound access on ports 22 (SSH) and 80 (HTTP).
+When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) to create your Linux virtual machine. At the step where you choose the VM image, search for **CentOS-based 6.5**, published by OpenLogic. Also ensure that your VM enables inbound access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
 
 <% end %>
 
@@ -58,7 +48,7 @@ When you're ready to continue with this tutorial, [follow this tutorial](https:/
 
 <% markdown do %>
 
-[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances.
+[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances. Here's how to install VirtualBox and Vagrant and bring up a CentOS 6.5 instance.
 
 Start by installing Virtual Box and Vagrant.
 
@@ -89,23 +79,13 @@ You'll also need two pieces of software on your virtual machine &ndash; the Chef
 
 Although Chef can be run from behind the firewall, giving your virtual machine Internet access is the easiest way to install packages and perform other common tasks.
 
-The free trial virtual machine is already configured for Internet access. If you're running your own virtual machine locally, ensure that it can reach the Internet through your company's proxy server and firewall.
-
-### Set up your text editor
-
-Because Chef uses _code_ to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
-
-The free trial virtual machine comes preinstalled with a number of text editors &ndash; `emacs`, `gedit`, `nano`, and `vim`.
-
-If you're using your own virtual machine, install a text editor now. [Atom](http://atom.io) and [Sublime Text](http://www.sublimetext.com) are popular text editors for graphical user environments. If you prefer the command line, `emacs`, `nano`, and `vim` are popular.
+Ensure that your server can reach the Internet through your company's proxy server and firewall.
 
 ### Install the Chef Development Kit
 
 Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef Development Kit on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
-The free trial virtual machine comes with the Chef DK preinstalled.
-
-If you're using your own virtual machine, download and install the Chef DK on your virtual machine.
+Download and install the Chef DK on your virtual machine.
 
 <%= link_to "<i class='fa fa-external-link'></i>&nbsp;Install the Chef DK", "#{chef_dk_url}", target: '_blank', class: 'accent-button radius' %>
 
@@ -122,6 +102,12 @@ Preparing...                ########################################### [100%]
    1:chefdk                 ########################################### [100%]
 Thank you for installing Chef Development Kit!
 ```
+
+### Set up your text editor
+
+Because Chef uses _code_ to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
+
+Install a text editor now. [Atom](http://atom.io) and [Sublime Text](http://www.sublimetext.com) are popular text editors for graphical user environments. If you prefer the command line, `emacs`, `nano`, and `vim` are popular.
 
 [END_BOX]
 
