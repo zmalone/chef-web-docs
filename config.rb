@@ -6,6 +6,12 @@ require 'lib/helpers/deploy_helpers'
 require 'lib/helpers/feature_helpers'
 require 'lib/helpers/tab_helpers'
 require 'lib/helpers/url_helpers'
+require 'lib/helpers/modal_helpers'
+require 'lib/helpers/accordion_helpers'
+require 'lib/helpers/markdown_helpers'
+require 'lib/helpers/box_helpers'
+require 'lib/helpers/page_nav_helpers'
+require 'lib/helpers/list_helpers'
 
 # In development you can use `binding.pry` anywhere to pause execution and bring
 # up a Ruby REPL
@@ -53,6 +59,12 @@ helpers do
   include FeatureHelpers
   include TabHelpers
   include URLHelpers
+  include ModalHelpers
+  include AccordionHelpers
+  include MarkdownHelpers
+  include BoxHelpers
+  include PageNavHelpers
+  include ListHelpers
 end
 
 # CloudFront

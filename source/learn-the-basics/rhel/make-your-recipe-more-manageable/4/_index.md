@@ -5,15 +5,15 @@ Now run the cookbook. To do so, we use the `chef-client` command and specify wha
 ```bash
 # ~/chef-repo
 $ sudo chef-client --local-mode --runlist 'recipe[learn_chef_httpd]'
-[2014-07-28T20:05:38+00:00] WARN: No config file found or specified on command line, using command line options.
-Starting Chef Client, version 11.16.0
+[2015-12-02T16:28:43+00:00] WARN: No config file found or specified on command line, using command line options.
+Starting Chef Client, version 12.5.1
 resolving cookbooks for run list: ["learn_chef_httpd"]
 Synchronizing Cookbooks:
-  - learn_chef_httpd
+  - learn_chef_httpd (0.1.0)
 Compiling Cookbooks...
-Converging 3 resources
+Converging 4 resources
 Recipe: learn_chef_httpd::default
-  * package[httpd] action install (up to date)
+  * yum_package[httpd] action install (up to date)
   * service[httpd] action enable (up to date)
   * service[httpd] action start (up to date)
   * template[/var/www/html/index.html] action create
@@ -24,7 +24,7 @@ Recipe: learn_chef_httpd::default
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 1/5 resources updated in 5.902863207 seconds
+Chef Client finished, 1/5 resources updated in 16 seconds
 ```
 
 [COMMENT] You ran `chef-apply` to run a single recipe from the command line. `chef-client` is what you use to run a cookbook. Specifically, the run-list you supply to `chef-client` contains the individual recipes from your cookbook that you want to apply.<br><br>In this example, `recipe[learn_chef_httpd]` is the same as specifying `recipe[learn_chef_httpd::default]`, meaning we want to run the `learn_chef_httpd` cookbook's default recipe, <code class="file-path">default.rb</code>.

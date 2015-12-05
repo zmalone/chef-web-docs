@@ -4,8 +4,129 @@ order: 1
 description: "Set up your Chef environment."
 keywords: TODO
 layout: lesson
-sections: [1, 2]
-next: {heading: Next, partial: next}
-time_to_complete: 10 minutes
+time_to_complete: 10-30 minutes
 ---
 In practice, you use Chef to manage your servers remotely, typically from a Linux, Mac OS, or Windows workstation. But for learning purposes, you'll start by managing a server directly to get a feel for how Chef works.
+
+[START_BOX]
+
+## 1. Get a virtual machine
+
+Because you'll directly modify the state of your machine, we strongly suggest that you work through this tutorial in a disposable environment such as a Red Hat Enterprise Linux or CentOS virtual machine. There are two ways to get started &ndash; you can use a free virtual machine that we provide or you can use your own virtual machine.
+
+[TIP] To experience Chef quickly, you can first complete this tutorial using the virtual machine that we provide. Then you can then go back a second time using your own virtual machine to learn how to set up the Chef tools in your environment.
+
+### Option 1: Use a virtual machine that we provide
+
+Let us provide a CentOS virtual machine with the Chef development kit (Chef DK) installed for you. The virtual machine runs in a browser window, so you don't have to worry about proxy settings. Just click the button below.
+
+<%= partial 'layouts/provisioner', locals: { title: 'CentOS', type: 'rhel-localmode' } %>
+
+### Option 2: Use your own virtual machine
+
+You can also use your own virtual machine. To ensure that the output you see matches the sample output that's shown, we recommend that you run Red Hat Enterprise Linux 6.5 or CentOS 6.5 on your virtual machine. Also ensure that you have `sudo` or root access to the instance.
+
+If you don't have a preferred way to set up a virtual machine, here are some popular options.
+
+<% accordion('vm-aws', 'Amazon Web Services') do %>
+
+<% markdown do %>
+
+AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
+
+If you're new to AWS, their [getting started guide](https://aws.amazon.com/getting-started/launch-a-virtual-machine/) walks you through the creation of your first Linux virtual machine.
+
+When you're ready to continue with this tutorial, visit the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00IOYDTV6) to create a CentOS 6.5 instance. Be sure to create a [security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#creating-security-group) that enables inbound access on ports 22 (SSH) and 80 (HTTP).
+
+<% end %>
+
+<% end %>
+
+<% accordion('vm-azure', 'Microsoft Azure') do %>
+
+<% markdown do %>
+
+Azure is offers a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
+
+When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) to create your Linux virtual machine. At the step where you choose the VM image, search for **CentOS-based 6.5**, published by OpenLogic. Also ensure that your VM enables inbound access on ports 22 (SSH) and 80 (HTTP).
+
+<% end %>
+
+<% end %>
+
+<% accordion('vm-vagrant', 'VirtualBox and Vagrant') do %>
+
+<% markdown do %>
+
+[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances.
+
+Start by installing Virtual Box and Vagrant.
+
+### Install VirtualBox
+
+<%= partial 'layouts/install_virtualbox' %>
+
+### Install Vagrant
+
+<%= partial 'layouts/install_vagrant' %>
+<%= partial 'layouts/vagrant_centos_box' %>
+
+<% end %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Set up your virtual machine
+
+For this tutorial, you'll need to ensure that your virtual machine can access the Internet and has ports 22 (SSH) and 80 (HTTP) open to inbound traffic through the firewall. Port 80 is required because you'll set up a basic web server configuration later in this tutorial.
+
+You'll also need two pieces of software on your virtual machine &ndash; the Chef Development Kit (Chef DK) and a good text editor.
+
+### Verify network access
+
+Although Chef can be run from behind the firewall, giving your virtual machine Internet access is the easiest way to install packages and perform other common tasks.
+
+The free trial virtual machine is already configured for Internet access. If you're running your own virtual machine locally, ensure that it can reach the Internet through your company's proxy server and firewall.
+
+### Set up your text editor
+
+Because Chef uses _code_ to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
+
+The free trial virtual machine comes preinstalled with a number of text editors &ndash; `emacs`, `gedit`, `nano`, and `vim`.
+
+If you're using your own virtual machine, install a text editor now. [Atom](http://atom.io) and [Sublime Text](http://www.sublimetext.com) are popular text editors for graphical user environments. If you prefer the command line, `emacs`, `nano`, and `vim` are popular.
+
+### Install the Chef Development Kit
+
+Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef Development Kit on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
+
+The free trial virtual machine comes with the Chef DK preinstalled.
+
+If you're using your own virtual machine, download and install the Chef DK on your virtual machine.
+
+<%= link_to "<i class='fa fa-external-link'></i>&nbsp;Install the Chef DK", "#{chef_dk_url}", target: '_blank', class: 'accent-button radius' %>
+
+Or, run this from the command line to install it.
+
+```bash
+$ curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -c current -P chefdk
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 17892  100 17892    0     0  18700      0 --:--:-- --:--:-- --:--:-- 34080
+Downloading chefdk  for el...
+[...]
+Preparing...                ########################################### [100%]
+   1:chefdk                 ########################################### [100%]
+Thank you for installing Chef Development Kit!
+```
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you have your virtual machine with the Chef tools and a text editor set up, let's use Chef to configure a file, a kind of _resource_, on it.
+
+<% end %>

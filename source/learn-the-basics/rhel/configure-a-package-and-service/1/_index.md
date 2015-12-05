@@ -15,8 +15,8 @@ Now run `chef-apply` to apply the recipe.
 # ~/chef-repo
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[httpd] action install
-    - install version 2.2.15-31.el6.centos of package httpd
+  * yum_package[httpd] action install
+    - install version 2.2.15-47.el6.centos of package httpd
 ```
 
 [COMMENT] `sudo` is required because this command installs a package and therefore must be run with root privileges. If you're running as root on your own machine, you can omit `sudo` from the command.
@@ -27,7 +27,7 @@ Run the recipe a second time.
 # ~/chef-repo
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[httpd] action install (up to date)
+  * yum_package[httpd] action install (up to date)
   ```
 
 You see that Chef does no work because there's nothing to do &ndash; the package is already installed.

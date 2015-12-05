@@ -97,22 +97,30 @@ module Middleman
             line_class = "output"
           end
           if line
-            "<span class='line #{line_class}'>#{line}</span>"
+            # TODO: A bit of a hack, but I want to be able to highlight commands from SSH connections.
+            # Can come back and rethink this more fully later.
+            if m = line.match(/(\[.+@.+ ~\]\$ )(.*)/)
+              "<span style='display: inline;' class='line-number'>#{m[1]}</span><span style='display: inline;' class='line command'>#{m[2]}</span>"
+            else
+              "<span class='line #{line_class}'>#{line}</span>"
+            end
           else
             ""
           end
         end
 
         def terminal_window(content,filepath)
-          %{<div class="window #{@window_style}">
-            <nav class="control-window">
-              <div class="close">&times;</div>
-              <div class="minimize"></div>
-              <div class="deactivate"></div>
-            </nav>
-            <h1 class="titleInside">#{filepath}</h1>
-            <div class="container"><div class="terminal">#{content}</div></div>
-          </div>}
+<<-EOH
+<div class="window #{@window_style}">
+  <nav class="control-window">
+    <div class="close">&times;</div>
+    <div class="minimize"></div>
+    <div class="deactivate"></div>
+    </nav>
+  <h1 class="titleInside">#{filepath}</h1>
+  <div class="container"><div class="terminal">#{content}</div></div>
+</div>
+EOH
         end
       end
 

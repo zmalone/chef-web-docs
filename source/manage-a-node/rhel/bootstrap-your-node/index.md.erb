@@ -5,12 +5,417 @@ description: 'Set up chef-client on your node,
  associate it with your Chef server, and apply your Apache cookbook to it.'
 keywords:
 layout: lesson
-sections: [1, 2, 3, 4, summary, exercises]
+sections: [exercises]
 next: {heading: Next, partial: next}
-time_to_complete: 15 minutes
+time_to_complete: 20 minutes
 ---
 [HEADLINE] We call the process that installs `chef-client` on a node and the initial check-in to the Chef server _bootstrapping_ the node.
 
 Recall that any computer that's managed by a Chef server is called a _node_, and that `chef-client` is the command that applies the policy defined by your cookbooks to a node.
 
 Let's bootstrap a node and execute the Apache cookbook on it.
+
+[START_BOX]
+
+<h2>1. Get a Linux machine to bootstrap</h2>
+<p>
+In <%= link_to 'Learn the Chef basics', '/learn-the-basics/rhel/', target: '_blank' %>, you installed the Chef DK on a server and configured it directly. Now you need a machine that doesn't have the Chef tools on it so you can see how the bootstrap process works.
+</p>
+<p>
+Like before, we suggest that you work in a disposable environment such as a Red Hat Enterprise Linux or CentOS virtual machine. There are two ways to get started &ndash; you can use a free virtual machine that we provide or you can use your own virtual machine.
+</p>
+<div class="alert-box tip"><i class="fa fa-2x fa-thumbs-o-up tip-icon"></i>&nbsp; To experience Chef quickly, you can first complete this tutorial using the virtual machine that we provide. Then you can then go back a second time using your own virtual machine to learn how to bootstrap a node in your environment.</div>
+<h3>Option 1: Use a virtual machine that we provide</h3>
+<p>
+Let us provide a CentOS virtual machine for you. This machine has the standard configuration, and does not have the Chef tools installed. Just click the button below.
+</p>
+<%= partial 'layouts/provisioner', locals: { title: 'CentOS', type: 'rhel-fundamentals' } %>
+<h3>Option 2: Use your own machine</h3>
+<p>
+You can also use your own virtual machine. To ensure that the output you see matches the sample output that's shown, we recommend that you run Red Hat Enterprise Linux 6.5 or CentOS 6.5 on your virtual machine. Also ensure that you have <code>sudo</code> or root access to the instance.
+</p>
+<p>
+If you don't have a preferred way to set up a virtual machine, here are some popular options.
+</p>
+
+<% accordion('vm-aws', 'Amazon Web Services') do %>
+
+<% markdown do %>
+
+AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
+
+If you're new to AWS, their [getting started guide](https://aws.amazon.com/getting-started/launch-a-virtual-machine/) walks you through the creation of your first Linux virtual machine.
+
+When you're ready to continue with this tutorial, visit the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00IOYDTV6) to create a CentOS 6.5 instance. Be sure to create a [security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#creating-security-group) that enables inbound access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+
+<% end %>
+
+<% end %>
+
+<% accordion('vm-azure', 'Microsoft Azure') do %>
+
+<% markdown do %>
+
+Azure is offers a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
+
+When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) to create your Linux virtual machine. At the step where you choose the VM image, search for **CentOS-based 6.5**, published by OpenLogic. Also ensure that your VM enables inbound access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+
+<% end %>
+
+<% end %>
+
+<% accordion('vm-vagrant', 'VirtualBox and Vagrant') do %>
+
+<% markdown do %>
+
+[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances.
+
+Start by installing Virtual Box and Vagrant.
+
+<%= partial 'layouts/install_virtualbox' %>
+<%= partial 'layouts/install_vagrant' %>
+<%= partial 'layouts/vagrant_centos_box' %>
+
+<% end %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Gather some details about your machine
+
+[COMMENT] All you need is for your virtual machine to be running &ndash; don't connect to it just yet.
+
+Now, gather this information about your machine:
+
+* Its host name or public IP address.
+* A user name that has root or `sudo` access and its password. If you use key-based authentication to connect to your instance, note the location of your private key file.
+
+If you're using the virtual machine that we provide, here's how to get these details.
+
+<% accordion('cloudshare-details', "Show details") do %>
+
+<% markdown do %>
+
+Click **More details**.
+
+![more details](/assets/images/quickstart/nodes/cloud-share/centos-more-details.png)
+
+Write down the **External Address** for the VM and click **show password** to display the user's password.
+
+![show password](/assets/images/quickstart/nodes/cloud-share/centos-show-password.png)
+
+Write down the **Username** and **Password** that are displayed.
+
+<% end %>
+<% end %>
+
+<% markdown do %>
+
+<p/>
+
+If you're bootstrapping a local virtual machine, such as a Vagrant instance, you'll also need to know which [forwarded port](https://docs.vagrantup.com/v2/networking/forwarded_ports.html) Vagrant chose for routing SSH traffic. Forwarded ports enable the host (your workstation) to receive and forward network traffic to the guest (the virtual machine.)
+
+If you're using virtualization software other than Vagrant and VirtualBox, check the documentation for that software to learn how to get the SSH connection details to the virtual machine, including the SSH forwarded port. Here's how to get the connection details for Vagrant.
+
+<% accordion('vagrant-details', "Show details") do %>
+
+<%= partial 'layouts/partials/vagrant_ssh_config' %>
+
+<% end %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create a test SSH connection to your node
+
+The bootstrap process connects to your node over SSH. Now that you have the connection details, let's create a test SSH connection to your node.
+
+You don't have to do this every time you bootstrap a node, but verifying that your node is connectable will help ensure that the bootstrap process succeeds.
+
+[WINDOWS] If you're on a Windows workstation and have Git installed, you can use the `ssh` command that we show here. If you're using PuTTY, the [getting started](http://the.earth.li/~sgtatham/putty/0.66/htmldoc/Chapter2.html#gs) guide shows how to start an SSH connection. Also, if you're using key-based authentication, you'll need to [convert your private key](http://the.earth.li/~sgtatham/putty/0.64/htmldoc/Chapter8.html#pubkey) to a format PuTTY can use.
+
+Here are examples for the various ways you can connect.
+
+### Connect using a username and password
+
+```bash
+$ ssh root@40.76.28.32
+The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
+RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
+root@40.76.28.32's password:
+[root@40.76.28.32 ~]$ exit
+logout
+Connection to 40.76.28.32 closed.
+```
+
+### Connect using key-based authentication
+
+```bash
+$ ssh -i ~/.ssh/my.pem root@40.76.28.32
+The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
+RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
+[root@40.76.28.32 ~]$ exit
+logout
+Connection to 40.76.28.32 closed.
+```
+
+### Connect to a local virtual machine using a forwarded port
+
+Here's an example for Vagrant. The `-l` option specifies the username `vagrant`. The `-p` option specifies the port on the host (2222) that will forward to port 22 on the guest.
+
+```bash
+$ ssh -i /home/user/.vagrant/machines/default/virtualbox/private_key -l vagrant -p 2222 localhost
+The authenticity of host '[localhost]:2222 ([127.0.0.1]:2222)' can't be established.
+RSA key fingerprint is c4:4d:f9:05:09:31:33:05:cd:99:52:5b:fc:e0:10:b5.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '[localhost]:2222' (RSA) to the list of known hosts.
+Last login: Thu Dec  3 15:32:08 2015 from 10.0.2.2
+[vagrant@localhost ~]$ exit
+logout
+Connection to localhost closed.
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Bootstrap your node
+
+Now that you've verified that you can connect to your node over SSH, you're now ready to bootstrap it.
+
+First, make sure you're in the <code class="file-path">~/learn-chef</code> directory.
+
+```bash
+$ cd ~/learn-chef
+```
+
+Now choose the option that matches how you normally connect to your node over SSH.
+
+### Bootstrap using a username and password
+
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your user's password.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name node1 --run-list 'recipe[learn_chef_httpd]'
+Creating new client for node1
+Creating new node for node1
+Connecting to 40.76.28.32
+40.76.28.32 -----> Installing Chef Omnibus (-v 12)
+40.76.28.32 downloading https://www.opscode.com/chef/install.sh
+40.76.28.32   to file /tmp/install.sh.1691/install.sh
+40.76.28.32 trying wget...
+40.76.28.32 Downloading Chef 12 for el...
+[...]
+40.76.28.32     @@ -1 +1,6 @@
+40.76.28.32     +<html>
+40.76.28.32     +  <body>
+40.76.28.32     +    <h1>hello world</h1>
+40.76.28.32     +  </body>
+40.76.28.32     +</html>
+40.76.28.32     - restore selinux security context
+40.76.28.32   * service[iptables] action stop
+40.76.28.32     - stop service service[iptables]
+40.76.28.32
+40.76.28.32 Running handlers:
+40.76.28.32 Running handlers complete
+40.76.28.32 Chef Client finished, 5/5 resources updated in 19 seconds
+```
+
+### Bootstrap using key-based authentication
+
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name node1 --run-list 'recipe[learn_chef_httpd]'
+Creating new client for node1
+Creating new node for node1
+Connecting to 40.76.28.32
+40.76.28.32 -----> Installing Chef Omnibus (-v 12)
+40.76.28.32 downloading https://www.opscode.com/chef/install.sh
+40.76.28.32   to file /tmp/install.sh.1691/install.sh
+40.76.28.32 trying wget...
+40.76.28.32 Downloading Chef 12 for el...
+[...]
+40.76.28.32     @@ -1 +1,6 @@
+40.76.28.32     +<html>
+40.76.28.32     +  <body>
+40.76.28.32     +    <h1>hello world</h1>
+40.76.28.32     +  </body>
+40.76.28.32     +</html>
+40.76.28.32     - restore selinux security context
+40.76.28.32   * service[iptables] action stop
+40.76.28.32     - stop service service[iptables]
+40.76.28.32
+40.76.28.32 Running handlers:
+40.76.28.32 Running handlers complete
+40.76.28.32 Chef Client finished, 5/5 resources updated in 19 seconds
+```
+
+### Bootstrap a local virtual machine using a forwarded port
+
+Here's an example for Vagrant.
+
+Replace <code class="placeholder">PORT</code> with your SSH forwarded port, for example, 2222, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">/home/user/.vagrant/machines/default/virtualbox/private_key</code>.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap localhost --ssh-port PORT --ssh-user vagrant --sudo --identity-file IDENTITY_FILE --node-name node1 --run-list 'recipe[learn_chef_httpd]'
+Creating new client for node1
+Creating new node for node1
+Connecting to localhost
+localhost -----> Installing Chef Omnibus (-v 12)
+localhost downloading https://www.opscode.com/chef/install.sh
+localhost   to file /tmp/install.sh.1691/install.sh
+localhost trying wget...
+localhost Downloading Chef 12 for el...
+[...]
+localhost     @@ -1 +1,6 @@
+localhost     +<html>
+localhost     +  <body>
+localhost     +    <h1>hello world</h1>
+localhost     +  </body>
+localhost     +</html>
+localhost     - restore selinux security context
+localhost   * service[iptables] action stop (up to date)
+localhost
+localhost Running handlers:
+localhost Running handlers complete
+localhost Chef Client finished, 4/5 resources updated in 29 seconds
+```
+
+<hr>
+
+The optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's FQDN is the default. If you previously used the name `node1` to bootstrap a different node, you'll need to choose a different name or remove the previous node.
+
+<% reveal_modal('knife-help-modal', 'Need help troubleshooting?') do %>
+
+<% markdown do %>
+
+## If the operation times out or fails, here are some things to try
+
+* Ensure that your environment is active before you run <code>knife</code>. For example, CloudShare instances suspend after a period of inactivity. <img class="border" src="/assets/images/rhel/cloudshare-suspend.png"></img>
+* Ensure that you run `knife` commands from your <code class="file-path">learn-chef</code> directory or one of its sub-directories.
+* Ensure you have a <code class="file-path">learn-chef/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and your RSA private key file. If you don't, <a href="/manage-a-node/rhel/set-up-your-chef-server#step2" target="_blank">configure your workstation to communicate with Chef server</a>.
+* Ensure that your node's IP address is accessible from your network.
+* Ensure the user name you provide has root or `sudo` access on the node.
+* Ensure your workstation has outbound access (including firewall) on these ports:
+  * 22 (SSH)
+  * 80 (HTTP)
+  * 443 (HTTPS)
+* Ensure your node has inbound access (including firewall) on these ports:
+  * 22 (SSH)
+* Ensure your node has outbound access (including firewall) on these ports:
+  * 443 (HTTPS)
+
+<% end %>
+
+<% end %>
+
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Confirm the result
+
+Two things just happened.
+
+First, your node was associated with your hosted Chef account. To verify this, navigate to the [Chef management console](https://manage.chef.io/organizations). From the **Nodes** tab, you'll see an entry for the node you just bootstrapped.
+
+![The bootstrapped node](rhel/management-console-node.png)
+
+You can also verify that the node successfully bootstrapped by running the `knife node list` command.
+
+```bash
+# ~/learn-chef
+$ knife node list
+node1
+```
+
+You can use the `knife node show` command to view data about your node.
+
+```bash
+# ~/learn-chef
+$ knife node show node1
+Node Name:   node1
+Environment: _default
+FQDN:
+IP:          172.32.22.10
+Run List:    recipe[learn_chef_httpd]
+Roles:
+Recipes:     learn_chef_httpd, learn_chef_httpd::default
+Platform:    centos 6.5
+Tags:
+```
+
+The second thing that happened was that your node did an initial check in with the Chef server and ran the Apache cookbook. To verify this, open a web browser from your workstation and navigate to your web server.
+
+![The basic home page](misc/webserver-basic-remote.png)
+
+If you bootstrapped a Vagrant instance, the easiest way to verify the configuration is to create an SSH connection to the instance and run `curl localhost`.
+
+```bash
+$ vagrant ssh
+Last login: Thu Dec  3 17:17:26 2015 from 10.0.2.2
+[vagrant@localhost ~]$ curl localhost
+<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>
+[vagrant@localhost ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## How to clean up your environment
+
+Perform these steps if you want to clean up your Chef server after you complete tutorial or you want to repeat the tutorial from the beginning.
+
+### Delete the node from the Chef server
+
+As you experiment, it's a good idea to delete information about your node from the Chef server when you no longer need it. That way, your Chef server contains only relevant information. In practice, it's up to you whether to delete node information when you retire a production system from service.
+
+From your workstation, run these commands to delete the data about your node from the Chef server.
+
+```bash
+# ~/learn-chef
+$ knife node delete node1 --yes
+Deleted node[node1]
+$ knife client delete node1 --yes
+Deleted client[node1]
+```
+
+### Tear down your node
+
+Deleting a node from your Chef server removes any data about that node from the server &ndash; it doesn't automatically tear down the instance.
+
+Don't forget to tear down any cloud instances that you used to complete the tutorial. If you're using the free trial virtual machine that we provide, that instance will automatically expire 24 hours after you started it.
+
+[END_BOX]
+
+[START_BOX]
+
+## Summary
+
+The `knife bootstrap` command established an SSH connection to the node, installed `chef-client`, downloaded the Learn Chef Apache cookbook on the node, and ran it. In one command, Chef carried out most of the steps you previously dealt with manually.
+
+In this lesson, you created a test connection to your node over SSH. But once you get the hang of the bootstrap process, you'll see that  `knife bootstrap` enables you to configure your servers without the need to connect to them directly. This enables you to further automate the process of provisioning and configuring your infrastructure.
+
+[END_BOX]

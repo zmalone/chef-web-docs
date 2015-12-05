@@ -30,7 +30,7 @@ Now apply it.
 # ~/chef-repo/
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[httpd] action install (up to date)
+  * yum_package[httpd] action install (up to date)
   * service[httpd] action enable (up to date)
   * service[httpd] action start (up to date)  
   * file[/var/www/html/index.html] action create (up to date)

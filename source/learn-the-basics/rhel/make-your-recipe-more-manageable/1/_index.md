@@ -26,10 +26,23 @@ $ tree
     ├── chefignore
     ├── metadata.rb
     ├── README.md
-    └── recipes
-        └── default.rb
+    ├── recipes
+    │   └── default.rb
+    ├── spec
+    │   ├── spec_helper.rb
+    │   └── unit
+    │       └── recipes
+    │           └── default_spec.rb
+    └── test
+        └── integration
+            ├── default
+            │   └── serverspec
+            │       └── default_spec.rb
+            └── helpers
+                └── serverspec
+                    └── spec_helper.rb
 
-2 directories, 5 files
+11 directories, 9 files
 ```
 
 Note the default recipe, named <code class="file-path">default.rb</code>. This is where we'll move our Apache recipe in a moment.

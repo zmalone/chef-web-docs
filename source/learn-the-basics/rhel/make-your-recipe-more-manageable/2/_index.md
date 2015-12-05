@@ -12,7 +12,7 @@ The file <code class="file-path">index.html.erb</code> gets created under <code 
 ```bash
 # ~/chef-repo/cookbooks
 $ tree
-.
+..
 └── learn_chef_httpd
     ├── Berksfile
     ├── chefignore
@@ -20,11 +20,24 @@ $ tree
     ├── README.md
     ├── recipes
     │   └── default.rb
-    └── templates
-        └── default
-            └── index.html.erb
+    ├── spec
+    │   ├── spec_helper.rb
+    │   └── unit
+    │       └── recipes
+    │           └── default_spec.rb
+    ├── templates
+    │   └── default
+    │       └── index.html.erb
+    └── test
+        └── integration
+            ├── default
+            │   └── serverspec
+            │       └── default_spec.rb
+            └── helpers
+                └── serverspec
+                    └── spec_helper.rb
 
-4 directories, 6 files
+13 directories, 10 files
 ```
 
 The .erb extension simply means that the file can have placeholders. More on that later.
