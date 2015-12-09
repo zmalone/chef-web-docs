@@ -43,9 +43,20 @@ fastly_backend bucket_name do
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
+ignore_old_domain = fastly_condition 'Ignore_Old_Domain' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  statement "req.http.host != \"#{old_learn_fqdn}\""
+  type 'request'
+  priority 20
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
 fastly_request_setting 'force_ssl' do
   api_key fastly_creds['api_key']
   service fastly_service.name
+  request_condition ignore_old_domain.name
   force_ssl true
   default_host "#{bucket_name}.s3-website-us-east-1.amazonaws.com"
   sensitive true
@@ -141,7 +152,7 @@ end
 old_learn_redirect = fastly_condition 'Old_Learn_Domain' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  statement "req.http.host ~ \"#{old_learn_fqdn}$\""
+  statement "req.http.host == \"#{old_learn_fqdn}\""
   type 'request'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
@@ -159,7 +170,7 @@ end
 old_learn_301 = fastly_condition 'Old_Learn_301' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  statement "req.http.host ~ \"#{old_learn_fqdn}$\" && resp.status == 301"
+  statement "req.http.host == \"#{old_learn_fqdn}\" && resp.status == 301"
   type 'response'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
