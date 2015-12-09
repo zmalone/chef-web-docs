@@ -10,7 +10,7 @@ Rake and Thor are command-line task running tools, similar to make. Tasks are wr
 
 #### Phase of Chef development
 
-Rake and Thor are used during pre-convergence to perform tasks such as running ChefSpec/RSpec, or lint checks with RuboCop and Foodcritic. Rubygem projects usually have tasks for releasing the gem to [rubygems.org](https://rubygems.org). Cookbook projects sometimes have tasks for releasing the cookbook to Supermarket, or uploading it to a Chef Server. Many projects use Travis CI to automatically run certain tasks such as unit/spec tests and lint/style checks on every commit.
+Rake and Thor are used during pre-convergence to perform tasks such as running ChefSpec/RSpec, or lint checks with RuboCop and Foodcritic. Rubygem projects usually have tasks for releasing the gem to [rubygems.org](https://rubygems.org). Cookbook projects sometimes have tasks for releasing the cookbook to Supermarket, or uploading it to a Chef server. Many projects use Travis CI to automatically run certain tasks such as unit/spec tests and lint/style checks on every commit.
 
 #### How to Get Them
 
