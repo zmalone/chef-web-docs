@@ -4,6 +4,8 @@
 
 From your web browser, navigate to the URL for your Chef Analytics server. Click the **Start Analytics** button and you'll be temporarily redirected to your Chef server logon page.
 
+[COMMENT] If you installed Chef Analytics through our AWS Marketplace image, append port 8443 to the URL, for example, https://52.35.72.84:8443/. The port is required because the Chef server uses ports 80 and 443.
+
 ![The Chef Analytics sign-in page](chef-analytics/sign-in.png)
 
 Sign in with the administrator user name and password that you used when you set up your Chef server.
