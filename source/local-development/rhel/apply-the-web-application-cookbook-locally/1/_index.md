@@ -54,7 +54,7 @@ Now, modify <code class="file-path">~/manage-a-web-app-rhel/chef-repo/data\_bags
 }
 ```
 
-Now modify <code class="file-path">~/manage-a-web-app-rhel/chef-repo/data\_bags/passwords/db\_admin.json</code> by adding the database password.
+Now modify <code class="file-path">~/manage-a-web-app-rhel/chef-repo/data\_bags/passwords/db\_admin\_password.json</code> by adding the database password.
 
 ```ruby
 # ~/manage-a-web-app-rhel/chef-repo/data_bags/passwords/db_admin_password.json

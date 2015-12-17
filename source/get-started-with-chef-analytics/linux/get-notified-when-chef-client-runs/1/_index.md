@@ -11,8 +11,11 @@ If you want to set up a basic mail server, run the command for the operating sys
 #### Red Hat Enterprise Linux and CentOS
 
 ```bash
-$ sudo yum install mailx -y
+$ sudo yum install sendmail -y
+$ sudo /etc/init.d/sendmail start
 ```
+
+After you start the `sendmail` service, you can run `sudo netstat -lptn | grep sendmail` to ensure that the service is listening on port 25.
 
 #### Ubuntu
 

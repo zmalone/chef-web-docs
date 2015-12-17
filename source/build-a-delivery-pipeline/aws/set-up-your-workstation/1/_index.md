@@ -34,7 +34,7 @@ You'll use the `delivery` command line interface (CLI) to interact with Chef Del
 
 [START_TAB cliMacOSX active]
 
-1. [Download the package](https://s3.amazonaws.com/delivery-packages/cli/deliverycli-0.0.0%2B20151021130322-1.pkg).
+1. [Download the package](https://s3.amazonaws.com/delivery-packages/cli/deliverycli-0.0.0%2B20151118205039-1.pkg).
 1. Click the package and install.
 1. You may need to allow the package on the machine. To do this, open **System Preferences** > **Security & Privacy**, and click **Allow**. You may also go to your <code class="file-path">~/Downloads</code> folder and right-click the package to open the installer. Accept the agreement to install the package.
 

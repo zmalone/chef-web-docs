@@ -2,7 +2,7 @@ include_recipe 'build-cookbook::_handler'
 include_recipe 'chef-sugar::default'
 include_recipe 'delivery-truck::provision'
 
-Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+load_delivery_chef_config
 
 fastly_creds = encrypted_data_bag_item_for_environment('cia-creds','fastly')
 
@@ -10,17 +10,6 @@ ENV['AWS_CONFIG_FILE'] = File.join(node['delivery']['workspace']['root'], 'aws_c
 
 require 'chef/provisioning/aws_driver'
 with_driver 'aws'
-
-site_name = 'learn'
-domain_name = 'chef.io'      
-
-if node['delivery']['change']['stage'] == 'delivered'
-  bucket_name = node['delivery']['change']['project'].gsub(/_/, '-')
-  fqdn = "#{site_name}.#{domain_name}"
-else
-  bucket_name = "#{node['delivery']['change']['project'].gsub(/_/, '-')}-#{node['delivery']['change']['stage']}"
-  fqdn = "#{site_name}-#{node['delivery']['change']['stage']}.#{domain_name}"
-end
 
 aws_s3_bucket bucket_name do
   enable_website_hosting true
@@ -54,9 +43,20 @@ fastly_backend bucket_name do
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
+ignore_old_domain = fastly_condition 'Ignore_Old_Domain' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  statement "req.http.host != \"#{old_learn_fqdn}\""
+  type 'request'
+  priority 20
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
 fastly_request_setting 'force_ssl' do
   api_key fastly_creds['api_key']
   service fastly_service.name
+  request_condition ignore_old_domain.name
   force_ssl true
   default_host "#{bucket_name}.s3-website-us-east-1.amazonaws.com"
   sensitive true
@@ -137,6 +137,53 @@ fastly_header 'X-Frame-Options' do
   type 'response'
   dst 'http.X-Frame-Options'
   src '"SAMEORIGIN"'
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+### Fastly learn.getchef.com Redirects
+fastly_domain old_learn_fqdn do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+old_learn_redirect = fastly_condition 'Old_Learn_Domain' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  statement "req.http.host == \"#{old_learn_fqdn}\""
+  type 'request'
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+fastly_response 'Redirect_old_Learn' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  request_condition old_learn_redirect.name
+  status 301
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+old_learn_301 = fastly_condition 'Old_Learn_301' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  statement "req.http.host == \"#{old_learn_fqdn}\" && resp.status == 301"
+  type 'response'
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
+fastly_header 'Old_Learn' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  response_condition old_learn_301.name
+  type 'response'
+  dst 'http.location'
+  src "\"https://#{fqdn}\" req.url"
+  priority 10
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
