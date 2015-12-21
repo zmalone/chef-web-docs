@@ -23,10 +23,6 @@ file '/var/www/html/index.html' do
   </body>
 </html>'
 end
-
-service 'iptables' do
-  action :stop
-end
 ```
 
 The resources are applied in the order they are specified in the recipe. So here the package is installed, then the service is configured, and finally the home page is set and the `iptables` service is stopped. If any resource is already in the desired state, Chef simply moves on to the next one.

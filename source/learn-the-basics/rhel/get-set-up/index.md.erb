@@ -6,15 +6,19 @@ keywords: TODO
 layout: lesson
 time_to_complete: 10-30 minutes
 ---
-In practice, you use Chef to manage your servers remotely, typically from a Linux, Mac OS, or Windows workstation. But for learning purposes, you'll start by managing a server directly to get a feel for how Chef works.
+In practice, you use Chef to manage your servers remotely, typically from a Linux, Mac OS, or Windows workstation. You normally use the [Chef Development Kit](https://downloads.chef.io/chef-dk/), or Chef DK, from your workstation to write Chef code and then run [Chef client](https://downloads.chef.io/chef-client/) on your server to apply your code.
+
+But for learning purposes, you'll start by managing a server directly to get a feel for how Chef works. To do that, you'll bring up a Red Hat Enterprise Linux or CentOS server and install the Chef DK on that server. The Chef DK provides everything that's needed to write Chef code and apply it all from the same system.
+
+Because you'll directly modify the state of your server, we strongly suggest that you work through this tutorial in a disposable environment such as a Red Hat Enterprise Linux or CentOS virtual machine or cloud instance.
 
 [START_BOX]
 
-## 1. Get a Red Hat Enterprise Linux or CentOS server
+## 1. Launch a Red Hat Enterprise Linux 6.5 or CentOS 6.5 server
 
-Because you'll directly modify the state of your server, we strongly suggest that you work through this tutorial in a disposable environment such as a Red Hat Enterprise Linux or CentOS virtual machine.
+To ensure that the output you see matches the sample output that's shown, we recommend that you run Red Hat Enterprise Linux 6.5 or CentOS 6.5 on your server. Ensure that you have `sudo` or root access to the server.
 
-To ensure that the output you see matches the sample output that's shown, we recommend that you run Red Hat Enterprise Linux 6.5 or CentOS 6.5 on your virtual machine. Ensure that you have `sudo` or root access to the instance.
+Your goal is to learn how Chef works in an environment you're comfortable working in. So although we recommend that you use a virtual machine or cloud instance, you can also use a spare physical machine that has Red Hat Enterprise Linux 6.5 or CentOS 6.5 installed.
 
 If you don't have a preferred way to set up a server, here are some popular options.
 
@@ -26,7 +30,7 @@ AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_camp
 
 If you're new to AWS, their [getting started guide](https://aws.amazon.com/getting-started/launch-a-virtual-machine/) walks you through the creation of your first Linux virtual machine.
 
-When you're ready to continue with this tutorial, visit the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00IOYDTV6) to create a CentOS 6.5 instance. Be sure to create a [security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#creating-security-group) that enables inbound access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+When you're ready to continue with this tutorial, visit the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00IOYDTV6) to create a CentOS 6.5 instance. Select t2.micro to take advantage of the free usage tier. When you create your security group, ensure that ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) are open for inbound network traffic.
 
 <% end %>
 
@@ -36,7 +40,7 @@ When you're ready to continue with this tutorial, visit the [AWS Marketplace](ht
 
 <% markdown do %>
 
-Azure is offers a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
+Microsoft Azure is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
 
 When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) to create your Linux virtual machine. At the step where you choose the VM image, search for **CentOS-based 6.5**, published by OpenLogic. Also ensure that your VM enables inbound access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
 
@@ -48,7 +52,17 @@ When you're ready to continue with this tutorial, [follow this tutorial](https:/
 
 <% markdown do %>
 
-[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances. Here's how to install VirtualBox and Vagrant and bring up a CentOS 6.5 instance.
+[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances on your workstation.
+
+Choose this option if you don't have access to cloud resources or you prefer to work with local virtual machines. You'll also need reasonably powerful hardware. Ensure that:
+
+* your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS.
+* your workstation meets the [system requirements](https://www.virtualbox.org/wiki/End-user_documentation) requirements for running VirtualBox.
+* your workstation has at least 5GB of free disk space. This will enable you to download the base image and run a few virtual machine instances.
+* your workstation has at least 512MB memory available per virtual machine instance.
+* nested virtualization is enabled if you're using another virtual machine as your workstation through a program such as VMWare Fusion.
+
+Here's how to install VirtualBox and Vagrant and bring up a CentOS 6.5 instance.
 
 Start by installing Virtual Box and Vagrant.
 
@@ -69,17 +83,43 @@ Start by installing Virtual Box and Vagrant.
 
 [START_BOX]
 
-## 2. Set up your virtual machine
+## Set up your server
 
-For this tutorial, you'll need to ensure that your virtual machine can access the Internet and has ports 22 (SSH) and 80 (HTTP) open to inbound traffic through the firewall. Port 80 is required because you'll set up a basic web server configuration later in this tutorial.
-
-You'll also need two pieces of software on your virtual machine &ndash; the Chef Development Kit (Chef DK) and a good text editor.
+Here you'll verify that your server can reach the Internet and install the Chef DK and a text editor on your server.
 
 ### Verify network access
 
+For this tutorial, you'll need to ensure that your virtual machine can access the Internet and has ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) open to inbound traffic through the firewall.
+
 Although Chef can be run from behind the firewall, giving your virtual machine Internet access is the easiest way to install packages and perform other common tasks.
 
-Ensure that your server can reach the Internet through your company's proxy server and firewall.
+We'll show you how to use Chef to configure the firewall in a later tutorial. But for now, manually ensure that your server can reach the Internet through your company's firewall. One easy way to test your connection is to run `curl` to retrieve www.cnn.com and search the output for a 200 OK result.
+
+```bash
+$ curl -I http://www.cnn.com | grep HTTP/1.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0 88096    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/1.1 200 OK
+```
+
+If you see 200 OK in the output, you're all set and can [move to the next step](#installthechefdevelopmentkit).
+
+If you receive an error like this one, you'll need to configure your firewall.
+
+```bash
+$ curl -I http://www.cnn.com | grep HTTP/1.1
+
+curl: (6) Couldn't resolve host 'www.cnn.com'
+```
+
+<% accordion('configure-firewall', 'Configure the firewall') do %>
+
+<%= partial 'layouts/partials/configure_iptables' %>
+
+<% end %>
+
+<p/>
 
 ### Install the Chef Development Kit
 
@@ -103,11 +143,13 @@ Preparing...                ########################################### [100%]
 Thank you for installing Chef Development Kit!
 ```
 
-### Set up your text editor
+### Set up a text editor
 
 Because Chef uses _code_ to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
 
-Install a text editor now. [Atom](http://atom.io) and [Sublime Text](http://www.sublimetext.com) are popular text editors for graphical user environments. If you prefer the command line, `emacs`, `nano`, and `vim` are popular.
+Install a text editor now. Because you'll likely be accessing your server from an SSH connection, choose a command-line text editor such as `emacs`, `nano`, or `vim`.
+
+If you're in a graphical user environment, [Atom](http://atom.io) and [Sublime Text](http://www.sublimetext.com) are popular.
 
 [END_BOX]
 
