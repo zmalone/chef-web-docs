@@ -1,4 +1,4 @@
-## 4. Windows only &ndash; install an SSH client
+## 4. Windows workstation only &ndash; install an SSH client
 
 In this tutorial, you'll log in to your Linux instance to verify your work. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you'll need to install one manually.
 
