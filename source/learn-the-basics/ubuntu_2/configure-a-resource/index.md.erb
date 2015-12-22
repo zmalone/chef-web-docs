@@ -29,11 +29,9 @@ $ cd ~/chef-repo
 
 [START_BOX]
 
-## 2. Create the MOTD file
+### 2. Create the MOTD file
 
 First, you need to create the file and set the initial MOTD. To keep things basic, let's configure the file in the working directory.
-
-In this step, you'll write what's called a _recipe_ to describe the desired state of the MOTD file. Then you'll run the [chef-apply](https://docs.chef.io/ctl_chef_apply.html) command to run the recipe and apply the desired state. Although `chef-apply` is not how you run Chef in production, it's a great way to explore resources and learn how Chef works.
 
 From your <code class="file-path">~/chef-repo</code> directory, create a file named <code class="file-path">hello.rb</code>, add these contents, and then save the file.
 
@@ -52,12 +50,11 @@ $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
     - create new file motd
-    - update content in file motd from none to b94d27
-    --- motd	2015-02-25 13:38:16.047114670 -0800
-    +++ ./.motd20150225-13770-mlbv6s	2015-02-25 13:38:16.047114670 -0800
+    - update content in file motd from none to de031d
+    --- motd        2014-05-13 14:52:54.025253948 -0700
+    +++ /tmp/.motd20140513-3474-5263n1 2014-05-13 14:52:54.025253948 -0700
     @@ -1 +1,2 @@
     +hello world
-    - restore selinux security context
 ```
 
 The output tells us that a new file, <code class="file-path">motd</code>, was created.
@@ -70,7 +67,7 @@ $ more motd
 hello world
 ```
 
-## Run the command a second time
+### Run the command a second time
 
 Now, let's see now what happens when you run the same `chef-apply` command again.
 
@@ -83,7 +80,7 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
 
 This time you get a different response. This is because Chef does work only when it needs to.
 
-Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify the <code class="file-path">motd</code> file because it already exists and its contents didn't change.
+Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <code class="file-path">motd</code> because it already exists and its contents didn't change.
 
 [END_BOX]
 
@@ -109,13 +106,12 @@ Run `chef-apply`.
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
-    - update content in file motd from b94d27 to c38c60
-    --- motd	2015-02-25 13:38:16.047114670 -0800
-    +++ ./.motd20150225-14129-uig0oi	2015-02-25 13:39:31.566787086 -0800
+    - update content in file motd from de031d to b1522f
+    --- motd        2014-05-13 14:52:54.025253948 -0700
+    +++ /tmp/.motd20140513-4015-13xpiup  2014-05-13 15:00:07.284522132 -0700
     @@ -1,2 +1,2 @@
     -hello world
     +hello chef
-    - restore selinux security context
 ```
 
 This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
@@ -142,22 +138,21 @@ Now run `chef-apply`.
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[motd] action create
-    - update content in file motd from 548078 to c38c60
-    --- motd	2015-02-25 13:40:01.398787053 -0800
-    +++ ./.motd20150225-14278-1ulmqhz	2015-02-25 13:40:06.753787047 -0800
+    - update content in file motd from 9b0c18 to b1522f
+    --- motd        2014-05-13 15:03:47.638770524 -0700
+    +++ /tmp/.motd20140513-4170-130uqxh  2014-05-13 15:04:43.874771326 -0700
     @@ -1,2 +1,2 @@
     -hello robots
     +hello chef
-    - restore selinux security context
 ```
 
 Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resource matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
 
-[COMMENT] In practice, it's common to configure Chef to act as a service that runs periodically or in response to an event, such as a commit to source control. Running Chef through automation helps to ensure that your servers remain configured as you expect and also enables them to be reconfigured when you need them to be.
-
 [END_BOX]
 
 [START_BOX]
+
+## 5. Delete the MOTD file
 
 ## 5. Delete the MOTD file
 
@@ -268,7 +263,7 @@ EOH
   <dd class="accordion-navigation">
     <a href="#question3">Answer <i class='fa fa-angle-double-right'></i></a>
     <div id="question3" class="box content">
-      <%= partial "/learn-the-basics/rhel/configure-a-resource/exercises/answers/3" %>
+      <%= partial "/learn-the-basics/ubuntu/configure-a-resource/exercises/answers/3" %>
     </div>
   </dd>
 </dl>

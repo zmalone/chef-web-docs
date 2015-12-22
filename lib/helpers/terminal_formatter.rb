@@ -99,7 +99,7 @@ module Middleman
           if line
             # TODO: A bit of a hack, but I want to be able to highlight commands from SSH connections.
             # Can come back and rethink this more fully later.
-            if m = line.match(/(\[.+@.+ ~\]\$ )(.*)/)
+            if m = line.match(/(\[?.+@.+\s?~\]?\$\s?)(.*)/)
               "<span style='display: inline;' class='line-number'>#{m[1]}</span><span style='display: inline;' class='line command'>#{m[2]}</span>"
             else
               "<span class='line #{line_class}'>#{line}</span>"
