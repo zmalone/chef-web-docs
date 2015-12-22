@@ -83,11 +83,76 @@ Start by installing Virtual Box and Vagrant.
 
 [START_BOX]
 
-## Set up your server
+## 2. Windows only &ndash; install an SSH client
 
-Here you'll verify that your server can reach the Internet and install the Chef DK and a text editor on your server.
+In this tutorial, you'll log in to your Ubuntu instance over an SSH connection from your workstation. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you'll need to install one manually.
 
-### Verify network access
+The easiest way to get set up is to [install Git](http://git-scm.com/download/), which includes an SSH client.
+
+After you install Git, ensure that the path to the Git binaries are included in your system `PATH`.
+
+Here's an example that adds the default Git path, <code class="file-path">C:\\Program Files (x86)\\Git\\bin</code>, to your `PATH` environment variable.
+
+```ps
+$ $path = [Environment]::GetEnvironmentVariable("PATH")
+$ $git_path = "C:\Program Files (x86)\Git\bin"
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$git_path")
+```
+
+[PuTTY](http://www.putty.org) is another popular SSH client for connecting to Linux machines.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Connect to your server
+
+Now create an SSH connection to your server from your workstation.
+
+[WINDOWS] If you're on a Windows workstation and have Git installed, you can use the `ssh` command that we show here. If you're using PuTTY, the [getting started](http://the.earth.li/~sgtatham/putty/0.66/htmldoc/Chapter2.html#gs) guide shows how to start an SSH connection. Also, if you're using key-based authentication, you'll need to [convert your private key](http://the.earth.li/~sgtatham/putty/0.64/htmldoc/Chapter8.html#pubkey) to a format PuTTY can use.
+
+Here are examples for the various ways you can connect.
+
+### Connect using a username and password
+
+```bash
+$ ssh root@40.76.28.32
+The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
+RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
+root@40.76.28.32's password:
+[root@40.76.28.32 ~]$
+```
+
+### Connect using key-based authentication
+
+```bash
+$ ssh -i ~/.ssh/my.pem root@40.76.28.32
+The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
+RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
+[root@40.76.28.32 ~]$
+```
+
+### Connect to a Vagrant instance
+
+From the directory where you ran `vagrant up`, run `vagrant ssh` to create an SSH connection to your Ubuntu virtual machine.
+
+```bash
+$ vagrant ssh
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+vagrant@vagrant:~$
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Verify network access
 
 For this tutorial, you'll need to ensure that your virtual machine can access the Internet and has ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) open to inbound traffic through the firewall.
 
@@ -119,9 +184,11 @@ curl: (6) Couldn't resolve host 'www.cnn.com'
 
 <% end %>
 
-<p/>
+[END_BOX]
 
-### Install the Chef Development Kit
+[START_BOX]
+
+## 5. Install the Chef Development Kit
 
 Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef Development Kit on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
@@ -143,13 +210,35 @@ Preparing...                ########################################### [100%]
 Thank you for installing Chef Development Kit!
 ```
 
-### Set up a text editor
+[END_BOX]
+
+[START_BOX]
+
+## 6. Set up a text editor
 
 Because Chef uses _code_ to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
 
-Install a text editor now. Because you'll likely be accessing your server from an SSH connection, choose a command-line text editor such as `emacs`, `nano`, or `vim`.
+Install a text editor now. Because you're accessing your server from an SSH connection, choose a command-line text editor such as `emacs`, `nano`, or `vim`.
 
-If you're in a graphical user environment, [Atom](http://atom.io) and [Sublime Text](http://www.sublimetext.com) are popular.
+Here are some examples of how to get started.
+
+<% accordion('emacs-gs', 'Emacs') do %>
+
+<%= partial 'layouts/partials/emacs_gs_rhel' %>
+
+<% end %>
+
+<% accordion('nano-gs', 'Nano') do %>
+
+<%= partial 'layouts/partials/nano_gs_rhel' %>
+
+<% end %>
+
+<% accordion('vim-gs', 'Vim') do %>
+
+<%= partial 'layouts/partials/vim_gs_rhel' %>
+
+<% end %>
 
 [END_BOX]
 
