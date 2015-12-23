@@ -1,0 +1,5 @@
+To install Windows Server on your virtual machine, you'll download the evaluation version of Windows Server as an ISO image and mount that image as a DVD drive. When your virtual machine boots, it will run the installer from the virtual DVD drive.
+
+Download the ISO image of the evaluation version of Windows Server 2012 R2 to your workstation from this URL to the <code class="file-path">C:\iso</code> directory on your workstation. If you can't download the file to this location, you can choose another &ndash; just be sure to change <code class="file-path">C:\iso</code> to your path in the steps that follow.
+
+<http://care.dlservice.microsoft.com/dl/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO>

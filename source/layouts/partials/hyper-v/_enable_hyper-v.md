@@ -1,5 +1,3 @@
-## 3. Enable the Hyper-V Windows feature
-
 You'll use Test Kitchen to create an instance under Hyper-V later in this tutorial. For now, let's ensure you have everything you'll need to create and connect to your instance.
 
 On Windows 8.1 and Windows 10, the easiest way to enable Hyper-V is to run this PowerShell command.

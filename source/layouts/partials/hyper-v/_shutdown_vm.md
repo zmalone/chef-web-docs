@@ -1,0 +1,1 @@
+The final step is to shut down your virtual machine, either from the instance or through Hyper-V. This step is important because Test Kitchen requires the instance to be shut down so that it can properly create the differencing disk.
