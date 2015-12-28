@@ -1,21 +1,12 @@
 ---
-title: 'Get set up'
+title: 'Set up a server to manage'
 order: 1
 description: "Set up your Chef environment."
 keywords: TODO
 layout: lesson
 time_to_complete: 30 minutes
 ---
-In this lesson, you'll:
-
-1. launch a Red Hat Enterprise Linux or CentOS instance.
-1. install an SSH client if you're working from a Windows workstation.
-1. connect to your instance from your workstation over SSH.
-1. verify Internet access.
-1. install the Chef Development Kit on your server.
-1. set up a text editor on your server.
-
-Because you'll directly modify the state of your server, we strongly suggest that you work through this tutorial in a disposable environment such as a Red Hat Enterprise Linux or CentOS virtual machine or cloud instance.
+The normal Chef workflow involves managing servers remotely from your workstation. But in this tutorial, you'll log on to a server and manage it directly to get a feel for how Chef works.
 
 <% reveal_modal('chef-workflow', 'Learn more about the Chef workflow') do %>
 
@@ -23,14 +14,22 @@ Because you'll directly modify the state of your server, we strongly suggest tha
 
 <% end %>
 
+In this lesson, you'll:
+
+1. [launch a Red Hat Enterprise Linux or CentOS instance](#step1)
+1. [install an SSH client if you're working from a Windows workstation](#step2)
+1. [connect to your instance from your workstation over SSH](#step3)
+1. [verify Internet access](#step4)
+1. [install the Chef Development Kit on your server](#step5)
+1. [set up a text editor on your server](#step6)
+
+Because you'll directly modify the state of your server, we strongly suggest that you work through this tutorial in a disposable environment such as a Red Hat Enterprise Linux or CentOS virtual machine or cloud instance. You can also use a spare physical machine that's running Red Hat Enterprise Linux or CentOS.
 
 [START_BOX]
 
 ## 1. Launch a Red Hat Enterprise Linux 6.5 or CentOS 6.5 server
 
 To ensure that the output you see matches the sample output that's shown, we recommend that you run Red Hat Enterprise Linux 6.5 or CentOS 6.5 on your server. Ensure that you have `sudo` or root access to the server.
-
-Your goal is to learn how Chef works in an environment you're comfortable working in. So although we recommend that you use a virtual machine or cloud instance, you can also use a spare physical machine that has Red Hat Enterprise Linux 6.5 or CentOS 6.5 installed.
 
 If you don't have a preferred way to set up a server, here are some popular options.
 
@@ -168,7 +167,7 @@ vagrant@vagrant:~$
 
 For this tutorial, you'll need to ensure that your virtual machine can access the Internet and has ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) open to inbound traffic through the firewall.
 
-Although Chef can be run from behind the firewall, giving your virtual machine Internet access is the easiest way to install packages and perform other common tasks.
+Although Chef can be run completely from behind the firewall, giving your virtual machine Internet access is the easiest way to install packages and perform other common tasks.
 
 We'll show you how to use Chef to configure the firewall in a later tutorial. But for now, manually ensure that your server can reach the Internet through your company's firewall. One easy way to test your connection is to run `curl` to retrieve www.cnn.com and search the output for a 200 OK result.
 
@@ -194,6 +193,9 @@ curl: (6) Couldn't resolve host 'www.cnn.com'
 
 <%= partial 'layouts/partials/configure_iptables' %>
 
+<p/>
+If you're still unable to connect, ensure that your
+
 <% end %>
 
 [END_BOX]
@@ -204,11 +206,7 @@ curl: (6) Couldn't resolve host 'www.cnn.com'
 
 Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef Development Kit on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
-Download and install the Chef DK on your virtual machine.
-
-<%= link_to "<i class='fa fa-external-link'></i>&nbsp;Install the Chef DK", "#{chef_dk_url}", target: '_blank', class: 'accent-button radius' %>
-
-Or, run this from the command line to install it.
+From your Red Hat Enterprise Linux or CentOS instance, run this from the command line to install the Chef DK.
 
 ```bash
 $ curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -c current -P chefdk
