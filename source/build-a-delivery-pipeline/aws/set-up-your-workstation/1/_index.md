@@ -1,6 +1,6 @@
 ## 1. Install components
 
-[TIP] If you installed Chef Delivery from your workstation, you can continue to use that same workstation. You can also move on to [step 2](#step2).
+[TIP] If you installed Chef Delivery from your workstation, you can continue to use that same workstation. You can also skip steps 1.1, 1.2, and 1.3 and [move on to step 1.4](#step1.4).
 
 ### 1.1. Install Git
 
