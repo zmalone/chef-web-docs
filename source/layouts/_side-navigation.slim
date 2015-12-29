@@ -4,7 +4,11 @@
   - @pages = current_page.siblings.insert current_page.data.order - 1, current_page
 div style="background-color:none;"
   ul.side-nav.box
+    - @previous_page = nil
     - @pages.each do |p|
+      - if @previous_page != nil && !@previous_page.title.start_with?('Appendix:') && p.title.start_with?('Appendix:')
+        hr
+      - @previous_page = p
       - if p == current_page
         li class="side-nav-active" == p.data.title
       - else

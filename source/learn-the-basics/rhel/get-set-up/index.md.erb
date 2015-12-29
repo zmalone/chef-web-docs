@@ -1,10 +1,10 @@
 ---
-title: 'Set up a server to manage'
+title: 'Get a free trial virtual machine to manage'
 order: 1
 description: "Set up your Chef environment."
 keywords: TODO
 layout: lesson
-time_to_complete: 30 minutes
+time_to_complete: 10 minutes
 ---
 The normal Chef workflow involves managing servers remotely from your workstation. But in this tutorial, you'll log on to a server and manage it directly to get a feel for how Chef works.
 
@@ -14,241 +14,34 @@ The normal Chef workflow involves managing servers remotely from your workstatio
 
 <% end %>
 
-In this lesson, you'll:
 
-1. [launch a Red Hat Enterprise Linux or CentOS instance](#step1)
-1. [install an SSH client if you're working from a Windows workstation](#step2)
-1. [connect to your instance from your workstation over SSH](#step3)
-1. [verify Internet access](#step4)
-1. [install the Chef Development Kit on your server](#step5)
-1. [set up a text editor on your server](#step6)
+The easiest way to get started is to use a free trial CentOS 6.5 virtual machine that we provide. The virtual machine runs in your browser and has the Chef tools and several popular text editors pre-installed.
 
-Because you'll directly modify the state of your server, we strongly suggest that you work through this tutorial in a disposable environment such as a Red Hat Enterprise Linux or CentOS virtual machine or cloud instance. You can also use a spare physical machine that's running Red Hat Enterprise Linux or CentOS.
+You can also [set up your own server](/learn-the-basics/rhel/set-up-your-own-server) to use with this tutorial. Or you can complete this tutorial using the virtual machine that we provide and then follow the tutorial a second time using your own server so that you can experience Chef in your own environment.
 
 [START_BOX]
 
-## 1. Launch a Red Hat Enterprise Linux 6.5 or CentOS 6.5 server
+## 1. Launch a free trial CentOS 6.5 server
 
-To ensure that the output you see matches the sample output that's shown, we recommend that you run Red Hat Enterprise Linux 6.5 or CentOS 6.5 on your server. Ensure that you have `sudo` or root access to the server.
-
-If you don't have a preferred way to set up a server, here are some popular options.
-
-<% accordion('vm-aws', 'Amazon Web Services') do %>
-
-<% markdown do %>
-
-AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
-
-If you're new to AWS, their [getting started guide](https://aws.amazon.com/getting-started/launch-a-virtual-machine/) walks you through the creation of your first Linux virtual machine.
-
-When you're ready to continue with this tutorial, visit the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00IOYDTV6) to create a CentOS 6.5 instance. Select t2.micro to take advantage of the free usage tier. When you create your security group, ensure that ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) are open for inbound network traffic.
-
-<% end %>
-
-<% end %>
-
-<% accordion('vm-azure', 'Microsoft Azure') do %>
-
-<% markdown do %>
-
-Microsoft Azure is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
-
-When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) to create your Linux virtual machine. At the step where you choose the VM image, search for **CentOS-based 6.5**, published by OpenLogic. Also ensure that your VM enables inbound access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
-
-<% end %>
-
-<% end %>
-
-<% accordion('vm-vagrant', 'VirtualBox and Vagrant') do %>
-
-<% markdown do %>
-
-[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances on your workstation.
-
-Choose this option if you don't have access to cloud resources or you prefer to work with local virtual machines. You'll also need reasonably powerful hardware. Ensure that:
-
-* your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS.
-* your workstation meets the [system requirements](https://www.virtualbox.org/wiki/End-user_documentation) requirements for running VirtualBox.
-* your workstation has at least 5GB of free disk space. This will enable you to download the base image and run a few virtual machine instances.
-* your workstation has at least 512MB memory available per virtual machine instance.
-* nested virtualization is enabled if you're using another virtual machine as your workstation through a program such as VMWare Fusion.
-
-Here's how to install VirtualBox and Vagrant and bring up a CentOS 6.5 instance.
-
-Start by installing Virtual Box and Vagrant.
-
-### Install VirtualBox
-
-<%= partial 'layouts/install_virtualbox' %>
-
-### Install Vagrant
-
-<%= partial 'layouts/install_vagrant' %>
-<%= partial 'layouts/vagrant_centos_box' %>
-
-<% end %>
-
-<% end %>
+Let us provide a CentOS virtual machine with the Chef Development Kit (Chef DK) installed for you. Just click the button below.
+</p>
+<%= partial 'layouts/provisioner', locals: { title: 'CentOS', type: 'rhel-localmode' } %>
 
 [END_BOX]
 
 [START_BOX]
 
-## 2. Windows workstation only &ndash; install an SSH client
-
-In this tutorial, you'll log in to your Ubuntu instance over an SSH connection from your workstation. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you'll need to install one manually.
-
-The easiest way to get set up is to [install Git](http://git-scm.com/download/), which includes an SSH client.
-
-After you install Git, ensure that the path to the Git binaries are included in your system `PATH`.
-
-Here's an example that adds the default Git path, <code class="file-path">C:\\Program Files (x86)\\Git\\bin</code>, to your `PATH` environment variable.
-
-```ps
-$ $path = [Environment]::GetEnvironmentVariable("PATH")
-$ $git_path = "C:\Program Files (x86)\Git\bin"
-$ [Environment]::SetEnvironmentVariable("PATH", "$path;$git_path")
-```
-
-[PuTTY](http://www.putty.org) is another popular SSH client for connecting to Linux machines.
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Connect to your server
-
-Now create an SSH connection to your server from your workstation.
-
-[WINDOWS] If you're on a Windows workstation and have Git installed, you can use the `ssh` command that we show here. If you're using PuTTY, the [getting started](http://the.earth.li/~sgtatham/putty/0.66/htmldoc/Chapter2.html#gs) guide shows how to start an SSH connection. Also, if you're using key-based authentication, you'll need to [convert your private key](http://the.earth.li/~sgtatham/putty/0.64/htmldoc/Chapter8.html#pubkey) to a format PuTTY can use.
-
-Here are examples for the various ways you can connect.
-
-### Connect using a username and password
-
-```bash
-$ ssh root@40.76.28.32
-The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
-RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
-root@40.76.28.32's password:
-[root@40.76.28.32 ~]$
-```
-
-### Connect using key-based authentication
-
-```bash
-$ ssh -i ~/.ssh/my.pem root@40.76.28.32
-The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
-RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
-[root@40.76.28.32 ~]$
-```
-
-### Connect to a Vagrant instance
-
-From the directory where you ran `vagrant up`, run `vagrant ssh` to create an SSH connection to your Ubuntu virtual machine.
-
-```bash
-$ vagrant ssh
-Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com/
-vagrant@vagrant:~$
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Verify network access
-
-For this tutorial, you'll need to ensure that your virtual machine can access the Internet and has ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) open to inbound traffic through the firewall.
-
-Although Chef can be run completely from behind the firewall, giving your virtual machine Internet access is the easiest way to install packages and perform other common tasks.
-
-We'll show you how to use Chef to configure the firewall in a later tutorial. But for now, manually ensure that your server can reach the Internet through your company's firewall. One easy way to test your connection is to run `curl` to retrieve www.cnn.com and search the output for a 200 OK result.
-
-```bash
-$ curl -I http://www.cnn.com | grep HTTP/1.1
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0 88096    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-HTTP/1.1 200 OK
-```
-
-If you see 200 OK in the output, you're all set and can [move to the next step](#installthechefdevelopmentkit).
-
-If you receive an error like this one, you'll need to configure your firewall.
-
-```bash
-$ curl -I http://www.cnn.com | grep HTTP/1.1
-
-curl: (6) Couldn't resolve host 'www.cnn.com'
-```
-
-<% accordion('configure-firewall', 'Configure the firewall') do %>
-
-<%= partial 'layouts/partials/configure_iptables' %>
-
-<p/>
-If you're still unable to connect, your company's firewall or proxy server might be blocking outbound Internet access. In that case, you may need to work with your network administrator to see what options are available for you to access the Internet from your server.
-
-<% end %>
-
-[END_BOX]
-
-[START_BOX]
-
-## 5. Install the Chef Development Kit
-
-Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef Development Kit on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
-
-From your Red Hat Enterprise Linux or CentOS instance, run this from the command line to install the Chef DK.
-
-```bash
-$ curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -c current -P chefdk
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100 17892  100 17892    0     0  18700      0 --:--:-- --:--:-- --:--:-- 34080
-Downloading chefdk  for el...
-[...]
-Preparing...                ########################################### [100%]
-   1:chefdk                 ########################################### [100%]
-Thank you for installing Chef Development Kit!
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 6. Set up a text editor
+## 2. Prepare a text editor
 
 Because Chef uses _code_ to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
 
-Install a text editor now. Because you're accessing your server from an SSH connection, choose a command-line text editor such as `emacs`, `nano`, or `vim`.
+After you launch your CentOS server, open a command prompt and bring up a text editor. The virtual machine comes with `emacs`, `nano`, and `vim` pre-installed. If you prefer another text editor, install it now.
 
-Here are some examples of how to get started.
+If you're new to using command-line text editors on CentOS, here are some resources to help get you started.
 
-<% accordion('emacs-gs', 'Emacs') do %>
-
-<%= partial 'layouts/partials/emacs_gs_rhel' %>
-
-<% end %>
-
-<% accordion('nano-gs', 'Nano') do %>
-
-<%= partial 'layouts/partials/nano_gs_rhel' %>
-
-<% end %>
-
-<% accordion('vim-gs', 'Vim') do %>
-
-<%= partial 'layouts/partials/vim_gs_rhel' %>
-
-<% end %>
+* Emacs: [Absolute Beginner's Guide to Emacs](http://www.jesshamrick.com/2012/09/10/absolute-beginners-guide-to-emacs/)
+* Nano: [The Beginner’s Guide to Nano, the Linux Command-Line Text Editor](http://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/)
+* Vim: [Interactive Vim tutorial](http://www.openvim.com/)
 
 [END_BOX]
 

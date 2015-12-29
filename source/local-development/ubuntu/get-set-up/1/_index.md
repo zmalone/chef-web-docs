@@ -1,4 +1,4 @@
-## 1. Install the Chef development kit on your workstation
+## 1. Install the Chef Development Kit on your workstation
 
 Install Chef DK on your workstation now if you haven't already. Chef DK comes with Test Kitchen, so there's nothing additional to set up.
 

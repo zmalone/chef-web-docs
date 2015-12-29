@@ -1,4 +1,4 @@
-## 1. Install the Chef development kit
+## 1. Install the Chef Development Kit
 
 In the first tutorial, [Learn the Chef basics](/learn-the-basics/windows/), you used the tools provided by the Chef Development Kit (Chef DK) to configure a virtual machine directly. Now it's time to install the Chef DK on your workstation so that you can manage a node remotely.
 

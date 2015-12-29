@@ -1,19 +1,12 @@
 ---
-title: 'Get set up'
+title: 'Get a free trial virtual machine to manage'
 order: 1
 description: "Set up your Chef environment."
 keywords: TODO
 layout: lesson
 time_to_complete: 30-60 minutes
 ---
-In this lesson, you'll:
-
-1. launch a Windows Server 2012 R2 instance.
-1. connect to your instance from your workstation over Remote Desktop.
-1. install the Chef Development Kit on your server.
-1. set up a text editor on your server.
-
-Because you'll directly modify the state of your server, we strongly suggest that you work through this tutorial in a disposable environment such as a Windows Server virtual machine or cloud instance.
+The normal Chef workflow involves managing servers remotely from your workstation. But in this tutorial, you'll log on to a server and manage it directly to get a feel for how Chef works.
 
 <% reveal_modal('chef-workflow', 'Learn more about the Chef workflow') do %>
 
@@ -22,143 +15,27 @@ Because you'll directly modify the state of your server, we strongly suggest tha
 <% end %>
 
 
+The easiest way to get started is to use a free trial Windows Server 2012 R2 virtual machine that we provide. The virtual machine runs in your browser and has the Chef tools and the [Atom](http://atom.io) text editor pre-installed.
+
+You can also [set up your own server](/learn-the-basics/windows/set-up-your-own-server) to use with this tutorial. Or you can complete this tutorial using the virtual machine that we provide and then follow the tutorial a second time using your own server so that you can experience Chef in your own environment.
+
 [START_BOX]
 
-## 1. Launch a Windows Server 2012 R2 server
+## 1. Launch a free trial Windows Server 2012 R2 virtual machine
 
-To ensure that the output you see matches the sample output that's shown, we recommend that you run Windows Server 2012 R2 on your server. Ensure that you have `sudo` or root access to the server.
-
-Your goal is to learn how Chef works in an environment you're comfortable working in. So although we recommend that you use a virtual machine or cloud instance, you can also use a spare physical machine that has Windows Server 2012 R2 installed.
-
-If you don't have a preferred way to set up a server, here are some popular options.
-
-<% accordion('vm-aws', 'Amazon Web Services') do %>
-
-<% markdown do %>
-
-AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
-
-If you're new to AWS, their [getting started guide](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html#ec2-launch-instance_linux) walks you through the creation of your first Windows Server 2012 R2 instance. 
-
-When you select the instance size, you can choose t2.micro to take advantage of the free usage tier. However, a t2.medium or larger instance size will give you better performance. When you create your security group, ensure that ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5985-5986 (WinRM) are open for inbound network traffic.
-
-<% end %>
-
-<% end %>
-
-<% accordion('vm-azure', 'Microsoft Azure') do %>
-
-<% markdown do %>
-
-Microsoft Azure is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
-
-When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-tutorial/) to create your Windows Server 2012 R2 instance. For now, all you need to do is create the instance. Ensure that your instance enables inbound access on ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), 5985-5986 (WinRM).
-
-<% end %>
-
-<% end %>
-
-<% accordion('vm-hyper-v', 'Hyper-V') do %>
-
-<% markdown do %>
-
-Hyper-V enables you to create and manage virtual machines from your workstation. 
-
-Choose this option if you don't have access to cloud resources or you prefer to work with local virtual machines. You'll also need reasonably powerful hardware. Ensure that:
-
-* your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS.
-* your workstation meets the [system requirements](https://msdn.microsoft.com/virtualization/hyperv_on_windows/quick_start/walkthrough_compatibility) requirements for running Hyper-V.
-* your workstation has at least 60GB of free disk space. This will enable you to download the base image and run a few virtual machine instances.
-* your workstation has at least 1GB memory available per virtual machine instance.
-* nested virtualization is enabled if you're using another virtual machine as your workstation through a program such as VMWare Fusion.
-
-In this part, you'll perform these steps to set up a Windows Server 2012 R2 virtual machine.
-
-1. Download the evaluation version of Windows Server 2012 R2 as an ISO image.
-1. Enable the Hyper-V Windows feature
-1. Create a Hyper-V virtual switch to provide your virtual machine with Internet access.
-1. Create a location to store virtual machines.
-1. Create an empty base virtual machine.
-1. Connect to your virtual machine through Hyper-V Manager.
-1. Install Windows Server 2012 R2 on your virtual machine.
-
-### Download the evaluation version of Windows Server 2012 R2 as an ISO image.
-
-<%= partial 'layouts/partials/hyper-v/download_iso' %>
-
-### Enable the Hyper-V Windows feature
-
-<%= partial 'layouts/partials/hyper-v/enable_hyper-v' %>
-
-### Create a Hyper-V virtual switch to provide your virtual machine with Internet access.
-
-<%= partial 'layouts/partials/hyper-v/create_switch' %>
-
-### Create a location to store virtual machines.
-
-<%= partial 'layouts/partials/hyper-v/create_store' %>
-
-### Create an empty base virtual machine.
-
-<%= partial 'layouts/partials/hyper-v/create_vm' %>
-
-### Connect to your virtual machine through Hyper-V Manager.
-
-<%= partial 'layouts/partials/hyper-v/connect_vm' %>
-
-### Install Windows Server 2012 R2 on your virtual machine.
-
-<%= partial 'layouts/partials/hyper-v/install_2012_r2' %>
-
-<% end %>
-
-<% end %>
+Let us provide a Windows Server virtual machine with the Chef Development Kit (Chef DK) installed for you. Just click the button below.
+</p>
+<%= partial 'layouts/provisioner', locals: { title: 'Windows Server', type: 'windows-localmode' } %>
 
 [END_BOX]
 
 [START_BOX]
 
-## 2. Connect to your server
-
-Now create a Remote Desktop connection to your server from your workstation.
-
-### Connect to your Amazon EC2 instance
-
-Follow [Step 2: Connect to Your Instance](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html#ec2-connect-to-instance-windows) from [Getting Started with Amazon EC2 Windows Instances](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html).
-
-### Connect to your Microsoft Azure instance
-
-Follow [Log on to the virtual machine](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-tutorial/#log-on-to-the-virtual-machine) from [Create a virtual machine running Windows in the Azure portal](Create a virtual machine running Windows in the Azure portal).
-
-### Connect to your Hyper-V instance
-
-From Hyper-V Manager, navigate to the results pane. Under **Virtual Machines**, right-click the name of the virtual machine and click **Connect**.
-
-Alternatively, you can run `vmconnect.exe` from the command line to connect to your instance. From the Virtual Machine Connection tool, select your server's name from the **Server** drop-down box. and then select **WindowsServer2012R2** from the **Virtual Machine** drop-down box.
-
-![](misc/vmconnect.png)
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Install the Chef Development Kit
-
-Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef Development Kit on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
-
-Download and install the Chef DK on your virtual machine.
-
-<%= link_to "<i class='fa fa-external-link'></i>&nbsp;Install the Chef DK", "#{chef_dk_url}", target: '_blank', class: 'accent-button radius' %>
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Set up a text editor
+## 2. Prepare a text editor
 
 Because Chef uses _code_ to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
 
-Now's a good time to make sure your favorite text editor is set up. Although Notepad is fine for this tutorial, [Atom](http://atom.io), [Sublime Text](http://www.sublimetext.com), and [Visual Studio Code](https://code.visualstudio.com) are popular among Chef users, and run in a graphical user environment.
+After you launch your Windows Server virtual machine, open a PowerShell prompt and bring up a text editor. The virtual machine comes with [Atom](http://atom.io) pre-installed. If you prefer another text editor, such as [Sublime Text](http://www.sublimetext.com) or [Visual Studio Code](https://code.visualstudio.com), install it now.
 
 [END_BOX]
 
