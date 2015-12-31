@@ -18,4 +18,6 @@ For example, you might deploy SQL Server to a Windows Server environment. Or you
 
 **Administrator's workstation** &ndash; This is the machine from where an administrator installs and manages the Delivery cluster. This can be an administrator's workstation or a server on AWS with SSH access.
 
-**Team member's workstation** &ndash; Users accesses Delivery from their workstations. Common tasks include creating projects and writing build cookbooks, submitting new features to the pipeline, and reviewing and approving changes that others submit.
+[COMMENT] We're still building support for installing and administering Chef Delivery from a Windows workstation. For now, we recommand that you work from a Mac OS or Linux system. If you're a Windows user, you may want to consider administering your Delivery installation from a Linux system running in the cloud, such as on AWS. 
+
+**Team member's workstation** &ndash; Users access Delivery from their workstations. A workstation can run Windows, Mac OS, or Linux. Common tasks include creating projects and writing build cookbooks, submitting new features to the pipeline, and reviewing and approving changes that others submit.

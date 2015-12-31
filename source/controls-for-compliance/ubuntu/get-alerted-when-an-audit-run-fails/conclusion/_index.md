@@ -4,7 +4,7 @@ Chef Analytics gives you a view into what's happening in your infrastructure. Yo
 
 By starting with Test Kitchen to verify your work locally, you have increased confidence that your changes will work in production.
 
-In this tutorial, you worked with the Chef Analytics web interface to view the state of your Chef server and to create rules that trigger when an audit fails. You can also use the `knife` plugin [knife-analtyics](https://github.com/chef/knife-analytics) to view alerts and perform other common tasks from the command line. To get started, run this command to install `knife-analtyics` on your workstation.
+In this tutorial, you worked with the Chef Analytics web interface to view the state of your Chef server and to create rules that trigger when an audit fails. You can also use the `knife` plugin [knife-analytics](https://github.com/chef/knife-analytics) to view alerts and perform other common tasks from the command line. To get started, run this command to install `knife-analytics` on your workstation.
 
 ```bash
 # ~/chef-repo
