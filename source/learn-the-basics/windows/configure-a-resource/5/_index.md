@@ -16,9 +16,9 @@ Now run `chef-apply`.
 $ chef-apply hello.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[C:\Users\Administrator\chef-repo\settings.ini] action create
-    - update content in file C:\Users\Administrator\chef-repo\settings.ini from 49c070 to cfde92
-    --- C:\Users\Administrator\chef-repo\settings.ini    2014-08-12 21:32:38.000000000 +0000
-    +++ C:/Users/ADMINI~1/AppData/Local/Temp/settings.ini20140812-1288-1ub7kv2      2014-08-12 21:32:52.000000000 +0000
+    - update content in file C:\Users\Administrator\chef-repo\settings.ini from 95e229 to cfde92
+    --- C:\Users\Administrator\chef-repo\settings.ini	2015-12-31 04:00:51.000000000 +0000
+    +++ C:\Users\Administrator\chef-repo/settings.ini20151231-3172-13zg2tg	2015-12-31 04:00:57.000000000 +0000
     @@ -1,2 +1,2 @@
     -greeting=hello robots
     +greeting=hello chef

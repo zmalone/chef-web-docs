@@ -20,8 +20,8 @@ Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * file[C:\Users\Administrator\chef-repo\settings.ini] action create
     - create new file C:\Users\Administrator\chef-repo\settings.ini
     - update content in file C:\Users\Administrator\chef-repo\settings.ini from none to 6823fa
-    --- C:\Users\Administrator\chef-repo\settings.ini    2014-08-16 01:04:33.000000000 +0000
-    +++ C:/Users/ADMINI~1/AppData/Local/Temp/2/settings.ini20140816-2080-5hrzgl     2014-08-16 01:04:33.000000000 +0000
+    --- C:\Users\Administrator\chef-repo\settings.ini	2015-12-31 04:00:38.000000000 +0000
+    +++ C:\Users\Administrator\chef-repo/settings.ini20151231-1664-1jvnppg	2015-12-31 04:00:38.000000000 +0000
     @@ -1 +1,2 @@
     +greeting=hello world
 ```

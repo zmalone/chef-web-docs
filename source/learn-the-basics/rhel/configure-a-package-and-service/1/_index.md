@@ -16,7 +16,7 @@ Now run `chef-apply` to apply the recipe.
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
   * yum_package[httpd] action install
-    - install version 2.2.15-47.el6.centos of package httpd
+    - install version 2.2.15-47.el6.centos.1 of package httpd
 ```
 
 [COMMENT] `sudo` is required because this command installs a package and therefore must be run with root privileges. If you're running as root on your own machine, you can omit `sudo` from the command.

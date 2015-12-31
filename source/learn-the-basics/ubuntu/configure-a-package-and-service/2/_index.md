@@ -22,9 +22,9 @@ Now apply it.
 # ~/chef-repo
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[apache2] action install (up to date)
+  * apt_package[apache2] action install (up to date)
   * service[apache2] action enable (up to date)
-  * service[apache2] action start (up to date)  
+  * service[apache2] action start (up to date)
 ```
 
 The package is already installed, so there's nothing to do. Similarly, the service is already started and enabled. On some Linux distros, Apache is not started or enabled as it is installed. With Chef, this is easy to verify.

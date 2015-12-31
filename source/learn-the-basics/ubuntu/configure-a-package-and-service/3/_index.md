@@ -32,21 +32,16 @@ Now apply it.
 # ~/chef-repo/
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[apache2] action install (up to date)
+  * apt_package[apache2] action install (up to date)
   * service[apache2] action enable (up to date)
   * service[apache2] action start (up to date)
   * file[/var/www/html/index.html] action create
-    - update content in file /var/www/html/index.html from 94850c to 2914aa
-    --- /var/www/html/index.html	2014-08-05 21:26:03.638403000 +0000
-    +++ /tmp/.index.html20140805-3788-1rrovsq	2014-08-05 21:30:24.930403000 +0000
-    @@ -1,5 +1,6 @@
-    -<html><body><h1>It works!</h1>
-    -<p>This is the default web page for this server.</p>
-    -<p>The web server software is running but no content has been added, yet.</p>
-    -</body></html>
-    +<html>
-    +  <body>
+    - update content in file /var/www/html/index.html from 538f31 to 2914aa
+    --- /var/www/html/index.html	2015-12-30 17:20:58.333013288 +0000
+[...]
+    -    </div>
     +    <h1>hello world</h1>
-    +  </body>
-    +</html>
+       </body>
+     </html>
+    -
 ```

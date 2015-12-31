@@ -15,8 +15,8 @@ Now run `chef-apply` to apply the recipe.
 # ~/chef-repo
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[apache2] action install
-    - install version 2.4.6-2ubuntu2.2 of package apache2
+  * apt_package[apache2] action install
+    - install version 2.4.7-1ubuntu4 of package apache2
 ```
 
 [COMMENT] `sudo` is required because this command installs a package and therefore must be run with root privileges. If you're running as root on your own machine, you can omit `sudo` from the command.
@@ -27,7 +27,7 @@ Run the recipe a second time.
 # ~/chef-repo
 $ sudo chef-apply webserver.rb
 Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * package[apache2] action install (up to date)
-  ```
+  * apt_package[apache2] action install (up to date)
+```
 
 You see that Chef does no work because there's nothing to do &ndash; the package is already installed.
