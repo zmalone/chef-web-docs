@@ -13,6 +13,8 @@ The installation consists of four steps:
 
 In order to create the AWS infrastructure, you'll use automation provided by the [delivery-cluster cookbook](https://github.com/chef-cookbooks/delivery-cluster). You'll need a machine to run the provisioning recipes. This can be an administrator's workstation or a server on AWS with SSH access. If you are working through the whole tutorial by yourself, you can use the same workstation as a provisioning node that you'll use later for creating changes in Chef Delivery. No matter which of these options you choose, we'll refer to the machine you use to run the installation automation as the cluster's _provisioning node_.
 
+[COMMENT] Remember, we recommend that you work from a Mac OS or Linux system as we build support for administering Chef Delivery from a Windows workstation. 
+
 Choose a machine that will run the automation recipes. It can run any OS that meets these [system requirements](https://docs.chef.io/supported_platforms.html#chef-dk-title). Prepare this machine using the following steps:
 
 #### 2.1.1. Download a temporary Chef Delivery license key
