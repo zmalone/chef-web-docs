@@ -27,22 +27,35 @@ Now apply it.
 
 ```bash
 # ~/chef-repo/
-$ sudo chef-apply webserver.rb
-Recipe: (chef-apply cookbook)::(chef-apply recipe)
+$ sudo chef-client --local-mode webserver.rb
+[2016-01-07T17:26:11+00:00] WARN: No config file found or specified on command line, using command line options.
+[2016-01-07T17:26:11+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /home/root/chef-repo.
+Starting Chef Client, version 12.6.0
+resolving cookbooks for run list: []
+Synchronizing Cookbooks:
+Compiling Cookbooks...
+[2016-01-07T17:26:12+00:00] WARN: Node default-centos-65 has an empty run list.
+Converging 3 resources
+Recipe: @recipe_files::/home/root/chef-repo/webserver.rb
   * yum_package[httpd] action install (up to date)
   * service[httpd] action enable (up to date)
-  * service[httpd] action start (up to date)  
+  * service[httpd] action start (up to date)
   * file[/var/www/html/index.html] action create
     - create new file /var/www/html/index.html
-    - update content in file /var/www/html/index.html from none to b8b8af
-    --- /var/www/html/index.html2014-06-27 15:11:55.190162819 -0400
-    +++ /tmp/.index.html20140627-9382-1nx42372014-06-27 15:11:55.190162819 -0400
+    - update content in file /var/www/html/index.html from none to 2914aa
+    --- /var/www/html/index.html	2016-01-07 17:26:13.711759153 +0000
+    +++ /var/www/html/.index.html20160107-3534-u036h1	2016-01-07 17:26:13.711759153 +0000
     @@ -1 +1,6 @@
     +<html>
     +  <body>
     +    <h1>hello world</h1>
     +  </body>
-    +  </html>
+    +</html>
+    - restore selinux security context
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 1/4 resources updated in 02 seconds
 ```
 
 The package and the service are already in the desired state, but you'll see that the home page, <code class="file-path">/var/www/html/index.html</code>, is created.

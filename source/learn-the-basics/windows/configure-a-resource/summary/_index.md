@@ -22,8 +22,7 @@ The documentation for each resource type, [file][file] for example, explains the
 
 In Chef, <code class="file-path">hello.rb</code> is an example of a [recipe][recipe], or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
 
-Our recipe states everything we need to manage the INI file. You used [chef-apply][chef-apply] to apply that recipe from the command line.
+Our recipe states everything we need to manage the INI file. You used `chef-client` in local mode to apply that recipe from the command line.
 
 [file]: https://docs.chef.io/resource_file.html
-[chef-apply]: https://docs.chef.io/ctl_chef_apply.html
 [recipe]: https://docs.chef.io/recipes.html

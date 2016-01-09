@@ -25,10 +25,10 @@ file '/var/www/html/index.html' do
 end
 ```
 
-The resources are applied in the order they are specified in the recipe. So here the package is installed, then the service is configured, and finally the home page is set and the `iptables` service is stopped. If any resource is already in the desired state, Chef simply moves on to the next one.
+The resources are applied in the order they are specified in the recipe. So here the package is installed, then the service is configured, and finally the home page is set. If any resource is already in the desired state, Chef simply moves on to the next one.
 
-The same idea applies to the action list `[:enable, :start]` for configuring the service. The service is enabled when the server boots and then it's started.
+The same idea applies to the action list `[:enable, :start]` for configuring the service. The service is enabled when the server boots before the service is started.
 
 It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the Apache service before the package is even installed.
 
-A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't start then we don't want to enable it.
+A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't be enabled on boot then we don't want to start it.

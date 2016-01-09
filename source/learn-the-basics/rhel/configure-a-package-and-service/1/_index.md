@@ -9,14 +9,26 @@ package 'httpd'
 
 We don't need to specify an action because `:install` is the default.
 
-Now run `chef-apply` to apply the recipe.
+Now run `chef-client` in local mode to apply the recipe.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply webserver.rb
-Recipe: (chef-apply cookbook)::(chef-apply recipe)
+$ sudo chef-client --local-mode webserver.rb
+[2016-01-07T17:22:44+00:00] WARN: No config file found or specified on command line, using command line options.
+[2016-01-07T17:22:44+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /home/root/chef-repo.
+Starting Chef Client, version 12.6.0
+resolving cookbooks for run list: []
+Synchronizing Cookbooks:
+Compiling Cookbooks...
+[2016-01-07T17:22:45+00:00] WARN: Node default-centos-65 has an empty run list.
+Converging 1 resources
+Recipe: @recipe_files::/home/root/chef-repo/webserver.rb
   * yum_package[httpd] action install
     - install version 2.2.15-47.el6.centos.1 of package httpd
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 1/1 resources updated in 05 seconds
 ```
 
 [COMMENT] `sudo` is required because this command installs a package and therefore must be run with root privileges. If you're running as root on your own machine, you can omit `sudo` from the command.
@@ -25,9 +37,21 @@ Run the recipe a second time.
 
 ```bash
 # ~/chef-repo
-$ sudo chef-apply webserver.rb
-Recipe: (chef-apply cookbook)::(chef-apply recipe)
+$ sudo chef-client --local-mode webserver.rb
+[2016-01-07T17:23:47+00:00] WARN: No config file found or specified on command line, using command line options.
+[2016-01-07T17:23:47+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /home/root/chef-repo.
+Starting Chef Client, version 12.6.0
+resolving cookbooks for run list: []
+Synchronizing Cookbooks:
+Compiling Cookbooks...
+[2016-01-07T17:23:49+00:00] WARN: Node default-centos-65 has an empty run list.
+Converging 1 resources
+Recipe: @recipe_files::/home/root/chef-repo/webserver.rb
   * yum_package[httpd] action install (up to date)
-  ```
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 0/1 resources updated in 02 seconds
+```
 
 You see that Chef does no work because there's nothing to do &ndash; the package is already installed.
