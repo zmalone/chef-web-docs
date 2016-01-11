@@ -1,13 +1,13 @@
 ---
 title: 'Bootstrap your node'
-order: 3
+order: 4
 description: 'Set up chef-client on your node,
  associate it with your Chef server, and apply your Apache cookbook to it.'
 keywords:
 layout: lesson
 sections: [exercises]
 next: {heading: Next, partial: next}
-time_to_complete: 15 minutes
+time_to_complete: 20 minutes
 ---
 [HEADLINE] We call the process that installs `chef-client` on a node and the initial check-in to the Chef server _bootstrapping_ the node.
 
@@ -17,135 +17,7 @@ Let's bootstrap a node and execute the Apache cookbook on it.
 
 [START_BOX]
 
-## 1. Get a Linux machine to bootstrap
-
-In [Learn the Chef basics](/learn-the-basics/ubuntu/), you installed the Chef DK on a server and configured it directly. Here you'll see how the bootstrap process enables you to configure your server remotely from your workstation.
-
-Like before, we suggest that you work in a disposable environment such as an Ubuntu virtual machine. To ensure that the output you see matches the sample output that's shown, we recommend that you run Ubuntu 14.04 on your virtual machine. Also ensure that you have `sudo` or root access to the instance.
-
-We recommend that you set up a second virtual machine so that you can see the bootstrap process run on a clean configuration. However, you can also bootstrap the instance that you used in the previous tutorial &ndash; just keep in mind that the output you see won't match what's shown because that instance is already configured with the Chef tools and your basic Apache web server configuration.
-
-If you don't have a preferred way to set up a server, here are some popular options.
-
-<% accordion('vm-aws', 'Amazon Web Services') do %>
-
-<% markdown do %>
-
-AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
-
-If you're new to AWS, their [getting started guide](https://aws.amazon.com/getting-started/launch-a-virtual-machine/) walks you through the creation of your first Linux virtual machine.
-
-When you're ready to continue with this tutorial, visit the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00JV9JBDS) to create an Ubuntu Server 14.04 LTS instance. Select t2.micro to take advantage of the free usage tier. When you create your security group, ensure that ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) are open for inbound network traffic.
-
-<% end %>
-
-<% end %>
-
-<% accordion('vm-azure', 'Microsoft Azure') do %>
-
-<% markdown do %>
-
-Microsoft Azure is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
-
-When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) to create your Linux virtual machine. At the step where you choose the VM image, search for **Ubuntu Server 14.04**, published by Canonical. Also ensure that your VM enables inbound access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
-
-<% end %>
-
-<% end %>
-
-<% accordion('vm-vagrant', 'VirtualBox and Vagrant') do %>
-
-<% markdown do %>
-
-[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances on your workstation.
-
-Choose this option if you don't have access to cloud resources or you prefer to work with local virtual machines. You'll also need reasonably powerful hardware. Ensure that:
-
-* your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS.
-* your workstation meets the [system requirements](https://www.virtualbox.org/wiki/End-user_documentation) requirements for running VirtualBox.
-* your workstation has at least 5GB of free disk space. This will enable you to download the base image and run a few virtual machine instances.
-* your workstation has at least 512MB memory available per virtual machine instance.
-* nested virtualization is enabled if you're using another virtual machine as your workstation through a program such as VMWare Fusion.
-
-Here's how to install VirtualBox and Vagrant and bring up a CentOS 6.5 instance.
-
-Start by installing Virtual Box and Vagrant.
-
-### Install VirtualBox
-
-<%= partial 'layouts/install_virtualbox' %>
-
-### Install Vagrant
-
-<%= partial 'layouts/install_vagrant' %>
-<%= partial 'layouts/vagrant_ubuntu_box' %>
-
-<% end %>
-
-<% end %>
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Create a test SSH connection to your node
-
-The bootstrap process connects to your node over SSH. Now that you have the connection details, let's create a test SSH connection to your node.
-
-You don't have to do this every time you bootstrap a node, but verifying that your node is connectable will help ensure that the bootstrap process succeeds.
-
-[WINDOWS] If you're on a Windows workstation and have Git installed, you can use the `ssh` command that we show here. If you're using PuTTY, the [getting started](http://the.earth.li/~sgtatham/putty/0.66/htmldoc/Chapter2.html#gs) guide shows how to start an SSH connection. Also, if you're using key-based authentication, you'll need to [convert your private key](http://the.earth.li/~sgtatham/putty/0.64/htmldoc/Chapter8.html#pubkey) to a format PuTTY can use.
-
-Here are examples for the various ways you can connect.
-
-### Connect using a username and password
-
-```bash
-$ ssh root@40.76.28.32
-The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
-RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
-root@40.76.28.32's password:
-[root@40.76.28.32 ~]$ exit
-logout
-Connection to 40.76.28.32 closed.
-```
-
-### Connect using key-based authentication
-
-```bash
-$ ssh -i ~/.ssh/my.pem root@40.76.28.32
-The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
-RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
-[root@40.76.28.32 ~]$ exit
-logout
-Connection to 40.76.28.32 closed.
-```
-
-### Connect to a local virtual machine using a forwarded port
-
-Here's an example for Vagrant. The `-l` option specifies the username `vagrant`. The `-p` option specifies the port on the host (2222) that will forward to port 22 on the guest.
-
-```bash
-$ ssh -i /home/user/.vagrant/machines/default/virtualbox/private_key -l vagrant -p 2222 localhost
-The authenticity of host '[localhost]:2222 ([127.0.0.1]:2222)' can't be established.
-RSA key fingerprint is c4:4d:f9:05:09:31:33:05:cd:99:52:5b:fc:e0:10:b5.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '[localhost]:2222' (RSA) to the list of known hosts.
-Last login: Thu Dec  3 15:32:08 2015 from 10.0.2.2
-[vagrant@localhost ~]$ exit
-logout
-Connection to localhost closed.
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Bootstrap your node
+## 1. Bootstrap your node
 
 Now that you've verified that you can connect to your node over SSH, you're now ready to bootstrap it.
 
@@ -283,7 +155,7 @@ localhost Chef Client finished, 4/5 resources updated in 29 seconds
 
 [START_BOX]
 
-## 5. Confirm the result
+## 2. Confirm the result
 
 Two things just happened.
 
