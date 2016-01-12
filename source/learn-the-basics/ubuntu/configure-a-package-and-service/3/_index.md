@@ -24,7 +24,7 @@ file '/var/www/html/index.html' do
 end
 ```
 
-[LINUX] Versions of Ubuntu prior to 14.04 use <code class="file-path">/var/www/index.html</code> as the default home page, so adjust your recipe accordingly if you're using your own machine.
+[LINUX] Versions of Ubuntu prior to 14.04 use <code class="file-path">/var/www/index.html</code> as the default home page, so adjust your recipe accordingly if your version of Ubuntu is prior to 14.04.
 
 Now apply it.
 
