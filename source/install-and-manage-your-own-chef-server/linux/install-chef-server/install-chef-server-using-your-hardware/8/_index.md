@@ -29,4 +29,4 @@ Connecting to host ec2-52-27-41-27.us-west-2.compute.amazonaws.com:443
 Successfully verified certificates from `ec2-52-27-41-27.us-west-2.compute.amazonaws.com'
 ```
 
-[COMMENT] By default, Chef Server uses a self-signed certificate, which is fine for getting started or for creating test servers. In production, we recommend that you use a [certificate signed by a root Certificate Authority (CA)](https://osxdominion.wordpress.com/2015/02/25/configuring-chef-server-12-to-use-trusted-ssl-certs/).
+[COMMENT] By default, Chef server uses a self-signed certificate, which is fine for getting started or for creating test servers. In production, we recommend that you use a [certificate signed by a root Certificate Authority (CA)](https://osxdominion.wordpress.com/2015/02/25/configuring-chef-server-12-to-use-trusted-ssl-certs/).

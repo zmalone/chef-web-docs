@@ -2,7 +2,7 @@
 
 [CALLOUT networks/workstation.png] Perform this part from your workstation.
 
-Now let's run the `hello_chef_server` cookbook on the node that you bootstrapped in the previous tutorial, [Learn to install and manage your own Chef Server](/install-and-manage-your-own-chef-server/linux/).
+Now let's run the `hello_chef_server` cookbook on the node that you bootstrapped in the previous tutorial, [Learn to install and manage your own Chef server](/install-and-manage-your-own-chef-server/linux/).
 
 <a class="help-button radius" href="#" data-reveal-id="chef-client-cheat-help-modal">Remind me how!</a>
 
