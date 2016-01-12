@@ -15,14 +15,14 @@ Now run `chef-client` to apply the recipe.
 # ~/chef-repo
 $ sudo chef-client --local-mode webserver.rb
 [2016-01-07T18:16:03+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-01-07T18:16:03+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /home/root/chef-repo.
+[2016-01-07T18:16:03+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
 Starting Chef Client, version 12.6.0
 resolving cookbooks for run list: []
 Synchronizing Cookbooks:
 Compiling Cookbooks...
 [2016-01-07T18:16:04+00:00] WARN: Node default-ubuntu-1404 has an empty run list.
 Converging 1 resources
-Recipe: @recipe_files::/home/root/chef-repo/webserver.rb
+Recipe: @recipe_files::/root/chef-repo/webserver.rb
   * apt_package[apache2] action install
     - install version 2.4.7-1ubuntu4.8 of package apache2
 
@@ -39,14 +39,14 @@ Run the recipe a second time.
 # ~/chef-repo
 $ sudo chef-client --local-mode webserver.rb
 [2016-01-07T18:16:46+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-01-07T18:16:46+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /home/root/chef-repo.
+[2016-01-07T18:16:46+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
 Starting Chef Client, version 12.6.0
 resolving cookbooks for run list: []
 Synchronizing Cookbooks:
 Compiling Cookbooks...
 [2016-01-07T18:16:48+00:00] WARN: Node default-ubuntu-1404 has an empty run list.
 Converging 1 resources
-Recipe: @recipe_files::/home/root/chef-repo/webserver.rb
+Recipe: @recipe_files::/root/chef-repo/webserver.rb
   * apt_package[apache2] action install (up to date)
 
 Running handlers:

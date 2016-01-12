@@ -15,14 +15,14 @@ Now run `chef-client` in local mode to apply the recipe.
 # ~/chef-repo
 $ sudo chef-client --local-mode webserver.rb
 [2016-01-07T17:22:44+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-01-07T17:22:44+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /home/root/chef-repo.
+[2016-01-07T17:22:44+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
 Starting Chef Client, version 12.6.0
 resolving cookbooks for run list: []
 Synchronizing Cookbooks:
 Compiling Cookbooks...
 [2016-01-07T17:22:45+00:00] WARN: Node default-centos-65 has an empty run list.
 Converging 1 resources
-Recipe: @recipe_files::/home/root/chef-repo/webserver.rb
+Recipe: @recipe_files::/root/chef-repo/webserver.rb
   * yum_package[httpd] action install
     - install version 2.2.15-47.el6.centos.1 of package httpd
 
@@ -39,14 +39,14 @@ Run the recipe a second time.
 # ~/chef-repo
 $ sudo chef-client --local-mode webserver.rb
 [2016-01-07T17:23:47+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-01-07T17:23:47+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /home/root/chef-repo.
+[2016-01-07T17:23:47+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
 Starting Chef Client, version 12.6.0
 resolving cookbooks for run list: []
 Synchronizing Cookbooks:
 Compiling Cookbooks...
 [2016-01-07T17:23:49+00:00] WARN: Node default-centos-65 has an empty run list.
 Converging 1 resources
-Recipe: @recipe_files::/home/root/chef-repo/webserver.rb
+Recipe: @recipe_files::/root/chef-repo/webserver.rb
   * yum_package[httpd] action install (up to date)
 
 Running handlers:
