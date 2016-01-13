@@ -1,4 +1,4 @@
-Now start Hyper-V Manager on your workstation, either from the **Start** screen or by running this command.
+Start Hyper-V Manager on your workstation, either from the **Start** screen or by running this command.
 
 ```ps
 $ C:\Windows\System32\mmc.exe C:\Windows\System32\virtmgmt.msc

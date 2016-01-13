@@ -15,4 +15,4 @@ To understand how templates work, you should first understand a bit more about n
 When a recipe runs, a `node` object is loaded into the program. Chef loads the node's attributes from the Chef server into memory. For our home page, we want to display the server's fully qualified domain name (FQDN). To do so, we access the `fqdn` attribute of the `node` object.
 
 [template]: https://docs.chef.io/templates.html
-[knifewinrm]: https://docs.chef.io/plugin_knife_windows.html
+[knifewinrm]: https://github.com/chef/knife-windows

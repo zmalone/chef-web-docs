@@ -1,19 +1,14 @@
 ---
 title: 'Get a node to bootstrap'
 order: 3
-description: 'Set up chef-client on your node,
- associate it with your Chef server, and apply your IIS cookbook to it.'
+description: 'Bring up a Windows Server 2012 R2 instance and prepare it for the bootstrap process.'
 keywords:
 layout: lesson
 sections: [exercises]
 next: {heading: Next, partial: next}
 time_to_complete: 20 minutes
 ---
-[HEADLINE] We call the process that installs `chef-client` on a node and the initial check-in to the Chef server _bootstrapping_ the node.
-
-Recall that any computer that's managed by a Chef server is called a _node_, and that `chef-client` is the command that applies the policy defined by your cookbooks to a node.
-
-Let's bootstrap a node and execute the IIS cookbook on it.
+Now it's time to bring up a Windows Server 2012 R2 instance and prepare it for the bootstrap process.
 
 [START_BOX]
 
@@ -21,7 +16,7 @@ Let's bootstrap a node and execute the IIS cookbook on it.
 
 In [Learn the Chef basics](/learn-the-basics/windows/), you installed the Chef DK on a server and configured it directly. Here you'll see how the bootstrap process enables you to configure your server remotely from your workstation.
 
-Like before, we suggest that you work in a disposable environment such as a Windows Server virtual machine. To ensure that the output you see matches the sample output that's shown, we recommend that you run Windows Server 2012 R2 on your virtual machine. Also ensure that you have `sudo` or root access to the instance.
+Like before, we suggest that you work in a disposable environment such as a Windows Server virtual machine. To ensure that the output you see matches the sample output that's shown, we recommend that you run Windows Server 2012 R2 on your virtual machine. Also ensure that you have administrator access to the instance.
 
 We recommend that you set up a second virtual machine so that you can see the bootstrap process run on a clean configuration. However, you can also bootstrap the instance that you used in the previous tutorial &ndash; just keep in mind that the output you see won't match what's shown because that instance is already configured with the Chef tools and your basic IIS web server configuration.
 
@@ -35,7 +30,7 @@ AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_camp
 
 If you're new to AWS, their [getting started guide](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html#ec2-launch-instance_linux) walks you through the creation of your first Windows Server 2012 R2 instance. 
 
-When you select the instance size, you can choose t2.micro to take advantage of the free usage tier. However, a t2.medium or larger instance size will give you better performance. When you create your security group, ensure that ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5985-5986 (WinRM) are open for inbound network traffic.
+When you select the instance size, you can choose t2.micro to take advantage of the free usage tier. However, a t2.medium or larger instance size will give you better performance. When you create your security group, ensure that ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5986 (WinRM) are open for inbound network traffic.
 
 <% end %>
 
@@ -47,7 +42,7 @@ When you select the instance size, you can choose t2.micro to take advantage of 
 
 Microsoft Azure is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
 
-When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-tutorial/) to create your Windows Server 2012 R2 instance. For now, all you need to do is create the instance. Ensure that your instance enables inbound access on ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), 5985-5986 (WinRM).
+When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-tutorial/) to create a Windows Server 2012 R2 Datacenter instance. For now, all you need to do is create the instance. Ensure that your instance contains endpoints for inbound network access on ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5986 (WinRM).
 
 <% end %>
 
@@ -120,7 +115,7 @@ In this part, you'll perform these steps to set up a Windows Server 2012 R2 virt
 Now, gather this information about your machine:
 
 * Its host name or public IP address.
-* A user name that has Administrator access and its password.
+* A user name that has administrator access and its password.
 
 If you're bootstrapping an instance under Hyper-V, you can run this PowerShell command to get your instance's IP address on your local network.
 
@@ -135,57 +130,125 @@ IPAddresses
 
 [START_BOX]
 
-## 3. Prepare your node 
+## 3. Connect to your node
 
-Use of SSL is strongly recommended, particularly when invoking knife-windows on non-Windows platforms, since without SSL there are limited options for ensuring the privacy of the plaintext transport.
+Next, log in to your node so that you can prepare your node for the bootstrap process.
 
-### Open the firewall
+If you're using physical hardware, you can log in to your system directly. If your node is running remotely, such as in the cloud, create an RDP connection. If your node is a local virtual machine, such as a Hyper-V instance, you can connect through your virtualization software.
 
-```ps
-$ netsh advfirewall firewall add rule name="WinRM-HTTPS" dir=in localport=5986 protocol=TCP action=allow
-```
+The following resources can help you connect if your node is running on AWS, Azure, or as a Hyper-V instance.
 
-### Create a self-signed certificate
+<% accordion('connect-aws', 'Amazon Web Services') do %>
 
-The easiest way to do this is to do it on the workstation and use knife-windows
+<% markdown do %>
 
-```ps
-$ knife windows cert generate --cert-passphrase "strong_passphrase" --hostname "myserver.myorganization.net" --output-file "server_cert.pfx"
-```
+[Connecting to Your Windows Instance Using RDP](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/connecting_to_windows_instance.html)
 
-### Import the pfx file generated from knife windows cert generate into the cert store on the node
+<% end %>
 
-I dont have the command for that handy
+<% end %>
 
-### Add a HTTPS listener on the node
+<% accordion('connect-azure', 'Microsoft Azure') do %>
 
-```ps
-$ winrm create winrm/config/Listener?Address=*+Transport=HTTPS "@{Hostname=`"<IP or host name>`";CertificateThumbprint=`"<thumbprint generated by knife-windows above>`"}"
-```
+<% markdown do %>
 
-knife windows cert generate above should use the same hostname or IP used to create the listener
+[Log on to a Windows virtual machine](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-log-on-windows-server/)
 
-### Configure WinRM
+<% end %>
 
-```ps
-$ winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
-$ winrm set winrm/config '@{MaxTimeoutms="1800000"}'
-```
+<% end %>
+
+<% accordion('connect-hyper-v', 'Hyper-V') do %>
+
+<%= partial 'layouts/partials/hyper-v/connect_vm' %>
+
+<% end %>
 
 [END_BOX]
 
 [START_BOX]
 
-## 4. Create a test WinRM connection to your node
+## 4. Prepare your node for the bootstrap process 
 
-The bootstrap process connects to your node over the WinRM protocol. Now that you have the connection details, let's create a test WinRM connection to your node.
+During the bootstrap process, your node gets associated with the Chef server. The Chef server holds information about your node that you can use to generate reports or share with other nodes. The bootstrap process also installs the Chef tools on your node and does an initial check in with the Chef server.
 
-You don't have to do this every time you bootstrap a node, but verifying that your node is connectable will help ensure that the bootstrap process succeeds.
+The recommended way to bootstrap Windows Server is over the SSL protocol. SSL uses digital certificates to encrypt and decrypt network communication between the server and the client. Digital certificates often form a hierarchy, or _certificate chain_ &ndash; each certificate in the chain is issued by a trusted certificate authority (CA) until a [root certificate](https://en.wikipedia.org/wiki/Root_certificate) is reached. A root certificate is a self-signed, third-party certificate that both the client and server trust.
 
-Connects to the remote WSMan/WinRM endpoint and verifies the remote node is listening. This is the equivalent of running Test-Wsman from PowerShell. Endpoints to test can be specified manually, or be driven by search and use many of the same connection options as knife winrm. To test a single node using the default WinRM port (5985)
+In production, you would likely issue trusted certificates to your users and on your servers. For learning purposes, in this tutorial you'll generate a self-signed certificate on your Windows Server node. During the bootstrap process, which you initiate from your workstation, you'll skip SSL verification, which essentially trusts the authenticity of your node. Testing with a self-signed certificate lets you validate that you can connect over SSL and that your connections over the secure channel work as expected. It also enables traffic to be encrypted between your workstation and your node.
 
-```bash
-$ knife wsman test 192.168.1.10 -m --winrm-transport ssl
+[WARN] Although it's generally accepable to use a self-signed certificate for learning or development work, keep in mind that self-signed certificates are more vulnerable to security threats such as [man-in-the-middle attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack). In production, we recommend that you always use a certificate chain that's rooted by a trusted CA.
+
+In this part, you'll:
+
+1. Create a self-signed certificate
+1. Add an HTTPS listener
+1. Configure WinRM
+1. Open the firewall to enable inbound traffic over WinRM 
+1. Verify the configuration
+
+Perform each of these steps from a PowerShell window on your Windows Server node.
+
+### Create a self-signed certificate
+
+Run the following command to create a self-signed certificate. You can replace <code class="placeholder">myserver.mydomain.org</code> with another name if you'd like.
+
+```ps
+$ $cert = New-SelfSignedCertificate -DnsName 'myserver.mydomain.org' -CertStoreLocation Cert:\LocalMachine\My
+```
+
+### Add an HTTPS listener
+
+Now create an HTTPS listener so that the node can accept incoming WinRM connections.
+
+First, delete any existing HTTPS listener.
+
+```ps
+$ winrm delete winrm/config/Listener?Address=*+Transport=HTTPS
+```
+
+Now run this to create a new listener.
+
+```ps
+$ New-Item -Address * -Force -Path wsman:\localhost\listener -Port 5986 -HostName ($cert.subject -split '=')[1] -Transport https -CertificateThumbPrint $cert.Thumbprint
+
+   WSManConfig: Microsoft.WSMan.Management\WSMan::localhost\Listener
+
+Type            Keys                                Name
+----            ----                                ----
+Container       {Transport=HTTPS, Address=*}        Listener_1305953032
+```
+
+### Configure WinRM
+
+Now you need to configure WinRM. You also need to ensure that WinRM allocates enough memory and provides enough time for the Chef tools to successfully install.
+
+Run these commands to allocate 1GB of memory to each WinRM shell and set the timeout period to 30 minutes. 
+
+```ps
+$ Set-Item WSMan:\localhost\Shell\MaxMemoryPerShellMB 1024
+$ Set-Item WSMan:\localhost\MaxTimeoutms 1800000
+```
+
+### Open the firewall
+
+Run this command to open the firewall on port 5986 to enable inbound traffic over the WinRM secure protocol.
+
+```ps
+$ netsh advfirewall firewall add rule name="WinRM-HTTPS" dir=in localport=5986 protocol=TCP action=allow
+Ok.
+```
+
+### Verify the configuration
+
+Finally, run `Test-WSMan` on your node to verify that the WinRM service is running.
+
+```ps
+$ Test-WSMan
+
+wsmid           : http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd
+ProtocolVersion : http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd
+ProductVendor   : Microsoft Corporation
+ProductVersion  : OS: 0.0.0 SP: 0.0 Stack: 3.0
 ```
 
 [END_BOX]
@@ -196,6 +259,6 @@ $ knife wsman test 192.168.1.10 -m --winrm-transport ssl
 
 In this lesson, you brought up a node that you'll later configure using Chef.
 
-In this lesson, you created a test connection to your node over WinRM. But once you get the hang of the bootstrap process, you'll see that  `knife bootstrap` enables you to configure your servers without the need to connect to them directly. This enables you to further automate the process of provisioning and configuring your infrastructure.
+You also created a test connection to your node over WinRM. But once you get the hang of things, you'll see that the bootstrap process enables you to configure your servers without the need to connect to them directly. This enables you to further automate the process of provisioning and configuring your infrastructure.
 
 [END_BOX]
