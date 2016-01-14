@@ -2,7 +2,7 @@
 
 You need to make sure that no other process can change the INI file.
 
-Imagine that a co-worker manually changes <code class="file-path">settings.ini</code> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy through your text editor. Or you can change the file from the command line like this.
+Imagine that a co-worker manually changes <code class="file-path">settings.ini</code> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy of <code class="file-path">settings.ini</code> through your text editor. Or you can change the file from the command line like this.
 
 ```ps
 # ~\chef-repo
