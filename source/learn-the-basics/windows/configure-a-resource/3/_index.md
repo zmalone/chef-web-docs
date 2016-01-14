@@ -41,7 +41,7 @@ Running handlers complete
 Chef Client finished, 1/1 resources updated in 18 seconds
 ```
 
-The output tells us that a new file, <code class="file-path">settings.ini</code>, was created.
+The output tells us that a new file, <code class="file-path">settings.ini</code>, was created. (The warnings you see relate to concepts we haven't introduced yet, and can be safely ignored for now.)
 
 Run the `Get-Content` PowerShell cmdlet to verify that the file was written.
 
