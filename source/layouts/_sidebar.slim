@@ -1,12 +1,12 @@
 nav role="nav"
   .section-container.accordion data-section="accordion"
-    - sitemap.roots.sort.reject { |page| page.data['skip_nav'] }.each do |page|
+    - sitemap.roots.sort.reject { |page| page.no_index? }.each do |page|
       section class=(page.current?(self) ? 'active' : nil) data-section-title="1"
         p.title= link_to(page.data['nav_title'] || page.data['title'], page)
-        - if page.children? && !page.children.all? { |page| page.data['skip_nav'] }
+        - if page.children? && !page.children.all? { |page| page.no_index? }
           div.content data-section-content="1"
             ul.side-nav
-              - page.children.reject { |page| page.data['skip_nav'] }.each do |child|
+              - page.children.reject { |page| page.no_index? }.each do |child|
                 li class=(child.current?(self) ? 'active' : nil) = link_to child.data['title'], child
 
 = link_to 'http://evocalize.com/consumer/rs/chef?dqr=1&surveyTemplate=learnchef', id: 'quickstart-survey-button', class: 'expand button' do

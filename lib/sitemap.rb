@@ -56,6 +56,10 @@ class Middleman::Sitemap::Resource
     self == receiver.current_page || self.children.any? { |child| child.current?(receiver) }
   end
 
+  def no_index?
+    self.data.meta_tags && self.data.meta_tags.any? {|h| h[:content].include?('NOINDEX') }
+  end
+
   def <=>(other_resource)
     [self.data['order'].to_i, (self.title || '').downcase] <=> [other_resource.data['order'].to_i, (other_resource.title || '').downcase]
   end
