@@ -44,7 +44,7 @@ $ [Convert]::ToBase64String($key) | Out-File "C:\temp\encrypted_data_bag_secret"
 $ [array]::Clear($key, 0, $key.Length)
 ```
 
-Now, modify <code class="file-path">~/manage-a-web-app-rhel/chef-repo/data\_bags/passwords/sql\_server\_root\_password.json</code> by adding the SQL root password in plain text.
+Now, modify <code class="file-path">~/manage-a-web-app-rhel/chef-repo/data\_bags/passwords/sql\_server\_root\_password.json</code> by replacing the SQL root password in plain text.
 
 ```ruby
 # ~/manage-a-web-app-rhel/chef-repo/data_bags/passwords/sql_server_root_password.json
@@ -54,7 +54,7 @@ Now, modify <code class="file-path">~/manage-a-web-app-rhel/chef-repo/data\_bags
 }
 ```
 
-Now modify <code class="file-path">~/manage-a-web-app-rhel/chef-repo/data\_bags/passwords/db\_admin\_password.json</code> by adding the database password.
+Now modify <code class="file-path">~/manage-a-web-app-rhel/chef-repo/data\_bags/passwords/db\_admin\_password.json</code> by replacing the database password in plain text..
 
 ```ruby
 # ~/manage-a-web-app-rhel/chef-repo/data_bags/passwords/db_admin_password.json
