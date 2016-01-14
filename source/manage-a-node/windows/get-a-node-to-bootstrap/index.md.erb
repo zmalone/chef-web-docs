@@ -1,0 +1,264 @@
+---
+title: 'Get a node to bootstrap'
+order: 3
+description: 'Bring up a Windows Server 2012 R2 instance and prepare it for the bootstrap process.'
+keywords:
+layout: lesson
+sections: [exercises]
+next: {heading: Next, partial: next}
+time_to_complete: 20 minutes
+---
+Now it's time to bring up a Windows Server 2012 R2 instance and prepare it for the bootstrap process.
+
+[START_BOX]
+
+## 1. Get a Windows Server machine to bootstrap
+
+In [Learn the Chef basics](/learn-the-basics/windows/), you installed the Chef DK on a server and configured it directly. Here you'll see how the bootstrap process enables you to configure your server remotely from your workstation.
+
+Like before, we suggest that you work in a disposable environment such as a Windows Server virtual machine. To ensure that the output you see matches the sample output that's shown, we recommend that you run Windows Server 2012 R2 on your virtual machine. Also ensure that you have administrator access to the instance.
+
+We recommend that you set up a second virtual machine so that you can see the bootstrap process run on a clean configuration. However, you can also bootstrap the instance that you used in the previous tutorial &ndash; just keep in mind that the output you see won't match what's shown because that instance is already configured with the Chef tools and your basic IIS web server configuration.
+
+If you don't have a preferred way to set up a server, here are some popular options.
+
+<% accordion('vm-aws', 'Amazon Web Services') do %>
+
+<% markdown do %>
+
+AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
+
+If you're new to AWS, their [getting started guide](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html#ec2-launch-instance_linux) walks you through the creation of your first Windows Server 2012 R2 instance. 
+
+When you select the instance size, you can choose t2.micro to take advantage of the free usage tier. However, a t2.medium or larger instance size will give you better performance. When you create your security group, ensure that ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5986 (WinRM) are open for inbound network traffic.
+
+<% end %>
+
+<% end %>
+
+<% accordion('vm-azure', 'Microsoft Azure') do %>
+
+<% markdown do %>
+
+Microsoft Azure is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
+
+When you're ready to continue with this tutorial, [learn how to create your Windows Server 2012 R2 Datacenter virtual machine](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-tutorial/). For now, all you need to do is create the instance. Ensure that your instance contains endpoints for inbound network access on ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5986 (WinRM).
+
+<% end %>
+
+<% end %>
+
+<% accordion('vm-hyper-v', 'Hyper-V') do %>
+
+<% markdown do %>
+
+Hyper-V enables you to create and manage virtual machines from your workstation. 
+
+Choose this option if you don't have access to cloud resources or you prefer to work with local virtual machines. You'll also need reasonably powerful hardware. Ensure that:
+
+* your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS.
+* your workstation meets the [system requirements](https://msdn.microsoft.com/virtualization/hyperv_on_windows/quick_start/walkthrough_compatibility) requirements for running Hyper-V.
+* your workstation has at least 60GB of free disk space. This will enable you to download the base image and run a few virtual machine instances.
+* your workstation has at least 1GB memory available per virtual machine instance.
+* nested virtualization is enabled if you're using another virtual machine as your workstation through a program such as VMWare Fusion.
+
+In this part, you'll perform these steps to set up a Windows Server 2012 R2 virtual machine.
+
+1. Download the evaluation version of Windows Server 2012 R2 as an ISO image.
+1. Enable the Hyper-V Windows feature
+1. Create a Hyper-V virtual switch to provide your virtual machine with Internet access.
+1. Create a location to store virtual machines.
+1. Create an empty base virtual machine.
+1. Connect to your virtual machine through Hyper-V Manager.
+1. Install Windows Server 2012 R2 on your virtual machine.
+
+### Download the evaluation version of Windows Server 2012 R2 as an ISO image.
+
+<%= partial 'layouts/partials/hyper-v/download_iso' %>
+
+### Enable the Hyper-V Windows feature
+
+<%= partial 'layouts/partials/hyper-v/enable_hyper-v' %>
+
+### Create a Hyper-V virtual switch to provide your virtual machine with Internet access.
+
+<%= partial 'layouts/partials/hyper-v/create_switch' %>
+
+### Create a location to store virtual machines.
+
+<%= partial 'layouts/partials/hyper-v/create_store' %>
+
+### Create an empty base virtual machine.
+
+<%= partial 'layouts/partials/hyper-v/create_vm' %>
+
+### Connect to your virtual machine through Hyper-V Manager.
+
+<%= partial 'layouts/partials/hyper-v/connect_vm' %>
+
+### Install Windows Server 2012 R2 on your virtual machine.
+
+<%= partial 'layouts/partials/hyper-v/install_2012_r2' %>
+
+<% end %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Gather some details about your machine
+
+[COMMENT] All you need is for your virtual machine to be running &ndash; don't connect to it just yet.
+
+Now, gather this information about your machine:
+
+* Its host name or public IP address.
+* A user name that has administrator access and its password.
+
+If you're bootstrapping an instance under Hyper-V, you can run this PowerShell command to get your instance's IP address on your local network.
+
+```ps
+$ Get-VM -Name "WindowsServer2012R2" | select -ExpandProperty NetworkAdapters | select IPAddresses
+IPAddresses
+-----------
+{192.168.1.171, fe80::983c:ebdf:3e87:34db}
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Connect to your node
+
+Next, log in to your node so that you can prepare your node for the bootstrap process.
+
+If you're using physical hardware, you can log in to your system directly. If your node is running remotely, such as in the cloud, create an RDP connection. If your node is a local virtual machine, such as a Hyper-V instance, you can connect through your virtualization software.
+
+The following resources can help you connect if your node is running on AWS, Azure, or as a Hyper-V instance.
+
+<% accordion('connect-aws', 'Amazon Web Services') do %>
+
+<% markdown do %>
+
+[Connecting to Your Windows Instance Using RDP](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/connecting_to_windows_instance.html)
+
+<% end %>
+
+<% end %>
+
+<% accordion('connect-azure', 'Microsoft Azure') do %>
+
+<% markdown do %>
+
+[Log on to a Windows virtual machine](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-log-on-windows-server/)
+
+<% end %>
+
+<% end %>
+
+<% accordion('connect-hyper-v', 'Hyper-V') do %>
+
+<%= partial 'layouts/partials/hyper-v/connect_vm' %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Prepare your node for the bootstrap process 
+
+During the bootstrap process, your node gets associated with the Chef server. The Chef server holds information about your node that you can use to generate reports or share with other nodes. The bootstrap process also installs the Chef tools on your node and does an initial check in with the Chef server.
+
+The recommended way to bootstrap Windows Server is over the SSL protocol. SSL uses digital certificates to encrypt and decrypt network communication between the server and the client. Digital certificates often form a hierarchy, or _certificate chain_ &ndash; each certificate in the chain is issued by a trusted certificate authority (CA) until a [root certificate](https://en.wikipedia.org/wiki/Root_certificate) is reached. A root certificate is a self-signed, third-party certificate that both the client and server trust.
+
+In production, you would likely issue trusted certificates to your users and on your servers. For learning purposes, in this tutorial you'll generate a self-signed certificate on your Windows Server node. During the bootstrap process, which you initiate from your workstation, you'll skip SSL verification, which essentially trusts the authenticity of your node. Testing with a self-signed certificate lets you validate that you can connect over SSL and that your connections over the secure channel work as expected. It also enables traffic to be encrypted between your workstation and your node.
+
+[WARN] Although it's generally accepable to use a self-signed certificate for learning or development work, keep in mind that self-signed certificates are more vulnerable to security threats such as [man-in-the-middle attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack). In production, we recommend that you always use a certificate chain that's rooted by a trusted CA.
+
+In this part, you'll:
+
+1. Create a self-signed certificate
+1. Add an HTTPS listener
+1. Configure WinRM
+1. Open the firewall to enable inbound traffic over WinRM 
+1. Verify the configuration
+
+Perform each of these steps from a PowerShell window on your Windows Server node.
+
+### Create a self-signed certificate
+
+Run the following command to create a self-signed certificate. You can replace <code class="placeholder">myserver.mydomain.org</code> with another name if you'd like.
+
+```ps
+$ $cert = New-SelfSignedCertificate -DnsName 'myserver.mydomain.org' -CertStoreLocation Cert:\LocalMachine\My
+```
+
+### Add an HTTPS listener
+
+Now create an HTTPS listener so that the node can accept incoming WinRM connections.
+
+First, delete any existing HTTPS listener.
+
+```ps
+$ winrm delete winrm/config/Listener?Address=*+Transport=HTTPS
+```
+
+Now run this to create a new listener.
+
+```ps
+$ New-Item -Address * -Force -Path wsman:\localhost\listener -Port 5986 -HostName ($cert.subject -split '=')[1] -Transport https -CertificateThumbPrint $cert.Thumbprint
+
+   WSManConfig: Microsoft.WSMan.Management\WSMan::localhost\Listener
+
+Type            Keys                                Name
+----            ----                                ----
+Container       {Transport=HTTPS, Address=*}        Listener_1305953032
+```
+
+### Configure WinRM
+
+Now you need to configure WinRM. You also need to ensure that WinRM allocates enough memory and provides enough time for the Chef tools to successfully install.
+
+Run these commands to allocate 1GB of memory to each WinRM shell and set the timeout period to 30 minutes. 
+
+```ps
+$ Set-Item WSMan:\localhost\Shell\MaxMemoryPerShellMB 1024
+$ Set-Item WSMan:\localhost\MaxTimeoutms 1800000
+```
+
+### Open the firewall
+
+Run this command to open the firewall on port 5986 to enable inbound traffic over the WinRM secure protocol.
+
+```ps
+$ netsh advfirewall firewall add rule name="WinRM-HTTPS" dir=in localport=5986 protocol=TCP action=allow
+Ok.
+```
+
+### Verify the configuration
+
+Finally, run `Test-WSMan` on your node to verify that the WinRM service is running.
+
+```ps
+$ Test-WSMan
+
+wsmid           : http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd
+ProtocolVersion : http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd
+ProductVendor   : Microsoft Corporation
+ProductVersion  : OS: 0.0.0 SP: 0.0 Stack: 3.0
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## Summary
+
+In this lesson, you brought up a node that you'll later configure using Chef.
+
+You also created a test connection to your node over WinRM. But once you get the hang of things, you'll see that the bootstrap process enables you to configure your servers without the need to connect to them directly. This enables you to further automate the process of provisioning and configuring your infrastructure.
+
+[END_BOX]

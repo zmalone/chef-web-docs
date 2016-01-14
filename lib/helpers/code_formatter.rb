@@ -61,14 +61,20 @@ module Middleman
         end
 
         def source_window(content,filepath,window_style)
-          %{<div class="window #{window_style}" ng-non-bindable>
-              <nav class="control-window">
-                <div class="close">&times;</div>
-                <div class="minimize"></div>
-                <div class="deactivate"></div>
-              </nav>
-              <h1 class="titleInside">#{filepath}</h1>
-              <div class="container"><div class="editor">#{content}</div></div></div>}
+<<-EOH
+<div class="window #{window_style}" ng-non-bindable>
+  <nav class="control-window">
+    <div class="close">&times;</div>
+    <div class="minimize"></div>
+    <div class="deactivate"></div>
+  </nav>
+  <h1 class="titleInside">#{filepath}</h1>
+  <div class="container">
+    <div class="editor">#{content}
+    </div>
+  </div>
+</div>
+EOH
         end
       end
 

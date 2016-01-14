@@ -31,20 +31,35 @@ Now apply it.
 
 ```ps
 # ~\chef-repo
-$ chef-apply webserver.rb
-Recipe: (chef-apply cookbook)::(chef-apply recipe)
+$ chef-client --local-mode webserver.rb
+[2016-01-07T13:50:09-08:00] WARN: No config file found or specified on command line, using command line options.
+[2016-01-07T13:50:09-08:00] WARN: No cookbooks directory found at or above current directory.  Assuming C:/Users/Adminis
+trator/chef-repo.
+Starting Chef Client, version 12.6.0
+resolving cookbooks for run list: []
+Synchronizing Cookbooks:
+Compiling Cookbooks...
+[2016-01-07T13:50:45-08:00] WARN: Node WIN-8MV74EBIT8G has an empty run list.
+Converging 3 resources
+Recipe: @recipe_files::C:/Users/Administrator/chef-repo/webserver.rb
   * powershell_script[Install IIS] action run (skipped due to not_if)
-  * service[w3svc] action enable (up to date)
-  * service[w3svc] action start (up to date)
+  * windows_service[w3svc] action enable (up to date)
+  * windows_service[w3svc] action start (up to date)
   * file[c:\inetpub\wwwroot\Default.htm] action create
     - create new file c:\inetpub\wwwroot\Default.htm
     - update content in file c:\inetpub\wwwroot\Default.htm from none to 2914aa
-    --- c:\inetpub\wwwroot\Default.htm  2014-08-19 21:19:58.000000000 +0000
-    +++ C:/Users/ADMINI~1/AppData/Local/Temp/2/Default.htm20140819-596-1vshr64      2014-08-19 21:19:58.000000000 +0000
+    --- c:\inetpub\wwwroot\Default.htm  2016-01-07 13:50:46.000000000 -0800
+    +++ c:\inetpub\wwwroot/Default.htm20160107-1644-19jhr7h     2016-01-07 13:50:46.000000000 -0800
     @@ -1 +1,6 @@
     +<html>
     +  <body>
     +    <h1>hello world</h1>
     +  </body>
     +</html>
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 1/4 resources updated in 36 seconds
 ```
+
+IIS and W3SVC are already in the desired state, but you'll see that the home page, <code class="file-path">c:\inetpub\wwwroot\Default.htm</code>, is created.

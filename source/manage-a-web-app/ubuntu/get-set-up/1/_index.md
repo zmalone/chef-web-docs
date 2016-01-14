@@ -1,4 +1,4 @@
-## 1. Install the Chef development kit on your workstation
+## 1. Install the Chef Development Kit on your workstation
 
 You administer your network with your workstation. Your workstation is also where you write your Chef code. Remember that although you'll be configuring an Ubuntu machine, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
 

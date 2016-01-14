@@ -4,9 +4,9 @@ You ran a few basic Chef commands and got a flavor of what Chef can do. You lear
 
 ### Resources describe the what, not the how
 
-Your policy declares _what_ state each resource should be in, but not _how_ to get there. In this lesson, you declared that the file <code class="file-path">settings.ini</code> must exist and what its contents are, but you didn't specify how to apply that policy. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
+A recipe is a file that holds one or more resources. Each resource declares _what_ state a part of the system should be in, but not _how_ to get there. Chef handles these complexities for you.
 
-A recipe declares what state each resource should be in but not how to achieve that state. Chef handles these complexities for you.
+In this lesson, you declared that the file <code class="file-path">settings.ini</code> must exist and what its contents are, but you didn't specify how to create or write to the file. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
 
 ### Resources have actions
 
@@ -22,8 +22,7 @@ The documentation for each resource type, [file][file] for example, explains the
 
 In Chef, <code class="file-path">hello.rb</code> is an example of a [recipe][recipe], or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
 
-Our recipe states everything we need to manage the INI file. You used [chef-apply][chef-apply] to apply that recipe from the command line.
+Our recipe states everything we need to manage the INI file. You used `chef-client` in local mode to apply that recipe from the command line.
 
 [file]: https://docs.chef.io/resource_file.html
-[chef-apply]: https://docs.chef.io/ctl_chef_apply.html
 [recipe]: https://docs.chef.io/recipes.html

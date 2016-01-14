@@ -5,14 +5,14 @@
       = partial "layouts/time_to_complete", :locals => { :time_to_complete => current_page.data.time_to_complete }
     .medium-9.columns
       h1 == current_page.data.title
-      - if current_page.data.byline
-        p style="font-style:italic;"
-          = current_page.data.byline
       = yield
       - if current_page.data.sections
         - current_page.data.sections.each do |section|
           div.box
             = partial "#{section}/index"
+      - if current_page.data.byline
+        p style="font-style:italic;"
+          = "This article was contributed by " + current_page.data.byline
       - if current_page.data.category #current_page.data.next
         div.box
           - @next = current_page.parent.children.select {|s| s.data.category == current_page.data.category && s.data.order == current_page.data.order + 1}.first

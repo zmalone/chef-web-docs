@@ -1,6 +1,8 @@
-## 1. Install the Chef development kit
+## 1. Install the Chef Development Kit
 
-The first step to managing a node remotely is to install the Chef development kit (Chef DK) on your workstation.
+In the first tutorial, [Learn the Chef basics](/learn-the-basics/rhel/), you used the tools provided by the Chef Development Kit (Chef DK) to configure a virtual machine directly. Now it's time to install the Chef DK on your workstation so that you can manage a node remotely.
+
+[COMMENT] You can also use a virtual machine as your workstation. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites).
 
 <a class='accent-button radius' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 

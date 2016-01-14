@@ -20,11 +20,24 @@ $ tree
     ├── README.md
     ├── recipes
     │   └── default.rb
-    └── templates
-        └── default
-            └── index.html.erb
+    ├── spec
+    │   ├── spec_helper.rb
+    │   └── unit
+    │       └── recipes
+    │           └── default_spec.rb
+    ├── templates
+    │   └── default
+    │       └── index.html.erb
+    └── test
+        └── integration
+            ├── default
+            │   └── serverspec
+            │       └── default_spec.rb
+            └── helpers
+                └── serverspec
+                    └── spec_helper.rb
 
-4 directories, 6 files
+13 directories, 10 files
 ```
 
 The .erb extension simply means that the file can have placeholders. More on that later.
@@ -39,3 +52,5 @@ Now copy the contents of the HTML file from your recipe to the new HTML file, <c
   </body>
 </html>
 ```
+
+[COMMENT] Here, you're adding the web site content directly to your cookbook for learning purposes. In practice, your web site content would more likely be some build artifact, for example a .zip file on your build server. With Chef, you could pull updated web content from your build server and deploy it to your web server.

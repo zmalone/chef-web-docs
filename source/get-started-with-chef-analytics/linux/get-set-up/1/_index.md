@@ -4,7 +4,7 @@ Chef Analytics requires a Chef server that's maintained in your infrastructure &
 
 If you don't already have a Chef server that you can configure to work with Chef Analytics, follow this Learn Chef tutorial to get set up.
 
-<a class='accent-button radius' href='/install-and-manage-your-own-chef-server/linux/' target='_blank'>Learn to install and manage your own Chef Server&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+<a class='accent-button radius' href='/install-and-manage-your-own-chef-server/linux/' target='_blank'>Learn to install and manage your own Chef server&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
 After completing this tutorial, you'll have:
 

@@ -15,6 +15,6 @@ service 'w3svc' do
 end
 
 template 'c:\inetpub\wwwroot\Default.htm' do
-  source 'index.html.erb'
+  source 'Default.htm.erb'
 end
 ```

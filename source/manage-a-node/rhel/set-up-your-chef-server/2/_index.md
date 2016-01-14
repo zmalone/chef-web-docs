@@ -1,49 +1,71 @@
-## 2. Install the Starter Kit
+## 2. Configure your workstation to communicate with the Chef server
 
-Now you need to download some files that enable you to securely communicate with the Chef server. The Starter Kit provides the certificates and other files you need to do this.
+[knife](https://docs.chef.io/knife.html) is the command-line tool that provides an interface between your workstation and the Chef server. `knife` enables you to upload your cookbooks to the Chef server and work with _nodes_, the servers that you manage.
 
-[WINDOWS] On Windows, we recommend that you use PowerShell to work with Chef. On Learn Chef, we use the <code class="file-path">~</code> character in directory names, which is a common shortcut for the user's home directory on Linux, but also works in PowerShell. On Windows, <code class="file-path">~</code> refers to your home directory, for example, <code class="file-path">C:\Users\Administrator</code>.
+`knife` requires two files to communicate with the Chef server &ndash; an RSA private key and a configuration file.
 
-From your workstation,
+Every request to the Chef server is authenticated through an RSA public key-pair. The Chef server holds the public part; you hold the private part.
 
-1. Navigate to the [Chef management console](https://manage.chef.io/).
-1. From the **Administration** tab, select your organization.
-1. Select **Starter Kit** from the menu on the left.
-1. Click the **Download Starter Kit** button.
-1. Click **Proceed**. Save the file <code class="file-path">chef-starter.zip</code> to your computer.
-1. Extract <code class="file-path">chef-starter.zip</code> to a working directory, for example, your home directory.
+The configuration file is typically named <code class="file-path">knife.rb</code>. It contains information such as the Chef server's URL, the location of your RSA private key, and the default location of your cookbooks.
 
-Here's how to unzip the files to your home directory on a Windows, Linux, or Mac OS workstation.
+Both of these files are typically located in a directory named <code class="file-path">.chef</code>. Every time `knife` runs, it looks in the current working directory for the <code class="file-path">.chef</code> directory. If the <code class="file-path">.chef</code> directory does not exist, `knife` searches up the directory tree for a <code class="file-path">.chef</code> directory. This process is similar to how tools such as Git work.
 
-[START_TABS extractStarter Windows, Linux and Mac OS]
+The next step is to create the <code class="file-path">~/learn-chef/.chef</code> directory and add your RSA private key and `knife` configuration files.
 
-[START_TAB extractStarterWindows active]
+[TIP] Because `knife` searches up the directory tree for a <code class="file-path">.chef</code> directory, you can have multiple <code class="file-path">.chef</code> directories in your tree. The <code class="file-path">~/learn-chef/.chef</code> directory gives you a default `knife` configuration for most projects, but you can also create a <code class="file-path">.chef</code> directory lower in the tree to configure other projects to work with another Chef server.
 
-```ps
-$ cd ~
-$ Add-Type -AssemblyName "System.IO.Compression.FileSystem"
-$ [IO.Compression.ZipFile]::ExtractToDirectory(".\Downloads\chef-starter.zip", ".\")
-```
+### Create the .chef directory
 
-[END_TAB]
-
-[START_TAB extractStarterLinuxandMacOS]
+Create the <code class="file-path">~/learn-chef/.chef</code> directory, like this.
 
 ```bash
-$ cd ~
-$ unzip ~/Downloads/chef-starter.zip
-Archive:  /Users/user/Downloads/chef-starter.zip
-  inflating: chef-repo/README.md
-   creating: chef-repo/cookbooks/
-  inflating: chef-repo/cookbooks/chefignore
-   creating: chef-repo/cookbooks/starter/
-[...]
-  inflating: chef-repo/.chef/admin.pem
-  inflating: chef-repo/.chef/org-validator.pem
+# ~/learn-chef
+$ mkdir ~/learn-chef/.chef
 ```
 
-[END_TAB]
+### Generate your knife configuration file
 
-[END_TABS]
+First, sign in to [https://manage.chef.io/](https://manage.chef.io/). From the **Administration** tab, select your organization. From the menu on the left, select **Generate Knife Config** and save the file.
 
-[WARN] Verify that your <code class="file-path">~/chef-repo</code> directory contains a <code class="file-path">.chef</code> directory to ensure that you extracted all files and folders from the Starter Kit, including hidden ones.
+![](misc/manage_generate_knife_config.png)
+
+From the command line, copy <code class="file-path">knife.rb</code> to your <code class="file-path">~/learn-chef/.chef</code> directory, for example:
+
+```bash
+$ cp ~/Downloads/knife.rb ~/learn-chef/.chef
+```
+
+### Generate your RSA private key file
+
+First, sign in to [https://manage.chef.io/](https://manage.chef.io/). From the **Administration** tab, select **Users** from the menu on the left. Select your user name, select **Reset key** from the menu on the left, and then select **Reset key** from the window that appears.
+
+![](misc/manage_reset_key.png)
+
+A second window appears that displays your private key. From the bottom of that window, click **Download** to download your private key file.
+
+![](misc/manage_download_key.png)
+
+From the command line, copy your private key file to your <code class="file-path">~/learn-chef/.chef</code> directory, for example:
+
+```bash
+$ cp ~/Downloads/your_name.pem ~/learn-chef/.chef
+```
+
+### Verify your connection to the Chef server
+
+First, validate that your <code class="file-path">~/learn-chef/.chef</code> contains your <code class="file-path">knife.rb</code> file and your private key file.
+
+```bash
+# ~/learn-chef
+$ ls ~/learn-chef/.chef
+knife.rb  your_name.pem
+```
+
+Now, validate your connection to the Chef server. One way to do that is to run the `knife ssl check` command.
+
+```bash
+# ~/learn-chef
+$ knife ssl check
+Connecting to host api.chef.io:443
+Successfully verified certificates from `api.chef.io'
+```
