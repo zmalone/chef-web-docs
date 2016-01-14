@@ -116,9 +116,9 @@ localhost Running handlers complete
 localhost Chef Client finished, 1/5 resources updated in 04 seconds
 ```
 
-<hr>
-
 [COMMENT] Remember, in practice it's common to configure Chef to act as a service that runs periodically or in response to an event, such as a commit to source control. For now, we're updating our server configuration by running `chef-client` manually.
+
+<hr>
 
 <a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
 

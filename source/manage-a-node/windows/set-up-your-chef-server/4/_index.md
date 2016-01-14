@@ -19,4 +19,4 @@ learn_chef_iis   0.2.0
 
 You can also see the cookbook from [https://manage.chef.io/](https://manage.chef.io/). Select the **Policy** tab to show all available cookbooks.
 
-![](misc/manage_httpd_cookbook.png)
+![](misc/manage_iis_cookbook.png)
