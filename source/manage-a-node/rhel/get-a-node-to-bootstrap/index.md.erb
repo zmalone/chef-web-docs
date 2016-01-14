@@ -42,7 +42,7 @@ When you're ready to continue with this tutorial, visit the [AWS Marketplace](ht
 
 Microsoft Azure is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
 
-When you're ready to continue with this tutorial, [follow this tutorial](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) to create your Linux virtual machine. At the step where you choose the VM image, search for **CentOS-based 6.5**, published by OpenLogic. Also ensure that your VM enables inbound access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+When you're ready to continue with this tutorial, [learn how to create your Linux virtual machine](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/). At the step where you choose the VM image, search for **CentOS-based 6.5**, published by OpenLogic. Ensure that your instance contains endpoints for inbound network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
 
 <% end %>
 
@@ -162,6 +162,45 @@ Last login: Thu Dec  3 15:32:08 2015 from 10.0.2.2
 logout
 Connection to localhost closed.
 ```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Verify network access
+
+For this tutorial, you'll need to ensure that your node can access the Internet and has ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) open to inbound traffic through the firewall.
+
+Although Chef can be run completely from behind the firewall, giving your node Internet access is the easiest way to install packages and perform other common tasks.
+
+In production, you might use automation to bring up servers that have the required network configuration. But for now, let's manually ensure that your server can reach the Internet through your company's firewall. One easy way to test your connection is to run `curl` to retrieve www.cnn.com and search the output for a 200 OK result.
+
+```bash
+$ curl -I http://www.cnn.com | grep HTTP/1.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0 88096    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/1.1 200 OK
+```
+
+If you see 200 OK in the output, you're all set and can move to the next lesson.
+
+If you receive an error like this one, you'll need to configure your firewall.
+
+```bash
+$ curl -I http://www.cnn.com | grep HTTP/1.1
+
+curl: (6) Couldn't resolve host 'www.cnn.com'
+```
+
+<% accordion('configure-firewall', 'Configure the firewall') do %>
+
+<%= partial 'layouts/partials/configure_iptables' %>
+
+<p/>
+If you're still unable to connect, your company's firewall or proxy server might be blocking outbound Internet access. In that case, you may need to work with your network administrator to see what options are available for you to access the Internet from your server.
+
+<% end %>
 
 [END_BOX]
 
