@@ -1,6 +1,6 @@
 ## 2. Start and enable the Apache service
 
-Now let's enable the Apache service when the server boots and start it. Modify <code class="file-path">webserver.rb</code> to look like this.
+Now let's first enable the Apache service when the server boots and then start the service. Modify <code class="file-path">webserver.rb</code> to look like this.
 
 ```ruby
 # ~/chef-repo/webserver.rb

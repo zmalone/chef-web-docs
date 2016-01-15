@@ -1,8 +1,8 @@
 ## 3. Create the INI file
 
-First, you need to create the INI file and set its initial contents. To keep things basic, let's configure the file in the working directory.
+In this step, you first create the INI file and set its initial contents. To keep things basic, let's configure the file in the working directory.
 
-In this step, you'll write what's called a _recipe_ to describe the desired state of the INI file. Then you'll run [chef-client](https://docs.chef.io/ctl_chef_client.html), the tool that applies your Chef code to place your system in the desired state. Typically, you use  `chef-client` to download and run the latest Chef code from the Chef server, but in this lesson, you'll run `chef-client` in what's called _local mode_ to apply Chef code that exists locally on your virtual machine.
+Next, you'll write what's called a _recipe_ to describe the desired state of the INI file. Then you'll run [chef-client](https://docs.chef.io/ctl_chef_client.html), the program that applies your Chef code to place your system in the desired state. Typically, `chef-client` downloads and runs the latest Chef code from the Chef server, but in this lesson, you'll run `chef-client` in what's called _local mode_ to apply Chef code that exists locally on your virtual machine.
 
 From your <code class="file-path">~\chef-repo</code> directory, create a file named <code class="file-path">hello.rb</code>, add these contents, and then save the file.
 
@@ -77,4 +77,4 @@ Chef Client finished, 0/1 resources updated in 11 seconds
 
 This time you get a different response &ndash; the file is already up to date. This is because Chef does work only when it needs to.
 
-Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <code class="file-path">settings.ini</code> because it already exists and its contents didn't change.
+Chef looks at the current configuration state and applies the action only if the current state doesn't match the desired state. Here, Chef doesn't create or modify <code class="file-path">settings.ini</code> because it already exists and its contents didn't change.  We call this approach _test and repair_.
