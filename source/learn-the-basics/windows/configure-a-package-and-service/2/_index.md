@@ -1,6 +1,6 @@
 ## 2. Start the World Wide Web Publishing Service
 
-Now let's enable the IIS World Wide Web Publishing Service (W3SVC) service when the server boots and then start it. Modify <code class="file-path">webserver.rb</code> to look like this.
+Now let's first enable the IIS World Wide Web Publishing Service (W3SVC) service when the server boots and then start the service. Modify <code class="file-path">webserver.rb</code> to look like this.
 
 ```ruby-Win32
 # ~\chef-repo\webserver.rb

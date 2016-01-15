@@ -14,6 +14,6 @@ Host default
   LogLevel FATAL
 ```
 
-In this example, any network traffic that's sent to port 2222 on your workstation will be forwarded to port 22 on your virtual machine.
+In this example, any network traffic that's sent to port 2222 on your workstation will be forwarded to port 22 (the SSH port) on your virtual machine.
 
 Write down the values of `User`, `Port`, and `IdentityFile`.

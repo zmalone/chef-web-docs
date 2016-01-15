@@ -1,6 +1,6 @@
 ## How to clean up your environment
 
-Perform these steps if you want to clean up your workstation or your Chef server after you complete tutorial or you want to repeat the tutorial from the beginning.
+Perform these steps if you want to clean up your workstation or your Chef server after you complete this tutorial or you want to repeat the tutorial from the beginning.
 
 ### Remove the cookbooks from the Chef server
 
