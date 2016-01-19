@@ -43,10 +43,20 @@ fastly_backend bucket_name do
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
+ignore_old_domains = fastly_condition 'Ignore_Old_Domains' do
+  api_key fastly_creds['api_key']
+  service fastly_service.name
+  statement "req.http.host != \"#{old_learn_fqdn}\" || req.http.host != \"#{old_opscode_fqdn}\""
+  type 'request'
+  priority 20
+  sensitive true
+  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
+end
+
 fastly_request_setting 'force_ssl' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  request_condition ignore_old_domain.name
+  request_condition ignore_old_domains.name
   force_ssl true
   default_host "#{bucket_name}.s3-website-us-east-1.amazonaws.com"
   sensitive true
@@ -131,7 +141,7 @@ fastly_header 'X-Frame-Options' do
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-### Fastly learn.getchef.com Redirects
+### Fastly Old Learn Redirects
 fastly_domain old_learn_fqdn do
   api_key fastly_creds['api_key']
   service fastly_service.name
@@ -139,20 +149,17 @@ fastly_domain old_learn_fqdn do
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-ignore_old_domain = fastly_condition 'Ignore_Old_Domain' do
+fastly_domain old_opscode_fqdn do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  statement "req.http.host != \"#{old_learn_fqdn}\""
-  type 'request'
-  priority 20
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
 
-old_learn_redirect = fastly_condition 'Old_Learn_Domain' do
+old_learn_redirect = fastly_condition 'Old_Learn_Redirect' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  statement "req.http.host == \"#{old_learn_fqdn}\""
+  statement "req.http.host == \"#{old_learn_fqdn}\" || req.http.host == \"#{old_opscode_fqdn}\""
   type 'request'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
@@ -170,7 +177,7 @@ end
 old_learn_301 = fastly_condition 'Old_Learn_301' do
   api_key fastly_creds['api_key']
   service fastly_service.name
-  statement "req.http.host == \"#{old_learn_fqdn}\" && resp.status == 301"
+  statement "(req.http.host == \"#{old_learn_fqdn}\" || req.http.host == \"#{old_opscode_fqdn}\") && resp.status == 301"
   type 'response'
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
@@ -187,64 +194,6 @@ fastly_header 'Old_Learn' do
   sensitive true
   notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
 end
-### End Fastly learn.getchef.com Redirects
-
-### Fastly learnchef.opscode.com Redirects
-fastly_domain old_opscode_fqdn do
-  api_key fastly_creds['api_key']
-  service fastly_service.name
-  sensitive true
-  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
-end
-
-ignore_opscode_domain = fastly_condition 'Ignore_Opscode_Domain' do
-  api_key fastly_creds['api_key']
-  service fastly_service.name
-  statement "req.http.host != \"#{old_opscode_fqdn}\""
-  type 'request'
-  priority 20
-  sensitive true
-  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
-end
-
-opscode_redirect = fastly_condition 'Opscode_Domain' do
-  api_key fastly_creds['api_key']
-  service fastly_service.name
-  statement "req.http.host == \"#{old_opscode_fqdn}\""
-  type 'request'
-  sensitive true
-  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
-end
-
-fastly_response 'Redirect_Opscode' do
-  api_key fastly_creds['api_key']
-  service fastly_service.name
-  request_condition opscode_redirect.name
-  status 301
-  sensitive true
-  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
-end
-
-opscode_301 = fastly_condition 'Opscode_301' do
-  api_key fastly_creds['api_key']
-  service fastly_service.name
-  statement "req.http.host == \"#{old_opscode_fqdn}\" && resp.status == 301"
-  type 'response'
-  sensitive true
-  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
-end
-
-fastly_header 'Old_Learn' do
-  api_key fastly_creds['api_key']
-  service fastly_service.name
-  response_condition opscode_301.name
-  type 'response'
-  dst 'http.location'
-  src "\"https://#{fqdn}\" req.url"
-  priority 10
-  sensitive true
-  notifies :activate_latest, "fastly_service[#{fqdn}]", :delayed
-end
-### End Fastly learnchef.opscode.com Redirects
+### End Fastly Old Learn Redirects
 
 include_recipe 'build-cookbook::_dns'
