@@ -19,7 +19,7 @@ Even if you're unfamiliar with the intricacies of using Chef, you can still unde
 [START_BOX]
 
 ##The CONTRIBUTING file
-Community cookbooks managed by Chef should have a **CONTRIBUTING.md** doc in the root directory. This doc is, in fact, a recommended practice for all open source projects. GitHub will include a banner linking to this doc when a contributor creates an issue or opens a Pull Request(PR).
+Community cookbooks managed by Chef should have a **CONTRIBUTING.md** doc in the root directory. This doc is, in fact, a recommended practice for all open source projects. GitHub will include a banner linking to this doc when a contributor creates an issue or opens a Pull Request (PR).
 
 In this file, you can describe the ways in which you would best like to interact with contributors, and the types of contributions that you would and would not like to receive. For instance, if your project is written in Python but you don’t care for PEP-8, you could state that contributors should not apply PEP-8 conventions.
 
@@ -57,7 +57,7 @@ Here's an example of the output.
 
 ![](./images/git_graph_example.png)
 
-If there is a commit of interest, this view makes it really easy to just do ```git show``` of the object you want to inspect.
+If there is a commit of interest, this view makes it really easy to just do a ```git show``` of the object you want to inspect.
 
 Examining past commits helps us understand how the code is structured on a project, as well as some of the design patterns that the project uses for git workflows.
 
@@ -108,7 +108,7 @@ We can examine the commits in the pull request with ```git graph```.
 
 This shows two commits, 7623e00 and bc74a45.
 
-The main changes are in bc74a45. In this commit the contributor has added code that, on FreeBSD platforms, checks to see if the shell specified in the databag JSON object exists on the node as specified or in /usr/local. If the shell isn’t in either of these locations, then the code sets the shell to the FreeBSD default shell **/bin/sh**.
+The main changes are in bc74a45. In this commit the contributor has added code that, on FreeBSD platforms, checks to see if the shell specified in the data bag JSON object exists on the node as specified or in /usr/local. If the shell isn’t in either of these locations, then the code sets the shell to the FreeBSD default shell **/bin/sh**.
 
 This PR exposes some fragility in our current definition because we don’t check for the existence of the shell on any other platform. Depending on our current priorities and workload, we may rewrite the resource to be less fragile or accept the contributions as they are.
 
@@ -290,14 +290,14 @@ I performed a ```kitchen converge default-macosx-1011``` and reproduced the issu
 
 ```
 <br>
-Logging into the host with ```kitchen login default-macosx-1011```, I could use the ```dscl command``` to check to see if the user was created.
+Logging into the host with ```kitchen login default-macosx-1011```, I could use the ```dscl``` command to check to see if the user was created.
 
 ```bash
 $ vagrant$ dscl . list /Users | grep test_user
 test_user
 ```
 <br>
-After digging a little further, and some pair code review with [Nathen Harvey](https://twitter.com/nathenharvey), we discovered that the issue was that the directory resource wanted a UID rather than a username when declaring the owner on Mac OS X.
+After digging a little further, and with some pair code review with [Nathen Harvey](https://twitter.com/nathenharvey), we discovered that the issue was that the directory resource wanted a UID rather than a username when declaring the owner on Mac OS X.
 
 Switching from username to UID resolved the errors, but the fix was only tested against Mac OS X. We needed to do some tests against other operating systems to make sure we hadn’t broken the provider.
 
@@ -391,14 +391,15 @@ In addition, folks mentioned [Seth Vargo](https://twitter.com/sethvargo) as bein
 ##Further Resources
 
 * [Emma Jane Hogbin Westby’s Git for Teams](http://gitforteams.com/)
-* [Atlassian git rebase history](https://www.atlassian.com/git/tutorials)
+* [Atlassian git rebase history](https://www.atlassian.com/git/tutorials/rewriting-history/)
 * [Travis CI for Complete Beginners](https://docs.travis-ci.com/user/for-beginners)
-* [Continuous Integration article from Martin Fowler](http://www.martinfowler.com/articles/continuousIntegration.html)
- ​* [Introduction to Rubocop with Frank Webber](https://www.youtube.com/watch?v=HRrc6UCXFMs)
+* ​ [Introduction to Rubocop with Frank Webber](https://www.youtube.com/watch?v=HRrc6UCXFMs)
 * [Test your Infrastructure Code - Learn Chef tutorial](https://learn.chef.io/test-your-infrastructure-code/rhel/)
 * [Atlas documentation](https://atlas.hashicorp.com/help)
-* [Docker Machine](https://docs.docker.com/machine/) and [Getting Started](https://docs.docker.com/machine/get-started/)
+* [Docker Machine](https://docs.docker.com/machine/)
+* [Getting Started with Docker Machine](https://docs.docker.com/machine/get-started/)
 * [kitchen-dokken](https://github.com/someara/kitchen-dokken)
+* [Continuous Integration article from Martin Fowler](http://www.martinfowler.com/articles/continuousIntegration.html)
 
 [END_BOX]
 
