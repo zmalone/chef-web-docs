@@ -28,7 +28,7 @@ If you don't have a preferred way to set up a server, here are some popular opti
 
 AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
 
-If you're new to AWS, their [getting started guide](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html#ec2-launch-instance_linux) walks you through the creation of your first Windows Server 2012 R2 instance. 
+If you're new to AWS, their ["Getting Started with Amazon EC2 Windows Instances" tutorial](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html) walks you through the creation of your first Windows Server 2012 R2 instance. 
 
 When you select the instance size, you can choose t2.micro to take advantage of the free usage tier. However, a t2.medium or larger instance size will give you better performance. When you create your security group, ensure that ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5986 (WinRM) are open for inbound network traffic.
 
@@ -42,7 +42,7 @@ When you select the instance size, you can choose t2.micro to take advantage of 
 
 Microsoft Azure is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage.
 
-When you're ready to continue with this tutorial, [learn how to create your Windows Server 2012 R2 Datacenter virtual machine](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-tutorial/). For now, all you need to do is create the instance. Ensure that your instance contains endpoints for inbound network access on ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5986 (WinRM).
+When you're ready to continue with this tutorial, [go to the "Create a virtual machine running Windows in the Azure portal"](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-tutorial/) tutorial on the Azure site. For now, all you need to do is create a Windows Server 2012 R2 Datacenter instance. Ensure that your instance contains endpoints for inbound network access on ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5986 (WinRM).
 
 <% end %>
 
@@ -170,9 +170,9 @@ The following resources can help you connect if your node is running on AWS, Azu
 
 ## 4. Prepare your node for the bootstrap process 
 
-During the bootstrap process, your node gets associated with the Chef server. The Chef server holds information about your node that you can use to generate reports or share with other nodes. The bootstrap process also installs the Chef tools on your node and does an initial check in with the Chef server.
+During the bootstrap process, your node gets associated with the Chef server. The Chef server holds information about your node that you can use to generate reports or share with other nodes. The bootstrap process also installs the Chef tools on your node and does an initial checkin with the Chef server.
 
-The recommended way to bootstrap Windows Server is over the SSL protocol. SSL uses digital certificates to encrypt and decrypt network communication between the server and the client. Digital certificates often form a hierarchy, or _certificate chain_ &ndash; each certificate in the chain is issued by a trusted certificate authority (CA) until a [root certificate](https://en.wikipedia.org/wiki/Root_certificate) is reached. A root certificate is a self-signed, third-party certificate that both the client and server trust.
+The recommended way to bootstrap Windows Server is over the WinRM protocol secured with SSL. SSL uses digital certificates to encrypt and decrypt network communication between the server and the client. Digital certificates often form a hierarchy, or _certificate chain_ &ndash; each certificate in the chain is issued by a trusted certificate authority (CA) until a [root certificate](https://en.wikipedia.org/wiki/Root_certificate) is reached. A root certificate is a self-signed, third-party certificate that both the client and server trust.
 
 In production, you would likely issue trusted certificates to your users and on your servers. For learning purposes, in this tutorial you'll generate a self-signed certificate on your Windows Server node. During the bootstrap process, which you initiate from your workstation, you'll skip SSL verification, which essentially trusts the authenticity of your node. Testing with a self-signed certificate lets you validate that you can connect over SSL and that your connections over the secure channel work as expected. It also enables traffic to be encrypted between your workstation and your node.
 
@@ -184,16 +184,21 @@ In this part, you'll:
 1. Add an HTTPS listener
 1. Configure WinRM
 1. Open the firewall to enable inbound traffic over WinRM 
-1. Verify the configuration
 
 Perform each of these steps from a PowerShell window on your Windows Server node.
 
 ### Create a self-signed certificate
 
-Run the following command to create a self-signed certificate. You can replace <code class="placeholder">myserver.mydomain.org</code> with another name if you'd like.
+Run the following command to create a self-signed certificate. Replace <code class="placeholder">HOSTNAME</code> with the IP address or FQDN that you can reach from your workstation.
 
 ```ps
-$ $cert = New-SelfSignedCertificate -DnsName 'myserver.mydomain.org' -CertStoreLocation Cert:\LocalMachine\My
+$ $cert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -DnsName 'HOSTNAME'
+```
+
+Here's an example for AWS.
+
+```ps
+$ $cert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -DnsName 'ec2-52-35-73-30.us-west-2.compute.amazonaws.com'
 ```
 
 ### Add an HTTPS listener
@@ -238,18 +243,66 @@ $ netsh advfirewall firewall add rule name="WinRM-HTTPS" dir=in localport=5986 p
 Ok.
 ```
 
-### Verify the configuration
+[END_BOX]
 
-Finally, run `Test-WSMan` on your node to verify that the WinRM service is running.
+[START_BOX]
+
+## 5. Verify the configuration
+
+From your workstation, you'll now verify that your Windows Server node can receive network traffic on port 5986 and through the firewall. There are two options, depending on where your node is running and which operating system your workstation is running.
+
+You don't have to do this every time you bootstrap a node, but verifying that your node is connectable will help ensure that the bootstrap process succeeds.
+
+### Verify using Test-NetConnection
+
+Run the [Test-NetConnection](https://technet.microsoft.com/en-us/library/dn372891.aspx) PowerShell cmdlet if your node is not running on Azure and you're running Windows 8.1 or Windows 10 on your workstation. Here's an example.
+
+[COMMENT] You can't use `Test-NetConnection` if your node is running on Azure because Azure blocks all inbound and outbound ICMP echo request (ping) traffic through its firewall. If your node is running on Azure, use the Netcat utility as shown below.
 
 ```ps
-$ Test-WSMan
+$ Test-NetConnection ec2-52-35-73-30.us-west-2.compute.amazonaws.com -Port 5986
 
-wsmid           : http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd
-ProtocolVersion : http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd
-ProductVendor   : Microsoft Corporation
-ProductVersion  : OS: 0.0.0 SP: 0.0 Stack: 3.0
+
+ComputerName           : ec2-52-35-73-30.us-west-2.compute.amazonaws.com
+RemoteAddress          : 52.35.73.30
+RemotePort             : 5986
+InterfaceAlias         : Ethernet0
+SourceAddress          : 192.168.145.143
+PingSucceeded          : True
+PingReplyDetails (RTT) : 102 ms
+TcpTestSucceeded       : True
 ```
+
+If `TcpTestSucceeded` shows as `True` in the output, you can continue to the next step. Otherwise, the output from `Test-NetConnection` can help you diagnose the connection failure.
+
+As an optional step, if `PingSucceeded` shows as `False` in the output, you may need to enable ICMP traffic through your firewall. 
+
+Run this command on your node to ensure that the built-in ICMPv4 firewall rule is enabled.
+
+```ps
+# ~
+$ netsh advfirewall firewall set rule name="File and Printer Sharing (Echo Request - ICMPv4-In)" new enable=yes
+
+Updated 1 rule(s).
+Ok.
+```
+
+If your node is running on a cloud provider such as AWS, you may also need to add a security group that allows inbound ICMP traffic.
+
+### Verify using Netcat
+
+Run the [Netcat](https://en.wikipedia.org/wiki/Netcat) utility if your node is running on Azure or you're running from a Linux, Mac OS, or Windows 7 workstation ([download Netcat for Windows](https://eternallybored.org/misc/netcat/)). Here's an example.
+
+```bash
+# ~
+$ nc -z -w1 ec2-52-35-73-30.us-west-2.compute.amazonaws.com 5986;echo $?
+Connection to ec2-52-35-73-30.us-west-2.compute.amazonaws.com port 5986 [tcp/wsmans] succeeded!
+0
+```
+
+<hr>
+
+[Check out this blog post](http://www.hurryupandwait.io/blog/understanding-and-troubleshooting-winrm-connection-and-authentication-a-thrill-seekers-guide-to-adventure?rq=winrm) if you need help diagnosing a connection failure. If you still need help, [ask the community](https://discourse.chef.io) on the Chef mailing list.
 
 [END_BOX]
 
