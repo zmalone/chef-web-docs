@@ -19,7 +19,7 @@ Let's bootstrap a node and execute the IIS cookbook on it.
 
 ## 1. Bootstrap your node
 
-Now that you've verified that you can connect to your node over WinRM, you're now ready to bootstrap it.
+Now that you've verified that you can connect to your node over WinRM secured with SSL, you're now ready to bootstrap it.
 
 First, from your workstation, make sure you're in the <code class="file-path">~/learn-chef</code> directory.
 
@@ -32,6 +32,26 @@ Run this command to bootstrap your node. Replace <code class="placeholder">ADDRE
 ```bash
 # ~/learn-chef
 $ knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name node1 --run-list 'recipe[learn_chef_iis]' --winrm-transport ssl --winrm-ssl-verify-mode verify_none 
+```
+
+Here's an example.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap windows winrm ec2-52-35-73-30.us-west-2.compute.amazonaws.com --winrm-user Administrator --winrm-password 'K5?kbs.7Eo-' --node-name node1 --run-list 'recipe[learn_chef_iis]' --winrm-transport ssl --winrm-ssl-verify-mode verify_none
+WARNING: * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+SSL validation of HTTPS requests for the WinRM transport is disabled. HTTPS WinRM
+connections are still encrypted, but knife is not able to detect forged replies
+or spoofing attacks.
+[...]
+Creating new client for node1
+Creating new node for node1
+[...]
+ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:44+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
+ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO: Chef Run complete in 36.374973 seconds
+ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO: Running report handlers
+ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO: Report handlers complete
+ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO: Sending resource update report (run-id: c4f69dad-7182-477b-b1c9-f2aaf858e462)
 ```
 
 The optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's FQDN is the default. If you previously used the name `node1` to bootstrap a different node, you'll need to choose a different name or remove the previous node.
