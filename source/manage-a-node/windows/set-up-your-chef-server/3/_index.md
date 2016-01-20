@@ -19,10 +19,10 @@ From your <code class="file-path">~/learn-chef</code> directory, run these comma
 ```bash
 # ~/learn-chef
 $ knife cookbook site download learn_chef_iis
-Downloading learn_chef_iis from the cookbooks site at version 0.2.0 to C:/Users/chef/learn-chef/learn_chef_iis-
-0.2.0.tar.gz
-Cookbook saved: C:/Users/chef/learn-chef/learn_chef_iis-0.2.0.tar.gz
-$ tar -zxvf learn_chef_iis-0.2.0.tar.gz -C cookbooks
+Downloading learn_chef_iis from the cookbooks site at version 0.2.1 to C:/Users/chef/learn-chef/learn_chef_iis-
+0.2.1.tar.gz
+Cookbook saved: C:/Users/chef/learn-chef/learn_chef_iis-0.2.1.tar.gz
+$ tar -zxvf learn_chef_iis-0.2.1.tar.gz -C cookbooks
 x learn_chef_iis/
 x learn_chef_iis/.kitchen.yml
 x learn_chef_iis/Berksfile
