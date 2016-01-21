@@ -6,7 +6,7 @@ When you use the `chef generate cookbook` command to create a cookbook, Chef cre
 
 The default <code class="file-path">.kitchen.yml</code> file looks like this.
 
-```ruby
+```yaml
 # ~/motd/.kitchen.yml
 ---
 driver:
@@ -30,7 +30,7 @@ suites:
 
 Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only CentOS, modify <code class="file-path">~/motd/.kitchen.yml</code> like this. (Be sure to replace `centos-7.1` with `centos-6.6`.)
 
-```ruby
+```yaml
 # ~/motd/.kitchen.yml
 ---
 driver:

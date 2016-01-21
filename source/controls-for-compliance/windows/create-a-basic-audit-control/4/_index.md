@@ -48,7 +48,7 @@ Now use Test Kitchen to apply the `webserver` cookbook locally. This instance is
 
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
-```ruby
+```yaml
 # ~/chef-repo/cookbooks/webserver/.kitchen.yml
 ---
 driver:
@@ -84,7 +84,7 @@ suites:
 
 Replace the value for `password` with the `Administrator` password on your base virtual machine.
 
-```ruby
+```yaml
 # ~/chef-repo/cookbooks/webserver/.kitchen.yml
 ---
 driver:
@@ -114,7 +114,7 @@ suites:
 
 [START_TAB configWebVagrant]
 
-```ruby
+```yaml
 # ~/chef-repo/cookbooks/webserver/.kitchen.yml
 ---
 driver:

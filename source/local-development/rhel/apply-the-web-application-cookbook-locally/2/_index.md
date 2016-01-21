@@ -10,7 +10,7 @@ In addition to configuring Test Kitchen to create a CentOS 6.6 virtual machine, 
 
 Edit your `awesome_customers` cookbook's <code class="file-path">.kitchen.yml</code> file like this.
 
-```ruby
+```yaml
 # ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers/.kitchen.yml
 ---
 driver:

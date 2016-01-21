@@ -10,7 +10,7 @@ Edit your `awesome_customers` cookbook's <code class="file-path">.kitchen.yml</c
 
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
-```ruby
+```yaml
 # ~/manage-a-web-app-windows/chef-repo/cookbooks/awesome_customers/.kitchen.yml
 ---
 driver:
@@ -50,7 +50,7 @@ This configuration resembles the one that you used when you ran the `settings` c
 
 Replace the value for `password` with the `Administrator` password on your base virtual machine.
 
-```ruby
+```yaml
 # ~/settings/.kitchen.yml
 ---
 driver:
@@ -80,7 +80,7 @@ suites:
 
 [START_TAB configVagrant]
 
-```ruby
+```yaml
 # ~/manage-a-web-app-windows/chef-repo/cookbooks/awesome_customers/.kitchen.yml
 ---
 driver:
