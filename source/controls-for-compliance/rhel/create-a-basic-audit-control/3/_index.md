@@ -2,7 +2,7 @@
 
 Now let's apply the audit control to a CentOS virtual machine. First, modify your `audit` cookbook's <code class="file-path">.kitchen.yml</code> file to look like this.
 
-```ruby
+```yaml
 # ~/chef-repo/cookbooks/audit/.kitchen.yml
 ---
 driver:

@@ -38,7 +38,7 @@ This recipe configures Apache and writes a few files for it to serve.
 
 Now use Test Kitchen to apply the `webserver` cookbook locally. This instance is different than the one you used to apply the `audit` cookbook. Start by adding this to your webserver's <code class="file-path">.kitchen.yml</code> file.
 
-```ruby
+```yaml
 # ~/chef-repo/cookbooks/webserver/.kitchen.yml
 ---
 driver:
