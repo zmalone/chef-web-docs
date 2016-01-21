@@ -6,7 +6,7 @@ When you use the `chef generate cookbook` command to create a cookbook, Chef cre
 
 The default <code class="file-path">.kitchen.yml</code> file looks like this.
 
-```ruby
+```yaml
 # ~/settings/.kitchen.yml
 ---
 driver:
@@ -36,7 +36,7 @@ Test Kitchen can manage more than one instance at a time. The default configurat
 
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
-```ruby
+```yaml
 # ~/settings/.kitchen.yml
 ---
 driver:
@@ -76,7 +76,7 @@ This configuration specifies the location of the parent virtual hard drive (VHD)
 
 Replace the value for `password` with the `Administrator` password on your base virtual machine.
 
-```ruby
+```yaml
 # ~/settings/.kitchen.yml
 ---
 driver:
@@ -106,7 +106,7 @@ suites:
 
 [START_TAB configVagrant]
 
-```ruby
+```yaml
 # ~/settings/.kitchen.yml
 ---
 driver:

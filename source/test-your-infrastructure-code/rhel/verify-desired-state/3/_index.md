@@ -4,7 +4,7 @@ Before we write any Chef code to configure the web server, let's run the test th
 
 Modify <code class="file-path">.kitchen.yml</code> like this to specify CentOS 6.6 as the target platform.
 
-```ruby
+```yaml
 # ~/webserver/.kitchen.yml
 ---
 driver:

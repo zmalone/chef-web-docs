@@ -19,7 +19,7 @@ cookbook 'audit', path: '../audit'
 
 Now modify your `webserver` cookbook's <code class="file-path">.kitchen.yml</code> file like this. This configuration sets the `audit_mode` to `:enabled` so that `chef-client` runs both the web server configuration code and the audit tests.
 
-```ruby
+```yaml
 # ~/chef-repo/cookbooks/webserver/.kitchen.yml
 ---
 driver:

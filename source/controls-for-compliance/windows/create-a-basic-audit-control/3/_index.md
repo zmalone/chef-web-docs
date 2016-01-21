@@ -8,7 +8,7 @@ Now let's apply the audit control to a Windows Server virtual machine. First, mo
 
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
-```ruby
+```yaml
 # ~/chef-repo/cookbooks/audit/.kitchen.yml
 ---
 driver:
@@ -50,7 +50,7 @@ This configuration specifies the location of the parent virtual hard drive (VHD)
 
 Replace the value for `password` with the `Administrator` password on your base virtual machine.
 
-```ruby
+```yaml
 # ~/chef-repo/cookbooks/audit/.kitchen.yml
 ---
 driver:
@@ -82,7 +82,7 @@ suites:
 
 [START_TAB configVagrant]
 
-```ruby
+```yaml
 # ~/chef-repo/cookbooks/audit/.kitchen.yml
 ---
 driver:
