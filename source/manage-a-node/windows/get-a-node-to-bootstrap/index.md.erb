@@ -184,16 +184,21 @@ In this part, you'll:
 1. Add an HTTPS listener
 1. Configure WinRM
 1. Open the firewall to enable inbound traffic over WinRM 
-1. Verify the configuration
 
 Perform each of these steps from a PowerShell window on your Windows Server node.
 
 ### Create a self-signed certificate
 
-Run the following command to create a self-signed certificate. You can replace <code class="placeholder">myserver.mydomain.org</code> with another name if you'd like.
+Run the following command to create a self-signed certificate. Replace <code class="placeholder">HOSTNAME</code> with the IP address or FQDN that you can reach from your workstation.
 
 ```ps
-$ $cert = New-SelfSignedCertificate -DnsName 'myserver.mydomain.org' -CertStoreLocation Cert:\LocalMachine\My
+$ $cert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -DnsName 'HOSTNAME'
+```
+
+Here's an example for AWS.
+
+```ps
+$ $cert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -DnsName 'ec2-52-35-73-30.us-west-2.compute.amazonaws.com'
 ```
 
 ### Add an HTTPS listener
@@ -238,18 +243,66 @@ $ netsh advfirewall firewall add rule name="WinRM-HTTPS" dir=in localport=5986 p
 Ok.
 ```
 
-### Verify the configuration
+[END_BOX]
 
-Finally, run `Test-WSMan` on your node to verify that the WinRM service is running.
+[START_BOX]
+
+## 5. Verify the configuration
+
+From your workstation, you'll now verify that your Windows Server node can receive network traffic on port 5986 and through the firewall. There are two options, depending on where your node is running and which operating system your workstation is running.
+
+You don't have to do this every time you bootstrap a node, but verifying that your node is connectable will help ensure that the bootstrap process succeeds.
+
+### Verify using Test-NetConnection
+
+Run the [Test-NetConnection](https://technet.microsoft.com/en-us/library/dn372891.aspx) PowerShell cmdlet if your node is not running on Azure and you're running Windows 8.1 or Windows 10 on your workstation. Here's an example.
+
+[COMMENT] You can't use `Test-NetConnection` if your node is running on Azure because Azure blocks all inbound and outbound ICMP echo request (ping) traffic through its firewall. If your node is running on Azure, use the Netcat utility as shown below.
 
 ```ps
-$ Test-WSMan
+$ Test-NetConnection ec2-52-35-73-30.us-west-2.compute.amazonaws.com -Port 5986
 
-wsmid           : http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd
-ProtocolVersion : http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd
-ProductVendor   : Microsoft Corporation
-ProductVersion  : OS: 0.0.0 SP: 0.0 Stack: 3.0
+
+ComputerName           : ec2-52-35-73-30.us-west-2.compute.amazonaws.com
+RemoteAddress          : 52.35.73.30
+RemotePort             : 5986
+InterfaceAlias         : Ethernet0
+SourceAddress          : 192.168.145.143
+PingSucceeded          : True
+PingReplyDetails (RTT) : 102 ms
+TcpTestSucceeded       : True
 ```
+
+If `TcpTestSucceeded` shows as `True` in the output, you can continue to the next step. Otherwise, the output from `Test-NetConnection` can help you diagnose the connection failure.
+
+As an optional step, if `PingSucceeded` shows as `False` in the output, you may need to enable ICMP traffic through your firewall. 
+
+Run this command on your node to ensure that the built-in ICMPv4 firewall rule is enabled.
+
+```ps
+# ~
+$ netsh advfirewall firewall set rule name="File and Printer Sharing (Echo Request - ICMPv4-In)" new enable=yes
+
+Updated 1 rule(s).
+Ok.
+```
+
+If your node is running on a cloud provider such as AWS, you may also need to add a security group that allows inbound ICMP traffic.
+
+### Verify using Netcat
+
+Run the [Netcat](https://en.wikipedia.org/wiki/Netcat) utility if your node is running on Azure or you're running from a Linux, Mac OS, or Windows 7 workstation ([download Netcat for Windows](https://eternallybored.org/misc/netcat/)). Here's an example.
+
+```bash
+# ~
+$ nc -z -w1 ec2-52-35-73-30.us-west-2.compute.amazonaws.com 5986;echo $?
+Connection to ec2-52-35-73-30.us-west-2.compute.amazonaws.com port 5986 [tcp/wsmans] succeeded!
+0
+```
+
+<hr>
+
+[Check out this blog post](http://www.hurryupandwait.io/blog/understanding-and-troubleshooting-winrm-connection-and-authentication-a-thrill-seekers-guide-to-adventure?rq=winrm) if you need help diagnosing a connection failure. If you still need help, [ask the community](https://discourse.chef.io) on the Chef mailing list.
 
 [END_BOX]
 
