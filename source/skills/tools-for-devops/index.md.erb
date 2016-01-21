@@ -1,5 +1,5 @@
 ---
-title: 'Examining Tools With a DevOps Lens'
+title: 'Examining tools with a DevOps lens'
 description: 'Learn about the interaction between DevOps and tools.'
 order: 6
 category: 'devops'
@@ -46,7 +46,7 @@ Organizations have created islands of culture based on their existing individual
 
 As organizations grow larger, each team's individual focus narrows further. Each team adopts a specific tool that meets their requirements, leading to multiple tools that overlap in purpose. This proliferation of tools both hinders transparency within the organization and stifles collaboration.
 
-For example, bug tracking within development teams led to the development of tools like [JIRA](https://www.atlassian.com/software/jira/) and [bugzilla](https://www.bugzilla.org/). Ticket tracking within operations teams led to development of tools like [Request Tracker(RT)](https://www.bestpractical.com/rt/). Bugs and tickets are both issues. While a single issues tracking tool can be selected at the organizational level, the tool can impact the cognitive load of teams unequally as a team tries to adopt a tool that isn't specific to their domain.
+For example, bug tracking within development teams led to the development of tools like [JIRA](https://www.atlassian.com/software/jira/) and [bugzilla](https://www.bugzilla.org/). Ticket tracking within operations teams led to development of tools like [Request Tracker (RT)](https://www.bestpractical.com/rt/). Bugs and tickets are both issues. While a single issues tracking tool can be selected at the organizational level, the tool can impact the cognitive load of teams unequally as a team tries to adopt a tool that isn't specific to their domain.
 
 The problem of tool proliferation continues today with the belief that a specific tool might solve all the problems an organization may have. When people say *DevOps is culture not tools*, it is in part to focus on solving the organizational issues that can not be solved with a change in technology alone.
 
@@ -64,7 +64,7 @@ These 5 pillars form the foundation for effective DevOps and the DevOps compact,
 
 With the DevOps compact, we commit to working together, communicate our intentions and any issues, and adjust our work in order to work towards shared organizational goals. We answer questions like: what is the value of what we are we trying to do, how are we going to do it, and what exactly are we doing? We don't just decide to do DevOps, and then we’re done. The nature of doing DevOps, means that we are commiting to adjusting to change.
 
-DevOps is culture which includes tools and their use. Tools are not DevOps. How tools are used, and the ease with which they can be used impacts the acceptance and proliferation of specific aspects of culture. When we talk about DevOps tools, we mean the tools and the manner of their use--not fundamental characteristics of the tools themselves.
+DevOps is culture which includes tools and their use. Tools are not DevOps. How tools are used, and the ease with which they can be used impacts the acceptance and proliferation of specific aspects of culture. When we talk about DevOps tools, we mean the tools and the manner of their use &ndash; not fundamental characteristics of the tools themselves.
 
 DevOps tools stress "We" over "Me"; they allow teams and organizations to build mutual understanding to get work done. Your choice of tools is a choice in a common language. Is this language one that benefits your organization as a whole or merely a subset of specific teams? At times, due to the lack of availability of an equally balanced tool, a choice must be made that has a higher cognitive cost to one team over another. Be aware of the cost and be empathetic to the teams impacted.
 
@@ -110,9 +110,24 @@ Resources make up the basic building blocks of our infrastructure. We can use re
 
 Recipes describe a specific piece of an application that we want to have running on a system. It's the ordered set of resources and, potentially, additional procedural code. Just as with a recipe for baking chocolate chip or oatmeal cookies, the recipe will be specific to what we want to create.
 
-![](./images/chef_example.png)
+```ruby
+# ~/chef-repo/webserver.rb
+package 'httpd'
 
-In this simple *webserver.rb* recipe from the [Learn Chef](https://learn.chef.io/) website, we use 3 resources: package, service, and file. These resources describe everything needed to stand up an Apache web server, have it run at boot time, and have it serve a simple "hello world" page.
+service 'httpd' do
+  action [:enable, :start]
+end
+
+file '/var/www/html/index.html' do
+  content '<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>'
+end
+```
+
+In this simple <code class="file-path">webserver.rb</code> recipe from the [Learn Chef](https://learn.chef.io/) website, we use 3 resources: `package`, `service`, and `file`. These resources describe everything needed to stand up an Apache web server, have it run at boot time, and have it serve a simple "hello world" page.
 
 More complex tasks like opening specific ports in a firewall or deploying Hadoop can be abstracted into a common language that allows for comprehension across teams. Because this code is stored in your standard version control, you can take advantage of the same ease of use and transparency that the rest of your source code is afforded.
 
@@ -180,16 +195,16 @@ The [DevOps community calendar](http://www.devopsdays.org/events/calendar/) also
 
 ###Share
 
-[END_BOX]
-
 I'd love to hear your feedback! What tools are you using in your environment and how do they impact organizational culture?
 
 Tweet at @sigje with hashtag #sysadvent, email me at <sparklydevops@chef.io>, or add a comment to the article.
+
+[END_BOX]
 
 ###Thank You
 
 Many thanks to [Greg Poirier](https://twitter.com/grepory) for being my Sysadvent Editor. Additional thanks to [Nathen Harvey](https://twitter.com/nathenharvey), [Peter Nealon](https://twitter.com/peternealon), [Amye Scavarda](https://twitter.com/amye), and [H. Waldo Grunenwald](https://twitter.com/gwaldo) for peer review and aditional edits.
 
 ###Image Credits
-* Young Girl Tilting Camera Up. Licensed from Kenneth Wiggins on <https://blackstock.co/collection/young-girl-tilting-camera-up/>
+* Young Girl Tilting Camera Up. [Licensed from Kenneth Wiggins](https://blackstock.co/collection/young-girl-tilting-camera-up/)
 * Light Sky Silo Windows Sunlight Rays from Public Domain Archive
