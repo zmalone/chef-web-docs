@@ -27,7 +27,7 @@ route53_record old_opscode_fqdn do
   aws_access_key_id aws_creds['access_key_id']
   aws_secret_access_key aws_creds['secret_access_key']
   type 'CNAME'
-  zone_id aws_creds['route53'][OLD_DOMAIN_NAME]
+  zone_id aws_creds['route53'][OPSCODE_DOMAIN_NAME]
   sensitive true
 end
 
