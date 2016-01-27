@@ -115,12 +115,6 @@ redirect '/errors-and-problems/401-unauthorized', "#{chef_docs_url}/errors.html#
 redirect '/errors-and-problems/403-forbidden', "#{chef_docs_url}/errors.html#forbidden"
 redirect '/errors-and-problems/workflow-problems', "#{chef_docs_url}/errors.html#workflow-problems"
 redirect '/legacy/starter-use-cases/windows-match', '/legacy/starter-use-cases/windows-batch/'
-redirect '/quickstart', '/set-up-your-chef-environment'
-redirect '/quickstart/chef-server', '/set-up-your-chef-environment#step1setupchefserver'
-redirect '/quickstart/converge', '/set-up-your-chef-environment#step3setupanodetomanage'
-redirect '/quickstart/nodes', '/set-up-your-chef-environment#step3setupanodetomanage'
-redirect '/quickstart/workstation', '/set-up-your-chef-environment#step2setupyourworkstation'
-redirect '/quickstart/workstation-setup', '/set-up-your-chef-environment#step2setupyourworkstation'
 redirect '/screencasts', '/additional-resources#cheffundamentalswebinarseries'
 redirect '/screencasts/spring-fundamentals/chef-lab', '/fundamentals-series/chef-lab'
 redirect '/screencasts/spring-fundamentals/week-1', '/fundamentals-series/week-1'
