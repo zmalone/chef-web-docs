@@ -8,11 +8,6 @@ Before viewing this video you should watch and complete the labs for the followi
 * [Part 3: Working with the node object and roles][spring-fund-week-3]
 * [Part 4: Common configuration data with data bags][spring-fund-week-4]
 
-During this video we will use the [Chef training lab][chef-lab] to launch a virtual machine that will be managed by Chef.
-
-<iframe width="560" height="315" src="//www.youtube.com/embed/9bidpd-LiNw" frameborder="0" allowfullscreen></iframe>
-
-
 [spring-fund-week-1]: /skills/fundamentals-series-week-1
 [spring-fund-week-2]: /skills/fundamentals-series-week-2
 [week2-homework]: /skills/fundamentals-series-week-2/#homework
