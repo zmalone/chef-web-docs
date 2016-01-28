@@ -4,7 +4,7 @@ Let's spruce things up and add a custom home page.
 
 You already know how to configure a `file` resource; append one that configures the default home page, <code class="file-path">/var/www/html/index.html</code>, to the end of <code class="file-path">webserver.rb</code>. The entire recipe now looks like this.
 
-[TIP] Although we believe typing in the code and commands is a great way to learn, remember you can copy the text from the code and terminal boxes and paste them into your remote session.
+[TIP] Although we believe typing in the code and commands is a great way to learn, remember you can copy the text from the code and terminal boxes and paste them into your remote session. If you're using our free trial VM, use the **Clipboard** command in the menu bar to copy text to your session's clipboard.
 
 ```ruby
 # ~/chef-repo/webserver.rb

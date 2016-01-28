@@ -41,4 +41,4 @@ Running handlers complete
 Chef Client finished, 0/3 resources updated in 37 seconds
 ```
 
-IIS is already installed, so again there's nothing to do. Similarly, the W3SVC service is already started and enabled. The command would install IIS if it got uninstalled and enable the W3SVC service if it was stopped or disabled.
+IIS is already installed, so again there's nothing to do. Similarly, the W3SVC service is already started and enabled. The command would install IIS if it got uninstalled and enable the W3SVC service if it was stopped or disabled. With Chef, this is easy to verify.

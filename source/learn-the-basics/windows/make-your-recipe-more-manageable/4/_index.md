@@ -24,7 +24,7 @@ Recipe: learn_chef_iis::default
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 3/4 resources updated in 39 seconds
+Chef Client finished, 1/4 resources updated in 39 seconds
 ```
 
 Previously, you ran `chef-client` to run a single recipe from the command line. A run-list specifies each of the individual recipes from your cookbook that you want to apply. Here, you applied just one recipe, but the run-list can contain multiple recipes from multiple cookbooks.<br><br>In this example, `recipe[learn_chef_iis]` is the same as specifying `recipe[learn_chef_iis::default]`, meaning we want to run the `learn_chef_iis` cookbook's default recipe, <code class="file-path">default.rb</code>.
