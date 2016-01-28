@@ -12,6 +12,6 @@ $ (Invoke-WebRequest localhost).Content
 </html>
 ```
 
-Optionally, from a web browser on another machine, navigate to your server. You'll see something like this.
+The free trial virtual machine does not have a public IP address, but if you're working through this tutorial on your own VM, you can access your web server from a browser on another machine. You'll see something like this.
 
 ![The basic home page](misc/webserver-basic-remote.png)

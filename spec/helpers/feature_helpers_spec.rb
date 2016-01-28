@@ -42,9 +42,9 @@ describe FeatureHelpers do
     subject(:the_provisioner) { helper.provisioner }
 
     context 'when PROVISIONER is not defined' do
-      it 'returns "cloudshare"' do
+      it 'returns "skytap"' do
         ENV.delete('PROVISIONER')
-        expect(the_provisioner).to eq('cloudshare')
+        expect(the_provisioner).to eq('skytap')
       end
     end
 
@@ -53,5 +53,5 @@ describe FeatureHelpers do
         expect(the_provisioner).to eq('a_provisioner')
       end
     end
-  end  
+  end
 end

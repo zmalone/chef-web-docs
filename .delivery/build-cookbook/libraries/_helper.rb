@@ -9,8 +9,10 @@ Chef::Resource.send(:include, Chef::Mixin::ShellOut)
 
 # Set some constants
 SITE_NAME = 'learn'
+OPSCODE_SITE_NAME = 'learnchef'
 DOMAIN_NAME = 'chef.io'
 OLD_DOMAIN_NAME = 'getchef.com'
+OPSCODE_DOMAIN_NAME = 'opscode.com'
 
 def bundler_cache_dir
   File.join(
@@ -90,6 +92,14 @@ def old_learn_fqdn
     "#{SITE_NAME}.#{OLD_DOMAIN_NAME}"
   else
     "#{SITE_NAME}-#{node['delivery']['change']['stage']}.#{OLD_DOMAIN_NAME}"
+  end
+end
+
+def old_opscode_fqdn
+  if stage_delivered?
+    "#{OPSCODE_SITE_NAME}.#{OPSCODE_DOMAIN_NAME}"
+  else
+    "#{OPSCODE_SITE_NAME}-#{node['delivery']['change']['stage']}.#{OPSCODE_DOMAIN_NAME}"
   end
 end
 
