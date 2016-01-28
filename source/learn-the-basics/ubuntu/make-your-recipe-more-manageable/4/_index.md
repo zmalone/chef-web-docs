@@ -16,11 +16,13 @@ Recipe: learn_chef_apache2::default
   * apt_package[apache2] action install (up to date)
   * service[apache2] action enable (up to date)
   * service[apache2] action start (up to date)
-  * template[/var/www/html/index.html] action create (up to date)
+    * template[/var/www/html/index.html] action create
+    - update content in file /var/www/html/index.html from 2914aa to ef4ffd
+    (no diff)
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 0/4 resources updated in 01 seconds
+Chef Client finished, 1/4 resources updated in 02 seconds
 ```
 
 Previously, you ran `chef-client` to run a single recipe from the command line. A run-list specifies each of the individual recipes from your cookbook that you want to apply. Here, you applied just one recipe, but the run-list can contain multiple recipes from multiple cookbooks.<br><br>In this example, `recipe[learn_chef_apache2]` is the same as specifying `recipe[learn_chef_apache2::default]`, meaning we want to run the `learn_chef_apache2` cookbook's default recipe, <code class="file-path">default.rb</code>.
