@@ -6,7 +6,7 @@ description: In this lesson you'll get an overview of Chef, set up your  worksta
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
 layout: skills-topic
-sections: [1, 2, 3]
+sections: [1, 2]
 icon: video.png
 ---
 After viewing this video you will be able to:
