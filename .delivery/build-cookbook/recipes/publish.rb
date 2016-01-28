@@ -39,7 +39,7 @@ execute 'build the site' do
   environment(
     'PATH' => '/opt/chefdk/embedded/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games',
     'HOME' => node['delivery']['workspace']['cache'],
-    'CHEF_LAB_URL' => 'http://opscode-cheflab.herokuapp.com'
+    'CHEF_LAB_URL' => 'https://lab.chef.io'
   )
   cwd node['delivery']['workspace']['repo']
 end
