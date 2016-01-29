@@ -1,12 +1,12 @@
 ---
-title: 'Learn to develop your Red Hat Enterprise Linux infrastructure code locally'
+title: 'Learn to develop your Windows Server infrastructure code locally'
 layout: lesson-overview
-platform: Red Hat Enterprise Linux
-logo: redhat.svg
-order: 1
+platform: Windows Server
+logo: windows.svg
+order: 2
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-In [Learn to manage a Red Hat Enterprise Linux node](/manage-a-node/rhel/), you built a basic web server configuration on Red Hat Enterprise Linux or CentOS. As part of the process, you set up a Chef server, brought up a node to manage, and bootstrapped your node.
+In [Learn to manage a Windows Server node](/manage-a-node/windows/), you built a basic web server configuration on Windows Server 2012 R2. As part of the process, you set up a Chef server, brought up a node to manage, and bootstrapped your node.
 
 The bootstrap process installed the Chef tools on your node, pulled the latest cookbooks from the Chef server, and performed an initial `chef-client` run on your node. After the bootstrap process completed, you made a small change to your web server cookbook and applied that change to your node. The overall process looks like this:
 
@@ -26,9 +26,9 @@ We consider using a temporary environment to be _local development_, no matter w
 
 <img src="/assets/images/networks/workstation-vm.png" style="width:30%; height:auto; box-shadow:none;" alt="Your workstation, Test Kitchen, and a virtual machine" />
 
-Another benefit to using Test Kitchen is that the operating system of your virtual environment doesn't need to match your workstation's. So even though you're configuring a Red Hat Enterprise Linux or CentOS server, your workstation can be Mac OS, Windows, or some other flavor of Linux.
+Another benefit to using Test Kitchen is that the operating system of your virtual environment doesn't need to match your workstation's. So even though you're configuring Windows Server, your workstation can be Mac OS, Windows, or Linux.
 
-In this tutorial, you'll use Test Kitchen together with the virtualization tools [VirtualBox](https://www.virtualbox.org) and [Vagrant](https://www.vagrantup.com) to build a basic server configuration on a virtual machine on your workstation.
+In this tutorial, you'll use Test Kitchen to apply a basic cookbook that writes a settings file to disk. You'll have the option to configure Test Kitchen to work with Amazon EC2 instance or a virtual machine on your workstation under Hyper-V or VirtualBox and Vagrant.
 
 After completing this tutorial, you'll understand the basics of how to use Test Kitchen to apply your cookbooks locally on temporary instances.
 
