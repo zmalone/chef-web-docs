@@ -47,15 +47,15 @@ From the <code class="file-path">~/learn-chef</code> directory on your workstati
 
 ```bash
 # ~/learn-chef
-$ chef generate cookbook settings-windows
+$ chef generate cookbook cookbooks/settings-windows
 Compiling Cookbooks...
 Recipe: code_generator::cookbook
-  * directory[/home/user/learn-chef/settings-windows] action create
-    - create new directory /home/user/learn-chef/settings-windows
+  * directory[/home/user/learn-chef/cookbooks/settings-windows] action create
+    - create new directory /home/user/learn-chef/cookbooks/settings-windows
 [...]
-  * cookbook_file[/home/user/learn-chef/settings-windows/.gitignore] action create
-    - create new file /home/user/learn-chef/settings-windows/.gitignore
-    - update content in file /home/user/learn-chef/settings-windows/.gitignore from none to dd37b2
+  * cookbook_file[/home/user/learn-chef/cookbooks/settings-windows/.gitignore] action create
+    - create new file /home/user/learn-chef/cookbooks/settings-windows/.gitignore
+    - update content in file /home/user/learn-chef/cookbooks/settings-windows/.gitignore from none to dd37b2
     (diff output suppressed by config)
 ```
 
@@ -65,14 +65,14 @@ We'll use a template to dynamically add information about the virtual machine to
 
 ```bash
 # ~/learn-chef
-$ chef generate template settings-windows server-info.txt
+$ chef generate template cookbooks/settings-windows server-info.txt
 Compiling Cookbooks...
 Recipe: code_generator::template
-  * directory[./settings-windows/templates/default] action create
-    - create new directory ./settings-windows/templates/default
-  * template[./settings-windows/templates/default/server-info.txt.erb] action create
-    - create new file ./settings-windows/templates/default/server-info.txt.erb
-    - update content in file ./settings-windows/templates/default/server-info.txt.erb from none to e3b0c4
+  * directory[./cookbooks/settings-windows/templates/default] action create
+    - create new directory ./cookbooks/settings-windows/templates/default
+  * template[./cookbooks/settings-windows/templates/default/server-info.txt.erb] action create
+    - create new file ./cookbooks/settings-windows/templates/default/server-info.txt.erb
+    - update content in file ./cookbooks/settings-windows/templates/default/server-info.txt.erb from none to e3b0c4
     (diff output suppressed by config)
 ```
 
@@ -89,7 +89,7 @@ The default recipe, <code class="file-path">default.rb</code>, fills in the temp
 Write out the default recipe like this.
 
 ```ruby
-# ~/learn-chef/settings-windows/recipes/default.rb
+# ~/learn-chef/cookbooks/settings-windows/recipes/default.rb
 directory 'C:/temp'
 
 template 'C:/temp/server-info.txt' do
@@ -110,7 +110,7 @@ When you use the `chef generate cookbook` command to create a cookbook, Chef cre
 The default <code class="file-path">.kitchen.yml</code> file looks like this.
 
 ```yaml
-# ~/learn-chef/settings-windows/.kitchen.yml
+# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
 ---
 driver:
   name: vagrant
@@ -136,7 +136,7 @@ suites:
 
 [COMMENT] On Linux and Mac OS, <code class="file-path">.kitchen.yml</code> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
-Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want Windows Server, modify <code class="file-path">~/settings-windows/.kitchen.yml</code> according to the Test Kitchen driver that you're using.
+Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want Windows Server, modify <code class="file-path">~/learn-chef/cookbooks/settings-windows/.kitchen.yml</code> according to the Test Kitchen driver that you're using.
 
 [START_TABS config EC2, Hyper-V, Vagrant]
 
@@ -145,7 +145,7 @@ Test Kitchen can manage more than one instance at a time. The default configurat
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
 ```yaml
-# ~/learn-chef/settings-windows/.kitchen.yml
+# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
 ---
 driver:
   name: ec2
@@ -187,7 +187,7 @@ This configuration specifies the location of the parent virtual hard drive (VHD)
 Replace the value for `password` with the `Administrator` password on your base virtual machine.
 
 ```yaml
-# ~/learn-chef/settings-windows/.kitchen.yml
+# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
 ---
 driver:
   name: hyperv
@@ -217,7 +217,7 @@ suites:
 [START_TAB configVagrant]
 
 ```yaml
-# ~/learn-chef/settings-windows/.kitchen.yml
+# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
 ---
 driver:
   name: vagrant
@@ -264,7 +264,7 @@ Now you'll provision a virtual machine to serve as your test environment. This i
 We often call the set of virtual environments that's created by Test Kitchen simply a _kitchen_. Run `kitchen list` to see what's in the kitchen.
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ kitchen list
 Instance                Driver  Provisioner            Verifier  Transport  Last Action
 default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      <Not Created>
@@ -284,7 +284,7 @@ Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual 
                 <div class="minimize"></div>
                 <div class="deactivate"></div>
               </nav>
-              <h1 class="titleInside">Editor: ~/settings</h1>
+              <h1 class="titleInside">Editor: ~/learn-chef/cookbooks/settings-windows</h1>
               <div class="container"><div class="editor"><div class="highlight ruby"><pre class="code_wrapper"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
 3
@@ -332,7 +332,7 @@ Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual 
               <div class="minimize"></div>
               <div class="deactivate"></div>
             </nav>
-            <h1 class="titleInside">Terminal: ~/settings</h1>
+            <h1 class="titleInside">Terminal: ~/learn-chef/cookbooks/settings-windows</h1>
             <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">kitchen list</span><span class="line output">Instance                           Driver   Provisioner            Verifier  Transport  Last Action</span><span class="line output">development-windows-2012r2         Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">development-windows-2012r2-secure  Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2                Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2-secure         Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span></code></pre></td></tr></tbody></table></div></div>
           </div>
 <p>Test matrices enable you to define multiple configurations, and test each configuration against one or more platforms.</p>
@@ -342,7 +342,7 @@ Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual 
 Create the instance now by running `kitchen create`.
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ kitchen create
 -----> Starting Kitchen (v1.4.2)
 -----> Creating <default-windows-2012r2>...
@@ -382,7 +382,7 @@ This output is for the EC2 driver. The output that you'll see depends on which d
 Now run `kitchen list` again.
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ kitchen list
 Instance                Driver  Provisioner            Verifier  Transport  Last Action
 default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      Created
@@ -401,7 +401,7 @@ Now run `kitchen converge` to apply the cookbook to the Windows Server virtual m
 <img src="/assets/images/misc/local_dev_workflow2.png" style="box-shadow: none;" alt=""/>
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
 -----> Converging <default-windows-2012r2>...
@@ -444,7 +444,7 @@ Test Kitchen runs `chef-client` on the instance. When the `chef-client` run comp
 ### From a Linux or Mac OS workstation
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ echo $?
 0
 ```
@@ -452,7 +452,7 @@ $ echo $?
 ### From a Windows workstation
 
 ```ps
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ echo $LastExitCode
 0
 ```
@@ -462,7 +462,7 @@ If you receive a result other than `0`, fix the errors that were reported. Then 
 Run `kitchen list` to see the latest status.
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ kitchen list
 Instance                Driver  Provisioner            Verifier  Transport  Last Action
 default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      Converged
@@ -471,7 +471,7 @@ default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      Conv
 `kitchen converge` takes longer the first time you run it on a new instance because Test Kitchen needs to install the Chef tools. Run `kitchen converge` a second time to see how much faster it is.
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
 -----> Converging <default-windows-2012r2>...
@@ -523,7 +523,7 @@ The way you connect to your instance depends on which driver you're using.
 When you use the EC2 driver, Test Kitchen creates two files in your cookbook's <code class="file-path">.kitchen</code> directory &ndash; a Remote Desktop (.rdp) file and a YAML (.yml) configuration file that lists details about the instance.
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ ls .kitchen
 default-windows-2012r2.rdp default-windows-2012r2.yml logs
 ```
@@ -531,7 +531,7 @@ default-windows-2012r2.rdp default-windows-2012r2.yml logs
 Get the password for the Windows account that Test Kitchen used to run `chef-client`.
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ more .kitchen/default-windows-2012r2.yml
 ---
 username: administrator
@@ -544,7 +544,7 @@ last_action: converge
 Now either run the .rdp file directly or run `kitchen login` to create a Remote Desktop connection to your instance. When prompted, enter the password that you retrieved in the previous step.
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ kitchen login
 ```
 
@@ -587,7 +587,7 @@ We're all done with our virtual machine, so now run the `kitchen destroy` comman
 <img src="/assets/images/misc/local_dev_workflow5.png" style="box-shadow: none;" alt=""/>
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ kitchen destroy
 -----> Starting Kitchen (v1.4.2)
 -----> Destroying <default-windows-2012r2>...
@@ -599,7 +599,7 @@ $ kitchen destroy
 Run `kitchen list` and you'll see that the `Last Action` column shows that the virtual machine no longer exists.
 
 ```bash
-# ~/learn-chef/settings
+# ~/learn-chef/cookbooks/settings-windows
 $ kitchen list
 Instance                Driver  Provisioner            Verifier  Transport  Last Action
 default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      <Not Created>
