@@ -1,0 +1,18 @@
+---
+title: 'Create a password store'
+order: 7
+keywords: TODO
+layout: lesson
+sections: [1, 2, 3, 4, 5, 6, 7, 8]
+next: {heading: Next, partial: next}
+time_to_complete: 20 minutes
+---
+[HEADLINE] _Data bags_ are collections of key-value pairs that are shared among your nodes. You can encrypt data bags to protect sensitive information, such as certificates, API keys, and passwords.
+
+The next thing we want to do is configure MySQL. This step involves working with two passwords &ndash; a root password for the MySQL instance and a password that lets our web app access the customer database that is hosted by MySQL.
+
+Before we set up MySQL, we need a way to securely store the passwords so that only our node can access them. Since we never want to store unencrypted passwords in a recipe, we'll use a special feature of Chef designed for managing secrets. We'll use an [encrypted data bag](https://docs.chef.io/chef/essentials_data_bags.html) for our passwords. This way we'll be able to set up MySQL passwords using Chef recipes without making those passwords available to everyone who reads our recipes.
+
+A _data bag_ stores data as a series of key-value pairs. An item in a data bag is similar to a node attribute. However, a data bag can be shared among nodes, whereas a node attribute belongs to just one node and can't be shared. Values stored by data bag items can optionally be encrypted to protect confidential information such as certificates, API keys, and in our case, passwords. Data bags with encrypted items are called _encrypted data bags_.
+
+In this part, you'll create an encrypted data bag to hold the two MySQL passwords. There are several steps.
