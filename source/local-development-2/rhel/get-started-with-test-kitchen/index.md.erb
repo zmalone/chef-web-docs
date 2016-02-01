@@ -47,15 +47,15 @@ From the <code class="file-path">~/learn-chef</code> directory on your workstati
 
 ```bash
 # ~/learn-chef
-$ chef generate cookbook motd-rhel
+$ chef generate cookbook cookbooks/motd-rhel
 Compiling Cookbooks...
 Recipe: code_generator::cookbook
-  * directory[/home/user/learn-chef/motd-rhel] action create
-    - create new directory /home/user/learn-chef/motd-rhel
+  * directory[/home/user/learn-chef/cookbooks/motd-rhel] action create
+    - create new directory /home/user/learn-chef/cookbooks/motd-rhel
 [...]
-  * cookbook_file[/home/user/learn-chef/motd-rhel/.gitignore] action create
-    - create new file /home/user/learn-chef/motd-rhel/.gitignore
-    - update content in file /home/user/learn-chef/motd-rhel/.gitignore from none to dd37b2
+  * cookbook_file[/home/user/learn-chef/cookbooks/motd-rhel/.gitignore] action create
+    - create new file /home/user/learn-chef/cookbooks/motd-rhel/.gitignore
+    - update content in file /home/user/learn-chef/cookbooks/motd-rhel/.gitignore from none to dd37b2
     (diff output suppressed by config)
 ```
 
@@ -67,7 +67,7 @@ We'll use a template to dynamically add information about the virtual machine to
 
 ```bash
 # ~/learn-chef
-$ chef generate template motd-rhel server-info
+$ chef generate template cookbooks/motd-rhel server-info
 Compiling Cookbooks...
 Recipe: code_generator::template
   * directory[./motd-rhel/templates/default] action create
@@ -89,7 +89,7 @@ The default recipe, <code class="file-path">default.rb</code>, fills in the temp
 Write out the default recipe like this.
 
 ```ruby
-# ~/learn-chef/motd-rhel/recipes/default.rb
+# ~/learn-chef/cookbooks/motd-rhel/recipes/default.rb
 template '/etc/motd' do
   source 'server-info.erb'
   mode '0644'
@@ -109,7 +109,7 @@ When you use the `chef generate cookbook` command to create a cookbook, Chef cre
 The default <code class="file-path">.kitchen.yml</code> file looks like this.
 
 ```yaml
-# ~/learn-chef/motd-rhel/.kitchen.yml
+# ~/learn-chef/cookbooks/motd-rhel/.kitchen.yml
 ---
 driver:
   name: vagrant
@@ -135,10 +135,10 @@ suites:
 
 [COMMENT] On Linux and Mac OS, <code class="file-path">.kitchen.yml</code> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
-Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only CentOS, modify <code class="file-path">~/learn-chef/motd-rhel/.kitchen.yml</code> like this. (Be sure to replace `centos-7.1` with `centos-6.5`.)
+Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only CentOS, modify <code class="file-path">~/learn-chef/cookbooks/motd-rhel/.kitchen.yml</code> like this. (Be sure to replace `centos-7.1` with `centos-6.5`.)
 
 ```yaml
-# ~/learn-chef/motd-rhel/.kitchen.yml
+# ~/learn-chef/cookbooks/motd-rhel/.kitchen.yml
 ---
 driver:
   name: vagrant
@@ -184,17 +184,17 @@ Now you'll provision a virtual machine to serve as your test environment. This i
 
 We often call the set of virtual environments that's created by Test Kitchen simply a _kitchen_.
 
-To work with Test Kitchen, first move to the directory that contains your <code class="file-path">.kitchen.yml</code> file, <code class="file-path">~/learn-chef/motd-rhel</code>.
+To work with Test Kitchen, first move to the directory that contains your <code class="file-path">.kitchen.yml</code> file, <code class="file-path">~/learn-chef/cookbooks/motd-rhel</code>.
 
 ```bash
 # ~/learn-chef
-$ cd ~/learn-chef/motd-rhel
+$ cd ~/learn-chef/cookbooks/motd-rhel
 ```
 
 Now run `kitchen list` to see what's in the kitchen.
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ kitchen list
 Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-65  Vagrant  ChefZero     Busser    Ssh        <Not Created>
@@ -212,7 +212,7 @@ Our kitchen includes just one instance &ndash; a CentOS 6.5 virtual machine that
                 <div class="minimize"></div>
                 <div class="deactivate"></div>
               </nav>
-              <h1 class="titleInside">Editor: ~/learn-chef/motd-rhel/.kitchen.yml
+              <h1 class="titleInside">Editor: ~/learn-chef/cookbooks/motd-rhel/.kitchen.yml
 </h1>
               <div class="container"><div class="editor"><div class='highlight conf'><pre><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
@@ -269,7 +269,7 @@ Our kitchen includes just one instance &ndash; a CentOS 6.5 virtual machine that
 Create the instance now by running `kitchen create`.
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ kitchen create
 -----> Starting Kitchen (v1.4.2)
 -----> Creating <default-centos-65>...
@@ -291,7 +291,7 @@ This command will take longer the first time your run it because Vagrant needs t
 Now run `kitchen list` again.
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ kitchen list
 Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-65  Vagrant  ChefZero     Busser    Ssh        Created
@@ -310,7 +310,7 @@ Now run `kitchen converge` to apply the cookbook to the CentOS virtual machine.
 <img src="/assets/images/misc/local_dev_workflow2.png" style="box-shadow: none;" alt=""/>
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
 -----> Converging <default-centos-65>...
@@ -354,7 +354,7 @@ Test Kitchen runs `chef-client` on the instance. When the `chef-client` run comp
 ### From a Linux or Mac OS workstation
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ echo $?
 0
 ```
@@ -362,7 +362,7 @@ $ echo $?
 ### From a Windows workstation
 
 ```ps
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ echo $LastExitCode
 0
 ```
@@ -372,7 +372,7 @@ If you receive a result other than `0`, fix the errors that were reported. Then 
 Run `kitchen list` to see the latest status.
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ kitchen list
 Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-65  Vagrant  ChefZero     Busser    Ssh        Converged
@@ -381,7 +381,7 @@ default-centos-65  Vagrant  ChefZero     Busser    Ssh        Converged
 `kitchen converge` takes longer the first time you run it on a new instance because Test Kitchen needs to install the Chef tools. Run `kitchen converge` a second time to see how much faster it is.
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ kitchen converge
 -----> Converging <default-centos-65>...
        Preparing files for transfer
@@ -423,7 +423,7 @@ Now let's log in to your virtual machine and verify that the MOTD was updated on
 Run `kitchen login` to log on to your instance.
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ kitchen login
 Last login: Thu Jan 14 19:02:14 2016 from 10.0.2.2
 hostname:  default-centos-65
@@ -454,7 +454,7 @@ We're all done with our virtual machine, so now run the `kitchen destroy` comman
 <img src="/assets/images/misc/local_dev_workflow5.png" style="box-shadow: none;" alt=""/>
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ kitchen destroy
 -----> Starting Kitchen (v1.4.2)
 -----> Destroying <default-centos-65>...
@@ -468,7 +468,7 @@ $ kitchen destroy
 Run `kitchen list` and you'll see that the `Last Action` column shows that the virtual machine no longer exists.
 
 ```bash
-# ~/learn-chef/motd-rhel
+# ~/learn-chef/cookbooks/motd-rhel
 $ kitchen list
 Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-65  Vagrant  ChefZero     Busser    Ssh        <Not Created>
