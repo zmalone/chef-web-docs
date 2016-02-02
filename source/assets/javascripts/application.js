@@ -5,5 +5,6 @@
 //= require nav
 //= require home
 //= require ga-link-checker
+//= require section-links
 
 $(document).foundation();
