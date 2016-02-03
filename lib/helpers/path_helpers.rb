@@ -2,7 +2,7 @@ module PathHelpers
   def file_path(path)
     concat(
       content_tag(:code, class: 'file-path') do
-        path
+        path.gsub(/_/, '\_').gsub(/\\\\_/, '\_')
       end
     )
   end
