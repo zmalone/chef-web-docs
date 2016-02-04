@@ -12,6 +12,7 @@ require 'lib/helpers/markdown_helpers'
 require 'lib/helpers/box_helpers'
 require 'lib/helpers/page_nav_helpers'
 require 'lib/helpers/list_helpers'
+require 'lib/helpers/path_helpers'
 
 # In development you can use `binding.pry` anywhere to pause execution and bring
 # up a Ruby REPL
@@ -63,6 +64,7 @@ helpers do
   include AccordionHelpers
   include MarkdownHelpers
   include BoxHelpers
+  include PathHelpers
   include PageNavHelpers
   include ListHelpers
 end
