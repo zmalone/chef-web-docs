@@ -59,6 +59,10 @@ class Middleman::Sitemap::Resource
   def no_index?
     self.data.meta_tags && self.data.meta_tags.any? {|h| h[:content].include?('NOINDEX') }
   end
+  
+  def appendix?
+    self.data.appendix == true
+  end
 
   def <=>(other_resource)
     [self.data['order'].to_i, (self.title || '').downcase] <=> [other_resource.data['order'].to_i, (other_resource.title || '').downcase]
