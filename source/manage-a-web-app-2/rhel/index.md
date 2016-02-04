@@ -19,7 +19,7 @@ After successfully verifying the completed web application locally, you'll set u
 
 By the end, you'll have a web application that looks like this:
 
-![the resulting web page](/assets/images/misc/webapp_result.png)
+![the resulting web page](misc/manage_customers_node.png)
 
 Setting up a LAMP stack is a great next step to building your Chef skills because it:
 
@@ -37,3 +37,5 @@ After completing this lesson, you'll:
 [COMMENT] You don't need to understand all the details about how Apache and MySQL work to complete this tutorial. The goal is to learn skills and patterns that will help you apply Chef to your specific infrastructure challenges.
 
 You'll get started by making sure your workstation is set up for local development with Test Kitchen, VirtualBox, and Vagrant.
+
+[COMMENT] You can [follow this quickstart](/manage-a-web-app-2/rhel/bring-up-the-web-app-using-test-kitchen/) if you've gone through the tutorial previously, or you have enough familiarity with Chef and just want to see the Customers web application in action.
