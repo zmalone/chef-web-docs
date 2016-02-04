@@ -1,5 +1,5 @@
 ---
-title: 'Get a node to manage'
+title: 'Configure your web application on a node'
 order: 11
 keywords: TODO
 layout: lesson
@@ -7,336 +7,346 @@ sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 ---
-To complete this tutorial, you'll need three things &dash; the Chef Development Kit (Chef DK) installed on your workstation, a Red Hat Enterprise Linux or CentOS node to manage, and a hosted Chef account.
+Now that you have the Customers web application working on a local test instance through Test Kitchen, you can apply your `awesome_customers_rhel` cookbook to a real server, or node.
 
-This is a <% fp('/blah/html/blah.html') %>.
+This part is optional, but it's a good opportunity to practice uploading your cookbooks to Chef server and then applying them to a bootstrapped node. In the process, you'll also learn how to use Berkshelf to automatically identify and resolve dependencies that your cookbook has on others.
 
-You'll also create a Chef code repository and a blank cookbook on your workstation to set up your web application project.
+You'll need to [set up a Chef server account](/manage-a-node/rhel/set-up-your-chef-server/) if you don't already have one. 
 
-[COMMENT] If you want to clean up your workstation or your Chef server after you complete this tutorial or you want to repeat the tutorial from the beginning, [follow these steps](/manage-a-web-app/rhel/apply-and-verify-your-final-web-application-configuration#howtocleanupyourenvironment) at the end of this tutorial.
+Here are the steps you'll follow:
 
-## 2. Get a node to manage
-
-Recall that a _node_ is any physical machine, cloud instance, or virtual machine that Chef manages.
-
-All you need to do right now is bring up a clean, 64-bit instance of Red Hat Enterprise Linux 6.5 or CentOS 6.5 that will serve as your node. Your node should not be your workstation. Be sure that:
-
-* its IP address is accessible from your network.
-* it has inbound network access on ports 22 (SSH) and 80 (HTTP) and outbound network access on port 443 (HTTPS).
-* it meets the [system requirements](https://docs.chef.io/chef_system_requirements.html#chef-client) for running `chef-client`.
-* you have root or `sudo` access.
-
-[WARN] Remember to use a 64-bit instance of Red Hat Enterprise Linux or CentOS. This tutorial does not support 32-bit instances.
-
-[WARN] Software such as Apache is configured differently in various releases of Red Hat Enterprise Linux and CentOS. For learning purposes, we recommend that you use Red Hat Enterprise Linux 6.5 or CentOS 6.5 as your node so that you can more easily verify your progress. However, if you're unable to use Red Hat Enterprise Linux 6.5 or CentOS 6.5, other versions can work with some modification.
-
-[WARN] Some of the cookbooks and features that you'll use in this tutorial require `chef-client` version 12.4.0 or greater on your node. If you have an existing node that has a prior version of `chef-client`, [upgrade to the latest version](https://downloads.chef.io/chef-client/).
-
-## 3. Get a hosted Chef account
-
-You'll store your cookbooks on a Chef server so that your node can access them. Hosted Chef is the easiest way to work through this tutorial. We recommend you work through [Learn to manage a node](/manage-a-node/rhel/) if you do not have a hosted Chef account that you can access from your workstation.
-
-[COMMENT] If your organization is [running its own Chef server](https://downloads.chef.io/chef-server/) and you know how to work with it, you can use that Chef server instead of setting up a hosted Chef account.  
+1. [Bring up a node to manage](#step1)
+1. [Copy your secret key to your node](#step2)
+1. [Upload your encrypted data bag to Chef server](#step3)
+1. [Upload your cookbooks to Chef server](#step4)
+1. [Bootstrap your node](#step5)
+1. [Verify the configuration](#step6)
 
 [START_BOX]
 
-## 2. Create a file on your node for the data bag key
+## 1. Bring up a node to manage
 
-Your node will need the data bag key when it accesses your data bag later in this tutorial. Let's prepare your node now.
+Like you did in [Learn to manage a node](/manage-a-node/rhel/), bring up a Red Hat Enterprise Linux 7 or CentOS 7 server to manage. Your server can run on spare hardware, a cloud instance, or even a virtual machine.
 
-In this step you'll copy the data bag key to the <code class="file-path">/etc/chef</code> directory on your node. You can copy the key file to any location that you have access to if you require it to exist in a different location.
+[Read this page](/manage-a-node/rhel/get-a-node-to-bootstrap/) if you need a refresher on how to prepare your node for the bootstrap process. Then come back to this page.
 
-Perform the steps that match your workstation setup.
+[COMMENT] We're in the process of updating the refresher material to work with Red Hat Enterprise Linux 7 and CentOS 7 &ndash; the current instructions are for version 6. For now, you'll need to adapt the instructions for version 7.
 
-### From a Linux or Mac OS workstation
-
-The `scp` command securely copies files from one computer to another.
-
-If you're using a user-name and password to connect to your node, run the following command to copy the secret key to your node. As needed, replace the IP address with your node's IP address and `root` with your user name.
-
-```bash
-# ~/learn-chef
-$ scp /tmp/encrypted_data_bag_secret root@52.10.205.36:/etc/chef
-encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
-```
-
-If you're using key-based encryption, the command looks similar to this.
-
-```bash
-# ~/learn-chef
-$ scp -i ~/.ssh/my.pem /tmp/encrypted_data_bag_secret root@52.10.205.36:/etc/chef
-encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
-```
-
-### From a Windows workstation
-
-You need to install a program to securely copy files from Windows to Linux. [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/) and [WinSCP](http://winscp.net) are popular options.
-
-Once you have a secure copy program set up, copy <code class="file-path">C:\\temp\\encrypted\_data\_bag\_secret</code> from your Windows workstation to the <code class="file-path">/etc/chef</code> directory on your node.
-
-[TIP] The [PuTTY User Manual](http://the.earth.li/~sgtatham/putty/0.60/htmldoc/Chapter5.html) shows how to use PuTTY's PSCP utility to securely copy a file from Windows to Linux.<br>If you're using Amazon EC2 to host your node, the [AWS documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/putty.html) can help get you started.
+At this point, your node should have ports 22, 80, and 443 open through the firewall. You also need your node's host name or public IP address, as well as an account that has root or `sudo` access and its password. If you use key-based authentication to connect to your instance, note the location of your private key file.
 
 [END_BOX]
 
 [START_BOX]
 
-## 3. Create a data bag to hold your passwords
+## 2. Copy your secret key to your node
 
-The first step to create a data bag is to create an object on the Chef server. Run the following command to create a data bag named `passwords`.
+Your node will need the secret key in order to decrypt the data bag item that contains your database passwords. In this step you'll copy the secret key to the <code class="file-path">/etc/chef</code> directory on your node.
 
-```bash
-# ~/learn-chef
-$ knife data bag create passwords
-Created data_bag[passwords]
-```
-
-This command creates an object for the `passwords` data bag on the Chef server only &ndash; it does not create anything on your workstation.
-
-The next step is to create a location on your workstation to hold the contents of the data bag. All data bags are stored in your Chef repo's <code class="file-path">data\_bags</code> directory. Each data bag is  stored in a subdirectory of <code class="file-path">data\_bags</code>. `knife` understands this directory structure so you don't need to enter the full path when working with data bags from the command line.
-
-Now create a directory on your workstation for your `passwords` data bag.
-
-```bash
-# ~/learn-chef
-$ mkdir data_bags/passwords
-```
-
-You now have a data bag object on your Chef server and a location in your Chef repo to store the items.
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Put the MySQL root password in the data bag
-
-To securely store the MySQL root password in the data bag, we need to create an encrypted data bag item.
-
-Data bag items are stored as files. Create a file named <code class="file-path">sql\_server\_root\_password.json</code> in the <code class="file-path">data\_bags/passwords</code> directory and add these contents.
-
-```ruby
-# ~/learn-chef/data_bags/passwords/sql_server_root_password.json
-{
-  "id": "sql_server_root_password",
-  "password": "learnchef_mysql"
-}
-```
-
-[COMMENT] If you prefer, you can use a different password. Just replace `learnchef_mysql` with your password.
-
-Every data bag item has an `id` field that identifies it. `"password": "learnchef_mysql"` is the data in the form of a key-value pair. A data bag item can have multiple key-value pairs.
-
-Now run this command to encrypt the data bag item and upload it to the Chef server. The `--secret-file` argument specifies the location of your secret key file that's used to perform the encryption.
-
-### From a Linux or Mac OS workstation
-
-```bash
-# ~/learn-chef
-$ knife data bag from file passwords sql_server_root_password.json --secret-file /tmp/encrypted_data_bag_secret
-Updated data_bag_item[passwords::sql_server_root_password]
-```
-
-### From a Windows workstation
-
-```ps
-# ~\learn-chef
-$ knife data bag from file passwords sql_server_root_password.json --secret-file C:\temp\encrypted_data_bag_secret
-Updated data_bag_item[passwords::sql_server_root_password]
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 5. Verify the contents of your data bag
-
-The `knife data bag` command performed the encryption and uploaded the data to your Chef server. Let's confirm that the data is encrypted and that we can decrypt it using our secret key file.
-
-Run this command to show the contents of the `sql_server_root_password` item in the `passwords` data bag.
-
-```bash
-# ~/learn-chef
-$ knife data bag show passwords sql_server_root_password
-id:       sql_server_root_password
-password:
-  cipher:         aes-256-cbc
-  encrypted_data: d6Lbq+83+cjfheU4sHF5c33EmtGMTmxO1yuPryHuOqI=
-
-  iv:             IeEuOPyQR/iXxn7DTPoUKQ==
-
-  version:        1
-```
-
-The data comes back encrypted because you did not specify a secret key to decrypt the file. This is good because it confirms that the data is safely encrypted on the Chef server.
-
-Run the same command again, but this time specify the `--secret-file` argument like you did when you encrypted the data bag item.
-
-### From a Linux or Mac OS workstation
-
-```bash
-# ~/learn-chef
-$ knife data bag show passwords sql_server_root_password --secret-file /tmp/encrypted_data_bag_secret
-id:       sql_server_root_password
-password: learnchef_mysql
-```
-
-### From a Windows workstation
-
-```ps
-# ~\learn-chef
-$ knife data bag show passwords sql_server_root_password --secret-file C:\temp\encrypted_data_bag_secret
-id:       sql_server_root_password
-password: learnchef_mysql
-```
-
-The output confirms that your secret key file can successfully decrypt your data bag item. In the next lesson, you'll learn how to decrypt the data bag item from your Chef recipe.
-
-[END_BOX]
-
-[START_BOX]
-
-## 6. Put the customer database password in the data bag
-
-Now let's follow the same process to create an encrypted data bag item to hold the password for our web app's customer database.
-
-Create a file named <code class="file-path">db\_admin\_password.json</code> in the <code class="file-path">data\_bags/passwords</code> directory and add these contents.
-
-```ruby
-# ~/learn-chef/data_bags/passwords/db_admin_password.json
-{
-  "id": "db_admin_password",
-  "password": "database_password"
-}
-```
-
-[COMMENT] Again, you can use your own password if you prefer.
-
-Now run the following commands to encrypt the data bag item, upload it to the Chef server, and verify that you can successfully retrieve and decrypt the data back again.
-
-### From a Linux or Mac OS workstation
-
-```bash
-# ~/learn-chef
-$ knife data bag from file passwords db_admin_password.json --secret-file /tmp/encrypted_data_bag_secret
-Updated data_bag_item[passwords::db_admin_password]
-$ knife data bag show passwords db_admin_password --secret-file /tmp/encrypted_data_bag_secret
-id:       db_admin_password
-password: database_password
-```
-
-### From a Windows workstation
-
-```ps
-# ~\learn-chef
-$ knife data bag from file passwords db_admin_password.json --secret-file C:\temp\encrypted_data_bag_secret
-Updated data_bag_item[passwords::db_admin_password]
-$ knife data bag show passwords db_admin_password --secret-file C:\temp\encrypted_data_bag_secret
-id:       db_admin_password
-password: database_password
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 7. Store the location of the data bag key file
-
-Let's also set a node attribute that points to the location of the secret key file on your node. The `database` recipe will need this path name to perform the decryption.
-
-Add a default node attribute to your attributes file, <code class="file-path">default.rb</code>, making the entire file look like this.
+Recall that you created a custom node attribute that holds the location of the secret file on your node. 
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
-default['awesome_customers']['user'] = 'web_admin'
-default['awesome_customers']['group'] = 'web_admin'
-
-default['awesome_customers']['document_root'] = '/var/www/customers/public_html'
-
-default['awesome_customers']['enabled_firewall_rules'] = %w(firewall_http firewall_sshd)
-
-default['awesome_customers']['passwords']['secret_path'] = '/etc/chef/encrypted_data_bag_secret'
+# [...]
+default['awesome_customers_rhel']['secret_file'] = '/etc/chef/encrypted_data_bag_secret'
+# [...]
 ```
 
-<code class="file-path">/etc/chef/encrypted\_data\_bag\_secret</code> is the location of the secret file on your node.
+[WINDOWS] If you're working from a Windows workstation, you'll need to install a program to securely copy files from Windows to Linux. The easiest way to do that is to [install Git for Windows](https://git-for-windows.github.io) and run the commands that follow from a Git Bash prompt.
+
+If you receive the error "mkdir: cannot create directory ‘/etc/chef’: Permission denied" or "scp: /etc/chef: Permission denied" from the `ssh` or `scp` commands that follow, try another directory, for example <% fp '~/chef' %>.
+
+If you do choose another directory, be sure to update your `node['awesome_customers_rhel']['secret_file']` node attribute to specify the fully-qualified path to the secret file on the node, for example, <% fp '/home/ec2-user/chef/encrypted_data_bag_secret' %>.
+
+If you use a username and password to connect to your node, run the following commands from the <% fp '~/learn-chef' %> directory to copy your secret key to your node. As needed, replace the IP address with your node's IP address and `root` with your username.
+
+```bash
+# ~/learn-chef
+$ ssh root@52.10.205.36 'mkdir -p /etc/chef'
+root@52.10.205.36's password:
+$ scp .chef/encrypted_data_bag_secret root@52.10.205.36:/etc/chef
+root@52.10.205.36's password:
+encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
+```
+
+If you use key-based encryption to connect, the commands look similar to these.
+
+```bash
+# ~/learn-chef
+$ ssh -i ~/.ssh/my.pem root@52.10.205.36 'mkdir -p /etc/chef'
+$ scp -i ~/.ssh/my.pem .chef/encrypted_data_bag_secret root@52.10.205.36:/etc/chef
+encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
+```
 
 [END_BOX]
 
 [START_BOX]
 
-## 8. Prepare your data bag items for source control
+## 3. Upload your encrypted data bag to Chef server
 
-The `knife data bag` command performed the encryption and uploaded the data to your Chef server. This step did not affect the file on your workstation.
+When you created your encrypted data bag item to store your database passwords, you did so locally on your workstation.
 
-For example, notice that the `sql_server_root_password` data bag item on your local system still contains unencrypted data.
+To upload your data bag items to Chef server, you run similar `knife` commands, except that you omit the `--local-mode` and `--secret-file` arguments.
 
-```bash
-# ~/learn-chef
-$ cat ~/learn-chef/data_bags/passwords/sql_server_root_password.json
-{
-  "id": "sql_server_root_password",
-  "password": "learnchef_mysql"
-}
-```
+The first step is to create the data bag object on your Chef server. You need to give the data bag the same name as the directory that stores the data bag item on your workstation. In our case, the name is `database_passwords`. 
 
-You never want to store this data in source control or any other non-secure location. Although we won't work with source control in this tutorial, let's encrypt your data bag items locally to see how to prepare sensitive data for use with source control.
-
-Run the same `knife data bag from file` command that you ran earlier, but this time provide the `--local-mode` argument to apply the encryption to your local system, and not the Chef server.
-
-First, encrypt your MySQL password locally.
-
-### From a Linux or Mac OS workstation
+From the <% fp '~/learn-chef' %> directory, run the following `knife data bag create` command to create the data bag object on your Chef server.
 
 ```bash
 # ~/learn-chef
-$ knife data bag from file passwords sql_server_root_password.json --secret-file /tmp/encrypted_data_bag_secret --local-mode
-Updated data_bag_item[passwords::sql_server_root_password]
+$ knife data bag create database_passwords
+Created data_bag[database_passwords]
 ```
 
-### From a Windows workstation
-
-```ps
-# ~\learn-chef
-$ knife data bag from file passwords sql_server_root_password.json --secret-file C:\temp\encrypted_data_bag_secret --local-mode
-Updated data_bag_item[passwords::sql_server_root_password]
-```
-
-Now encrypt your database password.
-
-### From a Linux or Mac OS workstation
+Now run the following `knife data bag from file` command to upload your data bag item to Chef server.
 
 ```bash
 # ~/learn-chef
-$ knife data bag from file passwords db_admin_password.json --secret-file /tmp/encrypted_data_bag_secret --local-mode
-Updated data_bag_item[passwords::db_admin_password]
+$ knife data bag from file database_passwords mysql_customers.json
+Updated data_bag_item[database_passwords::mysql_customers]
 ```
 
-### From a Windows workstation
+You omit the `--secret-file` argument because the data bag item is already in an encrypted format. 
 
-```ps
-# ~\learn-chef
-$ knife data bag from file passwords db_admin_password.json --secret-file C:\temp\encrypted_data_bag_secret --local-mode
-Updated data_bag_item[passwords::db_admin_password]
+[END_BOX]
+
+[START_BOX]
+
+## 4. Upload your cookbooks to Chef server
+
+Recall that <code class="file-path">metadata.rb</code> references the cookbooks your cookbook depends on.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_rhel/metadata.rb
+name 'awesome_customers_rhel'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures awesome_customers_rhel'
+long_description 'Installs/Configures awesome_customers_rhel'
+version '0.1.0'
+
+depends 'selinux', '~> 0.9.0'
+depends 'firewall', '~> 2.4.0'
+depends 'httpd', '~> 0.3.4'
+depends 'mysql2_chef_gem', '~> 1.0.2'
+depends 'mysql', '~> 6.1.2'
+depends 'database', '~> 4.0.9'
 ```
 
-Your data bag items are now encrypted locally, and are safe to commit to source control.
+These cookbooks need to exist on the Chef server so that the node can access them when it runs `chef-client`.
+
+You could download each cookbook from Chef Supermarket and then upload it the Chef server, but there's one minor complication &ndash; each cookbook you depend on might depend on one or more other cookbooks. And those cookbooks in turn might depend on others.
+
+For example, if you look at the [mysql](https://github.com/chef-cookbooks/mysql/blob/master/metadata.rb) cookbook, you'll see in its <code class="file-path">metadata.rb</code> file that it depends on the `yum-mysql-community` and `smf` cookbooks.
+
+```ruby
+# metadata.rb
+# [...]
+
+depends 'yum-mysql-community'
+depends 'smf'
+```
+
+To help unravel this dependency web &ndash; and remove the need for you to manually resolve cookbook dependencies &ndash; we're going to use [Berkshelf](http://berkshelf.com) instead of running the `knife cookbook upload` command to manually upload each dependency. Berkshelf uploads your cookbooks to the Chef server and retrieves the cookbooks that your cookbook depends on.
+
+Berkshelf comes with the Chef DK, so you don't have to install anything.
+
+When you created your cookbook, the `chef generate cookbook` command created a file named <code class="file-path">Berksfile</code> in the cookbook's root directory.
+
+For this project, you won't need to work directly with <code class="file-path">Berksfile</code>. But you'll notice that <code class="file-path">Berksfile</code> comes pre-configured to pull cookbooks from Chef Supermarket.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ more Berksfile
+source "https://supermarket.chef.io"
+
+metadata
+```
+
+The `metadata` line tells Berkshelf to pull additional dependencies from the <code class="file-path">metadata.rb</code> file.
+
+### Use Berkshelf to install your dependencies
+
+The next step is to have Berkshelf resolve your dependencies by downloading all dependent cookbooks from Chef Supermarket.
+
+Run `berks install`.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ berks install
+Resolving cookbook dependencies...
+Fetching 'awesome_customers_rhel' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Installing apt (2.9.2)
+Installing build-essential (2.2.4)
+Installing compat_resource (12.7.0)
+Installing database (4.0.9)
+Installing chef-sugar (3.3.0)
+Installing firewall (2.4.0)
+Using awesome_customers_rhel (0.1.0) from source at .
+Installing httpd (0.3.4)
+Installing mariadb (0.3.1)
+Installing mysql (6.1.2)
+Installing mysql2_chef_gem (1.0.2)
+Installing openssl (4.4.0)
+Installing postgresql (4.0.0)
+Installing rbac (1.0.3)
+Installing selinux (0.9.0)
+Installing smf (2.2.7)
+Installing yum (3.9.0)
+Installing yum-epel (0.6.5)
+Installing yum-mysql-community (0.1.21)
+```
+
+Berkshelf installs dependent cookbooks to the <code class="file-path">~/.berkshelf/cookbooks</code> directory so that they can be shared among all of your cookbooks.
+
+```bash
+$ ls ~/.berkshelf/cookbooks
+apt-2.9.2                  mysql2_chef_gem-1.0.2
+build-essential-2.2.4      openssl-4.4.0
+chef-sugar-3.3.0           postgresql-4.0.0
+compat_resource-12.7.0     rbac-1.0.3
+database-4.0.9             selinux-0.9.0
+firewall-2.4.0             smf-2.2.7
+httpd-0.3.4                yum-3.9.0
+mariadb-0.3.1              yum-epel-0.6.5
+mysql-6.1.2                yum-mysql-community-0.1.21
+```
+
+### Use Berkshelf to upload the cookbooks to the Chef server
+
+Now we can upload your cookbooks to the Chef server.
+
+Run `berks upload`.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ berks upload
+Uploaded apt (2.9.2) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded awesome_customers_rhel (0.1.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded build-essential (2.2.4) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded chef-sugar (3.3.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded compat_resource (12.7.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded database (4.0.9) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded firewall (2.4.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded httpd (0.3.4) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded mariadb (0.3.1) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded mysql (6.1.2) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded mysql2_chef_gem (1.0.2) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded openssl (4.4.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded postgresql (4.0.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded rbac (1.0.3) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded selinux (0.9.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded smf (2.2.7) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded yum (3.9.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded yum-epel (0.6.5) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded yum-mysql-community (0.1.21) to: 'https://api.chef.io:443/organizations/your_org'
+```
+
+[COMMENT] Berkshelf requires a trusted SSL certificate in order to upload cookbooks. If you're using your own Chef server, and not hosted Chef, you'll need to configure Chef server [to use a trusted SSL certificate](https://osxdominion.wordpress.com/2015/02/25/configuring-chef-server-12-to-use-trusted-ssl-certs/). The [Chef documentation](http://docs.chef.io/server_security.html#ssl-protocols) describes how Chef server works with SSL certificates.<br/><br/>Alternatively, for testing purposes you can run `berks upload --no-ssl-verify` to disable SSL verification.
+
+### Verify that the upload process succeeded
+
+To prove that the cookbooks uploaded successfully, run `knife cookbook list`.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ knife cookbook list
+apt                      2.9.2
+awesome_customers_rhel   0.1.0
+build-essential          2.2.4
+chef-sugar               3.3.0
+compat_resource          12.7.0
+database                 4.0.9
+firewall                 2.4.0
+httpd                    0.3.4
+mariadb                  0.3.1
+mysql                    6.1.2
+mysql2_chef_gem          1.0.2
+openssl                  4.4.0
+postgresql               4.0.0
+rbac                     1.0.3
+selinux                  0.9.0
+smf                      2.2.7
+yum                      3.9.0
+yum-epel                 0.6.5
+yum-mysql-community      0.1.21
+```
+
+Chef server now contains everything you need to run `chef-client` on your node.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Bootstrap your node
+
+Now you can bootstrap your node. You'll specify the `awesome_customers_rhel` cookbook's default recipe in the node's run-list, which will apply your web application configuration.
+
+Here are two examples of the bootstrap process. [Find more complete details](/manage-a-node/rhel/bootstrap-your-node/).
+
+### Bootstrap using a username and password
+
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your user's password.
 
 ```bash
 # ~/learn-chef
-$ cat ~/learn-chef/data_bags/passwords/sql_server_root_password.json
-{
-  "id": "sql_server_root_password",
-  "password": {
-    "encrypted_data": "nKTHAg+Y3xE56PGUrxVMgdbi6VcLSCLqKIB1tcPlqyMmFU/Fcb5B2+Rjv8w0\nkiKt\n",
-    "iv": "y/GG/9AaRHAMd5BnyE1u2w==\n",
-    "version": 1,
-    "cipher": "aes-256-cbc"
-  }
-}
+$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name customers_web_app --run-list 'recipe[awesome_customers_rhel]'
+Creating new client for customers_web_app
+Creating new node for customers_web_app
+Connecting to 23.96.80.167
+23.96.80.167 [sudo] password for azureuser: -----> Installing Chef Omnibus (-v 12)
+23.96.80.167 downloading https://www.opscode.com/chef/install.sh
+23.96.80.167   to file /tmp/install.sh.11054/install.sh
+23.96.80.167 trying curl...
+23.96.80.167 Getting information for chef stable 12 for el...
+[...]
+23.96.80.167 Recipe: awesome_customers_rhel::web
+23.96.80.167   * httpd_service_rhel_systemd[customers] action restart
+23.96.80.167     * service[httpd-customers] action restart
+23.96.80.167       - restart service service[httpd-customers]
+23.96.80.167
+23.96.80.167
+23.96.80.167 Running handlers:
+23.96.80.167 Running handlers complete
+23.96.80.167 Chef Client finished, 132/215 resources updated in 06 minutes 19 seconds
 ```
 
-[WARN] Remember, _never_ commit passwords or other sensitive data to source control in plain text because it will forever exist in that file's version history.
+### Bootstrap using key-based authentication
 
-[WARN] Also never store your secret key in source control. We created the secret key file in a temporary directory to help prevent this from happening by accident. If you use Git, you can also add an entry to your <code class="file-path">gitignore</code> file to explicitly ignore your secret key file.
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
 
-[TIP] It's still up to you to implement an appropriate distribution mechanism for your secret keys. [chef-vault](https://github.com/Nordstrom/chef-vault) is commonly used to solve the key distribution problem. `chef-vault` uses the existing RSA key pair that your node uses to communicate with the Chef server to create an asymmetric key used for decryption. This provides a more automatic key distribution mechanism and enables you to control which nodes have access to sensitive data.
+```bash
+# ~/learn-chef
+$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name customers_web_app --run-list 'recipe[awesome_customers_rhel]'
+Creating new client for customers_web_app
+Creating new node for customers_web_app
+Connecting to 54.69.248.21
+54.69.248.21 -----> Installing Chef Omnibus (-v 12)
+54.69.248.21 downloading https://www.opscode.com/chef/install.sh
+54.69.248.21   to file /tmp/install.sh.16492/install.sh
+54.69.248.21 trying curl...
+54.69.248.21 Getting information for chef stable 12 for el...
+[...]
+54.69.248.21 Recipe: awesome_customers_rhel::web
+54.69.248.21   * httpd_service_rhel_systemd[customers] action restart
+54.69.248.21     * service[httpd-customers] action restart
+54.69.248.21       - restart service service[httpd-customers]
+54.69.248.21
+54.69.248.21
+54.69.248.21 Running handlers:
+54.69.248.21 Running handlers complete
+54.69.248.21 Chef Client finished, 132/215 resources updated in 02 minutes 08 seconds
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Verify the configuration
+
+From a browser, navigate to your server. You'll see this:
+
+![](misc/manage_customers_node.png)
 
 [END_BOX]
