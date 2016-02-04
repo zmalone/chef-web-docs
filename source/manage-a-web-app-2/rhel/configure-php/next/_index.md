@@ -1,1 +1,1 @@
-Now that PHP is set up, let's upload your latest cookbook to the Chef server, apply it to your node, and confirm everything works as expected.
+As an optional exercise, next you'll apply the `awesome_customers_rhel` cookbook on a live Red Hat Enterprise Linux or CentOS node.
