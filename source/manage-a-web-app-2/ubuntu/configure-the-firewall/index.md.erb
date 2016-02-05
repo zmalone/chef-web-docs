@@ -106,21 +106,17 @@ Recipe: code_generator::attribute
 
 This command adds the <code class="file-path">default.rb</code> attribute file to the<br><code class="file-path">~/learn-chef/cookbooks/awesome\_customers_ubuntu/attributes</code> directory.
 
-Now add the following to your attributes files, <code class="file-path">default.rb</code>.
+Now add the following to your attributes file, <code class="file-path">default.rb</code>.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/attributes/default.rb
 default['firewall']['allow_ssh'] = true
-default['firewall']['allow_established'] = true
 default['awesome_customers_ubuntu']['open_ports'] = 80
 ```
 
-The first two node attributes are provided by the `firewall` cookbook. Here's a brief description of each:
+The first node attribute is provided by the `firewall` cookbook. It specifies to that the `firewall` cookbook's default recipe should open port 22.
 
-* Line 1 specifies whether the `firewall` cookbook's default recipe should open port 22.
-* Line 2 specifies whether to allow related/established traffic.
-
-The `default['awesome_customers_ubuntu']['open_ports']` node attribute (line 3) is a custom node attribute that we define. We specify port 80 to be the additional port to open. We could use the array syntax to specify multiple ports, for example, `[80, 443]`.
+The `default['awesome_customers_ubuntu']['open_ports']` node attribute (line 2) is a custom node attribute that we define. We specify port 80 to be the additional port to open. We could use the array syntax to specify multiple ports, for example, `[80, 443]`.
 
 [END_BOX]
 
@@ -213,20 +209,19 @@ $ kitchen converge
         (skipped due to only_if)
        * file[/etc/default/ufw-chef.rules] action create
          - update content in file /etc/default/ufw-chef.rules from fa85ee to 7510cb
-         --- /etc/default/ufw-chef.rules	2016-02-05 18:20:15.454691631 +0000
-         +++ /etc/default/.ufw-chef.rules20160205-7008-z681wz	2016-02-05 18:20:15.474691631 +0000
+         --- /etc/default/ufw-chef.rules	2016-02-05 20:35:25.688954672 +0000
+         +++ /etc/default/.ufw-chef.rules20160205-5185-1yd8j3v	2016-02-05 20:35:25.712954672 +0000
          @@ -1,2 +1,4 @@
          -# created by chef to allow service to start
          +# position 50
          +ufw allow in proto tcp to any port 22 from 0.0.0.0/0
-
+         +ufw allow in proto tcp to any port 80 from any
 
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 8/27 resources updated in 10 seconds
-       Finished converging <default-ubuntu-1404> (0m17.72s).
------> Kitchen is finished. (0m18.78s)
+       Chef Client finished, 14/28 resources updated in 20 seconds
+       Finished converging <default-ubuntu-1404> (0m35.06s).
 ```
 
 You'll see from the output that ports 22 and 80 are opened to the firewall.
