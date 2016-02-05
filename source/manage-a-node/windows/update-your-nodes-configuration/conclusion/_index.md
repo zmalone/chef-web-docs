@@ -1,4 +1,4 @@
-That's it for this tutorial. You can continue to experiment with the virtual machine that we provided for this lesson. When you're done you can close the connection &ndash; we'll no longer be using that virtual machine.
+That's it for this tutorial. You can continue to experiment with your virtual machine. When you're done, be sure to [clean up your environment](/manage-a-node/windows/update-your-nodes-configuration#howtocleanupyourenvironment).
 
 You can also explore the [Chef management console](https://manage.chef.io). See what info's available for your nodes and what else you can do.
 
