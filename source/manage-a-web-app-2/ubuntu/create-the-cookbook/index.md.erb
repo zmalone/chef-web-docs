@@ -48,7 +48,7 @@ Recipe: code_generator::cookbook
     (diff output suppressed by config)
 ```
 
-The "ubuntu" part of the cookbook's name is simply to distinguish it from the versions of this project for [Windows Server](/manage-a-web-app-2/windows/) and [Ubuntu](/manage-a-web-app-2/ubuntu/). We break many of the tutorials into these categories to help you focus on the platform you care about most. In practice, you could write a single cookbook that runs on multiple platforms. In that case, you might name the cookbook simply `awesome_customers`.
+The "ubuntu" part of the cookbook's name is simply to distinguish it from the versions of this project for [Red Hat Enterprise Linux](/manage-a-web-app-2/rhel/) and [Windows Server](/manage-a-web-app-2/windows/). We break many of the tutorials into these categories to help you focus on the platform you care about most. In practice, you could write a single cookbook that runs on multiple platforms. In that case, you might name the cookbook simply `awesome_customers`.
 
 [END_BOX]
 
@@ -70,7 +70,7 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: centos-7.2
+  - name: ubuntu-14.04
     driver:
       customize:
         memory: 256
@@ -98,8 +98,8 @@ Now run `kitchen list`. You'll see that the instance was not yet created.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen list
-Instance           Driver   Provisioner  Verifier  Transport  Last Action
-default-centos-72  Vagrant  ChefZero     Busser    Ssh        <Not Created>
+Instance             Driver   Provisioner  Verifier  Transport  Last Action
+default-ubuntu-1404  Vagrant  ChefZero     Busser    Ssh        <Not Created>
 ```
 
 Now run `kitchen converge`. This command downloads the base Ubuntu 14.04 box if needed, brings up an instance, installs `chef-client`, and applies the cookbook.
@@ -108,9 +108,9 @@ Now run `kitchen converge`. This command downloads the base Ubuntu 14.04 box if 
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
------> Creating <default-centos-72>...
+-----> Creating <default-ubuntu-1404>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'opscode-centos-7.2'...
+       ==> default: Importing base box 'opscode-ubuntu-14.04'...
 [...]
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
@@ -121,7 +121,7 @@ $ kitchen converge
        Running handlers:
        Running handlers complete
        Chef Client finished, 0/0 resources updated in 01 seconds
-       Finished converging <default-centos-72> (0m19.72s).
+       Finished converging <default-ubuntu-1404> (0m19.72s).
 -----> Kitchen is finished. (2m39.62s)
 ```
 
@@ -134,8 +134,11 @@ Finally, verify that you can successfully connect to your instance over SSH. Run
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
-Last login: Mon Feb  1 20:18:41 2016 from 10.0.2.2
-[vagrant@default-centos-72 ~]$ logout
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Fri Feb  5 02:56:17 2016 from 10.0.2.2
+vagrant@default-ubuntu-1404:~$ logout
 Connection to 127.0.0.1 closed.
 ```
 

@@ -239,7 +239,7 @@ Like you did previously, run the cookbook and verify that it's configured as we 
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
------> Converging <default-centos-72>...
+-----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
        Preparing dna.json
        Resolving cookbook dependencies with Berkshelf 4.0.1...
@@ -247,7 +247,7 @@ $ kitchen converge
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
-       Transferring files to <default-centos-72>
+       Transferring files to <default-ubuntu-1404>
        Starting Chef Client, version 12.6.0
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
@@ -277,7 +277,7 @@ $ kitchen converge
              +++ /etc/httpd-customers/conf.d/.customers.conf20160202-30334-mqtmpm	2016-02-02 15:30:11.079050541 +0000
              @@ -1 +1,27 @@
              +<VirtualHost *:80>
-             +  ServerName default-centos-72
+             +  ServerName default-ubuntu-1404
              +  ServerAdmin 'ops@example.com'
              +
              +  DocumentRoot /var/www/customers/public_html
@@ -339,7 +339,7 @@ $ kitchen converge
        Running handlers:
        Running handlers complete
        Chef Client finished, 79/153 resources updated in 31 seconds
-       Finished converging <default-centos-72> (0m35.28s).
+       Finished converging <default-ubuntu-1404> (0m35.28s).
 -----> Kitchen is finished. (0m35.90s)
 ```
 
@@ -365,7 +365,7 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: centos-7.2
+  - name: ubuntu-14.04
     driver:
       customize:
         memory: 256
@@ -387,13 +387,13 @@ Now let's log in to the instance and verify that the configuration is exactly as
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
 Last login: Tue Feb  2 16:21:03 2016 from 10.0.2.2
-[vagrant@default-centos-72 ~]$
+[vagrant@default-ubuntu-1404 ~]$
 ```
 
 First, verify that `web_admin` owns the default home page and that the home page has the proper file mode (0644).
 
 ```bash
-[vagrant@default-centos-72 ~]$ stat -c "%A (%a) %U %G" /var/www/customers/public_html/index.html
+[vagrant@default-ubuntu-1404 ~]$ stat -c "%A (%a) %U %G" /var/www/customers/public_html/index.html
 -rw-r--r-- (644) web_admin web_admin
 ```
 
@@ -401,7 +401,7 @@ Now verify that the `httpd-customers` service is running.
 
 ```bash
 # ~
-[vagrant@default-centos-72 ~]$ sudo service httpd-customers status
+[vagrant@default-ubuntu-1404 ~]$ sudo service httpd-customers status
 Redirecting to /bin/systemctl status  httpd-customers.service
 ● httpd-customers.service - The Apache HTTP Server
    Loaded: loaded (/usr/lib/systemd/system/httpd-customers.service; enabled; vendor preset: disabled)
@@ -419,8 +419,8 @@ Redirecting to /bin/systemctl status  httpd-customers.service
            ├─26996 /usr/sbin/httpd-customers -f /etc/httpd-customers/conf/htt...
            └─27000 /usr/sbin/httpd-customers -f /etc/httpd-customers/conf/htt...
 
-Feb 02 16:21:55 default-centos-72 systemd[1]: Starting The Apache HTTP Server...
-Feb 02 16:21:55 default-centos-72 systemd[1]: Started The Apache HTTP Server.
+Feb 02 16:21:55 default-ubuntu-1404 systemd[1]: Starting The Apache HTTP Server...
+Feb 02 16:21:55 default-ubuntu-1404 systemd[1]: Started The Apache HTTP Server.
 Hint: Some lines were ellipsized, use -l to show in full.
 ```
 
@@ -428,7 +428,7 @@ Finally, verify that the home page is in the location we expect.
 
 ```bash
 # ~
-[vagrant@default-centos-72 ~]$ more /var/www/customers/public_html/index.html
+[vagrant@default-ubuntu-1404 ~]$ more /var/www/customers/public_html/index.html
 <html>This is a placeholder</html>
 ```
 
@@ -436,7 +436,7 @@ Now log out.
 
 ```bash
 # ~
-[vagrant@default-centos-72 ~]$ logout
+[vagrant@default-ubuntu-1404 ~]$ logout
 Connection to 127.0.0.1 closed.
 ```
 

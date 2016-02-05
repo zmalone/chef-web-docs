@@ -175,7 +175,7 @@ Like you did for the SELinux configuration, let's run the cookbook and verify th
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
------> Converging <default-centos-72>...
+-----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
        Preparing dna.json
        Resolving cookbook dependencies with Berkshelf 4.0.1...
@@ -183,7 +183,7 @@ $ kitchen converge
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
-       Transferring files to <default-centos-72>
+       Transferring files to <default-ubuntu-1404>
        Starting Chef Client, version 12.6.0
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
@@ -243,7 +243,7 @@ $ kitchen converge
        Running handlers:
        Running handlers complete
        Chef Client finished, 10/19 resources updated in 24 seconds
-       Finished converging <default-centos-72> (0m29.44s).
+       Finished converging <default-ubuntu-1404> (0m29.44s).
 -----> Kitchen is finished. (0m30.03s)
 ```
 
@@ -255,14 +255,14 @@ Let's log in to the instance and verify the firewall configuration. Run `kitchen
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
 Last login: Tue Feb  2 05:11:17 2016 from 10.0.2.2
-[vagrant@default-centos-72 ~]$
+[vagrant@default-ubuntu-1404 ~]$
 ```
 
 First, verify that `firewalld` is running.
 
 ```bash
 # ~
-[vagrant@default-centos-72 ~]$ systemctl status firewalld
+[vagrant@default-ubuntu-1404 ~]$ systemctl status firewalld
 ● firewalld.service - firewalld - dynamic firewall daemon
    Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
    Active: active (running) since Tue 2016-02-02 05:11:42 UTC; 15min ago
@@ -275,7 +275,7 @@ Now run this command to list all rules.
 
 ```bash
 # ~
-[vagrant@default-centos-72 ~]$ sudo firewall-cmd --direct --permanent --get-all-rules
+[vagrant@default-ubuntu-1404 ~]$ sudo firewall-cmd --direct --permanent --get-all-rules
 ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 22 -m comment --comment 'allow world to ssh' -j ACCEPT
 ipv4 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment established -j ACCEPT
 ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
@@ -289,7 +289,7 @@ Now log out.
 
 ```bash
 # ~
-[vagrant@default-centos-72 ~]$ logout
+[vagrant@default-ubuntu-1404 ~]$ logout
 Connection to 127.0.0.1 closed.
 ```
 

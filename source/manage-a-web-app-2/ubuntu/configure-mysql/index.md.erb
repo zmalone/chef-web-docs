@@ -167,7 +167,7 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: centos-7.2
+  - name: ubuntu-14.04
     driver:
       customize:
         memory: 256
@@ -202,7 +202,7 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: centos-7.2
+  - name: ubuntu-14.04
     driver:
       customize:
         memory: 256
@@ -253,7 +253,7 @@ Let's apply the configuration and verify that MySQL is properly configured. Run 
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
------> Converging <default-centos-72>...
+-----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
        Preparing dna.json
        Resolving cookbook dependencies with Berkshelf 4.0.1...
@@ -263,7 +263,7 @@ $ kitchen converge
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
-       Transferring files to <default-centos-72>
+       Transferring files to <default-ubuntu-1404>
        Starting Chef Client, version 12.6.0
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
@@ -310,7 +310,7 @@ $ kitchen converge
        Running handlers:
        Running handlers complete
        Chef Client finished, 38/200 resources updated in 02 minutes 35 seconds
-       Finished converging <default-centos-72> (2m41.91s).
+       Finished converging <default-ubuntu-1404> (2m41.91s).
 -----> Kitchen is finished. (2m42.72s)
 ```
 
@@ -320,13 +320,13 @@ Now let's verify the database configuration. Start by logging in to your instanc
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
 Last login: Wed Feb  3 21:24:18 2016 from 10.0.2.2
-[vagrant@default-centos-72 ~]$
+[vagrant@default-ubuntu-1404 ~]$
 ```
 
 First, verify that the MySQL service is running.
 
 ```bash
-[vagrant@default-centos-72 ~]$ sudo netstat -tap | grep mysql
+[vagrant@default-ubuntu-1404 ~]$ sudo netstat -tap | grep mysql
 tcp        0      0 0.0.0.0:mysql           0.0.0.0:*               LISTEN      28435/mysqld
 ```
 
@@ -335,7 +335,7 @@ You'll see that the `mysqld` service is in the `LISTEN` state.
 Now verify that you can access the databases that come preconfigured with the installation. If you chose a different root password when you created the data bag item, replace "mysql\_root_password" with yours. 
 
 ```bash
-[vagrant@default-centos-72 ~]$ mysqlshow -h 127.0.0.1 -uroot -pmysql_root_password
+[vagrant@default-ubuntu-1404 ~]$ mysqlshow -h 127.0.0.1 -uroot -pmysql_root_password
 +--------------------+
 |     Databases      |
 +--------------------+
@@ -349,7 +349,7 @@ Looks good! Now log out.
 
 ```bash
 # ~
-[vagrant@default-centos-72 ~]$ logout
+[vagrant@default-ubuntu-1404 ~]$ logout
 Connection to 127.0.0.1 closed.
 ```
 

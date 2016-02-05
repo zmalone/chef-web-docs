@@ -519,7 +519,7 @@ First, run `kitchen converge` to apply the `awesome_customers_ubuntu` cookbook.
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
------> Converging <default-centos-72>...
+-----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
        Preparing dna.json
        Resolving cookbook dependencies with Berkshelf 4.0.1...
@@ -529,7 +529,7 @@ $ kitchen converge
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
-       Transferring files to <default-centos-72>
+       Transferring files to <default-ubuntu-1404>
        Starting Chef Client, version 12.6.0
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
@@ -594,7 +594,7 @@ $ kitchen converge
        Running handlers:
        Running handlers complete
        Chef Client finished, 9/201 resources updated in 10 seconds
-       Finished converging <default-centos-72> (0m15.55s).
+       Finished converging <default-ubuntu-1404> (0m15.55s).
 -----> Kitchen is finished. (0m16.14s)
 ```
 
@@ -604,13 +604,13 @@ Now let's verify the database configuration. Start by logging in to your instanc
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
 Last login: Thu Feb  4 00:26:56 2016 from 10.0.2.2
-[vagrant@default-centos-72 ~]$
+[vagrant@default-ubuntu-1404 ~]$
 ```
 
 First, verify that the `my_company` database exists.
 
 ```bash
-[vagrant@default-centos-72 ~]$ mysqlshow -h 127.0.0.1 -uroot -pmysql_root_password
+[vagrant@default-ubuntu-1404 ~]$ mysqlshow -h 127.0.0.1 -uroot -pmysql_root_password
 +--------------------+
 |     Databases      |
 +--------------------+
@@ -626,7 +626,7 @@ First, verify that the `my_company` database exists.
 Now verify that `db_admin` is enabled as a local database user.
 
 ```bash
-[vagrant@default-centos-72 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -e "select user,host from mysql.user;"
+[vagrant@default-ubuntu-1404 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -e "select user,host from mysql.user;"
 +----------+-----------+
 | user     | host      |
 +----------+-----------+
@@ -639,7 +639,7 @@ Now verify that `db_admin` is enabled as a local database user.
 Verify that `db_admin` has rights only to the `my_company` database.
 
 ```bash
-vagrant@default-centos-72 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -e "show grants for 'db_admin'@'127.0.0.1';"
+vagrant@default-ubuntu-1404 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -e "show grants for 'db_admin'@'127.0.0.1';"
 +-----------------------------------------------------------------------------------------------------------------+
 | Grants for db_admin@127.0.0.1                                                                                   |
 +-----------------------------------------------------------------------------------------------------------------+
@@ -651,7 +651,7 @@ vagrant@default-centos-72 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -e
 Finally, verify the `customers` database table exists and contains the sample data.
 
 ```bash
-vagrant@default-centos-72 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -Dmy_company -e "select id,first_name from customers;"
+vagrant@default-ubuntu-1404 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -Dmy_company -e "select id,first_name from customers;"
 +----------------------------------+------------+
 | id                               | first_name |
 +----------------------------------+------------+
@@ -666,7 +666,7 @@ Everything checks out! Now log out.
 
 ```bash
 # ~
-[vagrant@default-centos-72 ~]$ logout
+[vagrant@default-ubuntu-1404 ~]$ logout
 Connection to 127.0.0.1 closed.
 ```
 
