@@ -10,11 +10,14 @@ If you bootstrapped a Vagrant instance, the easiest way to verify the configurat
 
 ```bash
 $ vagrant ssh
-Last login: Thu Dec  3 19:54:48 2015 from 10.0.2.2
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Fri Feb  5 13:28:02 2016 from 10.0.2.2
 [vagrant@localhost ~]$ curl localhost
 <html>
   <body>
-    <h1>hello from localhost</h1>
+    <h1>hello from vagrant.vm<</h1>
   </body>
 </html>
 [vagrant@localhost ~]$ exit
@@ -22,4 +25,4 @@ logout
 Connection to 127.0.0.1 closed.
 ```
 
-The home page now displays "hello from localhost" instead of "hello world".
+The home page now displays "hello from vagrant.vm" instead of "hello world".

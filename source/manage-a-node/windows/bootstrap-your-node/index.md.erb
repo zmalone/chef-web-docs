@@ -54,7 +54,7 @@ ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO
 ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO: Sending resource update report (run-id: c4f69dad-7182-477b-b1c9-f2aaf858e462)
 ```
 
-The optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's FQDN is the default. If you previously used the name `node1` to bootstrap a different node, you'll need to choose a different name or remove the previous node.
+The optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's FQDN is the default. If you previously used the name `node1` to bootstrap a different node, you'll need to choose a different name or [remove the previous node](/manage-a-node/windows/update-your-nodes-configuration#howtocleanupyourenvironment).
 
 [COMMENT] Remember, you used a self-signed certificate when setting up your node. The `--winrm-ssl-verify-mode verify_none` part turns off SSL certificate validation on your workstation. In production, we recommend that you replace the  `--winrm-ssl-verify-mode` with the `--ca-trust-file` option to supply the certificate that validates the identity of your node.
 
@@ -126,34 +126,6 @@ The second thing that happened was that your node did an initial checkin with th
 ![The basic home page](misc/webserver-basic-remote.png)
 
 [WARN] The IP address that's returned by the `knife node show` command is often the node's _internal_ IP address. Make sure you're using your node's public IP address or host name.
-
-[END_BOX]
-
-[START_BOX]
-
-## How to clean up your environment
-
-Perform these steps if you want to clean up your Chef server after you complete this tutorial or you want to repeat the tutorial from the beginning.
-
-### Delete the node from the Chef server
-
-As you experiment, it's a good idea to delete information about your node from the Chef server when you no longer need it. That way, your Chef server contains only relevant information. In practice, it's up to you whether to delete node information when you retire a production system from service.
-
-From your workstation, run these commands to delete the data about your node from the Chef server.
-
-```bash
-# ~/learn-chef
-$ knife node delete node1 --yes
-Deleted node[node1]
-$ knife client delete node1 --yes
-Deleted client[node1]
-```
-
-### Tear down your node
-
-Deleting a node from your Chef server removes any data about that node from the server &ndash; it doesn't automatically tear down the instance.
-
-Don't forget to tear down any cloud instances that you used to complete the tutorial.
 
 [END_BOX]
 
