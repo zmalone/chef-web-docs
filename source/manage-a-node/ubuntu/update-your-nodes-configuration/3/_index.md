@@ -15,33 +15,31 @@ Replace <code class="placeholder">ADDRESS</code>, <code class="placeholder">USER
 ```bash
 # ~/learn-chef
 $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password 'PASSWORD'
-40.76.28.32 Starting Chef Client, version 12.5.1
-40.76.28.32 resolving cookbooks for run list: ["learn_chef_httpd"]
+40.76.28.32 Starting Chef Client, version 12.6.0
+40.76.28.32 resolving cookbooks for run list: ["learn_chef_apache2"]
 40.76.28.32 Synchronizing Cookbooks:
-40.76.28.32   - learn_chef_httpd (0.2.0)
+40.76.28.32   - learn_chef_apache2 (0.2.1)
 40.76.28.32 Compiling Cookbooks...
-40.76.28.32 Converging 4 resources
-40.76.28.32 Recipe: learn_chef_httpd::default
-40.76.28.32   * yum_package[httpd] action install (up to date)
-40.76.28.32   * service[httpd] action enable (up to date)
-40.76.28.32   * service[httpd] action start (up to date)
+40.76.28.32 Converging 3 resources
+40.76.28.32 Recipe: learn_chef_apache2::default
+40.76.28.32   * apt_package[apache2] action install (up to date)
+40.76.28.32   * service[apache2] action enable (up to date)
+40.76.28.32   * service[apache2] action start (up to date)
 40.76.28.32   * template[/var/www/html/index.html] action create
-40.76.28.32     - update content in file /var/www/html/index.html from ef4ffd to 67d031
-40.76.28.32     --- /var/www/html/index.html	2015-12-03 17:22:00.545190361 +0000
-40.76.28.32     +++ /var/www/html/.index.html20151203-11236-muaex2	2015-12-03 19:57:39.502865516 +0000
+40.76.28.32     - update content in file /var/www/html/index.html from ef4ffd to 379617
+40.76.28.32     --- /var/www/html/index.html	2016-02-05 13:28:22.805071016 +0000
+40.76.28.32     +++ /var/www/html/.index.html20160205-6462-de5awx	2016-02-05 13:40:14.381071016 +0000
 40.76.28.32     @@ -1,6 +1,6 @@
 40.76.28.32      <html>
 40.76.28.32        <body>
 40.76.28.32     -    <h1>hello world</h1>
-40.76.28.32     +    <h1>hello from learn-chef.b10.internal.cloudapp.net</h1>
+40.76.28.32     +    <h1>hello from vagrant.vm</h1>
 40.76.28.32        </body>
 40.76.28.32      </html>
-40.76.28.32     - restore selinux security context
-40.76.28.32   * service[iptables] action stop (up to date)
 40.76.28.32
 40.76.28.32 Running handlers:
 40.76.28.32 Running handlers complete
-40.76.28.32 Chef Client finished, 1/5 resources updated in 06 seconds
+40.76.28.32 Chef Client finished, 1/4 resources updated in 03 seconds
 ```
 
 ### Update your node using key-based authentication
@@ -51,33 +49,31 @@ Replace <code class="placeholder">ADDRESS</code> with your remote node's externa
 ```bash
 # ~/learn-chef
 $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
-40.76.28.32 Starting Chef Client, version 12.5.1
-40.76.28.32 resolving cookbooks for run list: ["learn_chef_httpd"]
+40.76.28.32 Starting Chef Client, version 12.6.0
+40.76.28.32 resolving cookbooks for run list: ["learn_chef_apache2"]
 40.76.28.32 Synchronizing Cookbooks:
-40.76.28.32   - learn_chef_httpd (0.2.0)
+40.76.28.32   - learn_chef_apache2 (0.2.1)
 40.76.28.32 Compiling Cookbooks...
-40.76.28.32 Converging 4 resources
-40.76.28.32 Recipe: learn_chef_httpd::default
-40.76.28.32   * yum_package[httpd] action install (up to date)
-40.76.28.32   * service[httpd] action enable (up to date)
-40.76.28.32   * service[httpd] action start (up to date)
+40.76.28.32 Converging 3 resources
+40.76.28.32 Recipe: learn_chef_apache2::default
+40.76.28.32   * apt_package[apache2] action install (up to date)
+40.76.28.32   * service[apache2] action enable (up to date)
+40.76.28.32   * service[apache2] action start (up to date)
 40.76.28.32   * template[/var/www/html/index.html] action create
-40.76.28.32     - update content in file /var/www/html/index.html from ef4ffd to 67d031
-40.76.28.32     --- /var/www/html/index.html	2015-12-03 17:22:00.545190361 +0000
-40.76.28.32     +++ /var/www/html/.index.html20151203-11236-muaex2	2015-12-03 19:57:39.502865516 +0000
+40.76.28.32     - update content in file /var/www/html/index.html from ef4ffd to 379617
+40.76.28.32     --- /var/www/html/index.html	2016-02-05 13:28:22.805071016 +0000
+40.76.28.32     +++ /var/www/html/.index.html20160205-6462-de5awx	2016-02-05 13:40:14.381071016 +0000
 40.76.28.32     @@ -1,6 +1,6 @@
 40.76.28.32      <html>
 40.76.28.32        <body>
 40.76.28.32     -    <h1>hello world</h1>
-40.76.28.32     +    <h1>hello from learn-chef.b10.internal.cloudapp.net</h1>
+40.76.28.32     +    <h1>hello from vagrant.vm</h1>
 40.76.28.32        </body>
 40.76.28.32      </html>
-40.76.28.32     - restore selinux security context
-40.76.28.32   * service[iptables] action stop (up to date)
 40.76.28.32
 40.76.28.32 Running handlers:
 40.76.28.32 Running handlers complete
-40.76.28.32 Chef Client finished, 1/5 resources updated in 06 seconds
+40.76.28.32 Chef Client finished, 1/4 resources updated in 03 seconds
 ```
 
 ### Update a local virtual machine using a forwarded port
@@ -87,33 +83,31 @@ Replace <code class="placeholder">PORT</code> with your SSH forwarded port, for 
 ```bash
 # ~/learn-chef
 $ knife ssh localhost --ssh-port PORT 'sudo chef-client' --manual-list --ssh-user vagrant --identity-file IDENTITY_FILE
-localhost Starting Chef Client, version 12.5.1
-localhost resolving cookbooks for run list: ["learn_chef_httpd"]
+localhost Starting Chef Client, version 12.6.0
+localhost resolving cookbooks for run list: ["learn_chef_apache2"]
 localhost Synchronizing Cookbooks:
-localhost   - learn_chef_httpd (0.2.0)
+localhost   - learn_chef_apache2 (0.2.1)
 localhost Compiling Cookbooks...
-localhost Converging 4 resources
-localhost Recipe: learn_chef_httpd::default
-localhost   * yum_package[httpd] action install (up to date)
-localhost   * service[httpd] action enable (up to date)
-localhost   * service[httpd] action start (up to date)
+localhost Converging 3 resources
+localhost Recipe: learn_chef_apache2::default
+localhost   * apt_package[apache2] action install (up to date)
+localhost   * service[apache2] action enable (up to date)
+localhost   * service[apache2] action start (up to date)
 localhost   * template[/var/www/html/index.html] action create
-localhost     - update content in file /var/www/html/index.html from ef4ffd to 0a7ee1
-localhost     --- /var/www/html/index.html	2015-12-03 17:18:14.677999934 +0000
-localhost     +++ /var/www/html/.index.html20151203-2159-tr52ik	2015-12-03 19:54:55.230604816 +0000
+localhost     - update content in file /var/www/html/index.html from ef4ffd to 379617
+localhost     --- /var/www/html/index.html	2016-02-05 13:28:22.805071016 +0000
+localhost     +++ /var/www/html/.index.html20160205-6462-de5awx	2016-02-05 13:40:14.381071016 +0000
 localhost     @@ -1,6 +1,6 @@
 localhost      <html>
 localhost        <body>
 localhost     -    <h1>hello world</h1>
-localhost     +    <h1>hello from localhost</h1>
+localhost     +    <h1>hello from vagrant.vm</h1>
 localhost        </body>
 localhost      </html>
-localhost     - restore selinux security context
-localhost   * service[iptables] action stop (up to date)
 localhost
 localhost Running handlers:
 localhost Running handlers complete
-localhost Chef Client finished, 1/5 resources updated in 04 seconds
+localhost Chef Client finished, 1/4 resources updated in 03 seconds
 ```
 
 [COMMENT] Remember, in practice it's common to configure Chef to act as a service that runs periodically or in response to an event, such as a commit to source control. For now, we're updating our server configuration by running `chef-client` manually.
@@ -126,7 +120,7 @@ localhost Chef Client finished, 1/5 resources updated in 04 seconds
   <h3 id="modalTitle">If the operation times out or fails, here are some things to try</h3>
   <ul>
     <li>Ensure that you run <code>knife</code> commands from your <code class="file-path">learn-chef</code> directory or one of its sub-directories.</li>
-    <li>Ensure you have a <code class="file-path">learn-chef/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and your RSA private key file. If you don't, <a href="/manage-a-node/rhel/set-up-your-chef-server#step2" target="_blank">configure your workstation to communicate with Chef server</a>.</li>
+    <li>Ensure you have a <code class="file-path">learn-chef/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and your RSA private key file. If you don't, <a href="/manage-a-node/ubuntu/set-up-your-chef-server#step2" target="_blank">configure your workstation to communicate with Chef server</a>.</li>
     <li>Ensure that your node's IP address is accessible from your network.</li>
     <li>Ensure the user name you provide has root or <code>sudo</code> access on the node.</li>
     <li>Ensure your workstation has outbound access (including firewall) on these ports:
