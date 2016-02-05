@@ -1,0 +1,296 @@
+---
+title: 'Configure the firewall'
+order: 4
+keywords: TODO
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 15 minutes
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
+---
+Now let's configure the firewall. You need inbound access on port 22 (SSH) so that you can run `chef-client` remotely from your workstation and so that you can log in and verify that your server is configured as we expect. You also need inbound access on port 80 (HTTP) so users can access your web site.
+
+The easiest way to set firewall rules is to use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook from Chef Supermarket. The `firewall` works on multiple platforms; on Ubuntu 14.04, it configures [firewalld](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html).
+
+[START_BOX]
+
+## 1. Reference the firewall cookbook
+
+First, modify <code class="file-path">metadata.rb</code> to load the `firewall` cookbook.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/metadata.rb
+name             'awesome_customers_ubuntu'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures awesome_customers_ubuntu'
+long_description 'Installs/Configures awesome_customers_ubuntu'
+version          '0.1.0'
+
+depends 'selinux', '~> 0.9.0'
+depends 'firewall', '~> 2.4.0'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Create the firewall recipe
+
+Now create a recipe that defines the firewall rules. From your <% fp('~/learn-chef') %> directory, run this `chef generate recipe` command to create a recipe named `firewall`.
+
+```bash
+# ~/learn-chef
+$ chef generate recipe cookbooks/awesome_customers_ubuntu firewall
+Compiling Cookbooks...
+Recipe: code_generator::recipe
+  * directory[cookbooks/awesome_customers_ubuntu/spec/unit/recipes] action create (up to date)
+  * cookbook_file[cookbooks/awesome_customers_ubuntu/spec/spec_helper.rb] action create_if_missing (up to date)
+  * template[cookbooks/awesome_customers_ubuntu/spec/unit/recipes/firewall_spec.rb] action create_if_missing
+    - create new file cookbooks/awesome_customers_ubuntu/spec/unit/recipes/firewall_spec.rb
+    - update content in file cookbooks/awesome_customers_ubuntu/spec/unit/recipes/firewall_spec.rb from none to f59449
+    (diff output suppressed by config)
+  * template[cookbooks/awesome_customers_ubuntu/recipes/firewall.rb] action create
+    - create new file cookbooks/awesome_customers_ubuntu/recipes/firewall.rb
+    - update content in file cookbooks/awesome_customers_ubuntu/recipes/firewall.rb from none to cc51cd
+    (diff output suppressed by config)
+```
+
+At this point, there are two things that are named "firewall" &ndash; the `firewall` cookbook from Chef Supermarket and your `awesome_customers_ubuntu::firewall` recipe.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Define the firewall rules
+
+A cookbook can define resource types for other cookbooks to use. The `firewall` cookbook provides the `firewall_rule` resource, which enables you to define firewall rules. At the end of the `chef-client` run, the firewall is restarted to reflect any changed rules.
+
+Add this code to <% fp('firewall.rb') %> (your `firewall` recipe) to open ports 22 and 80. You'll refactor this recipe to be more general in a later step.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/firewall.rb
+ports = [22, 80]
+firewall_rule "open ports #{ports}" do
+  port ports
+end
+```
+
+One problem with this approach is that if you ever want to change the list of open ports, you'll have to do it in this recipe and any other recipes that reference those ports.
+
+To keep things more manageable, it's a common practice to separate the logic of your recipe from its data and define that data in another place. To do that, we'll define custom _node attributes_.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create the custom attributes file
+
+In [Learn to manage a node](/manage-a-node/ubuntu/), you learned about some of the built-in node attributes that Chef provides, such as the node's IP address. You can also define your own custom attributes that are specific to your policy. Let's create an attributes file that will define all of the custom attributes for your web application cookbook.
+
+Run the following from the <% fp('~/learn-chef') %> directory to create an attributes file named <code class="file-path">default.rb</code>.
+
+```bash
+# ~/learn-chef
+$ chef generate attribute cookbooks/awesome_customers_ubuntu default
+Compiling Cookbooks...
+Recipe: code_generator::attribute
+  * directory[cookbooks/awesome_customers_ubuntu/attributes] action create
+    - create new directory cookbooks/awesome_customers_ubuntu/attributes
+  * template[cookbooks/awesome_customers_ubuntu/attributes/default.rb] action create
+    - create new file cookbooks/awesome_customers_ubuntu/attributes/default.rb
+    - update content in file cookbooks/awesome_customers_ubuntu/attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+This command adds the <code class="file-path">default.rb</code> attribute file to the<br><code class="file-path">~/learn-chef/cookbooks/awesome\_customers_ubuntu/attributes</code> directory.
+
+Now add the following to your attributes files, <code class="file-path">default.rb</code>.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/attributes/default.rb
+default['firewall']['allow_ssh'] = true
+default['firewall']['firewalld']['permanent'] = false
+default['firewall']['ipv6_enabled'] = false
+default['firewall']['allow_established'] = true
+default['awesome_customers_ubuntu']['open_ports'] = 80
+```
+
+The first four node attributes are provided by the `firewall` cookbook. Here's a brief description of each:
+
+* Line 1 specifies whether the `firewall` cookbook's default recipe should open port 22.
+* Line 2 specifies whether to set the rules permanently so that they persist after reboot.
+* Line 3 specifies whether ICMPv6 (ping) requests should be enabled. We set this to `false` because we don't need IPv6 functionality.
+* Line 4 specifies whether to allow related/established traffic.
+
+The `default['awesome_customers_ubuntu']['open_ports']` node attribute is a custom node attribute that we define. We specify port 80 to be the additional port to open. We could use the array syntax to specify multiple ports, for example, `[80, 443]`.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Revise the firewall recipe
+
+Now let's reference our custom node attributes from our `firewall` recipe. Make your copy of <code class="file-path">firewall.rb</code> look like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/firewall.rb
+include_recipe 'firewall::default'
+
+ports = node.default['awesome_customers_ubuntu']['open_ports']
+firewall_rule "open ports #{ports}" do
+  port ports
+end
+```
+
+This code:
+
+1. applies the `firewall` cookbook's default recipe, which ensures that port 22 is open.
+1. opens the additional ports. Recall that `node['awesome_customers_ubuntu']['open_ports']` specifies port 80.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Set the firewall recipe to run
+
+Append an `include_recipe` line to your cookbook's default recipe to set the `firewall` recipe to run. The entire file looks like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/default.rb
+include_recipe 'selinux::permissive'
+include_recipe 'awesome_customers_ubuntu::firewall'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Apply and verify the configuration
+
+Like you did for the SELinux configuration, let's run the cookbook and verify that it's configured as we expect. Run `kitchen converge` to apply the `awesome_customers_ubuntu` cookbook.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu
+$ kitchen converge
+-----> Starting Kitchen (v1.4.2)
+-----> Converging <default-centos-72>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Chef Omnibus installation detected (install only if missing)
+       Transferring files to <default-centos-72>
+       Starting Chef Client, version 12.6.0
+       resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
+       Synchronizing Cookbooks:
+         - chef-sugar (3.3.0)
+         - selinux (0.9.0)
+         - awesome_customers_ubuntu (0.1.0)
+         - firewall (2.4.0)
+       Compiling Cookbooks...
+[...]
+       Recipe: firewall::default
+
+           - install firewalld, create template for /etc/sysconfig
+        (up to date)
+
+           - enable service service[firewalld]
+
+           - start service service[firewalld]
+         * file[create empty /etc/sysconfig/firewalld-chef.rules] action create
+
+           - update content in file /etc/sysconfig/firewalld-chef.rules from none to fa85ee
+
+           +++ /etc/sysconfig/.firewalld-chef.rules20160202-25554-9lyzf5	2016-02-02 05:47:59.520615390 +0000
+           @@ -1 +1,2 @@
+
+
+         * firewall_rule[allow world to ssh] action create
+
+         * firewall_rule[allow world to winrm] action create (skipped due to only_if)
+         * firewall_rule[established] action create
+
+         * firewall_rule[ipv6_icmp] action create (skipped due to only_if)
+       Recipe: awesome_customers_ubuntu::firewall
+         * firewall_rule[open ports 80] action create
+
+       Recipe: firewall::default
+
+            (skipped due to only_if)
+          (skipped due to only_if)
+       * file[/etc/sysconfig/firewalld-chef.rules] action create
+         - update content in file /etc/sysconfig/firewalld-chef.rules from fa85ee to 4fb944
+         --- /etc/sysconfig/firewalld-chef.rules	2016-02-02 05:47:59.520615390 +0000
+         +++ /etc/sysconfig/.firewalld-chef.rules20160202-25554-3u79b3	2016-02-02 05:48:00.000855390 +0000
+         @@ -1,2 +1,7 @@
+         -# created by chef to allow service to start
+         +# position 50
+         +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 22 -m comment --comment 'allow world to ssh' -j ACCEPT
+         +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
+         +firewall-cmd --direct --add-rule ipv6 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
+         +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
+
+
+       [2016-02-02T05:48:00+00:00] WARN: Cloning resource attributes for service[firewalld] from prior resource (CHEF-3694)
+       [2016-02-02T05:48:00+00:00] WARN: Previous service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:38:in `block (2 levels) in <class:FirewallFirewalld>'
+       [2016-02-02T05:48:00+00:00] WARN: Current  service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:92:in `block in <class:FirewallFirewalld>'
+
+
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 10/19 resources updated in 24 seconds
+       Finished converging <default-centos-72> (0m29.44s).
+-----> Kitchen is finished. (0m30.03s)
+```
+
+You'll see from the output that ports 22 and 80 are opened to the firewall. You'll also see that the `firewall` cookbook creates rule filters for `RELATED` and `ESTABLISHED` traffic.
+
+Let's log in to the instance and verify the firewall configuration. Run `kitchen login` to login to your instance.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu
+$ kitchen login
+Last login: Tue Feb  2 05:11:17 2016 from 10.0.2.2
+[vagrant@default-centos-72 ~]$
+```
+
+First, verify that `firewalld` is running.
+
+```bash
+# ~
+[vagrant@default-centos-72 ~]$ systemctl status firewalld
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+   Active: active (running) since Tue 2016-02-02 05:11:42 UTC; 15min ago
+ Main PID: 28315 (firewalld)
+   CGroup: /system.slice/firewalld.service
+           └─28315 /usr/bin/python -Es /usr/sbin/firewalld --nofork --nopid
+```
+
+Now run this command to list all rules.
+
+```bash
+# ~
+[vagrant@default-centos-72 ~]$ sudo firewall-cmd --direct --permanent --get-all-rules
+ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 22 -m comment --comment 'allow world to ssh' -j ACCEPT
+ipv4 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment established -j ACCEPT
+ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
+ipv6 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment established -j ACCEPT
+ipv6 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
+```
+
+You'll see that ports 22 and 80 are open for inbound traffic.
+
+Now log out.
+
+```bash
+# ~
+[vagrant@default-centos-72 ~]$ logout
+Connection to 127.0.0.1 closed.
+```
+
+[END_BOX]
