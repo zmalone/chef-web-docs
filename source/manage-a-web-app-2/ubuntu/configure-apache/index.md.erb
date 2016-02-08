@@ -18,7 +18,7 @@ That's where the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook o
 
 ## 1. Reference the httpd cookbook
 
-As you did for the `selinux` and `firewall` cookbooks, add the dependency for the `httpd` cookbook to your <code class="file-path">metadata.rb</code>, making the entire file look like this.
+As you did for the `apt` and `firewall` cookbooks, add the dependency for the `httpd` cookbook to your <code class="file-path">metadata.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/metadata.rb
@@ -30,7 +30,7 @@ description 'Installs/Configures awesome_customers_ubuntu'
 long_description 'Installs/Configures awesome_customers_ubuntu'
 version '0.1.0'
 
-depends 'selinux', '~> 0.9.0'
+depends 'apt', '~> 2.9.2'
 depends 'firewall', '~> 2.4.0'
 depends 'httpd', '~> 0.3.4'
 ```
@@ -68,11 +68,11 @@ Recipe: code_generator::recipe
   * cookbook_file[cookbooks/awesome_customers_ubuntu/spec/spec_helper.rb] action create_if_missing (up to date)
   * template[cookbooks/awesome_customers_ubuntu/spec/unit/recipes/web_spec.rb] action create_if_missing
     - create new file cookbooks/awesome_customers_ubuntu/spec/unit/recipes/web_spec.rb
-    - update content in file cookbooks/awesome_customers_ubuntu/spec/unit/recipes/web_spec.rb from none to a449dd
+    - update content in file cookbooks/awesome_customers_ubuntu/spec/unit/recipes/web_spec.rb from none to 88bb80
     (diff output suppressed by config)
   * template[cookbooks/awesome_customers_ubuntu/recipes/web.rb] action create
     - create new file cookbooks/awesome_customers_ubuntu/recipes/web.rb
-    - update content in file cookbooks/awesome_customers_ubuntu/recipes/web.rb from none to 8f89ec
+    - update content in file cookbooks/awesome_customers_ubuntu/recipes/web.rb from none to 9709e5
     (diff output suppressed by config)
 ```
 
@@ -289,11 +289,11 @@ $ kitchen converge
              +          Require all granted
              +  </Directory>
              +
-             +  ErrorLog /var/log/httpd/error.log
+             +  ErrorLog /var/log/apache2/error.log
              +
              +  LogLevel warn
              +
-             +  CustomLog /var/log/httpd/access.log combined
+             +  CustomLog /var/log/apache2/access.log combined
              +  ServerSignature Off
              +
              +  AddType application/x-httpd-php .php
