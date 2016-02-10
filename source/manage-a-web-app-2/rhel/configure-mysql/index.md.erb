@@ -115,9 +115,9 @@ The `database` recipe also decrypts and uses the MySQL root password. Here's how
 
 [START_BOX]
 
-## 4. Add a node attribute for your secret key's location 
+## 4. Add a node attribute for your secret key's location
 
-At this point, your secret key file, <% fp('~/learn-chef/.chef/encrypted_data_bag_secret') %>, exists only on your workstation. You'll need to transfer your secret key to your server before you run `chef-client`. 
+At this point, your secret key file, <% fp('~/learn-chef/.chef/encrypted_data_bag_secret') %>, exists only on your workstation. You'll need to transfer your secret key to your server before you run `chef-client`.
 
 As you develop your cookbook using Test Kitchen, you need to configure your<br><% fp('~/learn-chef/.chef/encrypted_data_bag_secret') %> file to transfer your secret key to your test instance. You'll do that in the next step.
 
@@ -125,7 +125,7 @@ When you're ready to run your cookbook on a node, you'll need to copy your secre
 
 In the previous step, you referenced the `node['awesome_customers_rhel']['secret_file']` node attribute. This node attribute refers to the location of the secret file on your test instance or node. This node attribute does not exist yet, so let's add it now.
 
-Append a node attribute to your default attributes file, <% fp('default.rb') %>, making the entire file look like this. 
+Append a node attribute to your default attributes file, <% fp('default.rb') %>, making the entire file look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
@@ -178,7 +178,7 @@ suites:
     attributes:
 ```
 
-You need to add these three configuration settings to enable Test Kitchen to copy your data bag items and secret key to your test instance:
+You need to add these two configuration settings to enable Test Kitchen to copy your data bag items and secret key to your test instance:
 
 * The root directory on your workstation where your data bags are located.
 * The location of your secret file on your workstation.
@@ -222,7 +222,7 @@ Note that you added these settings:
 
 * Line 18 specifies the root directory on your workstation where your data bags are located.
 * Lines 21&mdash;22 specify the location of your secret file on your workstation.
-* Lines 24&mdash;26 override the `node['awesome_customers_rhel']['secret_file']` node attribute.  
+* Lines 24&mdash;26 override the `node['awesome_customers_rhel']['secret_file']` node attribute.
 
 [END_BOX]
 
@@ -246,7 +246,7 @@ include_recipe 'awesome_customers_rhel::database'
 
 ## 7. Apply and verify the configuration
 
-Let's apply the configuration and verify that MySQL is properly configured. Run `kitchen converge` to apply the `awesome_customers_rhel` cookbook. 
+Let's apply the configuration and verify that MySQL is properly configured. Run `kitchen converge` to apply the `awesome_customers_rhel` cookbook.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
@@ -331,7 +331,7 @@ tcp        0      0 0.0.0.0:mysql           0.0.0.0:*               LISTEN      
 
 You'll see that the `mysqld` service is in the `LISTEN` state.
 
-Now verify that you can access the databases that come preconfigured with the installation. If you chose a different root password when you created the data bag item, replace "mysql\_root_password" with yours. 
+Now verify that you can access the databases that come preconfigured with the installation. If you chose a different root password when you created the data bag item, replace "mysql\_root_password" with yours.
 
 ```bash
 [vagrant@default-centos-72 ~]$ mysqlshow -h 127.0.0.1 -uroot -pmysql_root_password
