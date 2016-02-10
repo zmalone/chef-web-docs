@@ -207,7 +207,9 @@ Add this to <code class="file-path">customers.conf.erb</code>.
 
 The configuration file uses two node attributes &ndash; `node['hostname']` and `node['awesome_customers_ubuntu']['document_root']`.
 
-`node['hostname']` is a built-in node attribute that defines the node's host name. This node attribute gets set during the initial bootstrap process. `node['awesome_customers_ubuntu']['document_root']` defines the site's document root, and is the node attribute that you used in the previous step to set up the home page.
+`node['hostname']` is one of many [built-in node attributes](https://docs.chef.io/ohai.html#automatic-attributes) that Chef provides for you. This attribute defines the node's host name.
+
+`node['awesome_customers_ubuntu']['document_root']` defines the site's document root, and is the node attribute that you used in the previous step to set up the home page.
 
 [END_BOX]
 
@@ -249,96 +251,49 @@ $ kitchen converge
        Starting Chef Client, version 12.6.0
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
-         - httpd (0.3.4)
-         - compat_resource (12.7.0)
-         - selinux (0.9.0)
-         - firewall (2.4.0)
          - awesome_customers_ubuntu (0.1.0)
+         - firewall (2.4.0)
+         - apt (2.9.2)
+         - httpd (0.3.4)
          - chef-sugar (3.3.0)
+         - compat_resource (12.7.1)
        Compiling Cookbooks...
 [...]
-             * yum_package[httpd] action install (up to date)
-             * directory[/etc/httpd-customers/conf.modules.d] action create (up to date)
-[...]
-             - start service service[httpd-customers]
+          * apt_package[apache2] action install
+             - install version 2.4.7-1ubuntu4.9 of package apache2
+           * service[apache2] action stop
+             - stop service service[apache2]
+           * service[apache2] action disable
+             - disable service service[apache2]
 
-             - enable service service[httpd-customers]
-
-             - reload service service[httpd-customers]
-
-         * httpd_config_ubuntu[customers] action create
-           * directory[/etc/httpd-customers/conf.d] action create (up to date)
-
-             - create new file /etc/httpd-customers/conf.d/customers.conf
-             - update content in file /etc/httpd-customers/conf.d/customers.conf from none to 3e5f59
-             --- /etc/httpd-customers/conf.d/customers.conf	2016-02-02 15:30:11.079050541 +0000
-             +++ /etc/httpd-customers/conf.d/.customers.conf20160202-30334-mqtmpm	2016-02-02 15:30:11.079050541 +0000
-             @@ -1 +1,27 @@
-             +<VirtualHost *:80>
-             +  ServerName default-ubuntu-1404
-             +  ServerAdmin 'ops@example.com'
-             +
-             +  DocumentRoot /var/www/customers/public_html
-             +  <Directory "/">
-             +          Options FollowSymLinks
-             +          AllowOverride None
-             +  </Directory>
-             +  <Directory /var/www/customers/public_html >
-             +          Options Indexes FollowSymLinks MultiViews
-             +          AllowOverride None
-             +          Require all granted
-             +  </Directory>
-             +
-             +  ErrorLog /var/log/apache2/error.log
-             +
-             +  LogLevel warn
-             +
-             +  CustomLog /var/log/apache2/access.log combined
-             +  ServerSignature Off
-             +
-             +  AddType application/x-httpd-php .php
-             +  AddType application/x-httpd-php-source .phps
-             +  DirectoryIndex index.php index.html
-             +</VirtualHost>
-             - change mode from '' to '0644'
+             - create new directory /var/cache/apache2-customers
+             - change mode from '' to '0755'
              - change owner from '' to 'root'
-
-             - restore selinux security context
-
-         * directory[/var/www/customers/public_html] action create
-
-           - restore selinux security context
-         * file[/var/www/customers/public_html/index.php] action create
-           - create new file /var/www/customers/public_html/index.php
-           - update content in file /var/www/customers/public_html/index.php from none to a02c68
-           --- /var/www/customers/public_html/index.php	2016-02-02 15:30:11.133050547 +0000
-           +++ /var/www/customers/public_html/.index.php20160202-30334-1ibr302	2016-02-02 15:30:11.133050547 +0000
+             - change group from '' to 'root'
+           * directory[/var/log/apache2-customers] action create
+             - create new directory /var/log/apache2-customers
+[...]
+           * service[apache2-customers] action start
+             - start service service[apache2-customers]
+           * service[apache2-customers] action enable
+             - enable service service[apache2-customers]
+[...]
+         * file[/var/www/customers/public_html/index.html] action create
+           - create new file /var/www/customers/public_html/index.html
+           - update content in file /var/www/customers/public_html/index.html from none to a02c68
+           --- /var/www/customers/public_html/index.html	2016-02-10 21:10:44.772087000 +0000
+           +++ /var/www/customers/public_html/.index.html20160210-5727-1lhm3n2	2016-02-10 21:10:44.772087000 +0000
            @@ -1 +1,2 @@
            +<html>This is a placeholder</html>
            - change mode from '' to '0644'
            - change owner from '' to 'web_admin'
-
-           - restore selinux security context
-       Recipe: awesome_customers_ubuntu::firewall
-
-            (skipped due to only_if)
-          (skipped due to only_if)
-        (up to date)
-       [2016-02-02T15:30:11+00:00] WARN: Cloning resource attributes for service[firewalld] from prior resource (CHEF-3694)
-       [2016-02-02T15:30:11+00:00] WARN: Previous service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:38:in `block (2 levels) in <class:FirewallFirewalld>'
-       [2016-02-02T15:30:11+00:00] WARN: Current  service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:92:in `block in <class:FirewallFirewalld>'
-        (up to date)
-       Recipe: awesome_customers_ubuntu::web
-         * httpd_service_ubuntu_systemd[customers] action restart
-
-             - restart service service[httpd-customers]
-
-
+           - change group from '' to 'web_admin'
+[...]
        Running handlers:
        Running handlers complete
-       Chef Client finished, 79/153 resources updated in 31 seconds
-       Finished converging <default-ubuntu-1404> (0m35.28s).
------> Kitchen is finished. (0m35.90s)
+       Chef Client finished, 94/186 resources updated in 16 seconds
+       Finished converging <default-ubuntu-1404> (0m19.06s).
+-----> Kitchen is finished. (0m19.64s)
 ```
 
 You'll see from the output that:
@@ -377,21 +332,24 @@ suites:
 
 From a web browser on your workstation, navigate to http://192.168.34.34. You'll see something like this.
 
-![](misc/manage_customers_placeholder.png)
+![](misc/manage_customers_placeholder_34.png)
 
 Now let's log in to the instance and verify that the configuration is exactly as we expect. Run `kitchen login` to log in to your instance.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
-Last login: Tue Feb  2 16:21:03 2016 from 10.0.2.2
-[vagrant@default-ubuntu-1404 ~]$
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Wed Feb 10 21:10:29 2016 from 10.0.2.2
+vagrant@default-ubuntu-1404:~$
 ```
 
 First, verify that `web_admin` owns the default home page and that the home page has the proper file mode (0644).
 
 ```bash
-[vagrant@default-ubuntu-1404 ~]$ stat -c "%A (%a) %U %G" /var/www/customers/public_html/index.html
+vagrant@default-ubuntu-1404:~$ stat -c "%A (%a) %U %G" /var/www/customers/public_html/index.html
 -rw-r--r-- (644) web_admin web_admin
 ```
 
@@ -399,34 +357,15 @@ Now verify that the `httpd-customers` service is running.
 
 ```bash
 # ~
-[vagrant@default-ubuntu-1404 ~]$ sudo service httpd-customers status
-Redirecting to /bin/systemctl status  httpd-customers.service
-● httpd-customers.service - The Apache HTTP Server
-   Loaded: loaded (/usr/lib/systemd/system/httpd-customers.service; enabled; vendor preset: disabled)
-   Active: active (running) since Tue 2016-02-02 16:21:55 UTC; 15min ago
-  Process: 26986 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=0/SUCCESS)
-  Process: 26776 ExecReload=/usr/sbin/httpd-customers -f /etc/httpd-customers/conf/httpd.conf -k graceful (code=exited, status=0/SUCCESS)
- Main PID: 26991 (httpd-customers)
-   Status: "Total requests: 1; Current requests/sec: 0; Current traffic:   0 B/sec"
-   CGroup: /system.slice/httpd-customers.service
-           ├─26991 /usr/sbin/httpd-customers -f /etc/httpd-customers/conf/htt...
-           ├─26992 /usr/sbin/httpd-customers -f /etc/httpd-customers/conf/htt...
-           ├─26993 /usr/sbin/httpd-customers -f /etc/httpd-customers/conf/htt...
-           ├─26994 /usr/sbin/httpd-customers -f /etc/httpd-customers/conf/htt...
-           ├─26995 /usr/sbin/httpd-customers -f /etc/httpd-customers/conf/htt...
-           ├─26996 /usr/sbin/httpd-customers -f /etc/httpd-customers/conf/htt...
-           └─27000 /usr/sbin/httpd-customers -f /etc/httpd-customers/conf/htt...
-
-Feb 02 16:21:55 default-ubuntu-1404 systemd[1]: Starting The Apache HTTP Server...
-Feb 02 16:21:55 default-ubuntu-1404 systemd[1]: Started The Apache HTTP Server.
-Hint: Some lines were ellipsized, use -l to show in full.
+vagrant@default-ubuntu-1404:~$ sudo service apache2-customers status
+ * apache2 is running
 ```
 
 Finally, verify that the home page is in the location we expect.
 
 ```bash
 # ~
-[vagrant@default-ubuntu-1404 ~]$ more /var/www/customers/public_html/index.html
+vagrant@default-ubuntu-1404:~$ more /var/www/customers/public_html/index.html
 <html>This is a placeholder</html>
 ```
 
@@ -434,7 +373,7 @@ Now log out.
 
 ```bash
 # ~
-[vagrant@default-ubuntu-1404 ~]$ logout
+vagrant@default-ubuntu-1404:~$ logout
 Connection to 127.0.0.1 closed.
 ```
 

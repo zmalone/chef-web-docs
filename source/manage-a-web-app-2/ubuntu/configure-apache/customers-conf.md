@@ -15,11 +15,11 @@
           Require all granted
   </Directory>
 
-  ErrorLog /var/log/httpd/error.log
+  ErrorLog /var/log/apache2/error.log
 
   LogLevel warn
 
-  CustomLog /var/log/httpd/access.log combined
+  CustomLog /var/log/apache2/access.log combined
   ServerSignature Off
 
   AddType application/x-httpd-php .php
