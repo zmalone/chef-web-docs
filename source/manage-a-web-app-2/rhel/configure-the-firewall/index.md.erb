@@ -10,7 +10,7 @@ meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Now let's configure the firewall. You need inbound access on port 22 (SSH) so that you can run `chef-client` remotely from your workstation and so that you can log in and verify that your server is configured as we expect. You also need inbound access on port 80 (HTTP) so users can access your web site.
 
-The easiest way to set firewall rules is to use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook from Chef Supermarket. The `firewall` works on multiple platforms; on Red Hat Enterprise Linux 7 and CentOS 7, it configures [firewalld](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html).
+The easiest way to set firewall rules is to use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook from Chef Supermarket. The `firewall` cookbook works on multiple platforms; on Red Hat Enterprise Linux 7 and CentOS 7, it configures the dynamic firewall daemon [firewalld](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html).
 
 [START_BOX]
 
@@ -55,9 +55,9 @@ Recipe: code_generator::recipe
     - create new file cookbooks/awesome_customers_rhel/recipes/firewall.rb
     - update content in file cookbooks/awesome_customers_rhel/recipes/firewall.rb from none to cc51cd
     (diff output suppressed by config)
-``` 
+```
 
-At this point, there are two things that are named "firewall" &ndash; the `firewall` cookbook from Chef Supermarket and your `awesome_customers_rhel::firewall` recipe. 
+At this point, there are two things that are named "firewall" &ndash; the `firewall` cookbook from Chef Supermarket and your `awesome_customers_rhel::firewall` recipe.
 
 [END_BOX]
 
@@ -169,7 +169,7 @@ include_recipe 'awesome_customers_rhel::firewall'
 
 ## 6. Apply and verify the configuration
 
-Like you did for the SELinux configuration, let's run the cookbook and verify that it's configured as we expect. Run `kitchen converge` to apply the `awesome_customers_rhel` cookbook. 
+Like you did for the SELinux configuration, let's run the cookbook and verify that it's configured as we expect. Run `kitchen converge` to apply the `awesome_customers_rhel` cookbook.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
@@ -247,9 +247,9 @@ $ kitchen converge
 -----> Kitchen is finished. (0m30.03s)
 ```
 
-You'll see from the output that ports 22 and 80 are opened to the firewall. You'll also see that the `firewall` cookbook creates rule filters for `RELATED` and `ESTABLISHED` traffic.
+You'll see from the output that ports 22 and 80 are open to the firewall. You'll also see that the `firewall` cookbook creates rule filters for `RELATED` and `ESTABLISHED` traffic.
 
-Let's log in to the instance and verify the firewall configuration. Run `kitchen login` to login to your instance.
+Let's log in to the instance and verify the firewall configuration. Run `kitchen login` to log in to your instance.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel

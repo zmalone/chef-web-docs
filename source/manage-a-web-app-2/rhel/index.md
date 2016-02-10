@@ -14,7 +14,7 @@ In this tutorial, you'll have the opportunity to practice what you've learned in
 
 Now you'll build a basic but complete web application on CentOS called Customers that uses a web server, a database, and scripting. Such a configuration is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll write a cookbook that's named `awesome_customers_rhel`.
 
-In the first part of this tutorial, you'll use an iterative process to build and verify each part of your web application. You'll do this all using Test Kitchen and a virtual machine that runs on your workstation.
+In the first part of this tutorial, you'll use an iterative process to build and verify each part of your web application. You'll do this by using Test Kitchen and a virtual machine that runs on your workstation.
 
 After successfully verifying the completed web application locally, you'll set up a CentOS 7 node to bootstrap, upload your cookbook to the Chef server, bootstrap your node, and apply your web server configuration.
 
