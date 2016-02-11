@@ -204,7 +204,7 @@ $ $cert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -Dn
 Here's an example for AWS.
 
 ```ps
-$ $cert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -DnsName 'ec2-52-35-73-30.us-west-2.compute.amazonaws.com'
+$ $cert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -DnsName 'ec2-52-34-18-177.us-west-2.compute.amazonaws.com'
 ```
 
 ### Add an HTTPS listener
@@ -216,6 +216,8 @@ First, delete any existing HTTPS listener.
 ```ps
 $ winrm delete winrm/config/Listener?Address=*+Transport=HTTPS
 ```
+
+If you receive an error, that's likely OK. An error will typically indicate that there was no existing HTTPS listener.
 
 Now run this to create a new listener.
 
@@ -255,60 +257,56 @@ Ok.
 
 ## 5. Verify the configuration
 
-From your workstation, you'll now verify that your Windows Server node can receive network traffic on port 5986 and through the firewall. There are two options, depending on where your node is running and which operating system your workstation is running.
+From your workstation, you'll now verify that your Windows Server node can receive network traffic on port 5986 and through the firewall. You don't have to do this every time you bootstrap a node, but verifying that your node is connectable will help ensure that the bootstrap process succeeds.
 
-You don't have to do this every time you bootstrap a node, but verifying that your node is connectable will help ensure that the bootstrap process succeeds.
+To verify the connection, you'll use the `knife wsman test` command, which is provided by the `knife-windows` plugin. This command provides functionality that's similar to PowerShell's 
+[Test-WSMan](https://technet.microsoft.com/en-us/library/hh849873.aspx) cmdlet, but is available from any operating system that can run Chef DK, including Windows, Mac OS, and Linux.
 
-### Verify using Test-NetConnection
+First, let's verify that your Windows Server node is indeed using a self-signed certificate. 
 
-Run the [Test-NetConnection](https://technet.microsoft.com/en-us/library/dn372891.aspx) PowerShell cmdlet if your node is not running on Azure and you're running Windows 8.1 or Windows 10 on your workstation. Here's an example.
-
-[COMMENT] You can't use `Test-NetConnection` if your node is running on Azure because Azure blocks all inbound and outbound ICMP echo request (ping) traffic through its firewall. If your node is running on Azure, use the Netcat utility as shown below.
-
-```ps
-$ Test-NetConnection ec2-52-35-73-30.us-west-2.compute.amazonaws.com -Port 5986
-
-
-ComputerName           : ec2-52-35-73-30.us-west-2.compute.amazonaws.com
-RemoteAddress          : 52.35.73.30
-RemotePort             : 5986
-InterfaceAlias         : Ethernet0
-SourceAddress          : 192.168.145.143
-PingSucceeded          : True
-PingReplyDetails (RTT) : 102 ms
-TcpTestSucceeded       : True
-```
-
-If `TcpTestSucceeded` shows as `True` in the output, you can continue to the next step. Otherwise, the output from `Test-NetConnection` can help you diagnose the connection failure.
-
-As an optional step, if `PingSucceeded` shows as `False` in the output, you may need to enable ICMP traffic through your firewall. 
-
-Run this command on your node to ensure that the built-in ICMPv4 firewall rule is enabled.
-
-```ps
-# ~
-$ netsh advfirewall firewall set rule name="File and Printer Sharing (Echo Request - ICMPv4-In)" new enable=yes
-
-Updated 1 rule(s).
-Ok.
-```
-
-If your node is running on a cloud provider such as AWS, you may also need to add a security group that allows inbound ICMP traffic.
-
-### Verify using Netcat
-
-Run the [Netcat](https://en.wikipedia.org/wiki/Netcat) utility if your node is running on Azure or you're running from a Linux, Mac OS, or Windows 7 workstation ([download Netcat for Windows](https://eternallybored.org/misc/netcat/)). Here's an example.
+From the <% fp '~/learn-chef' %> directory on your workstation, run the following command, replacing <% ph 'HOSTNAME' %> with the hostname you specified when you created the certificate on your node. The `--winrm-transport ssl` argument means that you want to verify a secure SSL connection over port 5986. 
 
 ```bash
-# ~
-$ nc -z -w1 ec2-52-35-73-30.us-west-2.compute.amazonaws.com 5986;echo $?
-Connection to ec2-52-35-73-30.us-west-2.compute.amazonaws.com port 5986 [tcp/wsmans] succeeded!
-0
+# ~/learn-chef
+$ knife wsman test HOSTNAME --manual-list --winrm-transport ssl
 ```
 
-<hr>
+Here's an example:
 
-[Check out this blog post](http://www.hurryupandwait.io/blog/understanding-and-troubleshooting-winrm-connection-and-authentication-a-thrill-seekers-guide-to-adventure?rq=winrm) if you need help diagnosing a connection failure. If you still need help, [ask the community](https://discourse.chef.io) on the Chef mailing list.
+```bash
+# ~/learn-chef
+$ knife wsman test ec2-52-34-18-177.us-west-2.compute.amazonaws.com --manual-list --winrm-transport ssl
+WARNING: Failed to connect to ec2-52-34-18-177.us-west-2.compute.amazonaws.com at https://ec2-52-34-18-177.us-west-2.compute.amazonaws.com:5986/wsman.
+WARNING: Failure due to an issue with SSL; likely cause would be unsuccesful certificate verification.
+WARNING: Either ensure your certificate is valid or use '--winrm-ssl-verify-mode verify_none' to ignore verification failures.
+ERROR: Failed to connect to 1 nodes.
+```
+
+The output shows that the node's certificate chain could not be verified to have a trusted root CA. This makes sense because we're using a self-signed certificate.
+
+Now run the command again, this time by appending the `--winrm-ssl-verify-mode verify_none` argument. This argument disables the verification check of the node's certificate. Here's an example:
+
+```bash
+# ~/learn-chef
+$ knife wsman test ec2-52-34-18-177.us-west-2.compute.amazonaws.com --manual-list --winrm-transport ssl --winrm-ssl-verify-mode verify_none
+WARNING: * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+SSL validation of HTTPS requests for the WinRM transport is disabled. HTTPS WinRM
+connections are still encrypted, but knife is not able to detect forged replies
+or spoofing attacks.
+
+To fix this issue add an entry like this to your knife configuration file:
+
+`` `
+  # Verify all WinRM HTTPS connections (default, recommended)
+  knife[:winrm_ssl_verify_mode] = :verify_peer
+`` `
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+Connected successfully to ec2-52-34-18-177.us-west-2.compute.amazonaws.com at https://ec2-52-34-18-177.us-west-2.compute.amazonaws.com:5986/wsman.
+```
+
+This time the command succeeds. Although bypassing certificate verification is useful for getting started or debugging connection issues, remember that the most secure way to set up a Windows Server node is to use a certificate chain that's signed by a trusted root CA.
+
+[COMMENT] If the command fails, [make sure that you have the latest knife-windows plugin](/manage-a-node/windows/get-set-up#step2). [Check out this blog post](http://www.hurryupandwait.io/blog/understanding-and-troubleshooting-winrm-connection-and-authentication-a-thrill-seekers-guide-to-adventure?rq=winrm) or [ask the community](https://discourse.chef.io) on the Chef mailing list if you need further help diagnosing a connection failure.
 
 [END_BOX]
 
