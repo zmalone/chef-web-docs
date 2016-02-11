@@ -14,7 +14,7 @@ In this part, you'll configure PHP and create a basic PHP app that reads the rec
 
 You've done most of the ground work &ndash; for example you've already set up a place to hold your custom site and you've opened up port 80 to incoming traffic.
 
-To configure PHP, you're going to install the native `php-mysql` package, which enables PHP code to connect to MySQL databases. You'll first install the `mod_php` Apache module, which enables Apache to interpret PHP files.
+To configure PHP, you're going to install the native `php5-mysql` package, which enables PHP code to connect to MySQL databases. You'll first install the `mod_php5` Apache module, which enables Apache to interpret PHP files.
 
 [START_BOX]
 
@@ -51,22 +51,22 @@ file "#{node['awesome_customers_ubuntu']['document_root']}/index.html" do
 end
 ```
 
-The `httpd` cookbook defines the `httpd_module` resource, which installs Apache modules. In <code class="file-path">web.rb</code>, append this `httpd_module` resource to install the `mod_php` Apache module.
+The `httpd` cookbook defines the `httpd_module` resource, which installs Apache modules. In <code class="file-path">web.rb</code>, append this `httpd_module` resource to install the `mod_php5` Apache module.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/web.rb
-# Install the mod_php Apache module.
-httpd_module 'php' do
+# Install the mod_php5 Apache module.
+httpd_module 'php5' do
   instance 'customers'
 end
 ```
 
-Now append a `package` resource to install `php-mysql`.
+Now append a `package` resource to install `php5-mysql`.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/web.rb
-# Install php-mysql.
-package 'php-mysql' do
+# Install php5-mysql.
+package 'php5-mysql' do
   action :install
   notifies :restart, 'httpd_service[customers]'
 end
@@ -102,19 +102,19 @@ file "#{node['awesome_customers_ubuntu']['document_root']}/index.html" do
   group node['awesome_customers_ubuntu']['group']
 end
 
-# Install the mod_php Apache module.
-httpd_module 'php' do
+# Install the mod_php5 Apache module.
+httpd_module 'php5' do
   instance 'customers'
 end
 
-# Install php-mysql.
-package 'php-mysql' do
+# Install php5-mysql.
+package 'php5-mysql' do
   action :install
   notifies :restart, 'httpd_service[customers]'
 end
 ```
 
-Apache needs to be restarted to enable PHP to use the `php-mysql` package. To do that, we use the [notifies](https://docs.chef.io/resource_common.html#notifications) attribute. The `notifies` attribute performs the `:restart` action on the `httpd-customers` service. But it does so only when it needs to; that is, only when the `package` resource actually performs the `:install` action.
+Apache needs to be restarted to enable PHP to use the `php5-mysql` package. To do that, we use the [notifies](https://docs.chef.io/resource_common.html#notifications) attribute. The `notifies` attribute performs the `:restart` action on the `httpd-customers` service. But it does so only when it needs to; that is, only when the `package` resource actually performs the `:install` action.
 
 [END_BOX]
 
@@ -337,7 +337,6 @@ Run `kitchen converge` to apply the `awesome_customers_ubuntu` cookbook.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
 -----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
        Preparing dna.json
@@ -349,8 +348,8 @@ $ kitchen converge
        Preparing client.rb
 [...]
            - update content in file /var/www/customers/public_html/index.php from none to 2d6d89
-           --- /var/www/customers/public_html/index.php	2016-02-04 01:30:01.760279731 +0000
-           +++ /var/www/customers/public_html/.index.php20160204-32712-d2ikex	2016-02-04 01:30:01.760279731 +0000
+           --- /var/www/customers/public_html/index.php	2016-02-11 03:42:30.072751575 +0000
+           +++ /var/www/customers/public_html/.index.php20160211-16379-82idh2	2016-02-11 03:42:30.072751575 +0000
            @@ -1 +1,56 @@
            +<!DOCTYPE html>
            +<html lang="en">
@@ -368,16 +367,16 @@ $ kitchen converge
 [...]
        Running handlers:
        Running handlers complete
-       Chef Client finished, 11/208 resources updated in 32 seconds
-       Finished converging <default-ubuntu-1404> (0m36.62s).
------> Kitchen is finished. (0m37.25s)
+       Chef Client finished, 10/241 resources updated in 18 seconds
+       Finished converging <default-ubuntu-1404> (0m21.56s).
+-----> Kitchen is finished. (0m22.15s)
 ```
 
 In practice, you might log into your node and verify that PHP was installed properly. But let's skip ahead and browse to your web application from a browser on your workstation.
 
 Navigate to your site at http://192.168.34.34.
 
-![](misc/manage_customers_final.png)
+![](misc/manage_customers_final_34.png)
 
 Congratulations! You've successfully configured an entire application stack using Chef!
 
@@ -393,8 +392,8 @@ $ kitchen destroy
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
        Vagrant instance <default-ubuntu-1404> destroyed.
-       Finished destroying <default-ubuntu-1404> (0m4.68s).
------> Kitchen is finished. (0m5.27s)
+       Finished destroying <default-ubuntu-1404> (0m4.48s).
+-----> Kitchen is finished. (0m5.07s)
 ```
 
 Now run `kitchen converge` to bring up a clean instance and apply your cookbook.
