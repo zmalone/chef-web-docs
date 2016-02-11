@@ -20,13 +20,13 @@ First, modify <code class="file-path">metadata.rb</code> to load the `firewall` 
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/metadata.rb
-name             'awesome_customers_rhel'
-maintainer       'The Authors'
+name 'awesome_customers_rhel'
+maintainer 'The Authors'
 maintainer_email 'you@example.com'
-license          'all_rights'
-description      'Installs/Configures awesome_customers_rhel'
+license 'all_rights'
+description 'Installs/Configures awesome_customers_rhel'
 long_description 'Installs/Configures awesome_customers_rhel'
-version          '0.1.0'
+version '0.1.0'
 
 depends 'selinux', '~> 0.9.0'
 depends 'firewall', '~> 2.4.0'
@@ -106,25 +106,21 @@ Recipe: code_generator::attribute
 
 This command adds the <code class="file-path">default.rb</code> attribute file to the<br><code class="file-path">~/learn-chef/cookbooks/awesome\_customers_rhel/attributes</code> directory.
 
-Now add the following to your attributes files, <code class="file-path">default.rb</code>.
+Now add the following to your attributes file, <code class="file-path">default.rb</code>.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
 default['firewall']['allow_ssh'] = true
 default['firewall']['firewalld']['permanent'] = false
-default['firewall']['ipv6_enabled'] = false
-default['firewall']['allow_established'] = true
 default['awesome_customers_rhel']['open_ports'] = 80
 ```
 
-The first four node attributes are provided by the `firewall` cookbook. Here's a brief description of each:
+The first two attributes are provided by the `firewall` cookbook. Here's a brief description of each:
 
 * Line 1 specifies whether the `firewall` cookbook's default recipe should open port 22.
 * Line 2 specifies whether to set the rules permanently so that they persist after reboot.
-* Line 3 specifies whether ICMPv6 (ping) requests should be enabled. We set this to `false` because we don't need IPv6 functionality.
-* Line 4 specifies whether to allow related/established traffic.
 
-The `default['awesome_customers_rhel']['open_ports']` node attribute is a custom node attribute that we define. We specify port 80 to be the additional port to open. We could use the array syntax to specify multiple ports, for example, `[80, 443]`.
+The `default['awesome_customers_rhel']['open_ports']` node attribute (line 3) is a custom node attribute that we define. We specify port 80 to be the additional port to open. We could use the array syntax to specify multiple ports, for example, `[80, 443]`.
 
 [END_BOX]
 
@@ -194,57 +190,64 @@ $ kitchen converge
        Compiling Cookbooks...
 [...]
        Recipe: firewall::default
-
+         * firewall[default] action install
            - install firewalld, create template for /etc/sysconfig
-        (up to date)
+         * yum_package[firewalld] action install (up to date)
 
            - enable service service[firewalld]
+         * service[firewalld] action start
 
-           - start service service[firewalld]
          * file[create empty /etc/sysconfig/firewalld-chef.rules] action create
 
            - update content in file /etc/sysconfig/firewalld-chef.rules from none to fa85ee
-
-           +++ /etc/sysconfig/.firewalld-chef.rules20160202-25554-9lyzf5	2016-02-02 05:47:59.520615390 +0000
+           --- /etc/sysconfig/firewalld-chef.rules	2016-02-05 20:25:48.573209000 +0000
+           +++ /etc/sysconfig/.firewalld-chef.rules20160205-25969-12gar62	2016-02-05 20:25:48.565204999 +0000
            @@ -1 +1,2 @@
 
 
          * firewall_rule[allow world to ssh] action create
 
          * firewall_rule[allow world to winrm] action create (skipped due to only_if)
-         * firewall_rule[established] action create
 
-         * firewall_rule[ipv6_icmp] action create (skipped due to only_if)
+
+         * firewall_rule[ipv6_icmp] action create
+
        Recipe: awesome_customers_rhel::firewall
-         * firewall_rule[open ports 80] action create
 
-       Recipe: firewall::default
 
+         * firewall[default] action save (up to date)
+         * firewall[default] action restart
             (skipped due to only_if)
-          (skipped due to only_if)
-       * file[/etc/sysconfig/firewalld-chef.rules] action create
-         - update content in file /etc/sysconfig/firewalld-chef.rules from fa85ee to 4fb944
-         --- /etc/sysconfig/firewalld-chef.rules	2016-02-02 05:47:59.520615390 +0000
-         +++ /etc/sysconfig/.firewalld-chef.rules20160202-25554-3u79b3	2016-02-02 05:48:00.000855390 +0000
-         @@ -1,2 +1,7 @@
-         -# created by chef to allow service to start
-         +# position 50
-         +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 22 -m comment --comment 'allow world to ssh' -j ACCEPT
-         +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
-         +firewall-cmd --direct --add-rule ipv6 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
-         +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
+         * file[/etc/sysconfig/firewalld-chef.rules] action create
+           - update content in file /etc/sysconfig/firewalld-chef.rules from fa85ee to ec238a
+           --- /etc/sysconfig/firewalld-chef.rules	2016-02-05 20:25:48.565204999 +0000
+           +++ /etc/sysconfig/.firewalld-chef.rules20160205-25969-pyscdn	2016-02-05 20:25:50.551197500 +0000
+           @@ -1,2 +1,14 @@
+           -# created by chef to allow service to start
+           +# position 50
+           +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 22 -m comment --comment 'allow world to ssh' -j ACCEPT
+           +firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 22 -m comment --comment 'allow world to ssh' -j ACCEPT
+           +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
+           +firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
+           +firewall-cmd --direct --add-rule ipv6 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
+           +firewall-cmd --permanent --direct --add-rule ipv6 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
+           +firewall-cmd --direct --add-rule ipv6 filter INPUT 50 -p ipv6-icmp -m comment --comment 'ipv6_icmp' -j ACCEPT
+           +firewall-cmd --permanent --direct --add-rule ipv6 filter INPUT 50 -p ipv6-icmp -m comment --comment 'ipv6_icmp' -j ACCEPT
+           +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
+           +firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
+           +firewall-cmd --direct --add-rule ipv6 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
 
-
-       [2016-02-02T05:48:00+00:00] WARN: Cloning resource attributes for service[firewalld] from prior resource (CHEF-3694)
-       [2016-02-02T05:48:00+00:00] WARN: Previous service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:38:in `block (2 levels) in <class:FirewallFirewalld>'
-       [2016-02-02T05:48:00+00:00] WARN: Current  service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:92:in `block in <class:FirewallFirewalld>'
+           - restore selinux security context
+       [2016-02-05T20:25:50+00:00] WARN: Cloning resource attributes for service[firewalld] from prior resource (CHEF-3694)
+       [2016-02-05T20:25:50+00:00] WARN: Previous service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:38:in `block (2 levels) in <class:FirewallFirewalld>'
+       [2016-02-05T20:25:50+00:00] WARN: Current  service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:92:in `block in <class:FirewallFirewalld>'
 
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 10/19 resources updated in 24 seconds
-       Finished converging <default-centos-72> (0m29.44s).
------> Kitchen is finished. (0m30.03s)
+       Chef Client finished, 11/19 resources updated in 44 seconds
+       Finished converging <default-centos-72> (1m7.78s).
+-----> Kitchen is finished. (3m29.61s)
 ```
 
 You'll see from the output that ports 22 and 80 are open to the firewall. You'll also see that the `firewall` cookbook creates rule filters for `RELATED` and `ESTABLISHED` traffic.
@@ -280,6 +283,7 @@ ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 22 -m comment --comment
 ipv4 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment established -j ACCEPT
 ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
 ipv6 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment established -j ACCEPT
+ipv6 filter INPUT 50 -p ipv6-icmp -m comment --comment ipv6_icmp -j ACCEPT
 ipv6 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
 ```
 

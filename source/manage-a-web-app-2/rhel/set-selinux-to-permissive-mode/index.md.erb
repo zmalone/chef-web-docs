@@ -8,7 +8,7 @@ next: {heading: Next, partial: next}
 time_to_complete: 10 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-[HEADLINE] Chef Supermarket provides cookbooks that perform many common tasks but a single cookbook can have multiple versions. Specifying, or _pinning_, cookbook versions helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production.
+[HEADLINE] Chef Supermarket provides cookbooks that perform many common tasks, but a single cookbook can have multiple versions. Specifying, or _pinning_, cookbook versions helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production.
 
 Enforcing your organization's security requirements is important. On Red Hat Enterprise Linux and CentOS, [Security-Enhanced Linux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux), or SELinux, is enabled by default. It's likely that SELinux will be configured to run under _permissive_ mode, meaning it will log security violations, but it will not enforce restricted policies. For learning purposes, we'll ensure that system security is relaxed so we don't have to deal with the complexity it introduces.
 
@@ -28,13 +28,13 @@ The way you load one cookbook from inside another is to reference it in your coo
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/metadata.rb
-name             'awesome_customers_rhel'
-maintainer       'The Authors'
+name 'awesome_customers_rhel'
+maintainer 'The Authors'
 maintainer_email 'you@example.com'
-license          'all_rights'
-description      'Installs/Configures awesome_customers_rhel'
+license 'all_rights'
+description 'Installs/Configures awesome_customers_rhel'
 long_description 'Installs/Configures awesome_customers_rhel'
-version          '0.1.0'
+version '0.1.0'
 
 depends 'selinux', '~> 0.9.0'
 ```
@@ -62,6 +62,8 @@ There are [multiple ways to specify version constraints](http://docs.chef.io/coo
 [START_BOX]
 
 ## 2. Run the selinux::permissive recipe
+
+For our web application project, we'll use what's called the _application cookbook pattern_. An application cookbook typically contains multiple recipes, where each recipe configures one part of the system. The default recipe, <code class="file-path">default.rb</code>, lists these recipes in the order needed to build your application or service.
 
 The `selinux::permissive` recipe does everything we need to ensure that SELinux is running in permissive mode. To run this recipe, add the line `include_recipe 'selinux::permissive'` to the beginning of your cookbook's default recipe, <code class="file-path">default.rb</code>.
 
