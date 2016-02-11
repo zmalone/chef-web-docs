@@ -32,8 +32,6 @@ Like you did in [Learn to manage a node](/manage-a-node/ubuntu/), bring up an Ub
 
 [Read this page](/manage-a-node/ubuntu/get-a-node-to-bootstrap/) if you need a refresher on how to prepare your node for the bootstrap process.
 
-[COMMENT] We're in the process of updating the refresher material to work with Ubuntu 14.04 &ndash; the current instructions are for version 6. For now, you'll need to adapt the instructions for version 7.
-
 At this point, your node should have ports 22, 80, and 443 open through the firewall. You also need your node's host name or public IP address, as well as an account that has root or `sudo` access and its password. If you use key-based authentication to connect to your instance, note the location of your private key file.
 
 [END_BOX]
@@ -57,16 +55,16 @@ default['awesome_customers_ubuntu']['secret_file'] = '/etc/chef/encrypted_data_b
 
 If you receive the error "Permission denied" from the commands that follow, try another directory, for example <% fp '~/chef' %>.
 
-If you do choose another directory, be sure to update your `node['awesome_customers_ubuntu']['secret_file']` node attribute to specify the fully-qualified path to the secret file on the node, for example,<br><% fp '/home/ec2-user/chef/encrypted_data_bag_secret' %>.
+If you do choose another directory, be sure to update your `node['awesome_customers_ubuntu']['secret_file']` node attribute to specify the fully-qualified path to the secret file on the node, for example,<br><% fp '/home/ubuntu/chef/encrypted_data_bag_secret' %>.
 
-If you use a username and password to connect to your node, run the following commands from the <% fp '~/learn-chef' %> directory to copy your secret key to your node. As needed, replace the IP address with your node's IP address and `root` with your username.
+If you use a username and password to connect to your node, run the following commands from the <% fp '~/learn-chef' %> directory to copy your secret key to your node. As needed, replace the IP address with your node's IP address and `ubuntu` with your username.
 
 ```bash
 # ~/learn-chef
-$ ssh root@52.10.205.36 'mkdir -p /etc/chef'
-root@52.10.205.36's password:
-$ scp .chef/encrypted_data_bag_secret root@52.10.205.36:/etc/chef
-root@52.10.205.36's password:
+$ ssh ubuntu@52.10.205.36 'mkdir -p /etc/chef'
+ubuntu@52.10.205.36's password:
+$ scp .chef/encrypted_data_bag_secret ubuntu@52.10.205.36:/etc/chef
+ubuntu@52.10.205.36's password:
 encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
 ```
 
@@ -74,8 +72,8 @@ If you use key-based encryption to connect, the commands look similar to these.
 
 ```bash
 # ~/learn-chef
-$ ssh -i ~/.ssh/my.pem root@52.10.205.36 'mkdir -p /etc/chef'
-$ scp -i ~/.ssh/my.pem .chef/encrypted_data_bag_secret root@52.10.205.36:/etc/chef
+$ ssh -i ~/.ssh/my.pem ubuntu@52.10.205.36 'mkdir -p /etc/chef'
+$ scp -i ~/.ssh/my.pem .chef/encrypted_data_bag_secret ubuntu@52.10.205.36:/etc/chef
 encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
 ```
 
@@ -181,10 +179,10 @@ Fetching 'awesome_customers_ubuntu' from source at .
 Fetching cookbook index from https://supermarket.chef.io...
 Installing apt (2.9.2)
 Installing build-essential (2.2.4)
-Installing compat_resource (12.7.0)
-Installing database (4.0.9)
 Installing chef-sugar (3.3.0)
+Installing compat_resource (12.7.1)
 Installing firewall (2.4.0)
+Installing database (4.0.9)
 Using awesome_customers_ubuntu (0.1.0) from source at .
 Installing httpd (0.3.4)
 Installing mariadb (0.3.1)
@@ -193,9 +191,8 @@ Installing mysql2_chef_gem (1.0.2)
 Installing openssl (4.4.0)
 Installing postgresql (4.0.0)
 Installing rbac (1.0.3)
-Installing selinux (0.9.0)
 Installing smf (2.2.7)
-Installing yum (3.9.0)
+Installing yum (3.10.0)
 Installing yum-epel (0.6.5)
 Installing yum-mysql-community (0.1.21)
 ```
@@ -204,15 +201,12 @@ Berkshelf installs dependent cookbooks to the <code class="file-path">~/.berkshe
 
 ```bash
 $ ls ~/.berkshelf/cookbooks
-apt-2.9.2                  mysql2_chef_gem-1.0.2
-build-essential-2.2.4      openssl-4.4.0
-chef-sugar-3.3.0           postgresql-4.0.0
-compat_resource-12.7.0     rbac-1.0.3
-database-4.0.9             selinux-0.9.0
-firewall-2.4.0             smf-2.2.7
-httpd-0.3.4                yum-3.9.0
-mariadb-0.3.1              yum-epel-0.6.5
-mysql-6.1.2                yum-mysql-community-0.1.21
+apt-2.9.2                  httpd-0.3.4                rbac-1.0.3
+build-essential-2.2.4      mariadb-0.3.1              smf-2.2.7
+chef-sugar-3.3.0           mysql-6.1.2                yum-3.10.0
+compat_resource-12.7.1     mysql2_chef_gem-1.0.2      yum-epel-0.6.5
+database-4.0.9             openssl-4.4.0              yum-mysql-community-0.1.21
+firewall-2.4.0             postgresql-4.0.0
 ```
 
 ### Use Berkshelf to upload the cookbooks to the Chef server
@@ -228,7 +222,7 @@ Uploaded apt (2.9.2) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded awesome_customers_ubuntu (0.1.0) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded build-essential (2.2.4) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded chef-sugar (3.3.0) to: 'https://api.chef.io:443/organizations/your_org'
-Uploaded compat_resource (12.7.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded compat_resource (12.7.1) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded database (4.0.9) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded firewall (2.4.0) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded httpd (0.3.4) to: 'https://api.chef.io:443/organizations/your_org'
@@ -238,9 +232,8 @@ Uploaded mysql2_chef_gem (1.0.2) to: 'https://api.chef.io:443/organizations/your
 Uploaded openssl (4.4.0) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded postgresql (4.0.0) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded rbac (1.0.3) to: 'https://api.chef.io:443/organizations/your_org'
-Uploaded selinux (0.9.0) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded smf (2.2.7) to: 'https://api.chef.io:443/organizations/your_org'
-Uploaded yum (3.9.0) to: 'https://api.chef.io:443/organizations/your_org'
+Uploaded yum (3.10.0) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded yum-epel (0.6.5) to: 'https://api.chef.io:443/organizations/your_org'
 Uploaded yum-mysql-community (0.1.21) to: 'https://api.chef.io:443/organizations/your_org'
 ```
@@ -249,30 +242,29 @@ Uploaded yum-mysql-community (0.1.21) to: 'https://api.chef.io:443/organizations
 
 ### Verify that the upload process succeeded
 
-To prove that the cookbooks uploaded successfully, run `knife cookbook list`.
+To prove that the cookbooks uploaded successfully, run `knife cookbook list` from your <% fp '~/learn-chef' %> directory.
 
 ```bash
-# ~/learn-chef/cookbooks/awesome_customers_ubuntu
+# ~/learn-chef
 $ knife cookbook list
-apt                      2.9.2
+apt                        2.9.2
 awesome_customers_ubuntu   0.1.0
-build-essential          2.2.4
-chef-sugar               3.3.0
-compat_resource          12.7.0
-database                 4.0.9
-firewall                 2.4.0
-httpd                    0.3.4
-mariadb                  0.3.1
-mysql                    6.1.2
-mysql2_chef_gem          1.0.2
-openssl                  4.4.0
-postgresql               4.0.0
-rbac                     1.0.3
-selinux                  0.9.0
-smf                      2.2.7
-yum                      3.9.0
-yum-epel                 0.6.5
-yum-mysql-community      0.1.21
+build-essential            2.2.4
+chef-sugar                 3.3.0
+compat_resource            12.7.1
+database                   4.0.9
+firewall                   2.4.0
+httpd                      0.3.4
+mariadb                    0.3.1
+mysql                      6.1.2
+mysql2_chef_gem            1.0.2
+openssl                    4.4.0
+postgresql                 4.0.0
+rbac                       1.0.3
+smf                        2.2.7
+yum                        3.10.0
+yum-epel                   0.6.5
+yum-mysql-community        0.1.21
 ```
 
 Chef server now contains everything you need to run `chef-client` on your node.
