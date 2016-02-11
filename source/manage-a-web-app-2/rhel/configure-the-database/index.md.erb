@@ -38,7 +38,7 @@ depends 'mysql', '~> 6.1.2'
 depends 'database', '~> 4.0.9'
 ```
 
-[COMMENT] Don't confuse the `database` cookbook from Chef Supermarket with your `database` recipe. 
+[COMMENT] Don't confuse the `database` cookbook from Chef Supermarket with your `database` recipe.
 
 [END_BOX]
 
@@ -88,7 +88,6 @@ The entire file looks like this.
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
 default['firewall']['allow_ssh'] = true
 default['firewall']['firewalld']['permanent'] = false
-default['firewall']['ipv6_enabled'] = false
 default['awesome_customers_rhel']['open_ports'] = 80
 
 default['awesome_customers_rhel']['user'] = 'web_admin'
@@ -196,7 +195,7 @@ mysql_database_user 'db_admin' do
 end
 ```
 
-This code sets up the `db_admin` user with `CREATE` and `GRANT` permissions to the `my_company` database. It also sets the user's initial password (recall that we used the admin password "mysql\_admin_password" when we created the data bag item for the database passwords.) 
+This code sets up the `db_admin` user with `CREATE` and `GRANT` permissions to the `my_company` database. It also sets the user's initial password (recall that we used the admin password "mysql\_admin_password" when we created the data bag item for the database passwords.)
 
 Let's perform a similar process to separate the logic from the data. We already know how to update the connection info. We also already have node attributes that define the host name and database name, and we already have access to the database passwords.
 
@@ -217,7 +216,6 @@ The entire file looks like this.
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
 default['firewall']['allow_ssh'] = true
 default['firewall']['firewalld']['permanent'] = false
-default['firewall']['ipv6_enabled'] = false
 default['awesome_customers_rhel']['open_ports'] = 80
 
 default['awesome_customers_rhel']['user'] = 'web_admin'
@@ -305,7 +303,7 @@ end
 
 Now the `my_company` database is set up, along with a user to manage it. Next, let's create a database table along with some sample data.
 
-We'll create a MySQL script that defines the table and our sample data, and then invoke that script from your recipe.
+We'll create a MySQL script that defines the table and our sample data, and then invoke that script from our recipe.
 
 From your <% fp '~/learn-chef' %> directory, start by running the following `chef generate file` command to create a file that will hold the script.
 
@@ -406,7 +404,6 @@ Append the `node['awesome_customers_rhel']['database']['create_tables_script']` 
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
 default['firewall']['allow_ssh'] = true
 default['firewall']['firewalld']['permanent'] = false
-default['firewall']['ipv6_enabled'] = false
 default['awesome_customers_rhel']['open_ports'] = 80
 
 default['awesome_customers_rhel']['user'] = 'web_admin'
@@ -513,7 +510,7 @@ end
 
 Let's apply the configuration and verify that `my_company` database, `db_admin` user, and `customers` table are properly configured. If you chose a root database password other than "mysql\_root_password", be sure to use that password in the commands that follow.
 
-First, run `kitchen converge` to apply the `awesome_customers_rhel` cookbook. 
+First, run `kitchen converge` to apply the `awesome_customers_rhel` cookbook.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel

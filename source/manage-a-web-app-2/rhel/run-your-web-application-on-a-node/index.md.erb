@@ -10,7 +10,7 @@ meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Now that you have the Customers web application working on a local test instance through Test Kitchen, you can apply your `awesome_customers_rhel` cookbook to a real server, or node.
 
-This part is optional, but it's a good opportunity to practice uploading your cookbooks to Chef server and then applying them to a bootstrapped node. In the process, you'll also learn how to use Berkshelf to automatically identify and resolve dependencies that your cookbook has on others.
+This part is optional, but it's a good opportunity to practice uploading your cookbooks to Chef server and then applying them to a bootstrapped node. In the process, you'll also learn how to use Berkshelf to automatically identify and resolve dependencies that your cookbook has on other cookbooks.
 
 You'll need to [set up a Chef server account](/manage-a-node/rhel/set-up-your-chef-server/) if you don't already have one.
 
@@ -30,7 +30,7 @@ Here are the steps you'll follow:
 
 Like you did in [Learn to manage a node](/manage-a-node/rhel/), bring up a Red Hat Enterprise Linux 7 or CentOS 7 server to manage. Your server can run on spare hardware, a cloud instance, or even a virtual machine.
 
-[Read this page](/manage-a-node/rhel/get-a-node-to-bootstrap/) if you need a refresher on how to prepare your node for the bootstrap process. Then come back to this page.
+[Read this page](/manage-a-node/rhel/get-a-node-to-bootstrap/) if you need a refresher on how to prepare your node for the bootstrap process.
 
 [COMMENT] We're in the process of updating the refresher material to work with Red Hat Enterprise Linux 7 and CentOS 7 &ndash; the current instructions are for version 6. For now, you'll need to adapt the instructions for version 7.
 
@@ -249,10 +249,10 @@ Uploaded yum-mysql-community (0.1.21) to: 'https://api.chef.io:443/organizations
 
 ### Verify that the upload process succeeded
 
-To prove that the cookbooks uploaded successfully, run `knife cookbook list`.
+To prove that the cookbooks uploaded successfully, run `knife cookbook list` from your <% fp '~/learn-chef' %> directory.
 
 ```bash
-# ~/learn-chef/cookbooks/awesome_customers_rhel
+# ~/learn-chef
 $ knife cookbook list
 apt                      2.9.2
 awesome_customers_rhel   0.1.0
@@ -296,22 +296,22 @@ Replace <code class="placeholder">ADDRESS</code> with your remote node's externa
 $ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name customers_web_app --run-list 'recipe[awesome_customers_rhel]'
 Creating new client for customers_web_app
 Creating new node for customers_web_app
-Connecting to 23.96.80.167
-23.96.80.167 [sudo] password for azureuser: -----> Installing Chef Omnibus (-v 12)
-23.96.80.167 downloading https://www.opscode.com/chef/install.sh
-23.96.80.167   to file /tmp/install.sh.11054/install.sh
-23.96.80.167 trying curl...
-23.96.80.167 Getting information for chef stable 12 for el...
+Connecting to 52.10.9.146
+52.10.9.146 -----> Installing Chef Omnibus (-v 12)
+52.10.9.146 downloading https://www.opscode.com/chef/install.sh
+52.10.9.146   to file /tmp/install.sh.1492/install.sh
+52.10.9.146 trying wget...
+52.10.9.146 Getting information for chef stable 12 for ubuntu...
 [...]
-23.96.80.167 Recipe: awesome_customers_rhel::web
-23.96.80.167   * httpd_service_rhel_systemd[customers] action restart
-23.96.80.167     * service[httpd-customers] action restart
-23.96.80.167       - restart service service[httpd-customers]
-23.96.80.167
-23.96.80.167
-23.96.80.167 Running handlers:
-23.96.80.167 Running handlers complete
-23.96.80.167 Chef Client finished, 132/215 resources updated in 06 minutes 19 seconds
+52.10.9.146 Recipe: awesome_customers_ubuntu::web
+52.10.9.146   * httpd_service_debian_sysvinit[customers] action restart
+52.10.9.146     * service[apache2-customers] action restart
+52.10.9.146       - restart service service[apache2-customers]
+52.10.9.146
+52.10.9.146
+52.10.9.146 Running handlers:
+52.10.9.146 Running handlers complete
+52.10.9.146 Chef Client finished, 149/244 resources updated in 02 minutes 38 seconds
 ```
 
 ### Bootstrap using key-based authentication
@@ -323,22 +323,22 @@ Replace <code class="placeholder">ADDRESS</code> with your remote node's externa
 $ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name customers_web_app --run-list 'recipe[awesome_customers_rhel]'
 Creating new client for customers_web_app
 Creating new node for customers_web_app
-Connecting to 54.69.248.21
-54.69.248.21 -----> Installing Chef Omnibus (-v 12)
-54.69.248.21 downloading https://www.opscode.com/chef/install.sh
-54.69.248.21   to file /tmp/install.sh.16492/install.sh
-54.69.248.21 trying curl...
-54.69.248.21 Getting information for chef stable 12 for el...
+Connecting to 52.10.9.146
+52.10.9.146 -----> Installing Chef Omnibus (-v 12)
+52.10.9.146 downloading https://www.opscode.com/chef/install.sh
+52.10.9.146   to file /tmp/install.sh.1492/install.sh
+52.10.9.146 trying wget...
+52.10.9.146 Getting information for chef stable 12 for ubuntu...
 [...]
-54.69.248.21 Recipe: awesome_customers_rhel::web
-54.69.248.21   * httpd_service_rhel_systemd[customers] action restart
-54.69.248.21     * service[httpd-customers] action restart
-54.69.248.21       - restart service service[httpd-customers]
-54.69.248.21
-54.69.248.21
-54.69.248.21 Running handlers:
-54.69.248.21 Running handlers complete
-54.69.248.21 Chef Client finished, 132/215 resources updated in 02 minutes 08 seconds
+52.10.9.146 Recipe: awesome_customers_ubuntu::web
+52.10.9.146   * httpd_service_debian_sysvinit[customers] action restart
+52.10.9.146     * service[apache2-customers] action restart
+52.10.9.146       - restart service service[apache2-customers]
+52.10.9.146
+52.10.9.146
+52.10.9.146 Running handlers:
+52.10.9.146 Running handlers complete
+52.10.9.146 Chef Client finished, 149/244 resources updated in 02 minutes 38 seconds
 ```
 
 [END_BOX]

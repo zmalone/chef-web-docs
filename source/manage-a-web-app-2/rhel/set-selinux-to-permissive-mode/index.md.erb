@@ -8,13 +8,13 @@ next: {heading: Next, partial: next}
 time_to_complete: 10 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-[HEADLINE] Chef Supermarket provides cookbooks that perform many common tasks. Specifying, or _pinning_, dependent cookbook versions helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production.
+[HEADLINE] Chef Supermarket provides cookbooks that perform many common tasks, but a single cookbook can have multiple versions. Specifying, or _pinning_, cookbook versions helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production.
 
 Enforcing your organization's security requirements is important. On Red Hat Enterprise Linux and CentOS, [Security-Enhanced Linux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux), or SELinux, is enabled by default. It's likely that SELinux will be configured to run under _permissive_ mode, meaning it will log security violations, but it will not enforce restricted policies. For learning purposes, we'll ensure that system security is relaxed so we don't have to deal with the complexity it introduces.
 
 Remember that Chef Supermarket is a place for the community to share cookbooks. Configuring SELinux is a common task, and the [selinux](https://supermarket.chef.io/cookbooks/selinux) cookbook on Chef Supermarket provides an easy way to accomplish that so you don't have to reinvent the wheel.
 
-In this part, you'll use the [selinux](https://supermarket.chef.io/cookbooks/selinux) cookbook from Chef Supermarket to set SELinux to permissive mode. 
+In this part, you'll use the [selinux](https://supermarket.chef.io/cookbooks/selinux) cookbook from Chef Supermarket to set SELinux to permissive mode.
 
 [COMMENT] Keep in mind that for now your goal is to learn how Chef works. It's OK if you don't understand every detail of how the community cookbooks work because you're working in a safe environment. As you gain experience, you'll want to evaluate the code and documentation to ensure that the cookbooks you get from Chef Supermarket do exactly what you expect before you apply them to your production environment.
 
@@ -28,13 +28,13 @@ The way you load one cookbook from inside another is to reference it in your coo
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/metadata.rb
-name             'awesome_customers_rhel'
-maintainer       'The Authors'
+name 'awesome_customers_rhel'
+maintainer 'The Authors'
 maintainer_email 'you@example.com'
-license          'all_rights'
-description      'Installs/Configures awesome_customers_rhel'
+license 'all_rights'
+description 'Installs/Configures awesome_customers_rhel'
 long_description 'Installs/Configures awesome_customers_rhel'
-version          '0.1.0'
+version '0.1.0'
 
 depends 'selinux', '~> 0.9.0'
 ```
@@ -63,6 +63,8 @@ There are [multiple ways to specify version constraints](http://docs.chef.io/coo
 
 ## 2. Run the selinux::permissive recipe
 
+For our web application project, we'll use what's called the _application cookbook pattern_. An application cookbook typically contains multiple recipes, where each recipe configures one part of the system. The default recipe, <code class="file-path">default.rb</code>, lists these recipes in the order needed to build your application or service.
+
 The `selinux::permissive` recipe does everything we need to ensure that SELinux is running in permissive mode. To run this recipe, add the line `include_recipe 'selinux::permissive'` to the beginning of your cookbook's default recipe, <code class="file-path">default.rb</code>.
 
 ```ruby
@@ -78,7 +80,7 @@ include_recipe 'selinux::permissive'
 
 ## 3. Apply and verify the configuration
 
-Let's apply and then verify the configuration. Run `kitchen converge` to apply the `awesome_customers_rhel` cookbook. 
+Let's apply and then verify the configuration. Run `kitchen converge` to apply the `awesome_customers_rhel` cookbook.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
@@ -115,7 +117,7 @@ $ kitchen converge
 
 In this example, SELinux was already set to permissive, so Chef takes no action.
 
-But to be sure, let's log in to the instance and verify things. Run `kitchen login` to login to your instance.
+But to be sure, let's log in to the instance and verify things. Run `kitchen login` to log in to your instance.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
