@@ -1,1 +1,1 @@
-Before we do anything else, let's ensure that your node's package manager is set up to retrieve the latest software packages.
+Before we do anything else, let's configure the Local Configuration Manager to disable consistency checking.
