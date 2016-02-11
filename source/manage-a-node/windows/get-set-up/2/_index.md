@@ -4,4 +4,9 @@ The `knife-windows` plugin enables you to configure remote Windows Server nodes 
 
 ```bash
 $ chef gem install knife-windows
+Fetching: knife-windows-1.2.1.gem (100%)
+Successfully installed knife-windows-1.2.1
+1 gem installed
 ```
+
+[COMMENT] It's important that you have `knife-windows` version 1.2.1 or later.
