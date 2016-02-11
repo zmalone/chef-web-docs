@@ -221,7 +221,7 @@ Note that you added these settings:
 
 * Line 18 specifies the root directory on your workstation where your data bags are located.
 * Lines 21&mdash;22 specify the location of your secret file on your workstation.
-* Lines 24&mdash;26 override the `node['awesome_customers_ubuntu']['secret_file']` node attribute.
+* Lines 24&mdash;26 override the `node['awesome_customers_ubuntu']['secret_file']` node attribute. (This part might look strange because you're used to writing node attributes using Ruby syntax. The Test Kitchen configuration file uses [YAML](http://yaml.org).)
 
 [END_BOX]
 
@@ -265,51 +265,41 @@ $ kitchen converge
        Starting Chef Client, version 12.6.0
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
+         - apt (2.9.2)
          - awesome_customers_ubuntu (0.1.0)
-         - selinux (0.9.0)
          - mysql2_chef_gem (1.0.2)
+         - chef-sugar (3.3.0)
+         - build-essential (2.2.4)
+         - yum-mysql-community (0.1.21)
+         - yum (3.10.0)
+         - rbac (1.0.3)
+         - firewall (2.4.0)
          - mysql (6.1.2)
          - httpd (0.3.4)
-         - firewall (2.4.0)
-         - chef-sugar (3.3.0)
-         - mariadb (0.3.1)
-         - yum-mysql-community (0.1.21)
-         - smf (2.2.7)
-         - yum (3.9.0)
+         - compat_resource (12.7.1)
          - yum-epel (0.6.5)
-         - rbac (1.0.3)
-         - compat_resource (12.7.0)
-         - build-essential (2.2.4)
-         - apt (2.9.2)
+         - smf (2.2.7)
+         - mariadb (0.3.1)
        Compiling Cookbooks...
 [...]
        Recipe: awesome_customers_ubuntu::database
          * mysql_client[default] action create
-        (up to date)
-        (up to date)
+           * apt_package[default :create mysql-client-5.5] action install (up to date)
+           * apt_package[default :create libmysqlclient-dev] action install (up to date)
             (up to date)
          * mysql_service[default] action create
+           * apt_package[default :create mysql-server-5.5] action install
 
-             - install version 5.5.47-2.el7 of package mysql-community-server
-        (up to date)
-           * service[default :create mysql] action disable (up to date)
-           * group[default :create mysql] action create (up to date)
-           * user[default :create mysql] action create (up to date)
-           * file[default :create /etc/mysql/my.cnf] action delete (up to date)
-           * file[default :create /etc/my.cnf] action delete
-             - delete file /etc/my.cnf
+           * service[default :create mysql] action stop
 
-
-           * directory[default :create /etc/mysql-default] action create
-
-             - change mode from '' to '0750'
-             - change owner from '' to 'mysql'
+           * service[default :create mysql] action disable
+             - disable service service[default :create mysql]
 [...]
        Running handlers:
        Running handlers complete
-       Chef Client finished, 38/200 resources updated in 02 minutes 35 seconds
-       Finished converging <default-ubuntu-1404> (2m41.91s).
------> Kitchen is finished. (2m42.72s)
+       Chef Client finished, 37/227 resources updated in 04 minutes 32 seconds
+       Finished converging <default-ubuntu-1404> (4m38.32s).
+-----> Kitchen is finished. (4m38.92s)
 ```
 
 Now let's verify the database configuration. Start by logging in to your instance.
@@ -317,15 +307,18 @@ Now let's verify the database configuration. Start by logging in to your instanc
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
-Last login: Wed Feb  3 21:24:18 2016 from 10.0.2.2
-[vagrant@default-ubuntu-1404 ~]$
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Thu Feb 11 02:51:40 2016 from 10.0.2.2
+vagrant@default-ubuntu-1404:~$
 ```
 
 First, verify that the MySQL service is running.
 
 ```bash
-[vagrant@default-ubuntu-1404 ~]$ sudo netstat -tap | grep mysql
-tcp        0      0 0.0.0.0:mysql           0.0.0.0:*               LISTEN      28435/mysqld
+vagrant@default-ubuntu-1404:~$ sudo netstat -tap | grep mysql
+tcp        0      0 *:mysql                 *:*                     LISTEN      15688/mysqld
 ```
 
 You'll see that the `mysqld` service is in the `LISTEN` state.
@@ -333,7 +326,7 @@ You'll see that the `mysqld` service is in the `LISTEN` state.
 Now verify that you can access the databases that come preconfigured with the installation. If you chose a different root password when you created the data bag item, replace "mysql\_root_password" with yours.
 
 ```bash
-[vagrant@default-ubuntu-1404 ~]$ mysqlshow -h 127.0.0.1 -uroot -pmysql_root_password
+vagrant@default-ubuntu-1404:~$ mysqlshow -h 127.0.0.1 -uroot -pmysql_root_password
 +--------------------+
 |     Databases      |
 +--------------------+
@@ -347,7 +340,7 @@ Looks good! Now log out.
 
 ```bash
 # ~
-[vagrant@default-ubuntu-1404 ~]$ logout
+vagrant@default-ubuntu-1404:~$ logout
 Connection to 127.0.0.1 closed.
 ```
 
