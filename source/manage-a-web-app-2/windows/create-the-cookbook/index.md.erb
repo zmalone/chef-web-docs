@@ -16,7 +16,7 @@ We'll create one cookbook, named `awesome_customers_windows`, to describe our we
 
 [START_BOX]
 
-## 1. Create the awesome\_customers_ubuntu cookbook
+## 1. Create the awesome\_customers_windows cookbook
 
 To get started, first move to the <% fp('~/learn-chef') %> directory.
 
@@ -54,26 +54,104 @@ The "windows" part of the cookbook's name is simply to distinguish it from the v
 
 [START_BOX]
 
-## 2. Apply the awesome\_customers_ubuntu cookbook on a Test Kitchen instance
+## 2. Apply the awesome\_customers_windows cookbook on a Test Kitchen instance
 
-Now let's verify that the empty configuration runs successfully on a Windows Server 2012 R2 instance. Replace the contents of your copy of <% fp('~/learn-chef/cookbooks/awesome\_customers_ubuntu/.kitchen.yml') %> with this.
+Now let's verify that the empty configuration runs successfully on a Windows Server 2012 R2 instance. Replace the contents of your copy of <% fp('~/learn-chef/cookbooks/awesome\_customers_windows/.kitchen.yml') %> with the version that matches the Test Kitchen driver you want to use.
+
+[START_TABS config EC2, Hyper-V, Vagrant]
+
+[START_TAB configEC2 active]
+
+Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
 ```yaml
-# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
+---
+driver:
+  name: ec2
+  aws_ssh_key_id: learnchef
+  region: us-west-2
+  availability_zone: a
+  subnet_id: subnet-eacb348f
+  instance_type: m1.small
+  image_id: ami-c3b3b1f3
+  security_group_ids: ['sg-2d3b3b48']
+  retryable_tries: 120
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+transport:
+  ssh_key: C:\Users\LearnChef\.ssh\learnchef.pem
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[settings-windows::default]
+    attributes:
+```
+
+[COMMENT] Be sure to use the full path to your .pem file and not the `~` syntax.
+
+This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html), which is the default. While an `m1.small` or larger instance type can provide better performance, you can use the `t2.micro` instance type if your AWS account provides [free-tier](http://aws.amazon.com/free/) access.
+
+[END_TAB]
+
+[START_TAB configHyperV]
+
+This configuration specifies the location of the parent virtual hard drive (VHD) folder, the name of the virtual switch to use for network access, and allocates 2 GB of memory to the instance.
+
+Replace the value for `password` with the `Administrator` password on your base virtual machine.
+
+```yaml
+# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
+---
+driver:
+  name: hyperv
+  parent_vhd_folder: C:\Hyper-V
+  parent_vhd_name: WindowsServer2012R2.vhdx
+  vm_switch: ExternalSwitch
+  memory_startup_bytes: 2GB
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+transport:
+  password: H24?6;H.QaV8JP2&
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[settings-windows::default]
+    attributes:
+```
+
+[END_TAB]
+
+[START_TAB configVagrant]
+
+```yaml
+# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
 ---
 driver:
   name: vagrant
   network:
-    - ["private_network", {ip: "192.168.34.34"}]
+    - ["private_network", {ip: "192.168.35.35"}]
 
 provisioner:
-  name: chef_zero
+  name: chef_zero_scheduled_task
 
 platforms:
-  - name: ubuntu-2012 R2
+  - name: windows-2012r2
     driver:
       customize:
-        memory: 256
+        memory: 2048
 
 suites:
   - name: default
@@ -82,11 +160,15 @@ suites:
     attributes:
 ```
 
-This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance having 256 MB of memory. It resembles the one you created for the `motd-ubuntu` cookbook in the previous tutorial.
+This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance having 2 GB of memory. It resembles the one you created for the `settings-windows` cookbook in the previous tutorial.
 
-It also assigns the IP address 192.168.34.34 to the instance. You'll later use that address to access your web application from your workstation. We use an address that's in the 192.168.0.0 &mdash; 192.168.255.255 range because that range is defined as part of the [private IPv4 address space](https://en.wikipedia.org/wiki/Private_network), and is not accessible to the public Internet.
+It also assigns the IP address 192.168.35.35 to the instance. You'll later use that address to access your web application from your workstation. We use an address that's in the 192.168.0.0 &mdash; 192.168.255.255 range because that range is defined as part of the [private IPv4 address space](https://en.wikipedia.org/wiki/Private_network), and is not accessible to the public Internet.
 
-Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/awesome\_customers_ubuntu') %> directory..
+[END_TAB]
+
+[END_TABS]
+
+Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/awesome\_customers_windows') %> directory..
 
 ```bash
 # ~/learn-chef
@@ -98,8 +180,8 @@ Now run `kitchen list`. You'll see that the instance was not yet created.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen list
-Instance             Driver   Provisioner  Verifier  Transport  Last Action
-default-ubuntu-1404  Vagrant  ChefZero     Busser    Ssh        <Not Created>
+Instance                Driver   Provisioner            Verifier  Transport  Last Action
+default-windows-2012r2  Vagrant  ChefZeroScheduledTask  Busser    Winrm      <Not Created>
 ```
 
 Now run `kitchen converge`. This command downloads the base Windows Server 2012 R2 box if needed, brings up an instance, installs `chef-client`, and applies the cookbook.
@@ -108,40 +190,30 @@ Now run `kitchen converge`. This command downloads the base Windows Server 2012 
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen converge
 -----> Starting Kitchen (v1.4.2)
------> Creating <default-ubuntu-1404>...
+-----> Creating <default-windows-2012r2>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'opscode-ubuntu-2012 R2'...
+       ==> default: Importing base box 'windows-2012r2'...
 [...]
-       resolving cookbooks for run list: ["awesome_customers_windows::default"]
-       Synchronizing Cookbooks:
-         - awesome_customers_windows (0.1.0)
        Compiling Cookbooks...
        Converging 0 resources
+       [2016-02-11T18:33:28+00:00] INFO: Chef Run complete in 0.343755 seconds
 
        Running handlers:
+       [2016-02-11T18:33:28+00:00] INFO: Running report handlers
        Running handlers complete
-       Chef Client finished, 0/0 resources updated in 01 seconds
-       Finished converging <default-ubuntu-1404> (0m19.72s).
------> Kitchen is finished. (2m39.62s)
+       [2016-02-11T18:33:28+00:00] INFO: Report handlers complete
+       Chef Client finished, 0/0 resources updated in 55 seconds
+
+       Finished converging <default-windows-2012r2> (1m40.97s).
+-----> Kitchen is finished. (3m51.49s)
 ```
 
 As expected, 0 resources were applied because the cookbook is empty. But it's a great first step to verifying that the instance comes up and `chef-client` runs successfully.
 
 [TIP] If you need to take a break from this tutorial, you can run `kitchen destroy` to terminate your instance. Doing so is especially important when working with Amazon EC2, Microsoft Azure, or another Test Kitchen cloud driver, where you pay hourly for usage. Cleaning up your instance when you don't need it can also help you free up compute resources on your workstation if you're working with a virtual machine. When you return, just run `kitchen converge` to get back to the state where you left off.
 
-Finally, verify that you can successfully connect to your instance over SSH. Run `kitchen login` to connect to your instance and then log out.
+Finally, verify that you can successfully connect to your instance. The way you connect depends on which Test Kitchen driver you're using. [Here's a reminder of how to connect](/local-development-2/windows/get-started-with-test-kitchen#step5). 
 
-```bash
-# ~/learn-chef/cookbooks/awesome_customers_windows
-$ kitchen login
-Welcome to Windows Server 2012 R2.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com/
-Last login: Fri Feb  5 02:56:17 2016 from 10.0.2.2
-vagrant@default-ubuntu-1404:~$ logout
-Connection to 127.0.0.1 closed.
-```
-
-[WINDOWS] If you're working from a Windows workstation and receive an error, it may be because you don't have an SSH client set up. The easiest way to set up an SSH client is to [install Git](/manage-a-node/windows/get-set-up#step4).
+After you've successfully connected to your instance, you can close your connection. However, you might find it useful to keep your session open &ndash; you'll come back multiple times in this tutorial to verify your work.
 
 [END_BOX]
