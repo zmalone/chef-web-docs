@@ -1,4 +1,4 @@
-That's it for this tutorial. You can continue to experiment with your virtual machine. When you're done, be sure to [clean up your environment](/manage-a-node/rhel/bootstrap-your-node#howtocleanupyourenvironment).
+That's it for this tutorial. You can continue to experiment with your virtual machine. When you're done, be sure to [clean up your environment](/manage-a-node/rhel/update-your-nodes-configuration#howtocleanupyourenvironment).
 
 You can also explore [https://manage.chef.io](https://manage.chef.io). See what info's available for your nodes and what else you can do.
 
