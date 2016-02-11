@@ -528,36 +528,37 @@ $ kitchen converge
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
          - awesome_customers_ubuntu (0.1.0)
-         - selinux (0.9.0)
-         - httpd (0.3.4)
-         - mysql2_chef_gem (1.0.2)
-         - mysql (6.1.2)
+         - apt (2.9.2)
          - firewall (2.4.0)
-         - database (4.0.9)
+         - mysql2_chef_gem (1.0.2)
+         - httpd (0.3.4)
+         - mysql (6.1.2)
          - chef-sugar (3.3.0)
-         - compat_resource (12.7.0)
+         - compat_resource (12.7.1)
          - build-essential (2.2.4)
+         - database (4.0.9)
          - mariadb (0.3.1)
          - yum-mysql-community (0.1.21)
          - smf (2.2.7)
          - postgresql (4.0.0)
-         - apt (2.9.2)
-         - yum (3.9.0)
+         - yum (3.10.0)
+         - rbac (1.0.3)
          - yum-epel (0.6.5)
          - openssl (4.4.0)
-         - rbac (1.0.3)
        Compiling Cookbooks...
 [...]
            - Creating schema 'my_company'
-
+         * mysql_database_user[db_admin] action create
            - Creating user 'db_admin'@'127.0.0.1'
-
+         * mysql_database_user[db_admin] action grant
            - Granting privs for 'db_admin'@'127.0.0.1'
-
-
+         * mysql_database_user[db_admin] action create (up to date)
+         * mysql_database_user[db_admin] action grant (up to date)
+         * cookbook_file[/tmp/create-tables.sql] action create
+           - create new file /tmp/create-tables.sql
            - update content in file /tmp/create-tables.sql from none to 326217
-           --- /tmp/create-tables.sql	2016-02-04 00:27:07.690849396 +0000
-           +++ /tmp/.create-tables.sql20160204-31474-npl46g	2016-02-04 00:27:07.690849396 +0000
+           --- /tmp/create-tables.sql	2016-02-11 03:06:03.686187118 +0000
+           +++ /tmp/.create-tables.sql20160211-15806-corac	2016-02-11 03:06:03.682187118 +0000
            @@ -1 +1,11 @@
            +CREATE TABLE customers(
            +  id CHAR (32) NOT NULL,
@@ -571,25 +572,22 @@ $ kitchen converge
            +INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Dave', 'Richards', 'dave.richards@example.com' );
            - change mode from '' to '0600'
            - change owner from '' to 'root'
-
-           - restore selinux security context
-
+           - change group from '' to 'root'
+         * execute[initialize my_company database] action run
            - execute mysql -h 127.0.0.1 -u db_admin -pmysql_admin_password -D my_company < /tmp/create-tables.sql
-       Recipe: awesome_customers_ubuntu::firewall
-
+       Recipe: firewall::default
+         * firewall[default] action restart
             (skipped due to only_if)
           (skipped due to only_if)
-        (up to date)
-       [2016-02-04T00:27:07+00:00] WARN: Cloning resource attributes for service[firewalld] from prior resource (CHEF-3694)
-       [2016-02-04T00:27:07+00:00] WARN: Previous service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:38:in `block (2 levels) in <class:FirewallFirewalld>'
-       [2016-02-04T00:27:07+00:00] WARN: Current  service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:92:in `block in <class:FirewallFirewalld>'
+        (skipped due to only_if)
+       * file[/etc/default/ufw-chef.rules] action create (up to date)
         (up to date)
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 9/201 resources updated in 10 seconds
-       Finished converging <default-ubuntu-1404> (0m15.55s).
------> Kitchen is finished. (0m16.14s)
+       Chef Client finished, 8/232 resources updated in 06 seconds
+       Finished converging <default-ubuntu-1404> (0m13.30s).
+-----> Kitchen is finished. (0m13.89s)
 ```
 
 Now let's verify the database configuration. Start by logging in to your instance.
@@ -597,14 +595,16 @@ Now let's verify the database configuration. Start by logging in to your instanc
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
-Last login: Thu Feb  4 00:26:56 2016 from 10.0.2.2
-[vagrant@default-ubuntu-1404 ~]$
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Thu Feb 11 03:05:55 2016 from 10.0.2.2
 ```
 
 First, verify that the `my_company` database exists.
 
 ```bash
-[vagrant@default-ubuntu-1404 ~]$ mysqlshow -h 127.0.0.1 -uroot -pmysql_root_password
+vagrant@default-ubuntu-1404:~$ mysqlshow -h 127.0.0.1 -uroot -pmysql_root_password
 +--------------------+
 |     Databases      |
 +--------------------+
@@ -620,7 +620,7 @@ First, verify that the `my_company` database exists.
 Now verify that `db_admin` is enabled as a local database user.
 
 ```bash
-[vagrant@default-ubuntu-1404 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -e "select user,host from mysql.user;"
+vagrant@default-ubuntu-1404:~$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -e "select user,host from mysql.user;"
 +----------+-----------+
 | user     | host      |
 +----------+-----------+
@@ -633,7 +633,7 @@ Now verify that `db_admin` is enabled as a local database user.
 Verify that `db_admin` has rights only to the `my_company` database.
 
 ```bash
-vagrant@default-ubuntu-1404 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -e "show grants for 'db_admin'@'127.0.0.1';"
+vagrant@default-ubuntu-1404:~$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -e "show grants for 'db_admin'@'127.0.0.1';"
 +-----------------------------------------------------------------------------------------------------------------+
 | Grants for db_admin@127.0.0.1                                                                                   |
 +-----------------------------------------------------------------------------------------------------------------+
@@ -645,12 +645,12 @@ vagrant@default-ubuntu-1404 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password 
 Finally, verify the `customers` database table exists and contains the sample data.
 
 ```bash
-vagrant@default-ubuntu-1404 ~]$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -Dmy_company -e "select id,first_name from customers;"
+vagrant@default-ubuntu-1404:~$ mysql -h 127.0.0.1 -uroot -pmysql_root_password -Dmy_company -e "select id,first_name from customers;"
 +----------------------------------+------------+
 | id                               | first_name |
 +----------------------------------+------------+
-| 061d3e9a-cad6-11e5-a1a2-91e3c01a | Jane       |
-| 061d68ea-cad6-11e5-a1a2-91e3c01a | Dave       |
+| 62d40288-d06c-11e5-8167-080027c9 | Jane       |
+| 62d4397d-d06c-11e5-8167-080027c9 | Dave       |
 +----------------------------------+------------+
 ```
 
@@ -660,7 +660,7 @@ Everything checks out! Now log out.
 
 ```bash
 # ~
-[vagrant@default-ubuntu-1404 ~]$ logout
+vagrant@default-ubuntu-1404:~$ logout
 Connection to 127.0.0.1 closed.
 ```
 
