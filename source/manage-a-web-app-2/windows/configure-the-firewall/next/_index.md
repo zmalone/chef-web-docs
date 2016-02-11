@@ -1,1 +1,0 @@
-Now that your cookbook properly configures the firewall, let's create an application user who has access rights to modify the web content.

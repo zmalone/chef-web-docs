@@ -58,6 +58,8 @@ The "windows" part of the cookbook's name is simply to distinguish it from the v
 
 Now let's verify that the empty configuration runs successfully on a Windows Server 2012 R2 instance. Replace the contents of your copy of <% fp('~/learn-chef/cookbooks/awesome\_customers_windows/.kitchen.yml') %> with the version that matches the Test Kitchen driver you want to use.
 
+[PRODNOTE] Which instance size for EC2?
+
 [START_TABS config EC2, Hyper-V, Vagrant]
 
 [START_TAB configEC2 active]
@@ -65,7 +67,7 @@ Now let's verify that the empty configuration runs successfully on a Windows Ser
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
 ```yaml
-# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
 ---
 driver:
   name: ec2
@@ -90,7 +92,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[settings-windows::default]
+      - recipe[awesome_customers_windows::default]
     attributes:
 ```
 
@@ -107,7 +109,7 @@ This configuration specifies the location of the parent virtual hard drive (VHD)
 Replace the value for `password` with the `Administrator` password on your base virtual machine.
 
 ```yaml
-# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
 ---
 driver:
   name: hyperv
@@ -128,7 +130,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[settings-windows::default]
+      - recipe[awesome_customers_windows::default]
     attributes:
 ```
 
@@ -137,7 +139,7 @@ suites:
 [START_TAB configVagrant]
 
 ```yaml
-# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
 ---
 driver:
   name: vagrant
@@ -160,7 +162,7 @@ suites:
     attributes:
 ```
 
-This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance having 2 GB of memory. It resembles the one you created for the `settings-windows` cookbook in the previous tutorial.
+This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance having 2 GB of memory. It resembles the one you created for the `awesome_customers_windows` cookbook in the previous tutorial.
 
 It also assigns the IP address 192.168.35.35 to the instance. You'll later use that address to access your web application from your workstation. We use an address that's in the 192.168.0.0 &mdash; 192.168.255.255 range because that range is defined as part of the [private IPv4 address space](https://en.wikipedia.org/wiki/Private_network), and is not accessible to the public Internet.
 

@@ -5,15 +5,10 @@ keywords: TODO
 layout: lesson
 sections: []
 next: {heading: Next, partial: next}
-time_to_complete: 10 minutes
+time_to_complete: 20 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In this tutorial, you'll use Chef's support for [PowerShell Desired State Configuration (DSC)](https://technet.microsoft.com/en-us/library/dn249912.aspx) to configure IIS and ASP.NET. With PowerShell DSC, you define the state of the system &ndash; files, processes, services, registry keys, and so on &ndash; and the framework ensures that the actual state matches the desired state.
-
-Although Chef and PowerShell DSC share common concepts, when you [combine them](https://www.chef.io/blog/2014/09/03/why-chef-dsc-revisited/
-), you get the best that each framework has to offer. From PowerShell DSC, you get direct access to the Windows framework in a programming model you already know. Chef adds to that tools that help you inventory, analyze, and test your configurations on multiple platforms in a number of cloud and virtualized environments.
-
-[TIP] Learn more about PowerShell DSC in [The DSC Book](https://www.penflip.com/powershellorg/the-dsc-book).
 
 The default configuration mode for the [Local Configuration Manager (LCM)](https://msdn.microsoft.com/en-us/powershell/dsc/metaconfig4), the DSC engine, is `ApplyAndMonitor`. The `ApplyAndMonitor` mode monitors the state of previous DSC actions and reports to the log file when any state changes, or _drifts_.
 
@@ -83,6 +78,7 @@ powershell_script 'Configure the LCM' do
     ConfigLCM -OutputPath "#{Chef::Config[:file_cache_path]}\\DSC_LCM"
     Set-DscLocalConfigurationManager -Path "#{Chef::Config[:file_cache_path]}\\DSC_LCM"
   EOH
+  not_if '(Get-DscLocalConfigurationManager | select -ExpandProperty "ConfigurationMode") -eq "ApplyOnly"'
 end
 ```
 
@@ -91,6 +87,10 @@ This code creates a DSC configuration named `ConfigLCM`. The configuration sets 
 Line 14 writes the configuration to the <% fp 'DSC_LCM' %> directory under Chef's cache directory. Line 15 uses the [Set-DscLocalConfigurationManager](https://technet.microsoft.com/en-us/library/dn521621.aspx) cmdlet to apply the LCM settings to the local system.
 
 `Chef::Config[:file_cache_path]` reads the location of the Chef cache from the [chef-client configuration file](https://docs.chef.io/config_rb_client.html). The Chef cache is commonly used to centrally store configuration and other files for other components to use.
+
+The `not_if` part ensures that the configuration is applied only if the system is not in the desired state. In this case, the configuration won't be set if the configuration mode is already `ApplyOnly`.
+
+You'll learn more about how the `powershell_script` and `code` parts fit in to describing PowerShell and DSC code as part of a Chef recipe. 
 
 [END_BOX]
 
@@ -194,7 +194,6 @@ instance of OMI_ConfigurationDocument
  GenerationDate="02/11/2016 20:14:13";
  GenerationHost="WIN-HJ4AJJPSATO";
 };
-
 ```
 
 [END_BOX]
