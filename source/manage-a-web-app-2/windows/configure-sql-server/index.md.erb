@@ -1,0 +1,299 @@
+---
+title: 'Configure SQL Server'
+order: 5
+keywords: TODO
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 15 minutes
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
+---
+Now let's configure Microsoft SQL Server. For this tutorial, we'll use Microsoft SQL Server Express 2012.
+
+In the previous lesson, you used PowerShell DSC to enable the IIS role.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/webserver.rb
+# Enable the IIS role.
+dsc_script 'Web-Server' do
+  code <<-EOH
+  WindowsFeature InstallWebServer
+  {
+    Name = "Web-Server"
+    Ensure = "Present"
+  }
+  EOH
+end
+```
+
+To configure SQL Server, we want to download the installer and run it from a Chef recipe. Although it's possible to [use PowerShell DSC to configure SQL Server](http://www.colinsalmcorner.com/post/install-and-configure-sql-server-using-powershell-dsc
+), let's use the [sql_server](https://supermarket.chef.io/cookbooks/sql_server) cookbook from Chef Supermarket.
+
+Remember that Chef Supermarket is a place for the community to share cookbooks. In [Learn to manage a Windows Server node](/manage-a-node/windows/), you downloaded the Learn Chef IIS cookbook so you didn't have to type it in a second time. The `sql_server` cookbook on Chef Supermarket works in a similar way &ndash; it contains reusable components so that you don't have to reinvent the wheel.
+
+The `sql_server` cookbook works by downloading the SQL Server installer to a temporary location. Then it runs the installer in quiet mode by [providing a configuration file](https://technet.microsoft.com/en-us/library/Dd239405\(v=SQL.110\).aspx) that lists the required configuration options. The cookbook uses the template mechanism that you worked with in the previous tutorial to build the configuration file. You'll learn in this lesson how to use node attributes to customize the contents of the configuration file when the cookbook runs.
+
+The `sql_server` cookbook implements Chef's _test and repair_ model by downloading the installer only if it doesn't already exist and by running the installer only if SQL Server isn't installed.
+
+[COMMENT] Keep in mind that for now your goal is to learn how Chef works. It's OK if you don't understand every detail of how the community cookbooks work because you're working in a safe environment. As you gain experience, you'll want to evaluate the code and documentation to ensure that the cookbooks you get from Chef Supermarket do exactly what you expect before you apply them to your production environment.
+
+[START_BOX]
+
+## 1. Reference the sql_server cookbook
+
+You don't need to manually download cookbooks from Chef Supermarket to use them. You'll learn how to automatically download cookbooks in a bit, but the first step is to reference the cookbooks you want to load.
+
+The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, <code class="file-path">metadata.rb</code>. To use the `sql_server` cookbook, append the line `depends 'sql_server', '~> 2.4.0'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/metadata.rb
+name 'awesome_customers_windows'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures awesome_customers_windows'
+long_description 'Installs/Configures awesome_customers_windows'
+version '0.1.0'
+
+depends 'sql_server', '~> 2.4.0'
+```
+
+We also specify the version of the `sql_server` cookbook we want to use. Specifying, or _pinning_, the cookbook version helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production. That way, you can adopt the latest changes and functionality when you're ready.
+
+How did we know to specify version `2.4.0`? One way is by reading the latest version from the `sql_server` cookbook's [page](https://supermarket.chef.io/cookbooks/sql_server) on Supermarket.
+
+![The sql_server cookbook version](misc/supermarket_sql_server_version.png)
+
+Another way to get version information is through the `knife cookbook site show` command. The following command retrieves information for the `sql_server` cookbook and searches the result for the latest version.
+
+On a Windows workstation, you would run:
+
+```ps
+# ~/learn-chef
+$ knife cookbook site show sql_server | findstr latest_version
+latest_version:     https://supermarket.chef.io/api/v1/cookbooks/sql_server/versions/2.4.0
+```
+
+On Linux or Mac OS, you would run:
+
+```bash
+# ~/learn-chef
+$ knife cookbook site show sql_server | grep latest_version
+latest_version:     https://supermarket.chef.io/api/v1/cookbooks/sql_server/versions/2.4.0
+```
+
+There are [multiple ways to specify version constraints](http://docs.chef.io/cookbook_versions.html). The `~>` syntax, called the _pessimistic version constraint_, tells Chef that we want the latest version of the `sql_server` cookbook that is greater than or equal to `2.4.0` but less than `2.5.0`. The third digit in a Chef cookbook's version typically relates to bug fixes or patches that are compatible with prior versions.
+
+[COMMENT] For this tutorial, just to ensure that what you see matches the output that is shown, we recommend that you use the versions that we specify, even if a newer version is available.  We'll periodically update this tutorial to match newer versions of the community cookbooks.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Create the database recipe
+
+Now let's create a recipe to hold all of our database configuration code. From your <code class="file-path">~/learn-chef</code> directory, start by creating a recipe named <code class="file-path">database.rb</code>.
+
+```bash
+# ~/learn-chef
+$ chef generate recipe cookbooks/awesome_customers_windows database
+Compiling Cookbooks...
+Recipe: code_generator::recipe
+  * directory[cookbooks/awesome_customers_windows/spec/unit/recipes] action create (up to date)
+  * cookbook_file[cookbooks/awesome_customers_windows/spec/spec_helper.rb] action create_if_missing (up to date)
+  * template[cookbooks/awesome_customers_windows/spec/unit/recipes/database_spec.rb] action create_if_missing
+    - create new file cookbooks/awesome_customers_windows/spec/unit/recipes/database_spec.rb
+    - update content in file cookbooks/awesome_customers_windows/spec/unit/recipes/database_spec.rb from none to 6027f9
+    (diff output suppressed by config)
+  * template[cookbooks/awesome_customers_windows/recipes/database.rb] action create
+    - create new file cookbooks/awesome_customers_windows/recipes/database.rb
+    - update content in file cookbooks/awesome_customers_windows/recipes/database.rb from none to 97f98b
+    (diff output suppressed by config)
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Set data attributes to customize the installation
+
+In [Learn to manage a Windows Server node](/manage-a-node/windows/), you learned about some of the built-in node attributes that Chef provides, such as the node's IP address. You can also define your own custom attributes that are specific to your policy.
+
+The `sql_server` cookbook defines [a number of node attributes](https://github.com/opscode-cookbooks/sql_server/blob/master/attributes/server.rb) that control how SQL Server is installed, such as the installation directory and which features to install. These values are written to the configuration file that the installer uses to customize the installation.
+
+When you call one cookbook from another, you can specify, or _override_, that cookbook's node attributes with your values. Although in most cases we can use the default values, we also want to:
+
+* indicate that we accept the terms of the end-user license agreement (EULA.) Accepting the EULA is mandatory to install SQL Server.
+* install SQL Server 2012 Express and not SQL Server 2008 R2 Express, which is the default.
+* name the SQL Server instance 'MSSQLSERVER'. Using this name simplifies the later process of setting up a database instance.
+* specify not to install updates during the installation process. For our project, we don't need product updates.
+
+### Create the custom attributes file
+
+Let's create an attributes file that will define all of the custom attributes for your web application cookbook.
+
+Run the following to create an attributes file named <code class="file-path">default.rb</code>.
+
+```bash
+# ~/learn-chef
+$ chef generate attribute cookbooks/awesome_customers_windows default
+Compiling Cookbooks...
+Recipe: code_generator::attribute
+  * directory[cookbooks/awesome_customers_windows/attributes] action create
+    - create new directory cookbooks/awesome_customers_windows/attributes
+  * template[cookbooks/awesome_customers_windows/attributes/default.rb] action create
+    - create new file cookbooks/awesome_customers_windows/attributes/default.rb
+    - update content in file cookbooks/awesome_customers_windows/attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+This command added the <code class="file-path">default.rb</code> attribute file to the<br><% fp '~/learn-chef/cookbooks/awesome_customers_windows/attributes' %> directory.
+
+### Override the sql_server cookbook's default attributes
+
+Earlier, we listed the functionality we need to override. Here are the `sql_server` cookbook's attributes for these items, their default values, and the values we need to use.
+
+| Attribute                              | Default value       | New value       |
+|---------------------------------------:|---------------------|-----------------|
+| `default['sql_server']['accept_eula']`    | `false`             | `true`          |
+| `default['sql_server']['version']`        | `'2008'`            | `'2012'`        |
+| `default['sql_server']['instance_name']`  | `'SQLEXPRESS'`      | `'MSSQLSERVER'` |
+| `default['sql_server']['update_enabled']` | `true`              | `false`         |
+
+To override these attributes, you create new ones that use the same names and define the values you want to use.
+
+Add the following to <code class="file-path">default.rb</code>.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/attributes/default.rb
+default['sql_server']['accept_eula'] = true
+default['sql_server']['version'] = '2012'
+default['sql_server']['instance_name']  = 'MSSQLSERVER'
+default['sql_server']['update_enabled'] = false
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Install SQL Server
+
+Now that we've referenced the `sql_server` cookbook from our cookbook's metadata and set up the node attributes we need to override, we're ready to install SQL Server.
+
+The `sql_server` cookbook provides a recipe named `server` that does everything for us. So all we need to do is run that recipe from our `database` recipe.
+
+Add the following to <code class="file-path">database.rb</code>.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/database.rb
+# Install SQL Server.
+include_recipe 'sql_server::server'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Set the web recipe to run
+
+As you did for the `lcm` and `web` recipes, add a line to your cookbook's default recipe, <code class="file-path">default.rb</code> to run the `database` recipe.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/default.rb
+include_recipe 'awesome_customers_windows::lcm'
+include_recipe 'awesome_customers_windows::web'
+include_recipe 'awesome_customers_windows::database'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Apply and verify the configuration
+
+Like before, let's apply and then verify the configuration. Run `kitchen converge` to apply the `awesome_customers_windows` cookbook. 
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_windows
+$ kitchen converge
+-----> Converging <default-windows-2012r2>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+[...]
+       Recipe: sql_server::server
+         * template[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini] action create[2016-02-12T02:44:46+00:00] INFO: Processing template[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini] action create (sql_server::server line 44)
+       [2016-02-12T02:44:46+00:00] INFO: template[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini] created file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini
+
+           - create new file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini[2016-02-12T02:44:46+00:00] INFO: template[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini] updated file contents C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini
+[...]
+         Recipe: <Dynamically Defined Resource>
+           * remote_file[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe] action create[2016-02-12T02:44:46+00:00] INFO: Processing remote_file[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe] action create (dynamically defined)
+       [2016-02-12T02:45:37+00:00] INFO: remote_file[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe] created file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe
+
+             - create new file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe[2016-02-12T02:45:37+00:00] INFO: remote_file[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe] updated file contents C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe
+
+             - update content in file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe from none to 7f5e3d
+             (file sizes exceed 10000000 bytes, diff output suppressed)
+       [2016-02-12T02:48:04+00:00] INFO: windows_package[Microsoft SQL Server 2012 (64-bit)] installed Microsoft SQL Server 2012 (64-bit) at 11.0.2100.60
+           - install version 11.0.2100.60 of package Microsoft SQL Server 2012 (64-bit)
+       Recipe: sql_server::server
+         * windows_service[MSSQLSERVER] action nothing[2016-02-12T02:48:04+00:00] INFO: Processing windows_service[MSSQLSERVER] action nothing (sql_server::server line 75)
+        (skipped due to action :nothing)
+         * registry_key[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQLServer\SuperSocketNetLib\Tcp\IPAll] action create[2016-02-12T02:48:04+00:00] INFO: Processing registry_key[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQLServer\SuperSocketNetLib\Tcp\IPAll] action create (sql_server::server line 80)
+
+           - create key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQLServer\SuperSocketNetLib\Tcp\IPAll
+           - set value {:name=>"TcpPort", :type=>:string, :data=>"1433"}
+           - set value {:name=>"TcpDynamicPorts", :type=>:string, :data=>""}
+       [2016-02-12T02:48:04+00:00] INFO: registry_key[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQLServer\SuperSocketNetLib\Tcp\IPAll] sending restart action to windows_service[MSSQLSERVER] (immediate)
+         * windows_service[MSSQLSERVER] action restart[2016-02-12T02:48:04+00:00] INFO: Processing windows_service[MSSQLSERVER] action restart (sql_server::server line 75)
+       [2016-02-12T02:48:06+00:00] INFO: windows_service[MSSQLSERVER] configured with {:service_name=>"MSSQLSERVER"}
+       [2016-02-12T02:48:07+00:00] INFO: windows_service[MSSQLSERVER] restarted
+
+           - restart service windows_service[MSSQLSERVER]
+       Recipe: sql_server::client
+         * gem_package[tiny_tds] action install[2016-02-12T02:48:07+00:00] INFO: Processing gem_package[tiny_tds] action install (sql_server::client line 45)
+       [2016-02-12T02:48:19+00:00] INFO: gem_package[tiny_tds] installed tiny_tds at 0.7.0
+
+           - install version 0.7.0 of package tiny_tds
+       [2016-02-12T02:48:20+00:00] INFO: Chef Run complete in 223.718729 seconds
+
+       Running handlers:
+       [2016-02-12T02:48:20+00:00] INFO: Running report handlers
+       Running handlers complete
+       [2016-02-12T02:48:20+00:00] INFO: Report handlers complete
+       Chef Client finished, 6/11 resources updated in 04 minutes 38 seconds
+
+       Finished converging <default-windows-2012r2> (5m7.96s).
+-----> Kitchen is finished. (5m10.31s)
+```
+
+You'll see from the output that the SQL Server install configuration file, <% fp 'ConfigurationFile.ini' %>, is generated and SQL Server 2012 Express is downloaded and installed.
+
+Now let's connect to your node and run a few commands to help verify that the SQL Server service is running.
+
+First, from a PowerShell session on your node, run these commands to set up PowerShell to manage SQL Server.
+
+```ps
+# ~
+$ Set-ExecutionPolicy RemoteSigned
+$ Import-Module SQLPS
+```
+
+Now run this command.
+
+```ps
+# ~
+$ Get-Service MSSQL*
+ 
+Status   Name               DisplayName
+------   ----               -----------
+Running  MSSQLSERVER        SQL Server (MSSQLSERVER)
+```
+
+You'll see that the `MSSQLSERVER` service is running.
+
+[END_BOX]
