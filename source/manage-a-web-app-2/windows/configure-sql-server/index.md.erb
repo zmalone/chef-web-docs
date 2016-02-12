@@ -172,6 +172,71 @@ default['sql_server']['instance_name']  = 'MSSQLSERVER'
 default['sql_server']['update_enabled'] = false
 ```
 
+#### Vagrant users: set the system administrators attribute
+
+One final setting to account for is the Windows accounts that act as the SQL Server system administrators. The `sql_server` cookbook by default [sets this value to Administrator](https://github.com/chef-cookbooks/sql_server/blob/master/attributes/server.rb#L34). 
+
+```ruby
+# default.rb
+default['sql_server']['sysadmins'] = ['Administrator']
+```
+
+Many Test Kitchen drivers run Chef as the `Administrator` user. However, the Vagrant driver runs Chef as the `vagrant` user. 
+
+One way to solve this might be to include the `vagrant` user in the list of system administrators in your default node attributes file.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/attributes/default.rb
+default['sql_server']['sysadmins'] = ['Administrator', 'vagrant'] # This is not a recommended practice.
+```
+
+However, this is not a recommened practice because the `vagrant` user is only part of your development and testing environment. You don't want this user name to be included in a production environment.
+
+The correct way to enable the `vagrant` user to be a SQL system administrator in your development and testing environment is to override this node attribute from the `attributes` section of your Test Kitchen configuration file.
+
+If you are using the Vagrant driver, make the final part of your <% fp '.kitchen.yml' %> file look like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+attributes:
+  sql_server:
+    sysadmins: ['Administrator', 'vagrant']
+```
+
+This setting includes both the `Administrator` and the `vagrant` users as SQL system administrators.
+
+This syntax might look strange because you're used to writing node attributes using Ruby syntax. The Test Kitchen configuration file uses [YAML](http://yaml.org).
+
+The complete <% fp '.kitchen.yml' %> file looks like this.
+ 
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+---
+driver:
+  name: vagrant
+  network:
+    - ["private_network", {ip: "192.168.35.35"}]
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+platforms:
+  - name: windows-2012r2
+    driver:
+      customize:
+        memory: 2048
+
+suites:
+  - name: default
+    run_list:
+      - recipe[awesome_customers_windows::default]
+    attributes:
+      sql_server:
+        sysadmins: ['Administrator', 'vagrant']
+```
+
+If you had specific requirements for which Windows accounts should be set as the system administrator, you would set `default['sql_server']['sysadmins']` in your default node attribute file, <% fp 'default.rb' %>. If you're using the Vagrant driver to test your configuration, you might continue to overwrite this attribute from your <% fp '.kitchen.yml' %> file to include the `vagrant` user.
+
 [END_BOX]
 
 [START_BOX]
