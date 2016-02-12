@@ -5,7 +5,7 @@ keywords: TODO
 layout: lesson
 sections: []
 next: {heading: Next, partial: next}
-time_to_complete: 15 minutes
+time_to_complete: 40 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Now let's configure Microsoft SQL Server. For this tutorial, we'll use Microsoft SQL Server Express 2012.
@@ -27,7 +27,7 @@ end
 ```
 
 To configure SQL Server, we want to download the installer and run it from a Chef recipe. Although it's possible to [use PowerShell DSC to configure SQL Server](http://www.colinsalmcorner.com/post/install-and-configure-sql-server-using-powershell-dsc
-), let's use the [sql_server](https://supermarket.chef.io/cookbooks/sql_server) cookbook from Chef Supermarket.
+), let's use the [sql_server](https://supermarket.chef.io/cookbooks/sql_server) cookbook from Chef Supermarket to learn how community cookbooks work.
 
 Remember that Chef Supermarket is a place for the community to share cookbooks. In [Learn to manage a Windows Server node](/manage-a-node/windows/), you downloaded the Learn Chef IIS cookbook so you didn't have to type it in a second time. The `sql_server` cookbook on Chef Supermarket works in a similar way &ndash; it contains reusable components so that you don't have to reinvent the wheel.
 
@@ -43,7 +43,7 @@ The `sql_server` cookbook implements Chef's _test and repair_ model by downloadi
 
 You don't need to manually download cookbooks from Chef Supermarket to use them. You'll learn how to automatically download cookbooks in a bit, but the first step is to reference the cookbooks you want to load.
 
-The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, <code class="file-path">metadata.rb</code>. To use the `sql_server` cookbook, append the line `depends 'sql_server', '~> 2.4.0'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
+The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, <code class="file-path">metadata.rb</code>. To use the `sql_server` cookbook, append the line `depends 'sql_server', '~> 2.5.0'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_windows/metadata.rb
@@ -55,7 +55,7 @@ description 'Installs/Configures awesome_customers_windows'
 long_description 'Installs/Configures awesome_customers_windows'
 version '0.1.0'
 
-depends 'sql_server', '~> 2.4.0'
+depends 'sql_server', '~> 2.5.0'
 ```
 
 We also specify the version of the `sql_server` cookbook we want to use. Specifying, or _pinning_, the cookbook version helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production. That way, you can adopt the latest changes and functionality when you're ready.
@@ -259,7 +259,156 @@ include_recipe 'sql_server::server'
 
 [START_BOX]
 
-## 5. Set the web recipe to run
+## 5. Add a node attribute for your secret key's location
+
+Before we can run the `sql_server::server` recipe, we need to decrypt our SQL SA password and pass it to the `sql_server` cookbook.
+
+The `sql_server` cookbook provides a node attribute named `node['sql_server']['server_sa_password']`. This attribute must be set before the `sql_server::server` recipe runs. To do so, we'll use Chef's built-in way to load and decrypt encrypted data bag items.
+
+Make your copy of <% fp 'database.rb' %> look like this. 
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/database.rb
+# Load the secrets file and the encrypted data bag item that holds the sa password.
+password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_windows']['secret_file'])
+password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'sql_server_customers', password_secret)
+
+# Set the node attribute that holds the sa password with the decrypted passoword.
+node.default['sql_server']['server_sa_password'] = password_data_bag_item['sa_password']
+
+# Install SQL Server.
+include_recipe 'sql_server::server'
+```
+
+Here's how the file breaks down:
+
+* Line 2 loads the secret key file, <% fp 'encrypted_data_bag_secret' %>, into memory.
+  * The `node['awesome_customers_windows']['secret_file']` node attribute does not exist yet &ndash; you'll add that in the next step.
+* Line 3 loads the encrypted data bag item into memory and decrypts the data.
+  * `database_passwords` refers to the data bag.
+  * `sql_server_customers` refers to the data bag item to decrypt.
+  * `password_secret` refers to the secret key that was loaded into memory on line 2.
+* Line 6 retrieves the decrypted value of the `sa_password` field from the data bag item (for example, "SQL\_sa_pa$$w0rd") and uses that value to set the `node['sql_server']['server_sa_password']` node attribute. The `sql_server` cookbook later writes the value of that node attribute to the SQL Server installer's configuration file. 
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Add a node attribute for your secret key's location
+
+At this point, your secret key file, <% fp('~/learn-chef/.chef/encrypted_data_bag_secret') %>, exists only on your workstation. You'll need to transfer your secret key to your server before you run `chef-client`.
+
+As you develop your cookbook using Test Kitchen, you need to configure your<br><% fp('~/learn-chef/.chef/encrypted_data_bag_secret') %> file to transfer your secret key to your test instance. You'll do that in the next step.
+
+When you're ready to run your cookbook on a node, you'll need to copy your secret key to your node before you initiate the bootstrap process. More on that later.
+
+In the previous step, you referenced the `node['awesome_customers_windows']['secret_file']` node attribute. This node attribute refers to the location of the secret file on your test instance or node. This node attribute does not exist yet, so let's add it now.
+
+Append a node attribute to your default attributes file, <% fp('default.rb') %>, making the entire file look like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/attributes/default.rb
+default['sql_server']['accept_eula'] = true
+default['sql_server']['version'] = '2012'
+default['sql_server']['instance_name']  = 'MSSQLSERVER'
+default['sql_server']['update_enabled'] = false
+
+default['awesome_customers_windows']['secret_file'] = 'C:/chef/encrypted_data_bag_secret'
+```
+
+The path <% fp('C:/chef/encrypted_data_bag_secret') %> is commonly used to store the secret key file on a node, so we make that the default value. Later in this tutorial, you'll copy your secret key to this location on your node as you prepare your node for the bootstrap process.
+
+In the next step, you'll see how to override this value for use with Test Kitchen.
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Configure Test Kitchen to copy your data bag item and secret key
+
+Because we're still developing our cookbook locally, let's set up Test Kitchen to copy the data bag item and secret file to the test instance.
+
+So far, your <% fp '.kitchen.yml' %> file looks like this.
+
+```yaml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+---
+driver:
+  name: vagrant
+  network:
+    - ["private_network", {ip: "192.168.35.35"}]
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+platforms:
+  - name: windows-2012r2
+    driver:
+      customize:
+        memory: 2048
+
+suites:
+  - name: default
+    run_list:
+      - recipe[awesome_customers_windows::default]
+    attributes:
+      sql_server:
+        sysadmins: ['Administrator', 'vagrant']
+```
+
+You need to add these two configuration settings to enable Test Kitchen to copy your data bag items and secret key to your test instance:
+
+* The root directory on your workstation where your data bags are located.
+* The location of your secret file on your workstation.
+
+The paths you specify can be absolute or relative to the location of your <% fp '.kitchen.yml' %> file.
+
+You'll also need to override the value of the `node['awesome_customers_windows']['secret_file']` node attribute. That's because Test Kitchen copies your secret file to a temporary directory on the instance, but the attribute currently points to <% fp 'C:/chef' %>.
+
+Modify your copy of <% fp '.kitchen.yml' %> to look like this.
+
+```yaml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+---
+driver:
+  name: vagrant
+  network:
+    - ["private_network", {ip: "192.168.35.35"}]
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+platforms:
+  - name: windows-2012r2
+    driver:
+      customize:
+        memory: 2048
+
+suites:
+  - name: default
+    data_bags_path: "../../data_bags"
+    run_list:
+      - recipe[awesome_customers_windows::default]
+    provisioner:
+      encrypted_data_bag_secret_key_path: "../../.chef/encrypted_data_bag_secret"
+    attributes:
+      awesome_customers_windows:
+        secret_file: 'C:/Users/vagrant/AppData/Local/Temp/kitchen/encrypted_data_bag_secret'
+      sql_server:
+        sysadmins: ['Administrator', 'vagrant']
+```
+
+Note that you added these settings:
+
+* Line 18 specifies the root directory on your workstation where your data bags are located.
+* Lines 21&mdash;22 specify the location of your secret file on your workstation.
+* Lines 24&mdash;25 override the `node['awesome_customers_windows']['secret_file']` node attribute. Here, you're overriding node attributes the same way you set the account names of the SQL system administrators.
+
+[END_BOX]
+
+[START_BOX]
+
+## 8. Set the database recipe to run
 
 As you did for the `lcm` and `web` recipes, add a line to your cookbook's default recipe, <code class="file-path">default.rb</code> to run the `database` recipe.
 
@@ -274,7 +423,7 @@ include_recipe 'awesome_customers_windows::database'
 
 [START_BOX]
 
-## 6. Apply and verify the configuration
+## 9. Apply and verify the configuration
 
 Like before, let's apply and then verify the configuration. Run `kitchen converge` to apply the `awesome_customers_windows` cookbook. 
 
