@@ -66,6 +66,8 @@ Now let's verify that the empty configuration runs successfully on a Windows Ser
 
 Replace the values for `aws_ssh_key_id`, `region`, `availability_zone`, `subnet_id`, `image_id`, `security_group_ids`, and `ssh_key` with your values.
 
+Remember, your security group should provide inbound network access on ports 80, 443, 3389, and 5985.
+
 ```yaml
 # ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
 ---
@@ -74,11 +76,14 @@ driver:
   aws_ssh_key_id: learnchef
   region: us-west-2
   availability_zone: a
+  image_id: ami-ff4baf9f
   subnet_id: subnet-eacb348f
-  instance_type: m1.small
-  image_id: ami-c3b3b1f3
+  instance_type: t2.medium
   security_group_ids: ['sg-2d3b3b48']
   retryable_tries: 120
+  associate_public_ip: true
+  tags:
+    X-Project: Learn Chef
 
 provisioner:
   name: chef_zero_scheduled_task
@@ -88,6 +93,26 @@ transport:
 
 platforms:
   - name: windows-2012r2
+    driver:
+      user_data: |
+        <powershell>
+        $logfile="C:\\Program Files\\Amazon\\Ec2ConfigService\\Logs\\kitchen-ec2.log"
+        #PS Remoting and & winrm.cmd basic config
+        Enable-PSRemoting -Force -SkipNetworkProfileCheck
+        & winrm.cmd set winrm/config '@{MaxTimeoutms="1800000"}' >> $logfile
+        & winrm.cmd set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}' >> $logfile
+        & winrm.cmd set winrm/config/winrs '@{MaxShellsPerUser="50"}' >> $logfile
+        #Server settings - support username/password login
+        & winrm.cmd set winrm/config/service/auth '@{Basic="true"}' >> $logfile
+        & winrm.cmd set winrm/config/service '@{AllowUnencrypted="true"}' >> $logfile
+        & winrm.cmd set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}' >> $logfile
+        #Firewall Config
+        & netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" profile=public protocol=tcp localport=5985 remoteip=localsubnet new remoteip=any  >> $logfile
+        #Set script execution to unrestricted
+        & Set-ExecutionPolicy Unrestricted -Force
+        </powershell>
+    transport:
+      username: Administrator
 
 suites:
   - name: default
@@ -98,7 +123,9 @@ suites:
 
 [COMMENT] Be sure to use the full path to your .pem file and not the `~` syntax.
 
-This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html), which is the default. While an `m1.small` or larger instance type can provide better performance, you can use the `t2.micro` instance type if your AWS account provides [free-tier](http://aws.amazon.com/free/) access.
+This configuration uses the `t2.medium` [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html). We recommend that you use a `t2.medium` or larger instance type to get the best performance and also provide enough memory for components such as IIS and SQL Server.
+
+The `user_data` part specifies EC2 [user data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts), which is a script that's run when the machine is booted for the first time. In this case, we provide a PowerShell script that configures WinRM, the Windows Firewall, and other features to ensure that the machine is accessible from Test Kitchen. 
 
 [END_TAB]
 
