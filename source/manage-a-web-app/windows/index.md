@@ -4,7 +4,6 @@ layout: lesson-overview
 platform: Windows Server
 logo: windows.svg
 order: 2
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In this tutorial, you'll have the opportunity to practice what you've learned in the previous tutorials. Here's a quick recap:
 

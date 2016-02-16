@@ -4,7 +4,6 @@ layout: lesson-overview
 platform: Ubuntu
 logo: ubuntu.svg
 order: 3
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In this tutorial, you'll have the opportunity to practice what you've learned in the previous tutorials. Here's a quick recap:
 

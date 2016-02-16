@@ -6,7 +6,6 @@ layout: lesson
 sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 40 minutes
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Now let's configure Microsoft SQL Server. For this tutorial, we'll use Microsoft SQL Server Express 2012.
 
@@ -174,14 +173,14 @@ default['sql_server']['update_enabled'] = false
 
 #### Vagrant users: set the system administrators attribute
 
-One final setting to account for is the Windows accounts that act as the SQL Server system administrators. The `sql_server` cookbook by default [sets this value to Administrator](https://github.com/chef-cookbooks/sql_server/blob/master/attributes/server.rb#L34). 
+One final setting to account for is the Windows accounts that act as the SQL Server system administrators. The `sql_server` cookbook by default [sets this value to Administrator](https://github.com/chef-cookbooks/sql_server/blob/master/attributes/server.rb#L34).
 
 ```ruby
 # default.rb
 default['sql_server']['sysadmins'] = ['Administrator']
 ```
 
-Many Test Kitchen drivers run Chef as the `Administrator` user. However, the Vagrant driver runs Chef as the `vagrant` user. 
+Many Test Kitchen drivers run Chef as the `Administrator` user. However, the Vagrant driver runs Chef as the `vagrant` user.
 
 One way to solve this might be to include the `vagrant` user in the list of system administrators in your default node attributes file.
 
@@ -208,7 +207,7 @@ This setting includes both the `Administrator` and the `vagrant` users as SQL sy
 This syntax might look strange because you're used to writing node attributes using Ruby syntax. The Test Kitchen configuration file uses [YAML](http://yaml.org).
 
 The complete <% fp '.kitchen.yml' %> file looks like this.
- 
+
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
 ---
@@ -265,7 +264,7 @@ Before we can run the `sql_server::server` recipe, we need to decrypt our SQL SA
 
 The `sql_server` cookbook provides a node attribute named `node['sql_server']['server_sa_password']`. This attribute must be set before the `sql_server::server` recipe runs. To do so, we'll use Chef's built-in way to load and decrypt encrypted data bag items.
 
-Make your copy of <% fp 'database.rb' %> look like this. 
+Make your copy of <% fp 'database.rb' %> look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_windows/recipes/database.rb
@@ -288,7 +287,7 @@ Here's how the file breaks down:
   * `database_passwords` refers to the data bag.
   * `sql_server_customers` refers to the data bag item to decrypt.
   * `password_secret` refers to the secret key that was loaded into memory on line 2.
-* Line 6 retrieves the decrypted value of the `sa_password` field from the data bag item (for example, "SQL\_sa_pa$$w0rd") and uses that value to set the `node['sql_server']['server_sa_password']` node attribute. The `sql_server` cookbook later writes the value of that node attribute to the SQL Server installer's configuration file. 
+* Line 6 retrieves the decrypted value of the `sa_password` field from the data bag item (for example, "SQL\_sa_pa$$w0rd") and uses that value to set the `node['sql_server']['server_sa_password']` node attribute. The `sql_server` cookbook later writes the value of that node attribute to the SQL Server installer's configuration file.
 
 [END_BOX]
 
@@ -637,7 +636,7 @@ include_recipe 'awesome_customers_windows::database'
 
 ## 9. Apply and verify the configuration
 
-Like before, let's apply and then verify the configuration. Run `kitchen converge` to apply the `awesome_customers_windows` cookbook. 
+Like before, let's apply and then verify the configuration. Run `kitchen converge` to apply the `awesome_customers_windows` cookbook.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
@@ -714,7 +713,7 @@ Now run this command.
 ```ps
 # ~
 $ Get-Service MSSQL*
- 
+
 Status   Name               DisplayName
 ------   ----               -----------
 Running  MSSQLSERVER        SQL Server (MSSQLSERVER)

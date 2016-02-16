@@ -6,7 +6,6 @@ layout: lesson
 sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 20 minutes
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 [HEADLINE] _Data bags_ are collections of key-value pairs that are shared among your nodes. You can encrypt data bags to protect sensitive information, such as certificates, API keys, and passwords.
 
@@ -16,7 +15,7 @@ Before we set up MySQL, we need a way to securely store the passwords so that on
 
 A _data bag_ stores data as a series of key-value pairs. An item in a data bag is similar to a node attribute. However, a data bag can be shared among nodes, whereas a node attribute belongs to just one node and can't be shared. Values stored by data bag items can optionally be encrypted to protect confidential information such as certificates, API keys, and in our case, passwords. Data bags with encrypted items are called _encrypted data bags_.
 
-In this part, you'll create a secret key and then use that key to encrypt a data bag item that holds the database passwords. Later, you'll configure Test Kitchen to copy that key and your encrypted data bag item to your test instance so that the instance can access the database passwords. The secret key you'll generate is _symmetric_. In other words, the same key is used to both encrypt and decrypt data.  
+In this part, you'll create a secret key and then use that key to encrypt a data bag item that holds the database passwords. Later, you'll configure Test Kitchen to copy that key and your encrypted data bag item to your test instance so that the instance can access the database passwords. The secret key you'll generate is _symmetric_. In other words, the same key is used to both encrypt and decrypt data.
 
 [COMMENT] Encrypted data bags are a great way get started when you're working with sensitive information, but they don't solve everything. For example, it's still up to you to implement an appropriate distribution mechanism for your secret keys. [chef-vault](https://github.com/Nordstrom/chef-vault) is commonly used to solve the key distribution problem. `chef-vault` uses the existing RSA key pair that your node uses to communicate with the Chef server to create an asymmetric key used for decryption. [Read more about chef-vault](https://www.chef.io/blog/2016/01/21/chef-vault-what-is-it-and-what-can-it-do-for-you/) in this blog post.
 
@@ -59,10 +58,10 @@ This example was adapted from <a href="http://powershell.org/wp/2014/02/01/revis
 
 ## 2. Create a directory to store your data bag
 
-A data bag is simply a directory that holds data bag items. You typically store all of your data bags in a <% fp('data\_bags') %> directory. Each data bag is stored in a subdirectory of <% fp('data\_bags') %>. 
+A data bag is simply a directory that holds data bag items. You typically store all of your data bags in a <% fp('data\_bags') %> directory. Each data bag is stored in a subdirectory of <% fp('data\_bags') %>.
 
-We'll name our data bag `database_passwords`, which means you'll need to create a directory named<br><% fp('~/learn-chef/data\_bags/database\_passwords') %>. 
- 
+We'll name our data bag `database_passwords`, which means you'll need to create a directory named<br><% fp('~/learn-chef/data\_bags/database\_passwords') %>.
+
 Run these commands to create the directory structure.
 
 ```bash
@@ -78,9 +77,9 @@ $ mkdir data_bags/database_passwords
 
 ## 3. Create the data bag item as a plain text file
 
-Every data bag item is stored in a JSON file in the data bag directory. 
+Every data bag item is stored in a JSON file in the data bag directory.
 
-In this part, you'll create a data bag item to hold both the MySQL root password and the password for the administrator. We'll name the data bag item `mysql_customers`. 
+In this part, you'll create a data bag item to hold both the MySQL root password and the password for the administrator. We'll name the data bag item `mysql_customers`.
 
 First, create a file named <% fp('~/learn-chef/data\_bags/database\_passwords/mysql\_customers.json') %> and add these contents. If you prefer, you can use different passwords.
 
@@ -93,7 +92,7 @@ First, create a file named <% fp('~/learn-chef/data\_bags/database\_passwords/my
 }
 ```
 
-Data bag items are organized using key-value pairs. Every data bag item has an `id` field that identifies it. The `id` typically matches the name of the file. This data bag item has two additional data fields, one for each password. 
+Data bag items are organized using key-value pairs. Every data bag item has an `id` field that identifies it. The `id` typically matches the name of the file. This data bag item has two additional data fields, one for each password.
 
 [COMMENT] In practice, if you plan to have multiple databases or database administrators, it might be appropriate to create separate data bags for each password. You might also manage each data bag using a different secret key. This mechanism would allow more fine-grained access control to sensitive data.
 
@@ -107,7 +106,7 @@ At this point, your data bag item exists as plain text. Now you'll encrypt your 
 
 You use the `knife data bag from file` command to encrypt data bag items. By default, this command uploads the encrypted data bag item to the Chef server. Because we're still in local development mode, we don't yet want to upload the data bag item to Chef server. To encrypt the data as a local file, we'll pass the `--local-mode` flag to the `knife` command.
 
-From your <% fp('~/learn-chef') %> directory, run this command to encrypt your data bag item. 
+From your <% fp('~/learn-chef') %> directory, run this command to encrypt your data bag item.
 
 ```bash
 # ~/learn-chef
