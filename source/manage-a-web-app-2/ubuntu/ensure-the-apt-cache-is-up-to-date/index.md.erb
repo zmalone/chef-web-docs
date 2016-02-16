@@ -29,7 +29,7 @@ You don't need to manually download cookbooks from Chef Supermarket to use them.
 The way you load one cookbook from inside another is to reference it in your cookbook's metadata file,<br><% fp('~/learn-chef/cookbooks/awesome_customers_ubuntu/metadata.rb') %>. To use the `apt` cookbook, append the line `depends 'apt', '~> 2.9.2'` to <% fp('metadata.rb') %> making the entire file look like this.
 
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers_ubuntu/metadata.rb
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/metadata.rb
 name 'awesome_customers_ubuntu'
 maintainer 'The Authors'
 maintainer_email 'you@example.com'
@@ -50,7 +50,7 @@ How did we know to specify version `2.9.2`? One way is by reading the latest ver
 Another way to get version information is through the `knife cookbook site show` command. The following command retrieves information for the `apt` cookbook and searches the result for the latest version.
 
 ```bash
-# ~/chef-repo
+# ~/learn-chef
 $ knife cookbook site show apt | grep latest_version
 latest_version:     https://supermarket.chef.io/api/v1/cookbooks/apt/versions/2.9.2
 ```
@@ -70,7 +70,7 @@ For our web application project, we'll use what's called the _application cookbo
 The `apt` cookbook's default recipe does everything we need to ensure the `apt` cache is up to date. To run this recipe, add the following to your cookbook's default recipe, <code class="file-path">default.rb</code>.
 
 ```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/default.rb
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/default.rb
 include_recipe 'apt::default'
 ```
 

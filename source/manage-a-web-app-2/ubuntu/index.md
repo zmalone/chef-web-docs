@@ -28,7 +28,7 @@ Setting up a LAMP stack is a great next step to building your Chef skills becaus
 * introduces just enough complexity to demonstrate real-world Chef usage patterns.
 * uses off-the-shelf software that you probably already know.
 
-After completing this lesson, you'll:
+After completing this tutorial, you'll:
 
 * be able to use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
 * be more productive by using community cookbooks from Chef Supermarket to perform common tasks.
