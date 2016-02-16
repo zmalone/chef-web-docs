@@ -4,7 +4,6 @@ layout: lesson-overview
 platform: Windows Server
 logo: windows.svg
 order: 2
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In [Learn to manage a Windows Server node](/manage-a-node/windows/), you built a basic web server configuration on Windows Server 2012 R2. As part of the process, you set up a Chef server, brought up a node to manage, and bootstrapped your node.
 

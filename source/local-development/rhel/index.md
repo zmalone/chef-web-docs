@@ -4,7 +4,6 @@ layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In [Learn to manage a Red Hat Enterprise Linux node](/manage-a-node/rhel/), you built a basic web server configuration on Red Hat Enterprise Linux or CentOS. As part of the process, you set up a Chef server, brought up a node to manage, and bootstrapped your node.
 

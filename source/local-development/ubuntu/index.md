@@ -4,7 +4,6 @@ layout: lesson-overview
 platform: Ubuntu
 logo: ubuntu.svg
 order: 3
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In [Learn to manage an Ubuntu node](/manage-a-node/ubuntu/), you built a basic web server configuration on Ubuntu. As part of the process, you set up a Chef server, brought up a node to manage, and bootstrapped your node.
 
