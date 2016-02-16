@@ -4,6 +4,8 @@ layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
+redirect: /test_tutorial_offline/
 ---
 In [Learn to develop your Red Hat Enterprise Linux infrastructure code locally](/local-development/rhel/), you used [Test Kitchen](http://kitchen.ci) to configure and run a web application in an isolated environment that resembles your production environment.
 

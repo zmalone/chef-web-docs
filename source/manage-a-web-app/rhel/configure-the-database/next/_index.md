@@ -1,1 +1,1 @@
-Next, you'll upload your `awesome_customers` cookbook to the Chef server and apply it to your node. Then you'll log into your node and run a few commands to verify that the database portion is configured as we expect.
+Next, you'll configure the final part of your web application. You'll configure Apache to run PHP code and update your home page to display the customer records in the database.
