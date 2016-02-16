@@ -391,7 +391,31 @@ suites:
 
 [START_TAB currenttkconfigHyperV]
 
-TODO
+```yaml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+---
+driver:
+  name: hyperv
+  parent_vhd_folder: C:\Hyper-V
+  parent_vhd_name: WindowsServer2012R2.vhdx
+  vm_switch: ExternalSwitch
+  memory_startup_bytes: 2GB
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+transport:
+  password: H24?6;H.QaV8JP2&
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[awesome_customers_windows::default]
+    attributes:
+```
 
 [END_TAB]
 
@@ -504,19 +528,48 @@ Note that you added these settings:
 
 * Line 47 specifies the root directory on your workstation where your data bags are located.
 * Lines 50&mdash;51 specify the location of your secret file on your workstation.
-* Lines 53&mdash;54 override the `node['awesome_customers_windows']['secret_file']` node attribute. Here, you're overriding node attributes the same way you set the account names of the SQL system administrators.
+* Lines 53&mdash;54 override the `node['awesome_customers_windows']['secret_file']` node attribute.
 
 [END_TAB]
 
 [START_TAB revisedtkconfigHyperV]
 
-TODO
+```yaml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+---
+driver:
+  name: hyperv
+  parent_vhd_folder: C:\Hyper-V
+  parent_vhd_name: WindowsServer2012R2.vhdx
+  vm_switch: ExternalSwitch
+  memory_startup_bytes: 2GB
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+transport:
+  password: H24?6;H.QaV8JP2&
+
+platforms:
+  - name: windows-2012r2
+
+suites:
+  - name: default
+    data_bags_path: "../../data_bags"
+    run_list:
+      - recipe[awesome_customers_windows::default]
+    provisioner:
+      encrypted_data_bag_secret_key_path: "../../.chef/encrypted_data_bag_secret"
+    attributes:
+      awesome_customers_windows:
+        secret_file:  C:/Users/Administrator/AppData/Local/Temp/kitchen/encrypted_data_bag_secret
+```
 
 Note that you added these settings:
 
-* Line 18 specifies the root directory on your workstation where your data bags are located.
-* Lines 21&mdash;22 specify the location of your secret file on your workstation.
-* Lines 24&mdash;25 override the `node['awesome_customers_windows']['secret_file']` node attribute. Here, you're overriding node attributes the same way you set the account names of the SQL system administrators.
+* Line 20 specifies the root directory on your workstation where your data bags are located.
+* Lines 23&mdash;24 specify the location of your secret file on your workstation.
+* Lines 26&mdash;27 override the `node['awesome_customers_windows']['secret_file']` node attribute.
 
 [END_TAB]
 
