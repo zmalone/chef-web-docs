@@ -1,9 +1,0 @@
-## 4. Set the user recipe to run
-
-To run the `user` recipe, append an `include_recipe` line to your cookbook's default recipe, just like you did for the `apt` cookbook's default recipe. Make the entire default recipe look like this.
-
-```ruby
-# ~/chef-repo/cookbooks/awesome_customers/recipes/default.rb
-include_recipe 'apt::default'
-include_recipe 'awesome_customers::user'
-```

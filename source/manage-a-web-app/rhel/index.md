@@ -4,20 +4,23 @@ layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-In [Learn the basics](/learn-the-basics/rhel) and [Learn to manage a node](/manage-a-node/rhel/), you learned how Chef works by configuring a web server and a custom home page. Let's extend this by building a basic but complete web application on Red Hat Enterprise Linux or CentOS that uses a web server, a database, and scripting.
+In this tutorial, you'll have the opportunity to practice what you've learned in the previous tutorials. Here's a quick recap:
 
-In this tutorial, you'll write Chef code from your workstation, upload your code to a Chef server, and have your Red Hat Enterprise Linux or CentOS node pull that code from the Chef server and apply it.
+* In [Learn the Chef basics](/learn-the-basics/rhel), you learned how Chef works by running `chef-client` in local mode to configure a CentOS server directly.
+* In [Learn to manage a node](/manage-a-node/rhel/), you learned how to set up your Chef server and bootstrap and manage a server, also called a _node_, remotely from your workstation.
+* In [Learn to develop your infrastructure code locally](/local-development/rhel/), you learned how _local development_ with Test Kitchen helps shorten the development process. With Test Kitchen, you apply your cookbook to a temporary instance that resembles production before you apply your work to a bootstrapped node.
 
-<img src="/assets/images/networks/workstation-server-node.png" style="width: 100%; box-shadow: none;" alt="Your workstation, a Chef server, and nodes" />
+Now you'll build a basic but complete web application on CentOS called Customers that uses a web server, a database, and scripting. Such a configuration is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll write a cookbook that's named `awesome_customers_rhel`.
 
-You've seen this setup in [Learn to manage a node](/manage-a-node/rhel/). There, you uploaded your cookbook to the Chef server from your workstation. To apply your cookbook to your node, you ran the `knife ssh` command, which created an SSH connection from your workstation to your node and ran `chef-client` on your node. When your node ran `chef-client`, it pulled the latest cookbooks from the Chef server.
+In the first part of this tutorial, you'll use an iterative process to build and verify each part of your web application. You'll do this by using Test Kitchen and a virtual machine that runs on your workstation.
 
-In this tutorial, the node will host the web application, which reads customer records from a database and displays the results on a web page. By the end, you'll have a web application that looks like this:
+After successfully verifying the completed web application locally, you'll set up a CentOS 7 node to bootstrap, upload your cookbook to the Chef server, bootstrap your node, and apply your web server configuration.
 
-![the resulting web page](/assets/images/misc/webapp_result.png)
+By the end, you'll have a web application that looks like this:
 
-A Linux web application configuration that uses a database and scripting is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll work with all of these components in this tutorial.
+![the resulting web page](misc/manage_customers_node.png)
 
 Setting up a LAMP stack is a great next step to building your Chef skills because it:
 
@@ -25,7 +28,7 @@ Setting up a LAMP stack is a great next step to building your Chef skills becaus
 * introduces just enough complexity to demonstrate real-world Chef usage patterns.
 * uses off-the-shelf software that you probably already know.
 
-After completing this lesson, you'll:
+After completing this tutorial, you'll:
 
 * be able to use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
 * be more productive by using community cookbooks from Chef Supermarket to perform common tasks.
@@ -34,4 +37,6 @@ After completing this lesson, you'll:
 
 [COMMENT] You don't need to understand all the details about how Apache and MySQL work to complete this tutorial. The goal is to learn skills and patterns that will help you apply Chef to your specific infrastructure challenges.
 
-You'll get started by setting up your workstation, a Chef server, and a node to manage.
+You'll get started by making sure your workstation is set up for local development with Test Kitchen, VirtualBox, and Vagrant.
+
+[COMMENT] You can [follow this quickstart](/manage-a-web-app-2/rhel/bring-up-the-web-app-using-test-kitchen/) if you've gone through the tutorial previously, or you have enough familiarity with Chef and just want to see the Customers web application in action.

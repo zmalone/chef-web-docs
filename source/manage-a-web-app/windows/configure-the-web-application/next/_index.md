@@ -1,1 +1,1 @@
-Now that the Customers web application is set up, let's upload your latest cookbook to the Chef server, apply it to your node, and confirm everything works as expected.
+Next, as an optional exercise, you'll apply the `awesome_customers_windows` cookbook on a live Windows Server node.

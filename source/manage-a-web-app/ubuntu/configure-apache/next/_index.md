@@ -1,1 +1,3 @@
-Next, you'll bootstrap your node and run the `awesome_customers` cookbook. Then you'll log into your node and run a few commands to verify that things are configured as we expect.
+Great work! You now have a working Apache configuration. Now that we have confidence that things are working, we can move on to setting up MySQL, a database instance, and PHP.
+
+But before we do that, let's set things up so that we can securely work with our database passwords.
