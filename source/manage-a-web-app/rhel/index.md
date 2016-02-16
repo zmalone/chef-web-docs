@@ -38,4 +38,4 @@ After completing this tutorial, you'll:
 
 You'll get started by making sure your workstation is set up for local development with Test Kitchen, VirtualBox, and Vagrant.
 
-[COMMENT] You can [follow this quickstart](/manage-a-web-app-2/rhel/bring-up-the-web-app-using-test-kitchen/) if you've gone through the tutorial previously, or you have enough familiarity with Chef and just want to see the Customers web application in action.
+[COMMENT] You can [follow this quickstart](/manage-a-web-app/rhel/bring-up-the-web-app-using-test-kitchen/) if you've gone through the tutorial previously, or you have enough familiarity with Chef and just want to see the Customers web application in action.
