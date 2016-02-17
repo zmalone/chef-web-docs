@@ -110,14 +110,14 @@ Now add the following to your attributes file, <code class="file-path">default.r
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
 default['firewall']['allow_ssh'] = true
-default['firewall']['firewalld']['permanent'] = false
+default['firewall']['firewalld']['permanent'] = true
 default['awesome_customers_rhel']['open_ports'] = 80
 ```
 
 The first two attributes are provided by the `firewall` cookbook. Here's a brief description of each:
 
-* Line 1 specifies whether the `firewall` cookbook's default recipe should open port 22.
-* Line 2 specifies whether to set the rules permanently so that they persist after reboot.
+* Line 1 specifies that the `firewall` cookbook's default recipe should open port 22 to allow SSH access.
+* Line 2 specifies that all rules should be set permanently so that they persist after reboot.
 
 The `default['awesome_customers_rhel']['open_ports']` node attribute (line 3) is a custom node attribute that we define. We specify port 80 to be the additional port to open. We could use the array syntax to specify multiple ports, for example, `[80, 443]`.
 
@@ -192,42 +192,42 @@ $ kitchen converge
          * firewall[default] action install
            - install firewalld, create template for /etc/sysconfig
          * yum_package[firewalld] action install (up to date)
-
+       
            - enable service service[firewalld]
-         * service[firewalld] action start
-
+       
+           - start service service[firewalld]
          * file[create empty /etc/sysconfig/firewalld-chef.rules] action create
-
-           - update content in file /etc/sysconfig/firewalld-chef.rules from none to fa85ee
-           --- /etc/sysconfig/firewalld-chef.rules	2016-02-05 20:25:48.573209000 +0000
-           +++ /etc/sysconfig/.firewalld-chef.rules20160205-25969-12gar62	2016-02-05 20:25:48.565204999 +0000
+       
+       
+           --- /etc/sysconfig/firewalld-chef.rules	2016-02-17 13:24:34.246048500 +0000
+           +++ /etc/sysconfig/.firewalld-chef.rules20160217-25958-tmeqp0	2016-02-17 13:24:34.237044000 +0000
            @@ -1 +1,2 @@
-
-
+       
+       
          * firewall_rule[allow world to ssh] action create
-
-         * firewall_rule[allow world to winrm] action create (skipped due to only_if)
-
-
+         
+        (skipped due to only_if)
+         * firewall_rule[established] action create
+         
          * firewall_rule[ipv6_icmp] action create
-
+         
        Recipe: awesome_customers_rhel::firewall
-
-
+       
+         
          * firewall[default] action save (up to date)
          * firewall[default] action restart
             (skipped due to only_if)
-         * file[/etc/sysconfig/firewalld-chef.rules] action create
+       
            - update content in file /etc/sysconfig/firewalld-chef.rules from fa85ee to ec238a
-           --- /etc/sysconfig/firewalld-chef.rules	2016-02-05 20:25:48.565204999 +0000
-           +++ /etc/sysconfig/.firewalld-chef.rules20160205-25969-pyscdn	2016-02-05 20:25:50.551197500 +0000
+           --- /etc/sysconfig/firewalld-chef.rules	2016-02-17 13:24:34.237044000 +0000
+           +++ /etc/sysconfig/.firewalld-chef.rules20160217-25958-ph96nh	2016-02-17 13:24:36.036943499 +0000
            @@ -1,2 +1,14 @@
            -# created by chef to allow service to start
            +# position 50
            +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 22 -m comment --comment 'allow world to ssh' -j ACCEPT
            +firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 22 -m comment --comment 'allow world to ssh' -j ACCEPT
            +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
-           +firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
+       
            +firewall-cmd --direct --add-rule ipv6 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
            +firewall-cmd --permanent --direct --add-rule ipv6 filter INPUT 50 -m state --state RELATED,ESTABLISHED -m comment --comment 'established' -j ACCEPT
            +firewall-cmd --direct --add-rule ipv6 filter INPUT 50 -p ipv6-icmp -m comment --comment 'ipv6_icmp' -j ACCEPT
@@ -235,21 +235,26 @@ $ kitchen converge
            +firewall-cmd --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
            +firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
            +firewall-cmd --direct --add-rule ipv6 filter INPUT 50 -p tcp -m tcp -m multiport --dports 80 -m comment --comment 'open ports 80' -j ACCEPT
-
-           - restore selinux security context
-       [2016-02-05T20:25:50+00:00] WARN: Cloning resource attributes for service[firewalld] from prior resource (CHEF-3694)
-       [2016-02-05T20:25:50+00:00] WARN: Previous service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:38:in `block (2 levels) in <class:FirewallFirewalld>'
-       [2016-02-05T20:25:50+00:00] WARN: Current  service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:92:in `block in <class:FirewallFirewalld>'
-
-
+       
+       
+       [2016-02-17T13:24:36+00:00] WARN: Cloning resource attributes for service[firewalld] from prior resource (CHEF-3694)
+       [2016-02-17T13:24:36+00:00] WARN: Previous service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:38:in `block (2 levels) in <class:FirewallFirewalld>'
+       [2016-02-17T13:24:36+00:00] WARN: Current  service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:92:in `block in <class:FirewallFirewalld>'
+       
+       
        Running handlers:
        Running handlers complete
-       Chef Client finished, 11/19 resources updated in 44 seconds
-       Finished converging <default-centos-72> (1m7.78s).
------> Kitchen is finished. (3m29.61s)
+       
+       Deprecated features used!
+         Default value "Evolving" is invalid for property stability of resource smf. In Chef 13 this will become an error: Option stability must be equal to one of: Standard Stable Evolving Unstable External Obsolete!  You passed "Evolving".. at 1 location:
+           - /tmp/kitchen/cache/cookbooks/smf/resources/default.rb:39:in `class_from_file'
+       
+       Chef Client finished, 11/19 resources updated in 28 seconds
+       Finished converging <default-centos-72> (0m53.13s).
+-----> Kitchen is finished. (3m19.01s)
 ```
 
-You'll see from the output that ports 22 and 80 are open to the firewall. You'll also see that the `firewall` cookbook creates rule filters for `RELATED` and `ESTABLISHED` traffic.
+You'll see from the output that ports 22 and 80 are open to the firewall.
 
 Let's log in to the instance and verify the firewall configuration. Run `kitchen login` to log in to your instance.
 
