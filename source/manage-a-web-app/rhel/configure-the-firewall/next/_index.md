@@ -1,1 +1,1 @@
-Next, you'll bootstrap your node and run the `awesome_customers` cookbook. Then you'll log into your node and run a few commands to verify that things are configured as we expect.
+Now that your cookbook properly configures the firewall, let's create an application user who has access rights to modify the web content.
