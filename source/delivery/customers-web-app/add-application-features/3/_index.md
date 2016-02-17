@@ -257,7 +257,7 @@ When the Delivery UI appears, trace the change's progress through the pipeline.
 
 Let's verify that the Customers web application successfully deployed to your Delivered stage's infrastructure environment.
 
-Follow the [same steps](/build-a-delivery-pipeline/aws/write-the-build-cookbook#verifythechangewassuccessfullydelivered) as you did previously to obtain the web server's IP address and then navigate to your home page.
+Follow the [same steps](/delivery/customers-web-app/write-the-build-cookbook#verifythechangewassuccessfullydelivered) as you did previously to obtain the web server's IP address and then navigate to your home page.
 
 Here's what you'll see.
 

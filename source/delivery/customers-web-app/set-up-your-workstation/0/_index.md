@@ -1,6 +1,6 @@
 ## Gather information about your Delivery server
 
-You'll need some information [from the previous lesson](/build-a-delivery-pipeline/aws/install-chef-delivery#step3). You can get this information from your administrator if you did not perform the installation.
+You'll need some information [from the previous lesson](/delivery/customers-web-app/install-chef-delivery#step3). You can get this information from your administrator if you did not perform the installation.
 
 * The Chef server URL, for example, https://10.194.13.167/organizations/test, and logon information.
 * The Chef Delivery web interface URL, for example, https://10.194.9.174/e/test/.
