@@ -284,7 +284,7 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ou
 
 Let's verify that the Customers web application successfully deployed to your Acceptance stage.
 
-Follow the [same steps](/delivery/customers-web-app/write-the-build-cookbook#verifythedeploymenttotheacceptancestage) as you did previously to obtain the web server's IP address and then navigate to your home page.
+Follow the [same steps](/delivery/get-started/write-the-build-cookbook#verifythedeploymenttotheacceptancestage) as you did previously to obtain the web server's IP address and then navigate to your home page.
 
 Here's what you'll see.
 

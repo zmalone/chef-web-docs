@@ -2,7 +2,7 @@
 
 In this lesson, you'll write automation code to provision the infrastructure environments for the Acceptance, Union, Rehearsal and Delivered stages.
 
-In [an earlier lesson](/delivery/customers-web-app/install-chef-delivery#step3), you or your administrator gathered information about your AWS environment. You'll need that information here. Specifically, you'll need:
+In [an earlier lesson](/delivery/get-started/install-chef-delivery#step3), you or your administrator gathered information about your AWS environment. You'll need that information here. Specifically, you'll need:
 
 * Your AWS credentials (access key and secret key).
 * An SSH private key that can be used to connect to the stage environments. Private keys are typically in .pem format.
