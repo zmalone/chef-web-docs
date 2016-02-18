@@ -17,7 +17,7 @@ Chef Delivery handles many types of software systems. You can use it to:
 * release source code or build artifacts to a repository such as GitHub.
 * push build artifacts to production servers in real time.
 
-[COMMENT] Chef Delivery relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. If you're unfamiliar with Git, you might want to [check out the documentation](https://git-scm.com/doc).
+[COMMENT] Chef Delivery relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. We'll provide all the Git commands that you'll need, but you can also [check out the documentation](https://git-scm.com/doc) to learn more.
 
 [START_BOX]
 
