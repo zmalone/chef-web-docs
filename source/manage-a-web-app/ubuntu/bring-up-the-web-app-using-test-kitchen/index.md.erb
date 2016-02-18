@@ -63,12 +63,26 @@ $ mkdir data_bags
 $ mkdir data_bags/database_passwords
 ```
 
-Generate your secret key.
+Run the commands that match your workstation setup to create a secret key in the<br><% fp('~/learn-chef/.chef') %> directory.
+
+### From a Linux or Mac OS workstation
 
 ```bash
 # ~/learn-chef
 $ openssl rand -base64 512 | tr -d '\r\n' > ~/learn-chef/.chef/encrypted_data_bag_secret
 ```
+
+### From a Windows workstation
+
+```ps
+# ~\learn-chef
+$ $key = New-Object byte[](512)
+$ $rng = [System.Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($key)
+$ [Convert]::ToBase64String($key) | Out-File "~\learn-chef\.chef\encrypted_data_bag_secret" -encoding "UTF8"
+$ [array]::Clear($key, 0, $key.Length)
+```
+
+<hr>
 
 Write this to <% fp 'mysql_customers.json' %>
 
