@@ -29,7 +29,7 @@ Then the following command to verify that VirtualBox is installed.
 ```bash
 # ~
 $ VBoxManage --version
-5.0.4r102546
+5.0.14r105127
 ```
 
 ### Install Vagrant
@@ -45,5 +45,5 @@ Then run the following to verify that Vagrant is installed.
 ```bash
 # ~
 $ vagrant --version
-Vagrant 1.7.4
+Vagrant 1.8.1
 ```

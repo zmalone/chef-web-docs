@@ -23,5 +23,5 @@ Now run the following to verify that Vagrant is installed.
 ```bash
 # ~
 $ vagrant --version
-Vagrant 1.7.4
+Vagrant 1.8.1
 ```
