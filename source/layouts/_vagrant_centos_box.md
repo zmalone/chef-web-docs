@@ -10,6 +10,8 @@ $ vagrant box add centos-6.5 http://opscode-vm-bento.s3.amazonaws.com/vagrant/vi
 ==> box: Successfully added box 'centos-6.5' (v0) for 'virtualbox'!
 ```
 
+[WINDOWS] [Due to an issue with newer versions of Vagrant](https://github.com/mitchellh/vagrant/issues/6852), if you're using a Windows workstation and the command fails with a blank error message, [you may need to install the Microsoft Visual C++ 2010 SP1 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=8328). Then try the command again.
+
 ### Bring up an instance
 
 Next, run these commands to bring up a CentOS 6.5 instance.
