@@ -9,3 +9,5 @@ These pages show you how to prepare a Linux or Windows Server node for use with 
 * [Red Hat Enterprise Linux or CentOS](/manage-a-node/rhel/get-a-node-to-bootstrap/)
 * [Windows Server](/manage-a-node/windows/get-a-node-to-bootstrap/)
 * [Ubuntu](/manage-a-node/ubuntu/get-a-node-to-bootstrap/)
+
+[COMMENT] The easiest way to get started is to use a system that has full Internet access. However, many users run Chef behind the firewall. [Check out this blog post](https://www.chef.io/blog/2014/10/28/working-with-chef-behind-your-firewall/) to learn more.
