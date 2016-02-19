@@ -32,7 +32,7 @@ You can use audit mode in environments that are not managed by Chef. You can sta
 
 In this tutorial, you'll first use audit mode to discover an infrastructure change that, while appearing well-intentioned and functional, actually violates your compliance policy. Then you'll connect your audit and infrastructure code to Chef Analytics. Next, you'll write an additional control that highlights the need to repair existing infrastructure and you'll also have Chef Analytics issue an alert when the audit fails.
 
-After completing this lesson, you'll be able to:
+After completing this lesson, you should be able to:
 
 * write and apply controls, both to a local virtual machine or cloud instance and to a node bootstrapped to your Chef server.
 * verify and resolve audit failures.

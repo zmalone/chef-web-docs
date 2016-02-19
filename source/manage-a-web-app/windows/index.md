@@ -27,12 +27,12 @@ Setting up a web application stack is a great next step to building your Chef sk
 * introduces just enough complexity to demonstrate real-world Chef usage patterns.
 * uses off-the-shelf software that you probably already know.
 
-After completing this tutorial, you'll:
+After completing this tutorial, you should be able to:
 
-* be able to use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
-* know how to incorporate PowerShell and PowerShell DSC in your Chef recipes.
-* be more productive by using community cookbooks from Chef Supermarket to perform common tasks.
-* know how to use tools such as Berkshelf to resolve dependencies among your cookbooks.
+* use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
+* use community cookbooks from Chef Supermarket to perform common tasks.
+* use encrypted data bags to protect sensitive data.
+* use Berkshelf to resolve dependencies among your cookbooks.
 
 [COMMENT] You don't need to understand all the details about how IIS and SQL Server work to complete this tutorial. The goal is to learn skills and patterns that will help you apply Chef to your specific infrastructure challenges.
 

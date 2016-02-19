@@ -12,7 +12,7 @@ The bootstrap process installed the Chef tools on your node, pulled the latest c
 1. Write a small amount of Chef code that expresses some new policy or feature.
 1. Upload your code to the Chef server.
 1. Run `chef-client` to apply the updated policy on your node.
-1. Log on to your node and manually verify that it's configured as you expect.
+1. Log in to your node and manually verify that it's configured as you expect.
 1. Repeat the process.
 
 <img src="/assets/images/misc/dev_cycle_4.png" style="width:40%; height:auto; box-shadow:none;" alt="The current development cycle" />
