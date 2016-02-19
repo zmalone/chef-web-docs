@@ -22,7 +22,7 @@ Like before, we suggest that you work in a disposable environment such as a Wind
 
 ## 1. Get a Windows Server 2012 R2 node to bootstrap
 
-Your node must be reachable from your workstation &ndash; the system from where you'll initiate the bootstrap process. We'll show you how to verify a connection before you bootstrap your node.  
+Your node must be reachable from your workstation &ndash; the system from where you'll initiate the bootstrap process. We'll show you how to verify a connection before you bootstrap your node.
 
 The free trial virtual machine that we provide in the first tutorial is not reachable from the Internet because its IP address is allocated on the private network. Therefore, you'll need to bring up your own system.
 
@@ -36,7 +36,7 @@ If you don't have a preferred way to set up a server, here are some popular opti
 
 AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
 
-If you're new to AWS, their ["Getting Started with Amazon EC2 Windows Instances" tutorial](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html) walks you through the creation of your first Windows Server 2012 R2 instance. 
+If you're new to AWS, their ["Getting Started with Amazon EC2 Windows Instances" tutorial](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html) walks you through the creation of your first Windows Server 2012 R2 instance.
 
 When you select the instance size, you can choose t2.micro to take advantage of the free usage tier. However, a t2.medium or larger instance size will give you better performance. When you create your security group, ensure that ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5986 (WinRM) are open for inbound network traffic.
 
@@ -60,7 +60,7 @@ When you're ready to continue with this tutorial, [go to the "Create a virtual m
 
 <% markdown do %>
 
-Hyper-V enables you to create and manage virtual machines from your workstation. 
+Hyper-V enables you to create and manage virtual machines from your workstation.
 
 Choose this option if you don't have access to cloud resources or you prefer to work with local virtual machines. You'll also need reasonably powerful hardware. Ensure that:
 
@@ -176,7 +176,7 @@ The following resources can help you connect if your node is running on AWS, Azu
 
 [START_BOX]
 
-## 4. Prepare your node for the bootstrap process 
+## 4. Prepare your node for the bootstrap process
 
 During the bootstrap process, your node gets associated with the Chef server. The Chef server holds information about your node that you can use to generate reports or share with other nodes. The bootstrap process also installs the Chef tools on your node and does an initial checkin with the Chef server.
 
@@ -191,7 +191,7 @@ In this part, you'll:
 1. Create a self-signed certificate
 1. Add an HTTPS listener
 1. Configure WinRM
-1. Open the firewall to enable inbound traffic over WinRM 
+1. Open the firewall to enable inbound traffic over WinRM
 
 Perform each of these steps from a PowerShell window on your Windows Server node.
 
@@ -237,7 +237,7 @@ Container       {Transport=HTTPS, Address=*}        Listener_1305953032
 
 Now you need to configure WinRM. You also need to ensure that WinRM allocates enough memory and provides enough time for the Chef tools to successfully install.
 
-Run these commands to allocate 1GB of memory to each WinRM shell and set the timeout period to 30 minutes. 
+Run these commands to allocate 1GB of memory to each WinRM shell and set the timeout period to 30 minutes.
 
 ```ps
 $ Set-Item WSMan:\localhost\Shell\MaxMemoryPerShellMB 1024
@@ -261,12 +261,12 @@ Ok.
 
 From your workstation, you'll now verify that your Windows Server node can receive network traffic on port 5986 and through the firewall. You don't have to do this every time you bootstrap a node, but verifying that your node is connectable will help ensure that the bootstrap process succeeds.
 
-To verify the connection, you'll use the `knife wsman test` command, which is provided by the `knife-windows` plugin. This command provides functionality that's similar to PowerShell's 
+To verify the connection, you'll use the `knife wsman test` command, which is provided by the `knife-windows` plugin. This command provides functionality that's similar to PowerShell's
 [Test-WSMan](https://technet.microsoft.com/en-us/library/hh849873.aspx) cmdlet, but is available from any operating system that can run Chef DK, including Windows, Mac OS, and Linux.
 
-First, let's verify that your Windows Server node is indeed using a self-signed certificate. 
+First, let's verify that your Windows Server node is indeed using a self-signed certificate.
 
-From the <% fp '~/learn-chef' %> directory on your workstation, run the following command, replacing <% ph 'HOSTNAME' %> with the hostname you specified when you created the certificate on your node. The `--winrm-transport ssl` argument means that you want to verify a secure SSL connection over port 5986. 
+From the <% fp '~/learn-chef' %> directory on your workstation, run the following command, replacing <% ph 'HOSTNAME' %> with the hostname you specified when you created the certificate on your node. The `--winrm-transport ssl` argument means that you want to verify a secure SSL connection over port 5986.
 
 ```bash
 # ~/learn-chef

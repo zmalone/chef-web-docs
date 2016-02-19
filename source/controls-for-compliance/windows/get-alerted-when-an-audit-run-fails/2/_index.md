@@ -73,7 +73,7 @@ $ knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASS
 
 ### View the events in the Timeline view
 
-Now log on to the web interface for your Chef Analytics server. From the **Timeline** tab, you'll see the recent activity on your node.
+Now log in to the web interface for your Chef Analytics server. From the **Timeline** tab, you'll see the recent activity on your node.
 
 Here's what the events look like when you bootstrap a node.
 
