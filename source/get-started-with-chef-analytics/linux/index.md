@@ -24,7 +24,7 @@ In this tutorial, you'll set up a Chef Analytics server, connect it to your Chef
 
 ![Adding a new rule](chef-analytics/notification-email.png)
 
-After completing this lesson, you'll be able to:
+After completing this tutorial, you should be able to:
 
 * install and configure Chef Analytics and connect it to your Chef server.
 * use the Chef Analytics web interface to view events that happen on your Chef server.

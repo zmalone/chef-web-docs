@@ -19,10 +19,10 @@ Working with hosted Chef is a great way to get started, and in the long run can 
 
 In this tutorial, you'll install and configure a Chef server as part of your own infrastructure. Then you'll write and upload a basic cookbook to your Chef server, bootstrap a node, and apply your cookbook to that node.
 
-After completing this lesson, you'll:
+After completing this tutorial, you should be able to:
 
-* be able to install Chef server, customize its configuration, and prepare your workstation to remotely manage nodes.
-* learn to upload a cookbook to your Chef server, bootstrap a node, and apply that cookbook to your node.
-* know how to install the Chef management console and other Chef server features.
+* install Chef server, customize its configuration, and prepare your workstation to remotely manage nodes.
+* upload a cookbook to your Chef server, bootstrap a node, and apply that cookbook to your node.
+* install the Chef management console and other Chef server features.
 
 You'll get started by setting up your workstation and performing prerequisite tasks for your Chef server.

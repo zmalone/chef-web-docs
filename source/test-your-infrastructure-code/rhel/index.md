@@ -35,12 +35,13 @@ Rather than focusing on the specific kinds of software testing, like unit and in
 * Are our resources properly defined?
 * Does the code adhere to our style guide?
 
-After completing this tutorial, you'll:
+After completing this tutorial, you should be able to:
 
-* be able to use [Serverspec](http://serverspec.org) to verify that your cookbook configures the system as you expect.
-* be able to use [ChefSpec](http://sethvargo.github.io/chefspec/) to verify that your resources are properly defined, even before you apply your cookbook.
-* be able to use [RuboCop](https://github.com/bbatsov/rubocop) and [Foodcritic](http://acrmp.github.io/foodcritic/) to verify that your cookbook adheres to accepted coding standards and avoids common defects.
-* have increased confidence that your `awesome_customers` cookbook that you've built in the previous tutorials will behave as you expect in production.
+* use [Serverspec](http://serverspec.org) to verify that your cookbook configures the system as you expect.
+* use [ChefSpec](http://sethvargo.github.io/chefspec/) to verify that your resources are properly defined, even before you apply your cookbook.
+* use [RuboCop](https://github.com/bbatsov/rubocop) and [Foodcritic](http://acrmp.github.io/foodcritic/) to verify that your cookbook adheres to accepted coding standards and avoids common defects.
+
+You'll also have increased confidence that the `awesome_customers` cookbook that you've built in the previous tutorials will behave as you expect in production.
 
 You'll get started by setting up the Chef Development Kit and familiarize yourself with Test Kitchen.
 
