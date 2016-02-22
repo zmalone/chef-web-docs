@@ -11,5 +11,5 @@ After you sign up, you'll receive an email to confirm your account. Click the li
 After that, navigate to [https://manage.chef.io/](https://manage.chef.io/) and sign in. Then follow these steps to create an organization.
 
 1. Click **Create New Organization**.
-1. Enter a full name and short name for your organization. An organization is typically a company name, or a department within a company. These names can be whatever you want, but the short name must be unique.
+1. Enter a full name and short name for your organization. An organization is typically a company name or a department within a company. These names can be whatever you want but the short name must be unique.
 1. Click **Create Organization**.

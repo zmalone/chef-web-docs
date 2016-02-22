@@ -1,6 +1,6 @@
 ## 3. Create the INI file
 
-In this step, you first create the INI file and set its initial contents. To keep things basic, let's configure the file in the working directory.
+In this step, you'll first create the INI file and set its initial contents. To keep things basic, you'll configure the file in the working directory.
 
 Next, you'll write what's called a _recipe_ to describe the desired state of the INI file. Then you'll run [chef-client](https://docs.chef.io/ctl_chef_client.html), the program that applies your Chef code to place your system in the desired state. Typically, `chef-client` downloads and runs the latest Chef code from the Chef server, but in this lesson, you'll run `chef-client` in what's called _local mode_ to apply Chef code that exists locally on your virtual machine.
 

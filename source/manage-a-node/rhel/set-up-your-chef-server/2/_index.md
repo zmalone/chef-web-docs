@@ -25,11 +25,13 @@ $ mkdir ~/learn-chef/.chef
 
 ### Generate your knife configuration file
 
-First, sign in to [https://manage.chef.io/](https://manage.chef.io/). From the **Administration** tab, select your organization. From the menu on the left, select **Generate Knife Config** and save the file.
+1. Sign in to [https://manage.chef.io/](https://manage.chef.io/).
+1. From the **Administration** tab, select your organization.
+1. From the menu on the left, select **Generate Knife Config** and save the file.
 
 ![](misc/manage_generate_knife_config.png)
 
-From the command line, copy <code class="file-path">knife.rb</code> to your <code class="file-path">~/learn-chef/.chef</code> directory, for example:
+From the command line, copy <code class="file-path">knife.rb</code> to your <code class="file-path">~/learn-chef/.chef</code> directory. For example:
 
 ```bash
 $ cp ~/Downloads/knife.rb ~/learn-chef/.chef
@@ -37,7 +39,9 @@ $ cp ~/Downloads/knife.rb ~/learn-chef/.chef
 
 ### Generate your RSA private key file
 
-First, sign in to [https://manage.chef.io/](https://manage.chef.io/). From the **Administration** tab, select **Users** from the menu on the left. Select your user name, select **Reset key** from the menu on the left, and then select **Reset key** from the window that appears.
+1. Sign in to [https://manage.chef.io/](https://manage.chef.io/).
+1. From the **Administration** tab, select **Users** from the menu on the left.
+1. Select your user name, select **Reset key** from the menu on the left. Then select **Reset key** from the window that appears.
 
 ![](misc/manage_reset_key.png)
 
@@ -45,7 +49,7 @@ A second window appears that displays your private key. From the bottom of that 
 
 ![](misc/manage_download_key.png)
 
-From the command line, copy your private key file to your <code class="file-path">~/learn-chef/.chef</code> directory, for example:
+From the command line, copy your private key file to your <code class="file-path">~/learn-chef/.chef</code> directory. For example:
 
 ```bash
 $ cp ~/Downloads/your_name.pem ~/learn-chef/.chef
