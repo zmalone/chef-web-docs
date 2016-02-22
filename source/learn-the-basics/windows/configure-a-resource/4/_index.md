@@ -39,4 +39,4 @@ Running handlers complete
 Chef Client finished, 1/1 resources updated in 13 seconds
 ```
 
-This time Chef does work because we've changed the desired state of the file and need to update the installed version to match it.
+This time Chef applies the action because you've changed the desired state of the file and need to update the installed version to match it.
