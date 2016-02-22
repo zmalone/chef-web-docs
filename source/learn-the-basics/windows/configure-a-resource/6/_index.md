@@ -1,6 +1,6 @@
 ## 6. Delete the INI file
 
-OK, you're done experimenting with the INI file, so let's clean up. From your <code class="file-path">~\chef-repo</code> directory, create a new file named <code class="file-path">goodbye.rb</code> and save this content to it.
+OK, you're done experimenting with the INI file, so let's clean up. From your <code class="file-path">~\chef-repo</code> directory, create a new file named <code class="file-path">goodbye.rb</code> and save the following content to it.
 
 ```ruby-Win32
 # ~/chef-repo/goodbye.rb
