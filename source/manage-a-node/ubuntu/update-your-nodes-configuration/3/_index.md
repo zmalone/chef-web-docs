@@ -2,7 +2,7 @@
 
 Now that your updated cookbook is on the Chef server, you can run `chef-client` on your node. The `chef-client` command pulls from Chef server the latest cookbooks from the node's run-list and applies the run-list to the node.
 
-To run `chef-client` on your note remotely from your workstation, you'll run the [knife ssh](https://docs.chef.io/knife_ssh.html) command. `knife ssh` takes the command to run on the node as an argument. Here, we'll run `sudo chef-client`.
+To run `chef-client` on your node remotely from your workstation, you'll run the [knife ssh](https://docs.chef.io/knife_ssh.html) command. `knife ssh` takes the command to run on the node as an argument. Here, we'll run `sudo chef-client`.
 
 As with `knife bootstrap`, the options you provide to `knife ssh` depend on how you would normally connect to your node over SSH.
 
