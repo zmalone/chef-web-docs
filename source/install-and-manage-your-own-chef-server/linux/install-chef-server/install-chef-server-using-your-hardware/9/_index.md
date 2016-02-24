@@ -19,7 +19,5 @@ $ knife client list
     <li>your RSA key is user-readable only.</li>
     <li>your Chef server meets the <a href="https://docs.chef.io/install_server_pre.html">prerequisites</a>.</li>
   </ul>
-  <p>If you're unable to resolve the error, let us know in the forum at the bottom of this page or sign up for weekly <a href="https://www.chef.io/contact/office-hours-registration/">office hours</a>.
-  </p>
   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
 </div>
