@@ -5,7 +5,7 @@ In this tutorial, you'll work from both your workstation and your Chef server. W
 <a class="help-button radius" href="#" data-reveal-id="connect-ssh-help-modal">Show me how!</a>
 
 <div id="connect-ssh-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-<h4><a class="section-link" name="connectfromamacosorlinuxworkstation" href="#connectfromamacosorlinuxworkstation">&#167;</a>Connect to your Chef server over SSH from a Mac OS or Linux workstation</h4>
+<h4>Connect to your Chef server over SSH from a Mac OS or Linux workstation</h4>
 
 <p>Here&#39;s an example of how to create an SSH connection using a user name and password.</p>
 <div class="window ">
@@ -27,7 +27,7 @@ In this tutorial, you'll work from both your workstation and your Chef server. W
             <h1 class="titleInside">Terminal: ~/chef-repo</h1>
             <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>ssh -i ~/.ssh/my.pem root@52.25.201.190</span></code></pre></td></tr></table></div></div>
           </div>
-<h4><a class="section-link" name="connectfromawindowsworkstation" href="#connectfromawindowsworkstation">&#167;</a>Connect to your Chef server over SSH from a Windows workstation</h4>
+<h4>Connect to your Chef server over SSH from a Windows workstation</h4>
 
 <p>Mac OS and most Linux distributions come with an SSH client. On Windows, you&#39;ll need to install one. <a href="http://www.putty.org">PuTTY</a> is a popular SSH client for connecting to Linux machines.</p>
 

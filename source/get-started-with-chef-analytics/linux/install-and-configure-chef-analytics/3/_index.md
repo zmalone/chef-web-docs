@@ -15,11 +15,11 @@ One way to copy the files is to:
 <a class="help-button radius" href="#" data-reveal-id="transfer-files-help-modal">Show me how!</a>
 
 <div id="transfer-files-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-  <h3><a class="section-link" name="tocopythefilesfromchefservertochefanalytics" href="#tocopythefilesfromchefservertochefanalytics">&#167;</a>To copy the files from Chef server to Chef Analytics</h3>
+  <h3>To copy the files from Chef server to Chef Analytics</h3>
 
 <p>Choose the steps that match your workstation setup and how you connect to your servers. These steps are performed from your workstation.</p>
 
-<h4><a class="section-link" name="copythefilesfromamacosorlinuxworkstation" href="#copythefilesfromamacosorlinuxworkstation">&#167;</a>Copy the files from a Mac OS or Linux workstation</h4>
+<h4>Copy the files from a Mac OS or Linux workstation</h4>
 
 <p>Here&#39;s how to copy the files using a user name and password. Replace <code class="placeholder">USER</code>, <code class="placeholder">CHEF\_SERVER\_IP\_ADDRESS</code>, and <code class="placeholder">ANALYTICS\_IP\_ADDRESS</code> with your values.</p>
 <div class="window ">
@@ -41,7 +41,7 @@ One way to copy the files is to:
             <h1 class="titleInside">Terminal: ~</h1>
             <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>&nbsp;</span><span class='line-number'>$</span><span class='line-number'>&nbsp;</span><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>ssh -t -i IDENTITY_FILE USER@CHEF_SERVER_IP_ADDRESS sudo tar -czvf /tmp/opscode-analytics.tar /etc/opscode-analytics</span><span class='line output'>tar: Removing leading `/' from member names</span><span class='line output'>/etc/opscode-analytics/</span><span class='line output'>/etc/opscode-analytics/webui_priv.pem</span><span class='line output'>/etc/opscode-analytics/actions-source.json</span><span class='line command'>scp -p -i IDENTITY_FILE USER@CHEF_SERVER_IP_ADDRESS:/tmp/opscode-analytics.tar /tmp</span><span class='line output'>opscode-analytics.tar                         100% 1975     1.9KB/s   00:00</span><span class='line command'>cat /tmp/opscode-analytics.tar | ssh -i IDENTITY_FILE USER@ANALYTICS_IP_ADDRESS sudo tar -xzf - -C /</span></code></pre></td></tr></table></div></div>
           </div>
-<h4><a class="section-link" name="copythefilesfromawindowsworkstation" href="#copythefilesfromawindowsworkstation">&#167;</a>Copy the files from a Windows workstation</h4>
+<h4>Copy the files from a Windows workstation</h4>
 
 <p>Mac OS and most Linux distributions come with an SSH client and secure copy utility. On Windows, you&#39;ll need to install them. <a href="http://www.putty.org">PuTTY</a> is a popular SSH client for connecting to Linux machines, and comes with a secure copy utility. <a href="http://winscp.net">WinSCP</a> is another popular option for securely copying files. If you&#39;re using Amazon EC2 to host your node, the <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/putty.html">AWS documentation</a> can also help get you started.</p>
 
