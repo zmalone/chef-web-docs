@@ -20,7 +20,7 @@ Now let's run the `hello_chef_server` cookbook on the node that you bootstrapped
             <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password 'PASSWORD'</span></code></pre></td></tr></table></div></div>
           </div>
   <h4>Linux node: key-based authentication</h4>
-  <p>Replace <code class="placeholder">ADDRESS</code> with your remote node&#39;s external address and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.</p>
+  <p>Replace <code class="placeholder">ADDRESS</code> with your remote node&#39;s external address and <code class="placeholder">IDENTITY_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.</p>
 <div class="window ">
             <nav class="control-window">
               <div class="close">&times;</div>
