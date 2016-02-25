@@ -15,7 +15,12 @@ $ sudo yum install sendmail -y
 $ sudo /etc/init.d/sendmail start
 ```
 
-After you start the `sendmail` service, you can run `sudo netstat -lptn | grep sendmail` to ensure that the service is listening on port 25.
+Now run this command to verify that the service is listening on port 25.
+
+```bash
+$ sudo netstat -lptn | grep sendmail
+tcp        0      0 127.0.0.1:25                0.0.0.0:*                   LISTEN      14693/sendmail
+```
 
 #### Ubuntu
 

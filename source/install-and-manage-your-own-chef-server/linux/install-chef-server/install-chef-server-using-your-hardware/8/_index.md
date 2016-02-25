@@ -7,15 +7,15 @@ During the bootstrap process, `knife` copies the certificate from your workstati
 Run the `knife ssl fetch` command from your workstation to retrieve a copy of the certificate.
 
 ```bash
-# ~/chef-repo
+# ~/learn-chef
 $ knife ssl fetch
 WARNING: Certificates from ec2-52-25-239-111.us-west-2.compute.amazonaws.com will be fetched and placed in your trusted_cert
-directory (/home/user/chef-repo/.chef/trusted_certs).
+directory (/home/user/learn-chef/.chef/trusted_certs).
 
 Knife has no means to verify these are the correct certificates. You should
 verify the authenticity of these certificates after downloading.
 
-Adding certificate for ec2-52-25-239-111.us-west-2.compute.amazonaws.com in /home/user/chef-repo/.chef/trusted_certs/ec2-52-25-239-111_us-west-2_compute_amazonaws_com.crt
+Adding certificate for ec2-52-25-239-111.us-west-2.compute.amazonaws.com in /home/user/learn-chef/.chef/trusted_certs/ec2-52-25-239-111_us-west-2_compute_amazonaws_com.crt
 ```
 
 [COMMENT] If the command fails, verify that you have port 443 (HTTPS) open to incoming traffic on the Chef server.
@@ -23,7 +23,7 @@ Adding certificate for ec2-52-25-239-111.us-west-2.compute.amazonaws.com in /hom
 Now run `knife ssl check` to verify that the certificate was properly retrieved and can be used to authenticate calls to the Chef server.
 
 ```bash
-# ~/chef-repo
+# ~/learn-chef
 $ knife ssl check
 Connecting to host ec2-52-27-41-27.us-west-2.compute.amazonaws.com:443
 Successfully verified certificates from `ec2-52-27-41-27.us-west-2.compute.amazonaws.com'
