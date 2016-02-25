@@ -1,5 +1,5 @@
 ---
-title: 'Build a continuous delivery pipeline with Chef Delivery on AWS'
+title: 'Get started with Chef Delivery on AWS'
 layout: lesson-overview
 platform: Get started with Chef Delivery on AWS
 logo: delivery.svg
