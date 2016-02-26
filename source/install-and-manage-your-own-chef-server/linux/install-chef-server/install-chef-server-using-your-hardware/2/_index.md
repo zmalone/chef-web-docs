@@ -1,10 +1,6 @@
 ## 2. Install Chef server
 
-Click the button to get the Chef server package for your version of Red Hat Enterprise Linux/CentOS or Ubuntu.
-
-<a class='accent-button radius' href='https://downloads.chef.io/chef-server/' target='_blank'>Download Chef server&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
-
-It's likely that you're viewing this web page from your workstation, and that your Chef server is running without a graphical user interface. The easiest way to get the download link from your workstation to your Chef server is to locate and copy the link you need, and then paste it into a `wget` command through an SSH session to your Chef server.
+It's likely that you're viewing this web page from your workstation, and that your system for running Chef server is running without a graphical user interface. The easiest way to get the download link from your workstation to your Chef server is to [copy the link you need from the download page](https://downloads.chef.io/chef-server/) and then paste it into a `wget` command through an SSH session to your Chef server.
 
 Here's an example of how to download and install Chef server on Red Hat Enterprise Linux or CentOS. Replace <code class="placeholder">PACKAGE\_URL</code> and <code class="placeholder">PACKAGE\_NAME</code> with the latest one from the download page.
 
