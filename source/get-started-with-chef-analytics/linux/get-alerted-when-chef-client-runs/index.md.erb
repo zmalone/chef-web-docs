@@ -10,9 +10,9 @@ show_disqus: false
 ---
 [HEADLINE] Alerts help keep your team informed of important events that occur on your Chef server.
 
-The Chef documentation [provides an overview](https://docs.chef.io/analytics.html) of Chef Analtyics' components. In brief, Chef Analtyics enables you to set up a _alert_ or _notification_, or an action that occurs in response to an event. You can also set up _rules_, or the conditions that define which events cause a notification or alert to be sent.
+The Chef documentation [provides an overview](https://docs.chef.io/analytics.html) of Chef Analytics' components. In brief, Chef Analytics enables you to set up an _alert_ or _notification_, or an action that occurs in response to an event. You also set up _rules_, or the conditions that define which events cause an alert or notification to be sent.
 
-An alert is a message that appears in the Chef Analtyics web interface. Alerts are categorized as informational messages, warnings, and errors. A notification can be sent through email, HipChat, Slack, Splunk, or to any HTTP endpoint.
+An alert is a message that appears in the Chef Analytics web interface. Alerts are categorized as informational messages, warnings, and errors. A notification can be sent through email, HipChat, Slack, Splunk, or to any HTTP endpoint.
 
 In this lesson, you'll set up a basic alert that is triggered when a `chef-client` run completes on a node.
 
@@ -28,7 +28,7 @@ From your web browser, navigate to the URL for your Chef Analytics server. Click
 
 ![The Chef Analytics sign-in page](chef-analytics/sign-in.png)
 
-Sign in with the administrator user name and password that you used when you set up your Chef server.
+Sign in with the administrator username and password that you used when you set up your Chef server.
 
 ![The Chef Manage sign-in page](chef-analytics/sign-in-redirect.png)
 
@@ -81,7 +81,7 @@ Now go back to the Chef Analytics web interface. From the **Nodes** tab, scroll 
 
 ![The Nodes tab](chef-analytics/nodes-success.png)
 
-Click your node from the list that appears at the bottom of the page (for example, **node1**) and you'll see details about the latest `chef-client` run.  
+Click your node from the list that appears at the bottom of the page (for example, **node1**) and you'll see details about the latest `chef-client` run.
 
 ![The node details screen](chef-analytics/node-status.png)
 
@@ -113,13 +113,13 @@ Some message types are:
 * `run_resource` &ndash; a single resource was updated
 * `run_control` &ndash; a control run as part of [audit mode](https://docs.chef.io/analytics.html#audit-mode) occurred
 
-You can find all of the message types in the [Chef documentation](https://docs.chef.io/analytics_rules.html#message-types).
+You can [find all of the message types](https://docs.chef.io/analytics_rules.html#message-types) in the Chef documentation.
 
 [COMMENT] Remember, to _converge_ a node means to run `chef-client` and bring the node towards its desired configuration.
 
 We want a rule that alerts us every time a node converges, so we'll write a rule for the `run_converge` message type.
 
-From the Chef Analytics page in your web browser, click **Rules** and then click **+** to create a new rule. From the rule editor, click `New Rule Group 1` and rename it to `alert_on_run_converge`.
+From the Chef Analytics web interface, click **Rules** and then click **+** to create a new rule. From the rule editor, click `New Rule Group 1` and rename it to `alert_on_run_converge`.
 
 ![Adding a new rule](chef-analytics/add-rule.png)
 
@@ -212,7 +212,7 @@ end
 
 This code contains two rules. The first rule triggers an informational alert when `chef-client` completes successfully. It uses the built-in `message` object to retrieve the node's name, completion time, and the number of resources that were updated.
 
-The second rule triggers an error alert when `chef-client` fails. It uses the built-in `message` object to build the URL to the page on Chef server that details the failure. 
+The second rule triggers an error alert when `chef-client` fails. It uses the built-in `message` object to build the URL to the page on Chef server that details the failure.
 
 [DOCS] [Learn more about how to write rules](https://docs.chef.io/analytics_rules.html) in the Chef documentation.
 
@@ -249,9 +249,9 @@ From the web interface, navigate to the **Alerts** tab. You'll see something lik
 
 ![The success alert](chef-analytics/alert-success.png)
 
-As expected, the `chef-client` run succeeded.
+As expected, the `chef-client` run succeeded. Zero resources were updated because the node is already in the desired state.
 
-Now let's modify the `hello_chef_server` cookbook to fail so that we can trigger the failure alert. If you are using your own cookbook, you can add a similar failure. 
+Now let's modify the `hello_chef_server` cookbook to fail so that we can trigger the failure alert. If you are using your own cookbook, you can add a similar failure.
 
 Modify your cookbook's default recipe like this.
 
@@ -264,7 +264,7 @@ end
 raise 'A fatal error has occurred.'
 ```
 
-This example [raises an exception](http://ruby-doc.org/core-2.1.1/Exception.html) to cause the `chef-client` run to fail. 
+This example [raises an exception](http://ruby-doc.org/core-2.1.1/Exception.html) to cause the `chef-client` run to fail.
 
 Now upload your updated cookbook to the Chef server.
 

@@ -11,7 +11,7 @@ $ cd ~/Development
 
 Clone the `deliver-customers-rhel` repo from GitHub.
 
-[WINDOWS] Many Git users use Git BASH, which is part of [Git for Windows](https://git-for-windows.github.io), to work with Git from Windows. [posh-git](https://github.com/dahlbyk/posh-git) is another popular option, which provides access to Git from Windows PowerShell.
+[WINDOWS] Many Git users use Git Bash, which is part of [Git for Windows](https://git-for-windows.github.io), to work with Git from Windows. [posh-git](https://github.com/dahlbyk/posh-git) is another popular option, which provides access to Git from Windows PowerShell.
 
 ```bash
 # ~/Development

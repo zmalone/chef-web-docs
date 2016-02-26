@@ -8,7 +8,7 @@ You'll need [Git](https://git-scm.com/downloads) to obtain starter code for your
 
 [WINDOWS] On Windows, Git 2.6 is not currently supported for use with Chef Delivery.
 
-[WINDOWS] Many Windows users use Git BASH, which is part of [Git for Windows](https://git-for-windows.github.io). [posh-git](https://github.com/dahlbyk/posh-git) is another popular option, which provides access to Git from Windows PowerShell.
+[WINDOWS] Many Windows users use Git Bash, which is part of [Git for Windows](https://git-for-windows.github.io). [posh-git](https://github.com/dahlbyk/posh-git) is another popular option, which provides access to Git from Windows PowerShell.
 
 ### 1.2. Install the Chef Development Kit
 

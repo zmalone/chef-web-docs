@@ -4,10 +4,10 @@ Nodes communicate with the Chef server through a web service that's hosted on yo
 
 During the bootstrap process, `knife` copies the certificate from your workstation to the node. In order to do that, you must first retrieve a copy of the certificate on your workstation.
 
-Run the `knife ssl fetch` command from your workstation to retrieve a copy of the certificate.
+From your <code class="file-path">~/learn-chef/chef-repo</code> directory, run the `knife ssl fetch` command to retrieve a copy of the certificate.
 
 ```bash
-# ~/learn-chef
+# ~/learn-chef/chef-repo
 $ knife ssl fetch
 WARNING: Certificates from ec2-52-25-239-111.us-west-2.compute.amazonaws.com will be fetched and placed in your trusted_cert
 directory (/home/user/learn-chef/.chef/trusted_certs).
@@ -23,7 +23,7 @@ Adding certificate for ec2-52-25-239-111.us-west-2.compute.amazonaws.com in /hom
 Now run `knife ssl check` to verify that the certificate was properly retrieved and can be used to authenticate calls to the Chef server.
 
 ```bash
-# ~/learn-chef
+# ~/learn-chef/chef-repo
 $ knife ssl check
 Connecting to host ec2-52-27-41-27.us-west-2.compute.amazonaws.com:443
 Successfully verified certificates from `ec2-52-27-41-27.us-west-2.compute.amazonaws.com'

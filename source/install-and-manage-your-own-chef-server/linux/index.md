@@ -5,7 +5,9 @@ platform: 'Get started with Chef server'
 logo: chef-server.svg
 order: 1
 ---
-[COMMENT] If you're new to Chef, we recommend that you first work through _Learn the Chef_ basics for [Red Hat Enterprise Linux](/learn-the-basics/rhel/), [Ubuntu](/learn-the-basics/ubuntu/), or [Windows Server](/learn-the-basics/windows/) and _Learn to manage a node_ for [Red Hat Enterprise Linux](/manage-a-node/rhel/), [Ubuntu](/manage-a-node/ubuntu/), or [Windows Server](/manage-a-node/windows/). These tutorials teach you the basics of how Chef works on a virtual machine that we provide.
+<br>
+
+[COMMENT] If you're new to Chef, we recommend that you first work through the [Learn the Chef basics](/tutorials/#learn-the-basics) and [Learn to manage a node](/tutorials/#manage-a-node) tutorials. The first tutorial teaches you the basics of how Chef works on a virtual machine that we provide. The second tutorial shows how to use hosted Chef, which is a Chef server that we manage for you. Both tutorials come in versions for Red Hat Enterprise Linux, Windows Server, and Ubuntu.
 
 In [Learn to manage a node](/manage-a-node/ubuntu/), you learned how to write a Chef cookbook from your workstation, upload your cookbook to the Chef server, bootstrap a node, and apply your cookbook to your node. You signed up for a hosted Chef account, which provides you with access to a Chef server that we manage for you.
 

@@ -25,7 +25,7 @@ To successfully configure Chef Analytics, you'll also need to set up a few thing
 
 Review and perform the [prerequisites](https://docs.chef.io/install_analytics.html#prerequisites) for running Chef Analytics. Chef server runs on Red Hat Enterprise Linux/CentOS and Ubuntu.
 
-The system requirements for Chef Analytics are similar to that for running Chef server. [Use these checklists](/install-and-manage-your-own-chef-server/linux/get-set-up#step4) to help verify you have everything you need. Also keep in mind these additional requirements:
+The system requirements for Chef Analytics are similar to that for running Chef server. [Use these checklists](/install-and-manage-your-own-chef-server/linux/install-chef-server/install-chef-server-using-your-hardware/#step1) to help verify you have everything you need. Also keep in mind these additional requirements:
 
 <a class="help-button radius" href="#" data-reveal-id="chef-server-el-prep-help-modal">Checklist for Red Hat Enterprise Linux</a> <a class="help-button radius" href="#" data-reveal-id="chef-server-ubuntu-prep-help-modal">Checklist for Ubuntu</a>
 
@@ -66,7 +66,7 @@ The system requirements for Chef Analytics are similar to that for running Chef 
 
 In this tutorial, you'll work from your workstation and your Chef server and Chef Analytics servers. We recommend that you open an SSH connection to your Chef server and Chef Analytics server from your workstation so that you can perform all steps from one place.
 
-Here's an example of how to create an SSH connection using a user name and password.
+Here's an example of how to create an SSH connection using a username and password.
 
 ```bash
 $ ssh root@52.25.201.190
@@ -91,7 +91,7 @@ After you connect to your Chef Analytics server, the first thing you should do i
 
 [CALLOUT rhel/platform-logos/chef-analytics.svg] Perform this part from your Chef Analytics server.
 
-It's likely that you're viewing this web page from your workstation, and that your Chef Analytics server is running without a graphical user interface. The easiest way to get the download link from your workstation to your Chef Analytics server is to [copy the link you need from the download page](https://downloads.chef.io/analytics/) and then paste it into a `wget` command through an SSH session to your Chef Analytics server.
+It's likely that you're viewing this web page from your workstation, and that your system for running Chef Analytics server is running without a graphical user interface. The easiest way to get the download link from your workstation to your Chef Analytics server is to [copy the link you need from the download page](https://downloads.chef.io/analytics/) and then paste it into a `wget` command through an SSH session to your Chef Analytics server.
 
 Here's an example of how to download and install Chef Analytics on Red Hat Enterprise Linux or CentOS. Replace <% ph 'PACKAGE_URL' %> and  <% ph 'PACKAGE_NAME' %> with the package information from the download page.
 
@@ -142,7 +142,7 @@ ok: down: rabbitmq: 1s, normally up
 ok: down: redis_lb: 0s, normally up
 ```
 
-From your Chef server, add the FQDN for the Chef server and the Chef analytics server to <% fp '/etc/opscode/chef-server.rb' %>. Replace <% ph 'CHEF_SERVER_FQDN' %> with your Chef server's FQDN and <% ph 'ANALYTICS_FQDN' %> with your Chef Analytics server's FQDN. For `redirect_uri`, the ending slash is required.
+From your Chef server, add the FQDN for the Chef server and the Chef Analytics server to <% fp '/etc/opscode/chef-server.rb' %>. Replace <% ph 'CHEF_SERVER_FQDN' %> with your Chef server's FQDN and <% ph 'ANALYTICS_FQDN' %> with your Chef Analytics server's FQDN. For `redirect_uri`, the ending slash is required.
 
 ```ruby
 # /etc/opscode/chef-server.rb
@@ -280,11 +280,11 @@ opscode-manage Reconfigured!
 
 ## 5. Copy the configuration files to your Chef Analytics server
 
-[CALLOUT rhel/platform-logos/chef-server.svg,rhel/platform-logos/chef-analytics.svg] You'll begin on your Chef server and then move to your Chef Analytics server.
+[CALLOUT networks/workstation.png] Perform this part from your workstation.
 
-When you prepared your Chef server to work with Chef Analytics, the Chef server generated files that Chef Analytics needs. In this step, you'll copy these files to your Chef Analytics server and configure Chef Analytics to work with your Chef server.
+When you prepared your Chef server to work with Chef Analytics, the Chef server generated files that Chef Analytics needs. In this step, you'll copy these files from your Chef server to your Chef Analytics server.
 
-First, you need to copy the files in the <% fp '/etc/opscode-analytics' %> directory from your Chef server to your Chef Analytics server. The way you do this depends on how you access your servers. For example, if you're using key-based authentication, then you might not be able to connect directly from one server to the other.
+You need to copy the files in the <% fp '/etc/opscode-analytics' %> directory from your Chef server to your Chef Analytics server. The way you do this depends on how you access your servers. For example, if you're using key-based authentication, then you might not be able to connect directly from one server to the other.
 
 One way to copy the files is to:
 
@@ -294,7 +294,7 @@ One way to copy the files is to:
 
 Mac OS and most Linux distributions come with an SSH client and secure copy utility. On Windows, you'll need to install them. The easiest way is to [install Git](https://git-for-windows.github.io) and run these commands from a Git Bash prompt.
 
-Here's how to copy the files using a user name and password. Replace <% ph 'USER' %>, <% ph 'CHEF_SERVER_IP_ADDRESS' %>, and <% ph 'ANALYTICS_IP_ADDRESS' %> with your values.
+Here's how to copy the files using a username and password, all from your workstation. Replace <% ph 'USER' %>, <% ph 'CHEF_SERVER_IP_ADDRESS' %>, and <% ph 'ANALYTICS_IP_ADDRESS' %> with your values.
 
 ```bash
 $ ssh -t USER@CHEF_SERVER_IP_ADDRESS sudo tar -czvf /tmp/opscode-analytics.tar /etc/opscode-analytics

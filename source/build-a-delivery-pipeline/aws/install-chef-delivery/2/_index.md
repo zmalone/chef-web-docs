@@ -44,7 +44,7 @@ After you click the link in the email, the license file named <code class="file-
 
 You'll need [Git](https://git-scm.com/downloads) to obtain the automation project that installs Chef Delivery.
 
-[WINDOWS] Many Windows users use Git BASH, which is part of [Git for Windows](https://git-for-windows.github.io). [posh-git](https://github.com/dahlbyk/posh-git) is another popular option, which provides access to Git from Windows PowerShell.
+[WINDOWS] Many Windows users use Git Bash, which is part of [Git for Windows](https://git-for-windows.github.io). [posh-git](https://github.com/dahlbyk/posh-git) is another popular option, which provides access to Git from Windows PowerShell.
 
 #### 2.1.3. Install the Chef Development Kit
 
