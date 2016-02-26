@@ -1,3 +1,51 @@
+---
+title: 'Get alerted when chef-client runs on your node'
+order: 3
+keywords: TODO
+layout: lesson
+sections: [1, 2, 3, 4, exercises]
+next: {heading: Conclusion, partial: conclusion}
+time_to_complete: 30 minutes
+show_disqus: false
+---
+[HEADLINE] Notifications help keep your team informed of important events that occur on your Chef server.
+
+* bootstrap a node, run `chef-client`, and watch the result appear in the Chef Analytics web interface.
+
+In this part, you'll set up a _notification_, or an action that occurs in response to an event, and a _rule_, or the conditions that define which events cause a notification to be sent.
+
+A notification can be sent through email, HipChat, Splunk, or to any HTTP endpoint. In this lesson, you'll set up an email notification. The rule will be to send the email notification when a `chef-client` run completes.
+
+[START_BOX]
+
+## 6. Sign in to Analytics server
+
+[CALLOUT networks/workstation.png] Perform this part from your workstation.
+
+From your web browser, navigate to the URL for your Chef Analytics server. Click the **Start Analytics** button and you'll be temporarily redirected to your Chef server logon page.
+
+[COMMENT] If you installed Chef Analytics through our AWS Marketplace image, append port 8443 to the URL, for example, https://52.35.72.84:8443/. The port is required because the Chef server uses ports 80 and 443.
+
+![The Chef Analytics sign-in page](chef-analytics/sign-in.png)
+
+Sign in with the administrator user name and password that you used when you set up your Chef server.
+
+![The Chef Manage sign-in page](chef-analytics/sign-in-redirect.png)
+
+Click **Yes** to authorize Chef Analytics to use your Chef account.
+
+![Authorize Chef Analytics to use your Chef account](chef-analytics/authorize.png)
+
+On the home page you'll see an event timeline. This timeline is a rolling list of events that are happening in your infrastructure &ndash; machines that are checking in to Chef server, users updating cookbooks, and so on.
+
+![The Chef Analytics home page](chef-analytics/home-page.png)
+
+In the next step, you'll run `chef-client` on your node and watch an event appear on the timeline.
+
+[END_BOX]
+
+[START_BOX]
+
 ## 7. Run chef-client on your node
 
 [CALLOUT networks/workstation.png] Perform this part from your workstation.
@@ -9,7 +57,7 @@ Now let's run the `hello_chef_server` cookbook on the node that you bootstrapped
 <div id="chef-client-cheat-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">Here are some of the common ways to run chef-client on your node from your workstation</h3>
   <h4>Linux node: user name and password</h4>
-  <p>Replace <code class="placeholder">ADDRESS</code> with your remote node&#39;s external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.</p>
+  <p>Replace <% ph 'ADDRESS' %> with your remote node&#39;s external address, <% ph 'USER' %> with your username, and <% ph 'PASSWORD' %> with your password.</p>
 <div class="window ">
             <nav class="control-window">
               <div class="close">&times;</div>
@@ -20,7 +68,7 @@ Now let's run the `hello_chef_server` cookbook on the node that you bootstrapped
             <div class="container"><div class="terminal"><table><tr><td class='gutter'><pre class='line-numbers'><span class='line-number'>$</span></pre></td><td class='code'><pre><code><span class='line command'>knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password 'PASSWORD'</span></code></pre></td></tr></table></div></div>
           </div>
   <h4>Linux node: key-based authentication</h4>
-  <p>Replace <code class="placeholder">ADDRESS</code> with your remote node&#39;s external address and <code class="placeholder">IDENTITY_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.</p>
+  <p>Replace <% ph 'ADDRESS' %> with your remote node&#39;s external address and <% ph 'IDENTITY_FILE' %> with your SSH identify file, for example <% fp '~/.ssh/my.pem' %>.</p>
 <div class="window ">
             <nav class="control-window">
               <div class="close">&times;</div>
@@ -32,7 +80,7 @@ Now let's run the `hello_chef_server` cookbook on the node that you bootstrapped
             </div>
   <h4>Windows Server node</h4>
   <p>
-Replace <code class="placeholder">ADDRESS</code>, <code class="placeholder">USER</code>, and <code class="placeholder">PASSWORD</code> with your values.
+Replace <% ph 'ADDRESS' %>, <% ph 'USER' %>, and <% ph 'PASSWORD' %> with your values.
 </p>
 <div id="knife-command" class="window" ng-non-bindable>
   <nav class="control-window">
@@ -55,3 +103,5 @@ Replace <code class="placeholder">ADDRESS</code>, <code class="placeholder">USER
 Now go back to the Chef Analytics home page in your web browser. You'll see an entry for your `chef-client` run on the **Timeline** tab.
 
 ![The Chef Analytics timeline](chef-analytics/timeline.png)
+
+[END_BOX]

@@ -20,9 +20,9 @@ That's where Chef Analytics comes in. Chef Analytics provides real-time visibili
 
 Chef Analytics enables you to write _rules_, which describe the events you care about, and _notifications_, which are the actions that occur in response to an event. A notification can be sent through email, a post to the HipChat instant messaging service, a post to an HTTP service, or to Splunk.
 
-In this tutorial, you'll set up a Chef Analytics server, connect it to your Chef server, and configure it to email you when your node completes a `chef-client` run.
+In this tutorial, you'll set up a Chef Analytics server, connect it to your Chef server, and configure it to alert you when your node completes a `chef-client` run.
 
-![Adding a new rule](chef-analytics/notification-email.png)
+![Adding a new rule](chef-analytics/alert-converged.png)
 
 After completing this tutorial, you should be able to:
 
@@ -30,4 +30,4 @@ After completing this tutorial, you should be able to:
 * use the Chef Analytics web interface to view events that happen on your Chef server.
 * notify your team when `chef-client` completes on a node.
 
-Let's get started by performing the prerequisite tasks to run Chef Analytics.
+Let's get started by making sure you're set up to run Chef Analytics.
