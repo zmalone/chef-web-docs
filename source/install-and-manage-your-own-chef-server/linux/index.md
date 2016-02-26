@@ -1,5 +1,5 @@
 ---
-title: 'Learn to install and manage your own Chef server'
+title: 'Install and manage your own Chef server'
 layout: lesson-overview
 platform: 'Get started with Chef server'
 logo: chef-server.svg
