@@ -1,1 +1,1 @@
-Now that you're all set up, let's install and configure Chef Analytics.
+If you installed Chef server manually in your own infrastructure, next you'll install and configure Chef Analytics.

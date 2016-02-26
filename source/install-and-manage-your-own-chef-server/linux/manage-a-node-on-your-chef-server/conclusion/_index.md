@@ -2,8 +2,6 @@ In this tutorial, you installed and configured your own Chef server and the Chef
 
 Chef server is the hub for your cookbooks and node data. You can access Chef server in one of two ways &ndash; hosted or on premises. Hosted Chef provides you with access to a Chef server that we maintain and keep updated for you. An on premises Chef server enables you to run Chef behind the firewall and provides access to additional features. The decision ultimately depends on your requirements and how you prefer to work with Chef server.
 
-[TIP] As you get more comfortable working with Chef server, or need to configure more than one instance, you can use the [Chef server cookbook](https://supermarket.chef.io/cookbooks/chef-server) to automate the process! 
-
 In the next tutorial, [Get started with Chef Analytics](/get-started-with-chef-analytics/linux/), you'll learn how Chef Analytics provides a comprehensive, real-time view into what is happening on your Chef server.
 
 <p style="font-size: 14px; font-style: italic;">
