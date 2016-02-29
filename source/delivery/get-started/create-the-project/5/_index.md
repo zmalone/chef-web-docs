@@ -45,12 +45,12 @@ To see this, run `git remote -v` to see your remote repositories.
 $ git remote -v
 delivery	ssh://tpetchel@test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel (fetch)
 delivery	ssh://tpetchel@test@10.194.11.99:8989/test/learn-chef/deliver-customers-rhel (push)
-origin	https://github.com/learn-chef/deliver-customers-rhel.git (fetch)
-origin	https://github.com/learn-chef/deliver-customers-rhel.git (push)
+origin	https://github.com/learn-chef/customers-web-app-delivery.git (fetch)
+origin	https://github.com/learn-chef/customers-web-app-delivery.git (push)
 ```
 
 In practice, you'll typically have just one remote &ndash; `delivery`. The `origin` remote exists only as a way for you to obtain starter code that we provide for you.
 
 Also remember that you don't have to use Delivery's Git server. We do so for learning purposes and because using the Git server that Delivery already provides is the easiest way to get started.
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-add-delivery-config-v1.0.0) (tag `ref-add-delivery-config-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/customers-web-app-delivery/tree/ref-add-delivery-config-v1.0.0) (tag `ref-add-delivery-config-v1.0.0`.)

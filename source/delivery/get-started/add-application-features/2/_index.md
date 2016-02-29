@@ -321,4 +321,4 @@ Fast-forward
  create mode 100644 cookbooks/awesome_customers/files/default/drop-tables.sql
 ```
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-add_sample_data_delivery-v1.0.0) (tag `ref-add_sample_data_delivery-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/customers-web-app-delivery/tree/ref-add_sample_data_delivery-v1.0.0) (tag `ref-add_sample_data_delivery-v1.0.0`.)

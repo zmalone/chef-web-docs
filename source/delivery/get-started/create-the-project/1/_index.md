@@ -15,7 +15,7 @@ Clone the `deliver-customers-rhel` repo from GitHub.
 
 ```bash
 # ~/Development
-$ git clone https://github.com/learn-chef/deliver-customers-rhel.git
+$ git clone https://github.com/learn-chef/customers-web-app-delivery.git
 Cloning into 'deliver-customers-rhel'...
 remote: Counting objects: 1698, done.
 remote: Compressing objects: 100% (849/849), done.

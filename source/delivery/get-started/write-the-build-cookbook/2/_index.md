@@ -292,4 +292,4 @@ Fast-forward
  3 files changed, 22 insertions(+), 3 deletions(-)
 ```
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-publish-customers-app-v1.0.0) (tag `ref-publish-customers-app-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/customers-web-app-delivery/tree/ref-publish-customers-app-v1.0.0) (tag `ref-publish-customers-app-v1.0.0`.)

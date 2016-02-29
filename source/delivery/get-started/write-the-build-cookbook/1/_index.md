@@ -219,4 +219,4 @@ Fast-forward
  13 files changed, 16 insertions(+)
 ```
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-add-delivery-truck-v1.0.0) (tag `ref-add-delivery-truck-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/customers-web-app-delivery/tree/ref-add-delivery-truck-v1.0.0) (tag `ref-add-delivery-truck-v1.0.0`.)

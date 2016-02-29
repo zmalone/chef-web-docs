@@ -211,4 +211,4 @@ Fast-forward
  1 file changed, 59 insertions(+)
 ```
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-deploy-customers-app-v1.0.0) (tag `ref-deploy-customers-app-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/customers-web-app-delivery/tree/ref-deploy-customers-app-v1.0.0) (tag `ref-deploy-customers-app-v1.0.0`.)

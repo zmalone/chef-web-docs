@@ -160,4 +160,4 @@ Fast-forward
  1 files changed, 14 insertions(+)
 ```
 
-[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/deliver-customers-rhel/tree/ref-smoke-test-customers-app-v1.0.0) (tag `ref-smoke-test-customers-app-v1.0.0`.)
+[GITHUB] The final code for this section is available on [GitHub](https://github.com/learn-chef/customers-web-app-delivery/tree/ref-smoke-test-customers-app-v1.0.0) (tag `ref-smoke-test-customers-app-v1.0.0`.)
