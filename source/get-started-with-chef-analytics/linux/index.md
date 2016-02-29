@@ -24,6 +24,8 @@ In this tutorial, you'll set up a Chef Analytics server, connect it to your Chef
 
 ![Adding a new rule](chef-analytics/alert-converged.png)
 
+Then you'll modify your rule to provide additional information, such as the time the `chef-client` run completed, whether it succeeded for failed, and where where to get more information about a failed run.
+
 After completing this tutorial, you should be able to:
 
 * install and configure Chef Analytics and connect it to your Chef server.
