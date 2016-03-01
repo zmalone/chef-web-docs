@@ -6,6 +6,8 @@ logo: delivery.svg
 order: 1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
+[PRODNOTE] Reviewers: For this iteration, don't focus so much on prose or sample output - focus on steps and resolving callouts that look like this one. 
+
 Chef Delivery manages changes to both infrastructure and application code, giving your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more.
 
 It provides a proven, reproducible workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production.
@@ -59,7 +61,7 @@ Chef Delivery runs in many kinds of environments &ndash; either on your hardware
 
 To help you get started with Chef Delivery more quickly, you'll begin by using automation to build infrastructure that runs in Amazon Web Services (AWS). All you need to bring is an AWS account and a Chef Delivery license key (you'll sign up for a trial key on the next page.)
 
-The automation brings up a fully-functional Chef Delivery system. The system includes a user's workstation that's preconfigured with a Delivery user account. The automation installs Chef Delivery in an isolated environment so it won't affect anything else you have running. After you complete the tutorial, you can experiment further and then simply tear down the envrionment when you're done.
+The automation brings up a fully-functional Chef Delivery system that includes features that . The system includes a user's workstation that's preconfigured with a Delivery user account. The automation installs Chef Delivery in an isolated environment so it won't affect anything else you have running. After you complete the tutorial, you can experiment further and then simply tear down the envrionment when you're done.
 
 ### Part 2: Submit and follow a change through the pipeline 
 
