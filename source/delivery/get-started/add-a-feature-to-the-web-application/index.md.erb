@@ -99,15 +99,9 @@ Before you submit a change to the Delivery pipeline, you want to verify that the
 
 For a Chef cookbook, you might run [Test Kitchen](https://docs.chef.io/kitchen.html) as you build your feature to verify that it behaves as you expect on a temporary instance that resembles production. You might also run your ChefSpec tests, Foodcritic, and RuboCop on your workstation. For an application or service, you might run a different set of tools to verify your work.
 
-Another way to verify your work is to run [delivery job](https://docs.chef.io/ctl_delivery.html#delivery-job). `delivery job` executes a Chef Delivery phase on a build node. It performs the same task  temporary copy of the main repository and runs the tests against master.
+Another way to verify your work is to run [delivery job](https://docs.chef.io/ctl_delivery.html#delivery-job). `delivery job` executes a phase on a build node. Chef Delivery uses `delivery job` to execute the phases as changes move through the pipeline. Running `delivery job` from your workstation is a great way to help ensure that your change is good before it reaches the pipeline.
 
-
- 
-you'll use the `delivery job` command to run the unit, lint, and syntax phases on a build node. This will help verify that the changes are good locally, we'll submit our changes to our Git repo and trigger the Delivery pipeline. Because it's a good idea to make changes in as small a batch as possible, we'll verify, build, and run acceptance tests for each change separately. We'll deliver them together to Union.
-
-
-
-[PRODNOTE] Well, crud. `delivery job verify unit` fails because the builder is running chef-client 12.5 but the cookbook uses the `apt_update` resource, which is introduced in 12.7. We need to either update cc on the build node or remove this from the cookbook.
+[PRODNOTE] Well, crud. `delivery job verify unit` fails because the job is running chef-client 12.5 but the cookbook uses the `apt_update` resource, which is introduced in 12.7. I believe the fix is to update to Chef DK 0.11.0 on the Windows workstation.
 
 ```ps
 # ~/delivery-demo/awesome_customers_delivery
