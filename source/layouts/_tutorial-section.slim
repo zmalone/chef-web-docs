@@ -1,26 +1,27 @@
-h2 style="text-align: center;" == header
-- topics.each do |topic|
-  .row
-    .small-10.small-centered.columns
-      div.box id="#{ topic.data.name }" class="topic"
-        h2 = topic.data.title
-        - if topic.data.tags
-          div style="margin-top:-16px;margin-bottom:10px;"
-            = partial "layouts/add-tags", locals: { tags: topic.data.tags }
-        - if topic.data.time_to_complete
-          div style="font-size:12px;margin-top:-10px;margin-bottom:10px;" == topic.data.time_to_complete
-        = topic.data.description
-        - if topic.data.platform_intro
-          br
-          br
-          center
-            div
-              = topic.data.platform_intro
-          ul#platform-tabs
-            - topic.children.select{|p| p.data.platform}.each do |overview_page|
-              li style="border-width; 2px; border 1px solid black;" = link_to overview_page do
-                = image_tag "rhel/platform-logos/#{overview_page.data.logo}"
-                p = "#{overview_page.data.platform}&nbsp;&nbsp;<i class='fa fa-angle-double-right'></i>"
-        - if topic.data.coming_soon
-          .coming-soon
-            = "Coming soon: #{topic.data.coming_soon.join(', ')}"
+- if topics.count > 0
+  h2 style="text-align: center;" == header
+  - topics.each do |topic|
+    .row
+      .small-10.small-centered.columns
+        div.box id="#{ topic.data.name }" class="topic"
+          h2 = topic.data.title
+          - if topic.data.tags
+            div style="margin-top:-16px;margin-bottom:10px;"
+              = partial "layouts/add-tags", locals: { tags: topic.data.tags }
+          - if topic.data.time_to_complete
+            div style="font-size:12px;margin-top:-10px;margin-bottom:10px;" == topic.data.time_to_complete
+          = topic.data.description
+          - if topic.data.platform_intro
+            br
+            br
+            center
+              div
+                = topic.data.platform_intro
+            ul#platform-tabs
+              - topic.children.select{|p| p.data.platform}.each do |overview_page|
+                li style="border-width; 2px; border 1px solid black;" = link_to overview_page do
+                  = image_tag "rhel/platform-logos/#{overview_page.data.logo}"
+                  p = "#{overview_page.data.platform}&nbsp;&nbsp;<i class='fa fa-angle-double-right'></i>"
+          - if topic.data.coming_soon
+            .coming-soon
+              = "Coming soon: #{topic.data.coming_soon.join(', ')}"
