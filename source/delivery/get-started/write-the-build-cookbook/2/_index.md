@@ -36,7 +36,7 @@ $ git branch
 
 To tell the `delivery-truck` cookbook that you want to publish your cookbooks to Chef server, you need to set the `node['delivery']['config']['delivery-truck']['publish']['chef_server']` attribute. The `delivery-truck` cookbook reads this attribute and automatically uploads any changed cookbooks to the Chef server during the publish phase, which is part of the Build stage.
 
-An easy way to set this attribute is from your project's configuration file, located at<br><code class="file-path">~/Development/deliver-customers-rhel/.delivery/config.json</code>. Modify yours like this.
+An easy way to set this attribute is from your project's configuration file, located at<br><% fp '~/Development/deliver-customers-rhel/.delivery/config.json' %>. Modify yours like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/config.json
@@ -61,7 +61,7 @@ Lines 10-14 specify the required node attribute.
 
 ### Prepare your encryption key and encrypted data bag items
 
-If you've gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, copy your encrypted data bag items, <code class="file-path">db\_admin\_password.json</code> and <code class="file-path">sql\_server\_root\_password.json</code> to the <code class="file-path">~/Development/deliver-customers-rhel/data\_bags/passwords</code> directory. You can then move to the next step. You'll handle getting your data bag encryption key to the Chef server a bit later.
+If you've gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, copy your encrypted data bag items, <% fp 'db\_admin\_password.json' %> and <% fp 'sql\_server\_root\_password.json' %> to the <% fp '~/Development/deliver-customers-rhel/data\_bags/passwords' %> directory. You can then move to the next step. You'll handle getting your data bag encryption key to the Chef server a bit later.
 
 If you haven't gone through this tutorial, or no longer have your encrypted data bag items or your encryption key, you'll create them now.
 
@@ -128,7 +128,7 @@ Recall that the `delivery-truck` cookbook acts only on cookbooks that have chang
 
 Let's make a basic change to `awesome_customers` to trigger the unit, lint, syntax, and publish phases to run. You'll increment the `awesome_customers` cookbook's version from 0.3.0 to 1.0.0, which, according to [Semantic Versioning](http://semver.org), marks the cookbook as ready for production.
 
-In your `awesome_customers` cookbook's metadata file, <code class="file-path">metadata.rb</code>, update the `version` field from 0.3.0 to 1.0.0, like this.
+In your `awesome_customers` cookbook's metadata file, <% fp 'metadata.rb' %>, update the `version` field from 0.3.0 to 1.0.0, like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/cookbooks/awesome_customers/metadata.rb
@@ -196,22 +196,22 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 [CALLOUT networks/admin-workstation.svg,networks/chef-server.svg] In this part, you connect to Chef server from the administrator's workstation.
 
-The publish phase uploads your cookbooks and any dependencies that are listed in your <code class="file-path">Berksfile</code>.
+The publish phase uploads your cookbooks and any dependencies that are listed in your <% fp 'Berksfile' %>.
 
 Let's verify that your cookbook is on the Chef server. There are two ways to do this &ndash; from the command line or from the Chef management console.
 
 #### Verify from the command line
 
-On the administrator's workstation or provisioning node, the `delivery-cluster` cookbook sets up a `knife` configuration file, <code class="file-path">knife.rb</code>, and server certificates to enable you to administer your Chef server from your workstation or provisioning node.
+On the administrator's workstation or provisioning node, the `delivery-cluster` cookbook sets up a `knife` configuration file, <% fp 'knife.rb' %>, and server certificates to enable you to administer your Chef server from your workstation or provisioning node.
 
-To verify the status of the `awesome_customers` cookbook from the command line, first, move to the <code class="file-path">~/delivery-cluster</code> directory on the administrator's workstation or provisioning node.
+To verify the status of the `awesome_customers` cookbook from the command line, first, move to the <% fp '~/delivery-cluster' %> directory on the administrator's workstation or provisioning node.
 
 ```bash
 # ~
 $ cd ~/delivery-cluster
 ```
 
-You'll see your <code class="file-path">knife.rb</code> file and the <code class="file-path">trusted_certs</code> directory, which contains the Chef server's SSL certificates.
+You'll see your <% fp 'knife.rb' %> file and the <% fp 'trusted_certs' %> directory, which contains the Chef server's SSL certificates.
 
 ```bash
 # ~/delivery-cluster
@@ -263,7 +263,7 @@ Choose **Data Bags** from the menu on the left, then select **passwords**. You'l
 
 As we did previously, we need to pull Delivery's `master` branch locally. Here's a reminder how.
 
-First, move to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
+First, move to your <% fp '~/Development/deliver-customers-rhel' %> directory.
 
 ```bash
 # ~/delivery-cluster

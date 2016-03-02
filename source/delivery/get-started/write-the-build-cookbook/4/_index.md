@@ -168,7 +168,7 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 Let's verify that the `awesome_customers` cookbook successfully deployed to your Acceptance stage. To do that, you'll need the IP address of your server. You can get its IP address from its node attributes.
 
-From the administrator's workstation or provisioning node, move to the <code class="file-path">~/delivery-cluster</code> directory.
+From the administrator's workstation or provisioning node, move to the <% fp '~/delivery-cluster' %> directory.
 
 ```bash
 # ~

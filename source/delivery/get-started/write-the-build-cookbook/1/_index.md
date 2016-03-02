@@ -30,7 +30,7 @@ $ git branch
 
 ### Add the dependency
 
-The build cookbook exists in the <code class="file-path">.delivery</code> directory. Modify<br><code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb</code> like this. The metadata file lists which cookbooks the build cookbook depends on.
+The build cookbook exists in the <% fp '.delivery' %> directory. Modify<br><% fp '~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb' %> like this. The metadata file lists which cookbooks the build cookbook depends on.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb
@@ -43,7 +43,7 @@ version '0.1.0'
 depends 'delivery-truck'
 ```
 
-Now modify <code class="file-path">~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile</code> like this. The <code class="file-path">Berksfile</code> describes where to get dependent cookbooks.
+Now modify <% fp '~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile' %> like this. The <% fp 'Berksfile' %> describes where to get dependent cookbooks.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/Berksfile
@@ -69,21 +69,21 @@ The [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a
 
 Now you'll include each of the `delivery-truck` cookbook's recipes in your build cookbook's recipes.
 
-For example, make your `build-cookcook` cookbook's default recipe, <code class="file-path">default.rb</code>, look like this.
+For example, make your `build-cookcook` cookbook's default recipe, <% fp 'default.rb' %>, look like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/default.rb
 include_recipe 'delivery-truck::default'
 ```
 
-Make your `lint` recipe, <code class="file-path">lint.rb</code>, look like this.
+Make your `lint` recipe, <% fp 'lint.rb' %>, look like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/lint.rb
 include_recipe 'delivery-truck::lint'
 ```
 
-Follow the same pattern for all recipes: <code class="file-path">default.rb</code>, <code class="file-path">deploy.rb</code>, <code class="file-path">functional.rb</code>, <code class="file-path">lint.rb</code>, <code class="file-path">provision.rb</code>, <code class="file-path">publish.rb</code>, <code class="file-path">quality.rb</code>, <code class="file-path">security.rb</code>, <code class="file-path">smoke.rb</code>, <code class="file-path">syntax.rb</code>, and <code class="file-path">unit.rb</code>.
+Follow the same pattern for all recipes: <% fp 'default.rb' %>, <% fp 'deploy.rb' %>, <% fp 'functional.rb' %>, <% fp 'lint.rb' %>, <% fp 'provision.rb' %>, <% fp 'publish.rb' %>, <% fp 'quality.rb' %>, <% fp 'security.rb' %>, <% fp 'smoke.rb' %>, <% fp 'syntax.rb' %>, and <% fp 'unit.rb' %>.
 
 ### Commit the changes
 
@@ -181,7 +181,7 @@ But you'll see in the Delivery UI that 0 resources updated during the lint phase
 
 That's because the `delivery-truck` cookbook acts only on cookbooks that have _changed_ as part of the current Git commit. This enables the pipeline to move more quickly by performing only necessary work.
 
-The `changed_cookbooks` method, which the `delivery-sugar` cookbook defines, detects which cookbooks in the repo's <code class="file-path">cookbooks</code> directory have changed. Your build cookbook changed, but the `awesome_customers` cookbook did not.
+The `changed_cookbooks` method, which the `delivery-sugar` cookbook defines, detects which cookbooks in the repo's <% fp 'cookbooks' %> directory have changed. Your build cookbook changed, but the `awesome_customers` cookbook did not.
 
 Although the phases did no real work, this is a good indication that the `delivery-truck` cookbook is properly integrated.
 

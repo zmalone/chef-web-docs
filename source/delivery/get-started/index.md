@@ -61,19 +61,33 @@ Chef Delivery runs in many kinds of environments &ndash; either on your hardware
 
 To help you get started with Chef Delivery more quickly, you'll begin by using automation to build infrastructure that runs in Amazon Web Services (AWS). All you need to bring is an AWS account and a Chef Delivery license key (you'll sign up for a trial key on the next page.)
 
-The automation brings up a fully-functional Chef Delivery system that includes features that . The system includes a user's workstation that's preconfigured with a Delivery user account. The automation installs Chef Delivery in an isolated environment so it won't affect anything else you have running. After you complete the tutorial, you can experiment further and then simply tear down the envrionment when you're done.
+The automation brings up a fully-functional Chef Delivery system in an isolated environment so it won't affect anything else you have running. After you complete the tutorial, you can experiment further and then simply tear down the envrionment when you're done.
 
-### Part 2: Submit and follow a change through the pipeline 
+### Part 2: Set up your workstation
+
+In this part, you'll log into a Windows workstation that's included as part of the automated install process. You'll install the Chef Delivery commmand-line interface (CLI) tools and set up a user account that can access Chef Delivery.
+
+### Part 3: Create the project
 
 You can use Chef Delivery to deploy almost any kind of software or infrastructure project. For example, your project might be a Chef cookbook that you deploy to Chef server, Chef Supermarket, or GitHub. Or your project can be a software package or service that you deploy to a package or application server. 
 
-The preconfigured Delivery system comes with a sample Chef cookbook project that configures a web application named Customers. The web application cookbook is a simplified version of the one you wrote in the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/) tutorial. The project's build cookbook deploys the web application cookbook to a Chef server and then runs the web application cookbook on a node that's bootstrapped to the Chef server. Both the Chef server and the node are included in the automated setup. 
+In this tutorial, the project will be a Chef cookbook named `awesome_customers`. The `awesome_customers` cookbook configures a web application named Customers, which displays customer data. If you've gone through the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook. 
 
-You'll first verify that the web application cookbook was successfully deployed to Chef server and that the web application is running on your node. The web application will look like this:
+The project's build cookbook will publish the web application cookbook to a Chef server and then run the web application cookbook on a node that's bootstrapped to the Chef server. Both the Chef server and the node are included in the automated setup.
+
+By the end of this part, your web application will look like this:
 
 ![](delivery/acceptance-customers-verify.png)
 
-Then you'll integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You'll follow the change through each pipeline stage, from your workstation all the way out to your node. By the end, your web application will look like this:
+### Part 4: Add a new feature to the web application
+
+In this part, you'll integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You'll follow the change through each pipeline stage, from your workstation all the way out to your node. By the end of this part, your web application will look like this:
+
+![](delivery/customers-visualize-data-delivered.png)
+
+### Part 5: Add a feature to the build cookbook
+
+In this part, you'll modify your build cookbook to integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You'll follow the change through each pipeline stage, from your workstation all the way out to your node. By the end of this part, your web application will look like this:
 
 ![](delivery/customers-visualize-data-delivered.png)
 

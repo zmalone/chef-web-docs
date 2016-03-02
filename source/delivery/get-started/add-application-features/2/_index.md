@@ -72,7 +72,7 @@ Fast-forward
 
 Your `add_sample_data` now contains the new feature as well as your build cookbook.
 
-It's recommended to always update your cookbook's version metadata to ensure that each version is tied to a specific set of functionality. In <code class="file-path">metadata.rb</code>, update the `awesome_customers` cookbook's version from 1.0.0 to 1.1.0, like this.
+It's recommended to always update your cookbook's version metadata to ensure that each version is tied to a specific set of functionality. In <% fp 'metadata.rb' %>, update the `awesome_customers` cookbook's version from 1.0.0 to 1.1.0, like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/cookbooks/awesome_customers/metadata.rb
@@ -96,7 +96,7 @@ depends 'database', '~> 4.0.3'
 
 Let's run the same lint, syntax, and unit tests that our build cookbook performs. That will help ensure that your change moves through the pipeline smoothly.
 
-First, move to the `awesome_customers` cookbook directory, <code class="file-path">~/Development/deliver-customers-rhel/cookbooks/awesome_customers</code>.
+First, move to the `awesome_customers` cookbook directory, <% fp '~/Development/deliver-customers-rhel/cookbooks/awesome_customers' %>.
 
 ```bash
 # ~/Development/deliver-customers-rhel
@@ -145,7 +145,7 @@ All tests pass! You're now ready to try your new feature on a local virtual mach
 
 In [this earlier tutorial](/local-development/rhel/apply-the-web-application-cookbook-locally/), you used Test Kitchen to apply the `awesome_customers` cookbook on a Test Kitchen instance. The idea is run your infrastructure code in a temporary, isolated environment that resembles your production environment. When you develop locally, you're able to get feedback more quickly.
 
-The `awesome_customers` cookbook comes with a Test Kitchen configuration file, <code class="file-path">.kitchen.yml</code> which runs the cookbook on a CentOS 6.6 instance. One feature of the configuration file is that it assigns the instance the IP address 192.168.33.33, which is in the private address space, so that we can access the web application from the host machine.
+The `awesome_customers` cookbook comes with a Test Kitchen configuration file, <% fp '.kitchen.yml' %> which runs the cookbook on a CentOS 6.6 instance. One feature of the configuration file is that it assigns the instance the IP address 192.168.33.33, which is in the private address space, so that we can access the web application from the host machine.
 
 First run `kitchen list` to verify that the instance does not yet exist.
 

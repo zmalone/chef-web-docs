@@ -114,7 +114,7 @@ This moves the change through the Union, Rehearsal, and Delivered stages.
 
 Let's verify that the Customers web application was successfully delivered.
 
-As before, you'll need the IP address of your server. From the administrator's workstation or provisioning node, move to the <code class="file-path">~/delivery-cluster</code> directory.
+As before, you'll need the IP address of your server. From the administrator's workstation or provisioning node, move to the <% fp '~/delivery-cluster' %> directory.
 
 ```bash
 # ~

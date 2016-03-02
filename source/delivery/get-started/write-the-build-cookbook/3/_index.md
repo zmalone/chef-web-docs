@@ -2,7 +2,7 @@
 
 In this part, we'll provision the last four stages of your pipeline with the infrastructure they need to run the `awesome_customers` cookbook. Here you'll use automated provisioning with AWS to bring up these infrastructure pieces.
 
-When you or your administrator installed Chef Delivery, the procedure created an encryption key for you, located at<br>  <code class="file-path">~/delivery-cluster/.chef/delivery-cluster-data/encrypted\_data\_bag\_secret</code>. That encryption key gets copied to the build node each time it performs a job. That means you can use it to encrypt data on your administrator's workstation or provisioning node and decrypt it when the build-cookbook runs.
+When you or your administrator installed Chef Delivery, the procedure created an encryption key for you, located at<br>  <% fp '~/delivery-cluster/.chef/delivery-cluster-data/encrypted\_data\_bag\_secret' %>. That encryption key gets copied to the build node each time it performs a job. That means you can use it to encrypt data on your administrator's workstation or provisioning node and decrypt it when the build-cookbook runs.
 
 [COMMENT] In practice, you'll need to decide which users have access to the encryption key. If you installed Chef Delivery from your workstation, then you'll have access to both the encryption key and the unencrypted data. For this tutorial, you can work with your administrator to encrypt and upload the data if you did not perform the installation.
 
@@ -12,7 +12,7 @@ You'll use the key to encrypt these items in a data bag:
   * Your private key used for SSH authentication to EC2 instances.
   * Your secret file that's used to decrypt the database password used by the Customers web application.
 
-[COMMENT] In this scenario, there are two files named <code class="file-path">encrypted\_data\_bag\_secret</code> &ndash; the one that Chef Delivery provides for you to encrypt additional data and the one that the `awesome_customers` cookbook uses to decrypt database passwords. Here, you're using the first encryption key to encrypt the second.
+[COMMENT] In this scenario, there are two files named <% fp 'encrypted\_data\_bag\_secret' %> &ndash; the one that Chef Delivery provides for you to encrypt additional data and the one that the `awesome_customers` cookbook uses to decrypt database passwords. Here, you're using the first encryption key to encrypt the second.
 
 You'll create node attributes in your build cookbook that describe your Acceptance, Union, Rehearsal, and Delivered stages and reference those attributes in your recipe for the provision phase.
 
@@ -22,7 +22,7 @@ You'll create node attributes in your build cookbook that describe your Acceptan
 
 In this part, you'll create a data bag to hold your SSH private key. You'll also encrypt your AWS credentials in the data bag.
 
-Move to the <code class="file-path">~/delivery-cluster</code> directory on the administrator's workstation or provisioning node.
+Move to the <% fp '~/delivery-cluster' %> directory on the administrator's workstation or provisioning node.
 
 ```bash
 $ cd ~/delivery-cluster
@@ -40,7 +40,7 @@ Created data_bag[provisioning-data]
 
 In this part, you'll encrypt your SSH private key and add it to your data bag.
 
-Create <code class="file-path">~/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json</code> and add this, replacing `YOUR_NAME` and `YOUR_PRIVATE_KEY` with your values (`YOUR_NAME` should not include .pem or any file extension.)
+Create <% fp '~/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json' %> and add this, replacing `YOUR_NAME` and `YOUR_PRIVATE_KEY` with your values (`YOUR_NAME` should not include .pem or any file extension.)
 
 ```ruby
 # ~/delivery-cluster/.chef/delivery-cluster-data/ssh_key.json
@@ -102,7 +102,7 @@ id:      ssh_key
 
 ### Encrypt and upload your AWS credentials
 
-Create <code class="file-path">~/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json</code> and add this, replacing `YOUR_ACCESS_KEY_ID` and `YOUR_SECRET_ACCESS_KEY` with your values.
+Create <% fp '~/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json' %> and add this, replacing `YOUR_ACCESS_KEY_ID` and `YOUR_SECRET_ACCESS_KEY` with your values.
 
 ```ruby
 # ~/delivery-cluster/.chef/delivery-cluster-data/aws_creds.json
@@ -158,7 +158,7 @@ id:      aws_creds
 
 In this step, you'll encrypt and upload the decryption key for the Customers web application. You can either use the key you generated in [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel/), or the one you generated in the [Prepare your encryption key and encrypted data bag items](#prepareyourencryptionkeyandencrypteddatabagitems) portion of this tutorial.
 
-Create <code class="file-path">~/delivery-cluster/.chef/delivery-cluster-data/database\_passwords\_key.json</code> and add this:
+Create <% fp '~/delivery-cluster/.chef/delivery-cluster-data/database\_passwords\_key.json' %> and add this:
 
 ```ruby
 # ~/delivery-cluster/.chef/delivery-cluster-data/database_passwords_key.json
@@ -207,7 +207,7 @@ id:      database_passwords_key
 
 Now you'll create a branch for your changes to the `provision` recipe.
 
-First, move to your <code class="file-path">~/Development/deliver-customers-rhel</code> directory.
+First, move to your <% fp '~/Development/deliver-customers-rhel' %> directory.
 
 ```bash
 # ~/delivery-cluster
@@ -262,7 +262,7 @@ Recipe: code_generator::attribute
 
 ### Add node attributes that describe your environments
 
-Add this to your default node attributes file, <code class="file-path">default.rb</code>. Replace `security_group_ids`, `subnet_id`, `image_id`, and `ssh_username` with your values.
+Add this to your default node attributes file, <% fp 'default.rb' %>. Replace `security_group_ids`, `subnet_id`, `image_id`, and `ssh_username` with your values.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/attributes/default.rb
@@ -307,7 +307,7 @@ We need to:
 
 In [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel), we showed how to use `Chef::EncryptedDataBagItem` to load and decrypt the encrypted database passwords from a data bag. For this project, we'll use the [chef-sugar](https://supermarket.chef.io/cookbooks/chef-sugar) cookbook from Chef Supermarket to make the process easier. The `chef-sugar` cookbook provides the `encrypted_data_bag_item_for_environment` helper method to decrypt data bag items.
 
-To load the `chef-sugar` cookbook, add the line `depends 'chef-sugar'` to your build cookbook's metadata file, <code class="file-path">metadata.rb</code>, making the entire file look like this.
+To load the `chef-sugar` cookbook, add the line `depends 'chef-sugar'` to your build cookbook's metadata file, <% fp 'metadata.rb' %>, making the entire file look like this.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/metadata.rb
@@ -418,7 +418,7 @@ Recipe: code_generator::recipe
 
 The underscore `_` notation in the file name is a convention that shows that the recipe supports other recipes, and doesn't implement one of the core Chef Delivery phases.
 
-Add this to <code class="file-path">\_aws\_creds.rb</code>.
+Add this to <% fp '\_aws\_creds.rb' %>.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/_aws_creds.rb
@@ -460,7 +460,7 @@ This code:
 * writes the credentials file to a workspace location on disk.
 * sets the `AWS_CONFIG_FILE` environment variable. This environment variable tells Chef provisioning where the AWS credentials file is located.
 
-Now run your <code class="file-path">\_aws\_creds</code> recipe from your `provision` recipe. Add the following.
+Now run your <% fp '\_aws\_creds' %> recipe from your `provision` recipe. Add the following.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
@@ -472,7 +472,7 @@ include_recipe "#{cookbook_name}::_aws_creds"
 
 Chef provisioning uses [drivers](https://docs.chef.io/provisioning.html#drivers) to connect to various cloud and virtualization providers. In this part, we need to initialize the AWS driver.
 
-Add this to <code class="file-path">provision.rb</code>.
+Add this to <% fp 'provision.rb' %>.
 
 ```ruby
 # ~/Development/deliver-customers-rhel/.delivery/build-cookbook/recipes/provision.rb
@@ -519,7 +519,7 @@ The [:setup](https://docs.chef.io/resource_machine.html#actions) action gets the
 
 The machine name can be anything you like. We follow a common convention, which is to concatenate the current stage name and the project name.
 
-The `files` attribute copies the secret file that decrypts the database passwords to <code class="file-path">/etc/chef/encrypted\_data\_bag\_secret</code> on the machine.
+The `files` attribute copies the secret file that decrypts the database passwords to <% fp '/etc/chef/encrypted\_data\_bag\_secret' %> on the machine.
 
 The code uses `add_machine_options` to first specify details about the SSH private key that Chef provisioning will use to connect to the machine and then it specifies the options that you specified in your default attributes file (the AMI ID, subnet ID, and so on.)
 
@@ -645,9 +645,9 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 Now let's verify that the infrastructure environment for the Acceptance stage was successfully created. We'll run the `awesome_customers` cookbook in that infrastructure environment when we write the recipe for the deploy phase in the next step.
 
-One way to verify the Acceptance stage is to move to your <code class="file-path">~/delivery-cluster</code> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
+One way to verify the Acceptance stage is to move to your <% fp '~/delivery-cluster' %> and run the `knife node list` command, similar to how you confirmed that the `awesome_customers` cookbook was successfully published to the Chef server. Remember, this directory holds your `knife` configuration file and enables you to administer your Chef server from your workstation or provisioning node.
 
-First, from the administrator's workstation or provisioning node, move to the <code class="file-path">~/delivery-cluster</code> directory.
+First, from the administrator's workstation or provisioning node, move to the <% fp '~/delivery-cluster' %> directory.
 
 ```bash
 # ~
