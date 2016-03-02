@@ -1,0 +1,160 @@
+---
+title: 'Install Chef Delivery'
+order: 1
+keywords: TODO
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 30 minutes
+survey_id: 2mCgpoLBUQiBI9gS46TWiSMBYPVi_2FumGC4rJ8eJqMxJdJLzeR4SRdxnZWD5DzYU2
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
+---
+In this tutorial, you'll set up Chef Delivery with a [CloudFormation](https://aws.amazon.com/cloudformation/) template and infrastructure in Amazon Web Services (AWS). You'll create a Chef server, a Chef Delivery server and build nodes that run jobs scheduled by Chef Delivery. You'll also bring up the environment that will receive the pipeline's final output &ndash; the `awesome_customers_delivery` cookbook. 
+
+[PRODNOTE] Add BL up here that points to each subsection.
+
+[COMMENT] The automation we provide for AWS gives you a preconfigured setup that's ready for you to work with right away. We recommend that you start with the AWS automation to give you a feel for how Delivery works. Later, you can [install Chef Delivery](https://docs.chef.io/release/delivery/index.html) in another cloud environment or on your own hardware.
+
+[START_BOX]
+
+## The installation at a glance
+
+[PRODNOTE] Show this first? Or, get the user started installing it and let them read this while it installs? Will people be willing to blindly run the template without first understanding what it creates?
+
+This tutorial creates infrastructure in AWS and depends on at least one local workstation outside of AWS. Here's a diagram:
+
+<img src="/assets/images/delivery/delivery-scenario-architecture.png" style="width: 100%; box-shadow: none;" alt="An example Delivery installation" />
+
+The diagram breaks down into these parts:
+
+**Delivery cluster** &ndash; These are the machines that make up a Chef Delivery installation.
+
+At a minimum, a Delivery cluster includes Chef Delivery, one build node, and environments to run the Acceptance, Union, Rehearsal, and Delivered stages. Your setup will include two build nodes to demonstrate how phases can run in parallel.
+
+Your setup will also include a Chef server. The Chef server acts as a central repository for the `awesome_customers_delivery` cookbook that you'll deploy to your Acceptance, Union, Rehearsal, and Delivered environments. 
+
+A Delivery cluster can also include a Chef Supermarket or a Chef Analytics server, which are outside the scope of this tutorial.
+
+The automation you'll run uses the recommended [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html) for each server.
+
+**Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Delivery deploys build artifacts, or the pipeline's final output, to these environments.
+
+For example, you might deploy SQL Server to a Windows Server environment. Or you might deploy web content and other media to an Amazon S3 bucket. In this tutorial, the Acceptance, Union, Rehearsal and Delivered stages are where you'll run the `awesome_customers_delivery` cookbook. In other words, these environments host the web application.
+
+The automation you'll run brings up four CentOS 6 servers, one for each environment. Each server comes already [bootstrapped to the Chef server](https://docs.chef.io/install_bootstrap.html).
+
+**Administrator's workstation** &ndash; This is the machine from where an administrator installs and manages the Delivery cluster. This is commonly a dedicated machine that the administrator can access over SSH. The automation you'll run brings up a preconfigured Delivery cluster, and does not provide you with this workstation.
+
+**Team member's workstation** &ndash; Users access Delivery from their workstations. A workstation can run Windows, Mac OS, or Linux. Common tasks include creating projects and writing build cookbooks, submitting new features to the pipeline, and reviewing and approving changes that others submit.
+
+**VPC** &ndash; Although a [virtual private cloud](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-vpc.html) (VPC) is not required to use Chef Delivery on AWS, the automation creates one to give you an environment that's isolated from the rest of your AWS account. When you tear down your Delivery cluster, only the resources that belong to this isolated environment are destroyed. 
+
+An added benefit to using a VPC is that it assigns a static IP adddress to each server. These IP addresses remain fixed so that you can temporarily stop and restart your AWS instances as you evaluate Chef Delivery. In a complete setup, it's common to keep the instances running so that users can access Delivery at any time.
+
+### Network and ports
+
+The automation also configures the appropriate [security groups](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html) for the Delivery cluster and the environments. [See  the Chef documentation](https://docs.chef.io/install_delivery_aws.html#network-and-ports) for more information on the Delivery cluster's recommended port settings.
+
+For the Acceptance, Union, Rehearsal, and Delivered environments, the automation sets up network access on these ports:
+
+* 22 (SSH) &ndash; enables `chef-client` to run remotely from the build nodes as the pipeline runs.
+* 80 (HTTP) &ndash; enables you to access the Customers web application from your workstation.
+* 443 (HTTPS) &ndash; enables the environment to access the Chef server when it checks in for the latest cookbooks.
+
+[END_BOX]
+
+[START_BOX]
+
+## 1. Plan the installation
+
+[PRODNOTE] This needs to be updated for the final template. For now, bring the thing up from here: [https://github.com/chef-cft/delivery-tutorial/tree/full-auto#delivery-deployment-cloudformation-template](https://github.com/chef-cft/delivery-tutorial/tree/full-auto#delivery-deployment-cloudformation-template).
+
+To run the automated installation, you'll need:
+
+1. an [AWS account](https://aws.amazon.com/free/).
+1. an [SSH key pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-a-key-pair) for the US East (N. Virginia) region.
+1. a Chef Delivery license key.
+
+If you don't have a license key, click the button below, fill out the short form, and check your email for a link to a temporary license key for this tutorial.
+
+[START_MODAL get-a-license-key Get a license key]
+
+<script src="//app-sj05.marketo.com/js/forms2/js/forms2.min.js"></script>
+<form id="mktoForm_1438">
+  <h3>Get a Delivery License Key</h3>
+</form>
+<script>
+MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438, function(form) {
+  form.onSuccess(function(values, followUpUrl) {
+    $('a.close-reveal-modal').trigger('click'); // close modal.
+    return false; // don't navigate to follow-up URL.
+  });
+});
+</script>
+
+[END_MODAL]
+
+After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <% fp '~/delivery.license' %>.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Install Chef Delivery using the CloudFormation template
+
+[PRODNOTE] TBD
+
+- Walk the user through installing from the web UI.
+- Then show the running instances from the EC2 Management Console.
+- Have the user note the IP address, logon information, etc. of each machine in the cluster.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Verify the Delivery installation
+
+[PRODNOTE] Flesh this out.
+
+- Mention how Delivery is preconfigured.
+  - Delivery & Chef server usernames & default passwords
+  - How the acceptance node is already bootstrapped; how to access it.
+  - What else?
+
+Make a table for the user names and initial passwords?
+
+- Have the user log in to the Delivery server through the webUI.
+
+Navigate to the Delivery web page (**Web login**) and use the `admin` credentials (**Admin username** and **Admin password**) to log in. You'll see the Delivery dashboard.
+
+  ![](delivery/delivery-dashboard.png)
+
+- Have the user log in to the Chef server through the webUI.
+  - Show them what's available (build nodes, environments, whatever else...)
+
+- What to prepare for users
+  - If you're installing Chef Delivery for others to use, give each team member
+    - Their Delivery user name and initial password
+    - Delivery URL
+
+- Have the user navigate to the acceptance node from a web browser. You'll see an initial version of the Customers web application. Add screenshot. 
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Create the organization and add users
+
+[Because you can do this as a team, the idea is that the person playing the administrator role will set up the users and org. The admin will set an initial password and leave the RSA box blank for the user to fill in.] 
+
+[PRODNOTE] You know how to do this; I'll write it up later. Add an organization named "delivery-demo" and a user with all roles except Admin. Leave the RSA key blank; you'll set that in the next page.  
+
+[END_BOX]
+
+[START_BOX]
+
+## How to tear down your Delivery installation
+
+[PRODNOTE] Show the user how to delete the stack.
+
+[END_BOX]

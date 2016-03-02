@@ -1,0 +1,360 @@
+---
+title: 'Add a feature to the web application'
+order: 4
+keywords: TODO
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 30 minutes
+survey_id: gzdFdK8SiSN29yyuyR3nkb5Hn4up6PSkw1_2BX0eko_2FDSAhVR5246l68OL7xE9W1Lv
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
+---
+[CALLOUT networks/team-members-workstation.svg] Continue on the Windows workstation that you used in the previous part.
+
+At this point, you've validated that your pipeline works and you've configured it with your build cookbook. You're ready to use Chef Delivery for what it was intended &ndash; moving changes quickly and safely all the way from your workstation to production.
+
+In this lesson, you'll add new feature to the Customers web application by changing the `awesome_customers_delivery` cookbook. The feature adds additional sample data and also provides an interactive control that displays where our customers are on a globe. This feature uses [D3](http://d3js.org), a JavaScript library for producing interactive data visualizations.
+
+You'll fetch a branch from GitHub that contains this feature and then integrate that branch with your local `master` branch. 
+
+You'll also learn how to use `delivery job` to verify your work before you submit a change to the pipeline. 
+
+[PRODNOTE] This will all get filled out later.
+
+[START_BOX]
+
+## 1. Get the feature branch from GitHub
+
+```ps
+# ~/delivery-demo/awesome_customers_delivery
+$ git checkout visualize_data
+Branch visualize_data set up to track remote branch visualize_data from origin.
+Switched to a new branch 'visualize_data'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Integrate the feature branch with your local master branch
+
+```ps
+# ~/delivery-demo/awesome_customers_delivery
+$ git merge master
+Merge made by the 'recursive' strategy.
+ .delivery/build-cookbook/.kitchen.yml              |  21 +++
+ .delivery/build-cookbook/Berksfile                 |  18 +++
+ .delivery/build-cookbook/LICENSE                   |   3 +
+ .delivery/build-cookbook/README.md                 | 146 +++++++++++++++++++++
+ .delivery/build-cookbook/chefignore                |  97 ++++++++++++++
+ .../data_bags/keys/delivery_builder_keys.json      |   1 +
+ .delivery/build-cookbook/metadata.rb               |   7 +
+ .delivery/build-cookbook/recipes/default.rb        |   6 +
+ .delivery/build-cookbook/recipes/deploy.rb         |   6 +
+ .delivery/build-cookbook/recipes/functional.rb     |   6 +
+ .delivery/build-cookbook/recipes/lint.rb           |   6 +
+ .delivery/build-cookbook/recipes/provision.rb      |   6 +
+ .delivery/build-cookbook/recipes/publish.rb        |   6 +
+ .delivery/build-cookbook/recipes/quality.rb        |   6 +
+ .delivery/build-cookbook/recipes/security.rb       |   6 +
+ .delivery/build-cookbook/recipes/smoke.rb          |   6 +
+ .delivery/build-cookbook/recipes/syntax.rb         |   6 +
+ .delivery/build-cookbook/recipes/unit.rb           |   6 +
+ .delivery/build-cookbook/secrets/fakey-mcfakerton  |   0
+ .../test/fixtures/cookbooks/test/metadata.rb       |   2 +
+ .../fixtures/cookbooks/test/recipes/default.rb     |   7 +
+ .delivery/config.json                              |  15 +++
+ 22 files changed, 383 insertions(+)
+ create mode 100644 .delivery/build-cookbook/.kitchen.yml
+ create mode 100644 .delivery/build-cookbook/Berksfile
+ create mode 100644 .delivery/build-cookbook/LICENSE
+ create mode 100644 .delivery/build-cookbook/README.md
+ create mode 100644 .delivery/build-cookbook/chefignore
+ create mode 100644 .delivery/build-cookbook/data_bags/keys/delivery_builder_keys.json
+ create mode 100644 .delivery/build-cookbook/metadata.rb
+ create mode 100644 .delivery/build-cookbook/recipes/default.rb
+ create mode 100644 .delivery/build-cookbook/recipes/deploy.rb
+ create mode 100644 .delivery/build-cookbook/recipes/functional.rb
+ create mode 100644 .delivery/build-cookbook/recipes/lint.rb
+ create mode 100644 .delivery/build-cookbook/recipes/provision.rb
+ create mode 100644 .delivery/build-cookbook/recipes/publish.rb
+ create mode 100644 .delivery/build-cookbook/recipes/quality.rb
+ create mode 100644 .delivery/build-cookbook/recipes/security.rb
+ create mode 100644 .delivery/build-cookbook/recipes/smoke.rb
+ create mode 100644 .delivery/build-cookbook/recipes/syntax.rb
+ create mode 100644 .delivery/build-cookbook/recipes/unit.rb
+ create mode 100644 .delivery/build-cookbook/secrets/fakey-mcfakerton
+ create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/metadata.rb
+ create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/recipes/default.rb
+ create mode 100644 .delivery/config.json
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Run Delivery jobs to verify the change
+
+Before you submit a change to the Delivery pipeline, you want to verify that the feature works as expected and passes unit, lint, and syntax checks.
+
+For a Chef cookbook, you might run [Test Kitchen](https://docs.chef.io/kitchen.html) as you build your feature to verify that it behaves as you expect on a temporary instance that resembles production. You might also run your ChefSpec tests, Foodcritic, and RuboCop on your workstation. For an application or service, you might run a different set of tools to verify your work.
+
+[PRODNOTE] I have this wrong. `delivery job` runs locally. Will update to fix this.
+
+Another way to verify your work is to run [delivery job](https://docs.chef.io/ctl_delivery.html#delivery-job). `delivery job` executes a phase on a build node. Chef Delivery uses `delivery job` to execute the phases as changes move through the pipeline. Running `delivery job` from your workstation is a great way to help ensure that your change is good before it reaches the pipeline.
+
+[PRODNOTE] Well, crud. `delivery job verify unit` fails because the job is running chef-client 12.5 but the cookbook uses the `apt_update` resource, which is introduced in 12.7. I believe the fix is to update to Chef DK 0.11.0 on the Windows workstation.
+
+```ps
+# ~/delivery-demo/awesome_customers_delivery
+$ delivery job verify unit
+Chef Delivery
+Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+Starting job for awesome_customers_delivery verify unit
+Creating workspace in C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
+ify\unit
+Cloning repository, and merging visualize_data to master
+Configuring the job
+Running the job
+Setting up the builder
+[...]
+```
+
+```ps
+# ~/delivery-demo/awesome_customers_delivery
+$ delivery job verify lint
+Chef Delivery
+Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+Starting job for awesome_customers_delivery verify lint
+Creating workspace in C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
+ify\lint
+Cloning repository, and merging visualize_data to master
+Configuring the job
+Running the job
+Setting up the builder
+[...]
+Running phase lint
+[2016-03-02T19:14:03+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
+led_plugins for ohai.
+Starting Chef Client, version 12.5.1
+resolving cookbooks for run list: ["build-cookbook::lint"]
+Synchronizing Cookbooks:
+  - build-cookbook (0.1.0)
+  - delivery-truck (2.0.4)
+  - delivery-sugar (1.0.0)
+Compiling Cookbooks...
+Converging 2 resources
+Recipe: delivery-truck::lint
+  * execute[lint_foodcritic_awesome_customers_delivery] action run
+    - execute foodcritic -f correctness   C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery
+_delivery\master\verify\lint\repo/
+  * execute[lint_rubocop_awesome_customers_delivery] action run
+    - execute rubocop C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
+ify\lint\repo/
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 2/2 resources updated in 21 seconds
+```
+
+```ps
+# ~/delivery-demo/awesome_customers_delivery
+$ delivery job verify syntax
+Chef Delivery
+Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+Starting job for awesome_customers_delivery verify syntax
+Creating workspace in C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
+ify\syntax
+Cloning repository, and merging visualize_data to master
+Configuring the job
+[...]
+Running phase syntax
+[2016-03-02T19:15:34+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
+led_plugins for ohai.
+Starting Chef Client, version 12.5.1
+resolving cookbooks for run list: ["build-cookbook::syntax"]
+Synchronizing Cookbooks:
+  - build-cookbook (0.1.0)
+  - delivery-truck (2.0.4)
+  - delivery-sugar (1.0.0)
+Compiling Cookbooks...
+
+================================================================================
+Recipe Compile Error in C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/v
+erify/syntax/cache/cookbooks/build-cookbook/recipes/syntax.rb
+================================================================================
+
+RuntimeError
+------------
+The awesome_customers_delivery cookbook was modified but the version was not updated in the metadata file.
+
+Cookbook Trace:
+---------------
+  C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/coo
+kbooks/delivery-truck/recipes/syntax.rb:22:in `block in from_file'
+  C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/coo
+kbooks/delivery-truck/recipes/syntax.rb:18:in `each'
+  C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/coo
+kbooks/delivery-truck/recipes/syntax.rb:18:in `from_file'
+  C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/coo
+kbooks/build-cookbook/recipes/syntax.rb:6:in `from_file'
+
+Relevant File Content:
+----------------------
+C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/cookb
+ooks/delivery-truck/recipes/syntax.rb:
+
+ 15:  # limitations under the License.
+ 16:  #
+ 17:
+ 18:  changed_cookbooks.each do |cookbook|
+ 19:    # If we changed a cookbook but didn't bump the version than the build
+ 20:    # phase will fail when trying to upload to the Chef Server.
+ 21:    unless bumped_version?(cookbook.path)
+ 22>>     raise RuntimeError, "The #{cookbook.name} cookbook was modified " \
+ 23:                          "but the version was not updated in the " \
+ 24:                          "metadata file."
+ 25:    end
+ 26:
+ 27:    # Run `knife cookbook test` against the modified cookbook
+ 28:    execute "syntax_check_#{cookbook.name}" do
+ 29:      command "knife cookbook test -o #{cookbook.path} -a"
+ 30:    end
+ 31:  end
+
+
+Running handlers:
+[2016-03-02T19:15:47+00:00] ERROR: Running exception handlers
+Running handlers complete
+[2016-03-02T19:15:47+00:00] ERROR: Exception handlers complete
+Chef Client failed. 0 resources updated in 12 seconds
+[2016-03-02T19:15:47+00:00] FATAL: Stacktrace dumped to C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awe
+some_customers_delivery/master/verify/syntax/cache/chef-stacktrace.out
+[2016-03-02T19:15:47+00:00] FATAL: RuntimeError: The awesome_customers_delivery cookbook was modified but the version wa
+s not updated in the metadata file.
+Chef Client failed
+STDOUT:
+STDERR:
+```
+
+[Wow, an error! Looks like we forgot to increment the version in the metadata. Let's fix that.]
+
+```ruby
+# ~\delivery-demo\awesome_customers_delivery\metadata.rb
+name 'awesome_customers_delivery'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures awesome_customers_delivery'
+long_description 'Installs/Configures awesome_customers_delivery'
+version '0.2.0'
+
+depends 'chef-sugar'
+depends 'firewall', '~> 2.4.0'
+depends 'httpd', '~> 0.3.4'
+```
+
+Commit the change to the local `visualize_data` branch.
+
+```ps
+# ~/delivery-demo/awesome_customers_delivery
+$ git status
+On branch visualize_data
+Your branch is ahead of 'origin/visualize_data' by 5 commits.
+  (use "git push" to publish your local commits)
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   metadata.rb
+
+no changes added to commit (use "git add" and/or "git commit -a")
+$ git add metadata.rb
+$ git commit -m "Bump cookbook version"
+[visualize_data 5198ce9] Bump cookbook version
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+```
+
+Run `delivery job verify syntax` to verify the fix.
+ 
+```ps
+# ~/delivery-demo/awesome_customers_delivery
+$ delivery job verify syntax
+Chef Delivery
+Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+Starting job for awesome_customers_delivery verify syntax
+Creating workspace in C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
+ify\syntax
+Cloning repository, and merging visualize_data to master
+Configuring the job
+[...]
+Running phase syntax
+[2016-03-02T19:27:14+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
+led_plugins for ohai.
+Starting Chef Client, version 12.5.1
+resolving cookbooks for run list: ["build-cookbook::syntax"]
+Synchronizing Cookbooks:
+  - build-cookbook (0.1.0)
+  - delivery-truck (2.0.4)
+  - delivery-sugar (1.0.0)
+Compiling Cookbooks...
+Converging 1 resources
+Recipe: delivery-truck::syntax
+  * execute[syntax_check_awesome_customers_delivery] action run
+    - execute knife cookbook test -o C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery_deli
+very\master\verify\syntax\repo/ -a
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 1/1 resources updated in 16 seconds
+```
+
+[Woohoo! All works now. Lesson: we caught a potential failure _before_ it reached the pipeline.]
+
+You are now ready to submit your change.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Submit your change to the pipeline
+
+Before you submit your changes, run `git status` to verify that there are no pending changes.
+
+```ps
+# ~\delivery-demo\awesome_customers_delivery
+$ git status
+On branch visualize_data
+Your branch is ahead of 'origin/visualize_data' by 6 commits.
+  (use "git push" to publish your local commits)
+nothing to commit, working directory clean
+```
+
+Now run `delivery review` to submit your changes to the pipeline.
+
+```ps
+# ~\delivery-demo\awesome_customers_delivery
+Chef Delivery
+Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+Review for change visualize_data targeted for pipeline master
+Created new patchset
+https://10.0.0.12/e/delivery-demo/#/organizations/delivery-demo/projects/awesome_customers_delivery/changes/e2303bb7-1e3
+c-4596-b2d5-5e0b76ca9688
+```
+
+When the Delivery UI appears, trace the change's progress through the pipeline.
+
+1. Review the changes in the web interface. Click **Approve** when all tests pass.
+1. Watch the change progress through the Build and Acceptance stages.
+1. After the Acceptance stage completes, navigate to [http://10.0.0.15](http://10.0.0.15) from a second browser window. You'll see the updated version of the Customers web application featuring the interactive control.
+
+![](delivery/customers-visualize-data-delivered.png)
+
+After you verify the change in Acceptance, press the **Deliver** button. You can then watch the change progress through the Union, Rehearsal, and Delivered stages.
+
+![](delivery/customers-visualize-data-delivered-pipeline.png)
+
+[END_BOX]
