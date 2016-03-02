@@ -71,7 +71,7 @@ In this part, you'll log into a Windows workstation that's included as part of t
 
 You can use Chef Delivery to deploy almost any kind of software or infrastructure project. For example, your project might be a Chef cookbook that you deploy to Chef server, Chef Supermarket, or GitHub. Or your project can be a software package or service that you deploy to a package or application server. 
 
-In this tutorial, the project will be a Chef cookbook named `awesome_customers`. The `awesome_customers` cookbook configures a web application named Customers, which displays customer data. If you've gone through the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook. 
+In this tutorial, the project will be a Chef cookbook named `awesome_customers_delivery`. The `awesome_customers_delivery` cookbook configures a web application named Customers, which displays customer data. If you've gone through the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook. 
 
 The project's build cookbook will publish the web application cookbook to a Chef server and then run the web application cookbook on a node that's bootstrapped to the Chef server. Both the Chef server and the node are included in the automated setup.
 
