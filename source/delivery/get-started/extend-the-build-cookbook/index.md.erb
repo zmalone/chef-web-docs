@@ -15,7 +15,7 @@ In the previous part, you manually verified that the Customers application is ru
 
 However, you can also write _smoke tests_ to help quickly validate that the application or service is running and functional. If the smoke tests fail, you know that the application or service has failed.
 
-Remember that Chef Delivery works with almost any kind of application or infrastructure project, and that the `delivery-truck` cookbook helps perform many common tasks that are needed to deliver Chef cookbooks. However, because a cookbook can configure any part of the system, `delivery-truck` cannot provide a default implementation for the smoke phase.
+Remember that Chef Delivery works with almost any kind of application or infrastructure project, and that the `delivery-truck` cookbook helps perform many common tasks that are needed to deliver Chef cookbooks. However, because a cookbook can configure any part of the system, `delivery-truck` cannot provide a default implementation for some phases, such as the smoke phase.
 
 In this part, you'll implement the smoke phase to run cURL and verify that the web server responds with a 200 (OK) response. The smoke phase runs in the Acceptance, Union, Rehearsal, and Delivered stages.
 
@@ -103,8 +103,6 @@ This code performs a similar query as the deploy phase. For each node in the env
 
 Let's try out our smoke test. Follow the same steps as before to submit your change and trigger the pipeline.
 
-[PRODNOTE] I wanted to show how to verify the phase before submitting it by running `delivery job acceptance smoke`, but I get the error "No such file or directory @ rb_sysopen - /var/opt/delivery/workspace/.chef/knife.rb". I notice the same error running `delivery job acceptance deploy`. Am I missing a flag or something?
-
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
 $ git status
@@ -134,7 +132,7 @@ Trace the change's progress through the pipeline to the Acceptance stage.
 1. Review the changes in the web interface. Click **Approve** when all tests pass.
 1. Watch the change progress through the Build and Acceptance stages.
 
-You'll see that the smoke test passes.
+Watch as the smoke test runs and passes.
 
 ![](delivery/acceptance-smoke-test.png)
 
@@ -146,9 +144,9 @@ This moves the change through the Union, Rehearsal, and Delivered stages.
 
 ![](delivery/customers-delivered.png)
 
-Congratulations! [blah blah].
+Nice job! As your project evolves, you can implement additional phases such as quality, security, and functional to build further confidence in your changes and reduce the need to manually verify new features. 
 
-As you add features, remember to
+Remember to integrate the latest changes into your local `master` branch before creating a new feature branch.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
