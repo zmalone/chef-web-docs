@@ -6,8 +6,6 @@ logo: delivery.svg
 order: 1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-[PRODNOTE] Reviewers: For this iteration, don't focus so much on prose or sample output - focus on steps and resolving callouts that look like this one. 
-
 Chef Delivery manages changes to both infrastructure and application code, giving your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more.
 
 It provides a proven, reproducible workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production.
@@ -31,6 +29,8 @@ A _pipeline_ is series of automated and manual quality gates that take software 
 
 Changes progress from one stage to another by passing a suite of automated tests. To advance from the Verify and Acceptance stages, explicit approval by a designated person is required (in addition to completion of the associated tests.)
 
+[Learn more about pipeline stages](https://docs.chef.io/release/delivery/delivery_overview.html#pipeline-stages)
+
 [END_BOX]
 
 [START_BOX]
@@ -45,7 +45,7 @@ Here are the phases for each stage.
 
 You determine what happens in each phase with a _build cookbook_. Each phase is configured with a recipe in that cookbook. Build cookbooks also control other aspects of the pipeline, such as the types of artifacts you build and where you store them.
 
-[See the Chef documentation](https://docs.chef.io/release/delivery_1-0/) for a complete description of Chef Delivery.
+[Learn more about build cookbooks](https://docs.chef.io/delivery_cookbooks.html)
 
 [END_BOX]
 
@@ -53,25 +53,27 @@ You determine what happens in each phase with a _build cookbook_. Each phase is 
 
 ## What you'll do
 
-This tutorial comes in two parts. In part 1, you'll bring up a preconfigured Delivery system. In part 2, you'll follow a change through the Delivery pipeline.
- 
-### Part 1: Bring up a preconfigured Delivery system
+This tutorial comes in multiple parts. The first two parts focus on bringing up a Chef Delivery installation and configuring a user's workstation to communicate with it. The last three parts walk you through using Delivery's project system to deliver changes to a cookbook to Chef server and verify the cookbook's behavior in a production-like environment.
 
-Chef Delivery runs in many kinds of environments &ndash; either on your hardware or in the cloud.
+### Part 1: Install Chef Delivery
+
+Chef Delivery runs on your hardware or in the cloud.
 
 To help you get started with Chef Delivery more quickly, you'll begin by using automation to build infrastructure that runs in Amazon Web Services (AWS). All you need to bring is an AWS account and a Chef Delivery license key (you'll sign up for a trial key on the next page.)
 
-The automation brings up a fully-functional Chef Delivery system in an isolated environment so it won't affect anything else you have running. After you complete the tutorial, you can experiment further and then simply tear down the envrionment when you're done.
+The automation brings up a fully-functional Chef Delivery system in an isolated AWS environment so it won't affect anything else you have running. After you complete the tutorial, you can experiment further and then simply tear down the envrionment when you're done.
 
 ### Part 2: Set up your workstation
 
-In this part, you'll log into a Windows workstation that's included as part of the automated install process. You'll install the Chef Delivery commmand-line interface (CLI) tools and set up a user account that can access Chef Delivery.
+Next, you'll need to configure a workstation to communicate with Chef Delivery.
+
+The automation you'll run includes a Windows workstation. You'll install the Chef Delivery commmand-line interface (CLI) tools and set up a user account so you can access Delivery.
 
 ### Part 3: Create the project
 
-You can use Chef Delivery to deploy almost any kind of software or infrastructure project. For example, your project might be a Chef cookbook that you deploy to Chef server, Chef Supermarket, or GitHub. Or your project can be a software package or service that you deploy to a package or application server. 
+You can use Chef Delivery to build and deploy almost any kind of software system. For example, you can publish changes to a  Chef cookbook to Chef server, Chef Supermarket, or GitHub. Or might deploy a service to an application server. 
 
-In this tutorial, the project will be a Chef cookbook named `awesome_customers_delivery`. The `awesome_customers_delivery` cookbook configures a web application named Customers, which displays customer data. If you've gone through the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook. 
+In this tutorial, the project will be a Chef cookbook named `awesome_customers_delivery`. This cookbook configures a web application named Customers, which displays customer data to the user. If you've gone through the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook (this tutorial is not a prerequisite.) 
 
 The project's build cookbook will publish the web application cookbook to a Chef server and then run the web application cookbook on a node that's bootstrapped to the Chef server. Both the Chef server and the node are included in the automated setup.
 
@@ -79,17 +81,17 @@ By the end of this part, your web application will look like this:
 
 ![](delivery/acceptance-customers-verify.png)
 
-### Part 4: Add a new feature to the web application
+### Part 4: Add a feature to the web application
 
 In this part, you'll integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You'll follow the change through each pipeline stage, from your workstation all the way out to your node. By the end of this part, your web application will look like this:
 
 ![](delivery/customers-visualize-data-delivered.png)
 
-### Part 5: Add a feature to the build cookbook
+### Part 5: Extend the build cookbook
 
-In this part, you'll modify your build cookbook to integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You'll follow the change through each pipeline stage, from your workstation all the way out to your node. By the end of this part, your web application will look like this:
+In this tutorial, you'll discover the `delivery-truck` cookbook, which helps perform many common tasks that are needed to deliver Chef cookbooks. However, this cookbook can't do everything.
 
-![](delivery/customers-visualize-data-delivered.png)
+In this part, you'll extend your build cookbook to include a smoke test. Smoke testing helps you quickly validate whether your application or service is running and functional.
 
 [END_BOX]
 
@@ -99,7 +101,7 @@ In this part, you'll modify your build cookbook to integrate a change to the web
 
 Chef Delivery is team oriented, and so is this tutorial. As a result, there are several ways to go through this tutorial.
 
-If you are most interested in using Chef Delivery in a project, you might want to get a system administrator in your company to help by [running the AWS automation](/delivery/get-started/install-chef-delivery/) that is the first part of the tutorial. If you're a project leader or your interest is primarily day-to-day use of Delivery, then the part of the tutorial that [walks through delivering changes](/delivery/get-started/write-the-build-cookbook/) might be of the most interest.
+If you are most interested in using Chef Delivery in a project, you might want to get a system administrator in your company to help by [running the AWS automation](/delivery/get-started/install-chef-delivery/) that is the first part of the tutorial. If you're a project leader, you might find that the lesson that [sets up a project](/delivery/get-started/create-the-project/) is a good place to start. If your interest is primarily day-to-day use of Delivery, then the part of the tutorial that [walks through delivering a change](/delivery/get-started/add-a-feature-to-the-web-application/) might be of the most interest.
 
 In other words, it's possible to go through this tutorial as a team, with different members of the team doing parts of the tutorial that most closely map to their job roles. Of course, you can go through all tutorial steps as an individual.
 
@@ -107,9 +109,9 @@ After completing this tutorial, you should be able to:
 
 * describe each of the stages and phases that make up a Chef Delivery pipeline.
 * verify the correctness of new features and submit changes to the pipeline. 
-* approve changes made by others.
-* verify and deliver changes to your users. 
+* approve code changes made by others.
+* verify new features and deliver them to your users. 
 
-[GITHUB] After you complete this tutorial, you can refer back to the final version of the code on [GitHub](https://github.com/learn-chef/customers-web-app-delivery).
+[GITHUB] After you complete this tutorial, you can [refer to the final version of the code](https://github.com/learn-chef/awesome_customers_delivery) on GitHub.
 
 [END_BOX]
