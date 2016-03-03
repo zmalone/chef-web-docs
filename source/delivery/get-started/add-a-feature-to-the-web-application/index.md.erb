@@ -13,7 +13,7 @@ meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 
 At this point, you've validated that your pipeline works and you've configured it with your build cookbook. You're ready to use Chef Delivery for what it was intended &ndash; moving changes quickly and safely all the way from your workstation to production.
 
-In this lesson, you'll add new feature to the Customers web application by changing the `awesome_customers_delivery` cookbook. The feature adds additional sample data and also provides an interactive control that displays where our customers are on a globe. This feature uses [D3](http://d3js.org), a JavaScript library for producing interactive data visualizations.
+In this lesson, you'll add a feature to the Customers web application by changing the `awesome_customers_delivery` cookbook. The feature adds additional sample data and also provides an interactive control that displays where our customers are on a globe. This feature uses [D3](http://d3js.org), a JavaScript library for producing interactive data visualizations.
 
 You'll fetch a branch from GitHub that contains this feature and then integrate that branch with your local `master` branch. 
 
@@ -26,7 +26,7 @@ You'll also learn how to use `delivery job` to verify your work before you submi
 ## 1. Get the feature branch from GitHub
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ git checkout visualize_data
 Branch visualize_data set up to track remote branch visualize_data from origin.
 Switched to a new branch 'visualize_data'
@@ -39,7 +39,7 @@ Switched to a new branch 'visualize_data'
 ## 2. Integrate the feature branch with your local master branch
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ git merge master
 Merge made by the 'recursive' strategy.
  .delivery/build-cookbook/.kitchen.yml              |  21 +++
@@ -99,14 +99,12 @@ Before you submit a change to the Delivery pipeline, you want to verify that the
 
 For a Chef cookbook, you might run [Test Kitchen](https://docs.chef.io/kitchen.html) as you build your feature to verify that it behaves as you expect on a temporary instance that resembles production. You might also run your ChefSpec tests, Foodcritic, and RuboCop on your workstation. For an application or service, you might run a different set of tools to verify your work.
 
-[PRODNOTE] I have this wrong. `delivery job` runs locally. Will update to fix this.
+Another way to verify your work is to run [delivery job](https://docs.chef.io/ctl_delivery.html#delivery-job). Chef Delivery uses `delivery job` to execute the phases on build nodes as changes move through the pipeline. But you can also run `delivery job` to execute a phase directly on your workstation. Running jobs to exercise phases such as lint, unit, and syntax is a good way to help ensure that your change is good before it reaches the pipeline.
 
-Another way to verify your work is to run [delivery job](https://docs.chef.io/ctl_delivery.html#delivery-job). `delivery job` executes a phase on a build node. Chef Delivery uses `delivery job` to execute the phases as changes move through the pipeline. Running `delivery job` from your workstation is a great way to help ensure that your change is good before it reaches the pipeline.
-
-[PRODNOTE] Well, crud. `delivery job verify unit` fails because the job is running chef-client 12.5 but the cookbook uses the `apt_update` resource, which is introduced in 12.7. I believe the fix is to update to Chef DK 0.11.0 on the Windows workstation.
+[PRODNOTE] `delivery job verify unit` fails because the job is running chef-client 12.5 but the cookbook uses the `apt_update` resource, which is introduced in 12.7. We need update to install Chef DK 0.11.0 on the Windows workstation.
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ delivery job verify unit
 Chef Delivery
 Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
@@ -118,10 +116,11 @@ Configuring the job
 Running the job
 Setting up the builder
 [...]
+THIS IS BROKEN - NEED TO FIX
 ```
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ delivery job verify lint
 Chef Delivery
 Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
@@ -159,7 +158,7 @@ Chef Client finished, 2/2 resources updated in 21 seconds
 ```
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ delivery job verify syntax
 Chef Delivery
 Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
@@ -239,7 +238,22 @@ STDOUT:
 STDERR:
 ```
 
-[Wow, an error! Looks like we forgot to increment the version in the metadata. Let's fix that.]
+You'll see from the output that `delivery job verify syntax` reports an error.
+
+```ps
+# ~\delivery-demo\awesome_customers_delivery
+RuntimeError
+------------
+The awesome_customers_delivery cookbook was modified but the version was not updated in the metadata file.
+```
+
+The error tells us that we need to update the cookbook's version in <% fp 'metadata.rb' %>. It's important to update a cookbook's version when it changes to ensure that a given set of functionality is tied to a given version.
+
+[PRODNOTE] I have no idea how `knife cookbook test` knows this - I don't have a knife.rb set up, so how does it know that the version wasn't updated?
+
+Let's fix the error and verify the change. According to [Semantic Versioning](http://semver.org), we should increment the MINOR version because we're adding backwards-compatible functionality.
+
+Update the `version` field from 0.1.0 to 0.2.0 in your `awesome_customers_delivery` cookbook's <% fp 'metadata.rb' %> file.
 
 ```ruby
 # ~\delivery-demo\awesome_customers_delivery\metadata.rb
@@ -259,7 +273,7 @@ depends 'httpd', '~> 0.3.4'
 Commit the change to the local `visualize_data` branch.
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ git status
 On branch visualize_data
 Your branch is ahead of 'origin/visualize_data' by 5 commits.
@@ -280,7 +294,7 @@ $ git commit -m "Bump cookbook version"
 Run `delivery job verify syntax` to verify the fix.
  
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ delivery job verify syntax
 Chef Delivery
 Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
@@ -312,9 +326,9 @@ Running handlers complete
 Chef Client finished, 1/1 resources updated in 16 seconds
 ```
 
-[Woohoo! All works now. Lesson: we caught a potential failure _before_ it reached the pipeline.]
+The test passes. Running these checks helped us discover and fix a potential failure _before_ it reaches the pipeline.
 
-You are now ready to submit your change.
+You are now ready to submit your change. In practice, you might run the lint and unit tests a second time to verify that your change does not break other functionality.
 
 [END_BOX]
 
@@ -356,5 +370,7 @@ When the Delivery UI appears, trace the change's progress through the pipeline.
 After you verify the change in Acceptance, press the **Deliver** button. You can then watch the change progress through the Union, Rehearsal, and Delivered stages.
 
 ![](delivery/customers-visualize-data-delivered-pipeline.png)
+
+Great work! By testing your changes locally, you can discover and fix potential problems before you submit your work. Having a central pipeline gives you and your team the ability to review both the code and build artifacts before you move any changes to production. 
 
 [END_BOX]
