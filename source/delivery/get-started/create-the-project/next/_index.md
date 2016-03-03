@@ -1,1 +1,1 @@
-Next, you'll add functionality to your build cookbook, including running unit and syntax tests, publishing the `awesome_customers_delivery` cookbook to your Chef server, and delivering the Customers web application.
+Next, you'll add a feature to the Customers web application that alters the way customer information is displayed to the user and move the change through the Delivery pipeline.
