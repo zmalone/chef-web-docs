@@ -11,56 +11,50 @@ meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 [CALLOUT networks/team-members-workstation.svg] You'll perform this part from the Windows workstation that's part of the automated Delivery installation.
 
-[PRODNOTE] We need to decide on Git Bash or posh~git for this and make sure that it's pinned to the task bar. I like posh~git because it lets you do the PowerShell thing. (I thought we set up posh~git but I don't see it when I open PowerShell. I also don't see Git Bash pinned for the Chef user - we might need this for the ssh-keygen command in this part.)
+[PRODNOTE] We need to decide on Git Bash or posh-git for this and make sure that it's pinned to the task bar. I like posh-git because it lets you do the PowerShell thing, and feels more native to Windows (although, the Linux crowd might like Git Bash.) I thought we set up posh-git but I don't see it when I open PowerShell. I also don't see Git Bash pinned for the Chef user - we might need this for the ssh-keygen command in this part.
 
 In the previous lesson, you or your system administrator set up a Chef Delivery cluster. Now you're ready to use it. You'll interact with Chef Delivery from your workstation, but first you'll need to set it up.
 
-[COMMENT] If your administrator installed Chef Delivery, [review the installation at a glance](/delivery/get-started/install-chef-delivery#theinstallationataglance) to get a sense of what components are involved and how they fit together.
+[COMMENT] If someone else installed Chef Delivery for you, [review the installation](/delivery/get-started/install-chef-delivery#step1) to get a sense of what components are involved and how they fit together.
+
+The Windows workstation comes preconfigured with Git for Windows and the Chef DK. Here you'll perform these tasks to complete your setup.
+
+1. [Connect to your Windows workstation](#step1)
+1. [Create a working directory](#step2)
+1. [Chef Delivery command-line interface (CLI) tools](#step3)
+1. [Update your Delivery user with an SSH public key](#step4)
+1. [Connect the Delivery CLI to the Chef Delivery server](#step5)
+1. [Authenticate access to Delivery's Git server](#step6)
+
+[COMMENT] Later, you can configure a second Windows, Mac OS X, or Linux workstation for use with Chef Delivery. [The documentation explains how](https://docs.chef.io/release/delivery/install_delivery_ssh.html#install-delivery-cli). 
 
 [START_BOX]
 
-## Workstation setup overview
-
-Draft content:
-
-The preconfigured workstation includes:
-
-* Git for Windows
-* Chef DK
-
-You'll begin by first [gathering information about your Delivery server]().
-
-Then you'll install:
-
-* Chef Delivery command-line interface (CLI) tools
-
-Then you'll perform these tasks to complete your setup.
-
-* [Create a working directory]()
-* [Associate a public SSH key with your Delivery user]()
-* [Connect the Delivery CLI to the Chef Delivery server]()
-* [Generate a Delivery API token]()
-* [Authenticate access to Delivery's Git server]()
-
-[END_BOX]
-
-[START_BOX]
-
-## 1. Gather information about your Delivery server
-
-You'll need some information [from the previous lesson](/delivery/get-started/install-chef-delivery#step3). You can get this information from your administrator if you did not perform the installation.
-
-* The Chef server URL, for example, https://10.194.13.167/organizations/test, and logon information.
-* The Chef Delivery web interface URL, for example, https://10.194.9.174/e/test/.
-* Your Chef Delivery username and initial password.
-
-[END_BOX]
-
-[START_BOX]
-
-## 2. Connect to your Windows workstation
+## 1. Connect to your Windows workstation
 
 [PRODNOTE] Show how to get the IP address and set up an RDP connection.
+
+Connect has the **Chef** user. The password is **P4ssw0rd**.
+
+[PRODNOTE] I encountered some issues using the Chef user. We might want to just set this all up under the Administrator user.
+
+You may find it easier to continue this tutorial by opening this page in a browser from your RDP connection.
+
+[PRODNOTE] Use Chrome because IEESC is not disabled. I think we should also disable IEESC.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Create a working directory
+
+[PRODNOTE] Why not set this up for the user?
+
+```ps
+# ~
+$ mkdir ~\delivery-demo
+$ cd ~\delivery-demo
+```
 
 [END_BOX]
 
@@ -68,71 +62,39 @@ You'll need some information [from the previous lesson](/delivery/get-started/in
 
 ## 3. Install the Delivery CLI
 
-[Point to docs FMI about installing the CLI on other platforms.]
-
-[PRODNOTE] Don't follow this, as it's broken. Work-around below.
-
-1. [Download the Delivery CLI installer](https://s3.amazonaws.com/delivery-packages/cli/delivery-cli-0.0.0%2B20151020165859-1-x64.msi).
+1. [Download the Delivery CLI installer for Windows](https://s3.amazonaws.com/delivery-packages/cli/delivery-cli-latest.msi).
 1. Click the package and install.
 1. Modify your `PATH` environment variable to include the path to the `delivery` executable.
 
   ```ps
+  # ~\delivery-demo
   $ $env:Path = $env:Path + ";C:\chef\delivery-cli\bin"
   $ [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::User)
   ```
 
-[PRODNOTE] Here's how I work-around the broken CLI installer:
-
-```ps
-# ~
-$ mkdir C:\chef
-$ mkdir C:\chef\delivery-cli
-$ mkdir C:\chef\delivery-cli\bin
-# Download https://s3.amazonaws.com/delivery-packages/cli/deliverycli-latest.exe to C:\chef\delivery-cli\bin
-$ Invoke-WebRequest -Uri "https://s3.amazonaws.com/delivery-packages/cli/deliverycli-latest.exe" -OutFile "C:\chef\delivery-cli\bin\delivery.exe"
-# Manually download https://files.slack.com/files-pri/T03GRS9QS-F0PK4BB3N/bin.zip" to C:\chef\delivery-cli\bin\bin.zip (you'll get automatically redirected to the Chef sign-in page.)
-$ $shell = new-object -com shell.application
-$ $zip = $shell.NameSpace("C:\chef\delivery-cli\bin\bin.zip")
-$ foreach($item in $zip.items())
-$ {
-$   $shell.Namespace("C:\chef\delivery-cli").copyhere($item)
-$ }
-$ rm C:\chef\delivery-cli\bin\bin.zip
-$ $env:Path = $env:Path + ";C:\chef\delivery-cli\bin"
-$ [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::User)
-```
+[PRODNOTE] I need to confirm whether you really need to update the system PATH.
 
 [END_BOX]
 
 [START_BOX]
 
-## 4. Create a working directory
-
-```bash
-# ~
-$ mkdir ~/delivery-demo
-$ cd ~/delivery-demo
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 5. Update your Delivery user with an SSH public key
+## 4. Update your Delivery user with an SSH public key
 
 You need to associate your public SSH key with your Delivery user.
 
-Start by generating an SSH key. You can skip this step if you already have an SSH public key that you can use, for example, <% fp '~/.ssh/id_rsa.pub' %>.
+Start by generating an SSH key. Run this from a Git Bash prompt. You can replace you@example.com with your email address.
+
+[PRODNOTE] May need to orient folks to Git Bash.
 
 ```bash
-# ~
+# ~\delivery-demo
 $ ssh-keygen -t rsa -b 4096 -C "you@example.com"
 ```
 
 The output is similar to:
 
 ```bash
-# ~
+# ~\delivery-demo
 Generating public/private rsa key pair.
 Enter file in which to save the key (/Users/username/.ssh/id_rsa):
 Enter passphrase (empty for no passphrase):
@@ -158,14 +120,14 @@ The key's randomart image is:
 Now print your SSH key to the console, like this.
 
 ```bash
-# ~
+# ~\delivery-demo
 $ cat ~/.ssh/id_rsa.pub
 ```
 
 The output is similar to:
 
 ```bash
-# ~
+# ~\delivery-demo
 ssh-rsa
 AAAAB3NzaC1yc2EAAAADAQABAAACAQDa8BR/9bj5lVUfQP9Rsqon5qJMkiVm+JAtGi
 wnhxqgyRhkYLIzm6+gcifDgMOMuwZA88Ib5WNRhxjlmTseapower4rH/jAAczdp1h1
@@ -181,77 +143,67 @@ OcF6EvTYYO4RmISD8G+6dm1m4MlxLS53aZQWgYWvRdfNB1DA
 Zo3h9Q== you@example.com
 ```
 
-Log into the Chef Delivery web interface.
+Next, log into the Chef Delivery web interface. Google Chrome comes preconfigured with this page as a home page tab. If you close this tab, navigate to [https://10.0.0.12/e/delivery-demo](https://10.0.0.12/e/delivery-demo). 
 
 Open your user profile (select **Users** from the drop-down menu on the upper right, then navigate to your profile) and paste the output from your terminal window into the large text area under **Security Information**. If you were assigned an initial password, change it and save your profile.
+
+[PRODNOTE] Show screenshot?
 
 [END_BOX]
 
 [START_BOX]
 
-## 6. Connect the Delivery CLI to the Chef Delivery server
+## 5. Connect the Delivery CLI to the Chef Delivery server
 
 Next, you'll run the `delivery setup` command to create a file that configures the `delivery` command line interface (CLI) to contact the Chef Delivery server. The command you'll run creates a configuration file named <% fp '.delivery/cli.toml' %>.
 
 The placement of the `.delivery` directory in your file hierarchy is significant. Like Git, Chef Delivery searches the current directory and parent directories for its server settings. Because server settings are unique to an organization, we recommend that you create a directory for each organization you belong to and run the `delivery setup` command from that directory.
 
-From your command prompt, configure the `delivery` command line interface (CLI) to contact the Chef Delivery server at <code class="placeholder">10.0.0.12</code>, replacing <code class="placeholder">USERNAME</code> with yours.
+From your command prompt, configure the `delivery` command line interface (CLI) to contact the Chef Delivery server at <code class="placeholder">10.0.0.12</code>, replacing <code class="placeholder">USER</code> with your username.
 
-```bash
-# ~/delivery-demo
-$ delivery setup --server=10.0.0.12 --ent=delivery-demo --org=delivery-demo --user=USERNAME
-```
-This example produces this <% fp '.delivery/cli.toml' %> file.
-
-[Show it.]
-
-[END_BOX]
-
-[START_BOX]
-
-## 7. Generate a Delivery API token
-
-[PRODNOTE] I hear you don't have to do this with the latest Delivery CLI. Once the installer is fixed, verify and remove this step.
-
-Now run `delivery token` to generate an API token. An API token enables you to make authorized requests to your Chef Delivery server.
-
-```bash
-# ~/delivery-demo
-$ delivery token
+```ps
+# ~\delivery-demo
+$ delivery setup --server=10.0.0.12 --ent=delivery-demo --org=delivery-demo --user=USER
 Chef Delivery
-Loading configuration from /home/sally/Development
-Requesting Token
-Delivery password:
-token: 25d1TczLBIH0CfOolhwhKuV56TPdunMm1DO+TQT5c1M=
-saved API token to: /home/sally/.delivery/api-tokens
+Loading configuration from C:\Users\Administrator\delivery-demo
+Writing configuration to C:\Users\Administrator\delivery-demo\.delivery\cli.toml
+New configuration
+-----------------
+api_protocol = "https"
+enterprise = "delivery-demo"
+git_port = "8989"
+organization = "delivery-demo"
+pipeline = "master"
+server = "10.0.0.12"
+user = "USER"
 ```
 
 [END_BOX]
 
 [START_BOX]
 
-## 8. Authenticate access to Delivery's Git server
+## 6. Authenticate access to Delivery's Git server
 
 [PRODNOTE] Verify whether this is still necessary with the latest CLI.
 
 You must authenticate access to your Chef Delivery's Git server, which by default runs on port 8989.
 
-Here's an example for a user named `sally` and an enterprise named `delivery-demo`. Enter 'yes' when prompted.
+Run this command, replacing replacing <code class="placeholder">USER</code> with your username. Enter 'yes' when prompted.
 
-```bash
-# ~/delivery-demo
+```ps
+# ~\delivery-demo
 $ ssh -l USER@delivery-demo -p 8989 10.0.0.12
 The authenticity of host '[10.0.0.12]:8989 ([10.0.0.12]:8989)' can't be established.
 RSA key fingerprint is ba:db:0c:97:f8:d4:6d:0f:0b:57:0d:0f:0e:a4:15:01.
 Are you sure you want to continue connecting (yes/no)? yes
 Warning: Permanently added '[10.0.0.12]:8989' (RSA) to the list of known hosts.
 channel 0: protocol error: close rcvd twice
-Hi sally@delivery-demo! You've successfully authenticated, but Chef Delivery does not provide shell access.
+Hi USER@delivery-demo! You've successfully authenticated, but Chef Delivery does not provide shell access.
                       Connection to 10.0.0.12 closed.
 ```
 
 Your workstation is now set up for use with Chef Delivery.
 
-[PRODNOTE] Is there a command you can run to be absolutely sure you're configured properly?
+[PRODNOTE] Is there a command you can run to be absolutely sure you're configured properly to work with Delivery?
 
 [END_BOX]
