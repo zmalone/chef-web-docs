@@ -9,7 +9,7 @@ time_to_complete: 30 minutes
 survey_id: 5_2FtQ38ITqH6xDkuIca5JK6ZMtURQII1qH6ozW6Q51ciJmVEbUcHRPoSnZ259KAy1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-[CALLOUT networks/team-members-workstation.svg] Connect to the Windows workstation that you set up in the previous part.
+[CALLOUT networks/team-members-workstation.svg] Continue on the Windows workstation that you set up in the previous part.
 
 Chef Delivery uses _projects_ to organize work across multiple teams. You can create as many projects as you need. A common approach is to have one project for each major component of your system.
 
@@ -17,32 +17,20 @@ Each project has its own Git repository. Chef Delivery can host the Git reposito
 
 In this part, you'll create a project and watch the `awesome_customers_delivery` cookbook move through each stage of the Delivery pipeline. You'll perform these tasks:
 
-1. [Clone the awesome_customers_delivery repo from GitHub](#step1)
-1. [Create the project and the pipeline]()
-1. Connect that repository to Chef Delivery
-1. Configure the project to publish the `awesome_customers_delivery` cookbook to Chef server
+1. [Clone the awesome\_customers_delivery repo from GitHub](#step1)
+1. [Create the project and the pipeline](#step2)
+1. [Watch the Verify stage run](#step3)
+1. [Configure the build cookbook to publish to Chef server](#step4)
+1. [Submit the change](#step5)
+1. [Approve the change](#step6)
+1. [Deliver the change](#step7)
+1. [Integrate the change to your local master branch](#step8)
+1. Learn [how to delete your project](#howtodeleteyourproject) if you need to later
 
-During the process, you'll see how the `delivery-truck` cookbook performs many of these tasks for you.  
+During the process, you'll see how the `delivery-truck` cookbook can perform many common tasks that are needed to deliver Chef cookbooks.
 
-<img src="/assets/images/delivery/delivery_full_workflow.svg" style="width: 100%; box-shadow: none;" alt="Chef Delivery's pull pipeline" />
 
-Your build cookbook consists of recipes. Each recipe corresponds to a phase, such as lint or syntax. Any time that a phase runs, no matter in which stage, it uses the same recipe. For example, the recipe for the lint phase runs in the Verify and Build stages. You can use conditional logic to customize how the recipe behaves for a given stage.
 
-How you define each phase depends on your project and its requirements. For example, if your project is a web application that contains JavaScript, you might run JSLint as part of the lint phase. Alternatively, if you don't currently run lint tests on your code, you can leave the phase empty or configure Chef Delivery to skip it.
-
-Our project is the awesome_customers_delivery cookbook. Here's a brief summary of what each phase will accomplish.
-
-* unit – run ChefSpec.
-* lint – run Foodcritic and RuboCop.
-* syntax – run knife cookbook test.
-* publish – upload awesome_customers_delivery and the cookbooks it depends on to the Chef server.
-* provision – use Chef provisioning to create the infrastructure needed to test the artifacts (on first use) and to bootstrap the web application server.
-* deploy – run chef-client on the web application server. This phase deploys the artifacts that were published during the Build stage to the infrastructure you set up during the provision phase.
-* smoke – verify that the web server is at least minimally functional.
-
-To help implement these steps, we'll use the delivery-truck cookbook. This cookbook performs tasks that are typical for a cookbook project. For example, its unit recipe runs ChefSpec and its lint recipe runs Foodcritic and RuboCop. You'll start by adding delivery-truck as a dependency to your build cookbook. Then, step-by-step, you'll add the recipes for each phase.
-
-There are a few ways to [create a Delivery project](https://docs.chef.io/delivery_cookbooks.html#set-up-projects). In this tutorial, you'll clone the `awesome_customers_delivery` cookbook from GitHub to get starter code. Then you'll run the `delivery init` command to create the Delivery project. `delivery init` detects the existing Git repository and creates a copy of the `master` branch in its own Git repository on the Delivery server. Delivery also creates a default pipeline who’s target branch is `master`.
 
 Recall that you can use Chef Delivery to deploy almost any kind of software or infrastructure project and that a [build cookbook](https://docs.chef.io/release/delivery/build_cookbooks.html) defines how changes are verified, built, and deployed. 
 
@@ -61,21 +49,21 @@ The `awesome_customers_delivery` cookbook contains several ChefSpec tests. Blah 
 
 [START_BOX]
 
-## 1. Clone the awesome_customers_delivery repo from GitHub
+## 1. Clone the awesome\_customers_delivery repo from GitHub
 
 In this step, you'll clone the repository from GitHub and move to your local repository directory. This repository contains the `awesome_customers_delivery` cookbook, which configures the Customers web application.
 
-From a PowerShell prompt, move to your working directory, <% fp '~/delivery-demo' %>.
+From a PowerShell prompt, move to your working directory, <% fp '~\delivery-demo' %>.
 
 ```ps
 # 
-$ cd ~/delivery-demo
+$ cd ~\delivery-demo
 ```
 
 Clone the `awesome_customers_delivery` repo from GitHub.
 
 ```ps
-# ~/delivery-demo
+# ~\delivery-demo
 $ git clone https://github.com/learn-chef/awesome_customers_delivery.git
 Cloning into 'awesome_customers_delivery'...
 remote: Counting objects: 212, done.
@@ -88,8 +76,8 @@ Checking connectivity... done.
 
 Move to the <% fp 'awesome_customers_delivery' %> directory.
 
-```bash
-# ~/delivery-demo
+```ps
+# ~\delivery-demo
 $ cd awesome_customers_delivery
 ```
 
@@ -101,20 +89,19 @@ $ cd awesome_customers_delivery
 
 ## 2. Create the project and the pipeline
 
-The next step is to run `delivery init`. This command:
+There are a few ways to [create a Delivery project](https://docs.chef.io/delivery_cookbooks.html#set-up-projects). Here, you'll use the `delivery init` command. This command:
 
 * creates a project in Chef Delivery, which includes a new Git repository that's hosted on the Delivery server.
-* initializes the `master` branch in Delivery's Git repo from the existing `master` branch that you just cloned.
+* creates a default pipeline who’s target branch is `master`.
+* initializes the `master` branch in Delivery's Git repo from the existing `master` branch that you just cloned (`delivery init` detects whether there is an existing Git repository.)
 * creates a branch named `add-delivery-config`, which is based off of `master`.
-* creates the <% fp '.delivery' %> directory and adds to it an empty build cookbook and a configuration file.
+* creates the <% fp '.delivery' %> directory and adds to it a build cookbook and a configuration file.
 * submits the change for review.
 
-Run `delivery init` from your local repository directory.
+Run `delivery init` from your local repository directory. When prompted, enter the password that's associated with your Chef Delivery account. The `delivery` command uses your password to generate an API token that's used to make authorized requests to your Chef Delivery server. The `delivery` command writes this API token to <% fp '~/.delivery/api-tokens' %>.
 
-When prompted, enter the password that's associated with your Chef Delivery account. The `delivery` command uses this token to generate an API token that's used to make authorized requests to your Chef Delivery server. The `delivery` command writes this API token to <% fp '~\.delivery\api-tokens' %>
-
-```bash
-# ~/delivery-demo/awesome_customers_delivery
+```ps
+# ~\delivery-demo\awesome_customers_delivery
 $ delivery init
 Chef Delivery
 Loading configuration from C:\Users\chef\delivery-demo\awesome_customers_delivery
@@ -160,7 +147,25 @@ https://10.0.0.12/e/delivery-demo/#/organizations/delivery-demo/projects/awesome
 1-4b31-8b29-d10f87098cb6
 ```
 
-The `delivery init` command creates the <% '.delivery' %> directory at the root of your project. This directory contains two important parts &ndash; a configuration file and the build cookbook. [TODO: SAY MORE.]
+A browser window appears and the first stage of the pipeline, Verify, begins running its phases.  
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Watch the Verify stage run
+
+[PRODNOTE] We should set Chrome as the default browser so that the web UI appears there. Otherwise, we will need to disable IEESC. I'd prefer going with Chrome.
+
+When you run `delivery init`, two things happen. The first stage of the pipeline, Verify, begins and the Delivery web interface appears. With it, you can trace the progress of the cookbook as it moves through each stage and its associated phases.
+
+[PRODNOTE] Update screenshot to show the tests just starting...
+
+![](delivery/delivery-init-result.png)
+
+As the Verify stage runs, let's take a closer look at your project.
+
+The `delivery init` command creates the <% '.delivery' %> directory at the root of your project. This directory contains two important parts &ndash; a configuration file (<% fp 'config.json' %>) and the build cookbook (under the <% fp 'build-cookbook' %> directory.)
 
 ```ps
 $ tree .delivery /F
@@ -207,37 +212,87 @@ C:\USERS\CHEF\DELIVERY-DEMO\awesome_customers_delivery\.DELIVERY
                             default.rb
 ```
 
-[END_BOX]
-
-[START_BOX]
-
-## 3. Watch the Verify stage run
-
-[PRODNOTE] We should set Chrome as the default browser so that the web UI appears there. Otherwise, we will need to disable IEESC. I'd prefer going with Chrome.
-
-When you run `delivery init`, two things happen. The first stage of the pipeline, Verify, begins and the Delivery UI appears. With it, you can trace the progress of the cookbook as it moves through each stage and its associated phases.
-
-![](delivery/delivery-init-result.png)
-
-Each phase runs on a build node. If you have multiple build nodes, phases can be run in parallel, for example, unit and syntax. The automated installation process for this tutorial creates two build nodes.
-
-The build node that's running Verify merges your changes into `master` on a temporary copy of the main repository and runs the tests against `master`.
-
-[PRODNOTE] Update image to highlight the Verify stage and explain what each phase does.
-
-While the Verify stage runs, you can read about what's happening.
+Your build cookbook consists of recipes. Each recipe corresponds to a phase, such as lint or syntax. Any time that a phase runs, no matter in which stage, it uses the same recipe. For example, the recipe for the lint phase runs in the Verify and Build stages. You can use conditional logic to customize how the recipe behaves for a given stage.
 
 <img src="/assets/images/delivery/delivery_full_workflow.svg" style="width: 100%; box-shadow: none;" alt="Chef Delivery's pull pipeline" />
 
-* unit – run ChefSpec.
-* lint – run Foodcritic and RuboCop.
-* syntax – run knife cookbook test.
+Each phase runs on a build node. If you have multiple build nodes, phases can be run in parallel, for example, unit and syntax. The automated installation process for this tutorial creates two build nodes.
 
-[When the Verify stage completes, you'll see that tests pass.]  
+The build node that's running Verify, for example, merges your changes into `master` on a temporary copy of the main repository and runs the tests against `master`.
 
-[SHOW SCREENSHOT?]
+How you define each phase depends on your project and its requirements. For example, if your project is a web application that contains JavaScript, you might run JSLint as part of the lint phase. Alternatively, if you don't currently run lint tests on your code, you can leave the phase empty or configure Chef Delivery to skip it.
 
-[But we're not yet ready to merge the change to the `master` branch. First, we need to configure the build cookbook to publish the `awesome_customers_delivery` cookbook to the Chef server.]
+Our project is a Chef cookbook. Here's a brief summary of what each phase will accomplish.
+
+* lint &ndash; run [Foodcritic](https://docs.chef.io/foodcritic.html) and [RuboCop](https://docs.chef.io/rubocop.html).
+* syntax &ndash; run [knife cookbook test](https://docs.chef.io/knife_cookbook.html#test).
+* unit &ndash; run [ChefSpec](https://docs.chef.io/chefspec.html).
+* publish &ndash; upload `awesome_customers_delivery` and the cookbooks it depends on to the Chef server.
+* deploy &ndash; run `chef-client` on the node that runs the web application.
+* smoke &ndash; verify that the web server is at least minimally functional.
+
+For this project, no specific action is required for the security, quality, provision, and functional phases.
+
+[TIP] [Learn more about Foodcritic, RuboCop, and other Chef testing tools](/skills/test-driven-development/).
+
+To help implement these steps, we use the `delivery-truck` cookbook. This cookbook performs tasks that are typical for a cookbook project. For example, its unit recipe runs ChefSpec and its lint recipe runs Foodcritic and RuboCop. The `delivery-truck` cookbook is already included for you as a dependency of your build cookbook.
+
+Here's how `delivery-truck` is referenced in your build cookbook's metadata file.
+
+```ruby
+# ~\delivery-demo\awesome_customers_delivery\.delivery\build-cookbook\metadata.rb
+name 'build-cookbook'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+version '0.1.0'
+
+depends 'delivery-truck'
+```
+
+Each of your build cookbook's 11 recipes includes the implementation provided by `delivery-truck`. Here's an example for the `lint` recipe.
+
+```ruby
+# ~\delivery-demo\awesome_customers_delivery\.delivery\build-cookbook\recipes\lint.rb
+#
+# Cookbook Name:: build-cookbook
+# Recipe:: lint
+#
+# Copyright (c) 2016 The Authors, All Rights Reserved.
+include_recipe 'delivery-truck::lint'
+```
+
+Here's how [delivery-truck implements the lint phase](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/lint.rb).
+
+```ruby
+# lint.rb
+changed_cookbooks.each do |cookbook|
+  # Run Foodcritic against any cookbooks that were modified.
+  execute "lint_foodcritic_#{cookbook.name}" do
+    command "foodcritic -f correctness #{foodcritic_tags} #{foodcritic_excludes} #{cookbook.path}"
+  end
+
+  # Run Rubocop against any cookbooks that were modified.
+  execute "lint_rubocop_#{cookbook.name}" do
+    command "rubocop #{cookbook.path}"
+    environment(
+      # workaround for https://github.com/bbatsov/rubocop/issues/2407
+      'USER' => (ENV['USER'] || 'dbuild')
+    )
+    only_if { File.exist?(File.join(cookbook.path, '.rubocop.yml')) }
+  end
+end
+```
+
+You can modify a recipe in your build cookbook to fit your requirements. For example, you might add additional code or remove the `include_recipe` line entirely to specify your own implementation.
+
+Now go back to the Delivery web interface. When the Verify stage completes, you'll see that all 3 tests pass.
+
+[PRODNOTE] Show screenshot to show the tests all green...
+
+A manual step is required to move to the Build stage. This is where your team decides whether the code can be merged into the `master` branch or if more work is needed.
+
+We're not quite ready yet to to merge the change to `master`. First, we need to configure the build cookbook to publish the `awesome_customers_delivery` cookbook to the Chef server.
 
 [END_BOX]
 
@@ -247,10 +302,10 @@ While the Verify stage runs, you can read about what's happening.
 
 In this step, you'll configure your build cookbook to publish the `awesome_customers_delivery` cookbook to the Chef server during the publish phase. Then you'll commit that change to the `add-delivery-config` branch and submit the change for review.
 
-Recall that the `delivery init` command creates a file named <% fp '.delivery/config.json' %> in your project directory. This configuration file controls the behavior of your build cookbook. Here's what the file looks like.
+Recall that the `delivery init` command creates a file named <% fp '.delivery\config.json' %> in your project directory. This configuration file controls the behavior of your build cookbook. Here's what the file looks like.
 
 ```ruby
-# ~/delivery-demo/awesome_customers_delivery/.delivery/config.json
+# ~\delivery-demo\awesome_customers_delivery\.delivery\config.json
 {
   "version": "2",
   "build_cookbook": {
@@ -263,9 +318,9 @@ Recall that the `delivery init` command creates a file named <% fp '.delivery/co
 }
 ``` 
 
-You can also use this file to control how `delivery-truck` behaves. [SAY MORE]. 
+These configuration settings become node attributes on your build nodes. You can also use this file to [control how delivery-truck behaves](https://github.com/chef-cookbooks/delivery-truck#customizing-behavior-using-deliveryconfigjson).
 
-Modify your copy of <% fp '.delivery/config.json' %> like this.
+To specify that the cookbook should be published to Chef server, modify your copy of <% fp '.delivery\config.json' %> like this.
 
 ```ruby
 # ~/delivery-demo/awesome_customers_delivery/.delivery/config.json
@@ -286,10 +341,10 @@ Modify your copy of <% fp '.delivery/config.json' %> like this.
 }
 ```
 
-Run `git status`. You'll see that `add-delivery-config` is the current branch and that <% fp '.delivery/config.json' %> is not yet staged for commit. 
+Run `git status`. You'll see that `add-delivery-config` is the current branch and that <% fp '.delivery\config.json' %> is not yet staged for commit. 
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ git status
 On branch add-delivery-config
 Changes not staged for commit:
@@ -301,10 +356,10 @@ Changes not staged for commit:
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
-Now run `git add` to stage <% fp '.delivery/config.json' %> for commit.
+Now run `git add` to stage <% fp '.delivery\config.json' %> for commit.
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ git add .\.delivery\config.json
 warning: LF will be replaced by CRLF in .delivery/config.json.
 The file will have its original line endings in your working directory.
@@ -313,7 +368,7 @@ The file will have its original line endings in your working directory.
 Now run `git commit` to commit the change.
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ git commit -m "Publish to Chef server"
 [add-delivery-config warning: LF will be replaced by CRLF in .delivery/config.json.
 The file will have its original line endings in your working directory.
@@ -332,7 +387,7 @@ The file will have its original line endings in your working directory.
 Run `delivery review` to submit your change to the `add-delivery-config` branch for review as a new patchset.
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# ~\delivery-demo\awesome_customers_delivery
 $ delivery review
 Chef Delivery
 Loading configuration from C:\Users\chef\delivery-demo\awesome_customers_delivery
@@ -354,7 +409,7 @@ A browser window opens to show the pipeline in Chef Delivery. The Verify stage i
 
 The next step is to approve the change. This is a manual step, where people on your team have a chance to review the code and promote it to the Build stage.
 
-TODO: Show the user one or two changes.
+[PRODNOTE] TODO: Show a screenshot of a change or two.
 
 From the **Review** tab, scroll down to the bottom of the patchset and enter a comment.
 
@@ -402,7 +457,7 @@ Beginning with the Acceptance stage, the pipeline switches from analyzing the pr
 
 The Acceptance stage runs the provision, deploy, smoke, and functional phases.
 
-The provision phase sets up any infrastructure needed to test the artifacts. The automated Delivery installation provides an Ubuntu server to run the cookbook in the Acceptance stage. This server is already bootstrapped to the Chef server. Therefore, you don't need to [DO ANYTHING HERE.] [However, you could implement this phase to bring up infrastructure to] 
+The provision phase sets up any infrastructure needed to test the artifacts. This is where you can bring up infrastructure to run your artifact. The automated Delivery installation provides an Ubuntu server to run the cookbook in the Acceptance stage. This server is already bootstrapped to the Chef server. Therefore, no specific action is required in this phase.  
 
 The deploy phase deploys the artifact created in the Build stage. The `delivery-truck` cookbook deploys the `awesome_customers_delivery` cookbook by submitting a [push job](https://docs.chef.io/push_jobs.html) that runs `chef-client` to the infrastructure that's associated with the Acceptance stage.
 
@@ -426,8 +481,6 @@ You'll see the process move through the Union, Rehearsal, and Delivered stages.
 
 The automation you ran to install Chef Delivery provides infrastructure only for the Acceptance stage. If you had infrastructure for the Union, Rehearsal, and Delivered stages, the Customers web application would deploy to each of those environments as the change moves through the pipeline.
 
-While the change moves through the rest of the pipeline, you can [read about ...]  
-
 The Union, Rehearsal, and Delivered stages form a shared pipeline, where all the projects that make up the entire system come together. All three stages have the same phases.
 
 The Union stage assesses the impact of the change in the context of a complete (or as close as possible) installation of the set of projects that comprise the entire system. Union is where you test for interactions between interdependent projects.
@@ -447,14 +500,14 @@ Congratulations! You now have a functioning Chef Delivery pipeline.
 
 [START_BOX]
 
-## 8. Integrate the change locally
+## 8. Integrate the change to your local master branch
 
-When you clicked **Approve**, Chef Delivery merged the `add-delivery-config` branch into `master` on Delivery's Git server. Now you need to pull Delivery's updated `master` into your `master` branch.
+When you clicked **Approve** during the Verify stage, Chef Delivery merged the `add-delivery-config` branch into `master` on Delivery's Git server. Now you need to pull Delivery's updated `master` into your local `master` branch.
 
 First, switch to the `master` branch.
 
-```bash
-# ~/delivery-demo/awesome_customers_delivery
+```ps
+# ~\delivery-demo\awesome_customers_delivery
 $ git checkout master
 Switched to branch 'master'
 Your branch is ahead of 'delivery/master' by 1 commit.
@@ -463,8 +516,8 @@ Your branch is ahead of 'delivery/master' by 1 commit.
 
 Now pull the latest from Delivery to your local repo.
 
-```bash
-# ~/delivery-demo/awesome_customers_delivery
+```ps
+# ~\delivery-demo\awesome_customers_delivery
 $ git pull --prune
 From ssh://delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery
  x [deleted]         (none)     -> delivery/_for/master/add-delivery-config
@@ -520,7 +573,7 @@ Here's how to delete the `awesome_customers_delivery` project in the tutorial en
 
 ```bash
 $ sudo delivery-ctl delete-project delivery-demo delivery-demo awesome_customers_delivery
-Successfully deleted project: 'chef/Development/awesome_customers_delivery'
+Successfully deleted project: 'delivery-demo/delivery-demo/awesome_customers_delivery'
 ```
 
 [END_BOX]
