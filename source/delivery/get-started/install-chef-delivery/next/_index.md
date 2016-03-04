@@ -1,1 +1,1 @@
-Next, you'll set up your workstation to interact with Delivery.
+Next, you'll create an organization and set up an initial user account.
