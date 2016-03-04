@@ -79,7 +79,7 @@ The project's build cookbook publishes the web application cookbook to a Chef se
 
 By the end of this part, your web application looks like this:
 
-![](delivery/acceptance-customers-verify.png)
+<img style="max-width:100%;" src="/assets/images/delivery/acceptance-customers-verify.png"/>
 
 ### Part 4: Add a feature to the web application
 
