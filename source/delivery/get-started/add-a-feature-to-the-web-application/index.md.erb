@@ -1,6 +1,6 @@
 ---
 title: 'Add a feature to the web application'
-order: 4
+order: 5
 keywords: TODO
 layout: lesson
 sections: []
@@ -17,13 +17,20 @@ In this lesson, you add a feature to the Customers web application by changing t
 
 You first fetch a branch from GitHub that contains this feature and then integrate that branch with your local `master` branch.
 
-You also use `delivery job` to verify your work before you submit a change to the pipeline.
+You also use `delivery job` to verify your work and resolve test failures before you submit a change to the pipeline. 
 
-[PRODNOTE] This will all get filled out later.
+Here's what you'll do:
+
+1. [Get the feature branch from GitHub](#step1)
+1. [Integrate the feature branch with your local master branch](#step2)
+1. [Run Delivery jobs to verify the change](#step3)
+1. [Submit your change to the pipeline](#step4)
 
 [START_BOX]
 
 ## 1. Get the feature branch from GitHub
+
+Start by switching to the `visualize_data` feature branch.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
@@ -37,6 +44,10 @@ Switched to a new branch 'visualize_data'
 [START_BOX]
 
 ## 2. Integrate the feature branch with your local master branch
+
+Next, run `git merge master` to merge the changes from your local `master` branch into the `visualize_data` branch. This step brings in your build cookbook and the Delivery configuration file you set up in the previous part.
+
+[COMMENT] If you receive the error "error: cannot stat '.delivery': Permission denied", close Atom and run `git merge master` a second time. Then run `atom .` to reopen Atom. This issue is due to the way Atom locks files on Windows.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
@@ -101,7 +112,9 @@ For a Chef cookbook, you might run [Test Kitchen](https://docs.chef.io/kitchen.h
 
 Another approach is to run [delivery job](https://docs.chef.io/ctl_delivery.html#delivery-job). Chef Delivery uses `delivery job` to execute the phases on the build nodes as changes move through the pipeline. But you can also run `delivery job` to execute a phase directly on your workstation. Running jobs to exercise phases such as lint, unit, and syntax is a good way to be certain that your change is good before it reaches the pipeline.
 
-[PRODNOTE] `delivery job verify unit` fails because the job is running chef-client 12.5 but the cookbook uses the `apt_update` resource, which is introduced in 12.7. We need update to install Chef DK 0.11.0 on the Windows workstation.
+Start by running `delivery job verify unit` to run the unit phase under the Verify stage. The unit phase runs ChefSpec tests.
+
+You can check out <% fp 'spec\unit\recipes\web_spec.rb' %> to see some of the ChefSpec tests that comes with the `awesome_customers_delivery` cookbook.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
@@ -116,8 +129,30 @@ Configuring the job
 Running the job
 Setting up the builder
 [...]
-THIS IS BROKEN - NEED TO FIX
+Running phase unit
+[2016-03-04T20:30:39+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
+led_plugins for ohai.
+Starting Chef Client, version 12.7.2
+resolving cookbooks for run list: ["build-cookbook::unit"]
+Synchronizing Cookbooks:
+  - build-cookbook (0.1.0)
+  - delivery-truck (2.0.4)
+  - delivery-sugar (1.0.0)
+Compiling Cookbooks...
+Converging 1 resources
+Recipe: delivery-truck::unit
+  * execute[unit_rspec_awesome_customers_delivery] action run
+    - execute rspec --format documentation --color
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 1/1 resources updated in 01 minutes 14 seconds
 ```
+
+You'll see no errors reported.
+
+Now run `delivery job verify lint` to run lint testing. The lint phase runs Foodcritic and RuboCop.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
@@ -133,10 +168,10 @@ Running the job
 Setting up the builder
 [...]
 Running phase lint
-[2016-03-02T19:14:03+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+[2016-03-04T20:35:09+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
 and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
 led_plugins for ohai.
-Starting Chef Client, version 12.5.1
+Starting Chef Client, version 12.7.2
 resolving cookbooks for run list: ["build-cookbook::lint"]
 Synchronizing Cookbooks:
   - build-cookbook (0.1.0)
@@ -146,7 +181,7 @@ Compiling Cookbooks...
 Converging 2 resources
 Recipe: delivery-truck::lint
   * execute[lint_foodcritic_awesome_customers_delivery] action run
-    - execute foodcritic -f correctness   C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery
+    - execute foodcritic -f correctness   C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers
 _delivery\master\verify\lint\repo/
   * execute[lint_rubocop_awesome_customers_delivery] action run
     - execute rubocop C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
@@ -154,9 +189,13 @@ ify\lint\repo/
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 2/2 resources updated in 21 seconds
+Chef Client finished, 2/2 resources updated in 12 seconds
 ```
 
+The lint phase also passes.
+
+Finally, run `delivery job verify syntax` to perform syntax checks.
+ 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
 $ delivery job verify syntax
@@ -169,10 +208,10 @@ Cloning repository, and merging visualize_data to master
 Configuring the job
 [...]
 Running phase syntax
-[2016-03-02T19:15:34+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+[2016-03-04T20:41:14+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
 and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
 led_plugins for ohai.
-Starting Chef Client, version 12.5.1
+Starting Chef Client, version 12.7.2
 resolving cookbooks for run list: ["build-cookbook::syntax"]
 Synchronizing Cookbooks:
   - build-cookbook (0.1.0)
@@ -225,20 +264,22 @@ ooks/delivery-truck/recipes/syntax.rb:
 
 
 Running handlers:
-[2016-03-02T19:15:47+00:00] ERROR: Running exception handlers
+[2016-03-04T20:41:25+00:00] ERROR: Running exception handlers
 Running handlers complete
-[2016-03-02T19:15:47+00:00] ERROR: Exception handlers complete
-Chef Client failed. 0 resources updated in 12 seconds
-[2016-03-02T19:15:47+00:00] FATAL: Stacktrace dumped to C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awe
+[2016-03-04T20:41:25+00:00] ERROR: Exception handlers complete
+Chef Client failed. 0 resources updated in 10 seconds
+[2016-03-04T20:41:25+00:00] FATAL: Stacktrace dumped to C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awe
 some_customers_delivery/master/verify/syntax/cache/chef-stacktrace.out
-[2016-03-02T19:15:47+00:00] FATAL: RuntimeError: The awesome_customers_delivery cookbook was modified but the version wa
+[2016-03-04T20:41:25+00:00] FATAL: Please provide the contents of the stacktrace.out file if you file a bug report
+[2016-03-04T20:41:25+00:00] FATAL: RuntimeError: The awesome_customers_delivery cookbook was modified but the version wa
 s not updated in the metadata file.
 Chef Client failed
 STDOUT:
 STDERR:
+
 ```
 
-You can see from the output that `delivery job verify syntax` reports an error.
+You can see from the output that the syntax phase reports a failure!
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
@@ -248,8 +289,6 @@ The awesome_customers_delivery cookbook was modified but the version was not upd
 ```
 
 The error tells us that we need to update the cookbook's version in <% fp 'metadata.rb' %>. When a cookbook changes, it's important to update its version to ensure that a given set of functionality is tied to a given version.
-
-[PRODNOTE] I have no idea how `knife cookbook test` knows this - I don't have a knife.rb set up, so how does it know that the version wasn't updated?
 
 Let's fix the error and verify the change. According to [Semantic Versioning](http://semver.org), we should increment the MINOR version because we're adding backwards-compatible functionality.
 
@@ -305,10 +344,10 @@ Cloning repository, and merging visualize_data to master
 Configuring the job
 [...]
 Running phase syntax
-[2016-03-02T19:27:14+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+[2016-03-04T20:45:28+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
 and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
 led_plugins for ohai.
-Starting Chef Client, version 12.5.1
+Starting Chef Client, version 12.7.2
 resolving cookbooks for run list: ["build-cookbook::syntax"]
 Synchronizing Cookbooks:
   - build-cookbook (0.1.0)
@@ -318,17 +357,17 @@ Compiling Cookbooks...
 Converging 1 resources
 Recipe: delivery-truck::syntax
   * execute[syntax_check_awesome_customers_delivery] action run
-    - execute knife cookbook test -o C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery_deli
+    - execute knife cookbook test -o C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_deli
 very\master\verify\syntax\repo/ -a
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 1/1 resources updated in 16 seconds
+Chef Client finished, 1/1 resources updated in 15 seconds
 ```
 
-The test passes. Running these checks helped us discover and fix a potential failure _before_ it reached the pipeline.
+The syntax test now passes! Running these checks helped us discover and fix a potential failure _before_ it reached the pipeline.
 
-You are now ready to submit your change. In practice, you might run the lint and unit tests a second time to verify that your change does not break other functionality.
+You are now ready to submit your change. In practice, you might run the lint and unit tests a second time to verify that your change to the cookbook's version does not break other functionality.
 
 [END_BOX]
 
@@ -351,6 +390,7 @@ Now run `delivery review` to submit your changes to the pipeline.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
+$ delivery review
 Chef Delivery
 Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
 Review for change visualize_data targeted for pipeline master
@@ -361,11 +401,11 @@ c-4596-b2d5-5e0b76ca9688
 
 When the Delivery UI appears, trace the change's progress through the pipeline.
 
-1. Review the changes in the web interface. Click **Approve** when all tests pass.
+1. Review the changes in the web interface. Click **Approve** when all tests pass. In practice, others would help review and approve your code changes.
 1. Watch the change progress through the Build and Acceptance stages.
 1. After the Acceptance stage completes, navigate to [http://10.0.0.15](http://10.0.0.15) from a second browser window. You'll see the updated version of the Customers web application featuring the interactive control.
 
-![](delivery/customers-visualize-data-delivered.png)
+<img style="max-width:95%;" src="/assets/images/delivery/customers-visualize-data-delivered.png"/>
 
 After you verify the change in Acceptance, press the **Deliver** button. You can watch the change progress through the Union, Rehearsal, and Delivered stages.
 

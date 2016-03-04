@@ -1,11 +1,11 @@
 ---
 title: 'Create the project'
-order: 3
+order: 4
 keywords: TODO
 layout: lesson
 sections: []
 next: {heading: Next, partial: next}
-time_to_complete: 30 minutes
+time_to_complete: 60 minutes
 survey_id: 5_2FtQ38ITqH6xDkuIca5JK6ZMtURQII1qH6ozW6Q51ciJmVEbUcHRPoSnZ259KAy1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
@@ -29,21 +29,13 @@ In this part, you create a project and watch the `awesome_customers_delivery` co
 
 During the process, you'll see how the `delivery-truck` cookbook can perform many common tasks that are needed to deliver Chef cookbooks.
 
-
-
-
 Recall that you can use Chef Delivery to deploy almost any kind of software or infrastructure project and that a [build cookbook](https://docs.chef.io/release/delivery/build_cookbooks.html) defines how changes are verified, built, and deployed.
 
 [delivery-truck](https://github.com/chef-cookbooks/delivery-truck) is a build cookbook that's designed specifically for Chef cookbook projects. `delivery-truck` handles many common tasks, including:
 
-* TODO: Flesh this out.
-* running Foodcritic and Rubocop to perform lint tests.
-* running ChefSpec to perform unit tests.
-* publishing your cookbook to Chef server, Chef Supermarket, GitHub, or another Git server.
-
-The `awesome_customers_delivery` cookbook contains several ChefSpec tests. Blah blah.
-
-[Something about how we'll use `delivery init`'s ability to use `delivery-truck` automatically...
+* Running common cookbook test suites like [ChefSpec](https://docs.chef.io/chefspec.html), [Foodcritic](https://docs.chef.io/foodcritic.html), and [RuboCop](https://docs.chef.io/rubocop.html).
+* Publishing your cookbook to Chef server, Chef Supermarket, GitHub, or another Git server.
+* Triggering `chef-client` to run on nodes that use your cookbook. 
 
 [COMMENT] If your administrator installed Chef Delivery, be sure to [set up your workstation](/delivery/get-started/set-up-your-workstation/) before starting this part.
 
@@ -51,7 +43,7 @@ The `awesome_customers_delivery` cookbook contains several ChefSpec tests. Blah 
 
 ## 1. Clone the awesome\_customers_delivery repo from GitHub
 
-In this step, you clone the repository from GitHub and move it to your local repository directory. This repository contains the `awesome_customers_delivery` cookbook, which configures the Customers web application.
+In this step, you clone the repository from GitHub to your local repository directory. This repository contains the `awesome_customers_delivery` cookbook, which configures the Customers web application.
 
 From a PowerShell prompt, move to your working directory, <% fp '~\delivery-demo' %>.
 
@@ -81,7 +73,9 @@ Move to the <% fp 'awesome_customers_delivery' %> directory.
 $ cd awesome_customers_delivery
 ```
 
-[COMMENT] Remember, for the tutorial, you're cloning an existing Git project to obtain starter code. You can configure Chef Delivery to connect directly with your existing Git projects, import code from another source control system, or create a new repository.
+Remember, for the tutorial, you're cloning an existing Git project to obtain starter code. You can configure Chef Delivery to connect directly with your existing Git projects, import code from another source control system, or create a new repository.
+
+[COMMENT] The workstaton comes with [posh-git](https://github.com/dahlbyk/posh-git), which integrates Git with PowerShell. post-git provides useful features such as tab completion and the ability to show the current branch and the state of files.
 
 [END_BOX]
 
@@ -98,7 +92,7 @@ There are a few ways to [create a Delivery project](https://docs.chef.io/deliver
 * creates the <% fp '.delivery' %> directory and adds to it a build cookbook and a configuration file.
 * submits the change for review.
 
-Run `delivery init` from your local repository directory. When prompted, enter the password that's associated with your Chef Delivery account. The `delivery` command uses your password to generate an API token that's used to make authorized requests to your Chef Delivery server. The `delivery` command writes this API token to <% fp '~/.delivery/api-tokens' %>.
+Run `delivery init` from your local repository directory. When prompted, enter the password that's associated with your Chef Delivery account.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
@@ -147,6 +141,8 @@ https://10.0.0.12/e/delivery-demo/#/organizations/delivery-demo/projects/awesome
 1-4b31-8b29-d10f87098cb6
 ```
 
+The `delivery` command uses your password to generate an API token that's used to make authorized requests to your Chef Delivery server. The `delivery` command writes this API token to <% fp '~/.delivery/api-tokens' %>.
+
 A browser window appears and the first stage of the pipeline, Verify, begins running its phases.
 
 [END_BOX]
@@ -155,13 +151,9 @@ A browser window appears and the first stage of the pipeline, Verify, begins run
 
 ## 3. Watch the Verify stage run
 
-[PRODNOTE] We should set Chrome as the default browser so that the web UI appears there. Otherwise, we will need to disable IEESC. I'd prefer going with Chrome.
-
 When you run `delivery init`, two things happen. The first stage of the pipeline, Verify, begins and the Delivery web interface appears. With it, you can trace the progress of the cookbook as it moves through each stage and its associated phases.
 
-[PRODNOTE] Update screenshot to show the tests just starting...
-
-![](delivery/delivery-init-result.png)
+![](delivery/delivery-init-running.png)
 
 While the Verify stage runs, let's take a closer look at your project.
 
@@ -288,7 +280,7 @@ You can modify a recipe in your build cookbook to fit your requirements. For exa
 
 Now go back to the Delivery web interface. When the Verify stage completes, you'll see that all 3 tests pass.
 
-[PRODNOTE] Show screenshot to show the tests all green...
+![](delivery/delivery-init-result.png)
 
 A manual step is required to move to the Build stage. This is where your team decides whether the code can be merged into the `master` branch or if more work is needed.
 
@@ -323,7 +315,7 @@ These configuration settings become node attributes on your build nodes. You can
 To specify that the cookbook should be published to Chef server, modify your copy of <% fp '.delivery\config.json' %> like this.
 
 ```ruby
-# ~/delivery-demo/awesome_customers_delivery/.delivery/config.json
+# ~\delivery-demo\awesome_customers_delivery\.delivery\config.json
 {
   "version": "2",
   "build_cookbook": {
@@ -411,13 +403,19 @@ The next step is to approve the change. This is a manual step, where people on y
 
 [PRODNOTE] TODO: Show a screenshot of a change or two.
 
-From the **Review** tab, scroll down to the bottom of the patchset and enter a comment.
+From the **Review** tab, click on a few files to see how they changed. Here's an example for the change you made to <% fp '.delivery\config.json' %>
+
+![](delivery/review_config.png)
+
+The files are new, so change appears as an add <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/review_add_icon.png"/> operation. For an existing file that has changed, you would see the diff between the current version and the proposed change.
+
+Scroll down to the bottom of Patchset 2 and enter a comment.
 
 ![](delivery/delivery-init-add-comment.png)
 
 Click the **Add Comment** button.
 
-Scroll back to the top of the patchset and click the **Approve** button.
+Scroll back to the top of the patchset and click **Approve**.
 
 ![](delivery/delivery-init-approve.png)
 
@@ -465,7 +463,7 @@ Delivery uses [search](https://docs.chef.io/chef_search.html) to find the node t
 
 After the Acceptance stage completes, navigate to [http://10.0.0.15](http://10.0.0.15) from a second browser window. You'll see the Customers web application.
 
-![](delivery/acceptance-customers-verify.png)
+<img style="max-width:100%;" src="/assets/images/delivery/acceptance-customers-verify.png"/>
 
 After confirming that the web application comes up as expected, navigate back to the Delivery web interface and press the **Deliver** button. Pressing the **Deliver** button is a confirmation that the artifact can be released. The artifact will move through the next three pipeline stages automatically.
 
@@ -477,7 +475,7 @@ Press the **Confirm** button from the dialog that appears.
 
 You'll see the process move through the Union, Rehearsal, and Delivered stages.
 
-![](delivery/delivery-init-delivered.png)
+<img style="max-width:90%;" src="/assets/images/delivery/delivery-init-delivered.png"/>
 
 The automation you ran to install Chef Delivery provides infrastructure only for the Acceptance stage. If you had infrastructure for the Union, Rehearsal, and Delivered stages, the Customers web application would deploy to each of those environments as the change moves through the pipeline.
 
@@ -551,7 +549,7 @@ origin  https://github.com/learn-chef/awesome_customers_delivery.git (fetch)
 origin  https://github.com/learn-chef/awesome_customers_delivery.git (push)
 ```
 
-In practice, you'll typically have just one remote &ndash; `delivery`. The `origin` remote exists only as a way for you to obtain starter code that we provide for you.
+In practice, you might have just one remote &ndash; `delivery`. The `origin` remote exists only as a way for you to obtain starter code that we provide for you.
 
 Also remember that you don't have to use Delivery's Git server. We do so for learning purposes and because using the Git server that Delivery already provides is the easiest way to get started.
 
@@ -561,12 +559,12 @@ Also remember that you don't have to use Delivery's Git server. We do so for lea
 
 ## How to delete your project
 
-If you ever need to start over, or you complete the tutorial and want to delete this project, your need to log in to the Chef Delivery server (for example, over SSH) and run the `delivery-ctl delete-project` command.
+If you ever need to start over, or you complete the tutorial and want to delete this project, you'll need to log in to the Chef Delivery server (for example, over SSH) and run the `delivery-ctl delete-project` command.
 
 The `delivery-ctl delete-project` command takes your enterprise, organization, and project names as arguments, like this.
 
 ```bash
-$ delivery-ctl delete-project ENTERPRISE ORGANIZATION PROJECT
+$ sudo delivery-ctl delete-project ENTERPRISE ORGANIZATION PROJECT
 ```
 
 Here's how to delete the `awesome_customers_delivery` project in the tutorial environment:

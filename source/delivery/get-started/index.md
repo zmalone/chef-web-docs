@@ -79,7 +79,7 @@ The project's build cookbook publishes the web application cookbook to a Chef se
 
 By the end of this part, your web application looks like this:
 
-![](delivery/acceptance-customers-verify.png)
+<img style="max-width:100%;" src="/assets/images/delivery/acceptance-customers-verify.png"/>
 
 ### Part 4: Add a feature to the web application
 
@@ -101,7 +101,7 @@ In this part, you extend your build cookbook to include a smoke test. Smoke test
 
 Chef Delivery is team oriented, and so is this tutorial. As a result, there are several approaches you can take.
 
-If you are most interested in using Chef Delivery to deploy projects, you might want to get a system administrator to help by [running the AWS automation](/delivery/get-started/install-chef-delivery/). If you're a project leader, you might find that the lesson that [sets up a project](/delivery/get-started/create-the-project/) is a good place to start. If your interest is primarily day-to-day use of Delivery, then the part of the tutorial that [walks through delivering a change](/delivery/get-started/add-a-feature-to-the-web-application/) might be of the most interest.
+If you are most interested in using Chef Delivery to deploy projects, you might want to get a system administrator to help by [running the AWS automation](/delivery/get-started/install-chef-delivery/) and [creating the organization and a user account](/delivery/get-started/create-the-organization-and-add-users). If you're a project leader, you might find that the lesson that [sets up a project](/delivery/get-started/create-the-project/) is a good place to start. If your interest is primarily day-to-day use of Delivery, then the part of the tutorial that [walks through delivering a change](/delivery/get-started/add-a-feature-to-the-web-application/) might be of the most interest.
 
 In other words, it's possible to go through this tutorial with your team, with different team members doing the parts of the tutorial that most closely map to their jobs. Of course, you can also go through the entire tutorial yourself.
 
