@@ -11,13 +11,13 @@ meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 [CALLOUT networks/team-members-workstation.svg] Continue on the Windows workstation that you used in the previous part.
 
-In the previous part, you manually verified that the Customers application is running in Acceptance. In practice, it's common to have some manual verification process to validate that your application or service is up and functioning. For example, if you're deploying a web application, someone will typically test out a new feature manually on a pre-production server before releasing the feature to production.
+In the previous part, you manually verified that the Customers application was running in Acceptance. In practice, it's common to have some manual verification process to validate that your application or service is up and functioning. For example, if you're deploying a web application, someone will typically test out a new feature manually on a pre-production server before releasing the feature to production.
 
-However, you can also write _smoke tests_ to help quickly validate that the application or service is running and functional. If the smoke tests fail, you know that the application or service has failed.
+However, you can also write _smoke tests_ toquickly validate that the application or service is running and functional. If the smoke tests fail, you know that the application or service has failed.
 
 Remember that Chef Delivery works with almost any kind of application or infrastructure project, and that the `delivery-truck` cookbook helps perform many common tasks that are needed to deliver Chef cookbooks. However, because a cookbook can configure any part of the system, `delivery-truck` cannot provide a default implementation for some phases, such as the smoke phase.
 
-In this part, you'll implement the smoke phase to run cURL and verify that the web server responds with a 200 (OK) response. The smoke phase runs in the Acceptance, Union, Rehearsal, and Delivered stages.
+In this part, you implement the smoke phase to run cURL and verify that the web server responds with a 200 (OK) response. The smoke phase runs in the Acceptance, Union, Rehearsal, and Delivered stages.
 
 [PRODNOTE] Highlight smoke here.
 
@@ -93,7 +93,7 @@ nodes.each do |node|
 end
 ```
 
-This code performs a similar query as the deploy phase. For each node in the environment (we expect only one), we use the `execute` resource to run `curl` with the `-IL` flag (fetch HTTP reader only and follow any redirects) and search for the expected response code.
+This code performs a similar query as the one in the deploy phase. For each node in the environment (we expect only one), we use the `execute` resource to run `curl` with the `-IL` flag (fetch HTTP reader only and follow any redirects) and search for the expected response code.
 
 [END_BOX]
 
@@ -144,7 +144,7 @@ This moves the change through the Union, Rehearsal, and Delivered stages.
 
 ![](delivery/customers-delivered.png)
 
-Nice job! As your project evolves, you can implement additional phases such as quality, security, and functional to build further confidence in your changes and reduce the need to manually verify new features. 
+Nice job! As your project evolves, you can implement additional phases such as quality, security, and functional to build further confidence in your changes and reduce the need to manually verify new features.
 
 Remember to integrate the latest changes into your local `master` branch before creating a new feature branch.
 
@@ -174,7 +174,7 @@ Fast-forward
 
 There are many other types of tests you can run that we haven't discussed here. For example, the Build stage has a quality phase. You can use this phase to run additional test suites and code analysis tools that are too time consuming to run in the Verify stage. You don't want to run these tests until you know the code is approved.
 
-In many organizations, a suite of security tests must be run before a change can be deployed. The Build stage is a good place to run these tests, as well.
+In many organizations, a change must pass a suite of security tests before it can be deployed. The Build stage is a good place to run these tests, as well.
 
 Functional tests can run in the Acceptance, Union, Rehearsal and Delivered stages. These tests should give you confidence that the system is meeting its business requirements.
 
@@ -200,7 +200,7 @@ Here's an example that skips the phases we haven't discussed here &ndash; qualit
 
 <img src="/assets/images/delivery/delivery_full_workflow.svg" style="width: 100%; box-shadow: none;" alt="Chef Delivery's pull pipeline" />
 
-Your changes will move more quickly through the pipeline because the phases are skipped.
+Your changes will move more quickly through the pipeline because those phases are skipped.
 
 ![](delivery/skip-phases.png)
 
