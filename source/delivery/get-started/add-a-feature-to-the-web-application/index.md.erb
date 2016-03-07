@@ -13,29 +13,28 @@ meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 
 At this point, you've validated that your pipeline works and you've configured it with your build cookbook. You're ready to use Chef Delivery for what it was intended &ndash; moving changes quickly and safely all the way from your workstation to production.
 
-In this lesson, you add a feature to the Customers web application by changing the `awesome_customers_delivery` cookbook. The feature adds additional sample data and also provides an interactive control that displays where your customers are on a globe. This feature uses [D3](http://d3js.org), a JavaScript library for producing interactive data visualizations.
+In this part, you add a feature to the Customers web application by changing the `awesome_customers_delivery` cookbook. The feature adds additional sample data and also provides an interactive control that displays where your customers are on a globe. This feature uses [D3](http://d3js.org), a JavaScript library for producing interactive data visualizations.
 
-You first fetch a branch from GitHub that contains this feature and then integrate that branch with your local `master` branch.
+This feature is provided for you in GitHub (your `origin` remote.) You first create a feature branch that's based off your local `master` branch. Then you integrate the completed feature branch GitHub with your local feature branch.
 
 You also use `delivery job` to verify your work and resolve test failures before you submit a change to the pipeline. 
 
 Here's what you'll do:
 
-1. [Get the feature branch from GitHub](#step1)
-1. [Integrate the feature branch with your local master branch](#step2)
+1. [Create the feature branch](#step1)
+1. [Integrate the remote branch with your local feature branch](#step2)
 1. [Run Delivery jobs to verify the change](#step3)
 1. [Submit your change to the pipeline](#step4)
 
 [START_BOX]
 
-## 1. Get the feature branch from GitHub
+## 1. Create the feature branch
 
-Start by switching to the `visualize_data` feature branch.
+Start by creating a new feature branch named `visualize_data`.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
-$ git checkout visualize_data
-Branch visualize_data set up to track remote branch visualize_data from origin.
+$ git checkout -b visualize_data
 Switched to a new branch 'visualize_data'
 ```
 
@@ -43,62 +42,29 @@ Switched to a new branch 'visualize_data'
 
 [START_BOX]
 
-## 2. Integrate the feature branch with your local master branch
+## 2. Integrate the remote branch with your local feature branch
 
-Next, run `git merge master` to merge the changes from your local `master` branch into the `visualize_data` branch. This step brings in your build cookbook and the Delivery configuration file you set up in the previous part.
-
-[COMMENT] If you receive the error "error: cannot stat '.delivery': Permission denied", close Atom and run `git merge master` a second time. Then run `atom .` to reopen Atom. This issue is due to the way Atom locks files on Windows.
+Next, pull the remote branch from GitHub into your local `visualize_data` branch. This step integrates the feature branch with your build cookbook and the Delivery configuration file you set up in the previous part.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
-$ git merge master
+$ git pull https://github.com/learn-chef/awesome_customers_delivery visualize_data
+From https://github.com/learn-chef/awesome_customers_delivery
+ * branch            visualize_data -> FETCH_HEAD
 Merge made by the 'recursive' strategy.
- .delivery/build-cookbook/.kitchen.yml              |  21 +++
- .delivery/build-cookbook/Berksfile                 |  18 +++
- .delivery/build-cookbook/LICENSE                   |   3 +
- .delivery/build-cookbook/README.md                 | 146 +++++++++++++++++++++
- .delivery/build-cookbook/chefignore                |  97 ++++++++++++++
- .../data_bags/keys/delivery_builder_keys.json      |   1 +
- .delivery/build-cookbook/metadata.rb               |   7 +
- .delivery/build-cookbook/recipes/default.rb        |   6 +
- .delivery/build-cookbook/recipes/deploy.rb         |   6 +
- .delivery/build-cookbook/recipes/functional.rb     |   6 +
- .delivery/build-cookbook/recipes/lint.rb           |   6 +
- .delivery/build-cookbook/recipes/provision.rb      |   6 +
- .delivery/build-cookbook/recipes/publish.rb        |   6 +
- .delivery/build-cookbook/recipes/quality.rb        |   6 +
- .delivery/build-cookbook/recipes/security.rb       |   6 +
- .delivery/build-cookbook/recipes/smoke.rb          |   6 +
- .delivery/build-cookbook/recipes/syntax.rb         |   6 +
- .delivery/build-cookbook/recipes/unit.rb           |   6 +
- .delivery/build-cookbook/secrets/fakey-mcfakerton  |   0
- .../test/fixtures/cookbooks/test/metadata.rb       |   2 +
- .../fixtures/cookbooks/test/recipes/default.rb     |   7 +
- .delivery/config.json                              |  15 +++
- 22 files changed, 383 insertions(+)
- create mode 100644 .delivery/build-cookbook/.kitchen.yml
- create mode 100644 .delivery/build-cookbook/Berksfile
- create mode 100644 .delivery/build-cookbook/LICENSE
- create mode 100644 .delivery/build-cookbook/README.md
- create mode 100644 .delivery/build-cookbook/chefignore
- create mode 100644 .delivery/build-cookbook/data_bags/keys/delivery_builder_keys.json
- create mode 100644 .delivery/build-cookbook/metadata.rb
- create mode 100644 .delivery/build-cookbook/recipes/default.rb
- create mode 100644 .delivery/build-cookbook/recipes/deploy.rb
- create mode 100644 .delivery/build-cookbook/recipes/functional.rb
- create mode 100644 .delivery/build-cookbook/recipes/lint.rb
- create mode 100644 .delivery/build-cookbook/recipes/provision.rb
- create mode 100644 .delivery/build-cookbook/recipes/publish.rb
- create mode 100644 .delivery/build-cookbook/recipes/quality.rb
- create mode 100644 .delivery/build-cookbook/recipes/security.rb
- create mode 100644 .delivery/build-cookbook/recipes/smoke.rb
- create mode 100644 .delivery/build-cookbook/recipes/syntax.rb
- create mode 100644 .delivery/build-cookbook/recipes/unit.rb
- create mode 100644 .delivery/build-cookbook/secrets/fakey-mcfakerton
- create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/metadata.rb
- create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/recipes/default.rb
- create mode 100644 .delivery/config.json
+ attributes/default.rb         |   2 +-
+ files/default/customer.php    |  33 +++++++-
+ files/default/index.php       |  51 +++++++------
+ files/default/styles.css      |  37 +++++++++
+ files/default/vis.js          | 171 ++++++++++++++++++++++++++++++++++++++++++
+ files/default/world-110m.json |   1 +
+ 6 files changed, 267 insertions(+), 28 deletions(-)
+ create mode 100644 files/default/styles.css
+ create mode 100644 files/default/vis.js
+ create mode 100644 files/default/world-110m.json
 ```
+
+You see a few new files appear. These files support the new feature.
 
 [END_BOX]
 
@@ -315,8 +281,6 @@ Commit the change to the local `visualize_data` branch.
 # ~\delivery-demo\awesome_customers_delivery
 $ git status
 On branch visualize_data
-Your branch is ahead of 'origin/visualize_data' by 5 commits.
-  (use "git push" to publish your local commits)
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git checkout -- <file>..." to discard changes in working directory)
@@ -326,7 +290,7 @@ Changes not staged for commit:
 no changes added to commit (use "git add" and/or "git commit -a")
 $ git add metadata.rb
 $ git commit -m "Bump cookbook version"
-[visualize_data 5198ce9] Bump cookbook version
+[visualize_data bd578ae] Bump cookbook version
  1 file changed, 1 insertion(+), 1 deletion(-)
 ```
 
@@ -381,8 +345,6 @@ Before you submit your changes, run `git status` to verify that there are no pen
 # ~\delivery-demo\awesome_customers_delivery
 $ git status
 On branch visualize_data
-Your branch is ahead of 'origin/visualize_data' by 6 commits.
-  (use "git push" to publish your local commits)
 nothing to commit, working directory clean
 ```
 
