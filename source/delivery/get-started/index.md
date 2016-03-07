@@ -89,7 +89,7 @@ In this part, you integrate a change to the web application cookbook that alters
 
 ### Part 5: Extend the build cookbook
 
-In this tutorial, you discover the `delivery-truck` cookbook, which helps perform many common tasks that are needed to deliver Chef cookbooks. However, this cookbook can't do everything.
+In this tutorial, you learn about the `delivery-truck` cookbook, which helps perform many common tasks that are needed to deliver Chef cookbooks. However, this cookbook can't do everything.
 
 In this part, you extend your build cookbook to include a smoke test. Smoke testing helps you quickly validate whether your application or service is running and functional.
 
