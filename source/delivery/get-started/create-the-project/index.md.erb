@@ -94,6 +94,8 @@ There are a few ways to [create a Delivery project](https://docs.chef.io/deliver
 
 Run `delivery init` from your local repository directory. When prompted, enter the password that's associated with your Chef Delivery account.
 
+If you're prompted to choose the default web browser, choose Google Chrome.
+
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
 $ delivery init
@@ -282,7 +284,7 @@ Now go back to the Delivery web interface. When the Verify stage completes, you'
 
 ![](delivery/delivery-init-result.png)
 
-A manual step is required to move to the Build stage. This is where your team decides whether the code can be merged into the `master` branch or if more work is needed.
+A manual step is required to move to the Build stage. This is where your team decides whether the code can be merged into the `master` branch or more work is needed.
 
 We're not quite ready yet to to merge the change to `master`. First, we need to configure the build cookbook to publish the `awesome_customers_delivery` cookbook to the Chef server.
 
@@ -401,13 +403,13 @@ A browser window opens to show the pipeline in Chef Delivery. The Verify stage i
 
 The next step is to approve the change. This is a manual step, where people on your team have a chance to review the code and promote it to the Build stage.
 
-[PRODNOTE] TODO: Show a screenshot of a change or two.
+Let's review and approve the changes. In practice, others on your team would assist with the review.
 
 From the **Review** tab, click on a few files to see how they changed. Here's an example for the change you made to <% fp '.delivery\config.json' %>
 
 ![](delivery/review_config.png)
 
-The files are new, so change appears as an add <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/review_add_icon.png"/> operation. For an existing file that has changed, you would see the diff between the current version and the proposed change.
+The files are new, so each chang appears as an add <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/review_add_icon.png"/> operation. For an existing file that has changed, you would see the diff between the current version and the proposed change.
 
 Scroll down to the bottom of Patchset 2 and enter a comment.
 
@@ -547,6 +549,23 @@ delivery        ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delive
 delivery        ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery (push)
 origin  https://github.com/learn-chef/awesome_customers_delivery.git (fetch)
 origin  https://github.com/learn-chef/awesome_customers_delivery.git (push)
+```
+
+You can also run `git remote show delivery` to see that `git pull` merges changes from Delivery's `master` branch. 
+
+```ps
+# ~/delivery-demo/awesome_customers_delivery
+$ git remote show delivery
+* remote delivery
+  Fetch URL: ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery
+  Push  URL: ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery
+  HEAD branch: master
+  Remote branch:
+    master tracked
+  Local branch configured for 'git pull':
+    master merges with remote master
+  Local ref configured for 'git push':
+    master pushes to master (up to date)
 ```
 
 In practice, you might have just one remote &ndash; `delivery`. The `origin` remote exists only as a way for you to obtain starter code that we provide for you.
