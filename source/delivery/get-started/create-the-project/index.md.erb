@@ -8,6 +8,7 @@ next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 survey_id: 5_2FtQ38ITqH6xDkuIca5JK6ZMtURQII1qH6ozW6Q51ciJmVEbUcHRPoSnZ259KAy1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
+show_disqus: false
 ---
 [CALLOUT networks/team-members-workstation.svg] Continue on the Windows workstation that you set up in the previous part.
 
@@ -208,7 +209,7 @@ C:\USERS\CHEF\DELIVERY-DEMO\awesome_customers_delivery\.DELIVERY
 
 Your build cookbook consists of recipes. Each recipe corresponds to a phase, such as lint or syntax. Any time that a phase runs, no matter in which stage, it uses the same recipe. For example, the recipe for the lint phase runs in the Verify and Build stages. You can use conditional logic to customize how the recipe behaves for a given stage.
 
-<img src="/assets/images/delivery/delivery_full_workflow.svg" style="width: 100%; box-shadow: none;" alt="Chef Delivery's pull pipeline" />
+<img src="/assets/images/delivery/delivery_full_workflow.svg" style="width: 100%; box-shadow: none;" />
 
 Each phase runs on a build node. If you have multiple build nodes, phases can run in parallel, for example, unit and syntax. The automated installation process for this tutorial creates two build nodes.
 
@@ -437,7 +438,7 @@ The **Approve** action merges the `add-delivery-config` branch into the `master`
 
 After you approve the change, the change moves to the Build stage.
 
-<img src="/assets/images/delivery/delivery_full_workflow_build.svg" style="width: 100%; box-shadow: none;" alt="Chef Delivery's pull pipeline" />
+<img src="/assets/images/delivery/delivery_full_workflow_build.svg" style="width: 100%; box-shadow: none;" />
 
 The unit, lint, and syntax phases run again on the build node. Rerunning the tests ensures that they continue to pass after the change is merged to `master`.
 
@@ -447,7 +448,7 @@ The Build stage also runs the security and quality phases. By default, these pha
 
 After the Build stage completes, the process moves to the Acceptance stage.
 
-<img src="/assets/images/delivery/delivery_full_workflow_acceptance.svg" style="width: 100%; box-shadow: none;" alt="Chef Delivery's pull pipeline" />
+<img src="/assets/images/delivery/delivery_full_workflow_acceptance.svg" style="width: 100%; box-shadow: none;" />
 
 Beginning with the Acceptance stage, the pipeline switches from analyzing the project's source code to verifying the artifacts produced in the Build stage. The goal of the Acceptance stage is for the team to make a decision about whether the change should go all the way out to production or not.
 
@@ -473,9 +474,11 @@ Press the **Confirm** button from the dialog that appears.
 
 You'll see the process move through the Union, Rehearsal, and Delivered stages.
 
-<img style="max-width:90%;" src="/assets/images/delivery/delivery-init-delivered.png"/>
+<img src="/assets/images/delivery/delivery_full_workflow_shared.svg" style="width: 100%; box-shadow: none;" />
 
 The automation you ran to install Chef Delivery provides infrastructure only for the Acceptance stage. If you had infrastructure for the Union, Rehearsal, and Delivered stages, the Customers web application would deploy to each of those environments as the change moves through the pipeline.
+
+While the Union, Rehearsal, and Delivered stages run, let's take a closer look at the role of each stage.
 
 The Union, Rehearsal, and Delivered stages form a shared pipeline, where all the projects that make up the entire system come together. All three stages have the same phases.
 
@@ -487,6 +490,9 @@ If a failure occurs in Union, Rehearsal serves a different purpose. When you sub
 
 Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean publishing a set of artifacts so they are accessible for your customers.
 
+Return to the Delivery web interface and watch the Union, Rehearsal, and Delivered stages complete.
+
+<img style="max-width:90%;" src="/assets/images/delivery/delivery-init-delivered.png"/>
 
 Congratulations! You now have a functioning Chef Delivery pipeline.
 
