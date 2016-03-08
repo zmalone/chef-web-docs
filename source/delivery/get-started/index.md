@@ -6,16 +6,24 @@ logo: delivery.svg
 order: 1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-Chef Delivery manages changes to both infrastructure and application code, giving your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more.
+Chef Delivery (Delivery) gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation and transparency.
 
-Chef Delivery provides a proven, reproducible workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production.
+Delivery provides a workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production. If you have many different teams, each delivering software in its own way, you can use Delivery to bring a standard, proven approach to all of your organization's deployments.
 
-Chef Delivery handles many types of software systems. You can use it to:
+With Delivery, you can, for example:
 
 * upload new and updated cookbooks to the Chef server that manages your infrastructure and applications.
 * publish new and updated cookbooks to a Chef Supermarket installation.
-* release source code or build artifacts to a repository such as GitHub or Artifactory.
+* release source code or build artifacts (for example, a Java or PHP application) to a repository such as GitHub or Artifactory.
 * push build artifacts to production servers in real time.
+
+Chef uses Delivery to deploy its own software. With it, we have:
+
+* increased the number of features per release by 50%.
+* reduced the number of defects per release by 70%.
+* went from 1 release every two days to 12 releases per day.
+
+We are shipping code faster, with less effort, and with higher quality. In this tutorial, you'll Delivery for a spin and see what sorts of benefits you can deliver for your organization.
 
 [COMMENT] Chef Delivery relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. We'll provide all the Git commands that you'll need, but you can also [check out the documentation](https://git-scm.com/doc) to learn more.
 
