@@ -9,9 +9,9 @@ time_to_complete: 15 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 show_disqus: false
 ---
-[CALLOUT networks/team-members-workstation.svg] You'll perform this part from the Windows workstation that's part of the automated Delivery installation.
+> You'll perform this part from the virtual Windows workstation that's part of the automated Delivery installation.
 
-In this part, you perform two administrative tasks &ndash; create the origanization and add a user account.
+In this part, you perform two administrative tasks &ndash; create the organization and add a user account.
 
 An organization enables you to group related projects and provide scope for authorization rules. User accounts enable end users to access Chef Delivery through its web interface or from the command line.
 
@@ -26,11 +26,49 @@ Here's what you'll do:
 
 ## 1. Connect to the Windows workstation
 
-Create an RDP connection to your workstation. Connect as **Administrator**. The password is **P4ssw0rd**.
+Create a Remote Desktop Protocol (RDP) connection to your workstation.
 
-[Connecting to Your Windows Instance Using RDP](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/connecting_to_windows_instance.html)
+Connect as **Administrator**. The password is **P4ssw0rd**.
 
-You may find it easier to continue this tutorial by opening this page in a browser from your RDP connection. We recommend that you use Google Chrome, which is preinstalled. When prompted, set Chrome as the default web browser.
+<% accordion('connect-aws-rdp', 'More details') do %>
+
+<%= partial 'layouts/partials/aws/install_rdp' %>
+
+### Get the workstation's public IP address
+
+[Refer to this earlier step](/delivery/get-started/install-chef-delivery#step4) to get the workstation's public IP address. Or if someone else installed Delivery for you, you can ask that person. 
+
+### Connect to the workstation
+
+**Windows users:** 
+
+1. Open the Remote Desktop Connection application, `mstsc`.
+1. In the **Computer** field, enter the Windows workstation's public IP address or DNS name.
+1. In the **User name** field, enter **Administrator**.
+1. Select the **Allow me to save credentials** option.
+1. Click **Connect**.
+1. Enter your password when prompted.
+1. A warning appears stating that the identity of the remote computer cannot be verified. This is because the Windows workstaton comes with a self-signed certificate. Click **Yes** to continue connecting.
+
+![](misc/rdp_windows.png)
+ 
+**Mac OS X users**: 
+
+1. Open Microsoft Remote Desktop.
+1. Select **New**.
+1. In the **Connection name** field, enter a descriptive name, for example, **Delivery tutorial Windows workstation**.
+1. In the **PC name** field, enter the Windows workstation's public IP address or DNS name.
+1. In the **User name** field, enter **Administrator**.
+1. In the **Password** field, enter **P4ssw0rd**.
+1. Close the window.
+1. Select your connection to connect.
+1. A warning appears stating that the certificate could not be verified back to a root certificate. This is because the Windows workstaton comes with a self-signed certificate. Click **Continue** to continue connecting.
+
+![](misc/rdp_mac.png)
+
+<% end %>
+<br>
+After you connect, you may find it easier to continue this tutorial by opening this page in a browser from your RDP connection. We recommend that you use Google Chrome, which is preinstalled. If prompted, set Chrome as the default web browser.
 
 [COMMENT] In practice, an administrator would typically perform these tasks from his or her own workstation. However, the automated setup requires users to access Chef Delivery from a system that's connected to the virtual private network (VPC).
 
@@ -40,9 +78,15 @@ You may find it easier to continue this tutorial by opening this page in a brows
 
 ## 2. Log in to the Delivery web interface
 
-[PRODNOTE] Need to remind the user the final generated admin password here. Reviewers: Get the admin password here: [https://gist.github.com/nedward/b8f29ee5da5213e0bec5](https://gist.github.com/nedward/b8f29ee5da5213e0bec5).
+Here you log in to the Delivery web interface as the `admin` user. First, you'll need the password.
 
-Open Google Chrome. When prompted, set Chrome as the default web browser.
+The Delivery installation comes with a preconfigured password. Copy to the clipboard the password that matches your SSH key pair's region.
+
+* us-east-1 (N. Virginia) &mdash; **jcamy921UeSqknfqGjDEPhsV1Uk4rI2Yyrc=**
+* us-west-1 (N. California) &mdash; **3TAP31daB5vulkQMOnApI93IH5AvWVEBC9Y=**
+* us-west-2 (Oregon) &mdash; **BCF3vxBuzC2cMgnX4bEaDMC2OXzikZHZ6Ig=**
+  
+Next, open Google Chrome. If prompted, set Chrome as the default web browser.
 
 Navigate to [https://10.0.0.12](https://10.0.0.12). On the welcome page, enter **delivery-demo** in the text box and click **Go to My Enterprise**. (Alternatively, you can navigate directly to [https://10.0.0.12/e/delivery-demo](https://10.0.0.12/e/delivery-demo).)
 
@@ -82,11 +126,11 @@ Select **Users** from the drop-down menu in the upper right corner.
 
 ![](delivery/web_ui_admin_users.png)
 
-Click **+**, then fill in the fields. The screen image below is an example. Specify the user's real info if you prefer. 
+Click **+**, then fill in the fields. The screen image below is an example. Specify the user's real info if you prefer.
 
 If you're setting up the account for someone else, enter an initial password and then give that person the username and password.
 
-Leave the **Enter SSH Public Key** field blank &ndash; the user will set that up in the next part. 
+Leave the **Enter SSH Public Key** field blank &ndash; the user will set that up in the next part.
 
 In practice, you would determine the appropriate [roles and permissions](https://docs.chef.io/release/delivery/delivery_users_and_roles.html#roles-and-permissions) for your user. For now, select all roles.
 

@@ -1,6 +1,6 @@
 ## 1. Upload your cookbooks to the Chef server
 
-[CALLOUT networks/workstation.png] Perform this step from your workstation.
+> Perform this step from your workstation.
 
 You already verified that your `audit` and `webserver` cookbooks behave as you expect on a local virtual machine, so let's begin by uploading these cookbooks to your Chef server.
 

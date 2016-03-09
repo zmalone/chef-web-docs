@@ -1,6 +1,6 @@
 ## 7. Download the Starter Kit
 
-[CALLOUT networks/workstation.png] In this step, switch over to the workstation from where you'll administer your Chef server.
+> In this step, switch over to the workstation from where you'll administer your Chef server.
 
 Now you need to generate the configuration file, <code class="file-path">knife.rb</code>, that enables `knife` to authenticate commands with the Chef server. You also need to copy the RSA key (the <code class="file-path">.pem</code> file) that you created in the previous step to enable `knife` to authenticate calls to the Chef server. This authentication process ensures that the Chef server responds only to requests made by trusted users.
 

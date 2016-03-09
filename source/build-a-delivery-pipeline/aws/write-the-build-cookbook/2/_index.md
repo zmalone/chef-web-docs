@@ -194,7 +194,7 @@ After Acceptance succeeds, don't press the **Deliver** button. We'll queue up ad
 
 ### Verify that the awesome_customers cookbook and the data bag are on your Chef server
 
-[CALLOUT networks/admin-workstation.svg,networks/chef-server.svg] In this part, you connect to Chef server from the administrator's workstation.
+> In this part, you connect to Chef server from the administrator's workstation.
 
 The publish phase uploads your cookbooks and any dependencies that are listed in your <code class="file-path">Berksfile</code>.
 
@@ -259,7 +259,7 @@ Choose **Data Bags** from the menu on the left, then select **passwords**. You'l
 
 ### Integrate the change locally
 
-[CALLOUT networks/team-members-workstation.svg] Now move back to the team member's workstation.
+> Now move back to the team member's workstation.
 
 As we did previously, we need to pull Delivery's `master` branch locally. Here's a reminder how.
 

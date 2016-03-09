@@ -1,6 +1,6 @@
 ## 5. Run smoke tests and deploy to your Union, Rehearsal, and Delivered stages
 
-[CALLOUT networks/team-members-workstation.svg] Perform this part from a team member's workstation.
+> Perform this part from a team member's workstation.
 
 In the previous step, you manually verified that the Customers application is running in Acceptance. In practice, it's common to have some manual verification process to validate that your application or service is up and functioning. For example, if you're deploying a web application, someone will typically test out a new feature manually on a pre-production server before releasing the feature to production.
 
@@ -110,7 +110,7 @@ This moves the change through the Union, Rehearsal, and Delivered stages.
 
 ### Verify the change was successfully delivered
 
-[CALLOUT networks/admin-workstation.svg] Perform this part from the administrator's workstation.
+> Perform this part from the administrator's workstation.
 
 Let's verify that the Customers web application was successfully delivered.
 
@@ -137,7 +137,7 @@ Congratulations! You've successfully delivered the Customers web application!
 
 ### Integrate the change locally
 
-[CALLOUT networks/team-members-workstation.svg] Now move back to a team member's workstation.
+> Now move back to a team member's workstation.
 
 As we did previously, let's merge the `master` branch locally. Here's a reminder how.
 
