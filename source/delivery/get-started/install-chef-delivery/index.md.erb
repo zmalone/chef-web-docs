@@ -21,6 +21,8 @@ Here are the steps to perform:
 1. [Review the installation](#step1)
 1. [Gather prerequisites](#step2)
 1. [Run the CloudFormation template](#step3)
+1. [Get your Windows workstation's public IP address](#step4)
+1. Learn how to [temporarily stop and restart your AWS instances](#howtotemporarilystopandrestartyourawsinstances) as you evaluate Delivery
 1. Learn how to [tear down your Delivery installation](/delivery/get-started/install-chef-delivery#howtoteardownyourdeliveryinstallation) when you're done
 
 [START_BOX]
@@ -31,9 +33,7 @@ The systems that make up a Chef Delivery system depends on the software you want
 
 The automation you run for this tutorial includes the minimum number of systems that are typical for most users. Here's a diagram:
 
-[PRODNOTE] Update diagram to 1) remove administrator's workstation 2) include team member's workstation in the VPC 3) show two build nodes 4) grey-out U-R-D systems.
-
-<img src="/assets/images/delivery/delivery-scenario-architecture.png" style="width: 100%; box-shadow: none;" alt="An example Delivery installation" />
+<img src="/assets/images/delivery/delivery-scenario-architecture.svg" style="width: 100%; box-shadow: none;" alt="An example Delivery installation" />
 
 The diagram shows these components:
 
@@ -41,7 +41,7 @@ The diagram shows these components:
 
 At a minimum, a Delivery cluster includes Chef Delivery and one build node.
 
-Your setup includes Chef Delivery and Chef server, along with two build nodes. Having multiple build nodes enables phases to run in parallel.
+Your setup includes Chef Delivery and Chef server, along with two build nodes. The Chef server holds the `awesome_customers_delivery` cookbook, which is an output of the pipeline. Having multiple build nodes enables phases to run in parallel.
 
 **Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Delivery deploys build artifacts, or the pipeline's final output, to these environments.
 
@@ -79,12 +79,13 @@ For the Acceptance environment, the automation sets up network access on these p
 
 ## 2. Gather prerequisites
 
-[PRODNOTE] Reviewers: You don't need to run this in US East. But users will once we create the final template.
-
 To run the automated installation, you need:
 
 1. an [AWS account](https://aws.amazon.com/free/).
-1. an [SSH key pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-a-key-pair) for the US East (N. Virginia) region.
+1. an [SSH key pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-a-key-pair) for one of these regions.
+  * us-east-1 (N. Virginia)
+  * us-west-1 (N. California)
+  * us-west-2 (Oregon)
 1. a Chef Delivery license key.
 
 If you don't have a license key, click the button below, fill out the short form, and check your email for a link to a temporary license key for this tutorial.
@@ -106,7 +107,7 @@ MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438, function(form
 
 [END_MODAL]
 
-After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <% fp '~/delivery.license' %>. The automation you'll run in the next step will upload your license key to the Delivery server.
+After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <% fp '~/delivery.license' %>. The automation you'll run in the next step uploads your license key to the Delivery server.
 
 [END_BOX]
 
@@ -114,13 +115,83 @@ After you click the link in the email, the license file named <% fp 'delivery.li
 
 ## 3. Run the CloudFormation template
 
-[PRODNOTE] This needs to be updated for the final template. For now, bring the thing up from here: [https://gist.github.com/nedward/b8f29ee5da5213e0bec5](https://github.com/chef-cft/delivery-tutorial). This will take about 2 minutes to complete.
+Now you're ready to run the [CloudFormation](https://aws.amazon.com/cloudformation/) template to bring up the Delivery installation. A CloudFormation template is a code file (in JSON format) that defines a collection of resources (called a stack.) When the template runs, it brings up the preconfigured server instances to run Delivery along with their required networking and security settings.
 
-TODO:
+1. From a web browser, start by navigating to the AWS home page. [https://aws.amazon.com/](https://aws.amazon.com/)
+1. Click the **Sign In to the Console** button and log in to your account.
+  ![](delivery/aws_sign_in.png)
+1. From the **Services** menu, select **Management Tools** and then **CloudFormation**. 
+  ![](delivery/aws_open_cloudformation.png) 
+1. Click **Create Stack**
+  ![](delivery/aws_create_stack.png)
+1. Under **Choose a template**, choose **Specify an Amazon S3 template URL**. 
+  ![](delivery/aws_stack_choose_template.png)
+1. Enter the URL that matches your SSH key pair's region. Then click **Next**.
+  * us-east-1 (N. Virginia) &mdash; [https://s3.amazonaws.com/ned-virginia-pup-cf-templates/delivery-tutorial.json](https://s3.amazonaws.com/ned-virginia-pup-cf-templates/delivery-tutorial.json) 
+  * us-west-1 (N. California) &mdash; [https://s3-us-west-1.amazonaws.com/ned-pub-cf-templates/delivery-tutorial.json](https://s3-us-west-1.amazonaws.com/ned-pub-cf-templates/delivery-tutorial.json)
+  * us-west-2 (Oregon) &mdash; [https://s3-us-west-2.amazonaws.com/ned-oregon-pup-templates/delivery-tutorial.json](https://s3-us-west-2.amazonaws.com/ned-oregon-pup-templates/delivery-tutorial.json)
+1. From the **Specify Details** screen, fill in the required details. When you're finished, click **Next**. 
+  * **Stack name** can be any name you choose. This value uniquely identifies your stack in AWS. Note your stack name for later.
+  * **KeyName** specifies the name of your SSH key pair. If you're new to AWS, this is the name you created in [step 2](#step2).
+  * **SSHLocation** specifies the range of IP addresses (using [CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation)) that are permitted to connect to the AWS instances. Users still require credentials to connect. 0.0.0.0/0 permits access from any computer and gives you the most flexibility. Specify an address range if you want to limit who can connect.
+  ![](delivery/aws_create_stack_details.png)
+1. From the **Options** screen, click **Next**.
+1. From the **Review** screen, click **Create**.
 
-- Walk the user through installing from the EC2 Management Console.
-- Then show the running instances from the EC2 Management Console.
-- Create a table [similar to this](https://gist.github.com/nedward/b8f29ee5da5213e0bec5), also include the value of the Name tag. Have the user note the IP address and log in creds for the Windows machine. Also note the user name and password for the Delivery admin account.
+Your stack is now being created. The process typically takes around 2 minutes to finish.
+
+![](delivery/aws_stack_create_in_progress.png)
+
+The process is done when the **Status** reads **CREATE_COMPLETE**.
+
+![](delivery/aws_stack_create_complete.png)
+
+Congratulations. You're almost ready to set up Delivery for your users. First, you'll need the public IP address of the virtual Windows workstation.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Get your Windows workstation's public IP address
+
+In the following parts, you'll connect to the virtual Windows workstation that's part of the automated installation. Now's a good time to get its public IP address.
+
+After your stack is created, click the **Outputs** tab. Make note of the IP address for the Windows workstation. 
+
+![](delivery/aws_stack_windows_workstation.png)
+
+If you're setting up Delivery for others, give each user the IP address.
+
+### Get the updated IP address if you stop and restart your AWS instances
+
+If you stop your AWS instances, as explained in the [following section](#howtotemporarilystopandrestartyourawsinstances), you'll need to get the Windows workstation's new public IP address when you restart your instances. Here's how to do that.
+
+1. Navigate to the EC2 Dashboard at [https://console.aws.amazon.com/ec2/v2/home](https://console.aws.amazon.com/ec2/v2/home).
+1. Select **Running Instances**.
+  ![](delivery/aws_running_instances.png)
+1. In the **Search** bar, enter the Windows workstation's fixed private IP address, 10.0.0.5.
+  ![](delivery/aws_search_10_0_0_5.png)
+1. Your Windows workstation is returned as the result. Select the instance. In the details section, note the instance's public address. You can connect to the instance by either its public DNS name or its IP address.
+  ![](delivery/aws_instance_details_public_address.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## How to temporarily stop and restart your AWS instances
+
+In practice, it's common to keep your instances running so that users can access Delivery at any time. But because the setup process assigns a static private IP address to each instance, you can temporarily stop and restart your AWS instances as you evaluate Chef Delivery.
+
+To stop your instances:
+
+1. Navigate to the EC2 Dashboard at [https://console.aws.amazon.com/ec2/v2/home](https://console.aws.amazon.com/ec2/v2/home).
+1. Select **Running Instances**.
+  ![](delivery/aws_running_instances.png)
+1. Enter the name of your stack in the **Search** bar. An example is **chef-delivery-tutorial**. 
+1. Select all results. From the **Actions** menu, select **Instance State** > **Stop**.
+  ![](delivery/aws_stop_instances.png)
+
+To restart your instances, repeat steps 1&ndash;3 from the previous procedure. Select all results. From the **Actions** menu, select **Instance State** > **Start**.
 
 [END_BOX]
 
@@ -128,6 +199,11 @@ TODO:
 
 ## How to tear down your Delivery installation
 
-[PRODNOTE] TODO: Show the user how to delete the stack.
+Here's how to delete your stack when you're finished with your Delivery evaluation or you want to start over. When you delete the stack, all resources that the stack allocated are torn down, including the instances and their network settings.
+
+1. Navigate to the CloudFormation dashboard at [https://console.aws.amazon.com/cloudformation/home](https://console.aws.amazon.com/cloudformation/home).
+1. Select your stack, then right click and select **Delete Stack**. 
+  ![](delivery/aws_delete_stack.png)
+1. Select **Yes, Delete** when prompted.
 
 [END_BOX]

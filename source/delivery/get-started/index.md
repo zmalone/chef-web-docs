@@ -23,7 +23,7 @@ Chef uses Delivery to deploy its own software. With it, we have:
 * reduced the number of defects per release by 70%.
 * went from 1 release every two days to 12 releases per day.
 
-We are shipping code faster, with less effort, and with higher quality. In this tutorial, you'll Delivery for a spin and see what sorts of benefits you can deliver for your organization.
+We are shipping code faster, with less effort, and with higher quality. In this tutorial, you'll take Delivery for a spin and see what sorts of benefits you can deliver for your organization.
 
 [COMMENT] Chef Delivery relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. We'll provide all the Git commands that you'll need, but you can also [check out the documentation](https://git-scm.com/doc) to learn more.
 
