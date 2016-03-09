@@ -1,6 +1,6 @@
 ## 2. Apply the webserver cookbook to a node
 
-[CALLOUT networks/workstation.png] Perform this step from your workstation.
+> Perform this step from your workstation.
 
 Next, let's apply the `webserver` cookbook to your node.
 

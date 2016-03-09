@@ -1,6 +1,6 @@
 ## 5. Add a new control
 
-[CALLOUT networks/workstation.png,rhel/platform-logos/chef-analytics.svg] In this part, you'll run commands from your workstation and then move to the Chef Analytics web interface.
+> In this part, you'll run commands from your workstation and then move to the Chef Analytics web interface.
 
 Now let's add a new control that verifies the state of the firewall. Specifically, we want to verify that:
 

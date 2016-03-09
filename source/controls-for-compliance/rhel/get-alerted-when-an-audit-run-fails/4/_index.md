@@ -1,6 +1,6 @@
 ## 4. Run the audit cookbook
 
-[CALLOUT networks/workstation.png] Perform this step from your workstation.
+> Perform this step from your workstation.
 
 Now let's run the `audit` cookbook on your node. You already verified that the audit passes when you ran it through Test Kitchen, so let's verify that the alert doesn't trigger.
 

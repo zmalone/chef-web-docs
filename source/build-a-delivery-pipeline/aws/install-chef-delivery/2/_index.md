@@ -1,6 +1,6 @@
 ## 2. Install Chef Delivery
 
-[CALLOUT networks/admin-workstation.svg] Perform this part from the administrator's workstation.
+> Perform this part from the administrator's workstation.
 
 The installation consists of four steps:
 
@@ -306,7 +306,7 @@ Then, do these steps to check that everything worked:
 
 ### 2.4. Finalize the configuration
 
-[CALLOUT networks/delivery-server.svg] Perform this part from the Chef Delivery web interface.
+> Perform this part from the Chef Delivery web interface.
 
 In Chef Delivery there are enterprises, organizations, and projects. The provisioning step created the initial enterprise you specified in your environment file. You still need to finalize the set up by adding adding users and organizations. (The `admin` user is intended only for installation and maintenance.)
 

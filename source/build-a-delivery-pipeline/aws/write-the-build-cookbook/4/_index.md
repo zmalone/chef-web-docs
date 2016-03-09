@@ -1,6 +1,6 @@
 ## 4. Deploy to the Acceptance stage
 
-[CALLOUT networks/team-members-workstation.svg] Perform this part from a team member's workstation.
+> Perform this part from a team member's workstation.
 
 Now that we know that the Acceptance stage is provisioned, we can deploy to it. In this step, we write the recipe for the deploy phase.
 

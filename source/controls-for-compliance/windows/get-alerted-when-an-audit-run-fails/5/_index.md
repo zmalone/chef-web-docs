@@ -1,6 +1,6 @@
 ## 5. Add a new control
 
-[CALLOUT networks/workstation.png,rhel/platform-logos/chef-analytics.svg] In this part, you'll run commands from your workstation and then move to the Chef Analytics web interface.
+> In this part, you'll run commands from your workstation and then move to the Chef Analytics web interface.
 
 Now let's add a new control that verifies the state of the firewall. Specifically, we want to verify that the firewall blocks ping requests from outside the domain. [Ping](https://en.wikipedia.org/wiki/Ping_(networking_utility\)) operates by sending Internet Control Message Protocol (ICMP) echo request packets to the target host and waiting for an ICMP echo reply.
 
