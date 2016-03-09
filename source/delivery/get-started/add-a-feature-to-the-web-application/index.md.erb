@@ -79,25 +79,24 @@ For a Chef cookbook, you might run [Test Kitchen](https://docs.chef.io/kitchen.h
 
 Another approach is to run [delivery job](https://docs.chef.io/ctl_delivery.html#delivery-job). Chef Delivery uses `delivery job` to execute the phases on the build nodes as changes move through the pipeline. But you can also run `delivery job` to execute a phase directly on your workstation. Running jobs to exercise phases such as lint, unit, and syntax is a good way to be certain that your change is good before it reaches the pipeline.
 
-Start by running `delivery job verify unit` to run the unit phase under the Verify stage. The unit phase runs ChefSpec tests.
+Start by running `delivery job verify unit --local` to run the unit phase under the Verify stage. The unit phase runs ChefSpec tests.
 
 You can check out <% fp 'spec\unit\recipes\web_spec.rb' %> to see some of the ChefSpec tests that comes with the `awesome_customers_delivery` cookbook.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
-$ delivery job verify unit
+$ delivery job verify unit --local
 Chef Delivery
 Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
 Starting job for awesome_customers_delivery verify unit
-Creating workspace in C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
-ify\unit
+Creating workspace in C:\Users\Administrator\localhost\local\workstation\awesome_customers_delivery\master\verify\unit
 Cloning repository, and merging visualize_data to master
 Configuring the job
 Running the job
 Setting up the builder
 [...]
 Running phase unit
-[2016-03-04T20:30:39+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+[2016-03-09T03:24:19+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
 and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
 led_plugins for ohai.
 Starting Chef Client, version 12.7.2
@@ -114,28 +113,29 @@ Recipe: delivery-truck::unit
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 1/1 resources updated in 01 minutes 14 seconds
+Chef Client finished, 1/1 resources updated in 01 minutes 09 seconds
 ```
 
 You'll see no errors reported.
 
-Now run `delivery job verify lint` to run lint testing. The lint phase runs Foodcritic and RuboCop.
+By default, `delivery job` configures the local system with build tools and other prerequisites you need for the project to run. This is an important step for build nodes. But because your virtual workstation is already configured with the Chef DK, you run `delivery job` with the `--local` flag to omit this step.
+
+Now run `delivery job verify lint --local` to run lint testing. The lint phase runs Foodcritic and RuboCop.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
-$ delivery job verify lint
+$ delivery job verify lint --local
 Chef Delivery
 Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
 Starting job for awesome_customers_delivery verify lint
-Creating workspace in C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
-ify\lint
+Creating workspace in C:\Users\Administrator\localhost\local\workstation\awesome_customers_delivery\master\verify\lint
 Cloning repository, and merging visualize_data to master
 Configuring the job
 Running the job
 Setting up the builder
 [...]
 Running phase lint
-[2016-03-04T20:35:09+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+[2016-03-09T03:27:41+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
 and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
 led_plugins for ohai.
 Starting Chef Client, version 12.7.2
@@ -148,34 +148,36 @@ Compiling Cookbooks...
 Converging 2 resources
 Recipe: delivery-truck::lint
   * execute[lint_foodcritic_awesome_customers_delivery] action run
-    - execute foodcritic -f correctness   C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers
-_delivery\master\verify\lint\repo/
+    - execute foodcritic -f correctness   C:\Users\Administrator\localhost\local\workstation\awesome_customers_delivery\
+master\verify\lint\repo/
   * execute[lint_rubocop_awesome_customers_delivery] action run
-    - execute rubocop C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
-ify\lint\repo/
+    - execute rubocop C:\Users\Administrator\localhost\local\workstation\awesome_customers_delivery\master\verify\lint\r
+epo/
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 2/2 resources updated in 12 seconds
+Chef Client finished, 2/2 resources updated in 11 seconds
 ```
 
 The lint phase also passes.
 
-Finally, run `delivery job verify syntax` to perform syntax checks.
+Finally, run `delivery job verify syntax --local` to perform syntax checks.
  
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
-$ delivery job verify syntax
+$ delivery job verify syntax --local
 Chef Delivery
 Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
 Starting job for awesome_customers_delivery verify syntax
-Creating workspace in C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
-ify\syntax
+Creating workspace in C:\Users\Administrator\localhost\local\workstation\awesome_customers_delivery\master\verify\syntax
+
 Cloning repository, and merging visualize_data to master
 Configuring the job
+Running the job
+Setting up the builder
 [...]
 Running phase syntax
-[2016-03-04T20:41:14+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+[2016-03-09T03:29:40+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
 and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
 led_plugins for ohai.
 Starting Chef Client, version 12.7.2
@@ -187,8 +189,8 @@ Synchronizing Cookbooks:
 Compiling Cookbooks...
 
 ================================================================================
-Recipe Compile Error in C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/v
-erify/syntax/cache/cookbooks/build-cookbook/recipes/syntax.rb
+Recipe Compile Error in C:/Users/Administrator/localhost/local/workstation/awesome_customers_delivery/master/verify/synt
+ax/cache/cookbooks/build-cookbook/recipes/syntax.rb
 ================================================================================
 
 RuntimeError
@@ -197,19 +199,19 @@ The awesome_customers_delivery cookbook was modified but the version was not upd
 
 Cookbook Trace:
 ---------------
-  C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/coo
-kbooks/delivery-truck/recipes/syntax.rb:22:in `block in from_file'
-  C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/coo
-kbooks/delivery-truck/recipes/syntax.rb:18:in `each'
-  C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/coo
-kbooks/delivery-truck/recipes/syntax.rb:18:in `from_file'
-  C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/coo
-kbooks/build-cookbook/recipes/syntax.rb:6:in `from_file'
+  C:/Users/Administrator/localhost/local/workstation/awesome_customers_delivery/master/verify/syntax/cache/cookbooks/del
+ivery-truck/recipes/syntax.rb:22:in `block in from_file'
+  C:/Users/Administrator/localhost/local/workstation/awesome_customers_delivery/master/verify/syntax/cache/cookbooks/del
+ivery-truck/recipes/syntax.rb:18:in `each'
+  C:/Users/Administrator/localhost/local/workstation/awesome_customers_delivery/master/verify/syntax/cache/cookbooks/del
+ivery-truck/recipes/syntax.rb:18:in `from_file'
+  C:/Users/Administrator/localhost/local/workstation/awesome_customers_delivery/master/verify/syntax/cache/cookbooks/bui
+ld-cookbook/recipes/syntax.rb:6:in `from_file'
 
 Relevant File Content:
 ----------------------
-C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awesome_customers_delivery/master/verify/syntax/cache/cookb
-ooks/delivery-truck/recipes/syntax.rb:
+C:/Users/Administrator/localhost/local/workstation/awesome_customers_delivery/master/verify/syntax/cache/cookbooks/deliv
+ery-truck/recipes/syntax.rb:
 
  15:  # limitations under the License.
  16:  #
@@ -231,14 +233,14 @@ ooks/delivery-truck/recipes/syntax.rb:
 
 
 Running handlers:
-[2016-03-04T20:41:25+00:00] ERROR: Running exception handlers
+[2016-03-09T03:29:50+00:00] ERROR: Running exception handlers
 Running handlers complete
-[2016-03-04T20:41:25+00:00] ERROR: Exception handlers complete
+[2016-03-09T03:29:50+00:00] ERROR: Exception handlers complete
 Chef Client failed. 0 resources updated in 10 seconds
-[2016-03-04T20:41:25+00:00] FATAL: Stacktrace dumped to C:/Users/Administrator/10.0.0.12/delivery-demo/delivery-demo/awe
-some_customers_delivery/master/verify/syntax/cache/chef-stacktrace.out
-[2016-03-04T20:41:25+00:00] FATAL: Please provide the contents of the stacktrace.out file if you file a bug report
-[2016-03-04T20:41:25+00:00] FATAL: RuntimeError: The awesome_customers_delivery cookbook was modified but the version wa
+[2016-03-09T03:29:50+00:00] FATAL: Stacktrace dumped to C:/Users/Administrator/localhost/local/workstation/awesome_custo
+mers_delivery/master/verify/syntax/cache/chef-stacktrace.out
+[2016-03-09T03:29:50+00:00] FATAL: Please provide the contents of the stacktrace.out file if you file a bug report
+[2016-03-09T03:29:50+00:00] FATAL: RuntimeError: The awesome_customers_delivery cookbook was modified but the version wa
 s not updated in the metadata file.
 Chef Client failed
 STDOUT:
@@ -295,21 +297,23 @@ $ git commit -m "Bump cookbook version"
  1 file changed, 1 insertion(+), 1 deletion(-)
 ```
 
-Run `delivery job verify syntax` to verify the fix.
+Run `delivery job verify syntax --local` to verify the fix.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
-$ delivery job verify syntax
+$ delivery job verify syntax --local
 Chef Delivery
 Loading configuration from C:\Users\Administrator\delivery-demo\awesome_customers_delivery
 Starting job for awesome_customers_delivery verify syntax
-Creating workspace in C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_delivery\master\ver
-ify\syntax
+Creating workspace in C:\Users\Administrator\localhost\local\workstation\awesome_customers_delivery\master\verify\syntax
+
 Cloning repository, and merging visualize_data to master
 Configuring the job
+Running the job
+Setting up the builder
 [...]
 Running phase syntax
-[2016-03-04T20:45:28+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
+[2016-03-09T03:32:06+00:00] WARN: Ohai::Config[:disabled_plugins] is set. Ohai::Config[:disabled_plugins] is deprecated
 and will be removed in future releases of ohai. Use ohai.disabled_plugins in your configuration file to configure :disab
 led_plugins for ohai.
 Starting Chef Client, version 12.7.2
@@ -322,12 +326,12 @@ Compiling Cookbooks...
 Converging 1 resources
 Recipe: delivery-truck::syntax
   * execute[syntax_check_awesome_customers_delivery] action run
-    - execute knife cookbook test -o C:\Users\Administrator\10.0.0.12\delivery-demo\delivery-demo\awesome_customers_deli
-very\master\verify\syntax\repo/ -a
+    - execute knife cookbook test -o C:\Users\Administrator\localhost\local\workstation\awesome_customers_delivery\maste
+r\verify\syntax\repo/ -a
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 1/1 resources updated in 15 seconds
+Chef Client finished, 1/1 resources updated in 14 seconds
 ```
 
 The syntax test now passes! Running these checks helped us discover and fix a potential failure _before_ it reached the pipeline.
