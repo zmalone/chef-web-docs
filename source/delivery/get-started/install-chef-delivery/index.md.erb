@@ -10,7 +10,7 @@ survey_id: 2mCgpoLBUQiBI9gS46TWiSMBYPVi_2FumGC4rJ8eJqMxJdJLzeR4SRdxnZWD5DzYU2
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 show_disqus: false
 ---
-In this part, you install Chef Delivery on AWS using a [CloudFormation template](https://aws.amazon.com/cloudformation/).
+In this part, you install Chef Delivery on AWS using [CloudFormation](https://aws.amazon.com/cloudformation/).
 
 The automation you run brings up a fully-functional Chef Delivery installation, which includes a Chef server, a Chef Delivery server, and build nodes that run jobs scheduled by Chef Delivery. The automation also sets up an end-user's Windows workstation as well as an Ubuntu server that runs the `awesome_customers_delivery` cookbook to bring up the Customers web application.
 
@@ -31,7 +31,7 @@ Here are the steps to perform:
 
 The systems that make up a Chef Delivery system depends on the software you want to deliver. For example, if you use Chef  to manage your infrastructure, your system may include [Chef Analytics](https://docs.chef.io/analytics.html) or a private [Chef Supermarket](https://docs.chef.io/supermarket.html) server that exists behind your firewall.
 
-The automation you run for this tutorial includes the minimum number of systems that are typical for most users. Here's a diagram:
+The automation you run for this tutorial includes the minimum number of systems that are typical for many users. Here's a diagram:
 
 <img src="/assets/images/delivery/delivery-scenario-architecture.svg" style="width: 100%; box-shadow: none;" alt="An example Delivery installation" />
 
@@ -65,7 +65,7 @@ An added benefit to using a VPC is that it assigns a static IP adddress to each 
 
 The automation uses the recommended [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html) for each server.
 
-The automation also configures the appropriate [security groups](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html) for the Delivery cluster and the environments. ([Learn more about the recommended port settings](https://docs.chef.io/install_delivery_aws.html#network-and-ports).)
+The automation also configures the appropriate [security groups](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html) for the Delivery cluster and the environments. [Learn more about the recommended port settings](https://docs.chef.io/install_delivery_aws.html#network-and-ports)
 
 For the Acceptance environment, the automation sets up network access on these ports:
 
@@ -115,7 +115,7 @@ After you click the link in the email, the license file named <% fp 'delivery.li
 
 ## 3. Run the CloudFormation template
 
-Now you're ready to run the [CloudFormation](https://aws.amazon.com/cloudformation/) template to bring up the Delivery installation. A CloudFormation template is a code file (in JSON format) that defines a collection of resources (called a stack.) When the template runs, it brings up the preconfigured server instances to run Delivery along with their required networking and security settings.
+Now you're ready to run the [CloudFormation](https://aws.amazon.com/cloudformation/) template to bring up the Delivery installation. A CloudFormation template is a code file (in JSON format) that defines a collection of resources, called a _stack_. When the template runs, it brings up the preconfigured server instances to run Delivery along with their required networking and security settings.
 
 1. From a web browser, start by navigating to the AWS home page. [https://aws.amazon.com/](https://aws.amazon.com/)
 1. Click the **Sign In to the Console** button and log in to your account.
@@ -133,7 +133,7 @@ Now you're ready to run the [CloudFormation](https://aws.amazon.com/cloudformati
 1. From the **Specify Details** screen, fill in the required details. When you're finished, click **Next**. 
   * **Stack name** can be any name you choose. This value uniquely identifies your stack in AWS. Note your stack name for later.
   * **KeyName** specifies the name of your SSH key pair. If you're new to AWS, this is the name you created in [step 2](#step2).
-  * **SSHLocation** specifies the range of IP addresses (using [CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation)) that are permitted to connect to the AWS instances. Users still require credentials to connect. 0.0.0.0/0 permits access from any computer and gives you the most flexibility. Specify an address range if you want to limit who can connect.
+  * **SSHLocation** specifies the range of IP addresses (using [CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation)) that are permitted to connect to the AWS instances (users still require credentials to connect.) **0.0.0.0/0** permits access from any computer and gives you the most flexibility. Specify an address range if you want to limit who can connect.
   ![](delivery/aws_create_stack_details.png)
 1. From the **Options** screen, click **Next**.
 1. From the **Review** screen, click **Create**.
@@ -164,15 +164,23 @@ If you're setting up Delivery for others, give each user the IP address.
 
 ### Get the updated IP address if you stop and restart your AWS instances
 
-If you stop your AWS instances, as explained in the [following section](#howtotemporarilystopandrestartyourawsinstances), you'll need to get the Windows workstation's new public IP address when you restart your instances. Here's how to do that.
+If you stop your AWS instances, as explained in the [following section](#howtotemporarilystopandrestartyourawsinstances), you'll need to get the Windows workstation's new public IP address when you restart your instances.
+
+<% accordion('restart-ip', 'Show details') do %>
+
+<% markdown do %>
 
 1. Navigate to the EC2 Dashboard at [https://console.aws.amazon.com/ec2/v2/home](https://console.aws.amazon.com/ec2/v2/home).
 1. Select **Running Instances**.
-  ![](delivery/aws_running_instances.png)
-1. In the **Search** bar, enter the Windows workstation's fixed private IP address, 10.0.0.5.
-  ![](delivery/aws_search_10_0_0_5.png)
+  ![](/assets/images/delivery/aws_running_instances.png)
+1. In the **Search** bar, enter the Windows workstation's fixed private IP address, **10.0.0.5**.
+  ![](/assets/images/delivery/aws_search_10_0_0_5.png)
 1. Your Windows workstation is returned as the result. Select the instance. In the details section, note the instance's public address. You can connect to the instance by either its public DNS name or its IP address.
-  ![](delivery/aws_instance_details_public_address.png)
+  ![](/assets/images/delivery/aws_instance_details_public_address.png)
+
+<% end %>
+
+<% end %>
 
 [END_BOX]
 
@@ -199,9 +207,9 @@ To restart your instances, repeat steps 1&ndash;3 from the previous procedure. S
 
 ## How to tear down your Delivery installation
 
-Here's how to delete your stack when you're finished with your Delivery evaluation or you want to start over. When you delete the stack, all resources that the stack allocated are torn down, including the instances and their network settings.
+Here's how to delete your stack when you're finished with your Delivery evaluation or you want to start over. When you delete the stack, all resources that are part of the stack are torn down, including the instances and their network settings.
 
-1. Navigate to the CloudFormation dashboard at [https://console.aws.amazon.com/cloudformation/home](https://console.aws.amazon.com/cloudformation/home).
+1. Navigate to the CloudFormation dashboard. [https://console.aws.amazon.com/cloudformation/home](https://console.aws.amazon.com/cloudformation/home)
 1. Select your stack, then right click and select **Delete Stack**. 
   ![](delivery/aws_delete_stack.png)
 1. Select **Yes, Delete** when prompted.

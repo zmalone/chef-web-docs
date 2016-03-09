@@ -6,7 +6,7 @@ logo: delivery.svg
 order: 1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-Chef Delivery (Delivery) gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation and transparency.
+Chef Delivery (Delivery) gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
 
 Delivery provides a workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production. If you have many different teams, each delivering software in its own way, you can use Delivery to bring a standard, proven approach to all of your organization's deployments.
 
@@ -15,6 +15,8 @@ With Delivery, you can, for example:
 * upload new and updated cookbooks to the Chef server that manages your infrastructure and applications.
 * publish new and updated cookbooks to a Chef Supermarket installation.
 * release source code or build artifacts (for example, a Java or PHP application) to a repository such as GitHub or Artifactory.
+* run automated tests to identify potential defects or bugs in your code. 
+* detect cases where a different team's code causes an incompatibility with yours.
 * push build artifacts to production servers in real time.
 
 Chef uses Delivery to deploy its own software. With it, we have:
@@ -61,9 +63,9 @@ You determine what happens in each phase with a _build cookbook_. Each phase is 
 
 ## What you'll do
 
-This tutorial comes in multiple parts. In the first two parts, you bring up a Chef Delivery installation and configure a workstation to communicate with it. In the last three parts, you  use Delivery to deliver a cookbook to Chef server and to verify the cookbook's behavior in a production-like environment.
+This tutorial comes in multiple parts. In the first three parts, you bring up a Chef Delivery installation and configure a workstation to communicate with it. In the last three parts, you  use Delivery to deliver a cookbook to Chef server and to verify the cookbook's behavior in a production-like environment.
 
-### Part 1: Install Chef Delivery
+### Part 1: Install Chef Delivery on AWS
 
 Chef Delivery runs on your hardware or in the cloud.
 
@@ -71,13 +73,19 @@ To help you get started with Chef Delivery more quickly, you begin by using auto
 
 The automation brings up a fully-functional Chef Delivery system in an isolated AWS environment that won't affect anything else you're running. After you complete the tutorial, you can experiment further and then simply tear down the environment when you're done.
 
-### Part 2: Set up your workstation
+### Part 2: Create the organization and add a user
+
+Here, you configure Chef Delivery for your users.
+
+You log in to the Delivery web interface and create an organization and a user account. Organizations group related projects. User accounts enable end users to access Delivery through its web interface or from the command line.
+
+### Part 3: Set up your workstation
 
 Next, you configure a workstation to communicate with Chef Delivery.
 
 The automation sets up a virtual Windows workstation. You install the Chef Delivery commmand-line interface (CLI) tools and set up a user account so you can access Delivery.
 
-### Part 3: Create the project
+### Part 4: Create the project
 
 You can use Chef Delivery to build and deploy almost any kind of software system. For example, you can publish changes to a  Chef cookbook to Chef server, Chef Supermarket, or GitHub. Alternatively, you might deploy a service to an application server.
 
@@ -89,13 +97,13 @@ By the end of this part, your web application looks like this:
 
 <img style="max-width:100%;" src="/assets/images/delivery/acceptance-customers-verify.png"/>
 
-### Part 4: Add a feature to the web application
+### Part 5: Add a feature to the web application
 
 In this part, you integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You follow the change through each pipeline stage, from your workstation all the way out to your node. By the end of this part, your web application looks like this:
 
 ![](delivery/customers-visualize-data-delivered.png)
 
-### Part 5: Extend the build cookbook
+### Part 6: Extend the build cookbook
 
 In this tutorial, you learn about the `delivery-truck` cookbook, which helps perform many common tasks that are needed to deliver Chef cookbooks. However, this cookbook can't do everything.
 
