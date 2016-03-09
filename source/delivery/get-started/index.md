@@ -75,7 +75,7 @@ The automation brings up a fully-functional Chef Delivery system in an isolated 
 
 Next, you configure a workstation to communicate with Chef Delivery.
 
-The automation sets up a Windows workstation. You install the Chef Delivery commmand-line interface (CLI) tools and set up a user account so you can access Delivery.
+The automation sets up a virtual Windows workstation. You install the Chef Delivery commmand-line interface (CLI) tools and set up a user account so you can access Delivery.
 
 ### Part 3: Create the project
 
