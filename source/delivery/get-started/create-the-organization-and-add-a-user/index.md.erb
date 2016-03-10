@@ -1,5 +1,5 @@
 ---
-title: 'Create the organization and add a user'
+title: 'Part 2: Create the organization and add a user'
 order: 2
 keywords: TODO
 layout: lesson
@@ -9,7 +9,7 @@ time_to_complete: 15 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 show_disqus: false
 ---
-> You'll perform this part from the virtual Windows workstation that's part of the automated Delivery installation.
+> Continue on the virtual Windows workstation that you connected to in the previous part.
 
 In this part, you perform two administrative tasks &ndash; create the organization and add a user account.
 
@@ -17,98 +17,34 @@ An organization enables you to group related projects and provide scope for auth
 
 Here's what you'll do:
 
-1. [Connect to the Windows workstation](#step1)
-1. [Log in to the Delivery web interface](#step2)
-1. [Create the organization](#step3)
-1. [Add a user](#step4)
-1. [Sign out of the Delivery web interface](#step5)
+1. [Log in to the Delivery web interface](#step1)
+1. [Create the organization](#step2)
+1. [Add a user](#step3)
+1. [Sign out of the Delivery web interface](#step4)
 
 [START_BOX]
 
-## 1. Connect to the Windows workstation
+## 1. Log in to the Delivery web interface
 
-Create a Remote Desktop Protocol (RDP) connection to your workstation. Keep in mind that it might take a few minutes for the Windows workstation to be fully connectable.
+### Open Google Chrome
 
-Connect as **Administrator**. The password is **P4ssw0rd**.
+Start by opening **Google Chrome**. The browser's home page is set to the Delivery web interface, [https://10.0.0.12/e/delivery-demo](https://10.0.0.12/e/delivery-demo).
 
-<% accordion('connect-aws-rdp', 'More details') do %>
+You'll see a warning regarding the Delivery server's security certificate. Accept the certificate by clicking **Advanced** and then **Proceed to 10.0.0.12**.
 
-<%= partial 'layouts/partials/aws/install_rdp' %>
+[COMMENT] For puposes of the tutorial, it's safe to accept the certificate. Delivery comes with a self-signed certificate. In a production environment, you would typically set up a certificate chain that's rooted by a trusted certificate authority (CA) to enable the Delivery server to verify its authenticity.
 
-### Get the workstation's public IP address
+After you connect, you may find it easier to continue this tutorial by opening this page in a second Chrome browser from your RDP connection.
 
-[Refer to this earlier step](/delivery/get-started/install-chef-delivery#step4) to get the workstation's public IP address. Or if someone else installed Delivery for you, you can ask that person.
+### Log in
 
-### Connect to the workstation
+From the Delivery web interface, log in as the `admin` user. 
 
-**Windows users:**
-
-1. Open the Remote Desktop Connection application, `mstsc`.
-1. In the **Computer** field, enter the Windows workstation's public IP address or DNS name.
-1. In the **User name** field, enter **Administrator**.
-1. Select the **Allow me to save credentials** option.
-1. Click **Connect**.
-1. Enter your password when prompted.
-1. A warning appears stating that the identity of the remote computer cannot be verified. This is because the Windows workstaton comes with a self-signed certificate. Click **Yes** to continue connecting.
-
-![](misc/rdp_windows.png)
-
-**Mac OS X users**:
-
-1. Open Microsoft Remote Desktop.
-1. Select **New**.
-1. In the **Connection name** field, enter a descriptive name, for example, **Delivery tutorial Windows workstation**.
-1. In the **PC name** field, enter the Windows workstation's public IP address or DNS name.
-1. In the **User name** field, enter **Administrator**.
-1. In the **Password** field, enter **P4ssw0rd**.
-1. Close the window.
-1. Select your connection to connect.
-1. A warning appears stating that the certificate could not be verified back to a root certificate. This is because the Windows workstaton comes with a self-signed certificate. Click **Continue** to continue connecting.
-
-![](misc/rdp_mac.png)
-
-<% end %>
-<br>
-After you connect, you may find it easier to continue this tutorial by opening this page in a browser from your RDP connection. We recommend that you use Google Chrome, which is preinstalled. If prompted, set Chrome as the default web browser.
-
-[COMMENT] In practice, an administrator would typically perform these tasks from his or her own workstation. However, the automated setup requires users to access Chef Delivery from a system that's connected to the virtual private network (VPC).
-
-[END_BOX]
-
-[START_BOX]
-
-## 2. Log in to the Delivery web interface
-
-Here you log in to the Delivery web interface as the `admin` user. First, you'll need the password.
-
-The Delivery installation comes with a preconfigured password. Copy the password that matches your SSH key pair's region to the clipboard.
+The Delivery installation comes with a preconfigured password. Use the password that matches your SSH key pair's region.
 
 * us-east-1 (N. Virginia) &mdash; **jcamy921UeSqknfqGjDEPhsV1Uk4rI2Yyrc=**
-* us-west-1 (N. California) &mdash; **3TAP31daB5vulkQMOnApI93IH5AvWVEBC9Y=**
+* us-west-1 (N. California) &mdash; **yfXtgDjlCdykUr7kpDeqd4m+LEzqrtv67w4=**
 * us-west-2 (Oregon) &mdash; **BCF3vxBuzC2cMgnX4bEaDMC2OXzikZHZ6Ig=**
-
-Next, open Google Chrome. If prompted, set Chrome as the default web browser.
-
-If you see a warning regarding the Deliver server's security certificate, accept the certificate by clicking **Advanced** and then **Proceed to 10.0.0.12**.
-
-<% accordion('accept-cert', 'More details') do %>
-
-<% markdown do %>
-
-You'll likely see this warning.
-
-<img style="max-width:100%;" src="/assets/images/delivery/accept_server_certificate.png"/>
-
-For puposes of the tutorial, it's safe to accept the certificate. Delivery comes with a self-signed certificate. In a production environment, you would typically set up a certificate chain that's rooted by a trusted certificate authority (CA) to enable the Delivery server to verify its authenticity.
-
-<% end %>
-
-<% end %>
-<br>
-
-The browser's home page is set to the Delivery web interface, [https://10.0.0.12/e/delivery-demo](https://10.0.0.12/e/delivery-demo).
-
-Use your `admin` credentials to log in.
 
 ![](delivery/admin_sign_in.png)
 
@@ -120,7 +56,7 @@ You'll see the Delivery dashboard.
 
 [START_BOX]
 
-## 3. Create the organization
+## 2. Create the organization
 
 Select **Organizations** from the drop-down menu in the upper right corner.
 
@@ -134,7 +70,7 @@ In the text box, enter **delivery-demo**. Then click **Save & Close**.
 
 [START_BOX]
 
-## 4. Add a user
+## 3. Add a user
 
 Now you'll add a user.
 
@@ -158,7 +94,7 @@ When you're done, click **Save & Close**.
 
 [START_BOX]
 
-## 5. Sign out of the Delivery web interface
+## 4. Sign out of the Delivery web interface
 
 In the next part, you or another team member will set up the Windows workstation to interact with Delivery. Sign out of the Delivery web interface to allow that user to sign in using the credentials you just set up.
 
