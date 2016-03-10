@@ -1,5 +1,5 @@
 ---
-title: 'Install Chef Delivery on AWS'
+title: 'Part 1: Install Chef Delivery on AWS'
 order: 1
 keywords: TODO
 layout: lesson
@@ -21,9 +21,7 @@ Here are the steps to perform:
 1. [Review the installation](#step1)
 1. [Gather prerequisites](#step2)
 1. [Run the CloudFormation template](#step3)
-1. [Get your Windows workstation's public IP address](#step4)
-1. Learn how to [temporarily stop and restart your AWS instances](#howtotemporarilystopandrestartyourawsinstances) as you evaluate Delivery
-1. Learn how to [tear down your Delivery installation](/delivery/get-started/install-chef-delivery#howtoteardownyourdeliveryinstallation) when you're done
+1. [Connect to the Windows workstation](#step4)
 
 [START_BOX]
 
@@ -148,72 +146,88 @@ The process is done when the **Status** reads **CREATE_COMPLETE**.
 
 ![](delivery/aws_stack_create_complete.png)
 
-Congratulations. You're almost ready to set up Delivery for your users. First, you'll need the public IP address of the virtual Windows workstation.
+[COMMENT] The appendix explains and how to [temporarily suspend the AWS instances](/delivery/get-started/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and how to [tear down the installation](/delivery/get-started/managing-your-aws-instances#tearingdownyourdeliveryinstallation) when you're finished with your Delivery evaluation.
+
+Congratulations. You're almost ready to set up Delivery for your users. As a final step, you'll connect to the virtual Windows workstation.
 
 [END_BOX]
 
 [START_BOX]
 
-## 4. Get your Windows workstation's public IP address
+## 4. Connect to the Windows workstation
 
-In the following parts, you'll connect to the virtual Windows workstation that's part of the automated installation. Now's a good time to get its public IP address.
+For the remainder of the tutorial, you'll work from the virtual Windows workstation that's part of the automated installation.
 
-After your stack is created, click the **Outputs** tab. Make note of the IP address for the Windows workstation.
+Here you create a Remote Desktop Protocol (RDP) connection from your computer to your virtual workstation. Keep in mind that after the automated setup completes, it might take a few minutes for the Windows workstation to be fully connectable.
+
+### Get the workstation's public IP address
+
+From the CloudFormation console, select your stack and click the **Outputs** tab. Copy the IP address for the Windows workstation to the clipboard.
 
 ![](delivery/aws_stack_windows_workstation.png)
 
-If you're setting up Delivery for others, give each user the IP address.
+### Install an RDP client
 
-### Get the updated IP address if you stop and restart your AWS instances
-
-If you stop your AWS instances, as explained in the [following section](#howtotemporarilystopandrestartyourawsinstances), you'll need to get the Windows workstation's new public IP address when you restart your instances.
-
-<% accordion('restart-ip', 'Show details') do %>
+<% accordion('install-rdp-windows', 'Windows users') do %>
 
 <% markdown do %>
 
-1. Navigate to the EC2 Dashboard at [https://console.aws.amazon.com/ec2/v2/home](https://console.aws.amazon.com/ec2/v2/home).
-1. Select **Running Instances**.
-  ![](/assets/images/delivery/aws_running_instances.png)
-1. In the **Search** bar, enter the Windows workstation's fixed private IP address, **10.0.0.5**.
-  ![](/assets/images/delivery/aws_search_10_0_0_5.png)
-1. Your Windows workstation is returned as the result. Select the instance. In the details section, note the instance's public address. You can connect to the instance by either its public DNS name or its IP address.
-  ![](/assets/images/delivery/aws_instance_details_public_address.png)
+Windows comes with an RDP client. Run `mstsc` from the command prompt to bring up Remote Desktop.
 
 <% end %>
 
 <% end %>
 
-[END_BOX]
+<% accordion('install-rdp-macosx', 'Mac OS X users') do %>
 
-[START_BOX]
+<% markdown do %>
 
-## How to temporarily stop and restart your AWS instances
+[Download Microsoft Remote Desktop](https://itunes.apple.com/us/app/microsoft-remote-desktop/id715768417?mt=12) from the Apple App Store. The RDP client from Microsoft's web site might not work.
 
-In practice, it's common to keep your instances running so that users can access Delivery at any time. But because the setup process assigns a static private IP address to each instance, you can temporarily stop and restart your AWS instances as you evaluate Chef Delivery.
+<% end %>
 
-To stop your instances:
+<% end %>
 
-1. Navigate to the EC2 Dashboard at [https://console.aws.amazon.com/ec2/v2/home](https://console.aws.amazon.com/ec2/v2/home).
-1. Select **Running Instances**.
-  ![](delivery/aws_running_instances.png)
-1. Enter the name of your stack in the **Search** bar. An example is **chef-delivery-tutorial**.
-1. Select all results. From the **Actions** menu, select **Instance State** > **Stop**.
-  ![](delivery/aws_stop_instances.png)
+<br>
 
-To restart your instances, repeat steps 1&ndash;3 from the previous procedure. Select all results. From the **Actions** menu, select **Instance State** > **Start**.
+### Connect to the workstation
 
-[END_BOX]
+<% accordion('connect-rdp-windows', 'Windows users') do %>
 
-[START_BOX]
+<% markdown do %>
 
-## How to tear down your Delivery installation
+1. Open the Remote Desktop Connection application, `mstsc`.
+1. In the **Computer** field, enter the Windows workstation's public IP address or DNS name.
+1. In the **User name** field, enter **Administrator**.
+1. Select the **Allow me to save credentials** option.
+1. Click **Connect**.
+1. Enter your password when prompted.
+1. A warning appears stating that the identity of the remote computer cannot be verified. This is because the Windows workstaton comes with a self-signed certificate. Click **Yes** to continue connecting.
 
-Here's how to delete your stack when you're finished with your Delivery evaluation or if you want to start over. When you delete the stack, all resources that are part of the stack are torn down, including the instances and their network settings.
+![](/assets/images/misc/rdp_windows.png)
 
-1. Navigate to the CloudFormation dashboard. [https://console.aws.amazon.com/cloudformation/home](https://console.aws.amazon.com/cloudformation/home)
-1. Select your stack, then right click and select **Delete Stack**.
-  ![](delivery/aws_delete_stack.png)
-1. Select **Yes, Delete** when prompted.
+<% end %>
+
+<% end %>
+
+<% accordion('connect-rdp-macosx', 'Mac OS X users') do %>
+
+<% markdown do %>
+
+1. Open Microsoft Remote Desktop.
+1. Select **New**.
+1. In the **Connection name** field, enter a descriptive name, for example, **Delivery tutorial Windows workstation**.
+1. In the **PC name** field, enter the Windows workstation's public IP address or DNS name.
+1. In the **User name** field, enter **Administrator**.
+1. In the **Password** field, enter **P4ssw0rd**.
+1. Close the window.
+1. Select your connection to connect.
+1. A warning appears stating that the certificate could not be verified back to a root certificate. This is because the Windows workstaton comes with a self-signed certificate. Click **Continue** to continue connecting.
+
+![](/assets/images/misc/rdp_mac.png)
+
+<% end %>
+
+<% end %>
 
 [END_BOX]

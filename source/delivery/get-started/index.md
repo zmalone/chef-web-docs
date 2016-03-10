@@ -87,7 +87,7 @@ The automation sets up a virtual Windows workstation. You install the Chef Deliv
 
 ### Part 4: Create the project
 
-You can use Chef Delivery to build and deploy almost any kind of software system. For example, you can publish changes to a  Chef cookbook to Chef server, Chef Supermarket, or GitHub. Alternatively, you might deploy a service to an application server.
+You can use Chef Delivery to build and deploy almost any kind of software system. For example, you can publish changes to a Chef cookbook to Chef server, Chef Supermarket, or GitHub. Alternatively, you might deploy a service to an application server.
 
 In this tutorial, the project is a Chef cookbook named `awesome_customers_delivery`. This cookbook configures a web application named Customers, which displays customer data to the user. If you've gone through the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook (this tutorial is not a prerequisite.)
 
@@ -115,7 +115,7 @@ In this part, you extend your build cookbook to include a smoke test. Smoke test
 
 ## How to approach this tutorial
 
-Chef Delivery is team oriented, and so is this tutorial. As a result, there are several approaches you can take.
+This tutorial walks you through setting up and using Chef Delivery as an individual. But because Chef Delivery is team oriented, you can approach the tutorial as a team as well.
 
 If you are most interested in using Chef Delivery to deploy projects, you might want to get a system administrator to help by [running the AWS automation](/delivery/get-started/install-chef-delivery/) and [creating the organization and a user account](/delivery/get-started/create-the-organization-and-add-a-user). If you're a project leader, you might find that the lesson that [sets up a project](/delivery/get-started/create-the-project/) is a good place to start. If your interest is primarily day-to-day use of Delivery, then the part of the tutorial that [walks through delivering a change](/delivery/get-started/add-a-feature-to-the-web-application/) and [extends the build cookbook](/delivery/get-started/extend-the-build-cookbook/) might be of the most interest.
 

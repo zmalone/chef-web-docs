@@ -36,7 +36,7 @@ $ knife winrm ADDRESS 'chef-client --audit-mode disabled' --manual-list --winrm-
 
 First, prepare a clean Windows Server 2012 R2 instance to bootstrap. Use the following checklist to verify that your instance is ready to use with Chef.
 
-<a class="help-button radius" href="#" data-reveal-id="knife-help-modal-windows">Checklist for Windows Server nodes</a>
+<a class="button radius" href="#" data-reveal-id="knife-help-modal-windows">Checklist for Windows Server nodes</a>
 
 <div id="knife-help-modal-windows" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">To prepare your Windows Server node, ensure that:</h3>

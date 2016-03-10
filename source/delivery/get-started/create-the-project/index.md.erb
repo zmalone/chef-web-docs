@@ -1,5 +1,5 @@
 ---
-title: 'Create the project'
+title: 'Part 4: Create the project'
 order: 4
 keywords: TODO
 layout: lesson
@@ -14,7 +14,7 @@ show_disqus: false
 
 Chef Delivery uses _projects_ to organize work across multiple teams. You can create as many projects as you need. A common approach is to have one project for each major component of your system.
 
-Each project has its own Git repository. Chef Delivery can host the Git repository for you or you can connect Delivery to an existing Git project, such as one on GitHub. In this tutorial, you get starter code from GitHub but host your project in Delivery's Git repository.
+Each project has its own Git repository. Chef Delivery can host the Git repository for you or you can connect Delivery to an existing project, such as one on GitHub or Atlassian Bitbucket. In this tutorial, you get starter code from GitHub but host your project in Delivery's Git repository.
 
 In this part, you create a project and watch the `awesome_customers_delivery` cookbook move through each stage of the Delivery pipeline. You perform these tasks:
 
@@ -26,7 +26,6 @@ In this part, you create a project and watch the `awesome_customers_delivery` co
 1. [Approve the change](#step6)
 1. [Deliver the change](#step7)
 1. [Integrate the change to your local master branch](#step8)
-1. Learn [how to delete your project](#howtodeleteyourproject) if you need to later
 
 During the process, you'll see how the `delivery-truck` cookbook can perform many common tasks that are needed to deliver Chef cookbooks.
 
@@ -35,7 +34,7 @@ Recall that you can use Chef Delivery to deploy almost any kind of software or i
 [delivery-truck](https://github.com/chef-cookbooks/delivery-truck) is a build cookbook that's designed specifically for Chef cookbook projects. `delivery-truck` handles many common tasks, including:
 
 * Running common cookbook test suites like [ChefSpec](https://docs.chef.io/chefspec.html), [Foodcritic](https://docs.chef.io/foodcritic.html), and [RuboCop](https://docs.chef.io/rubocop.html).
-* Publishing your cookbook to Chef server, Chef Supermarket, GitHub, or another Git server.
+* Publishing your cookbook to Chef server, Chef Supermarket, GitHub, Atlassian Bitbucket, or another Git server.
 * Triggering `chef-client` to run on nodes that use your cookbook.
 
 [COMMENT] If your administrator installed Chef Delivery, be sure to [set up your workstation](/delivery/get-started/set-up-your-workstation/) before starting this part.
@@ -146,6 +145,8 @@ https://10.0.0.12/e/delivery-demo/#/organizations/delivery-demo/projects/awesome
 The `delivery` command uses your password to generate an API token that's used to make authorized requests to your Chef Delivery server. The `delivery` command writes this API token to <% fp '~\\\\.delivery\api-tokens' %>.
 
 A browser window appears and the first stage of the pipeline, Verify, begins running its phases.
+
+[COMMENT] The appendex explains how to [delete your project](/delivery/get-started/managing-your-aws-instances#deletingthedeliveryproject) if you need to start over or want to do the tutorial a second time.
 
 [END_BOX]
 
@@ -572,36 +573,5 @@ $ git remote show delivery
 In practice, you might have just one remote &ndash; `delivery`. The `origin` remote exists only as a way for you to obtain starter code that we provide for you.
 
 Also remember that you don't have to use Delivery's Git server. We do so for learning purposes and because using the Git server that Delivery already provides is the easiest way to get started.
-
-[END_BOX]
-
-[START_BOX]
-
-## How to delete your project
-
-If you ever need to start over, or you complete the tutorial and want to delete this project, you'll need to log in to the Chef Delivery server (for example, over SSH) and run the `delivery-ctl delete-project` command.
-
-For the tutorial, you can get the Delivery server's public IP address from the **Output** tab in CloudFormation or from the EC2 management console. Search for the instance whose private IP address is 10.0.0.12. The username is `ubuntu`. Here's an example of how to connect. You would do this from your own system, which has your AWS SSH key.
-
-```bash
-$ ssh -i ~/.ssh/user.pem ubuntu@52.27.113.73
-The authenticity of host '52.27.113.73 (52.27.113.73)' can't be established.
-ECDSA key fingerprint is SHA256:BOLnibsx5Bdzg8zTl6c6l0p2tj8e6cgxmlA1hf6QAfQ.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '52.27.113.73' (ECDSA) to the list of known hosts.
-```
-
-The `delivery-ctl delete-project` command takes your enterprise, organization, and project names as arguments, like this.
-
-```bash
-$ sudo delivery-ctl delete-project ENTERPRISE ORGANIZATION PROJECT
-```
-
-Here's how to delete the `awesome_customers_delivery` project in the tutorial environment:
-
-```bash
-$ sudo delivery-ctl delete-project delivery-demo delivery-demo awesome_customers_delivery
-Successfully deleted project: 'delivery-demo/delivery-demo/awesome_customers_delivery'
-```
 
 [END_BOX]

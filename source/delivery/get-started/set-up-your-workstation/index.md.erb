@@ -1,5 +1,5 @@
 ---
-title: 'Set up your workstation'
+title: 'Part 3: Set up your workstation'
 order: 3
 keywords: TODO
 layout: lesson
@@ -10,33 +10,29 @@ survey_id: Betfc8doFaGlJLYu635jYbACof1cENmM8fQAfwmZBT5nX9gqZVxCU6byDKS6c_2FFs
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 show_disqus: false
 ---
-> You'll perform this part from the virtual Windows workstation that's part of the automated Delivery installation.
+> Continue on the virtual Windows workstation that you used in the previous part.
 
-In the previous parts, you or your system administrator set up a Chef Delivery system and added an organization and a user. Now you're ready to use Delivery. You'll interact with Delivery from your workstation, but first you'll need to set it up.
+In the previous parts, you or your system administrator set up a Chef Delivery system, [connected to the virtual Windows workstation](/delivery/get-started/install-chef-delivery#step4), and added an organization and a user. Now you're ready to use Delivery. You'll interact with Delivery from your workstation, but first you'll need to set it up.
 
 [COMMENT] If someone else installed Chef Delivery for you, [review the installation](/delivery/get-started/install-chef-delivery#step1) to get a sense of what components are involved and how they fit together.
 
 The Windows workstation comes preconfigured with Git for Windows and the Chef DK. Here you perform these tasks to complete your setup.
 
-1. [Connect to your Windows workstation and open PowerShell](#step1)
+1. [Open PowerShell](#step1)
 1. [Create a working directory](#step2)
 1. [Update your Delivery user with an SSH public key](#step3)
 1. [Install the Chef Delivery command-line interface (CLI) tools](#step4)
 1. [Connect the Delivery CLI to the Chef Delivery server](#step5)
-1. [Authenticate access to Delivery's Git server](#step6)
-1. [Set your Git identity](#step7)
+1. [Set your Git identity](#step6)
+1. [Authenticate access to Delivery's Git server](#step7)
 
 [COMMENT] In this tutorial, you're using a Windows workstation. In practice, a user's workstaton [can run Windows, Mac OS X, or Linux](https://docs.chef.io/release/delivery/install_delivery_ssh.html#install-delivery-cli).
 
 [START_BOX]
 
-## 1. Connect to your Windows workstation and open PowerShell
+## 1. Open PowerShell
 
-If you performed the previous part, you're already connected to the Windows workstation. Otherwise, [refer to this step](/delivery/get-started/create-the-organization-and-add-a-user/#step1) to learn how to connect.
-
-After you connect, you may find it easier to continue this tutorial by opening this page in a browser from your RDP connection. We recommend that you use Google Chrome, which is preinstalled. If prompted, set Chrome as the default web browser.
-
-Now open a Windows PowerShell window. From the task bar, right click the PowerShell icon and choose **Run as Administrator**.
+From the task bar, right click the PowerShell icon and choose **Run as Administrator**.
 
 ![](delivery/open_powershell_admin.png)
 
@@ -55,7 +51,7 @@ The command completed successfully.
 
 ## 2. Create a working directory
 
-Now set up a directory to work in. This is where your Delivery user settings and project will go.
+Now set up a directory to work in and move to that directory. This is where your Delivery user settings and project will go.
 
 ```ps
 # ~
@@ -84,9 +80,9 @@ $ atom .
 
 ## 3. Update your Delivery user with an SSH public key
 
-You need to associate your public SSH key with your Delivery user. This key enables you to authenticate requests to Delivery from the command line.
+At this point, you should have a [user account and its initial password](/delivery/get-started/create-the-organization-and-add-a-user#step3) set up.
 
-If someone else set up the account for you, ask that person for your username and initial password. If you do not have a Delivery user set up, [do so now](/delivery/get-started/create-the-organization-and-add-a-user#step4).
+You need to associate your public SSH key with your Delivery user. This key enables you to authenticate requests to Delivery from the command line.
 
 Start by generating an SSH key. Run this from your PowerShell prompt. You can replace you@example.com with your email address. Press Enter at each prompt (in other words, enter an empty response.)
 
@@ -123,21 +119,9 @@ Now copy the public part of your SSH key, <% fp '~\\\\.ssh\id_rsa.pub' %>, to th
 $ Get-Content ~\.ssh\id_rsa.pub | clip
 ```
 
-Next, log into the Chef Delivery web interface. Google Chrome comes preconfigured with this page as its home page. If you closed this tab, navigate to [https://10.0.0.12/e/delivery-demo](https://10.0.0.12/e/delivery-demo). If prompted, set Chrome as the default web browser.
+Next, log into the Chef Delivery web interface from Google Chrome. [https://10.0.0.12/e/delivery-demo](https://10.0.0.12/e/delivery-demo)
 
-If you see a warning regarding the Delivery server's security certificate, accept the certificate by clicking **Advanced** and then **Proceed to 10.0.0.12**.
-
-<% accordion('accept-cert', 'More details') do %>
-
-You'll likely see this warning.
-
-<img style="max-width:100%;" src="/assets/images/delivery/accept_server_certificate.png"/>
-
-For puposes of the tutorial, it's safe to accept the certificate. Delivery comes with a self-signed certificate. In a production environment, you would typically set up a certificate chain that's rooted by a trusted certificate authority (CA) to enable the Delivery server to verify its authenticity.
-
-<% end %>
-<br>
-On the next page, enter your username and initial password.
+Enter your username and initial password.
 
 Next, select **Users** from the drop-down menu in the upper right corner.
 
@@ -228,7 +212,27 @@ user = "USER"
 
 [START_BOX]
 
-## 6. Authenticate access to Delivery's Git server
+## 6. Set your Git identity
+
+Run `git config` to set your [Git identity](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup#Your-Identity). Git includes this information as metadata when you commit changes.
+
+If you have an existing Git account, such as with GitHub, you can use the same information here (changes you make in this tutorial won't be published as public activity on your GitHub account.)
+
+Here's an example.
+
+```ps
+# ~\delivery-demo
+$ git config --global user.name "John Smith"
+$ git config --global user.email jsmith@example.com
+```
+
+Your workstation is now set up.
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Authenticate access to Delivery's Git server
 
 As a verification step, authenticate access to Delivery's Git server, which by default runs on port 8989.
 
@@ -245,25 +249,5 @@ channel 0: protocol error: close rcvd twice
 Hi USER@delivery-demo! You've successfully authenticated, but Chef Delivery does not provide shell access.
                       Connection to 10.0.0.12 closed.
 ```
-
-[END_BOX]
-
-[START_BOX]
-
-## 7. Set your Git identity
-
-Finally, run `git config` to set your [Git identity](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup#Your-Identity). Git includes this information as metadata when you commit changes.
-
-If you have an existing Git account, such as with GitHub, you can use the same information here (changes you make in this tutorial won't be published as public activity on your GitHub account.)
-
-Here's an example.
-
-```ps
-# ~\delivery-demo
-$ git config --global user.name "John Smith"
-$ git config --global user.email jsmith@example.com
-```
-
-Your workstation is now set up.
 
 [END_BOX]
