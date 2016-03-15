@@ -83,7 +83,7 @@ You log in to the Delivery web interface and create an organization and a user a
 
 Next, you configure a workstation to communicate with Chef Delivery.
 
-The automation sets up a virtual Windows workstation. You install the Chef Delivery commmand-line interface (CLI) tools and set up a user account so you can access Delivery.
+The automation sets up a virtual Windows workstation. You install the Chef Delivery command-line interface (CLI) tools and set up a user account so you can access Delivery.
 
 ### Part 4: Create the project
 
