@@ -6,5 +6,6 @@
 //= require home
 //= require ga-link-checker
 //= require section-links
+//= require clipboard
 
 $(document).foundation();
