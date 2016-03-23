@@ -19,9 +19,9 @@ From your <code class="file-path">~/learn-chef</code> directory, run these comma
 ```bash
 # ~/learn-chef
 $ knife cookbook site download learn_chef_apache2
-Downloading learn_chef_apache2 from the cookbooks site at version 0.2.1 to /home/chef/learn-chef/learn_chef_apache2-0.2.1.tar.gz
-Cookbook saved: /home/chef/learn-chef/learn_chef_apache2-0.2.1.tar.gz
-$ tar -zxvf learn_chef_apache2-0.2.1.tar.gz -C cookbooks
+Downloading learn_chef_apache2 from the cookbooks site at version 0.3.0 to /home/chef/learn-chef/learn_chef_apache2-0.3.0.tar.gz
+Cookbook saved: /home/chef/learn-chef/learn_chef_apache2-0.3.0.tar.gz
+$ tar -zxvf learn_chef_apache2-0.3.0.tar.gz -C cookbooks
 learn_chef_apache2/
 learn_chef_apache2/.kitchen.yml
 learn_chef_apache2/Berksfile

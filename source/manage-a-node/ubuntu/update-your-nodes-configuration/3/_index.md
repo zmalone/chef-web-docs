@@ -18,7 +18,7 @@ $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-passw
 40.76.28.32 Starting Chef Client, version 12.6.0
 40.76.28.32 resolving cookbooks for run list: ["learn_chef_apache2"]
 40.76.28.32 Synchronizing Cookbooks:
-40.76.28.32   - learn_chef_apache2 (0.2.1)
+40.76.28.32   - learn_chef_apache2 (0.3.0)
 40.76.28.32 Compiling Cookbooks...
 40.76.28.32 Converging 3 resources
 40.76.28.32 Recipe: learn_chef_apache2::default
@@ -52,7 +52,7 @@ $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --identity-
 40.76.28.32 Starting Chef Client, version 12.6.0
 40.76.28.32 resolving cookbooks for run list: ["learn_chef_apache2"]
 40.76.28.32 Synchronizing Cookbooks:
-40.76.28.32   - learn_chef_apache2 (0.2.1)
+40.76.28.32   - learn_chef_apache2 (0.3.0)
 40.76.28.32 Compiling Cookbooks...
 40.76.28.32 Converging 3 resources
 40.76.28.32 Recipe: learn_chef_apache2::default
@@ -86,7 +86,7 @@ $ knife ssh localhost --ssh-port PORT 'sudo chef-client' --manual-list --ssh-use
 localhost Starting Chef Client, version 12.6.0
 localhost resolving cookbooks for run list: ["learn_chef_apache2"]
 localhost Synchronizing Cookbooks:
-localhost   - learn_chef_apache2 (0.2.1)
+localhost   - learn_chef_apache2 (0.3.0)
 localhost Compiling Cookbooks...
 localhost Converging 3 resources
 localhost Recipe: learn_chef_apache2::default

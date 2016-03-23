@@ -1,9 +1,16 @@
-## 1. Install the Apache package
 
-Let's install the Apache package, `apache2`. From your <code class="file-path">~/chef-repo</code> directory, add this recipe to a file named <code class="file-path">webserver.rb</code>.
+
+## 2. Install the Apache package
+
+Now let's install the Apache package, `apache2`. Modify <code class="file-path">webserver.rb</code> to look like this.
 
 ```ruby
 # ~/chef-repo/webserver.rb
+apt_update 'Update the apt cache daily' do
+  frequency 86_400
+  action :periodic
+end
+    
 package 'apache2'
 ```
 
@@ -21,14 +28,14 @@ resolving cookbooks for run list: []
 Synchronizing Cookbooks:
 Compiling Cookbooks...
 [2016-01-07T18:16:04+00:00] WARN: Node default-ubuntu-1404 has an empty run list.
-Converging 1 resources
+Converging 2 resources
 Recipe: @recipe_files::/root/chef-repo/webserver.rb
   * apt_package[apache2] action install
     - install version 2.4.7-1ubuntu4.8 of package apache2
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 1/1 resources updated in 08 seconds
+Chef Client finished, 2/2 resources updated in 08 seconds
 ```
 
 [COMMENT] `sudo` is required because this command installs a package and therefore must be run with root privileges. If you're running as root on your own machine, you can omit `sudo` from the command.

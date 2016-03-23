@@ -10,6 +10,11 @@ Let's take another quick look at our web server recipe.
 
 ```ruby
 # ~/chef-repo/webserver.rb
+apt_update 'Update the apt cache daily' do
+  frequency 86_400
+  action :periodic
+end
+
 package 'apache2'
 
 service 'apache2' do

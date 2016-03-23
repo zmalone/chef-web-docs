@@ -5,7 +5,7 @@ Now upload the Learn Chef Apache cookbook to your Chef server. Run this command 
 ```bash
 # ~/learn-chef
 $ knife cookbook upload learn_chef_apache2
-Uploading learn_chef_apache2    [0.2.1]
+Uploading learn_chef_apache2    [0.3.0]
 Uploaded 1 cookbook.
 ```
 
@@ -14,7 +14,7 @@ The output shows that the cookbook was successfully uploaded, but you can run th
 ```bash
 # ~/learn-chef
 $ knife cookbook list
-learn_chef_apache2   0.2.1
+learn_chef_apache2   0.3.0
 ```
 
 You can also see the cookbook from [https://manage.chef.io/](https://manage.chef.io/). Select the **Policy** tab to show all available cookbooks.
