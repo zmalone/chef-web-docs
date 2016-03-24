@@ -13,6 +13,15 @@ Now run the `chef` command to generate a cookbook named `learn_chef_httpd`.
 ```bash
 # ~/chef-repo/cookbooks
 $ chef generate cookbook learn_chef_httpd
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Recipe: code_generator::cookbook
+  * directory[/root/chef-repo/cookbooks/learn_chef_httpd] action create
+    - create new directory /root/chef-repo/cookbooks/learn_chef_httpd
+[...]
+    - update content in file /root/chef-repo/cookbooks/learn_chef_httpd/recipes/default.rb from none to 032289
+    (diff output suppressed by config)
+    - restore selinux security context
 ```
 
 Here's the directory structure that the command created.

@@ -5,6 +5,17 @@ Now we'll move the home page to an external file. First, run this command to gen
 ```bash
 # ~/chef-repo/cookbooks
 $ chef generate template learn_chef_httpd index.html
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Recipe: code_generator::template
+  * directory[./learn_chef_httpd/templates/default] action create
+    - create new directory ./learn_chef_httpd/templates/default
+    - restore selinux security context
+  * template[./learn_chef_httpd/templates/default/index.html.erb] action create
+    - create new file ./learn_chef_httpd/templates/default/index.html.erb
+    - update content in file ./learn_chef_httpd/templates/default/index.html.erb from none to e3b0c4
+    (diff output suppressed by config)
+    - restore selinux security context
 ```
 
 The file <code class="file-path">index.html.erb</code> gets created under <code class="file-path">learn\_chef\_httpd/templates/default</code>.
