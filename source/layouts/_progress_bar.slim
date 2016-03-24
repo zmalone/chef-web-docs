@@ -1,0 +1,11 @@
+// collect sibling pages, including this page, that are not appendices.
+- @siblings = page.parent.children.sort.reject { |p| p.appendix? }
+// compute which one we are.
+- @index = @siblings.index(page) + 1
+// compute overall percentage.
+- @percentage = (@index * 100 / @siblings.count).to_i
+row
+  span.progress-label
+    = "Part #{@index} of #{@siblings.count}"
+  div.custom-progress-container.small-2
+    span.meter style="width: #{@percentage}%;"
