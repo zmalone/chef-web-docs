@@ -1,4 +1,4 @@
-The directory from where you ran `vagrant init centos-6.5` contains a file named <code class="file-path">Vagrantfile</code>. From that directory, run the `vagrant ssh-config` command to get the connection details.
+The directory from where you ran `vagrant init centos-7.2` contains a file named <code class="file-path">Vagrantfile</code>. From that directory, run the `vagrant ssh-config` command to get the connection details.
 
 ```bash
 $ vagrant ssh-config

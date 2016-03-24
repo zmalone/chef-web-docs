@@ -1,6 +1,6 @@
 ### Download a CentOS 7.2 Vagrant box
 
-The next step is to download a base virtual machine image, called a _box_. Here's how to download a CentOS 6.5 box.
+The next step is to download a base virtual machine image, called a _box_. Here's how to download a CentOS 7.2 box.
 
 ```bash
 $ vagrant box add centos-7.2 http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.2_chef-provisionerless.box
