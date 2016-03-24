@@ -1,0 +1,5 @@
+AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
+
+If you're new to AWS, their ["Launch a Linux Virtual Machine" tutorial](https://aws.amazon.com/getting-started/launch-a-virtual-machine/) walks you through the creation of your first Linux virtual machine.
+
+When you're ready to continue with this tutorial, visit the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00IOYDTV6) to create a Red Hat Enterprise Linux 7.2 or CentOS 7 instance. Select t2.micro to take advantage of the free usage tier. When you create your security group, ensure that ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) are open for inbound network traffic.
