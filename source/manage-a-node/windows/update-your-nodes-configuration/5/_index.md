@@ -16,7 +16,17 @@ $ knife client delete node1 --yes
 Deleted client[node1]
 ```
 
-### Tear down your node
+### Optional: Delete the RSA private key from your node
+
+During the bootstrap process, an RSA private key is generated on your node to enable your node to make API calls to the Chef server. The default location of this key is <code class="file-path">C:\chef\client.pem</code> on Windows Server. 
+
+If you plan to bootstrap your node a second time, for example, to practice the process, you'll need to log in to your node and delete the RSA private key file, like this (you'll need to open your command prompt as **Administrator**.) 
+
+```ps
+$ rm C:\chef\client.pem
+```
+
+### Optional: Tear down your node
 
 Deleting a node from your Chef server removes any data about that node from the server &ndash; it doesn't automatically tear down the instance.
 
