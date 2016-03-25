@@ -41,17 +41,17 @@ At a minimum, a Delivery cluster includes Chef Delivery and one build node.
 
 Your setup includes Chef Delivery and Chef server, along with two build nodes. The Chef server holds the `awesome_customers_delivery` cookbook, which is an output of the pipeline. Having multiple build nodes enables phases to run in parallel.
 
-**Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Delivery deploys build artifacts, or the pipeline's final output, to these environments.
+**Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Delivery deploys build artifacts, or the pipeline's final output, to these environments. The output of your pipeline informs how you set up your environments.
 
-The output of your pipeline informs how you set up your environments.
+For example, you might deploy a SQL Server database to a Windows Server environment. You might deploy web content and other media to an Amazon S3 bucket. In this tutorial, the `awesome_customers_delivery` cookbook configures the Customers web application on Ubuntu. Therefore, the Acceptance, Union, Rehearsal and Delivered environments would all run Ubuntu.
 
-For example, you might deploy a SQL Server database to a Windows Server environment. You might deploy web content and other media to an Amazon S3 bucket. In this tutorial, the `awesome_customers_delivery` cookbook configures the Customers web application on Ubuntu. Therefore, the Acceptance, Union, Rehearsal and Delivered stages would all run Ubuntu.
+Recall that the final four stages of the pipeline are Acceptance, Union, Rehearsal, Delivered. A runtime environment exists for each of these stages because the artifacts produced in the Build stage need to be deployed.
 
-Your Acceptance, Union, Rehearsal, and Delivered environments typically resemble your production environment. Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
+Each environment is named for the stage in which it is used. These environments typically resemble your production environment, and can often be part of your production environment. Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
 
 The automation brings up one Ubuntu 14.04 instance, and it is for the Acceptance environment. It comes already [bootstrapped to the Chef server](https://docs.chef.io/install_bootstrap.html). We provide only the Acceptance environment to minimize the number of systems involved as you learn about Chef Delivery. A complete setup might include additional Ubuntu servers for the Union, Rehearsal and Delivered stages.
 
-**Team member's workstation** &ndash; Workstations are typically either a laptop or desktop computer. A workstation can run Windows, Mac OS X, or Linux. From the workstation, users access Chef Delivery using either the command line or the web interface. Common tasks include creating projects, writing build cookbooks, submitting new features to the pipeline, and reviewing and approving others' changes.
+**Team member's workstation** &ndash; Workstations are typically either a laptop or desktop computer. A workstation can run Windows, Mac OS X, or Linux. From the workstation, users access Chef Delivery using either the command line or the web interface. Other common tasks include creating projects, writing build cookbooks, submitting new features to the pipeline, and reviewing and approving others' changes.
 
 The automation sets up a Windows workstation because Windows provides an easy way to connect to its graphical desktop remotely.
 
@@ -80,6 +80,7 @@ For the Acceptance environment, the automation sets up network access on these p
 To run the automated installation, you need:
 
 1. an [AWS account](https://aws.amazon.com/free/).
+1. an IAM policy that [includes the necessary permissions](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-iam-template.html) to work with CloudFormation stacks.
 1. an [SSH key pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-a-key-pair) for one of these regions.
   * us-east-1 (N. Virginia)
   * us-west-1 (N. California)
@@ -107,7 +108,7 @@ MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438, function(form
 
 [END_MODAL]
 
-After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <% fp '~/delivery.license' %>. The automation you'll run in the next step uploads your license key to the Delivery server.
+After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <% fp '~/delivery.license' %>. The automation you'll run in the next step uploads your license key to your Delivery server.
 
 [END_BOX]
 
@@ -221,7 +222,7 @@ Windows comes with an RDP client. Run `mstsc` from the command prompt to bring u
 1. In the **User name** field, enter <span id="username-mac"><code>Administrator</code></span>. <a data-copytarget="#username-mac" class='small-button radius'>Copy</a>
 1. In the **Password** field, enter <span id="password-mac"><code>P4ssw0rd</code></span>. <a data-copytarget="#password-mac" class='small-button radius'>Copy</a>
 1. Close the window.
-1. Select your connection to connect.
+1. Select your connection and press **Start**.
 1. A warning appears stating that the certificate could not be verified back to a root certificate. This is because the Windows workstaton comes with a self-signed certificate. Click **Continue** to continue connecting.
 
 ![](/assets/images/misc/rdp_mac.png)

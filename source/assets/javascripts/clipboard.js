@@ -45,9 +45,9 @@
     }
     else {
       // show error message
-      var m = "Please press Ctrl+C to copy";
+      var m = "Your browser can't copy to the clipboard.\n\nPlease press Ctrl+C to copy.";
       if (navigator.appVersion.indexOf("Mac") !== -1) {
-        m = "Please press Command+C to copy";
+        m = "Your browser can't copy to the clipboard.\n\nPlease press Command+C to copy.";
       }
       alert(m);
     }
