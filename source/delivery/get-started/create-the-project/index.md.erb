@@ -281,6 +281,24 @@ end
 
 You can modify a recipe in your build cookbook to fit your requirements. For example, you might add additional code or remove the `include_recipe` line entirely to specify your own implementation.
 
+<% accordion('when-to-use-delivery-truck', 'When should you use the delivery-truck cookbook?') do %>
+
+<% markdown do %>
+
+For this project, the `delivery init` command detects the `awesome_customer_delivery` cookbook and automatically includes `delivery-truck` for you. This makes your build cookbook what's called a _wrapper cookbook_.
+
+You'll likely want to use `delivery-truck` in a cookbook project because `delivery-truck` handles many common tasks for you. Because your build cookbook wraps `delivery-truck`, you can extend or replace the `delivery-truck` cookbook's behavior in your build cookbook.
+
+If your project doesn't include a Chef cookbook, `delivery init` creates an empty build cookbook, meaning it won't generate a wrapper around `delivery-truck`.
+
+Is there a common application type or pattern you'd like to see, similar to `delivery-truck`? [Start the discussion](https://discourse.chef.io/c/delivery) on Discourse.
+
+<% end %>
+
+<% end %>
+
+<br>
+
 Now go back to the Delivery web interface. When the Verify stage completes, you'll see that all 3 tests pass.
 
 ![](delivery/delivery-init-result.png)
@@ -458,7 +476,7 @@ After you approve the change, it moves to the Build stage.
 
 The unit, lint, and syntax phases run again on the build node. Rerunning the tests ensures that they continue to pass after the change is merged to `master`.
 
-The Build stage also runs the security and quality phases. By default, these phases do nothing. Then the publish phase runs. This phase creates an artifact (in our case, a cookbook) that is a release candidate. Recall that you configured `delivery-truck` to publish the `awesome_customers_delivery` cookbook to Chef server. `delivery-truck` runs the `knife cookbook upload` command to do that ([source code](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/publish.rb)).
+The Build stage also runs the security and quality phases. These recipes do not have any logic, so nothing happens. Then the publish phase runs. This phase creates an artifact (in our case, a cookbook) that is a release candidate. Recall that you configured `delivery-truck` to publish the `awesome_customers_delivery` cookbook to Chef server. `delivery-truck` runs the `knife cookbook upload` command to do that ([source code](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/publish.rb)).
 
 ![](delivery/delivery-init-build.png)
 
@@ -562,7 +580,7 @@ Fast-forward
  create mode 100644 .delivery/config.json
 ```
 
-The `--prune` option removes references to any remote-tracking branches that no longer exist on the remote server. `delivery/_for/master/add-delivery-config` is an intermediate branch that Delivery creates as part of the integration process.
+The [--prune](https://git-scm.com/docs/git-prune) option removes references to any remote-tracking branches that no longer exist on the remote server. `delivery/_for/master/add-delivery-config` is an intermediate branch that Delivery creates as part of the integration process.
 
 <% accordion('delivery-and-git', 'Delivery and Git remotes') do %>
 

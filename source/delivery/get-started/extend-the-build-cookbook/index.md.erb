@@ -92,7 +92,9 @@ nodes.each do |node|
 end
 ```
 
-This code performs a similar query as the one in the deploy phase. For each node in the environment (we expect only one), we use the `execute` resource to run `curl` with the `-IL` flag (fetch HTTP reader only and follow any redirects) and search for the expected response code.
+This code performs a similar query as the one in the deploy phase. For each node in the environment (we expect only one), we use the [execute](https://docs.chef.io/resource_execute.html) resource to run `curl` with the `-IL` flag (fetch HTTP reader only and follow any redirects) and search for the expected response code.
+
+If the cURL command fails, the details are shown in the output and the pipeline moves to a failed state. You may then need to work with your team to examine and fix the failure. The fix may require you to push a new change through the pipeline, which is a completely acceptable thing to do.
 
 [END_BOX]
 
