@@ -21,11 +21,12 @@ In this part, you create a project and watch the `awesome_customers_delivery` co
 1. [Clone the awesome\_customers_delivery repo from GitHub](#step1)
 1. [Create the project and the pipeline](#step2)
 1. [Watch the Verify stage run](#step3)
-1. [Configure the build cookbook to publish to Chef server](#step4)
-1. [Submit the change](#step5)
-1. [Approve the change](#step6)
-1. [Deliver the change](#step7)
-1. [Integrate the change to your local master branch](#step8)
+1. [Take a closer look at your Delivery project](#step4)
+1. [Configure the build cookbook to publish to Chef server](#step5)
+1. [Submit the change](#step6)
+1. [Approve the change](#step7)
+1. [Deliver the change](#step8)
+1. [Integrate the change to your local master branch](#step9)
 
 During the process, you'll see how the `delivery-truck` cookbook can perform many common tasks that are needed to deliver Chef cookbooks.
 
@@ -146,7 +147,7 @@ The `delivery` command uses your password to generate an API token that's used t
 
 A browser window appears and the first stage of the pipeline, Verify, begins running its phases.
 
-[COMMENT] The appendex explains how to [delete your project](/delivery/get-started/managing-your-aws-instances#deletingthedeliveryproject) if you need to start over or want to do the tutorial a second time.
+[COMMENT] The appendix explains how to [delete your project](/delivery/get-started/managing-your-aws-instances#deletingthedeliveryproject) if you need to start over or want to do the tutorial a second time.
 
 [END_BOX]
 
@@ -158,9 +159,33 @@ When you run `delivery init`, two things happen. The first stage of the pipeline
 
 ![](delivery/delivery-init-running.png)
 
-While the Verify stage runs, let's take a closer look at your project.
+It's a good idea to watch each pipeline phase run at least once to gain a better understanding of what happens during the process. 
 
-The `delivery init` command creates the <% '.delivery' %> directory at the root of your project. This directory contains two important pieces &ndash; a configuration file (<% fp 'config.json' %>) and the build cookbook (under the <% fp 'build-cookbook' %> directory).
+As each of the unit, lint, and syntax phases moves to the <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/running_icon.png"/> state, click **>** to show the output log.
+ 
+![](delivery/syntax_open_log.png)
+
+![](delivery/syntax_output_log.png)
+
+Every time a phase runs, the build node first runs the build cookbook's default recipe, <% fp 'default.rb' %>, as the `root` user to ensure that the build node has everything it needs to run. This step is important because you can have multiple build nodes &ndash; a build node that runs one phase will not necessarily have run any of the prior phases.
+
+After the default recipe completes, the build node runs the recipe for the phase as the `dbuild` user.
+
+![](delivery/syntax_output_log2.png)
+
+Watch as each phase completes and enters the <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/passed_icon.png"/> state.
+
+![](delivery/delivery-init-result.png)
+
+Now that the Verify stage has completed, let's take a closer look at your project.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Take a closer look at your Delivery project
+
+The `delivery init` command creates the <% fp '.delivery' %> directory at the root of your project. This directory contains two important pieces &ndash; a configuration file (<% fp 'config.json' %>) and the build cookbook (under the <% fp 'build-cookbook' %> directory).
 
 ```ps
 $ tree .delivery /F
@@ -299,10 +324,6 @@ Is there a common application type or pattern you'd like to see, similar to `del
 
 <br>
 
-Now go back to the Delivery web interface. When the Verify stage completes, you'll see that all 3 tests pass.
-
-![](delivery/delivery-init-result.png)
-
 A manual step is required to move to the Build stage. This is where your team decides whether the code can be merged into the `master` branch or more work is needed.
 
 We're not quite ready yet to to merge the change to `master`. First, we need to configure the build cookbook to publish the `awesome_customers_delivery` cookbook to the Chef server.
@@ -311,7 +332,7 @@ We're not quite ready yet to to merge the change to `master`. First, we need to 
 
 [START_BOX]
 
-## 4. Configure the build cookbook to publish to Chef server
+## 5. Configure the build cookbook to publish to Chef server
 
 In this step, you configure your build cookbook to publish the `awesome_customers_delivery` cookbook to the Chef server during the publish phase. Then you commit that change to the `add-delivery-config` branch and submit the change for review.
 
@@ -395,7 +416,7 @@ The file will have its original line endings in your working directory.
 
 [START_BOX]
 
-## 5. Submit the change
+## 6. Submit the change
 
 Run `delivery review` to submit your change to the `add-delivery-config` branch for review as a new patchset.
 
@@ -418,7 +439,7 @@ A browser window opens to show the pipeline in Chef Delivery. The Verify stage i
 
 [START_BOX]
 
-## 6. Approve the change
+## 7. Approve the change
 
 The next step is to approve the change. This is a manual step, where people on your team have a chance to review the code and promote it to the Build stage.
 
@@ -468,7 +489,7 @@ After two people approve a code change in the **Review** tab and there are no un
 
 [START_BOX]
 
-## 7. Deliver the change
+## 8. Deliver the change
 
 After you approve the change, it moves to the Build stage.
 
@@ -488,7 +509,7 @@ Beginning with the Acceptance stage, the pipeline switches from analyzing the pr
 
 The Acceptance stage runs the provision, deploy, smoke, and functional phases.
 
-The provision phase is where you can bring up infrastructure to run your artifact. The automated Delivery installation provides an Ubuntu server to run the cookbook in the Acceptance stage. This server is already bootstrapped to the Chef server, so no specific action is required.
+The provision phase is where you can bring up infrastructure to run your artifact. The automated Delivery installation provides an Ubuntu server to run the cookbook in the Acceptance environment. This server is already bootstrapped to the Chef server, so no specific action is required.
 
 The deploy phase deploys the artifact created in the Build stage. The `delivery-truck` cookbook submits a [push job](https://docs.chef.io/push_jobs.html) that runs `chef-client` to deploy the `awesome_customers_delivery` cookbook to the infrastructure that's associated with the Acceptance stage.
 
@@ -548,7 +569,7 @@ You can set up a distinct runtime environment for each of the Acceptance, Union,
 
 [START_BOX]
 
-## 8. Integrate the change to your local master branch
+## 9. Integrate the change to your local master branch
 
 When you clicked **Approve** during the Verify stage, Chef Delivery merged the `add-delivery-config` branch into `master` on Delivery's Git server. Now you need to pull Delivery's updated `master` into your local `master` branch.
 
