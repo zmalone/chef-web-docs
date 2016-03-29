@@ -75,7 +75,7 @@ $ cd awesome_customers_delivery
 
 Remember, for the tutorial, you're cloning an existing Git project to obtain starter code. You can configure Chef Delivery to connect directly with your existing Git projects, import code from another source control system, or create a new repository.
 
-[COMMENT] The workstaton comes with [posh-git](https://github.com/dahlbyk/posh-git), which integrates Git with PowerShell. posh-git provides useful features such as tab completion and the ability to show the current branch and the state of files.
+[COMMENT] The workstation comes with [posh-git](https://github.com/dahlbyk/posh-git), which integrates Git with PowerShell. posh-git provides useful features such as tab completion and the ability to show the current branch and the state of files.
 
 [END_BOX]
 
@@ -509,11 +509,19 @@ Beginning with the Acceptance stage, the pipeline switches from analyzing the pr
 
 The Acceptance stage runs the provision, deploy, smoke, and functional phases.
 
-The provision phase is where you can bring up infrastructure to run your artifact. The automated Delivery installation provides an Ubuntu server to run the cookbook in the Acceptance environment. This server is already bootstrapped to the Chef server, so no specific action is required.
+The provision phase is where you can bring up infrastructure to run your artifact. The automated Delivery installation provides an Ubuntu server to run the cookbook during the Acceptance stage. This server is already bootstrapped to the Chef server, so no specific action is required.
 
 The deploy phase deploys the artifact created in the Build stage. The `delivery-truck` cookbook submits a [push job](https://docs.chef.io/push_jobs.html) that runs `chef-client` to deploy the `awesome_customers_delivery` cookbook to the infrastructure that's associated with the Acceptance stage.
 
-Delivery uses [search](https://docs.chef.io/chef_search.html) to find the node that matches the Acceptance [environment](https://docs.chef.io/environments.html) and has the `awesome_customers_delivery` cookbook in its run-list ([source code](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/deploy.rb)). The automated Delivery installation sets up the environment and the run-list for you.
+<% accordion('deployment-process', 'Learn more about the deployment process') do %>
+
+<%= partial 'deployment-process' %>
+
+<% end %>
+
+<br>
+
+The smoke and functional recipes do not have any logic, so nothing happens. You'll implement the smoke phase later in this tutorial. 
 
 After the Acceptance stage completes, navigate to [http://10.0.0.15](http://10.0.0.15) from a second browser window. You'll see the Customers web application.
 
