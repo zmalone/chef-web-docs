@@ -2,7 +2,7 @@
 
 In this part, you'll write Serverspec tests that verify the state of the web application on a Test Kitchen instance.
 
-In the [Learn to manage a basic web application](/manage-a-web-app/rhel/) tutorial, you manually logged in to your node and ran commands to verify the configuration. Here, we'll translate each manual test to an automated one.
+In the [Manage a basic web application](/manage-a-web-app/rhel/) tutorial, you manually logged in to your node and ran commands to verify the configuration. Here, we'll translate each manual test to an automated one.
 
 Let's begin by writing one test that verifies that you can access the web application and that the home page contains the correct title.
 

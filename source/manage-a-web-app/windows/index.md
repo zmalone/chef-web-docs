@@ -1,5 +1,5 @@
 ---
-title: 'Learn to manage a basic Windows Server web application'
+title: 'Manage a basic Windows Server web application'
 layout: lesson-overview
 platform: Windows Server
 logo: windows.svg
@@ -8,8 +8,8 @@ order: 2
 In this tutorial, you'll have the opportunity to practice what you've learned in the previous tutorials. Here's a quick recap:
 
 * In [Learn the Chef basics](/learn-the-basics/windows/), you learned how Chef works by running `chef-client` in local mode to configure Windows Server directly.
-* In [Learn to manage a node](/manage-a-node/windows/), you learned how to set up your Chef server and bootstrap and manage a server, also called a _node_, remotely from your workstation.
-* In [Learn to develop your infrastructure code locally](/local-development/windows/), you learned how _local development_ with Test Kitchen helps shorten the development process. With Test Kitchen, you apply your cookbook to a temporary instance that resembles production before you apply your work to a bootstrapped node.
+* In [Manage a node](/manage-a-node/windows/), you learned how to set up your Chef server and bootstrap and manage a server, also called a _node_, remotely from your workstation.
+* In [Develop your infrastructure code locally](/local-development/windows/), you learned how _local development_ with Test Kitchen helps shorten the development process. With Test Kitchen, you apply your cookbook to a temporary instance that resembles production before you apply your work to a bootstrapped node.
 
 Now you'll build a basic but complete web application on Windows Server called Customers that uses a web server, a database, and scripting. Such a configuration is commonly called a _LAMP stack_. The LAMP acronym comes from Linux and stands for Linux, Apache, MySQL, and PHP. On Windows, such a configuration is also commonly called a _WISA stack_, which stands for Windows, IIS, SQL Server, and ASP.NET. Both terms can be used when referring to the Windows configuration. You'll write a cookbook that's named `awesome_customers_windows`.
 

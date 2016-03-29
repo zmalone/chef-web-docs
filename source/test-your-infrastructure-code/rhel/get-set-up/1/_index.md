@@ -4,7 +4,7 @@ In this tutorial, you'll use Test Kitchen to apply and verify your configuration
 
 If you're not familiar with Test Kitchen, follow this Learn Chef tutorial to get set up with the tools and learn how Test Kitchen works.
 
-<a class='accent-button radius' href='/local-development/rhel/' target='_blank'>Learn to develop your Red Hat Enterprise Linux infrastructure code locally&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+<a class='accent-button radius' href='/local-development/rhel/' target='_blank'>Develop your Red Hat Enterprise Linux infrastructure code locally&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
 After completing this tutorial, you'll:
 

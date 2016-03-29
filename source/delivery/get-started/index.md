@@ -46,7 +46,7 @@ Changes progress from one stage to another by passing a suite of automated tests
 
 ## Phases
 
-The tests within each stage are organized into phases.
+The work within each stage is organized into phases.
 
 Here are the phases for each stage.
 
@@ -66,15 +66,13 @@ This tutorial comes in multiple parts. In the first three parts, you bring up a 
 
 ### Part 1: Install Chef Delivery on AWS
 
-Chef Delivery runs on your hardware or in the cloud.
-
 To help you get started with Chef Delivery more quickly, you begin by using automation to build infrastructure that runs in Amazon Web Services (AWS). All you need is an AWS account and a Chef Delivery license key (you sign up for a trial key on the next page).
 
 The automation brings up a fully-functional Chef Delivery system in an isolated AWS environment that won't affect anything else you're running. After you complete the tutorial, you can experiment further and then simply tear down the environment when you're done.
 
 ### Part 2: Create the organization and add a user
 
-Here, you configure Chef Delivery for your users.
+Here you add the users that will perform the last three parts of this tutorial.
 
 You log in to the Delivery web interface and create an organization and a user account. Organizations group related projects. User accounts enable end users to access Delivery through its web interface or from the command line.
 
@@ -82,13 +80,13 @@ You log in to the Delivery web interface and create an organization and a user a
 
 Next, you configure a workstation to communicate with Chef Delivery.
 
-The automation sets up a virtual Windows workstation. You install the Chef Delivery commmand-line interface (CLI) tools and set up a user account so you can access Delivery.
+The automation sets up a virtual Windows workstation. You install the Chef Delivery command-line interface (CLI) tools and set up a user account so you can access Delivery.
 
 ### Part 4: Create the project
 
-You can use Chef Delivery to build and deploy almost any kind of software system. For example, you can publish changes to a  Chef cookbook to Chef server, Chef Supermarket, or GitHub. Alternatively, you might deploy a service to an application server.
+You can use Chef Delivery to build and deploy almost any kind of software system. For example, you can publish changes to a Chef cookbook to Chef server, Chef Supermarket, or GitHub. Alternatively, you might deploy a service to an application server.
 
-In this tutorial, the project is a Chef cookbook named `awesome_customers_delivery`. This cookbook configures a web application named Customers, which displays customer data to the user. If you've gone through the [Learn to manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook (this tutorial is not a prerequisite.)
+In this tutorial, the project is a Chef cookbook named `awesome_customers_delivery`. This cookbook configures a web application named Customers, which displays customer data to the user. If you've gone through the [Manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook (this tutorial is not a prerequisite.)
 
 The project's build cookbook publishes the web application cookbook to a Chef server and then runs the web application cookbook on a node that's bootstrapped to the Chef server. Both the Chef server and the node are included in the automated setup.
 
@@ -114,7 +112,7 @@ In this part, you extend your build cookbook to include a smoke test. Smoke test
 
 ## How to approach this tutorial
 
-Chef Delivery is team oriented, and so is this tutorial. As a result, there are several approaches you can take.
+This tutorial walks you through setting up and using Chef Delivery as an individual. But because Chef Delivery is team oriented, you can approach the tutorial as a team as well.
 
 If you are most interested in using Chef Delivery to deploy projects, you might want to get a system administrator to help by [running the AWS automation](/delivery/get-started/install-chef-delivery/) and [creating the organization and a user account](/delivery/get-started/create-the-organization-and-add-a-user). If you're a project leader, you might find that the lesson that [sets up a project](/delivery/get-started/create-the-project/) is a good place to start. If your interest is primarily day-to-day use of Delivery, then the part of the tutorial that [walks through delivering a change](/delivery/get-started/add-a-feature-to-the-web-application/) and [extends the build cookbook](/delivery/get-started/extend-the-build-cookbook/) might be of the most interest.
 

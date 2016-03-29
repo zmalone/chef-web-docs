@@ -5,7 +5,7 @@ platform: Get started with Chef Delivery on AWS
 logo: delivery.svg
 order: 1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
-redirect: /delivery_tutorial_offline/
+redirect: /delivery/get-started/
 ---
 Chef Delivery manages changes to both infrastructure and application code, giving your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more.
 
@@ -55,7 +55,7 @@ For a complete description of Chef Delivery, see the [Chef documentation](https:
 
 ## The scenario
 
-This tutorial builds on [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) and the tutorials that follow. There, you wrote a cookbook called `awesome_customers` that built a web application named Customers.
+This tutorial builds on [Manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) and the tutorials that follow. There, you wrote a cookbook called `awesome_customers` that built a web application named Customers.
 
 The Customers application that you've built so far looks like this:
 

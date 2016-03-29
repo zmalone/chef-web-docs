@@ -17,7 +17,7 @@ In this part, you add a feature to the Customers web application by changing the
 
 This feature is provided for you in GitHub (your `origin` remote.) You first create a feature branch that's based off your local `master` branch. Then you integrate the completed feature branch from GitHub with your local feature branch.
 
-You also use `delivery job` to verify your work and resolve test failures before you submit a change to the pipeline. 
+You also use `delivery job` to verify your work and resolve test failures before you submit a change to the pipeline.
 
 Here's what you'll do:
 
@@ -76,7 +76,7 @@ Before you submit a change to the Delivery pipeline, you want to verify that the
 
 For a Chef cookbook, you might run [Test Kitchen](https://docs.chef.io/kitchen.html) as you build your feature to verify that it behaves as you expect on a temporary instance that resembles production. You might also run ChefSpec tests, Foodcritic, and RuboCop on your workstation. For an application or service, you might run a different set of tools to verify your work.
 
-Another approach is to run [delivery job](https://docs.chef.io/ctl_delivery.html#delivery-job). Chef Delivery uses `delivery job` to execute the phases on the build nodes as changes move through the pipeline. But you can also run `delivery job` to execute a phase directly on your workstation. Running jobs to exercise phases such as lint, unit, and syntax is a good way to be certain that your change is good before it reaches the pipeline.
+Another approach is to run [delivery job](https://docs.chef.io/ctl_delivery.html#delivery-job). Chef Delivery uses `delivery job` to execute the phases on the build nodes as changes move through the pipeline. But you can also run `delivery job` to execute a phase directly on your workstation. Running jobs to exercise phases such as lint, unit, and syntax is a good way to be certain that your change is valid before it reaches the pipeline.
 
 Start by running `delivery job verify unit --local` to run the unit phase under the Verify stage. The unit phase runs ChefSpec tests.
 
@@ -161,7 +161,7 @@ Chef Client finished, 2/2 resources updated in 11 seconds
 The lint phase also passes.
 
 Finally, run `delivery job verify syntax --local` to perform syntax checks.
- 
+
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
 $ delivery job verify syntax --local
@@ -369,7 +369,7 @@ When the Delivery UI appears, trace the change's progress through the pipeline.
 
 1. Review the changes in the web interface. Click **Approve** when all tests pass. In practice, others would help review and approve your code changes.
 1. Watch the change progress through the Build and Acceptance stages.
-1. After the Acceptance stage completes, navigate to [http://10.0.0.15](http://10.0.0.15) from a second browser window. You'll see the updated version of the Customers web application featuring the interactive control.
+1. After the Acceptance stage completes, navigate to [http://10.0.0.15](http://10.0.0.15) from a second browser window. You'll see that the updated version of the Customers web application features the interactive control.
 
 <img style="max-width:95%;" src="/assets/images/delivery/customers-visualize-data-delivered.png"/>
 
@@ -378,5 +378,7 @@ After you verify the change in Acceptance, press the **Deliver** button. You can
 ![](delivery/customers-visualize-data-delivered-pipeline.png)
 
 Great work! By testing your changes locally, you can discover and fix potential problems before you submit your work. Once you do submit something, Delivery's central pipeline lets you and your team review both the code and build artifacts before you move any changes to production.
+
+After your change gets merged into Delivery's `master` branch (this happens when you click the **Approve** button at the end of the Verify stage), you may want to integrate the change into your local `master` branch to prepare your copy of the source code for the next feature or bug fix. You'll checkout the `master` branch and run `git pull --prune` in the next part.
 
 [END_BOX]

@@ -6,7 +6,7 @@ Then review the [hardware and software system requirements](https://docs.chef.io
 
 The system requirements provide complete details on how to prepare your system for Chef server, but these checklists list the minimum amount required to get a Chef server up and running.
 
-<a class="help-button radius" href="#" data-reveal-id="chef-server-el-prep-help-modal">Checklist for Red Hat Enterprise Linux</a> <a class="help-button radius" href="#" data-reveal-id="chef-server-ubuntu-prep-help-modal">Checklist for Ubuntu</a>
+<a class="button radius" href="#" data-reveal-id="chef-server-el-prep-help-modal">Checklist for Red Hat Enterprise Linux</a> <a class="button radius" href="#" data-reveal-id="chef-server-ubuntu-prep-help-modal">Checklist for Ubuntu</a>
 
 <div id="chef-server-el-prep-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">To prepare your Red Hat Enterprise Linux system, ensure that:</h3>

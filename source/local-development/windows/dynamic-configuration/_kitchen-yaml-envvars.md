@@ -1,5 +1,5 @@
 ```yaml
-# ~/learn-chef/settings-windows/.kitchen.yml
+# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
 ---
 driver:
   name: ec2

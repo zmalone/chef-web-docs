@@ -156,7 +156,7 @@ id:      aws_creds
 
 ### Encrypt and upload the decryption key for the Customers web application
 
-In this step, you'll encrypt and upload the decryption key for the Customers web application. You can either use the key you generated in [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel/), or the one you generated in the [Prepare your encryption key and encrypted data bag items](#prepareyourencryptionkeyandencrypteddatabagitems) portion of this tutorial.
+In this step, you'll encrypt and upload the decryption key for the Customers web application. You can either use the key you generated in [Manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel/), or the one you generated in the [Prepare your encryption key and encrypted data bag items](#prepareyourencryptionkeyandencrypteddatabagitems) portion of this tutorial.
 
 Create <code class="file-path">~/delivery-cluster/.chef/delivery-cluster-data/database\_passwords\_key.json</code> and add this:
 
@@ -305,7 +305,7 @@ We need to:
 
 #### Decrypt the encryption key that contains the database passwords
 
-In [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel), we showed how to use `Chef::EncryptedDataBagItem` to load and decrypt the encrypted database passwords from a data bag. For this project, we'll use the [chef-sugar](https://supermarket.chef.io/cookbooks/chef-sugar) cookbook from Chef Supermarket to make the process easier. The `chef-sugar` cookbook provides the `encrypted_data_bag_item_for_environment` helper method to decrypt data bag items.
+In [Manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel), we showed how to use `Chef::EncryptedDataBagItem` to load and decrypt the encrypted database passwords from a data bag. For this project, we'll use the [chef-sugar](https://supermarket.chef.io/cookbooks/chef-sugar) cookbook from Chef Supermarket to make the process easier. The `chef-sugar` cookbook provides the `encrypted_data_bag_item_for_environment` helper method to decrypt data bag items.
 
 To load the `chef-sugar` cookbook, add the line `depends 'chef-sugar'` to your build cookbook's metadata file, <code class="file-path">metadata.rb</code>, making the entire file look like this.
 

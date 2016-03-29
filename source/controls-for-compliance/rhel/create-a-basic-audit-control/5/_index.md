@@ -4,7 +4,7 @@ Now let's apply both the `webserver` and `audit` cookbooks to the same Test Kitc
 
 In previous steps, you applied the `audit` and `webserver` cookbooks on separate Test Kitchen instances. Let's set things up so that you can run them both from the same instance. Here you'll apply the `audit` cookbook from the Test Kitchen instance for your `webserver` cookbook.
 
-Test Kitchen uses [Berkshelf](http://berkshelf.com) to resolve dependencies among cookbooks (if you haven't gone through the _Learn to manage a basic web application_ tutorial, you can [read](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration#1uploadyourcookbooktothechefserver) a bit about how Berkshelf works.) Berkshelf resolves dependencies that come from a remote source, such as Chef Supermarket, or from your local system.
+Test Kitchen uses [Berkshelf](http://berkshelf.com) to resolve dependencies among cookbooks (if you haven't gone through the _Manage a basic web application_ tutorial, you can [read](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration#1uploadyourcookbooktothechefserver) a bit about how Berkshelf works.) Berkshelf resolves dependencies that come from a remote source, such as Chef Supermarket, or from your local system.
 
 To run the `audit` cookbook from your `webserver` cookbook, modify your `webserver` cookbook's <code class="file-path">Berksfile</code> to point to the `audit` cookbook's relative location, like this.
 

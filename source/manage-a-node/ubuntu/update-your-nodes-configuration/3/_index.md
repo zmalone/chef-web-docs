@@ -15,13 +15,14 @@ Replace <code class="placeholder">ADDRESS</code>, <code class="placeholder">USER
 ```bash
 # ~/learn-chef
 $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password 'PASSWORD'
-40.76.28.32 Starting Chef Client, version 12.6.0
+40.76.28.32 Starting Chef Client, version 12.8.1
 40.76.28.32 resolving cookbooks for run list: ["learn_chef_apache2"]
 40.76.28.32 Synchronizing Cookbooks:
-40.76.28.32   - learn_chef_apache2 (0.2.1)
+40.76.28.32   - learn_chef_apache2 (0.3.0)
 40.76.28.32 Compiling Cookbooks...
-40.76.28.32 Converging 3 resources
+40.76.28.32 Converging 4 resources
 40.76.28.32 Recipe: learn_chef_apache2::default
+40.76.28.32   * apt_update[Update the apt cache daily] action periodic (up to date)
 40.76.28.32   * apt_package[apache2] action install (up to date)
 40.76.28.32   * service[apache2] action enable (up to date)
 40.76.28.32   * service[apache2] action start (up to date)
@@ -39,7 +40,7 @@ $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-passw
 40.76.28.32
 40.76.28.32 Running handlers:
 40.76.28.32 Running handlers complete
-40.76.28.32 Chef Client finished, 1/4 resources updated in 03 seconds
+40.76.28.32 Chef Client finished, 1/5 resources updated in 03 seconds
 ```
 
 ### Update your node using key-based authentication
@@ -49,13 +50,14 @@ Replace <code class="placeholder">ADDRESS</code> with your remote node's externa
 ```bash
 # ~/learn-chef
 $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
-40.76.28.32 Starting Chef Client, version 12.6.0
+40.76.28.32 Starting Chef Client, version 12.8.1
 40.76.28.32 resolving cookbooks for run list: ["learn_chef_apache2"]
 40.76.28.32 Synchronizing Cookbooks:
-40.76.28.32   - learn_chef_apache2 (0.2.1)
+40.76.28.32   - learn_chef_apache2 (0.3.0)
 40.76.28.32 Compiling Cookbooks...
-40.76.28.32 Converging 3 resources
+40.76.28.32 Converging 4 resources
 40.76.28.32 Recipe: learn_chef_apache2::default
+40.76.28.32   * apt_update[Update the apt cache daily] action periodic (up to date)
 40.76.28.32   * apt_package[apache2] action install (up to date)
 40.76.28.32   * service[apache2] action enable (up to date)
 40.76.28.32   * service[apache2] action start (up to date)
@@ -73,7 +75,7 @@ $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --identity-
 40.76.28.32
 40.76.28.32 Running handlers:
 40.76.28.32 Running handlers complete
-40.76.28.32 Chef Client finished, 1/4 resources updated in 03 seconds
+40.76.28.32 Chef Client finished, 1/5 resources updated in 03 seconds
 ```
 
 ### Update a local virtual machine using a forwarded port
@@ -83,13 +85,14 @@ Replace <code class="placeholder">PORT</code> with your SSH forwarded port, for 
 ```bash
 # ~/learn-chef
 $ knife ssh localhost --ssh-port PORT 'sudo chef-client' --manual-list --ssh-user vagrant --identity-file IDENTITY_FILE
-localhost Starting Chef Client, version 12.6.0
+localhost Starting Chef Client, version 12.8.1
 localhost resolving cookbooks for run list: ["learn_chef_apache2"]
 localhost Synchronizing Cookbooks:
-localhost   - learn_chef_apache2 (0.2.1)
+localhost   - learn_chef_apache2 (0.3.0)
 localhost Compiling Cookbooks...
-localhost Converging 3 resources
+localhost Converging 4 resources
 localhost Recipe: learn_chef_apache2::default
+localhost   * apt_update[Update the apt cache daily] action periodic (up to date)
 localhost   * apt_package[apache2] action install (up to date)
 localhost   * service[apache2] action enable (up to date)
 localhost   * service[apache2] action start (up to date)
@@ -107,7 +110,7 @@ localhost      </html>
 localhost
 localhost Running handlers:
 localhost Running handlers complete
-localhost Chef Client finished, 1/4 resources updated in 03 seconds
+localhost Chef Client finished, 1/5 resources updated in 03 seconds
 ```
 
 [COMMENT] Remember, in practice it's common to configure Chef to act as a service that runs periodically or in response to an event, such as a commit to source control. For now, we're updating our server configuration by running `chef-client` manually.

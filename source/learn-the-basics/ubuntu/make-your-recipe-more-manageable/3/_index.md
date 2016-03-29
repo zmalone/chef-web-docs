@@ -4,6 +4,11 @@ Write out the recipe, <code class="file-path">default.rb</code>, like this.
 
 ```ruby
 # ~/chef-repo/cookbooks/learn_chef_apache2/recipes/default.rb
+apt_update 'Update the apt cache daily' do
+  frequency 86_400
+  action :periodic
+end
+
 package 'apache2'
 
 service 'apache2' do

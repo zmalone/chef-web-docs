@@ -6,5 +6,7 @@
 //= require home
 //= require ga-link-checker
 //= require section-links
+//= require clipboard
+//= require progress-bar
 
 $(document).foundation();

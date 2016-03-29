@@ -18,13 +18,14 @@ Now apply it.
 ```bash
 # ~/chef-repo
 $ sudo chef-client --local-mode webserver.rb
-[2016-01-07T17:24:52+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-01-07T17:24:52+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
-Starting Chef Client, version 12.6.0
+[2016-03-24T18:25:01+00:00] WARN: No config file found or specified on command line, using command line options.
+[2016-03-24T18:25:01+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
+Starting Chef Client, version 12.8.1
 resolving cookbooks for run list: []
 Synchronizing Cookbooks:
+Installing Cookbook Gems:
 Compiling Cookbooks...
-[2016-01-07T17:24:54+00:00] WARN: Node default-centos-65 has an empty run list.
+[2016-03-24T18:25:02+00:00] WARN: Node default-centos-72 has an empty run list.
 Converging 2 resources
 Recipe: @recipe_files::/root/chef-repo/webserver.rb
   * yum_package[httpd] action install (up to date)
@@ -35,7 +36,7 @@ Recipe: @recipe_files::/root/chef-repo/webserver.rb
 
 Running handlers:
 Running handlers complete
-Chef Client finished, 2/3 resources updated in 02 seconds
+Chef Client finished, 2/3 resources updated in 03 seconds
 ```
 
 The package is already installed, so there's nothing to do. However, the service is started and enabled.

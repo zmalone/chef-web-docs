@@ -20,15 +20,13 @@ Here are the steps to perform:
 1. [Review the installation](#step1)
 1. [Gather prerequisites](#step2)
 1. [Run the CloudFormation template](#step3)
-1. [Get your Windows workstation's public IP address](#step4)
-1. Learn how to [temporarily stop and restart your AWS instances](#howtotemporarilystopandrestartyourawsinstances) as you evaluate Delivery
-1. Learn how to [tear down your Delivery installation](/delivery/get-started/install-chef-delivery#howtoteardownyourdeliveryinstallation) when you're done
+1. [Connect to the Windows workstation](#step4)
 
 [START_BOX]
 
 ## 1. Review the installation
 
-The systems that make up a Chef Delivery system depends on the software you want to deliver. For example, if you use Chef  to manage your infrastructure, your system may include [Chef Analytics](https://docs.chef.io/analytics.html) or a private [Chef Supermarket](https://docs.chef.io/supermarket.html) server that exists behind your firewall.
+The systems that make up Chef Delivery reflect the types of software you want to deliver. For example, if you use Chef  to manage your infrastructure, your system may include [Chef Analytics](https://docs.chef.io/analytics.html) or a private [Chef Supermarket](https://docs.chef.io/supermarket.html) server that exists behind your firewall.
 
 The automation you run for this tutorial includes the minimum number of systems that are typical for many users. Here's a diagram:
 
@@ -42,17 +40,17 @@ At a minimum, a Delivery cluster includes Chef Delivery and one build node.
 
 Your setup includes Chef Delivery and Chef server, along with two build nodes. The Chef server holds the `awesome_customers_delivery` cookbook, which is an output of the pipeline. Having multiple build nodes enables phases to run in parallel.
 
-**Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Delivery deploys build artifacts, or the pipeline's final output, to these environments.
+**Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Delivery deploys build artifacts, or the pipeline's final output, to these environments. The output of your pipeline informs how you set up your environments.
 
-The output of your pipeline informs how you set up your environments.
+For example, you might deploy a SQL Server database to a Windows Server environment. You might deploy web content and other media to an Amazon S3 bucket. In this tutorial, the `awesome_customers_delivery` cookbook configures the Customers web application on Ubuntu. Therefore, the Acceptance, Union, Rehearsal and Delivered environments would all run Ubuntu.
 
-For example, you might deploy a SQL Server database to a Windows Server environment. You might deploy web content and other media to an Amazon S3 bucket. In this tutorial, the `awesome_customers_delivery` cookbook configures the Customers web application on Ubuntu. Therefore, the Acceptance, Union, Rehearsal and Delivered stages would all run Ubuntu.
+Recall that the final four stages of the pipeline are Acceptance, Union, Rehearsal, Delivered. A runtime environment exists for each of these stages because the artifacts produced in the Build stage need to be deployed.
 
-Your Acceptance, Union, Rehearsal, and Delivered environments typically resemble your production environment. Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
+Each environment is named for the stage in which it is used. These environments typically resemble your production environment, and can often be part of your production environment. Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
 
 The automation brings up one Ubuntu 14.04 instance, and it is for the Acceptance environment. It comes already [bootstrapped to the Chef server](https://docs.chef.io/install_bootstrap.html). We provide only the Acceptance environment to minimize the number of systems involved as you learn about Chef Delivery. A complete setup might include additional Ubuntu servers for the Union, Rehearsal and Delivered stages.
 
-**Team member's workstation** &ndash; Workstations are typically either a laptop or desktop computer. A workstation can run Windows, Mac OS X, or Linux. From the workstation, users access Chef Delivery using either the command line or the web interface. Common tasks include creating projects, writing build cookbooks, submitting new features to the pipeline, and reviewing and approving others' changes.
+**Team member's workstation** &ndash; Workstations are typically either a laptop or desktop computer. A workstation can run Windows, Mac OS X, or Linux. From the workstation, users access Chef Delivery using either the command line or the web interface. Other common tasks include creating projects, writing build cookbooks, submitting new features to the pipeline, and reviewing and approving others' changes.
 
 The automation sets up a Windows workstation because Windows provides an easy way to connect to its graphical desktop remotely.
 
@@ -81,11 +79,13 @@ For the Acceptance environment, the automation sets up network access on these p
 To run the automated installation, you need:
 
 1. an [AWS account](https://aws.amazon.com/free/).
-1. an [SSH key pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-a-key-pair) for one of these regions.
+1. an [IAM user role](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-an-iam-user) and [SSH key pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-a-key-pair) for one of these regions.
   * us-east-1 (N. Virginia)
   * us-west-1 (N. California)
   * us-west-2 (Oregon)
 1. a Chef Delivery license key.
+
+Place your SSH private key in the <% fp '.ssh' %> directory under your home directory. Also ensure that your IAM user role [includes the necessary permissions](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-iam-template.html) to work with CloudFormation stacks.
 
 If you don't have a license key, click the button below, fill out the short form, and check your email for a link to a temporary license key for this tutorial.
 
@@ -106,7 +106,7 @@ MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438, function(form
 
 [END_MODAL]
 
-After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <% fp '~/delivery.license' %>. The automation you'll run in the next step uploads your license key to the Delivery server.
+After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <% fp '~/delivery.license' %>. The automation you'll run in the next step uploads your license key to your Delivery server.
 
 [END_BOX]
 
@@ -119,17 +119,17 @@ Now you're ready to run the [CloudFormation](https://aws.amazon.com/cloudformati
 1. From a web browser, start by navigating to the AWS home page. [https://aws.amazon.com/](https://aws.amazon.com/)
 1. Click the **Sign In to the Console** button and log in to your account.
   ![](delivery/aws_sign_in.png)
-1. From the **Services** menu, select **Management Tools** and then **CloudFormation**. 
-  ![](delivery/aws_open_cloudformation.png) 
+1. From the **Services** menu, select **Management Tools** and then **CloudFormation**.
+  ![](delivery/aws_open_cloudformation.png)
 1. Click **Create Stack**
   ![](delivery/aws_create_stack.png)
-1. Under **Choose a template**, choose **Specify an Amazon S3 template URL**. 
+1. Under **Choose a template**, choose **Specify an Amazon S3 template URL**.
   ![](delivery/aws_stack_choose_template.png)
 1. Enter the URL that matches your SSH key pair's region. Then click **Next**.
-  * us-east-1 (N. Virginia) &mdash; [https://s3.amazonaws.com/ned-virginia-pup-cf-templates/delivery-tutorial.json](https://s3.amazonaws.com/ned-virginia-pup-cf-templates/delivery-tutorial.json) 
+  * us-east-1 (N. Virginia) &mdash; [https://s3.amazonaws.com/ned-virginia-pup-cf-templates/delivery-tutorial.json](https://s3.amazonaws.com/ned-virginia-pup-cf-templates/delivery-tutorial.json)
   * us-west-1 (N. California) &mdash; [https://s3-us-west-1.amazonaws.com/ned-pub-cf-templates/delivery-tutorial.json](https://s3-us-west-1.amazonaws.com/ned-pub-cf-templates/delivery-tutorial.json)
   * us-west-2 (Oregon) &mdash; [https://s3-us-west-2.amazonaws.com/ned-oregon-pup-templates/delivery-tutorial.json](https://s3-us-west-2.amazonaws.com/ned-oregon-pup-templates/delivery-tutorial.json)
-1. From the **Specify Details** screen, fill in the required details. When you're finished, click **Next**. 
+1. From the **Specify Details** screen, fill in the required details. When you're finished, click **Next**.
   * **Stack name** can be any name you choose. This value uniquely identifies your stack in AWS. Note your stack name for later.
   * **KeyName** specifies the name of your SSH key pair. If you're new to AWS, this is the name you created in [step 2](#step2).
   * **SSHLocation** specifies the range of IP addresses (using [CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation)) that are permitted to connect to the AWS instances (users still require credentials to connect.) **0.0.0.0/0** permits access from any computer and gives you the most flexibility. Specify an address range if you want to limit who can connect.
@@ -145,72 +145,88 @@ The process is done when the **Status** reads **CREATE_COMPLETE**.
 
 ![](delivery/aws_stack_create_complete.png)
 
-Congratulations. You're almost ready to set up Delivery for your users. First, you'll need the public IP address of the virtual Windows workstation.
+[COMMENT] The appendix explains and how to [temporarily suspend the AWS instances](/delivery/get-started/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and how to [tear down the installation](/delivery/get-started/managing-your-aws-instances#tearingdownyourdeliveryinstallation) when you're finished with your Delivery evaluation.
+
+Congratulations. You're almost ready to set up Delivery for your users. As a final step, you'll connect to the virtual Windows workstation.
 
 [END_BOX]
 
 [START_BOX]
 
-## 4. Get your Windows workstation's public IP address
+## 4. Connect to the Windows workstation
 
-In the following parts, you'll connect to the virtual Windows workstation that's part of the automated installation. Now's a good time to get its public IP address.
+For the remainder of the tutorial, you'll work from the virtual Windows workstation that's part of the automated installation.
 
-After your stack is created, click the **Outputs** tab. Make note of the IP address for the Windows workstation. 
+Here you create a Remote Desktop Protocol (RDP) connection from your computer to your virtual workstation. Keep in mind that after the automated setup completes, it might take a few minutes for the Windows workstation to be fully connectable.
+
+### Get the workstation's public IP address
+
+From the CloudFormation console, select your stack and click the **Outputs** tab. Copy the IP address for the Windows workstation to the clipboard.
 
 ![](delivery/aws_stack_windows_workstation.png)
 
-If you're setting up Delivery for others, give each user the IP address.
+### Install an RDP client
 
-### Get the updated IP address if you stop and restart your AWS instances
-
-If you stop your AWS instances, as explained in the [following section](#howtotemporarilystopandrestartyourawsinstances), you'll need to get the Windows workstation's new public IP address when you restart your instances.
-
-<% accordion('restart-ip', 'Show details') do %>
+<% accordion('install-rdp-windows', 'Windows users') do %>
 
 <% markdown do %>
 
-1. Navigate to the EC2 Dashboard at [https://console.aws.amazon.com/ec2/v2/home](https://console.aws.amazon.com/ec2/v2/home).
-1. Select **Running Instances**.
-  ![](/assets/images/delivery/aws_running_instances.png)
-1. In the **Search** bar, enter the Windows workstation's fixed private IP address, **10.0.0.5**.
-  ![](/assets/images/delivery/aws_search_10_0_0_5.png)
-1. Your Windows workstation is returned as the result. Select the instance. In the details section, note the instance's public address. You can connect to the instance by either its public DNS name or its IP address.
-  ![](/assets/images/delivery/aws_instance_details_public_address.png)
+Windows comes with an RDP client. Run `mstsc` from the command prompt to bring up Remote Desktop.
 
 <% end %>
 
 <% end %>
 
-[END_BOX]
+<% accordion('install-rdp-macosx', 'Mac OS X users') do %>
 
-[START_BOX]
+<% markdown do %>
 
-## How to temporarily stop and restart your AWS instances
+[Download Microsoft Remote Desktop](https://itunes.apple.com/us/app/microsoft-remote-desktop/id715768417?mt=12) from the Apple App Store. The RDP client from Microsoft's web site might not work.
 
-In practice, it's common to keep your instances running so that users can access Delivery at any time. But because the setup process assigns a static private IP address to each instance, you can temporarily stop and restart your AWS instances as you evaluate Chef Delivery.
+<% end %>
 
-To stop your instances:
+<% end %>
 
-1. Navigate to the EC2 Dashboard at [https://console.aws.amazon.com/ec2/v2/home](https://console.aws.amazon.com/ec2/v2/home).
-1. Select **Running Instances**.
-  ![](delivery/aws_running_instances.png)
-1. Enter the name of your stack in the **Search** bar. An example is **chef-delivery-tutorial**. 
-1. Select all results. From the **Actions** menu, select **Instance State** > **Stop**.
-  ![](delivery/aws_stop_instances.png)
+<br>
 
-To restart your instances, repeat steps 1&ndash;3 from the previous procedure. Select all results. From the **Actions** menu, select **Instance State** > **Start**.
+### Connect to the workstation
 
-[END_BOX]
+<% accordion('connect-rdp-windows', 'Windows users') do %>
 
-[START_BOX]
+<% markdown do %>
 
-## How to tear down your Delivery installation
+1. Open the Remote Desktop Connection application, `mstsc`.
+1. In the **Computer** field, enter the Windows workstation's public IP address or DNS name.
+1. In the **User name** field, enter <span id="username-windows"><code>Administrator</code></span>. <a data-copytarget="#username-windows" class='small-button radius'>Copy</a>
+1. Select the **Allow me to save credentials** option.
+1. Click **Connect**.
+1. Enter the password <span id="password-windows"><code>P4ssw0rd</code></span> when prompted. <a data-copytarget="#password-windows" class='small-button radius'>Copy</a>
+1. A warning appears stating that the identity of the remote computer cannot be verified. This is because the Windows workstation comes with a self-signed certificate. Click **Yes** to continue connecting.
 
-Here's how to delete your stack when you're finished with your Delivery evaluation or you want to start over. When you delete the stack, all resources that are part of the stack are torn down, including the instances and their network settings.
+![](/assets/images/misc/rdp_windows.png)
 
-1. Navigate to the CloudFormation dashboard. [https://console.aws.amazon.com/cloudformation/home](https://console.aws.amazon.com/cloudformation/home)
-1. Select your stack, then right click and select **Delete Stack**. 
-  ![](delivery/aws_delete_stack.png)
-1. Select **Yes, Delete** when prompted.
+<% end %>
+
+<% end %>
+
+<% accordion('connect-rdp-macosx', 'Mac OS X users') do %>
+
+<% markdown do %>
+
+1. Open Microsoft Remote Desktop.
+1. Select **New**.
+1. In the **Connection name** field, enter a descriptive name, for example, **Delivery tutorial Windows workstation**.
+1. In the **PC name** field, enter the Windows workstation's public IP address or DNS name.
+1. In the **User name** field, enter <span id="username-mac"><code>Administrator</code></span>. <a data-copytarget="#username-mac" class='small-button radius'>Copy</a>
+1. In the **Password** field, enter <span id="password-mac"><code>P4ssw0rd</code></span>. <a data-copytarget="#password-mac" class='small-button radius'>Copy</a>
+1. Close the window.
+1. Select your connection and press **Start**.
+1. A warning appears stating that the certificate could not be verified back to a root certificate. This is because the Windows workstation comes with a self-signed certificate. Click **Continue** to continue connecting.
+
+![](/assets/images/misc/rdp_mac.png)
+
+<% end %>
+
+<% end %>
 
 [END_BOX]
