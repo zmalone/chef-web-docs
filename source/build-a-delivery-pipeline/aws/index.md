@@ -5,7 +5,7 @@ platform: Get started with Chef Delivery on AWS
 logo: delivery.svg
 order: 1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
-redirect: /delivery_tutorial_offline/
+redirect: /delivery/get-started/
 ---
 Chef Delivery manages changes to both infrastructure and application code, giving your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more.
 

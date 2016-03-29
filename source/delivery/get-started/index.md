@@ -47,7 +47,7 @@ Changes progress from one stage to another by passing a suite of automated tests
 
 ## Phases
 
-The tests within each stage are organized into phases.
+The work within each stage is organized into phases.
 
 Here are the phases for each stage.
 
@@ -67,15 +67,13 @@ This tutorial comes in multiple parts. In the first three parts, you bring up a 
 
 ### Part 1: Install Chef Delivery on AWS
 
-Chef Delivery runs on your hardware or in the cloud.
-
 To help you get started with Chef Delivery more quickly, you begin by using automation to build infrastructure that runs in Amazon Web Services (AWS). All you need is an AWS account and a Chef Delivery license key (you sign up for a trial key on the next page).
 
 The automation brings up a fully-functional Chef Delivery system in an isolated AWS environment that won't affect anything else you're running. After you complete the tutorial, you can experiment further and then simply tear down the environment when you're done.
 
 ### Part 2: Create the organization and add a user
 
-Here, you configure Chef Delivery for your users.
+Here you add the users that will perform the last three parts of this tutorial.
 
 You log in to the Delivery web interface and create an organization and a user account. Organizations group related projects. User accounts enable end users to access Delivery through its web interface or from the command line.
 
