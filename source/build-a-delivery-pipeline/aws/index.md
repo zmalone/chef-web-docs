@@ -55,7 +55,7 @@ For a complete description of Chef Delivery, see the [Chef documentation](https:
 
 ## The scenario
 
-This tutorial builds on [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) and the tutorials that follow. There, you wrote a cookbook called `awesome_customers` that built a web application named Customers.
+This tutorial builds on [Manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) and the tutorials that follow. There, you wrote a cookbook called `awesome_customers` that built a web application named Customers.
 
 The Customers application that you've built so far looks like this:
 

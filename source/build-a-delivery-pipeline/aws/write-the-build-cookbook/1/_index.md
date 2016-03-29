@@ -63,7 +63,7 @@ cookbook 'delivery-truck', git: 'https://github.com/chef-cookbooks/delivery-truc
 
 We also specify where to get `delivery-sugar`, which is a cookbook that `delivery-truck` depends on.
 
-The [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial [explains Berkshelf in greater detail](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration).
+The [Manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial [explains Berkshelf in greater detail](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration).
 
 ### Include the delivery-truck cookbook's recipes
 

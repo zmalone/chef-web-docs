@@ -61,7 +61,7 @@ Lines 10-14 specify the required node attribute.
 
 ### Prepare your encryption key and encrypted data bag items
 
-If you've gone through the [Learn to manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, copy your encrypted data bag items, <code class="file-path">db\_admin\_password.json</code> and <code class="file-path">sql\_server\_root\_password.json</code> to the <code class="file-path">~/Development/deliver-customers-rhel/data\_bags/passwords</code> directory. You can then move to the next step. You'll handle getting your data bag encryption key to the Chef server a bit later.
+If you've gone through the [Manage a basic Red Hat Enterprise Linux web application](/manage-a-web-app/rhel) tutorial, copy your encrypted data bag items, <code class="file-path">db\_admin\_password.json</code> and <code class="file-path">sql\_server\_root\_password.json</code> to the <code class="file-path">~/Development/deliver-customers-rhel/data\_bags/passwords</code> directory. You can then move to the next step. You'll handle getting your data bag encryption key to the Chef server a bit later.
 
 If you haven't gone through this tutorial, or no longer have your encrypted data bag items or your encryption key, you'll create them now.
 
