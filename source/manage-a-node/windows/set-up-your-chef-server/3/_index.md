@@ -33,7 +33,7 @@ x learn_chef_iis/README.md
 x learn_chef_iis/recipes/
 x learn_chef_iis/templates/
 x learn_chef_iis/templates/default/
-x learn_chef_iis/templates/default/index.html.erb
+x learn_chef_iis/templates/default/Default.htm.erb
 x learn_chef_iis/recipes/default.rb
 $ rm learn_chef_iis*.tar.gz
 ```
