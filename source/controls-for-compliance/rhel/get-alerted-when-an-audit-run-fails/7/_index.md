@@ -4,7 +4,7 @@ Now let's resolve the audit failure. We'll start by writing code to configure `i
 
 ### Update the webserver cookbook
 
-To ensure that the firewall is enabled, running, and activated, we'll use the [iptables](https://supermarket.chef.io/cookbooks/iptables) cookbook from Chef Supermarket, similar to what we did in the [Learn to manage a basic web application](/manage-a-web-app/rhel/configure-the-firewall/) tutorial. To summarize the steps:
+To ensure that the firewall is enabled, running, and activated, we'll use the [iptables](https://supermarket.chef.io/cookbooks/iptables) cookbook from Chef Supermarket, similar to what we did in the [Manage a basic web application](/manage-a-web-app/rhel/configure-the-firewall/) tutorial. To summarize the steps:
 
 1. Reference the `iptables` cookbook in your `webserver` cookbook's metadata.
 1. Create a template that defines the firewall rules.
@@ -219,7 +219,7 @@ $ kitchen destroy
 
 ### Upload the webserver cookbook to the Chef server
 
-Because the `webserver` cookbook has a dependency on the `iptables` cookbook from Chef Supermarket, let's use [Berkshelf](http://berkshelf.com) to automatically resolve and upload the dependent cookbooks, like you did in the [Learn to manage a basic web application](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration/) tutorial.
+Because the `webserver` cookbook has a dependency on the `iptables` cookbook from Chef Supermarket, let's use [Berkshelf](http://berkshelf.com) to automatically resolve and upload the dependent cookbooks, like you did in the [Manage a basic web application](/manage-a-web-app/rhel/apply-and-verify-your-web-server-configuration/) tutorial.
 
 First, run `berks install` to download all dependent cookbooks from Chef Supermarket to your workstation.
 
