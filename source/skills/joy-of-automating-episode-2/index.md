@@ -22,15 +22,15 @@ In this episode we focus on taking the manual installation instructions found in
 
 The completed exercise can be found here: [https://github.com/chef-training/django](https://github.com/chef-training/django)
 
-## Further Activities
+## Further activities
 
 When you are done with the initial implementation we encourage you to challenge yourself by:
 
-### Another Installation
+### Another installation
 
 We walked through several installations. As an exercise walk through the final installation of [installing Django through git](https://www.digitalocean.com/community/tutorials/how-to-install-the-django-web-framework-on-ubuntu-14-04#development-version-install-through-git). You will need the [git](https://docs.chef.io/resource_git.html) resource.
 
-### Custom Resource
+### Custom resource
 
 We started to write the [custom resource](https://docs.chef.io/custom_resources.html): `pip`. Finish it.
 

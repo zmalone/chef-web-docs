@@ -18,17 +18,17 @@ In this episode we focus on taking the manual installation instructions found in
 
 * [How to Install Apache Tomcat 8 on CentOS 7](https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-centos-7)
 
-## Further Activities
+## Further activities
 
 When you are done with the initial implementation we encourage you to challenge yourself by:
 
-### Refactoring to Attributes
+### Refactoring to attributes
 
 It is common to want to make certain values configurable within a cookbook. To do that we often refactor hard-coded values into attributes. While we do not have requirements driving us to change the code this is a good time to practice this technique.
 
 In the episode we extracted the version number into a node attribute. Find other values within the recipe that you may want to define as node attributes.
 
-### Desired State
+### Desired state
 
 When we use Test Kitchen to converge our test instance we are continually left with a few resources that are constantly taking action. This is inefficient if the system is already in the desired state. It is also noisy as they are constantly being reported in the output.
 
