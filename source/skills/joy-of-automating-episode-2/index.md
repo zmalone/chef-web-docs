@@ -9,7 +9,7 @@ sections: []
 icon: video.png
 ---
 
-<iframe width="930" height="523" src="https://www.youtube.com/embed/vEfMLejGhS4?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
+<iframe width="877" height="493" src="https://www.youtube.com/embed/vEfMLejGhS4?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
 <p/>
 
 In this episode we focused on converting the installation of Django into tested recipes. We explored installing Django from multiple sources: packages; pip; and through virtualenv. Which lead us into writing integration tests and unit tests for the various recipes, defining multiple test kitchen suites, and git branch workflow. Near the end we started to define a custom resource within the cookbook to handle our requests to install packages through pip.

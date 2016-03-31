@@ -9,7 +9,7 @@ sections: []
 icon: video.png
 ---
 
-<iframe width="930" height="523" src="https://www.youtube.com/embed/FOYc_SGWE-0?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
+<iframe width="877" height="493" src="https://www.youtube.com/embed/FOYc_SGWE-0?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
 <p/>
 
 ## Activity
