@@ -22,6 +22,22 @@ In this episode we focus on taking the manual installation instructions found in
 
 The completed exercise can be found here: [https://github.com/chef-training/django](https://github.com/chef-training/django)
 
+## Resources
+
+* [chef (executable)](https://docs.chef.io/ctl_chef.html): [generate cookbook](https://docs.chef.io/ctl_chef.html#chef-generate-cookbook); [generate recipe](https://docs.chef.io/ctl_chef.html#chef-generate-recipe); [exec](https://docs.chef.io/ctl_chef.html#chef-exec)
+* [kitchen (executable)](https://docs.chef.io/ctl_kitchen.html): [list](https://docs.chef.io/ctl_kitchen.html#kitchen-list);  [destroy](https://docs.chef.io/ctl_kitchen.html#kitchen-destroy); [create](https://docs.chef.io/ctl_kitchen.html#kitchen-create); and [verify](https://docs.chef.io/ctl_kitchen.html#kitchen-verify)
+* [Atom commands](http://flight-manual.atom.io/): [Fuzzy Find](http://flight-manual.atom.io/getting-started/sections/atom-basics/); [Toggle Tree View](http://flight-manual.atom.io/getting-started/sections/atom-basics/); and [Panes / Split Window](http://flight-manual.atom.io/using-atom/sections/panes/)
+* [Test Kitchen Configuration File](https://docs.chef.io/config_yml_kitchen.html)
+* [git](https://git-scm.com): [status](https://git-scm.com/docs/git-status); [add](https://git-scm.com/docs/git-add); [commit](https://git-scm.com/docs/git-commit); [checkout](https://git-scm.com/docs/git-checkout); [clean](https://git-scm.com/docs/git-clean); [reset](https://git-scm.com/docs/git-reset); [branch](https://git-scm.com/docs/git-branch); [merge](https://git-scm.com/docs/git-merge); [diff](https://git-scm.com/docs/git-diff); and [push](https://git-scm.com/docs/git-push)
+* [hub](https://hub.github.com/): [create](https://hub.github.com/hub.1.html) and [browse](https://hub.github.com/hub.1.html).
+* [GitHub](https://help.github.com/): [pull requests](https://help.github.com/articles/using-pull-requests/)
+* [Linux commands](http://www.mediacollege.com/linux/command/linux-command.html): [&&](http://stackoverflow.com/questions/4510640/command-line-what-is-the-purpose-of) and [cp -R](http://www.mediacollege.com/cgi-bin/man/page.cgi?topic=cp)
+* [Chef Resources](https://docs.chef.io/resources.html): [package](https://docs.chef.io/resource_package.html); and [execute](https://docs.chef.io/resource_execute.html)
+* [Recipe DSL](https://docs.chef.io/dsl_recipe.html): [include_recipe](https://docs.chef.io/dsl_recipe.html#include-recipes)
+* [ServerSpec](http://serverspec.org/): [command](http://serverspec.org/resource_types.html#command).
+* [ChefSpec](https://github.com/sethvargo/chefspec): [install_package](https://github.com/sethvargo/chefspec/tree/master/examples/package) and [run_execute](https://github.com/sethvargo/chefspec/tree/master/examples/execute)
+* [RSpec](https://relishapp.com/rspec): [it](https://relishapp.com/rspec/rspec-core/v/3-4/docs/example-groups/basic-structure-describe-it); [pending examples](https://relishapp.com/rspec/rspec-core/v/3-4/docs/pending-and-skipped-examples/pending-examples); and [--init](https://relishapp.com/rspec/rspec-core/v/3-4/docs/command-line/init-option)
+
 ## Further activities
 
 When you are done with the initial implementation we encourage you to challenge yourself by:
