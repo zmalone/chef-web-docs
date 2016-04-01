@@ -1,5 +1,5 @@
 ```conf
-# ~/learn-chef/cookbooks/settings-windows/templates/default/server-info.txt.erb
+# ~/learn-chef/cookbooks/settings_windows/templates/default/server-info.txt.erb
 
 fqdn:      <%= node['fqdn'] %>
 hostname:  <%= node['hostname'] %>
