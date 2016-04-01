@@ -1,5 +1,5 @@
 ```yaml
-# ~/learn-chef/cookbooks/settings-windows/.kitchen.yml
+# ~/learn-chef/cookbooks/settings_windows/.kitchen.yml
 ---
 driver:
   name: ec2
@@ -24,6 +24,6 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[settings-windows::default]
+      - recipe[settings_windows::default]
     attributes:
 ```
