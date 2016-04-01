@@ -1,5 +1,5 @@
 ```conf
-# ~/learn-chef/cookbooks/motd-ubuntu/templates/default/server-info.erb
+# ~/learn-chef/cookbooks/motd_ubuntu/templates/default/server-info.erb
 
 #!/bin/sh
 

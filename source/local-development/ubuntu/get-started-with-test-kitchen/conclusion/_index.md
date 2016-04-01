@@ -1,6 +1,6 @@
 In this tutorial, you used Test Kitchen along with VirtualBox and Vagrant to configure a basic MOTD on an Ubuntu virtual machine, all from your workstation.
 
-[GITHUB] [Get the reference implementation](https://github.com/learn-chef/motd-ubuntu/) for this tutorial on GitHub.
+[GITHUB] [Get the reference implementation](https://github.com/learn-chef/motd_ubuntu/) for this tutorial on GitHub.
 
 Local development gives you the time and flexibility to experiment, iterate, and fix problems early in the development cycle. You only upload your cookbooks to the Chef server and apply them to your bootstrapped node after you've confirmed from your workstation that your configuration code works as you expect.
 
