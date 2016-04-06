@@ -11,7 +11,7 @@ icon: video.png
 
 <iframe width="877" height="493" src="https://www.youtube.com/embed/Td1MMyvwaF8?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
 
-n this episode we focused on working with legacy code. Legacy code is everywhere. Learning the steps to tackle this kind of work essential. This is a cookbook that deploys Redis on Ubuntu. We wrote an integration test that exposed some issues in the recipe. Then proceeded to write unit tests to capture the current state. The resources used a lot of notifications to generate a chain of events that were important to test. Near the end we refactored out the version into a node attribute and then started to refactor the resource names to make the specifications less brittle. We finished with starting to apply the same refactoring techniques to our test suite
+In this episode we focused on working with legacy code. Legacy code is everywhere. Learning the steps to tackle this kind of work essential. This is a cookbook that deploys Redis on Ubuntu. We wrote an integration test that exposed some issues in the recipe. Then proceeded to write unit tests to capture the current state. The resources used a lot of notifications to generate a chain of events that were important to test. Near the end we refactored out the version into a node attribute and then started to refactor the resource names to make the specifications less brittle. We finished with starting to apply the same refactoring techniques to our test suite
 
 ## Activity
 
