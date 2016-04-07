@@ -28,9 +28,10 @@ In this episode we focus on taking the manual installation instructions found in
 * [Chef Resources](https://docs.chef.io/resources.html): [notifies](https://docs.chef.io/resource_common.html#resource-common-notifications); [remote_file](); [execute](https://docs.chef.io/resource_execute.html); [template](https://docs.chef.io/resource_template.html)
 * [Chef Templates](https://docs.chef.io/templates.html): [variables](https://docs.chef.io/resource_template.html#variables) and [inline_methods](https://docs.chef.io/resource_template.html#helpers)
 * [Jenkins](https://jenkins.io/): [Issues](https://issues.jenkins-ci.org/secure/Dashboard.jspa) and [Issue JENKINS-31814](https://issues.jenkins-ci.org/browse/JENKINS-31814)
-* [Supermarket](https://supermarket.chef.io/): [jenkins](https://supermarket.chef.io/cookbooks/jenkins); [apt](https://supermarket.chef.io/cookbooks/apt);
+* [Supermarket](https://supermarket.chef.io/): [jenkins](https://supermarket.chef.io/cookbooks/jenkins) and [apt](https://supermarket.chef.io/cookbooks/apt);
 * [Cookbook Metadata](https://docs.chef.io/config_rb_metadata.html)
 * [berks (executable)](http://berkshelf.com/)
+* [Pry](http://pryrepl.org/)
 
 ## Further activities
 
