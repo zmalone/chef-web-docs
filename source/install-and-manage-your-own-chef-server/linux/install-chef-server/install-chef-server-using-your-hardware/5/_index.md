@@ -9,9 +9,9 @@ The management console and reporting features also install prerequisites that [C
 Run these commands on your Chef server to install the management console.
 
 ```bash
-$ sudo chef-server-ctl install opscode-manage
+$ sudo chef-server-ctl install chef-manage
 $ sudo chef-server-ctl reconfigure
-$ sudo opscode-manage-ctl reconfigure
+$ sudo chef-manage-ctl reconfigure
 ```
 
 Then run these commands to install the reporting feature.

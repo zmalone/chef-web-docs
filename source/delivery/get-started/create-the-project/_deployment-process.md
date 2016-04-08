@@ -8,11 +8,11 @@ The deploy phase triggers `chef-client` to run on the node that's associated wit
 
 A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as a way to tag a node for a specific purpose.
 
-Every pipeline phase is associated with the name of a unique Chef environment. The name comes in this form:
+Every pipeline phase is associated with the name of a Chef environment. For the Acceptance stage, the name comes in this form:
 
 <code class='placeholder'>\<STAGE></code>-<code class='placeholder'>\<ENTERPRISE></code>-<code class='placeholder'>\<ORGANIZATION></code>-<code class='placeholder'>\<PROJECT></code>-<code class='placeholder'>\<PIPELINE></code>
 
-When the deploy phase runs during the Acceptance stage, for example, the current environment name is:
+For this project, the environment name during the Acceptance stage is:
  
 **acceptance-delivery-demo-delivery-demo-awesome\_customers\_delivery-master**
 
@@ -110,6 +110,18 @@ unless search_terms.empty?
 end
 ```
 
-This code uses [search](https://docs.chef.io/chef_search.html) to find the nodes that match the current Chef environment and contains at least one of the project's cookbooks. Although we provide infrastructure for only the Acceptance stage, the same logic applies to the Union, Rehearsal, and Delivered stages.
+This code uses [search](https://docs.chef.io/chef_search.html) to find the nodes that match the current Chef environment and contains at least one of the project's cookbooks.
 
-Because this mechanism finds all nodes that are associated with the current Chef environment, you can use this mechanism to associate multiple nodes with a given stage, for example, to run a cookbook that configures a multi-tiered application. 
+Although we provide infrastructure for only the Acceptance stage, similar logic applies to the Union, Rehearsal, and Delivered stages. However, because the Union, Rehearsal, and Delivered stages can be shared among multiple projects, their environment names are `union`, `rehearsal`, and `delivered`, respectively.
+
+For example, to prepare an Ubuntu server to run the `awesome_customers_delivery` cookbook in the Union stage, you would create an environment named `union` on your Chef server and then bootstrap your node to that environment.
+
+```bash
+$ knife environment create union
+$ knife bootstrap 10.0.0.16 --node-name awesome_customers_delivery-union \
+--environment union \
+--run-list "recipe[apt],recipe[delivery-base],recipe[awesome_customers_delivery]" \
+--ssh-user ubuntu --sudo --identity-file /home/ec2-user/.ssh/USER.pem
+```
+
+Because this mechanism finds all nodes that are associated with the current Chef environment, you can associate multiple nodes with a given stage, for example, to run a cookbook that configures a multi-tiered application. 
