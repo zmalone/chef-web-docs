@@ -1,9 +1,9 @@
 ---
-title: 'Audit a Windows Server node for compliance'
+title: 'Assess your Red Hat Enterprise Linux infrastructure with Chef Compliance'
 layout: lesson-overview
-platform: 'Windows Server'
-logo: windows.svg
-order: 2
+platform: 'Red Hat Enterprise Linux'
+logo: redhat.svg
+order: 1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Whether you must comply with regulatory frameworks such as PCI, HIPAA, or Dodd-Frank, or you have internal company standards you must meet, adhering to your compliance policies helps you deliver safe, secure applications and services.
@@ -13,6 +13,7 @@ Meeting the challenge of compliance requires both planning and action, and can b
 * **Analyze** &mdash; Be clear about your compliance requirements and the desired state of your infrastructure.
 * **Specify** &mdash; Translate your desired state into a formal language that precisely specifies your requirements.
 * **Test** &mdash; Verify whether the actual state of your infrastructure meets the desired state. Automated tests scale better than manual tests, and can be written even before a new software system or service is developed to provide a clear set of standards that must be met.
+* **Remediate** &ndash; When a compliance risk is identified, configure your infrastructure to meet the desired state. Like automated testing, configuring your infrastructure through automation can reduce risk more effectively because the process is more scalable and repeatable than manual configuration. You can use automation not only to configure new systems, but also to prevent configuration drift from occurring on existing systems.
 * **Certify** &mdash; Although not always required, many compliance processes require a final human sign off. The better your tests, the shorter the certification step can be.
 
 Think about your current compliance and audit process. How can you _prove_ that the actual state of your infrastructure meets the desired state?
@@ -35,10 +36,10 @@ In this tutorial, you'll first use audit mode to discover an infrastructure chan
 
 After completing this lesson, you should be able to:
 
-* write and apply controls, both to a local virtual machine or cloud instance and to a node bootstrapped to your Chef server.
+* write and apply controls, both to a local virtual machine and to a node bootstrapped to your Chef server.
 * verify and resolve audit failures.
 * use Chef Analytics to create alerts that signal when your infrastructure falls out of compliance.
 
-[GITHUB] The final code for this tutorial is available on [GitHub](https://github.com/learn-chef/controls-for-compliance-windows).
+[GITHUB] The final code for this tutorial is available on [GitHub](https://github.com/learn-chef/controls-for-compliance-rhel).
 
 Let's get started by ensuring you're all set up.
