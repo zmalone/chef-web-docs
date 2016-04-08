@@ -41,6 +41,6 @@ When you are done with the initial implementation we encourage you to challenge 
 
 ### Implement a Jenkins Cookbook Configuration File
 
-We started to explore the Jenkins implementation in the community cookbook. We copied the implementation except for the remaining template resource that allows us to configure Jenkins.
+We started to explore the Jenkins implementation in the community cookbook. We copied the implementation except for the remaining [template](https://docs.chef.io/resource_template.html) resource that allows us to configure Jenkins.
 
 Find that original file on the test instance or use the template provided in the community cookbook and bring it into the cookbook you developed. Start with the hard-coded values and then slowly start to replace them template variables.
