@@ -9,7 +9,9 @@ sections: []
 icon: video.png
 ---
 
-<iframe width="877" height="493" src="https://www.youtube.com/embed/SEsd7x0spjo" frameborder="0" allowfullscreen></iframe>
+<iframe width="877" height="493" src="https://www.youtube.com/embed/B9zhtyIazzM?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
+
+## Description
 
 In this episode we focus on working with converting a script to a recipe using Chef community cookbooks. Community cookbooks are powerful. Learning how to leverage them will help increase the speed at which you work. We will create a cookbook that deploys Jenkins.
 
@@ -25,20 +27,20 @@ In this episode we focus on taking the manual installation instructions found in
 * [git](https://git-scm.com): [status](https://git-scm.com/docs/git-status); [add](https://git-scm.com/docs/git-add); [commit](https://git-scm.com/docs/git-commit); [checkout](https://git-scm.com/docs/git-checkout); [clean](https://git-scm.com/docs/git-clean); [reset](https://git-scm.com/docs/git-reset); [branch](https://git-scm.com/docs/git-branch); [merge](https://git-scm.com/docs/git-merge); [diff](https://git-scm.com/docs/git-diff); and [push](https://git-scm.com/docs/git-push)
 * [Inspec](https://docs.chef.io/inspec_reference.html): [command](https://docs.chef.io/inspec_reference.html#command)
 * [Linux commands](http://www.mediacollege.com/linux/command/linux-command.html): [cd](http://www.rapidtables.com/code/linux/cd.htm); [&&](http://stackoverflow.com/questions/4510640/command-line-what-is-the-purpose-of); [cd](http://www.rapidtables.com/code/linux/cd.htm); and [wget](https://www.gnu.org/software/wget/manual/wget.html)
-* [Chef Resources](https://docs.chef.io/resources.html): [notifies](https://docs.chef.io/resource_common.html#resource-common-notifications); [remote_file](); [execute](https://docs.chef.io/resource_execute.html); [template](https://docs.chef.io/resource_template.html)
+* [Chef Resources](https://docs.chef.io/resources.html): [notifies](https://docs.chef.io/resource_common.html#resource-common-notifications); [remote_file](https://docs.chef.io/resource_remote_file.html); [execute](https://docs.chef.io/resource_execute.html); [template](https://docs.chef.io/resource_template.html)
 * [Chef Templates](https://docs.chef.io/templates.html): [variables](https://docs.chef.io/resource_template.html#variables) and [inline_methods](https://docs.chef.io/resource_template.html#helpers)
-* [Jenkins](https://jenkins.io/): [Issues](https://issues.jenkins-ci.org/secure/Dashboard.jspa) and [Issue JENKINS-31814](https://issues.jenkins-ci.org/browse/JENKINS-31814)
+* [Jenkins](https://jenkins.io/): [Install on Ubuntu](https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu); [Issues](https://issues.jenkins-ci.org/secure/Dashboard.jspa) and [Issue JENKINS-31814](https://issues.jenkins-ci.org/browse/JENKINS-31814)
 * [Supermarket](https://supermarket.chef.io/): [jenkins](https://supermarket.chef.io/cookbooks/jenkins) and [apt](https://supermarket.chef.io/cookbooks/apt);
 * [Cookbook Metadata](https://docs.chef.io/config_rb_metadata.html)
-* [berks (executable)](http://berkshelf.com/)
+* [Berkshelf and berks (executable)](http://berkshelf.com/)
 * [Pry](http://pryrepl.org/)
 
 ## Further activities
 
 When you are done with the initial implementation we encourage you to challenge yourself by:
 
-### Continue to make the template configurable
+### Implement a Jenkins Cookbook Configuration File
 
-When you install Jenkins you can define a configuration file with values that influence how Jenkins runs. We started by copy this configuration, creating a template within our cookbook, and replacing a hard-coded value with one defined as variable being passed into the template.
+We started to explore the Jenkins implementation in the community cookbook. We copied the implementation except for the remaining template resource that allows us to configure Jenkins.
 
-Continue to define more template variables for more of the important values specified in that configuration file.
+Find that original file on the test instance or use the template provided in the community cookbook and bring it into the cookbook you developed. Start with the hard-coded values and then slowly start to replace them template variables.
