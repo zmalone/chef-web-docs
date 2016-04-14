@@ -6,6 +6,13 @@ By starting with Test Kitchen to verify your work locally, you have increased co
 
 In this tutorial, you worked with the Chef Analytics web interface to view the state of your Chef server and to create rules that trigger when an audit fails. You can also use the `knife` plugin [knife-analytics](https://github.com/chef/knife-analytics) to view alerts and perform other common tasks from the command line. To get started, run this command to install `knife-analytics` on your workstation.
 
+EXERCISES
+
+Set up recurring scan
+Add a second node - scan 2 at the same time
+Think about how you might remediate SSH issue
+Think about your compliance requirements. (WHAT ELSE?)
+
 ```bash
 # ~/chef-repo
 $ chef gem install knife-analytics

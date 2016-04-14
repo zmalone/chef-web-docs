@@ -26,7 +26,7 @@ Chef's [audit mode](https://docs.chef.io/analytics.html#audit-mode) enables you 
 
 You can run audit mode alone or you can use it along with Chef Analytics. In [Get started with Chef Analytics](/get-started-with-chef-analytics/linux/), you learned how Chef Analytics provides visibility into what's happening on your Chef server. If you use Chef Analytics with audit mode, you can write Chef Analytics rules that automatically notify the relevant people and services if an audit run exposes a problem.
 
-<img src="/assets/images/networks/analytics.png" style="width: 100%; box-shadow: none;" alt="Your workstation, Chef server, Chef Analytics, and nodes" />
+<img src="/assets/images/networks/compliance-ssh-node.svg" style="width: 80%; box-shadow: none;" alt="Your workstation, Chef server, Chef Analytics, and nodes" />
 
 Audit mode also acts as a form of documentation. The audit tests formally define the requirements, and from the output you can generate reports that prove whether the actual state of your infrastructure meets those requirements.
 

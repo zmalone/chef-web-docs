@@ -8,6 +8,12 @@ next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
+You can run Compliance scans on demand or schedule them to run at a later time.
+
+Chef Compliance maintains profiles as a collection of individual controls that comprise a complete audit.
+
+As mentioned previously, Chef Compliance comes with a few reference profiles of various compliance policies that you can leverage or use as examples to create your own.
+
 [START_BOX]
 
 ## 1. Get a Red Hat Enterprise Linux 7 or CentOS 7 node to scan
@@ -15,5 +21,281 @@ meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 Bring up a server however you usually do.
 
 You can get some ideas here: /manage-a-node/rhel/get-a-node-to-bootstrap
+
+TODO: Be clear how to bring up a Vagrant box with the IP address shown in the tutorial. Perhaps also say that's the output you'll see.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. TBD
+
+> You'll do this part from your node.
+
+[Learn more](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)
+
+```ruby
+# /etc/sudoers.d/vagrant
+vagrant ALL=(root) NOPASSWD:ALL
+Defaults:vagrant !requiretty
+```
+
+```bash
+# ~
+[vagrant@node-1 ~]$ curl https://www.opscode.com/chef/install.sh | sudo bash
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 19559  100 19559    0     0  21648      0 --:--:-- --:--:-- --:--:-- 21636
+el 7 x86_64
+Getting information for chef stable  for el...
+[...]
+Installing chef
+installing with rpm...
+warning: /tmp/install.sh.25789/chef-12.9.38-1.el7.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+Preparing...                          ################################# [100%]
+Updating / installing...
+   1:chef-12.9.38-1.el7               ################################# [100%]
+Thank you for installing Chef!
+```
+
+```bash
+[vagrant@node-1 ~]$ wget https://raw.githubusercontent.com/chef/train/master/contrib/fixup_requiretty.rb
+--2016-04-13 17:45:04--  https://raw.githubusercontent.com/chef/train/master/contrib/fixup_requiretty.rb
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 23.235.46.133
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|23.235.46.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1396 (1.4K) [text/plain]
+Saving to: ‘fixup_requiretty.rb’
+
+100%[=======================================================================>] 1,396       --.-K/s   in 0s
+
+2016-04-13 17:45:04 (187 MB/s) - ‘fixup_requiretty.rb’ saved [1396/1396]
+```
+
+```bash
+[vagrant@node-1 ~]$ export TRAIN_SUDO_USER=vagrant
+[vagrant@node-1 ~]$ export TRAIN_SUDO_VERY_MUCH=yes
+```
+
+```bash
+[vagrant@node-1 ~]$ sudo -E chef-apply fixup_requiretty.rb
+Recipe: (chef-apply cookbook)::(chef-apply recipe)
+  * log[Warning: a sudoers configuration for user vagrant already exists, doing nothing (override with TRAIN_SUDO_VERY_MUCH=yes)] action write
+
+  * file[/etc/sudoers.d/vagrant] action create
+    - update content in file /etc/sudoers.d/vagrant from ce99b2 to 6c9f0a
+    --- /etc/sudoers.d/vagrant	2015-12-23 23:38:08.363780054 +0000
+    +++ /etc/sudoers.d/.chef-vagrant20160413-25856-1ak81p8	2016-04-13 17:45:46.846384716 +0000
+    @@ -1,2 +1,3 @@
+    -%vagrant ALL=(ALL) NOPASSWD: ALL
+    +vagrant ALL=(root) NOPASSWD:ALL
+    +Defaults:vagrant !requiretty
+    - change mode from '0644' to '0600'
+    - restore selinux security context
+  * execute[revert: delete the file if it's broken] action run (skipped due to not_if)
+```
+
+```bash
+Thomas@DESKTOP-CQOJ2L9 MINGW32 ~
+$ mkdir ~/.ssh
+
+Thomas@DESKTOP-CQOJ2L9 MINGW32 ~
+$ ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/c/Users/Thomas/.ssh/id_rsa): /c/users/Thomas/.ssh/node1
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /c/users/Thomas/.ssh/node1.
+Your public key has been saved in /c/users/Thomas/.ssh/node1.pub.
+The key fingerprint is:
+SHA256:VmeqYw0cenm24qvVllK+kt8oj3kCDtNioloHyErtrCM Thomas@DESKTOP-CQOJ2L9
+The key's randomart image is:
++---[RSA 2048]----+
+|                 |
+|                 |
+|        . . o    |
+|...    o + +     |
+|.o.. .. S =      |
+|o +.= oo X o     |
+|...=.= .B.B      |
+|Eo..  .+=B.+     |
+|+..   ..=O= .    |
++----[SHA256]-----+
+```
+
+```bash
+$ scp ~/.ssh/node1.pub vagrant@192.168.77.78:/home/vagrant/.ssh
+The authenticity of host '192.168.77.78 (192.168.77.78)' can't be established.
+ECDSA key fingerprint is SHA256:J+lrvc6OeB1Wtc1Tz2IKoMJrPyHFXR4K6cJLBoLk20k.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.77.78' (ECDSA) to the list of known hosts.
+vagrant@192.168.77.78's password:
+node1.pub                                     100%  404     0.4KB/s   00:00
+```
+
+```bash
+$ ssh vagrant@192.168.77.78
+vagrant@192.168.77.78's password:
+Last login: Wed Apr 13 19:51:49 2016 from 192.168.77.1
+[vagrant@node-1 ~]$ cat ~/.ssh/node1.pub >> ~/.ssh/authorized_keys
+[vagrant@node-1 ~]$ rm ~/.ssh/node1.pub
+[vagrant@node-1 ~]$ logout
+Connection to 192.168.77.78 closed.
+```
+
+(Linux / Mac OS only)
+
+```bash
+$ chmod 600 ~/.ssh/node1
+```
+
+```bash
+$ ssh -i ~/.ssh/node1 vagrant@192.168.77.78 "hostname"
+node-1.local
+```
+
+--OLD--
+
+```bash
+$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):
+Created directory '/root/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+0f:9e:11:c0:0f:db:34:6a:60:46:6b:8f:27:aa:0a:d7 root@node-1.local
+The key's randomart image is:
++--[ RSA 2048]----+
+|   ....          |
+|    +.o.o        |
+|   oo. B..       |
+|   . o+ o.       |
+|    o.o S        |
+|   o o . =       |
+|. o E   o .      |
+|.o               |
+|+                |
++-----------------+
+```
+
+```bash
+[vagrant@node-1 ~]$ cat ~/.ssh/id_rsa
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpQIBAAKCAQEAzJOWYo2SSSeJlFPl8EaRvPzz+KBeSGmjpLk/yBge/jNviy1Q
+1Q5q3SO8lWV0kbCgyk8qSvwujdmARd3lFwJ5j4aB/PWDr3rD7CasYz1bX2HdrjW6
+w0dYam5lZkrzw7k51MX7iFDRzXhb5650CzPF37yJM5rtshL+NJuVLilHkJ7Z7eAi
+YcTgts9qyg2mu94O11njy/LyIrW2ZfJ1nwOLr+0jc1N6AifqUsFHE99PdynuACSG
+pswGb0QuIS0uv5sc0vxVWiPxFRCoIN7Bq3LiJDZJLCwgd5fPNktem8E5yuHZD7tZ
+fhBWLERddhzDcdFI+MJIBn4l4yj11RqIcEnn+QIDAQABAoIBAQDJb62Nfx8Cv1ad
+4fqwm5wXPe+w6Z/Mp5BFu07NZMrnvJfhsA4+q8KX2v9vD4Y3inbYnhjj2uqwK/E9
+Wl+gR4SQyX4nKUywNi7C0dW+pgTZp5DTX/51GEQ8EFXx4m2iVDlYhFXHhOUA77l3
+KHUFLsZxJsDmOnBAfqkl/ehnmqfoAm7QFu0I4a8FH7is7Jhn+MGeTRnw2j00U1Jb
+lq6i/NgEjTk4J16Te35b4InENKv3S/GXVjXJwV4/7uttD+RUgMBJW+1qWW5is4kV
+7oocwY9aZU4Odtjfv6asr0ORr04hQZvdE/EBrOQTNcDdzddlcvJXQgD5C/B+sAQE
+odgEWp4tAoGBAPMEhiApgJiVN5dOffQXBTkF3lW3+/YzH5/GoT8eBY7ivM64XwwB
+3uqrdVTS1YsedUoF/R7hBG/ToHgt8oVSrXensfR6mAq2jEElRpEbFzQQLREBv5Sq
+ihFaPH6s7IJKnDUDwwmx3ex87JIpaOFEajj2NuFLq9z4SwTER6DDYsoTAoGBANeB
+WPkHYKKJs8t7gjhnZGov43O2gelGxNJnmW/QTuJhEJ53CzzPUbL34GNcU3R1HD3N
+w1XLO9f/CcI1XwCzJ0CIGYNDRpF0BeicA1Ujpj2t004OmGSYjBZxe4tKmRmlABbi
+GyiDW5B8kaNOIs1rn/21fpMlIr0403tL1rkDhYdDAoGBAMOd9qFZBwzLwG3pXvXm
+ueuGz8vMR+OMj347k3yNHAhCd50nSEsQDnJ0BgR7mi1cHSmy3GfI1Zt2jItw4PF0
+9fGFaXfUXyLwgsHF0aHoXqsoAj7YW3C+Pllte5i0dcUDbe420v6w0GUWwg99idEb
+Ey468z4zfWpn62sw3D+KR7FFAoGBANTbseHnY4+nq6skxy6nEQvBWUwFzLN5bxbT
+tT435nK7pQqgUr0xmWTIaR47J0M0GT0CbBnlr6pdAmqNBNVQH0kiJPD+Fkm868kh
+sDj8CUuK0debmvJhqpzQYlLmz+oAi+IOWvzdIifIoqFGoCF+WHzkM61rVLDJ3DlA
+Y0pDLDS5AoGAEh+QfboEMHRjD5+wKPuWZPW0dCTRzEnqRw/mXWBy+eKxr6PcTZZ3
+BWg87XTYB/Z61tU1aB60Q4Wi1zWAdZVHE+TmA6xet1npH6e8GWEEc9QNDQDJIzIb
+NCetfThYzoyaUia54uT2/hMSA/hHJqZaPXhrDXgfEWk+MMPGEU5riKU=
+-----END RSA PRIVATE KEY-----
+```
+
+> You'll do this part from the Chef Compliance web interface.
+
+From the **Settings** menu, click **Add Private Key**.
+
+![](compliance/add_pk_button.png)
+
+Fill in the **Name** and **Private Key** fields.
+
+You can replace **node1** with a different name if you'd like. The **Private Key** field is the RSA private key that you retrieved in the previous step.
+
+![](compliance/add_pk.png)
+
+Then click **Add Private Key**. You'll see this confirmation.
+
+![](compliance/add_pk_confirm.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. TBD
+
+From the **Dashboard** menu, click **Add** or **Add Nodes**.
+
+![](compliance/add_node_button.png)
+
+Enter IP address. Leave environment empty. A default environment will be created for you.
+
+An environment [TBD].
+
+![](compliance/add_node_ip_env.png)
+
+![](compliance/add_node_access.png)
+
+Leave **Sudo configuration** alone.
+
+Click the **Add 1 node** button.
+
+![](compliance/add_node_confirm_button.png)
+
+You'll be taken back to the dashboard.
+
+![](compliance/add_node_confirm.png)
+
+Give your node a name. Click on your node. 
+
+In the **Name** field, give your node a descriptive name, for example, **node1-centos7**.
+
+![](compliance/name_node-centos7.png)
+
+Scroll to the bottom of the page and click **Save**.
+
+![](compliance/edit_node_save_button.png)
+
+[COMMENT] As you may have noticed, you could add additional nodes by simply repeating the previous steps. You could also add a number of nodes at once by separating each hostname or IP address with a comma or a space, as shown in this illustration. Chef Compliance also supports bulk loading of nodes via API.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create a test connection to your node
+
+
+![](compliance/connectivity_button_centos7.png)
+
+![](compliance/connectivity_report_centos7.png)
+
+
+
+Troubleshooting:
+
+![](compliance/connectivity_report_fail_centos7.png)
+
+* Ensure SSH is 
+* Create a test connection
+* Ensure sudo configured 
+
+```bash
+[vagrant@chef-compliance ~]$ sudo chef-compliance-ctl tail core
+[...]
+2016-04-13_20:16:30.06851 20:16:30.068 ERR => Failed to parse json from detection run on sshKey://vagrant@192.168.77.78:22 using login key fe5ad500-1319-4c57-637d-ab0dd70aa254: unexpected end of JSON input
+2016-04-13_20:16:30.06853 20:16:30.068 DEB => Raw output was: Transport error, can't connect to 'ssh' backend: SSH session could not be established
+```
+
+Press Control+C to exit the `tail` command.
 
 [END_BOX]
