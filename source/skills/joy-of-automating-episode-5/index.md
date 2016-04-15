@@ -1,6 +1,6 @@
 ---
 title: 'Episode 5: Refactoring - Test Suite: ChefSpec and RSpec'
-description: 'Exploring ways to remove duplication from the test suite. In this episode we refactor ChefSpec using RSpec\'s powerful features.'
+description: 'Learn ways to remove duplication from the test suite. In this episode we refactor ChefSpec and learn the powerful features of RSpec.'
 order: 5
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
