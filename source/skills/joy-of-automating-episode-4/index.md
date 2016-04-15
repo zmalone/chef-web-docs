@@ -1,6 +1,6 @@
 ---
 title: 'Episode 4: Using Community Cookbooks - Jenkins on Ubuntu'
-description: 'Converting the application installation and configuration instructions into tested recipes. In this episode we install Jenkins onto ubuntu.'
+description: 'Learn to convert application installation and configuration instructions into tested recipes. In this episode we install Jenkins onto ubuntu.'
 order: 4
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
@@ -37,9 +37,7 @@ In this episode we focus on taking the manual installation instructions found in
 
 ## Further activities
 
-When you are done with the initial implementation we encourage you to challenge yourself by:
-
-### Implement a Jenkins Cookbook Configuration File
+When you are done with the initial implementation, we encourage you to challenge by implementing a Jenkins cookbook configuration file.
 
 We started to explore the Jenkins implementation in the community cookbook. We copied the implementation except for the remaining [template](https://docs.chef.io/resource_template.html) resource that allows us to configure Jenkins.
 
