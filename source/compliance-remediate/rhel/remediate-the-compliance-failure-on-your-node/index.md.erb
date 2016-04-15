@@ -10,9 +10,90 @@ meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 [START_BOX]
 
-  - Upload cookbook to Chef server
-  - Bootstrap the node
-  - Scan node
-  - Victory!
+## 1. Upload the ssh cookbook to your Chef server
+
+```bash
+# ~/learn-chef
+$ knife cookbook upload ssh
+Uploading ssh            [0.1.0]
+Uploaded 1 cookbook.
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Bootstrap your node
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 192.168.77.78 --ssh-user vagrant --sudo --identity-file ~/.ssh/node1 --node-name node1 --run-list 'recipe[ssh]'
+Creating new client for node1
+Creating new node for node1
+Connecting to 192.168.77.78
+192.168.77.78 -----> Existing Chef installation detected
+192.168.77.78 Starting the first Chef Client run...
+192.168.77.78 Starting Chef Client, version 12.9.38
+192.168.77.78 resolving cookbooks for run list: ["ssh"]
+192.168.77.78 Synchronizing Cookbooks:
+192.168.77.78   - ssh (0.1.0)
+192.168.77.78 Installing Cookbook Gems:
+192.168.77.78 Compiling Cookbooks...
+192.168.77.78 Converging 1 resources
+192.168.77.78 Recipe: ssh::default
+192.168.77.78   * cookbook_file[/etc/ssh/sshd_config] action create
+192.168.77.78     - update content in file /etc/ssh/sshd_config from 648219 to 09447b
+192.168.77.78     --- /etc/ssh/sshd_config	2015-12-23 15:38:33.070000000 +0000
+192.168.77.78     +++ /etc/ssh/.chef-sshd_config20160415-32201-19zavg0	2016-04-15 13:11:17.367581956 +0000
+192.168.77.78     @@ -1,155 +1,2 @@
+192.168.77.78     -#	$OpenBSD: sshd_config,v 1.93 2014/01/10 05:59:19 djm Exp $
+192.168.77.78     -
+[...]
+192.168.77.78     -UseDNS no
+192.168.77.78     +Protocol 2
+192.168.77.78     - change mode from '0600' to '0644'
+192.168.77.78     - restore selinux security context
+192.168.77.78
+192.168.77.78 Running handlers:
+192.168.77.78 Running handlers complete
+192.168.77.78 Chef Client finished, 1/1 resources updated in 06 seconds 
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Re-run the compliance scan 
+
+![](compliance/scan_button_centos7.png)
+
+![](compliance/select_profiles_centos7.png)
+
+![](compliance/scan_now_button.png)
+
+![](compliance/scan_in_progress.png)
+
+![](compliance/ssh_protocol2_compliant_centos7.png)
+
+[END_BOX]
+
+[START_BOX]
+
+### How to clean up your environment
+
+[Follow these steps](/manage-a-node/rhel/update-your-nodes-configuration#howtocleanupyourenvironment) from the _Manage a node_ tutorial if you want to clean up your Chef server after you complete this tutorial or you want to repeat the tutorial from the beginning.
+
+To remove the `ssh` cookbook from your Chef server, run `knife cookbook delete ssh`.
+
+```bash
+# ~/learn-chef
+$ knife cookbook delete ssh
+Do you really want to delete ssh version 0.1.0? (Y/N) y
+Deleted cookbook[ssh version 0.1.0]
+```
+
+To remove the node from your Chef Compliance server, select the node from the dashboard and click **Remove**.
+
+![](compliance/remove_node_centos7.png)
 
 [END_BOX]
