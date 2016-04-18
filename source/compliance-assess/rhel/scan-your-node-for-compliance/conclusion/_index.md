@@ -1,28 +1,21 @@
-In this tutorial, you used Chef's audit mode to apply audit controls to your infrastructure. With audit mode, you can run your  tests as often as you need and can resolve issues more quickly than through manual testing.
+In this tutorial, you set up a Chef Compliance server and scanned a CentOS 7 server, or _node_, against the predefined CIS Security Benchmarks. 
 
-Chef Analytics gives you a view into what's happening in your infrastructure. You can write rules, alerts, and notifications to contact the right people and services when an audit failure occurs anywhere in your network.
+Let's revisit the 5 stages to meeting your compliance challenges that we proposed at the [start of this tutorial](/compliance-assess/rhel/):
 
-By starting with Test Kitchen to verify your work locally, you have increased confidence that your changes will work in production.
+* **Analyze**
+* **Specify**
+* **Test**
+* **Remediate**
+* **Certify**
 
-In this tutorial, you worked with the Chef Analytics web interface to view the state of your Chef server and to create rules that trigger when an audit fails. You can also use the `knife` plugin [knife-analytics](https://github.com/chef/knife-analytics) to view alerts and perform other common tasks from the command line. To get started, run this command to install `knife-analytics` on your workstation.
+You've already covered 3 of these 5 stages.
 
-EXERCISES
+In the Analyze stage, you define your compliance requirements. In this tutorial, this means adhereing to the CIS Security Benchmarks.
 
-Set up recurring scan
-Add a second node - scan 2 at the same time
-Think about how you might remediate SSH issue
-Think about your compliance requirements. (WHAT ELSE?)
+In the Specify stage, you translate your requirements into a formal language. Chef Compliance does this for you by providing tests for the CIS Security Benchmarks. In the next tutorial, you'll learn about the testing framework Chef Compliance uses, called [InSpec](https://www.chef.io/inspec/).
 
-```bash
-# ~/chef-repo
-$ chef gem install knife-analytics
-Fetching: chef-analytics-0.1.0.gem (100%)
-Successfully installed chef-analytics-0.1.0
-Fetching: knife-analytics-0.2.1.gem (100%)
-Successfully installed knife-analytics-0.2.1
-2 gems installed
-```
+In the Test stage, you run the automated tests to see how closely your servers adhere to compliance. In this tutorial, you ran a compliance scan and noted which tests passed and which tests failed and may require further action.
 
-[GITHUB] Get the code for this tutorial on [GitHub](https://github.com/learn-chef/controls-for-compliance-rhel).
+Knowing the state of your servers is a great first step towards meeting your compliance goals. In the next tutorial, [Remediate compliance failures](compliance-remediate/rhel/), you'll build upon this tutorial by implementing the Remediate stage, using the **Set SSH Protocol to 2** rule as an example. You'll start by learning how to replicate and remediate the failure on a local virtual machine. Then you'll learn how to apply the remedation to your CentOS 7 node and verify that the rule passes. 
 
-Learn more about building a high velocity, highly compliant organization at [complianceatvelocity.com](http://complianceatvelocity.com/).
+You can also learn more about building a high velocity, highly compliant organization at [complianceatvelocity.com](http://complianceatvelocity.com/).
