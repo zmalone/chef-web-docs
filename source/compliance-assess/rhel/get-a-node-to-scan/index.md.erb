@@ -8,98 +8,75 @@ next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-You can run Compliance scans on demand or schedule them to run at a later time.
+In this part, you'll prepare a CentOS 7 node to scan, add your node to Chef Compliance, and verify that Chef Compliance can connect to your node.
 
-Chef Compliance maintains profiles as a collection of individual controls that comprise a complete audit.
+Recall that for Linux systems, Chef Compliance runs compliance tests remotely over SSH. This enables Chef Compliance to scan your systems without the need for any additional software.
 
-As mentioned previously, Chef Compliance comes with a few reference profiles of various compliance policies that you can leverage or use as examples to create your own.
+As a recommended practice, in this part you'll set up your node to use key-based authentication. You'll also configure your node to use non-interactive sessions by default. 
+
+Here's what you'll do:
+
+1. [Get a CentOS 7 node to scan](#step1)
+1. [Create an SSH key pair to connect to your node](#step2)
+1. [Configure your node for non-interactive sessions](#step3)
+1. [Provide your SSH private key to Chef Compliance](#step4)
+1. [Add your node to Chef Compliance](#step5)
+1. [Create a test connection to your node](#step6)
+
+[COMMENT] Although Chef Compliance works with many Linux distributions, for learning purposes we recommend that you use CentOS 7 to ensure that what you see matches the procedures and output that's shown here.
+
+Before you begin, open a command prompt or terminal window on your workstation.
+
+[WINDOWS] In this part, you'll run commands such as `ssh-keygen`, `ssh`, and `scp`, which are typically available on Linux systems and Mac OS. From Windows, the easiest way to access these tools is to [install Git for Windows](/manage-a-node/rhel/get-set-up#step4). Git for Windows includes Git Bash, a terminal emulator that makes it easy to run Linux commands.
 
 [START_BOX]
 
-## 1. Get a Red Hat Enterprise Linux 7 or CentOS 7 node to scan
+## 1. Get a CentOS 7 node to scan
 
-Bring up a server however you usually do.
+For this part, you'll need to bring up a CentOS 7 server that has the standard configuration. Your server also needs:
 
-You can get some ideas here: /manage-a-node/rhel/get-a-node-to-bootstrap
+* an IP address that's reachable from both your workstation computer and your Chef Compliance server.
+* access to the `root` user account or an account with `sudo` access. 
+* the ability to connect over SSH.
 
-TODO: Be clear how to bring up a Vagrant box with the IP address shown in the tutorial. Perhaps also say that's the output you'll see.
+Although not required, you may find it easiest to bring up your node in the same environment as your Chef Compliance server. For example, if you're running Chef Compliance server on a virtual machine, your node can be a second virtual machine on the same private network. 
+
+If you're interested in using Chef to remediate compliance failures, as you'll do in the next tutorial, now's a good time to make sure that your node has port 443 (HTTPS) open for network traffic. This will enable your node to communicate with a Chef server (you'll set up a Chef server in the next tutorial if you don't have one already.)
+
+The [Manage a node](/manage-a-node/rhel/get-a-node-to-bootstrap/) tutorial describes some options on how to set up a CentOS 7 node in the cloud or on a virtual machine, as well as how to prepare your node for use with Chef.
+
+Bring up a CentOS 7 system now. In the next step, you'll set up your node to be connectable using key-based authentication.
+
+[COMMENT] You'll see the username `vagrant` and the IP address 192.168.77.78 in the commands and sample output. Be sure to change these to match your environment.  
 
 [END_BOX]
 
 [START_BOX]
 
-## 3. TBD
+## 2. Create an SSH key pair to connect to your node
 
-> You'll do this part from your node.
+> You'll perform this part from your workstation and your node.
 
-[Learn more](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)
+Before you add your node to Chef Compliance, you'll need to set up a way for Chef Compliance to connect to your node over SSH.
 
-```ruby
-# /etc/sudoers.d/vagrant
-vagrant ALL=(root) NOPASSWD:ALL
-Defaults:vagrant !requiretty
-```
+Chef Compliance supports both password authentication and [key-based authentication](https://en.wikipedia.org/wiki/Public-key_cryptography). We'll use key-based authentication because it's generally considered to be more secure than password authentication. 
+
+[COMMENT] If your node is already set to be connectable through key-based authentication, such as through an Amazon EC2 instance, you can [skip to the next step](#step3), where you add the private part of your key pair to Chef Compliance. 
+
+In this part, you'll generate an SSH key pair on your workstation. Then you'll copy the public part of your key to your node. Finally, you'll create a test connection to your node to verify connectivity. 
+
+First, ensure you have the <% fp '~/.ssh' %> directory on your workstation. This directory is commonly used to manage public and private SSH keys. This step is important for Windows workstations &ndash; Linux and Mac OS workstations typically already have this directory.
 
 ```bash
 # ~
-[vagrant@node-1 ~]$ curl https://www.opscode.com/chef/install.sh | sudo bash
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100 19559  100 19559    0     0  21648      0 --:--:-- --:--:-- --:--:-- 21636
-el 7 x86_64
-Getting information for chef stable  for el...
-[...]
-Installing chef
-installing with rpm...
-warning: /tmp/install.sh.25789/chef-12.9.38-1.el7.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
-Preparing...                          ################################# [100%]
-Updating / installing...
-   1:chef-12.9.38-1.el7               ################################# [100%]
-Thank you for installing Chef!
-```
-
-```bash
-[vagrant@node-1 ~]$ wget https://raw.githubusercontent.com/chef/train/master/contrib/fixup_requiretty.rb
---2016-04-13 17:45:04--  https://raw.githubusercontent.com/chef/train/master/contrib/fixup_requiretty.rb
-Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 23.235.46.133
-Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|23.235.46.133|:443... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 1396 (1.4K) [text/plain]
-Saving to: ‘fixup_requiretty.rb’
-
-100%[=======================================================================>] 1,396       --.-K/s   in 0s
-
-2016-04-13 17:45:04 (187 MB/s) - ‘fixup_requiretty.rb’ saved [1396/1396]
-```
-
-```bash
-[vagrant@node-1 ~]$ export TRAIN_SUDO_USER=vagrant
-[vagrant@node-1 ~]$ export TRAIN_SUDO_VERY_MUCH=yes
-```
-
-```bash
-[vagrant@node-1 ~]$ sudo -E chef-apply fixup_requiretty.rb
-Recipe: (chef-apply cookbook)::(chef-apply recipe)
-  * log[Warning: a sudoers configuration for user vagrant already exists, doing nothing (override with TRAIN_SUDO_VERY_MUCH=yes)] action write
-
-  * file[/etc/sudoers.d/vagrant] action create
-    - update content in file /etc/sudoers.d/vagrant from ce99b2 to 6c9f0a
-    --- /etc/sudoers.d/vagrant	2015-12-23 23:38:08.363780054 +0000
-    +++ /etc/sudoers.d/.chef-vagrant20160413-25856-1ak81p8	2016-04-13 17:45:46.846384716 +0000
-    @@ -1,2 +1,3 @@
-    -%vagrant ALL=(ALL) NOPASSWD: ALL
-    +vagrant ALL=(root) NOPASSWD:ALL
-    +Defaults:vagrant !requiretty
-    - change mode from '0644' to '0600'
-    - restore selinux security context
-  * execute[revert: delete the file if it's broken] action run (skipped due to not_if)
-```
-
-```bash
-Thomas@DESKTOP-CQOJ2L9 MINGW32 ~
 $ mkdir ~/.ssh
+```
 
-Thomas@DESKTOP-CQOJ2L9 MINGW32 ~
+Next, run `ssh-keygen -t rsa` to generate an RSA key pair. When prompted, specify a unique key pair name (for example, `node1`) under the <% fp '~/.ssh' %> directory. Specifying a unique name will ensure that any existing keys are not overwritten. Leave the passphrase blank when prompted.  
+
+Here's an example on Windows from a Git Bash window.
+
+```bash
 $ ssh-keygen -t rsa
 Generating public/private rsa key pair.
 Enter file in which to save the key (/c/Users/Thomas/.ssh/id_rsa): /c/users/Thomas/.ssh/node1
@@ -123,6 +100,8 @@ The key's randomart image is:
 +----[SHA256]-----+
 ```
 
+Next, copy the public part of your key pair (the public part has the <% fp '.pub' %> file extension) to your node. An easy way to do that is to run the `scp` command. Specify the username and password for the user account that you want Chef Compliance to connect to. Your user account can be the root account or one that has `sudo` access.
+
 ```bash
 $ scp ~/.ssh/node1.pub vagrant@192.168.77.78:/home/vagrant/.ssh
 The authenticity of host '192.168.77.78 (192.168.77.78)' can't be established.
@@ -133,56 +112,83 @@ vagrant@192.168.77.78's password:
 node1.pub                                     100%  404     0.4KB/s   00:00
 ```
 
+Next, connect to your node over SSH.
+
 ```bash
 $ ssh vagrant@192.168.77.78
 vagrant@192.168.77.78's password:
 Last login: Wed Apr 13 19:51:49 2016 from 192.168.77.1
+```
+
+Append the contents of your public key to <% fp '~/.ssh/authorized_keys' %>. Then delete the public key file because it is no longer needed.
+
+```bash
 [vagrant@node-1 ~]$ cat ~/.ssh/node1.pub >> ~/.ssh/authorized_keys
 [vagrant@node-1 ~]$ rm ~/.ssh/node1.pub
+```
+
+Logout of your SSH session.
+
+```bash
 [vagrant@node-1 ~]$ logout
 Connection to 192.168.77.78 closed.
 ```
 
-(Linux / Mac OS only)
+If you're running Linux or Mac OS on your workstation, you need to set permissions so that only the owner may read and write the private key file. Run this command to set those permissions.
 
 ```bash
 $ chmod 600 ~/.ssh/node1
 ```
 
+Finally, create a test connection to your node to verify that your node is connectable through key-based authentication.
+
 ```bash
-$ ssh -i ~/.ssh/node1 vagrant@192.168.77.78 "hostname"
-node-1.local
+$ ssh -i ~/.ssh/node1 vagrant@192.168.77.78
+Last login: Fri Apr 15 13:11:09 2016 from 192.168.77.1
 ```
 
---OLD--
+Keep your connection open for the next step.
 
-```bash
-$ ssh-keygen
-Generating public/private rsa key pair.
-Enter file in which to save the key (/root/.ssh/id_rsa):
-Created directory '/root/.ssh'.
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in /root/.ssh/id_rsa.
-Your public key has been saved in /root/.ssh/id_rsa.pub.
-The key fingerprint is:
-0f:9e:11:c0:0f:db:34:6a:60:46:6b:8f:27:aa:0a:d7 root@node-1.local
-The key's randomart image is:
-+--[ RSA 2048]----+
-|   ....          |
-|    +.o.o        |
-|   oo. B..       |
-|   . o+ o.       |
-|    o.o S        |
-|   o o . =       |
-|. o E   o .      |
-|.o               |
-|+                |
-+-----------------+
+[COMMENT] In production, you might disable password authentication entirely to improve security even further. This is typically done by specifying `PasswordAuthentication no` in your SSH configuration file, <% fp '/etc/ssh/sshd_config' %>. 
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Configure your node for non-interactive sessions
+
+> In this step, you'll log in to your node.
+
+Chef Compliance requires a non-interactive session to run compliance scans on a node. 
+
+For Red Hat Enterprise Linux based systems, you need to modify the user account's configuration to use non-interactive sessions by default.
+
+Modify the configuration file under <% fp '/etc/sudoers.d' %> for the account you want Chef Compliance to connect through. Here's an example &ndash; replace <% ph 'vagrant' %> with your account name. 
+
+```ruby
+# /etc/sudoers.d/vagrant
+vagrant ALL=(root) NOPASSWD:ALL
+Defaults:vagrant !requiretty
 ```
 
+[COMMENT] In production, you can set up a user account that's reserved specifically for Chef Compliance if you have other accounts that require an interactive session. 
+
+If you use a framework such as Chef to manage your production servers, you can automate this process. [Here's an example Chef recipe](https://github.com/chef/train/blob/master/contrib/fixup_requiretty.rb) that does that.
+
+[END_BOX]
+
+[START_BOX]
+
+### 4. Provide your SSH private key to Chef Compliance
+
+> You'll do this part from the Chef Compliance web interface.
+
+The next step is to provide your SSH private key so that Chef Compliance can connect to your node.
+ 
+An easy way to get your private key file's contents is to print the file to the terminal and copy the output to your clipboard. 
+
 ```bash
-[vagrant@node-1 ~]$ cat ~/.ssh/id_rsa
+$ cat ~/.ssh/node1
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEAzJOWYo2SSSeJlFPl8EaRvPzz+KBeSGmjpLk/yBge/jNviy1Q
 1Q5q3SO8lWV0kbCgyk8qSvwujdmARd3lFwJ5j4aB/PWDr3rD7CasYz1bX2HdrjW6
@@ -212,41 +218,43 @@ NCetfThYzoyaUia54uT2/hMSA/hHJqZaPXhrDXgfEWk+MMPGEU5riKU=
 -----END RSA PRIVATE KEY-----
 ```
 
-> You'll do this part from the Chef Compliance web interface.
-
-From the **Settings** menu, click **Add Private Key**.
+Next, from the web interface, navigate to the **Settings** menu and click **Add Private Key**.
 
 ![](compliance/add_pk_button.png)
 
-Fill in the **Name** and **Private Key** fields.
-
-You can replace **node1** with a different name if you'd like. The **Private Key** field is the RSA private key that you retrieved in the previous step.
+Fill in the **Name** field. You can use a name other than **node1** if you'd like. Then paste the RSA private key that you retrieved in the previous step into the **Private Key** field.
 
 ![](compliance/add_pk.png)
 
-Then click **Add Private Key**. You'll see this confirmation.
+Click **Add Private Key**. You'll see this confirmation.
 
 ![](compliance/add_pk_confirm.png)
+
+[COMMENT] Depending on your requirements, you can use the same key pair to connect to multiple nodes. You only need to generate and import the private part of the key one time. Each server requires the public part of the key.
 
 [END_BOX]
 
 [START_BOX]
 
-## 2. TBD
+## 5. Add your node to Chef Compliance
+
+Now you'll add your node to Chef Compliance.
 
 From the **Dashboard** menu, click **Add** or **Add Nodes**.
 
 ![](compliance/add_node_button.png)
 
-Enter IP address. Leave environment empty. A default environment will be created for you.
-
-An environment [TBD].
+Enter your node's hostname or IP address. Leave the **Add to environment** field empty. Chef Compliance will create a default environment for you.
 
 ![](compliance/add_node_ip_env.png)
 
+Under **Access configuration**, enter the account Chef Compliance will connect through and specify your private key.
+
 ![](compliance/add_node_access.png)
 
-Leave **Sudo configuration** alone.
+Leave the fields under **Sudo Configuration** at their default values.
+
+![](compliance/add_node_sudo.png)
 
 Click the **Add 1 node** button.
 
@@ -256,7 +264,7 @@ You'll be taken back to the dashboard.
 
 ![](compliance/add_node_confirm.png)
 
-Give your node a name. Click on your node. 
+As an optional step, you can give your node a name to help you identify it later. To do so, click on your node from the dashboard. 
 
 In the **Name** field, give your node a descriptive name, for example, **node1-centos7**.
 
@@ -266,36 +274,28 @@ Scroll to the bottom of the page and click **Save**.
 
 ![](compliance/edit_node_save_button.png)
 
-[COMMENT] As you may have noticed, you could add additional nodes by simply repeating the previous steps. You could also add a number of nodes at once by separating each hostname or IP address with a comma or a space, as shown in this illustration. Chef Compliance also supports bulk loading of nodes via API.
+[COMMENT] You can repeat these steps to add additional nodes. You can also add multiple nodes at the same time by separating each hostname or IP address with a comma or a space. Chef Compliance also provides a REST API that enables you to programatically [add mulitples nodes in bulk](https://docs.chef.io/api_compliance.html#post-bulk).
 
 [END_BOX]
 
 [START_BOX]
 
-## 3. Create a test connection to your node
+## 6. Create a test connection to your node
 
+You've already manually verified that your node is connectable over SSH using key-based authentication. But let's verify that Chef Compliance is also properly set up to use your private key.
+
+From the dashboard, select your node and click the **Connectivity** button.  
 
 ![](compliance/connectivity_button_centos7.png)
 
+Chef Compliance creates a test connection over SSH. You'll see this in the connectivity report.
+
 ![](compliance/connectivity_report_centos7.png)
 
+<% accordion('troubleshooting-connectivity', 'Troubleshooting connectivity issues') do %>
 
+<%= partial 'troubleshooting' %>
 
-Troubleshooting:
-
-![](compliance/connectivity_report_fail_centos7.png)
-
-* Ensure SSH is 
-* Create a test connection
-* Ensure sudo configured 
-
-```bash
-[vagrant@chef-compliance ~]$ sudo chef-compliance-ctl tail core
-[...]
-2016-04-13_20:16:30.06851 20:16:30.068 ERR => Failed to parse json from detection run on sshKey://vagrant@192.168.77.78:22 using login key fe5ad500-1319-4c57-637d-ab0dd70aa254: unexpected end of JSON input
-2016-04-13_20:16:30.06853 20:16:30.068 DEB => Raw output was: Transport error, can't connect to 'ssh' backend: SSH session could not be established
-```
-
-Press Control+C to exit the `tail` command.
+<% end %>
 
 [END_BOX]
