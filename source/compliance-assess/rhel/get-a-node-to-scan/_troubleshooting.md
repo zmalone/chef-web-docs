@@ -4,9 +4,9 @@ If Chef Compliance fails to create a connection, you'll see something like this:
 
 If you see this error, verify that:
 
-* you can [manually connect over SSH](#step2) through your key pair.
+* you can [manually connect over SSH](#step2) using your key pair.
 * your node is [configured for non-interactive sessions](#step3).
-* Chef Compliance has the [private part of your key pair](#step4) and that your node is configured to use it.
+* Chef Compliance has the [private part of your key pair](#step4).
 
 If the connectivity test still fails, log in to your Chef Compliance server and run this command. The output may help indicate the source of failure. 
 
@@ -19,4 +19,4 @@ If the connectivity test still fails, log in to your Chef Compliance server and 
 
 Press Control+C to exit the `chef-compliance-ctl tail core` command.
 
-You can also [reach out to us](https://discourse.chef.io) on our Discourse site.
+You can also [reach out to us](https://discourse.chef.io) on Discourse.

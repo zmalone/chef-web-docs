@@ -33,7 +33,7 @@ Before you begin, open a command prompt or terminal window on your workstation.
 
 ## 1. Get a CentOS 7 node to scan
 
-For this part, you'll need to bring up a CentOS 7 server that has the standard configuration. Your server also needs:
+For this part, you need to bring up a CentOS 7 server that has the standard configuration. Your server also needs:
 
 * an IP address that's reachable from both your workstation computer and your Chef Compliance server.
 * access to the `root` user account or an account with `sudo` access. 
@@ -45,7 +45,7 @@ If you're interested in using Chef to remediate compliance failures, as you'll d
 
 The [Manage a node](/manage-a-node/rhel/get-a-node-to-bootstrap/) tutorial describes some options on how to set up a CentOS 7 node in the cloud or on a virtual machine, as well as how to prepare your node for use with Chef.
 
-Bring up a CentOS 7 system now. In the next step, you'll set up your node to be connectable using key-based authentication.
+Bring up a CentOS 7 system now. In the next step, you set up your node to be connectable using key-based authentication.
 
 [COMMENT] You'll see the username `vagrant` and the IP address 192.168.77.78 in the commands and sample output. Be sure to change these to match your environment.  
 
@@ -55,15 +55,15 @@ Bring up a CentOS 7 system now. In the next step, you'll set up your node to be 
 
 ## 2. Create an SSH key pair to connect to your node
 
-> You'll perform this part from your workstation and your node.
+> You perform this part from your workstation and your node.
 
-Before you add your node to Chef Compliance, you'll need to set up a way for Chef Compliance to connect to your node over SSH.
+Before you add your node to Chef Compliance, you need to set up a way for Chef Compliance to connect to your node over SSH.
 
 Chef Compliance supports both password authentication and [key-based authentication](https://en.wikipedia.org/wiki/Public-key_cryptography). We'll use key-based authentication because it's generally considered to be more secure than password authentication. 
 
-[COMMENT] If your node is already set to be connectable through key-based authentication, such as through an Amazon EC2 instance, you can [skip to the next step](#step3), where you add the private part of your key pair to Chef Compliance. 
+[COMMENT] If your node is already set to be connectable through key-based authentication, such as through an Amazon EC2 instance, you can [skip to the next step](#step3) to configure your node for non-interactive sessions. 
 
-In this part, you'll generate an SSH key pair on your workstation. Then you'll copy the public part of your key to your node. Finally, you'll create a test connection to your node to verify connectivity. 
+In this part, you generate an SSH key pair on your workstation. Then you copy the public part of your key to your node. Finally, you create a test connection to your node to verify connectivity. 
 
 First, ensure you have the <% fp '~/.ssh' %> directory on your workstation. This directory is commonly used to manage public and private SSH keys. This step is important for Windows workstations &ndash; Linux and Mac OS workstations typically already have this directory.
 
@@ -100,7 +100,7 @@ The key's randomart image is:
 +----[SHA256]-----+
 ```
 
-Next, copy the public part of your key pair (the public part has the <% fp '.pub' %> file extension) to your node. An easy way to do that is to run the `scp` command. Specify the username and password for the user account that you want Chef Compliance to connect to. Your user account can be the root account or one that has `sudo` access.
+Next, copy the public part of your key pair (the public part has the <% fp '.pub' %> file extension) to your node. An easy way to do that is to run the `scp` command. Specify the username and password for the user account that you want Chef Compliance to connect to. Your user account can be the root account or one that has `sudo` access. Here's an example:
 
 ```bash
 $ scp ~/.ssh/node1.pub vagrant@192.168.77.78:/home/vagrant/.ssh
@@ -181,11 +181,11 @@ If you use a framework such as Chef to manage your production servers, you can a
 
 ### 4. Provide your SSH private key to Chef Compliance
 
-> You'll do this part from the Chef Compliance web interface.
+> You do this part from the Chef Compliance web interface.
 
 The next step is to provide your SSH private key so that Chef Compliance can connect to your node.
  
-An easy way to get your private key file's contents is to print the file to the terminal and copy the output to your clipboard. 
+An easy way to get your private key file's contents is to print the file to the terminal and copy the output to your clipboard. Run this on your workstation.
 
 ```bash
 $ cat ~/.ssh/node1
@@ -226,11 +226,11 @@ Fill in the **Name** field. You can use a name other than **node1** if you'd lik
 
 ![](compliance/add_pk.png)
 
-Click **Add Private Key**. You'll see this confirmation.
+Click **Add Private Key**. You see this confirmation.
 
 ![](compliance/add_pk_confirm.png)
 
-[COMMENT] Depending on your requirements, you can use the same key pair to connect to multiple nodes. You only need to generate and import the private part of the key one time. Each server requires the public part of the key.
+[COMMENT] Depending on your requirements, you can use the same key pair to connect to multiple nodes. You only need to generate and import the private part of the key into Chef Compliance one time. Each server requires the public part of the key.
 
 [END_BOX]
 
@@ -238,13 +238,13 @@ Click **Add Private Key**. You'll see this confirmation.
 
 ## 5. Add your node to Chef Compliance
 
-Now you'll add your node to Chef Compliance.
+Now you add your node to Chef Compliance.
 
 From the **Dashboard** menu, click **Add** or **Add Nodes**.
 
 ![](compliance/add_node_button.png)
 
-Enter your node's hostname or IP address. Leave the **Add to environment** field empty. Chef Compliance will create a default environment for you.
+Enter your node's hostname or IP address. Leave the **Add to environment** field empty. Chef Compliance creates a default environment for you.
 
 ![](compliance/add_node_ip_env.png)
 
@@ -260,7 +260,7 @@ Click the **Add 1 node** button.
 
 ![](compliance/add_node_confirm_button.png)
 
-You'll be taken back to the dashboard.
+You're taken back to the dashboard.
 
 ![](compliance/add_node_confirm.png)
 
@@ -282,13 +282,13 @@ Scroll to the bottom of the page and click **Save**.
 
 ## 6. Create a test connection to your node
 
-You've already manually verified that your node is connectable over SSH using key-based authentication. But let's verify that Chef Compliance is also properly set up to use your private key.
+You've already manually verified that your node is connectable from your workstation over SSH using key-based authentication. But let's verify that Chef Compliance is also properly set up to use your key pair.
 
 From the dashboard, select your node and click the **Connectivity** button.  
 
 ![](compliance/connectivity_button_centos7.png)
 
-Chef Compliance creates a test connection over SSH. You'll see this in the connectivity report.
+Chef Compliance creates a test connection over SSH. You see this in the connectivity report.
 
 ![](compliance/connectivity_report_centos7.png)
 
