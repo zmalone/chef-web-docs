@@ -1,1 +1,1 @@
-Now that you're all set up, let's create the `awesome_customers_rhel` cookbook and, before writing any configuration code, verify that it successfully runs through Test Kitchen.
+Now that you've verified the remediation on a test instance, you'll upload your `ssh` cookbook to your Chef server and apply the configuration to your CentOS node. After that, you'll rerun the compliance scan on your node to verify the fix.
