@@ -1,28 +1,21 @@
-In this tutorial, you used Chef's audit mode to apply audit controls to your infrastructure. With audit mode, you can run your  tests as often as you need and can resolve issues more quickly than through manual testing.
+In this tutorial, you used Chef to remediate a failure to one of the predefined CIS Security Benchmarks. 
 
-Chef Analytics gives you a view into what's happening in your infrastructure. You can write rules, alerts, and notifications to contact the right people and services when an audit failure occurs anywhere in your network.
+You started with local development using Test Kitchen. Developing your code on local instances helps you to experiment and iterate more quickly. 
 
-By starting with Test Kitchen to verify your work locally, you have increased confidence that your changes will work in production.
+After verifying that your cookbook properly remediates the compliance failure on a test instance, you uploaded your cookbook to the Chef server and applied the configuration to your node. You then re-ran the compliance scan to verify that the SSH configuration meets compliacne.
 
-In this tutorial, you worked with the Chef Analytics web interface to view the state of your Chef server and to create rules that trigger when an audit fails. You can also use the `knife` plugin [knife-analytics](https://github.com/chef/knife-analytics) to view alerts and perform other common tasks from the command line. To get started, run this command to install `knife-analytics` on your workstation.
+Here are the 5 stages to meeting your compliance challenges that we proposed at the [start of the previous tutorial](/compliance-assess/rhel/):
 
-EXERCISES
+* **Analyze**
+* **Specify**
+* **Test**
+* **Remediate**
+* **Certify**
 
-Set up recurring scan
-Add a second node - scan 2 at the same time
-Think about how you might remediate SSH issue
-Think about your compliance requirements. (WHAT ELSE?)
+With remediation in place, you've successfully covered 4 of these 5 stages. The final stage, **Certify**, depends on your compliance process. With Chef Compliance, you have automated testing and reports to prove the state of your infrastructure, which can greatly decrease the time it takes to receive a final human sign off. And because your node is managed by Chef, you can use automation to repair new compliance failures and ensure that remediated failures stay good.
 
-```bash
-# ~/chef-repo
-$ chef gem install knife-analytics
-Fetching: chef-analytics-0.1.0.gem (100%)
-Successfully installed chef-analytics-0.1.0
-Fetching: knife-analytics-0.2.1.gem (100%)
-Successfully installed knife-analytics-0.2.1
-2 gems installed
-```
+The built-in compliance profiles are a great start, but they may not cover your organization's unique requirements. We're working on a tutorial that teaches you how to write custom compliance profiles. [Follow us on Twitter](https://twitter.com/learnchef) to get the latest updates.
 
-[GITHUB] Get the code for this tutorial on [GitHub](https://github.com/learn-chef/controls-for-compliance-rhel).
+[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/ssh) on GitHub.
 
-Learn more about building a high velocity, highly compliant organization at [complianceatvelocity.com](http://complianceatvelocity.com/).
+You can also learn more about building a high velocity, highly compliant organization at [complianceatvelocity.com](http://complianceatvelocity.com/).

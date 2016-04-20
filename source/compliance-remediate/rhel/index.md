@@ -24,7 +24,7 @@ You can use Chef's test and repair approach to remediate compliance failures. A 
 
 **run chef-client**<br>[chef-client](https://docs.chef.io/chef_client.html) runs on a node. It downloads the latest cookbooks from Chef server and then applies them. You can set up `chef-client` to run on-demand, periodically, or in response to a change. 
 
-**scan & verify**<br>After `chef-client` runs on your node, you rerun your compliance scans and verify that the compliance failure was correctly remediated.
+**scan & verify**<br>After `chef-client` runs on your node, you re-run your compliance scans and verify that the compliance failure was correctly remediated.
 
 In this tutorial, you'll implement this workflow to resolve the failure to the **Set SSH Protocol to 2** rule you saw in the previous tutorial. You'll start by remediating the failure locally on a virtual machine. Then you'll upload your cookbooks to the Chef server, run `chef-client` on your node, and rescan your node.  
 
@@ -33,7 +33,5 @@ After completing this lesson, you should be able to:
 * a
 * b
 * c
-
-[GITHUB] The [final code for this tutorial](https://github.com/learn-chef/ssh) is available on GitHub.
 
 Let's get started by ensuring you're all set up.
