@@ -1,0 +1,123 @@
+---
+title: 'Install Chef Compliance'
+order: 1
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 60 minutes
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
+---
+Chef Compliance runs on Red Hat Enterprise Linux, CentOS, and Ubuntu. You can install Chef Compliance on your own hardware or from the AWS Marketplace. For this tutorial, you can use a virtual machine.
+
+Here's a summary of what you'll do in this part:
+
+1. [Install Chef Compliance](#step1), either on your own hardware or through the AWS Marketplace.
+2. Log in to Chef Compliance through the web interface and [perform the initial setup](#step2).
+3. [Review the dashboard](#step3) and familiarize yourself with what you can do.
+
+[START_BOX]
+
+## 1. Install Chef Compliance
+
+Choose whether to install Chef Compliance on your own system or through the AWS Marketplace.
+
+### Option 1: Install on your own hardware or virtual machine
+
+Follow these steps to run Chef Compliance on your own hardware or virtual machine:
+
+1. [Choose your platform](https://docs.chef.io/install_compliance.html#supported-platforms) and bring up a system to run Chef Compliance.
+1. [Review the prerequisites](https://docs.chef.io/install_compliance.html#prerequisites) to ensure your system is ready.
+1. Log in to your server directly, typically over SSH. Then [follow steps 1-4](https://docs.chef.io/install_compliance.html#standalone) to download the package and perform the installation. 
+
+<% accordion('get-url', 'Getting the package URL') do %>
+
+It's likely that you're viewing this web page from your workstation, and that your system for running Chef Compliance is running on another system without a graphical user interface. The easiest way to get the download link from your workstation to your Chef Compliance server is to [copy the link you need from the download page](https://downloads.chef.io/compliance/) and then paste it into a `wget` command through an SSH session to your server.
+
+This example shows where to find the URL from the downloads page.
+ 
+![](assets/images/compliance/download_rhel7_url.png)
+
+Here's an example of how to download and install Chef Compliance on Red Hat Enterprise Linux or CentOS. Replace <code class="placeholder">PACKAGE\_URL</code> and <code class="placeholder">PACKAGE\_NAME</code> with the latest one from the download page.
+
+```bash
+$ wget PACKAGE_URL
+$ sudo rpm -Uvh PACKAGE_NAME
+```
+
+And here's an example for Ubuntu.
+
+```bash
+$ wget PACKAGE_URL
+$ sudo dpkg -i PACKAGE_NAME
+```
+
+<% end %>
+<br>
+
+### Option 2: Install from the AWS Marketplace
+
+You can [bring up Chef Compliance through the AWS Marketplace](https://docs.chef.io/aws_marketplace.html#chef-compliance-ami). The AWS Marketplace setup comes preconfigured with the necessary system requirements and network settings.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Perform the initial setup
+
+> In this part, you access the Chef Compliance web interface remotely from a web browser.
+
+The next step is to log in to the Chef Compliance web interface and perform the initial setup. 
+ 
+From your computer, open a web browser and navigate to your server's setup page. The URL comes in this form:
+
+**https://<% ph 'ip-address-or-fqdn' %>/#/setup**
+
+You'll likely see a warning regarding the server's security certificate. For puposes of the tutorial, it's safe to accept the certificate. Chef Compliance comes with a self-signed certificate. In a production environment, you can [configure an SSL certificate](https://docs.chef.io/install_compliance.html#configure-ssl) that's rooted by a trusted certificate authority (CA) to enable the Chef Compliance server to verify its authenticity.
+
+Next, click the **Setup Chef Compliance** button.
+
+![](compliance/setup_button.png)
+
+Review the **Online Master License and Services Agreement** and then click **Accept**.
+
+![](compliance/accept_license_button.png)
+
+Next, fill in the details for the administrator account and press **Next**. Note your username and password somewhere safe.
+
+![](compliance/create_admin_account.png)
+
+On the **Review** page, verify your account details and then click **Configure**.
+
+![](compliance/configure_button.png)
+
+After the process completes, click the **Dashboard** button. Then enter your administrator account details and click **Sign in**.
+
+![](compliance/sign_in_button.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Review the dashboard
+
+The dashboard appears when you sign in. This is where you manage nodes, initiate scans, and review reports. 
+
+![](compliance/dashboard.png)
+
+Click through each of the menu options to get a sense of what you can do. Here's a brief description of each option.
+
+* **Dashboard** &mdash; where you manage the systems, or _nodes_, that you scan for compliance. 
+* **Reports** &mdash; where you review the results of your compliance scans. 
+* **Jobs** &mdash; displays the status of scheduled scans. 
+* **Compliance** &mdash; displays the available [compliance profiles](https://docs.chef.io/compliance.html#compliance-profiles). Chef Compliance comes with a set of preconfigured profiles. You can also add your own.
+* **Settings** &mdash; where you manage the private keys that allow Chef Compliance to connect to your nodes. Although key-based authentication can provide better security, you can also configure Chef Compliance to connect to your servers using passwords. 
+
+You can view which user is logged in or log out of your session from the menu located at the upper-right corner.
+ 
+![](compliance/current_user.png)
+
+You can also manage organizations and users from the menu located at the bottom-left corner.
+
+![](compliance/manage_menu.png)
+
+[END_BOX]

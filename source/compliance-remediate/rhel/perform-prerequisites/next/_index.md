@@ -1,0 +1,1 @@
+Now that you have the basic skills you'll need, let's remediate the failure of the **Set SSH Protocol to 2** rule on a local virtual machine using Test Kitchen.
