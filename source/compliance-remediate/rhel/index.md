@@ -6,15 +6,27 @@ logo: redhat.svg
 order: 1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-[
-Here's what you did in the previous tutorial.
-]
+In the previous tutorial, [Assess your infrastructure with Chef Compliance](/compliance-assess/rhel/), you set up a Chef Compliance server and scanned a CentOS 7 server, or _node_, against the predefined CIS Security Benchmarks. 
 
-[
-Diagram what's involved (Chef Compliance, Chef server, workstation, node)
-]
+We proposed these 5 stages to meeting your compliance challenges: **Analyze**, **Specify**, **Test**, **Remediate**, and **Certify**. In the previous tutorial, you covered the first 3 of these 5 stages.
 
-<img src="/assets/images/networks/compliance-ssh-node.svg" style="width: 80%; box-shadow: none;" alt="Your workstation, Chef server, Chef Analytics, and nodes" />
+The fourth stage is **Remediate**. Knowing the state of your servers is a great first step towards meeting your compliance goals. But how might you remediate compliance failures and ensure that the remediation _stays_ good?
+
+With Chef, you write code to describe the desired state of your infrastructure. When Chef runs, it applies the configuration only when the current state differs from the desired state. This approach is called _test and repair_.
+
+You can use Chef's test and repair approach to remediate compliance failures. A complete workflow might use automation, such as a [Chef Delivery](/delivery/get-started/) pipeline. This diagram shows a more basic workflow that you might start with.
+
+<img src="/assets/images/networks/compliance_workflow.svg" style="width: 100%; box-shadow: none;" />
+
+**remediate locally**<br>The workflow begins with local remediation. This step involves writing Chef code, or _cookbooks_, on your workstation and applying that code to local test instances that resemble your production environment. Testing your code on local instances helps you to experiment and iterate more quickly.
+
+**upload cookbooks**<br>After you verify that your cookbook properly remediates the compliance failure on a local test instance, you can then upload your cookbook to the Chef server. Chef server acts as a central repository for your cookbooks and for information about your servers, or _nodes_.
+
+**run chef-client**<br>[chef-client](https://docs.chef.io/chef_client.html) runs on a node. It downloads the latest cookbooks from Chef server and then applies them. You can set up `chef-client` to run on-demand, periodically, or in response to a change. 
+
+**scan & verify**<br>After `chef-client` runs on your node, you rerun your compliance scans and verify that the compliance failure was correctly remediated.
+
+In this tutorial, you'll implement this workflow to resolve the failure to the **Set SSH Protocol to 2** rule you saw in the previous tutorial. You'll start by remediating the failure locally on a virtual machine. Then you'll upload your cookbooks to the Chef server, run `chef-client` on your node, and rescan your node.  
 
 After completing this lesson, you should be able to:
 

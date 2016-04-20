@@ -4,146 +4,57 @@ order: 1
 layout: lesson
 sections: []
 next: {heading: Next, partial: next}
-time_to_complete: 60 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-This tutorial comes in two parts. In the first part, [A](B), you'll XXX.
+This tutorial comes in two parts.
 
-https://docs.chef.io/integrate_compliance_chef_server.html
+In the first part, [Remediate the compliance failure on a local virtual machine](/compliance-remediate/rhel/remediate-the-compliance-failure-on-a-local-virtual-machine/), you'll replicate and remediate the failure of the **Set SSH Protocol to 2** rule on a local virtual machine.
 
-Perform prerequisites
+In the second part, [Remediate the compliance failure on your node](/compliance-remediate/rhel/remediate-the-compliance-failure-on-your-node/), you'll apply the remediation to your node and rerun the compliance scan to verify that the node's SSH configuration passes the **Set SSH Protocol to 2** rule.
 
-  - install CC
-  - test kitchen
-  - hosted Chef OR Chef server
+Both parts use Chef and require a basic understanding of: 
 
-If you do not want to set up Chef Compliance or Chef server now, you can follow just the second part, [A](B), which teaches you how to remediate and verify a compliance failure on a local virtual machine. [Develop your infrastructure code locally](/local-development/rhel/)
+* Chef's _test and repair_ approach.
+* working with a Chef server.
+* local development using Test Kitchen.
+* working with Chef Compliance.
+
+Use the following sections as a guide to understanding the prerequisite skills. 
 
 [START_BOX]
 
-## 1. Install Chef Compliance
+## Chef's test and repair approach
 
-> You'll do this part from your Chef Compliance server.
-
-Chef Compliance runs on Red Hat Enterprise Linux, CentOS, and Ubuntu. You can install Chef Compliance from the AWS Marketplace or on your own hardware. For this tutorial, you can use a virtual machine.
-
-To install Chef Compliance, you'll log in to your server directly (typically over SSH), download and then run the setup package. To access the Chef Compliance user interface, you'll connect remotely from a web browser. Ensure that your server has a resolvable hostname that is specified using a FQDN or an IP address and that your server provides SSH access.
-
-The Chef documentation walks you through the installation process.
-
-### Option 1: Install on your own hardware or virtual machine
-
-If you want to run Chef Compliance on your own hardware or virtual machine, [choose your platform](https://docs.chef.io/install_compliance.html#supported-platforms) and bring up a system. Then [review the prerequisites](https://docs.chef.io/install_compliance.html#prerequisites) to ensure your system is ready. Finally, log in to your server and [follow this procedure](https://docs.chef.io/install_compliance.html#standalone) to install Chef Compliance and start the server.
-
-It's likely that you're viewing this web page from your workstation, and that your system for running Chef Compliance is running on another system without a graphical user interface. The easiest way to get the download link from your workstation to your Chef Compliance server is to [copy the link you need from the download page](https://downloads.chef.io/compliance/) and then paste it into a `wget` command through an SSH session to your server.
-
-This example shows where to find the URL.
-
-![](compliance/download_rhel7_url.png)
-
-Here's an example of how to download and install Chef Compliance on Red Hat Enterprise Linux or CentOS. Replace <code class="placeholder">PACKAGE\_URL</code> and <code class="placeholder">PACKAGE\_NAME</code> with the latest one from the download page.
-
-```bash
-$ sudo yum install wget -y
-$ wget PACKAGE_URL
-$ sudo rpm -Uvh PACKAGE_NAME
-```
-
-And here's an example for Ubuntu.
-
-```bash
-$ sudo apt-get install wget -y
-$ wget PACKAGE_URL
-$ sudo dpkg -i PACKAGE_NAME
-```
-
-### Option 2: Install from the AWS Marketplace
-
-You can [bring up Chef Compliance through the AWS Marketplace](https://docs.chef.io/aws_marketplace.html#chef-compliance-ami). The AWS Marketplace setup comes preconfigured with the necessary system requirements and network settings.
+If you're new to Chef, we recommend that you first work through the [Learn the Chef basics](/learn-the-basics/rhel/) tutorial. You'll learn about Chef's test and repair approach by writing a Chef cookbook that brings up a basic web server configuration. We provide a free CentOS virtual machine that runs in your browser.
 
 [END_BOX]
 
 [START_BOX]
 
-## 2. Perform the initial setup
+## Working with a Chef server
 
-> You'll do this part from your workstation.
+If you don't have a Chef server, the [Manage a node](/manage-a-node/rhel/) tutorial gets you started. You'll learn how Chef server acts as a central repository for your cookbooks as well as for information about every node it manages. You'll sign up for hosted Chef and learn how to manage a Red Hat Enterprise Linux or CentOS server, called a _node_, remotely from your workstation.
 
-The next step is to connect to your Chef Compliance server from a web browser and perform the initial setup.
-
-From your workstation, open a web browser and navigate to your server's setup page. The URL comes in this form:
-
-**https://<% ph 'ip-address-or-fqdn' %>/#/setup**
-
-You'll likely see a warning regarding the server's security certificate. For puposes of the tutorial, it's safe to accept the certificate. Chef Compliance comes with a self-signed certificate. In a production environment, you can [configure an SSL certificate](https://docs.chef.io/install_compliance.html#configure-ssl) that's rooted by a trusted certificate authority (CA) to enable the Chef Compliance server to verify its authenticity.
-
-Next, click the **Setup Chef Compliance** button.
-
-![](compliance/setup_button.png)
-
-Review the **Online Master License and Services Agreement** and then click **Accept**.
-
-![](compliance/accept_license_button.png)
-
-Next, fill in the details for the administrator account and press **Next**. Note your username and password somewhere safe.
-
-![](compliance/create_admin_account.png)
-
-On the **Review** page, verify your account details and then click **Configure**.
-
-![](compliance/configure_button.png)
-
-After the process completes, click the **Dashboard** button. Then enter your administrator account details and click **Sign in**.
-
-![](compliance/sign_in_button.png)
+As an optional step, you can follow the [Install and manage your own Chef server](/install-and-manage-your-own-chef-server/linux/) tutorial to learn how to set up a Chef server that you manage.
 
 [END_BOX]
 
 [START_BOX]
 
-## 3. Review the dashboard
+## Local development using Test Kitchen
 
-The dashboard appears when you sign in. This is where you manage nodes, initiate scans, and review reports.
-
-![](compliance/dashboard.png)
-
-Click through each of the menu options to get a sense of what you can do. Here's a brief description of each option.
-
-* **Dashboard** &mdash; where you manage the systems, or _nodes_, that you want to scan for compliance risk.
-* **Reports** &mdash; where you review the results of your compliance scans.
-* **Jobs** &mdash; displays the status of scheduled and active scans.
-* **Compliance** &mdash; displays the available [compliance profiles](https://docs.chef.io/compliance.html#compliance-profiles). Chef Compliance comes with a set of preconfigured profiles. You can also add your own.
-* **Settings** &mdash; where you manage the private keys that allow Chef Compliance to connect to your nodes. Although key-based authentication can provide better security, you can also configure Chef Compliance to connect to your servers using passwords.
-
-You can view which user is logged in or log out of your session from the menu located at the upper-right corner.
-
-![](compliance/current_user.png)
-
-You can also manage organizations and users from the menu located at the bottom-left corner.
-
-![](compliance/manage_menu.png)
+If you're not familiar with local development using Test Kitchen, check out the [Develop your infrastructure code locally](/local-development/rhel/) tutorial. You'll learn how to use Test Kitchen along with the virtualization tools VirtualBox and Vagrant to develop and verify your infrastructure code _before_ you apply the configuration to your production servers.
 
 [END_BOX]
 
 [START_BOX]
 
-### Set up your workstation for local development
+## Working with Chef Compliance
 
-The first part of this tutorial builds on the previous tutorial, [Develop your infrastructure code locally](/local-development/rhel/), and has the same set up requirements. We recommend you work through the previous tutorial before starting this one.
+For this tutorial, you'll need a Chef Compliance installation and a CentOS 7 node that permits SSH-1 connections. 
 
-[COMMENT] Remember, although you're configuring a CentOS server, your workstation can be any OS you choose &ndash; be it Windows, Mac OS, or some other flavor of Linux. Your workstation can also be a virtual machine that's running on VMWare Fusion or another hypervisor that enables nested virtualization.
+Be sure to complete the previous tutorial, [Assess your infrastructure with Chef Compliance](/compliance-assess/rhel/), before starting this one.
 
-At this point, your workstation should:
-
-* have the latest version of the Chef DK.
-* have a programmer's text editor that you're comfortable working with.
-* have the <% fp('~/learn-chef') %> directory for you to work in.
-* have an SSH client &ndash; we recommend installing Git if you're using a Windows workstation.
-
-Having an SSH client is important because you'll log in to your Linux instance to verify your work.
-
-You should also be familiar with the basics of Test Kitchen, such as how to create, converge, and destroy instances.
-
-Test Kitchen works with a number of cloud and virtualization providers. In this tutorial you'll use [VirtualBox] (https://www.virtualbox.org) and [Vagrant](https://www.vagrantup.com) to run your work on a local virtual machine. You can later use the cookbook you build in this tutorial to [try out Test Kitchen drivers](https://docs.chef.io/config_yml_kitchen.html#drivers) for other environments.
+[COMMENT] This tutorial uses Chef server and Chef Compliance as standalone components. Although not required,  you can later [integrate Chef Complance with Chef server](https://docs.chef.io/integrate_compliance_chef_server.html) to enable Chef Compliance users to log in using their Chef server credentials and enable nodes to download Chef Compliance profiles, run them, and send the results back to Chef Compliance.
 
 [END_BOX]
