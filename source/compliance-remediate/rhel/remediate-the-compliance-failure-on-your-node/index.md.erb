@@ -8,25 +8,25 @@ next: {heading: Conclusion, partial: conclusion}
 time_to_complete: 30 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-In this part, you'll apply the SSH configuration to your CentOS node and then re-run the compliance scan to verify the fix.
+In this part, you'll apply the SSH configuration to your CentOS node and then rerun the compliance scan to verify the fix.
 
-To apply the SSH configuration, you'll upload the `ssh` cookbook to your Chef server and then bootstrap your CentOS node.  
+To apply the SSH configuration, you'll upload the `ssh` cookbook to your Chef server and then bootstrap your CentOS node.
 
-Recall that during the bootstrap process, a node installs `chef-client` and performs the initial checkin to the Chef server. When you bootstrap a node, you specify the _run-list_, which are the recipes that you want to apply. `chef-client` fetches the latest cookbooks from the Chef server. To update your node's configuration, you upload a new version of your cookbook to the Chef server and run `chef-client` on your node.
+Recall that during the bootstrap process, a node installs `chef-client` and performs the initial check-in to the Chef server. When you bootstrap a node, you specify the _run-list_, which includes the recipes that you want to apply. `chef-client` fetches the latest cookbooks from the Chef server. To update your node's configuration, you upload a new version of your cookbook to the Chef server and run `chef-client` on your node.
 
 Here's what you'll do in this part:
 
 1. [Upload the ssh cookbook to your Chef server](#step1)
 1. [Bootstrap your node](#step2)
-1. [Re-run the compliance scan](#step3)
+1. [Rerun the compliance scan](#step3)
 
 [START_BOX]
 
 ## 1. Upload the ssh cookbook to your Chef server
 
-The first step is to upload the `ssh` cookbook to the Chef server. This allows the node to fetch the cookbook during the bootstrap process. 
+The first step is to upload the `ssh` cookbook to the Chef server. This allows the node to fetch the cookbook during the bootstrap process.
 
-Run this comand from your <% fp '~/learn-chef' %> directory. 
+Run this comand from your <% fp '~/learn-chef' %> directory.
 
 ```bash
 # ~/learn-chef
@@ -41,7 +41,7 @@ Uploaded 1 cookbook.
 
 ## 2. Bootstrap your node
 
-Next, bootstrap your CentOS 7 node. In the _Manage a node_ tutorial, you chose whether to bootstrap [using a password or key-based authentication](/manage-a-node/rhel/bootstrap-your-node#step1). Here, you can use the SSH private key that you created in the previous tutorial to bootstrap using key-based authentication.
+Next, bootstrap your CentOS 7 node. In the _Manage a node_ tutorial, you chose whether to bootstrap [using a password or key-based authentication](/manage-a-node/rhel/bootstrap-your-node#step1). Here, you'll use the second apprach with the SSH private key that you created in the previous tutorial.
 
 Run this `knife bootstrap` command. Replace the IP address and the value of `--identify-file` as needed.
 
@@ -76,22 +76,22 @@ Connecting to 192.168.77.78
 192.168.77.78
 192.168.77.78 Running handlers:
 192.168.77.78 Running handlers complete
-192.168.77.78 Chef Client finished, 1/1 resources updated in 06 seconds 
+192.168.77.78 Chef Client finished, 1/1 resources updated in 06 seconds
 ```
 
-`chef-client` runs during the process. You see the SSH configuration file, <% fp '/etc/ssh/sshd_config' %>, get updated to include the `Protocol 2` setting.
+`chef-client` runs during the bootstrap process. You see the SSH configuration file, <% fp '/etc/ssh/sshd_config' %>, get updated to include the `Protocol 2` setting.
 
 [END_BOX]
 
 [START_BOX]
 
-## 3. Re-run the compliance scan 
+## 3. Re-run the compliance scan
 
 You've applied the updated SSH configuration to your node. Now let's scan your node against the CIS Benchmarks a second time to see whether the **Set SSH Protocol to 2** rule pases.
 
 We expect the rule to pass because we verified the configuration on a test instance and saw the expected output when `chef-client` ran on the node.
- 
-From the dashboard in the web interface, select your node and click **Scan**. 
+
+From the dashboard in the web interface, select your node and click **Scan**.
 
 ![](compliance/scan_button_centos7.png)
 
