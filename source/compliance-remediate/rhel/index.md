@@ -30,8 +30,8 @@ In this tutorial, you'll implement this workflow to resolve the failure to the *
 
 After completing this lesson, you should be able to:
 
-* test the remediation on a local instance
-* update a node with the remediation
-* prove that the remediation fixed the compliance failure
+* test the remediation on a local instance.
+* update a node with the remediation.
+* prove that the remediation fixed the compliance failure.
 
 Let's get started by ensuring you're all set up.
