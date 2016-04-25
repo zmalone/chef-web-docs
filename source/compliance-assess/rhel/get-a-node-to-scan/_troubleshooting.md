@@ -6,9 +6,9 @@ If you see this error, verify that:
 
 * you can [manually connect over SSH](#step2) using your key pair.
 * your node is [configured for non-interactive sessions](#step3).
-* Chef Compliance has the [private part of your key pair](#step4).
+* Chef Compliance has the [SSH private key](#step4).
 
-If the connectivity test still fails, log in to your Chef Compliance server and run this command. The output may help indicate the source of failure. 
+If the connectivity test still fails, log in to your Chef Compliance server and run this command. The output may help you find the source of the failure.
 
 ```bash
 [vagrant@chef-compliance ~]$ sudo chef-compliance-ctl tail core
