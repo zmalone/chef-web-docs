@@ -12,9 +12,9 @@ Recall that in the previous tutorial you ran the **cis-centos7-level1** complian
 
 ![](compliance/scan_report_issues_sshv2_centos7.png)
 
-The failure tells us that the node potentially enables [SSH version 1 connections](https://en.wikipedia.org/wiki/Secure_Shell#SSH-1). Due to design flaws which make it vulnerable, CIS and others recommend disabling access through SSH-1.
+The failure tells us that the node potentially enables [SSH version 1 connections](https://en.wikipedia.org/wiki/Secure_Shell#SSH-1). CIS recommends that you disable access through SSH-1 because it has design flaws that make it vulnerable.
 
-In this part, you'll remediate and verify the failure of the **Set SSH Protocol to 2** rule on a local virtual machine. By starting with local development, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers. 
+In this part, you'll verify the failure of the **Set SSH Protocol to 2** rule on a local virtual machine and remediate it. By starting with local development, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers.
 
 Here's what you'll do:
 
@@ -39,15 +39,15 @@ The code you see is [InSpec](https://github.com/chef/inspec), an auditing and te
 
 InSpec provides [built-in resource types](https://docs.chef.io/inspec_reference.html) that describe the various parts of a system, such as files, users, and services. In this example, you see the [file](https://docs.chef.io/inspec_reference.html#file) resource used 2 times.
 
-The first `file` resource uses a regular expression to verify whether the SSH configuration file, <% fp '/etc/ssh/sshd_conf' %>, contains at least one occurence of the `Protocol` setting. The regular expression does not match any settings that begin with a comment `#`. 
+The first `file` resource uses a regular expression to verify whether the SSH configuration file, <% fp '/etc/ssh/sshd_conf' %>, contains at least one occurence of the `Protocol` setting. The regular expression does not match any settings that begin with a comment `#`.
 
 [COMMENT] [Learn more about regular expressions in Ruby](http://www.tutorialspoint.com/ruby/ruby_regular_expressions.htm).
 
-The second `file` resource uses the same regular expression, but uses the [capture group](http://www.regular-expressions.info/refcapture.html) `(\S+)` to verify that each occurence of the `Protocol` setting specifies 2 as its value. 
+The second `file` resource uses the same regular expression, but uses the [capture group](http://www.regular-expressions.info/refcapture.html) `(\S+)` to verify that each occurence of the `Protocol` setting specifies 2 as its value.
 
 [COMMENT] See the regular expression in action. Go to [rubular.com](http://rubular.com) and enter the regular expression `^\s*Protocol\s+(\S+)\s*(?:#.*)?$`. Then test it against a few strings and note the behavior. Some strings you might test against are `Protocol 2,1`, `# Protocol 2`, and `Protocol 2 # only 2`.
 
-When you scanned your CentOS node, you saw that the first `file` resource failed. 
+When you scanned your CentOS node, you saw that the first `file` resource failed.
 
 ![](compliance/scan_report_issues_sshv2_centos7.png)
 
@@ -125,8 +125,8 @@ Recipe: code_generator::cookbook
 
 ## 3. Install kitchen-inspec
 
-Later in this part, you'll add InSpec code to your cookbook to verify the SSH-2 compliance rule. To run InSpec tests from Test Kitchen, you need the `kitchen-inspec` gem. Install `kitchen-inspec` like this. 
- 
+Later in this part, you'll add InSpec code to your cookbook to verify the SSH-2 compliance rule. To run InSpec tests from Test Kitchen, you need the `kitchen-inspec` gem. Install `kitchen-inspec` like this.
+
 ```bash
 # ~/learn-chef
 $ chef gem install kitchen-inspec
@@ -217,11 +217,11 @@ As expected, 0 resources were applied because the cookbook is empty. But it's a 
 
 In the previous tutorial, you saw the SSH-2 rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
 
-Recall that the InSpec code for this rule looks like this. You'll add this code to your cookbook.
+Recall that the InSpec code for the rule looks like this. You'll add this code to your cookbook.
 
 ![](compliance/ssh_protocol_2_rule.png)
 
-Start by creating the <% fp '~/learn-chef/cookbooks/ssh/test/integration/default/inspec' %> directory. 
+Start by creating the <% fp '~/learn-chef/cookbooks/ssh/test/integration/default/inspec' %> directory.
 
 ```bash
 # ~/learn-chef/cookbooks/ssh
@@ -280,7 +280,7 @@ rspec  # File /etc/ssh/sshd_config content should match /^\s*Protocol\s+(\S+)\s*
 >>>>>> ----------------------
 ```
 
-You see that the test produces the same failure on your test instance.
+You see that the test produces the same failure on your local test instance as it did on your node.
 
 ```bash
 # ~/learn-chef/cookbooks/ssh
@@ -295,7 +295,8 @@ rspec  # File /etc/ssh/sshd_config content should match /^\s*Protocol\s+(\S+)\s*
 
 ## 6. Remediate the failure
 
-In practice, you and your team would decide the appropriate way to fix the error. For example, you might use the [file](https://docs.chef.io/resource_file.html), [cookbook_file](https://docs.chef.io/resource_cookbook_file.html), or [template](https://docs.chef.io/resource_template.html) resource to provide a complete replacement to <% fp '/etc/ssh/sshd_config' %>. Or you might use another approach to patch the existing file.
+In practice, you and your team would decide the appropriate way to fix the error. For example, you might use the [file](https://docs.chef.io/resource_file.html), [cookbook_file](https://docs.chef.io/resource_cookbook_file.html), or [template](https://docs.chef.io/resource_template.html) resource to provide a complete replacement to <% fp '/etc/ssh/sshd_config' %>.
+
 
 For learning purposes, you'll use the `cookbook_file` resource to provide an SSH configuration file that contains only the `Protocol` setting.
 
@@ -313,7 +314,7 @@ Run this command to add a file named <% fp 'ssh_config' %> to your cookbook.
 $ chef generate file cookbooks/ssh ssh_config
 ```
 
-Now write the contents of your configuration file, <% fp '~/learn-chef/cookbooks/ssh/files/default/sshd_config' %>. The new configuration file includes only the `Protocol` setting and uses the recommended value of 2. 
+Now write the contents of your configuration file, <% fp '~/learn-chef/cookbooks/ssh/files/default/sshd_config' %>. The new configuration file includes only the `Protocol` setting and uses the recommended value of 2.
 
 ```ruby
 # ~/learn-chef/cookbooks/ssh/files/default/sshd_config
@@ -332,7 +333,7 @@ cookbook_file '/etc/ssh/sshd_config' do
 end
 ```
 
-Next, move back to your cookbook's directory. 
+Next, move back to your cookbook's directory.
 
 ```bash
 # ~/learn-chef
