@@ -16,11 +16,9 @@ You'll need to [set up a Chef server account](/manage-a-node/ubuntu/set-up-your-
 Here are the steps you'll follow:
 
 1. [Bring up a node to manage](#step1)
-1. [Copy your secret key to your node](#step2)
-1. [Upload your encrypted data bag to Chef server](#step3)
-1. [Upload your cookbooks to Chef server](#step4)
-1. [Bootstrap your node](#step5)
-1. [Verify the configuration](#step6)
+1. [Upload your cookbooks to Chef server](#step2)
+1. [Bootstrap your node](#step3)
+1. [Verify the configuration](#step4)
 1. [Optionally, clean up your environment](#cleanupyourenvironment)
 
 [START_BOX]
@@ -37,80 +35,7 @@ At this point, your node should have ports 22, 80, and 443 open through the fire
 
 [START_BOX]
 
-## 2. Copy your secret key to your node
-
-Your node will need the secret key in order to decrypt the data bag item that contains your database passwords. In this step you'll copy the secret key to the <code class="file-path">/etc/chef</code> directory on your node.
-
-Recall that you created a custom node attribute that holds the location of the secret file on your node.
-
-```ruby
-# ~/learn-chef/cookbooks/awesome_customers_ubuntu/attributes/default.rb
-# [...]
-default['awesome_customers_ubuntu']['secret_file'] = '/etc/chef/encrypted_data_bag_secret'
-# [...]
-```
-
-[WINDOWS] If you're working from a Windows workstation, you'll need to install a program to securely copy files from Windows to Linux. The easiest way to do that is to [install Git for Windows](https://git-for-windows.github.io) and run the commands that follow from a Git Bash prompt.
-
-If you receive the error "Permission denied" from the commands that follow, try another directory, for example <% fp '~/chef' %>.
-
-If you do choose another directory, be sure to update your `node['awesome_customers_ubuntu']['secret_file']` node attribute to specify the fully-qualified path to the secret file on the node, for example,<br><% fp '/home/ubuntu/chef/encrypted_data_bag_secret' %>.
-
-If you use a username and password to connect to your node, run the following commands from the <% fp '~/learn-chef' %> directory to copy your secret key to your node. As needed, replace the IP address with your node's IP address and `ubuntu` with your username.
-
-```bash
-# ~/learn-chef
-$ ssh ubuntu@52.10.205.36 'mkdir -p /etc/chef'
-ubuntu@52.10.205.36's password:
-$ scp .chef/encrypted_data_bag_secret ubuntu@52.10.205.36:/etc/chef
-ubuntu@52.10.205.36's password:
-encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
-```
-
-If you use key-based encryption to connect, the commands look similar to these.
-
-```bash
-# ~/learn-chef
-$ ssh -i ~/.ssh/my.pem ubuntu@52.10.205.36 'mkdir -p /etc/chef'
-$ scp -i ~/.ssh/my.pem .chef/encrypted_data_bag_secret ubuntu@52.10.205.36:/etc/chef
-encrypted_data_bag_secret                     100%  684     0.7KB/s   00:00
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Upload your encrypted data bag to Chef server
-
-When you created your encrypted data bag item to store your database passwords, you did so locally on your workstation.
-
-To upload your data bag items to Chef server, you run similar `knife` commands, except that you omit the `--local-mode` and `--secret-file` arguments.
-
-The first step is to create the data bag object on your Chef server. You need to give the data bag the same name as the directory that stores the data bag item on your workstation. In our case, the name is `database_passwords`.
-
-From the <% fp '~/learn-chef' %> directory, run the following `knife data bag create` command to create the data bag object on your Chef server.
-
-```bash
-# ~/learn-chef
-$ knife data bag create database_passwords
-Created data_bag[database_passwords]
-```
-
-Now run the following `knife data bag from file` command to upload your data bag item to Chef server.
-
-```bash
-# ~/learn-chef
-$ knife data bag from file database_passwords mysql_customers.json
-Updated data_bag_item[database_passwords::mysql_customers]
-```
-
-You omit the `--secret-file` argument because the data bag item is already in an encrypted format.
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Upload your cookbooks to Chef server
+## 2. Upload your cookbooks to Chef server
 
 Recall that <code class="file-path">metadata.rb</code> references the cookbooks your cookbook depends on.
 
@@ -277,7 +202,7 @@ Chef server now contains everything you need to run `chef-client` on your node.
 
 [START_BOX]
 
-## 5. Bootstrap your node
+## 3. Bootstrap your node
 
 Now you can bootstrap your node. You'll specify the `awesome_customers_ubuntu` cookbook's default recipe in the node's run-list, which will apply your web application configuration.
 
@@ -341,7 +266,7 @@ Connecting to 54.69.248.21
 
 [START_BOX]
 
-## 6. Verify the configuration
+## 4. Verify the configuration
 
 From a browser, navigate to your server. You'll see this:
 

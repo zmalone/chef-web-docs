@@ -11,11 +11,11 @@ In this tutorial, you'll have the opportunity to practice what you've learned in
 * In [Manage a node](/manage-a-node/rhel/), you learned how to set up your Chef server and bootstrap and manage a server, also called a _node_, remotely from your workstation.
 * In [Develop your infrastructure code locally](/local-development/rhel/), you learned how _local development_ with Test Kitchen helps shorten the development process. With Test Kitchen, you apply your cookbook to a temporary instance that resembles production before you apply your work to a bootstrapped node.
 
-Now you'll build a basic but complete web application on CentOS called Customers that uses a web server, a database, and scripting. Such a configuration is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll write a cookbook that's named `awesome_customers_rhel`.
+Now you'll build a basic but complete web application on Red Hat Enterprise Linux or CentOS called Customers that uses a web server, a database, and scripting. Such a configuration is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll write a cookbook that's named `awesome_customers_rhel`.
 
-In the first part of this tutorial, you'll use an iterative process to build and verify each part of your web application. You'll do this by using Test Kitchen and a virtual machine that runs on your workstation.
+In the first part of this tutorial, you'll use an iterative process to build and verify each part of your web application. You'll do this by using Test Kitchen and a CentOS virtual machine that runs on your workstation.
 
-After successfully verifying the completed web application locally, you'll set up a CentOS 7 node to bootstrap, upload your cookbook to the Chef server, bootstrap your node, and apply your web server configuration.
+After successfully verifying the completed web application locally, you'll set up a Red Hat Enterprise Linux or CentOS node to bootstrap, upload your cookbook to the Chef server, bootstrap your node, and apply your web server configuration.
 
 By the end, you'll have a web application that looks like this:
 
@@ -31,7 +31,6 @@ After completing this tutorial, you should be able to:
 
 * use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
 * use community cookbooks from Chef Supermarket to perform common tasks.
-* use encrypted data bags to protect sensitive data.
 * use Berkshelf to resolve dependencies among your cookbooks.
 
 [COMMENT] You don't need to understand all the details about how Apache and MySQL work to complete this tutorial. The goal is to learn skills and patterns that will help you apply Chef to your specific infrastructure challenges.

@@ -68,7 +68,7 @@ Recipe: code_generator::recipe
 
 [START_BOX]
 
-## 3. Install MySQL
+## 3. Configure MySQL
 
 Now let's install the MySQL client and service packages. We'll also need to install the `mysql2` Ruby gem before we configure MySQL.
 
@@ -85,13 +85,9 @@ mysql_client 'default' do
   action :create
 end
 
-# Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_rhel']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'mysql_customers', password_secret)
-
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password password_data_bag_item['root_password']
+  initial_root_password node['awesome_customers_rhel']['database']['root_password']
   action [:create, :start]
 end
 ```
@@ -100,134 +96,13 @@ The `mysql2_chef_gem` resource comes from the `mysql2_chef_gem` cookbook.
 
 The other two resources &ndash; `mysql_client` and `mysql_service` &ndash; come from the `mysql` cookbook. To keep things moving, we'll skip past the details of how these resources work. In practice, you might first [review the source code](https://github.com/chef-cookbooks/mysql) to gain a better understanding of the implementation before you apply the code to your production servers.
 
-The `database` recipe also decrypts and uses the MySQL root password. Here's how that breaks down:
-
-* Line 11 loads the secret key file into memory.
-  * The `node['awesome_customers_rhel']['secret_file']` node attribute does not exist yet &ndash; you'll add that in the next step.
-* Line 12 loads the encrypted data bag item into memory and decrypts the data.
-  * `database_passwords` refers to the data bag.
-  * `mysql_customers` refers to the data bag item to decrypt.
-  * `password_secret` refers to the secret key that was loaded into memory on line 11.
-* Line 16 retrieves the decrypted value of the `root_password` field from the data bag item (for example, "mysql\_root_password") and passes that value to the `mysql_service` resource to set the initial root password.
+The `mysql_service` resource takes the initial MySQL root password. To specify the password, you use the `node['awesome_customers_rhel']['database']['root_password']` node attribute that you set up in the previous part. When you run the cookbook through Test Kitchen, the password is "mysql\_root_password". When you run the cookbook on a node, the password is randomly generated.
 
 [END_BOX]
 
 [START_BOX]
 
-## 4. Add a node attribute for your secret key's location
-
-At this point, your secret key file, <% fp('~/learn-chef/.chef/encrypted_data_bag_secret') %>, exists only on your workstation. You'll need to transfer your secret key to your server before you run `chef-client`.
-
-As you develop your cookbook using Test Kitchen, you need to configure your<br><% fp('~/learn-chef/.chef/encrypted_data_bag_secret') %> file to transfer your secret key to your test instance. You'll do that in the next step.
-
-When you're ready to run your cookbook on a node, you'll need to copy your secret key to your node before you initiate the bootstrap process. One way to do that is to run `scp` or another secure file transfer tool.
-
-In the previous step, you referenced the `node['awesome_customers_rhel']['secret_file']` node attribute. This node attribute refers to the location of the secret file on your test instance or node. This node attribute does not exist yet, so let's add it now.
-
-Append a node attribute to your default attributes file, <% fp('default.rb') %>, making the entire file look like this.
-
-```ruby
-# ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
-default['firewall']['allow_ssh'] = true
-default['firewall']['firewalld']['permanent'] = true
-default['awesome_customers_rhel']['open_ports'] = 80
-
-default['awesome_customers_rhel']['user'] = 'web_admin'
-default['awesome_customers_rhel']['group'] = 'web_admin'
-default['awesome_customers_rhel']['document_root'] = '/var/www/customers/public_html'
-
-default['awesome_customers_rhel']['secret_file'] = '/etc/chef/encrypted_data_bag_secret'
-```
-
-The path <% fp('/etc/chef/encrypted_data_bag_secret') %> is commonly used to store the secret key file on a node, so we make that the default value. Later in this tutorial, you'll copy your secret key to this location on your node as you prepare your node for the bootstrap process.
-
-In the next step, you'll see how to override this value for use with Test Kitchen.
-
-[END_BOX]
-
-[START_BOX]
-
-## 5. Configure Test Kitchen to copy your data bag item and secret key
-
-Because we're still developing our cookbook locally, let's set up Test Kitchen to copy the data bag item and secret file to the test instance.
-
-So far, your <% fp '.kitchen.yml' %> file looks like this.
-
-```yaml
-# ~/learn-chef/cookbooks/awesome_customers_rhel/.kitchen.yml
----
-driver:
-  name: vagrant
-  network:
-    - ["private_network", {ip: "192.168.33.33"}]
-
-provisioner:
-  name: chef_zero
-
-platforms:
-  - name: centos-7.2
-    driver:
-      customize:
-        memory: 256
-
-suites:
-  - name: default
-    run_list:
-      - recipe[awesome_customers_rhel::default]
-    attributes:
-```
-
-You need to add these two configuration settings to enable Test Kitchen to copy your data bag items and secret key to your test instance:
-
-* The root directory on your workstation where your data bags are located.
-* The location of your secret file on your workstation.
-
-The paths you specify can be absolute or relative to the location of your <% fp '.kitchen.yml' %> file.
-
-You'll also need to override the value of the `node['awesome_customers_rhel']['secret_file']` node attribute. That's because Test Kitchen copies your secret file to the <% fp '/tmp/kitchen' %> directory on the instance, but the attribute currently points to <% fp '/etc/chef' %>.
-
-Modify your copy of <% fp '.kitchen.yml' %> to look like this.
-
-```yaml
-# ~/learn-chef/cookbooks/awesome_customers_rhel/.kitchen.yml
----
-driver:
-  name: vagrant
-  network:
-    - ["private_network", {ip: "192.168.33.33"}]
-
-provisioner:
-  name: chef_zero
-
-platforms:
-  - name: centos-7.2
-    driver:
-      customize:
-        memory: 256
-
-suites:
-  - name: default
-    data_bags_path: "../../data_bags"
-    run_list:
-      - recipe[awesome_customers_rhel::default]
-    provisioner:
-      encrypted_data_bag_secret_key_path: "../../.chef/encrypted_data_bag_secret"
-    attributes:
-      awesome_customers_rhel:
-        secret_file: '/tmp/kitchen/encrypted_data_bag_secret'
-```
-
-Note that you added these settings:
-
-* Line 18 specifies the root directory on your workstation where your data bags are located.
-* Lines 21&mdash;22 specify the location of your secret file on your workstation.
-* Lines 24&mdash;26 override the `node['awesome_customers_rhel']['secret_file']` node attribute. (This syntax might look strange because you're used to writing node attributes using Ruby syntax. The Test Kitchen configuration file uses [YAML](http://yaml.org).)
-
-[END_BOX]
-
-[START_BOX]
-
-## 6. Set the database recipe to run
+## 4. Set the database recipe to run
 
 Append an `include_recipe` statement to your default recipe, <code class="file-path">default.rb</code>. The entire file will look like this.
 
@@ -243,7 +118,7 @@ include_recipe 'awesome_customers_rhel::database'
 
 [START_BOX]
 
-## 7. Apply and verify the configuration
+## 5. Apply and verify the configuration
 
 Let's apply the configuration and verify that MySQL is properly configured. Run `kitchen converge` to apply the `awesome_customers_rhel` cookbook.
 

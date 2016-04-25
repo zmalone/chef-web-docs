@@ -64,13 +64,13 @@ mysql_database 'my_company' do
 end
 ```
 
-This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. We specify the root user's credentials (recall that we used the root password "mysql\_root_password" when we created the data bag item for the database passwords.) Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the host name.
+This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the host name. We also specify the logon credentials for the root account. 
 
-[WARN] Remember to never hard-code passwords in your recipes. We'll replace it with our decryption mechanism shortly.
+[WARN] Remember to never hard-code passwords in your recipes. We'll replace it with our node attributes in the next step.
 
 ### Refactor the database configuration
 
-Let's factor your data so that your recipe is more reusable. We'll factor out the database name and the connection info (host name and user name).
+Let's factor your data so that your recipe is more reusable and doesn't use a hard-coded password. We'll factor out the database name and the connection info (host name and user name).
 
 Append the following to your default attributes file, <code class="file-path">default.rb</code>.
 
@@ -85,6 +85,11 @@ The entire file looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
+def random_password
+  require 'securerandom'
+  SecureRandom.base64
+end
+
 default['firewall']['allow_ssh'] = true
 default['firewall']['firewalld']['permanent'] = true
 default['awesome_customers_rhel']['open_ports'] = 80
@@ -93,8 +98,8 @@ default['awesome_customers_rhel']['user'] = 'web_admin'
 default['awesome_customers_rhel']['group'] = 'web_admin'
 default['awesome_customers_rhel']['document_root'] = '/var/www/customers/public_html'
 
-default['awesome_customers_rhel']['secret_file'] = '/etc/chef/encrypted_data_bag_secret'
-
+default_unless['awesome_customers_rhel']['database']['root_password'] = random_password
+default_unless['awesome_customers_rhel']['database']['admin_password'] = random_password
 default['awesome_customers_rhel']['database']['dbname'] = 'my_company'
 default['awesome_customers_rhel']['database']['host'] = '127.0.0.1'
 default['awesome_customers_rhel']['database']['root_username'] = 'root'
@@ -109,28 +114,11 @@ mysql_database node['awesome_customers_rhel']['database']['dbname'] do
   connection(
     :host => node['awesome_customers_rhel']['database']['host'],
     :username => node['awesome_customers_rhel']['database']['root_username'],
-    :password => 'mysql_root_password'
+    :password => node['awesome_customers_rhel']['database']['root_password']
   )
   action :create
 end
 ```
-
-Finally, replace the hard-coded password with the decrypted database password.
-
-```ruby
-# ~/learn-chef/cookbooks/awesome_customers_rhel/recipes/database.rb
-# Create the database instance.
-mysql_database node['awesome_customers_rhel']['database']['dbname'] do
-  connection(
-    :host => node['awesome_customers_rhel']['database']['host'],
-    :username => node['awesome_customers_rhel']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
-  )
-  action :create
-end
-```
-
-Here, we want to use the MySQL root password, so we reuse the value of `password_data_bag_item['root_password']` that you created when you installed MySQL.
 
 <code class="file-path">database.rb</code> now looks like this.
 
@@ -145,13 +133,10 @@ mysql_client 'default' do
   action :create
 end
 
-# Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_rhel']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'mysql_customers', password_secret)
-
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password password_data_bag_item['root_password']
+  initial_root_password node['awesome_customers_rhel']['database']['root_password']
+  sensitive true
   action [:create, :start]
 end
 
@@ -160,7 +145,7 @@ mysql_database node['awesome_customers_rhel']['database']['dbname'] do
   connection(
     :host => node['awesome_customers_rhel']['database']['host'],
     :username => node['awesome_customers_rhel']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_rhel']['database']['root_password']
   )
   action :create
 end
@@ -194,7 +179,7 @@ mysql_database_user 'db_admin' do
 end
 ```
 
-This code sets up the `db_admin` user with `CREATE` and `GRANT` permissions to the `my_company` database. It also sets the user's initial password (recall that we used the admin password "mysql\_admin_password" when we created the data bag item for the database passwords.)
+This code sets up the `db_admin` user with `CREATE` and `GRANT` permissions to the `my_company` database. It also sets the user's initial password.
 
 Let's perform a similar process to separate the logic from the data. We already know how to update the connection info. We also already have node attributes that define the host name and database name, and we already have access to the database passwords.
 
@@ -213,6 +198,11 @@ The entire file looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
+def random_password
+  require 'securerandom'
+  SecureRandom.base64
+end
+
 default['firewall']['allow_ssh'] = true
 default['firewall']['firewalld']['permanent'] = true
 default['awesome_customers_rhel']['open_ports'] = 80
@@ -221,15 +211,15 @@ default['awesome_customers_rhel']['user'] = 'web_admin'
 default['awesome_customers_rhel']['group'] = 'web_admin'
 default['awesome_customers_rhel']['document_root'] = '/var/www/customers/public_html'
 
-default['awesome_customers_rhel']['secret_file'] = '/etc/chef/encrypted_data_bag_secret'
-
+default_unless['awesome_customers_rhel']['database']['root_password'] = random_password
+default_unless['awesome_customers_rhel']['database']['admin_password'] = random_password
 default['awesome_customers_rhel']['database']['dbname'] = 'my_company'
 default['awesome_customers_rhel']['database']['host'] = '127.0.0.1'
 default['awesome_customers_rhel']['database']['root_username'] = 'root'
 default['awesome_customers_rhel']['database']['admin_username'] = 'db_admin'
 ```
 
-Now refactor your `mysql_database_user` resource by replacing the data with the appropriate node attributes and the decrypted passwords from the data bag.
+Now refactor your `mysql_database_user` resource by replacing the data with the appropriate node attributes.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/recipes/database.rb
@@ -238,9 +228,9 @@ mysql_database_user node['awesome_customers_rhel']['database']['admin_username']
   connection(
     :host => node['awesome_customers_rhel']['database']['host'],
     :username => node['awesome_customers_rhel']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_rhel']['database']['root_password']
   )
-  password password_data_bag_item['admin_password']
+  password node['awesome_customers_rhel']['database']['admin_password']
   database_name node['awesome_customers_rhel']['database']['dbname']
   host node['awesome_customers_rhel']['database']['host']
   action [:create, :grant]
@@ -260,13 +250,10 @@ mysql_client 'default' do
   action :create
 end
 
-# Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_rhel']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'mysql_customers', password_secret)
-
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password password_data_bag_item['root_password']
+  initial_root_password node['awesome_customers_rhel']['database']['root_password']
+  sensitive true
   action [:create, :start]
 end
 
@@ -275,7 +262,7 @@ mysql_database node['awesome_customers_rhel']['database']['dbname'] do
   connection(
     :host => node['awesome_customers_rhel']['database']['host'],
     :username => node['awesome_customers_rhel']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_rhel']['database']['root_password']
   )
   action :create
 end
@@ -285,9 +272,9 @@ mysql_database_user node['awesome_customers_rhel']['database']['admin_username']
   connection(
     :host => node['awesome_customers_rhel']['database']['host'],
     :username => node['awesome_customers_rhel']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_rhel']['database']['root_password']
   )
-  password password_data_bag_item['admin_password']
+  password node['awesome_customers_rhel']['database']['admin_password']
   database_name node['awesome_customers_rhel']['database']['dbname']
   host node['awesome_customers_rhel']['database']['host']
   action [:create, :grant]
@@ -401,6 +388,11 @@ Append the `node['awesome_customers_rhel']['database']['create_tables_script']` 
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/attributes/default.rb
+def random_password
+  require 'securerandom'
+  SecureRandom.base64
+end
+
 default['firewall']['allow_ssh'] = true
 default['firewall']['firewalld']['permanent'] = true
 default['awesome_customers_rhel']['open_ports'] = 80
@@ -409,16 +401,16 @@ default['awesome_customers_rhel']['user'] = 'web_admin'
 default['awesome_customers_rhel']['group'] = 'web_admin'
 default['awesome_customers_rhel']['document_root'] = '/var/www/customers/public_html'
 
-default['awesome_customers_rhel']['secret_file'] = '/etc/chef/encrypted_data_bag_secret'
-
+default_unless['awesome_customers_rhel']['database']['root_password'] = random_password
+default_unless['awesome_customers_rhel']['database']['admin_password'] = random_password
 default['awesome_customers_rhel']['database']['dbname'] = 'my_company'
 default['awesome_customers_rhel']['database']['host'] = '127.0.0.1'
 default['awesome_customers_rhel']['database']['root_username'] = 'root'
 default['awesome_customers_rhel']['database']['admin_username'] = 'db_admin'
-default['awesome_customers_rhel']['database']['create_tables_script'] ='/tmp/create-tables.sql'
+default['awesome_customers_rhel']['database']['create_tables_script'] = '/tmp/create-tables.sql'
 ```
 
-We can also factor out most parts of your `execute` resource, such as the host name, user name, and password. We already have the node attributes and data bag items to describe those, so we're ready to modify the recipe.
+We can also factor out most parts of your `execute` resource, such as the host name, user name, and password. We already have the node attributes to describe those, so we're ready to modify the recipe.
 
 Make your `cookbook_file` and `execute` resources look like this.
 
@@ -434,8 +426,8 @@ end
 
 # Seed the database with a table and test data.
 execute "initialize #{node['awesome_customers_rhel']['database']['dbname']} database" do
-  command "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{password_data_bag_item['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} < #{node['awesome_customers_rhel']['database']['create_tables_script']}"
-  not_if  "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{password_data_bag_item['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} -e 'describe customers;'"
+  command "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{node['awesome_customers_rhel']['database']['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} < #{node['awesome_customers_rhel']['database']['create_tables_script']}"
+  not_if  "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{node['awesome_customers_rhel']['database']['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} -e 'describe customers;'"
 end
 ```
 
@@ -452,13 +444,10 @@ mysql_client 'default' do
   action :create
 end
 
-# Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_rhel']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'mysql_customers', password_secret)
-
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password password_data_bag_item['root_password']
+  initial_root_password node['awesome_customers_rhel']['database']['root_password']
+  sensitive true
   action [:create, :start]
 end
 
@@ -467,7 +456,7 @@ mysql_database node['awesome_customers_rhel']['database']['dbname'] do
   connection(
     :host => node['awesome_customers_rhel']['database']['host'],
     :username => node['awesome_customers_rhel']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_rhel']['database']['root_password']
   )
   action :create
 end
@@ -477,9 +466,9 @@ mysql_database_user node['awesome_customers_rhel']['database']['admin_username']
   connection(
     :host => node['awesome_customers_rhel']['database']['host'],
     :username => node['awesome_customers_rhel']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_rhel']['database']['root_password']
   )
-  password password_data_bag_item['admin_password']
+  password node['awesome_customers_rhel']['database']['admin_password']
   database_name node['awesome_customers_rhel']['database']['dbname']
   host node['awesome_customers_rhel']['database']['host']
   action [:create, :grant]
@@ -495,10 +484,9 @@ end
 
 # Seed the database with a table and test data.
 execute "initialize #{node['awesome_customers_rhel']['database']['dbname']} database" do
-  command "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{password_data_bag_item['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} < #{node['awesome_customers_rhel']['database']['create_tables_script']}"
-  not_if  "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{password_data_bag_item['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} -e 'describe customers;'"
+  command "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{node['awesome_customers_rhel']['database']['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} < #{node['awesome_customers_rhel']['database']['create_tables_script']}"
+  not_if  "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{node['awesome_customers_rhel']['database']['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} -e 'describe customers;'"
 end
-
 ```
 
 [END_BOX]
@@ -507,7 +495,7 @@ end
 
 ## 5. Apply and verify the configuration
 
-Let's apply the configuration and verify that `my_company` database, `db_admin` user, and `customers` table are properly configured. If you chose a root database password other than "mysql\_root_password", be sure to use that password in the commands that follow.
+Let's apply the configuration and verify that `my_company` database, `db_admin` user, and `customers` table are properly configured.
 
 First, run `kitchen converge` to apply the `awesome_customers_rhel` cookbook.
 
