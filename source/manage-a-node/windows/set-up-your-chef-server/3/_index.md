@@ -2,9 +2,9 @@
 
 Now let's practice uploading a cookbook to the Chef server.
 
-In [Learn the Chef basics](/learn-the-basics/rhel/), you wrote a cookbook that configures an Apache web server. You'll run that cookbook on your new node.
+In [Learn the Chef basics](/learn-the-basics/windows/), you wrote a cookbook that configures an IIS web server. You'll run that cookbook on your new node.
 
-But the virtual machine you used earlier is likely gone! Instead of having you type in the cookbook again, let's get a copy from Chef Supermarket. [Chef Supermarket](https://supermarket.chef.io/) is a place for the community to share cookbooks. Chef Supermarket contains the Learn Chef Apache cookbook for you to download.
+But the virtual machine you used earlier is likely gone! Instead of having you type in the cookbook again, let's get a copy from Chef Supermarket. [Chef Supermarket](https://supermarket.chef.io/) is a place for the community to share cookbooks. Chef Supermarket contains the Learn Chef IIS cookbook for you to download.
 
 First, create the <code class="file-path">~/learn-chef/cookbooks</code> directory. Your `knife` configuration file lists this directory as the default location for cookbooks.
 
