@@ -41,64 +41,7 @@ Checking connectivity... done.
 
 [START_BOX]
 
-## 2. Encrypt your database passwords
-
-Here, you'll create a secret key and use that key to encrypt the SQL Server system administrator (SA) password. The tutorial [describes the process](/manage-a-web-app/windows/create-a-password-store/) in greater detail.
-
-First, create these directories.
-
-```bash
-# ~/learn-chef/cookbooks
-$ cd ~/learn-chef
-$ mkdir .chef
-$ mkdir data_bags
-$ mkdir data_bags/database_passwords
-```
-
-Run the commands that match your workstation setup to create a secret key in the<br><% fp('~/learn-chef/.chef') %> directory.
-
-### From a Linux or Mac OS workstation
-
-```bash
-# ~/learn-chef
-$ openssl rand -base64 512 | tr -d '\r\n' > ~/learn-chef/.chef/encrypted_data_bag_secret
-```
-
-### From a Windows workstation
-
-```ps
-# ~\learn-chef
-$ $key = New-Object byte[](512)
-$ $rng = [System.Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($key)
-$ [Convert]::ToBase64String($key) | Out-File "~\learn-chef\.chef\encrypted_data_bag_secret" -encoding "UTF8"
-$ [array]::Clear($key, 0, $key.Length)
-```
-
-<hr>
-
-Write this to <% fp 'sql_server_customers.json' %>
-
-```ruby
-# ~/learn-chef/data_bags/database_passwords/sql_server_customers.json
-{
-  "id": "sql_server_customers",
-  "sa_password": "SQL_sa_pa$$w0rd"
-}
-```
-
-Encrypt the file.
-
-```bash
-# ~/learn-chef
-$ knife data bag from file database_passwords sql_server_customers.json --secret-file .chef/encrypted_data_bag_secret --local-mode
-Updated data_bag_item[database_passwords::sql_server_customers]
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Set up your Test Kitchen configuration file
+## 2. Set up your Test Kitchen configuration file
 
 The `awesome_customers_windows` cookbook on GitHub provides a separate Test Kitchen configuration file for the EC2, Hyper-V, and Vagrant drivers. The easiest way to switch between them is to set the `KITCHEN_YAML` environment variable to point to the configuration file you want to use.
 
@@ -204,7 +147,7 @@ default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      <Not
 
 [START_BOX]
 
-## 4. Run Test Kitchen
+## 3. Run Test Kitchen
 
 Now run `kitchen converge` from your cookbook's directory to upload your cookbooks to your test instance and run `chef-client`.
 
@@ -238,7 +181,7 @@ are responsible for your incurred costs.
 
 [START_BOX]
 
-## 5. Verify the result
+## 4. Verify the result
 
 Now you can verify the configuration from a web browser on your workstation.
 

@@ -1,0 +1,199 @@
+---
+title: 'Create the database password'
+order: 5
+keywords: TODO
+layout: lesson
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 20 minutes
+---
+The next thing we want to do is configure SQL Server. To do so, you'll need to provide a system administrator (SA) password.
+
+Before we set up SQL Server, we need a way to store the passwords so that our node can access them. Because Chef code is often maintained under source control, you never want to store passwords in a recipe in plain text.
+
+There are several approches you can take. For example, you could use an [encrypted data bag](https://docs.chef.io/chef/essentials_data_bags.html). A data bag is a collection of key-value pairs that are shared among your nodes. You can encrypt data bags to protect sensitive information, such as certificates, API keys, and passwords. 
+
+For this project, we'll generate random passwords for the SQL Server root and administrator accounts when the cookbook runs and store the passwords as node attributes. This way, the node has access to the passwords without making those passwords available to everyone who reads our recipes.
+
+[START_BOX]
+
+## 1. Create the custom attributes file
+
+In [Manage a Windows Server node](/manage-a-node/windows/), you learned about some of the built-in node attributes that Chef provides, such as the node's IP address. You can also define your own custom attributes that are specific to your policy, for example, the SA password.
+
+The `sql_server` cookbook defines [a number of node attributes](https://github.com/opscode-cookbooks/sql_server/blob/master/attributes/server.rb) that control how SQL Server is installed, such as the installation directory and which features to install. These values are written to the configuration file that the installer uses to customize the installation.
+
+When you call one cookbook from another, you can specify, or _override_, that cookbook's node attributes with your values. Although in most cases we can use the default values, we also want to:
+
+You define custom node attributes in a file named <code class="file-path">default.rb</code> in the <code class="file-path">attributes</code> directory of your cookbook. 
+
+Start by running this command from your <% fp '~/learn-chef' %> directory to create an attributes file that will define all of the custom attributes for your web application cookbook.
+
+```bash
+# ~/learn-chef
+$ chef generate attribute cookbooks/awesome_customers_windows default
+Compiling Cookbooks...
+Recipe: code_generator::attribute
+  * directory[cookbooks/awesome_customers_windows/attributes] action create
+    - create new directory cookbooks/awesome_customers_windows/attributes
+  * template[cookbooks/awesome_customers_windows/attributes/default.rb] action create
+    - create new file cookbooks/awesome_customers_windows/attributes/default.rb
+    - update content in file cookbooks/awesome_customers_windows/attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+This command adds the <code class="file-path">default.rb</code> attribute file to the<br><% fp '~/learn-chef/cookbooks/awesome_customers_windows/attributes' %> directory.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Write the random_password helper method
+
+To generate random passwords, you'll use Ruby's [SecureRandom.base64](http://ruby-doc.org/stdlib-2.2.0/libdoc/securerandom/rdoc/SecureRandom.html) method to build your own helper method. Then you'll call your helper method to set node attribute that holds the SA password.
+
+Start by defining the `random_password` method at the top of your attributes file, <% fp 'default.rb' %>. The entire file looks like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/attributes/default.rb
+def random_password
+  require 'securerandom'
+  password = SecureRandom.base64
+  until password =~ /[A-Z]/ && password =~ /[a-z]/ && password =~ /[0-9]/
+    password = SecureRandom.base64
+  end
+  password
+end
+```
+
+The `require 'securerandom'` part loads the `SecureRandom` module. We define it inside the `random_password` method to load the `SecureRandom` module only when it's used. The `SecureRandom.base64` method returns a string similar to "RuoHq6AvmcNH5hGKQkC0ew==".
+
+To meet SQL Server's [strong password requirements](https://support.microsoft.com/en-us/kb/965823), the `random_password` method generates passwords until it finds one that includes at least one uppercase letter, at least one lowercase letter, and at least one digit.
+
+<% accordion('regex-more', 'More about regular expressions') do %>
+
+The [=~ pattern match operator](http://ruby-doc.org/core-2.1.0/Regexp.html#method-i-3D-7E) matches the string on the left-hand side to the regular expression on the right-hand side.
+
+The slash `/` notation defines the regular expression pattern to match. The bracket `[]` notation defines which characters to match. For example, `/[A-Z]/` defines a regular expression that matches a single character in the range A through Z.
+
+[Learn more about regular expressions](http://www.tutorialspoint.com/ruby/ruby_regular_expressions.htm)
+
+Here's a more compact way to define a regular expression that validates SQL Server's strong password requirements. It uses [lookahead](http://www.rexegg.com/regex-lookarounds.html) to validate the password requirements without requiring the characters to occur in any particular order.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/attributes/default.rb
+def random_password
+  require 'securerandom'
+  password = SecureRandom.base64
+  until password =~ /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])/
+    password = SecureRandom.base64
+  end
+  password
+end
+```
+
+[Rubular](http://rubular.com) is a handy way to test out your regular expressions.
+
+<% end %>
+<br>
+
+[COMMENT] In practice, you might add the `random_password` to a helper library to make it more resusable. The [openssl cookbook](https://github.com/chef-cookbooks/openssl/blob/master/libraries/random_password.rb) shows an example. 
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Define the node attribute
+
+Now a node attribute to your attributes file that defines the SA password. The entire file looks like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/attributes/default.rb
+def random_password
+  require 'securerandom'
+  password = SecureRandom.base64
+  until password =~ /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])/
+    password = SecureRandom.base64
+  end
+  password
+end
+
+default_unless['awesome_customers_windows']['database']['sa_password'] = random_password
+```
+
+Typically, you use `default` to define a node attribute. To ensure that the password is generated one time only, you use `default_unless`. [default_unless](https://docs.chef.io/attributes.html#use-attribute-files) sets the node attribute only if the attribute has no value.
+
+[COMMENT] A node's attributes are accessible to other nodes in your network through Chef's [search](https://docs.chef.io/chef_search.html) capabilities. If you don't want other nodes to have access to sensitive information such as passwords, consider an alternative approach such as using encrypted data bags. The encrypted data is available to other nodes in your network, but only the nodes that have access to the secret key can decrypt the data. [chef-vault](https://github.com/Nordstrom/chef-vault) is commonly used distribute secret keys to nodes. [Learn more](https://www.chef.io/blog/2016/01/21/chef-vault-what-is-it-and-what-can-it-do-for-you/)
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Modify your Test Kitchen configuration file to support local development
+
+It's common to specify a value for passwords and other sensitive information as you develop your cookbooks. Here are a few reasons why.
+
+First, recall that your Test Kitchen configuration file, <% fp '.kitchen.yml' %>, uses the `chef_zero_scheduled_task` provisioner.
+  
+```yaml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+[...]
+provisioner:
+  name: chef_zero_scheduled_task
+[...]
+```
+
+The `provisioner` section specifies how to run Chef. You specify `chef_zero_scheduled_task` to mimic a Chef server environment on your local machine. Because the Chef server environment is reset between each Test Kitchen run, your node attributes are not preserved. This can cause problems when you run `kitchen converge` multiple times on the same test instance because your node attributes (for example, the database passwords) won't match the existing configuration.
+
+Other reasons you might specify the passwords during development are to support testing and debugging. For example, if your database is not configured as you expect, it may be easier to connect to the database to troubleshoot the issue using an easy to remember password that you specify. 
+
+You can override node attributes in the `attributes` section of your <% fp '.kitchen.yml' %> file. Test Kitchen sets these attributes before your cookbooks runs. Modify the `suites` section of your copy to look like this. 
+
+```yaml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+suites:
+  - name: default
+    run_list:
+      - recipe[awesome_customers_windows::default]
+    attributes:
+      awesome_customers_windows:
+        database:
+          sa_password: 'SQL_sa_pa$$w0rd'
+```
+
+As an example, the complete version for the Vagrant driver looks like this. 
+
+```yaml
+# ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
+---
+driver:
+  name: vagrant
+  network:
+    - ["private_network", {ip: "192.168.35.35"}]
+
+provisioner:
+  name: chef_zero_scheduled_task
+
+platforms:
+  - name: windows-2012r2
+    driver:
+      customize:
+        memory: 2048
+
+suites:
+  - name: default
+    run_list:
+      - recipe[awesome_customers_windows::default]
+    attributes:
+      awesome_customers_windows:
+        database:
+          sa_password: 'SQL_sa_pa$$w0rd'
+```
+
+This syntax might look strange because you're used to writing node attributes using Ruby syntax. The Test Kitchen configuration file uses [YAML](http://yaml.org).
+
+Remember, Test Kitchen is only involved during cookbook development and not when your cookbook is applied to a node that's managed by a Chef server. That's why your <% fp '.kitchen.yml' %> file is a safe place to store test passwords. 
+
+[COMMENT] Use basic names for your passwords while in development mode. Never use passwords that might appear on your production systems.
+
+[END_BOX]

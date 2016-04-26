@@ -17,11 +17,9 @@ You'll need to [set up a Chef server account](/manage-a-node/windows/set-up-your
 Here are the steps you'll follow:
 
 1. [Bring up a node to manage](#step1)
-1. [Copy your secret key to your node](#step2)
-1. [Upload your encrypted data bag to Chef server](#step3)
-1. [Upload your cookbooks to Chef server](#step4)
-1. [Bootstrap your node](#step5)
-1. [Verify the configuration](#step6)
+1. [Upload your cookbooks to Chef server](#step2)
+1. [Bootstrap your node](#step3)
+1. [Verify the configuration](#step4)
 1. [Optionally, clean up your environment](#cleanupyourenvironment)
 
 [START_BOX]
@@ -38,62 +36,7 @@ At this point, your node should have ports 80, 443, 3389, and 5986 open through 
 
 [START_BOX]
 
-## 2. Copy your secret key to your node
-
-Your node will need the secret key in order to decrypt the data bag item that contains your database passwords. In this step you'll copy the secret key to the <% fp 'C:/chef' %> directory on your node.
-
-Recall that you created a custom node attribute that holds the location of the secret file on your node.
-
-```ruby
-# ~/learn-chef/cookbooks/awesome_customers_windows/attributes/default.rb
-# [...]
-default['awesome_customers_windows']['secret_file'] = 'C:/chef/encrypted_data_bag_secret'
-# [...]
-```
-
-For learning purposes, the easiest way to copy the secret is over an RDP connection. Start by creating an RDP connection to your node and then create the <% fp 'C:/chef' %> directory on your node.
-
-From a Windows workstation, copy <% fp '~/learn-chef/.chef/encrypted_data_bag_secret' %> from a File Explorer window and paste it in the <% fp 'C:/chef' %> directory on your node.
-
-If you're using a Mac OS or Linux workstation, you can open <% fp '~/learn-chef/.chef/encrypted_data_bag_secret' %> in a text editor, copy its contents, and then paste its contents to <% fp 'C:\chef\encrypted_data_bag_secret' %> on your server. 
-
-In a production environment, it's up to you to decide the best way to distribute secret keys to your nodes.
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Upload your encrypted data bag to Chef server
-
-When you created your encrypted data bag item to store your database passwords, you did so locally on your workstation.
-
-To upload your data bag items to Chef server, you run similar `knife` commands, except that you omit the `--local-mode` and `--secret-file` arguments.
-
-The first step is to create the data bag object on your Chef server. You need to give the data bag the same name as the directory that stores the data bag item on your workstation. In our case, the name is `database_passwords`.
-
-From the <% fp '~/learn-chef' %> directory, run the following `knife data bag create` command to create the data bag object on your Chef server.
-
-```bash
-# ~/learn-chef
-$ knife data bag create database_passwords
-Created data_bag[database_passwords]
-```
-
-Now run the following `knife data bag from file` command to upload your data bag item to Chef server.
-
-```bash
-# ~/learn-chef
-$ knife data bag from file database_passwords sql_server_customers.json
-Updated data_bag_item[database_passwords::sql_server_customers]
-```
-
-You omit the `--secret-file` argument because the data bag item is already in an encrypted format.
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Upload your cookbooks to Chef server
+## 2. Upload your cookbooks to Chef server
 
 Recall that <code class="file-path">metadata.rb</code> references the cookbooks your cookbook depends on.
 
@@ -216,7 +159,7 @@ Chef server now contains everything you need to run `chef-client` on your node.
 
 [START_BOX]
 
-## 5. Bootstrap your node
+## 3. Bootstrap your node
 
 Now you can bootstrap your node. You'll specify the `awesome_customers_windows` cookbook's default recipe in the node's run-list, which will apply your web application configuration.
 
@@ -273,7 +216,7 @@ ec2-52-36-120-7.us-west-2.compute.amazonaws.com [2016-02-13T00:37:20+00:00] INFO
 
 [START_BOX]
 
-## 6. Verify the configuration
+## 4. Verify the configuration
 
 From a browser on your workstation, navigate to your site's /Products/Customers.aspx page, for example, http://52.36.120.7/Products/Customers.aspx. You'll see this:
 
