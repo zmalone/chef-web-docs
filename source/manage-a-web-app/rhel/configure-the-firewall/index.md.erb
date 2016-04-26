@@ -75,6 +75,10 @@ ports = [22, 80]
 firewall_rule "open ports #{ports}" do
   port ports
 end
+
+firewall 'default' do
+  action :save
+end
 ```
 
 One problem with this approach is that if you ever want to change the list of open ports, you'll have to do it in this recipe and any other recipes that reference those ports.
@@ -139,12 +143,17 @@ ports = node.default['awesome_customers_rhel']['open_ports']
 firewall_rule "open ports #{ports}" do
   port ports
 end
+
+firewall 'default' do
+  action :save
+end
 ```
 
 This code:
 
 1. applies the `firewall` cookbook's default recipe, which ensures that port 22 is open.
 1. opens the additional ports. Recall that `node['awesome_customers_rhel']['open_ports']` specifies port 80.
+1. ensures all rules are added permanently under `firewalld` using the `--permanent` option.
 
 [END_BOX]
 
