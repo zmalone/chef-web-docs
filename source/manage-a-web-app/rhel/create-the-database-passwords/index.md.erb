@@ -96,7 +96,7 @@ The `provisioner` section specifies how to run Chef. You specify `chef_zero` to 
 
 Other reasons you might specify the passwords during development are to support testing and debugging. For example, if your database is not configured as you expect, it may be easier to connect to the database to troubleshoot the issue using an easy to remember password that you specify. 
 
-You can override node attributes in the `attributes` section of your <% fp '.kitchen.yml' %> file. Modify your copy to look like this. 
+You can override node attributes in the `attributes` section of your <% fp '.kitchen.yml' %> file. Test Kitchen sets these attributes before your cookbooks runs. Modify your copy to look like this. 
 
 ```yaml
 # ~/learn-chef/cookbooks/awesome_customers_rhel/.kitchen.yml
@@ -127,6 +127,8 @@ suites:
 ```
 
 This syntax might look strange because you're used to writing node attributes using Ruby syntax. The Test Kitchen configuration file uses [YAML](http://yaml.org).
+
+Remember, Test Kitchen is only involved during cookbook development and not when your cookbook is applied to a node that's managed by a Chef server. That's why your <% fp '.kitchen.yml' %> file is a safe place to store test passwords. 
 
 [COMMENT] Use basic names for your passwords while in development mode. Never use passwords that might appear on your production systems.
   

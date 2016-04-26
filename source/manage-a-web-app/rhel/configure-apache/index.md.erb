@@ -31,7 +31,7 @@ version '0.1.0'
 
 depends 'selinux', '~> 0.9.0'
 depends 'firewall', '~> 2.4.0'
-depends 'httpd', '~> 0.3.4'
+depends 'httpd', '~> 0.3.5'
 ```
 
 Remember, you can get the latest version of a community cookbook from its page on Chef Supermarket or by running the `knife cookbook site show` command, like this.
@@ -39,7 +39,7 @@ Remember, you can get the latest version of a community cookbook from its page o
 ```bash
 # ~/learn-chef
 $ knife cookbook site show httpd | grep latest_version
-latest_version:     https://supermarket.chef.io/api/v1/cookbooks/httpd/versions/0.3.4
+latest_version:     https://supermarket.chef.io/api/v1/cookbooks/httpd/versions/0.3.5
 ```
 
 [END_BOX]
@@ -59,8 +59,10 @@ We'll call our custom site `customers`, and we'll store it in the <code class="f
 The first step is to create the recipe file, <code class="file-path">web.rb</code>. Run the following command to generate it.
 
 ```bash
-# ~/learn-chef
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ cd ~/learn-chef
 $ chef generate recipe cookbooks/awesome_customers_rhel web
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::recipe
   * directory[cookbooks/awesome_customers_rhel/spec/unit/recipes] action create (up to date)
@@ -189,6 +191,7 @@ First, run this command to create your template file, <code class="file-path">cu
 ```bash
 # ~/learn-chef
 $ chef generate template cookbooks/awesome_customers_rhel customers.conf
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::template
   * directory[cookbooks/awesome_customers_rhel/templates/default] action create
@@ -238,20 +241,20 @@ Like you did previously, run the cookbook and verify that it's configured as we 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-centos-72>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-centos-72>
-       Starting Chef Client, version 12.6.0
+       Starting Chef Client, version 12.9.38
        resolving cookbooks for run list: ["awesome_customers_rhel::default"]
        Synchronizing Cookbooks:
-         - httpd (0.3.4)
+         - httpd (0.3.5)
          - compat_resource (12.7.0)
          - selinux (0.9.0)
          - firewall (2.4.0)
@@ -259,22 +262,18 @@ $ kitchen converge
          - chef-sugar (3.3.0)
        Compiling Cookbooks...
 [...]
-             * yum_package[httpd] action install (up to date)
-             * directory[/etc/httpd-customers/conf.modules.d] action create (up to date)
+            * yum_package[httpd] action install
+             - install version 2.4.6-40.el7.centos of package httpd
+           * service[httpd] action stop (up to date)
+           * service[httpd] action disable (up to date)
 [...]
-             - start service service[httpd-customers]
-
-             - enable service service[httpd-customers]
-
-             - reload service service[httpd-customers]
-
          * httpd_config_rhel[customers] action create
            * directory[/etc/httpd-customers/conf.d] action create (up to date)
-
+           * template[/etc/httpd-customers/conf.d/customers.conf] action create
              - create new file /etc/httpd-customers/conf.d/customers.conf
              - update content in file /etc/httpd-customers/conf.d/customers.conf from none to 3e5f59
-             --- /etc/httpd-customers/conf.d/customers.conf	2016-02-02 15:30:11.079050541 +0000
-             +++ /etc/httpd-customers/conf.d/.customers.conf20160202-30334-mqtmpm	2016-02-02 15:30:11.079050541 +0000
+             --- /etc/httpd-customers/conf.d/customers.conf	2016-04-25 01:41:13.016051500 +0000
+             +++ /etc/httpd-customers/conf.d/.chef-customers.conf20160425-27486-14t8i3u	2016-04-25 01:41:13.014050500 +0000
              @@ -1 +1,27 @@
              +<VirtualHost *:80>
              +  ServerName default-centos-72
@@ -304,43 +303,35 @@ $ kitchen converge
              +</VirtualHost>
              - change mode from '' to '0644'
              - change owner from '' to 'root'
-
+             - change group from '' to 'root'
              - restore selinux security context
 
          * directory[/var/www/customers/public_html] action create
-
+           - create new directory /var/www/customers/public_html
            - restore selinux security context
-         * file[/var/www/customers/public_html/index.php] action create
-           - create new file /var/www/customers/public_html/index.php
-           - update content in file /var/www/customers/public_html/index.php from none to a02c68
-           --- /var/www/customers/public_html/index.php	2016-02-02 15:30:11.133050547 +0000
-           +++ /var/www/customers/public_html/.index.php20160202-30334-1ibr302	2016-02-02 15:30:11.133050547 +0000
+         * file[/var/www/customers/public_html/index.html] action create
+           - create new file /var/www/customers/public_html/index.html
+           - update content in file /var/www/customers/public_html/index.html from none to a02c68
+           --- /var/www/customers/public_html/index.html	2016-04-25 01:41:13.077082000 +0000
+           +++ /var/www/customers/public_html/.chef-index.html20160425-27486-10pd1r9	2016-04-25 01:41:13.076081500 +0000
            @@ -1 +1,2 @@
            +<html>This is a placeholder</html>
            - change mode from '' to '0644'
            - change owner from '' to 'web_admin'
-
+           - change group from '' to 'web_admin'
            - restore selinux security context
-       Recipe: awesome_customers_rhel::firewall
-
-            (skipped due to only_if)
-          (skipped due to only_if)
-        (up to date)
-       [2016-02-02T15:30:11+00:00] WARN: Cloning resource attributes for service[firewalld] from prior resource (CHEF-3694)
-       [2016-02-02T15:30:11+00:00] WARN: Previous service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:38:in `block (2 levels) in <class:FirewallFirewalld>'
-       [2016-02-02T15:30:11+00:00] WARN: Current  service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:92:in `block in <class:FirewallFirewalld>'
-        (up to date)
+[...]
        Recipe: awesome_customers_rhel::web
          * httpd_service_rhel_systemd[customers] action restart
-
+           * service[httpd-customers] action restart
              - restart service service[httpd-customers]
 
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 79/153 resources updated in 31 seconds
-       Finished converging <default-centos-72> (0m35.28s).
------> Kitchen is finished. (0m35.90s)
+       Chef Client finished, 81/152 resources updated in 33 seconds
+       Finished converging <default-centos-72> (0m42.46s).
+-----> Kitchen is finished. (0m43.11s)
 ```
 
 You'll see from the output that:
@@ -386,7 +377,7 @@ Now let's log in to the instance and verify that the configuration is exactly as
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
 $ kitchen login
-Last login: Tue Feb  2 16:21:03 2016 from 10.0.2.2
+Last login: Mon Apr 25 01:40:39 2016 from 10.0.2.2
 [vagrant@default-centos-72 ~]$
 ```
 

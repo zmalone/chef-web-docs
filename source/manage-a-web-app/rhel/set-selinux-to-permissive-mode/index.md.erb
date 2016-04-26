@@ -9,7 +9,7 @@ time_to_complete: 10 minutes
 ---
 [HEADLINE] Chef Supermarket provides cookbooks that perform many common tasks, but a single cookbook can have multiple versions. Specifying, or _pinning_, cookbook versions helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production.
 
-Enforcing your organization's security requirements is important. On Red Hat Enterprise Linux and CentOS, [Security-Enhanced Linux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux), or SELinux, is enabled by default. It's likely that SELinux will be configured to run under _permissive_ mode, meaning it will log security violations, but it will not enforce restricted policies. For learning purposes, we'll ensure that system security is relaxed so we don't have to deal with the complexity it introduces.
+Enforcing your organization's security requirements is important. On Red Hat Enterprise Linux and CentOS, [Security-Enhanced Linux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux), or SELinux, is turned on by default. It's likely that SELinux will be configured to run under _permissive_ mode, meaning it will log security violations, but it will not enforce restricted policies. For learning purposes, we'll ensure that system security is relaxed so we don't have to deal with the complexity it introduces.
 
 Remember that Chef Supermarket is a place for the community to share cookbooks. Configuring SELinux is a common task, and the [selinux](https://supermarket.chef.io/cookbooks/selinux) cookbook on Chef Supermarket provides an easy way to accomplish that so you don't have to reinvent the wheel.
 
@@ -23,7 +23,7 @@ In this part, you'll use the [selinux](https://supermarket.chef.io/cookbooks/sel
 
 You don't need to manually download cookbooks from Chef Supermarket to use them. You'll learn how to automatically download cookbooks in a bit, but the first step is to reference the cookbooks you want to load.
 
-The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, <% fp('~/learn-chef/cookbooks/awesome\_customers_rhel/metadata.rb') %>. To use the `selinux` cookbook, append the line `depends 'selinux', '~> 0.9.0'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
+The way you load one cookbook from inside another is to reference it in your cookbook's metadata file,<br><% fp('~/learn-chef/cookbooks/awesome\_customers_rhel/metadata.rb') %>. To use the `selinux` cookbook, append the line `depends 'selinux', '~> 0.9.0'` to <code class="file-path">metadata.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/metadata.rb
@@ -84,34 +84,35 @@ Let's apply and then verify the configuration. Run `kitchen converge` to apply t
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-centos-72>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-centos-72>
-       Starting Chef Client, version 12.6.0
+       Starting Chef Client, version 12.9.38
        resolving cookbooks for run list: ["awesome_customers_rhel::default"]
        Synchronizing Cookbooks:
          - selinux (0.9.0)
          - awesome_customers_rhel (0.1.0)
+       Installing Cookbook Gems:
        Compiling Cookbooks...
        Converging 3 resources
        Recipe: selinux::_common
-        (up to date)
-        (up to date)
+         * yum_package[libselinux-utils] action install (up to date)
+         * directory[/etc/selinux] action create (up to date)
        Recipe: selinux::permissive
-        (up to date)
+         * selinux_state[SELinux Permissive] action permissive (up to date)
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 0/3 resources updated in 05 seconds
-       Finished converging <default-centos-72> (0m11.07s).
------> Kitchen is finished. (0m11.67s)
+       Chef Client finished, 0/3 resources updated in 06 seconds
+       Finished converging <default-centos-72> (0m11.74s).
+-----> Kitchen is finished. (0m12.63s)
 ```
 
 In this example, SELinux was already set to permissive, so Chef takes no action.
@@ -121,7 +122,7 @@ But to be sure, let's log in to the instance and verify things. Run `kitchen log
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
 $ kitchen login
-Last login: Mon Feb  1 21:15:53 2016 from 10.0.2.2
+Last login: Mon Apr 25 00:15:36 2016 from 10.0.2.2
 [vagrant@default-centos-72 ~]$
 ```
 

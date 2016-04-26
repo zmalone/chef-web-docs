@@ -42,6 +42,7 @@ Now create a recipe that defines the firewall rules. From your <% fp('~/learn-ch
 ```bash
 # ~/learn-chef
 $ chef generate recipe cookbooks/awesome_customers_ubuntu firewall
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::recipe
   * directory[cookbooks/awesome_customers_ubuntu/spec/unit/recipes] action create (up to date)
@@ -93,6 +94,7 @@ Run the following from the <% fp('~/learn-chef') %> directory to create an attri
 ```bash
 # ~/learn-chef
 $ chef generate attribute cookbooks/awesome_customers_ubuntu default
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::attribute
   * directory[cookbooks/awesome_customers_ubuntu/attributes] action create
@@ -163,25 +165,27 @@ include_recipe 'awesome_customers_ubuntu::firewall'
 Like you did for the `apt` configuration, let's run the cookbook and verify that it's configured as we expect. Run `kitchen converge` to apply the `awesome_customers_ubuntu` cookbook.
 
 ```bash
-# ~/learn-chef/cookbooks/awesome_customers_ubuntu
+# ~/learn-chef
+$ cd ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-ubuntu-1404>
-       Starting Chef Client, version 12.6.0
+       Starting Chef Client, version 12.9.38
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
          - awesome_customers_ubuntu (0.1.0)
          - apt (2.9.2)
          - chef-sugar (3.3.0)
          - firewall (2.4.0)
+       Installing Cookbook Gems:
        Compiling Cookbooks...
 [...]
        Recipe: firewall::default
@@ -230,10 +234,10 @@ Let's log in to the instance and verify the firewall configuration. Run `kitchen
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
-Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 4.2.0-34-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com/
-Last login: Fri Feb  5 18:20:04 2016 from 10.0.2.2
+Last login: Tue Apr 26 01:29:57 2016 from 10.0.2.2
 vagrant@default-ubuntu-1404:~$
 ```
 
