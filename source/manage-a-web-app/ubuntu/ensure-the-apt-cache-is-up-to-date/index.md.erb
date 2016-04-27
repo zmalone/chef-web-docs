@@ -88,22 +88,25 @@ Let's apply and then verify the configuration. Run `kitchen converge` to apply t
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-ubuntu-1404>
-       Starting Chef Client, version 12.6.0
+       Starting Chef Client, version 12.9.38
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
          - awesome_customers_ubuntu (0.1.0)
          - apt (2.9.2)
+       Installing Cookbook Gems:
        Compiling Cookbooks...
+       [2016-04-26T01:05:14+00:00] WARN: Chef::Provider::AptRepository already exists!  Cannot create deprecation class for LWRP provider apt_repository from cookbook apt
+       [2016-04-26T01:05:14+00:00] WARN: AptRepository already exists!  Deprecation class overwrites Custom resource apt_repository from cookbook apt
        Converging 11 resources
        Recipe: apt::default
          * file[/var/lib/apt/periodic/update-success-stamp] action nothing (skipped due to action :nothing)
@@ -111,8 +114,8 @@ $ kitchen converge
          * cookbook_file[/etc/apt/apt.conf.d/15update-stamp] action create
            - create new file /etc/apt/apt.conf.d/15update-stamp
            - update content in file /etc/apt/apt.conf.d/15update-stamp from none to 174cdb
-           --- /etc/apt/apt.conf.d/15update-stamp	2016-02-05 03:24:09.120892000 +0000
-           +++ /etc/apt/apt.conf.d/.15update-stamp20160205-5476-1nxjjqm	2016-02-05 03:24:09.120892000 +0000
+           --- /etc/apt/apt.conf.d/15update-stamp	2016-04-26 01:05:14.845010000 +0000
+           +++ /etc/apt/apt.conf.d/.chef-15update-stamp20160426-1939-1cf3dse	2016-04-26 01:05:14.845010000 +0000
            @@ -1 +1,2 @@
            +APT::Update::Post-Invoke-Success {"touch /var/lib/apt/periodic/update-success-stamp 2>/dev/null || true";};
          * execute[apt-get update] action nothing (skipped due to action :nothing)
@@ -120,26 +123,50 @@ $ kitchen converge
          * execute[apt-get autoclean] action nothing (skipped due to action :nothing)
          * execute[apt-get-update-periodic] action run
            - execute apt-get update
-[...]
+         * file[/var/lib/apt/periodic/update-success-stamp] action touch
+           - update utime on file /var/lib/apt/periodic/update-success-stamp
+         * directory[/var/cache/local] action create
+           - create new directory /var/cache/local
+           - change mode from '' to '0755'
+           - change owner from '' to 'root'
+           - change group from '' to 'root'
+         * directory[/var/cache/local/preseeding] action create
+           - create new directory /var/cache/local/preseeding
+           - change mode from '' to '0755'
+           - change owner from '' to 'root'
+           - change group from '' to 'root'
+         * template[/etc/apt/apt.conf.d/10recommends] action create
+           - create new file /etc/apt/apt.conf.d/10recommends
+           - update content in file /etc/apt/apt.conf.d/10recommends from none to f41e1d
+           --- /etc/apt/apt.conf.d/10recommends	2016-04-26 01:05:24.433010000 +0000
+           +++ /etc/apt/apt.conf.d/.chef-10recommends20160426-1939-625jwx	2016-04-26 01:05:24.433010000 +0000
+           @@ -1 +1,4 @@
+           +# Managed by Chef
+           +APT::Install-Recommends "1";
+           +APT::Install-Suggests "0";
+           - change mode from '' to '0644'
+           - change owner from '' to 'root'
+           - change group from '' to 'root'
+         * apt_package[apt-transport-https] action install (up to date)
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 6/12 resources updated in 25 seconds
-       Finished converging <default-ubuntu-1404> (0m31.57s).
------> Kitchen is finished. (0m32.55s)
+       Chef Client finished, 6/12 resources updated in 11 seconds
+       Finished converging <default-ubuntu-1404> (0m17.98s).
+-----> Kitchen is finished. (0m19.06s)
 ```
 
-Let's log in to the instance and verify that the `apt` cache was updated. When the `apt` cache is updated, the system updates the timestamp on the file <% fp '/var/lib/apt/periodic/update-success-stamp' %>.
+Let's log in to the instance and verify that the `apt` cache was updated. When the `apt` cache is updated, the system updates the timestamp on the file<br><% fp '/var/lib/apt/periodic/update-success-stamp' %>.
 
 Run `kitchen login` to log in to your instance.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
-Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 4.2.0-34-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com/
-Last login: Fri Feb  5 03:24:06 2016 from 10.0.2.2
+Last login: Tue Apr 26 01:05:11 2016 from 10.0.2.2
 ```
 
 From your instance, run this command to get the timestamp.
@@ -147,7 +174,7 @@ From your instance, run this command to get the timestamp.
 ```bash
 # ~
 vagrant@default-ubuntu-1404:~$ stat -c %y /var/lib/apt/periodic/update-success-stamp
-2016-02-05 03:24:33.138500694 +0000
+2016-04-26 01:05:24.410995448 +0000
 ```
 
 The time that comes back is in Greenwich Mean Time (GMT). It should be close to the **Last login** time that was reported in the MOTD when you logged on.

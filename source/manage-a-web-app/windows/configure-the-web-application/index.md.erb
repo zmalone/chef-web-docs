@@ -1,6 +1,6 @@
 ---
 title: 'Configure the web application'
-order: 8
+order: 7
 keywords: TODO
 layout: lesson
 sections: []
@@ -55,7 +55,7 @@ long_description 'Installs/Configures awesome_customers_windows'
 version '0.1.0'
 
 depends 'sql_server', '~> 2.5.0'
-depends 'iis', '~> 4.1.6'
+depends 'iis', '~> 4.1.7'
 ```
 
 Now let's remove the default site. The `iis` cookbook provides a recipe named `remove_default_site` that does this for us. All you need to do is include this recipe in your cookbook.
@@ -68,7 +68,7 @@ Append the following code to <code class="file-path">web.rb</code>.
 include_recipe 'iis::remove_default_site'
 ```
 
-This recipe uses the `iis_site` and `iis_pool` resources that the `iis` cookbook defines to stop and delete the default web site and app pool.
+This recipe uses the `iis_site` and `iis_pool` resources that the `iis` cookbook defines to stop and delete the default web site and app pool. [Source code](https://github.com/chef-cookbooks/iis/blob/master/recipes/remove_default_site.rb#L21)
 
 ```ruby
 # remove_default_site.rb
@@ -91,7 +91,7 @@ Now let's write code to download the Customers web application and extract it to
 
 ASP.NET applications are often built into a _web deployment package_, which contains your site's static content &ndash; such as HTML, CSS, images, and other media &ndash; and server-side code. In practice, you might manually build the package and copy the result to a staging area. Or you might have an automated process that builds and stages the package when code is checked in to source control. You might then have a second process &ndash; either manual or automated &ndash; that runs your Chef cookbooks to deploy the updated application to your test or production environment when the build succeeds.
 
-For learning purposes, we've [provided a prebuilt version](https://github.com/learn-chef/get-started-aspnet/releases/tag/v0.1.0) of the Customers web application on GitHub so you don't have to build it yourself.
+For learning purposes, we've [provided a prebuilt version](https://github.com/learn-chef/customers-web-app-aspnet/releases/tag/v0.1.0) of the Customers web application on GitHub so you don't have to build it yourself.
 
 It's common to place IIS applications in the <code class="file-path">C:\inetpub\apps</code> directory and site configuration in the <code class="file-path">C:\inetpub\sites</code> directory. We're going to reference these directories multiple times, so let's create variables that we can reuse.
 
@@ -298,6 +298,7 @@ Run the following command to create an empty SQL script file in our cookbook.
 ```bash
 # ~/learn-chef
 $ chef generate file cookbooks/awesome_customers_windows grant-access.sql
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::cookbook_file
   * directory[cookbooks/awesome_customers_windows/files/default] action create (up to date)
@@ -373,52 +374,38 @@ As before, let's apply and then verify the configuration. Run `kitchen converge`
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen converge
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-windows-2012r2>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 [...]
        Recipe: iis::remove_default_site
-         * iis_site[Default Web Site] action stop[2016-02-12T19:11:31+00:00] INFO: Processing iis_site[Default Web Site] action stop (iis::remove_default_site line 21)
-       [2016-02-12T19:11:31+00:00] INFO: C:\Windows\System32\inetsrv\appcmd.exe stop site /site.name:"Default Web Site"
-       [2016-02-12T19:11:31+00:00] INFO: iis_site[Default Web Site] stopped
+         * iis_site[Default Web Site] action stop
 
+         * iis_site[Default Web Site] action delete
 
-         * iis_site[Default Web Site] action delete[2016-02-12T19:11:31+00:00] INFO: Processing iis_site[Default Web Site] action delete (iis::remove_default_site line 21)
-       [2016-02-12T19:11:31+00:00] INFO: C:\Windows\System32\inetsrv\appcmd.exe stop site /site.name:"Default Web Site"
-       [2016-02-12T19:11:32+00:00] INFO: iis_site[Default Web Site] deleted
+         * iis_pool[DefaultAppPool] action stop
 
-
-         * iis_pool[DefaultAppPool] action stop[2016-02-12T19:11:32+00:00] INFO: Processing iis_pool[DefaultAppPool] action stop (iis::remove_default_site line 25)
-       [2016-02-12T19:11:32+00:00] INFO: iis_pool[DefaultAppPool] stopped
-
-
-         * iis_pool[DefaultAppPool] action delete[2016-02-12T19:11:32+00:00] INFO: Processing iis_pool[DefaultAppPool] action delete (iis::remove_default_site line 25)
-       [2016-02-12T19:11:32+00:00] INFO: iis_pool[DefaultAppPool] deleted
+         * iis_pool[DefaultAppPool] action delete
 [...]
-         * directory[C:\inetpub\sites\Customers] action create[2016-02-12T19:11:40+00:00] INFO: Processing directory[C:\inetpub\sites\Customers] action create (awesome_customers_windows::web line 60)
-       [2016-02-12T19:11:40+00:00] INFO: directory[C:\inetpub\sites\Customers] created directory C:\inetpub\sites\Customers
+         * iis_pool[Products] action add
 
-           - create new directory C:\inetpub\sites\Customers[2016-02-12T19:11:40+00:00] INFO: directory[C:\inetpub\sites\Customers] permissions changed to [BUILTIN\IIS_IUSRS/flags:3/mask:80000000]
-
+         * directory[C:\inetpub\sites\Customers] action create
+           - create new directory C:\inetpub\sites\Customers
            - change dacl
-         * iis_site[Customers] action add[2016-02-12T19:11:40+00:00] INFO: Processing iis_site[Customers] action add (awesome_customers_windows::web line 67)
-       [2016-02-12T19:11:41+00:00] INFO: iis_site[Customers] configured site 'Customers'
-       [2016-02-12T19:11:41+00:00] INFO: iis_site[Customers] added new site 'Customers'
+         * iis_site[Customers] action add
 
-
-         * iis_site[Customers] action start[2016-02-12T19:11:41+00:00] INFO: Processing iis_site[Customers] action start (awesome_customers_windows::web line 67)
-        (up to date)
-         * iis_app[Customers] action add[2016-02-12T19:11:41+00:00] INFO: Processing iis_app[Customers] action add (awesome_customers_windows::web line 76)
-       [2016-02-12T19:11:41+00:00] INFO: App created
+         * iis_site[Customers] action start (up to date)
+         * iis_app[Customers] action add
 [...]
-       Chef Client finished, 16/28 resources updated in 46 seconds
+       Chef Client finished, 13/28 resources updated in 01 minutes 04 seconds
 
-       Finished converging <default-windows-2012r2> (0m57.45s).
------> Kitchen is finished. (0m59.55s)
+       Finished converging <default-windows-2012r2> (1m21.80s).
+-----> Kitchen is finished. (1m24.53s)
 [...]
 ```
 
@@ -437,9 +424,9 @@ You'll see this.
 
 Wonderful! You've successfully configured an entire application stack on Windows Server using Chef!
 
-To help you understand how your node was configured, let's run a few additional commands on your node. Running these commands can also help you diagnose any issues if you weren't able to access the Customers application from your workstation.
+To help you understand how your instance was configured, let's run a few additional commands. Running these commands can also help you diagnose any issues if you weren't able to access the Customers application from your workstation.
 
-Start by connecting to your Windows Server node.
+Start by connecting to your Windows Server instance.
 
 ### Verify that the IIS application pool, web site, and application exist
 
@@ -516,7 +503,7 @@ First, destroy the current instance.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen destroy
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Destroying <default-windows-2012r2>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
@@ -530,17 +517,17 @@ Now run `kitchen converge` to bring up a clean instance and apply your cookbook.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
------> Creating <default-windows-1404>...
+-----> Starting Kitchen (v1.7.2)
+-----> Creating <default-windows-2012r2>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'opscode-windows-14.04'...
+       ==> default: Importing base box 'windows-2012r2'...
 [...]
-       Chef Client finished, 22/28 resources updated in 08 minutes 38 seconds
+       Chef Client finished, 22/28 resources updated in 07 minutes 44 seconds
 
-       Finished converging <default-windows-2012r2> (9m26.86s).
------> Kitchen is finished. (11m37.71s)
+       Finished converging <default-windows-2012r2> (9m7.70s).
+-----> Kitchen is finished. (11m13.36s)
 ```
 
-In this example, it took about 12 minutes to apply the entire configuration on a clean Windows Server instance. Refresh your web browser to confirm that the web application comes up on your new instance.
+In this example, it took about 11 minutes to apply the entire configuration on a clean Windows Server instance. Refresh your web browser to confirm that the web application comes up on your new instance.
 
 [END_BOX]

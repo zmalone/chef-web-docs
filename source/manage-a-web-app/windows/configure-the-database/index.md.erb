@@ -1,6 +1,6 @@
 ---
 title: 'Configure the database'
-order: 7
+order: 6
 keywords: TODO
 layout: lesson
 sections: []
@@ -22,6 +22,7 @@ Run the following command to create an empty file in your cookbook.
 ```bash
 # ~/learn-chef
 $ chef generate file cookbooks/awesome_customers_windows create-database.sql
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::cookbook_file
   * directory[cookbooks/awesome_customers_windows/files/default] action create
@@ -83,13 +84,6 @@ So far our `database` recipe installs SQL Server. <code class="file-path">databa
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_windows/recipes/database.rb
-# Load the secrets file and the encrypted data bag item that holds the sa password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_windows']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'sql_server_customers', password_secret)
-
-# Set the node attribute that holds the sa password with the decrypted passoword.
-node.default['sql_server']['server_sa_password'] = password_data_bag_item['sa_password']
-
 # Install SQL Server.
 include_recipe 'sql_server::server'
 ```
@@ -216,13 +210,6 @@ Your entire `database` recipe looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_windows/recipes/database.rb
-# Load the secrets file and the encrypted data bag item that holds the sa password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_windows']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'sql_server_customers', password_secret)
-
-# Set the node attribute that holds the sa password with the decrypted passoword.
-node.default['sql_server']['server_sa_password'] = password_data_bag_item['sa_password']
-
 # Install SQL Server.
 include_recipe 'sql_server::server'
 
@@ -262,17 +249,18 @@ As before, let's apply and then verify the configuration. Run `kitchen converge`
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen converge
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-windows-2012r2>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 [...]
-           - update content in file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\create-database.sql from none to 6d849b
-           --- C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\create-database.sql	2016-02-12 18:24:08.000000000 +0000
-           +++ C:\Users\vagrant\AppData\Local\Temp\kitchen\cache/create-database.sql20160212-3108-rb79nb	2016-02-12 18:24:08.000000000 +0000
+           - update content in file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\create-database.sql from none to 25997f
+           --- C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\create-database.sql	2016-04-27 02:56:05.000000000 +0000
+           +++ C:\Users\vagrant\AppData\Local\Temp\kitchen\cache/chef-create-database.sql20160427-1960-kigbnk	2016-04-27 02:56:05.000000000 +0000
            @@ -1 +1,21 @@
            +USE master;
            +GO
@@ -294,19 +282,15 @@ $ kitchen converge
            +INSERT INTO customers(id, first_name, last_name, email) VALUES(newid(), 'Jane', 'Smith', 'jane.smith@example.com');
            +INSERT INTO customers(id, first_name, last_name, email) VALUES(newid(), 'Dave', 'Richards', 'dave.richards@example.com');
            +GO
-         * powershell_script[Initialize database] action run[2016-02-12T18:24:08+00:00] INFO: Processing powershell_script[Initialize database] action run (awesome_customers_windows::database line 21)
-       [2016-02-12T18:24:08+00:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
-       [2016-02-12T18:24:22+00:00] INFO: powershell_script[Guard resource] ran successfully
-[...]
-       Running handlers:
-       [2016-02-12T18:24:27+00:00] INFO: Running report handlers
-       Running handlers complete
-       [2016-02-12T18:24:27+00:00] INFO: Report handlers complete
-       Chef Client finished, 2/12 resources updated in 01 minutes 29 seconds
+         * powershell_script[Initialize database] action run
+           - execute "C:\Windows\system32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -InputFormat None -File "C:/Users/vagrant/AppData/Local/Temp/chef-script20160427-4088-z769t4.ps1"
 
-       Finished converging <default-windows-2012r2> (2m24.14s).
------> Kitchen is finished. (2m26.57s)
-[...]
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 2/12 resources updated in 49 seconds
+
+       Finished converging <default-windows-2012r2> (1m13.42s).
+-----> Kitchen is finished. (1m16.10s)
 ```
 
 You'll see from the output that the SQL script is copied to the Chef cache and then the script is executed.
@@ -316,7 +300,7 @@ Now let's connect to your node and run a few commands to help verify the databas
 * the `learnchef` database exists.
 * the `customers` database table exists and contains the sample data.
 
-From a PowerShell session on your node, run these commands to set up PowerShell to manage SQL Server.
+From a PowerShell session on your Test Kitchen instance, run these commands to set up PowerShell to manage SQL Server.
 
 ```ps
 $ Set-ExecutionPolicy RemoteSigned

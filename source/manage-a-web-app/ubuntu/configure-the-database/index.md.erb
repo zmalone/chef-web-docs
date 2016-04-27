@@ -13,11 +13,13 @@ Now let's configure a database instance named `my_company`. You'll also assign a
 
 In the previous part, you used the `mysql` cookbook to set up the MySQL installation. For this part, we'll use the [database](https://supermarket.chef.io/cookbooks/database) cookbook from Chef Supermarket, which enables us to configure MySQL database instances.
 
+The `database` cookbook uses the [mysql2](https://rubygems.org/gems/mysql2/versions/0.4.3) Ruby library (a Ruby library is often packaged as a [gem](http://guides.rubygems.org/what-is-a-gem/)) to connect to MySQL. To install this gem, we'll use the [mysql2\_chef_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem) cookbook.
+
 [START_BOX]
 
-## 1. Reference the database cookbook
+## 1. Reference the mysql2\_chef_gem and database cookbooks
 
-Like you did before, append a `depends` statement for the `database` cookbook to <code class="file-path">metadata.rb</code>, making the entire file look like this.
+Like you did before, append two `depends` statement for the `mysql2_chef_gem` and `database` cookbooks to <code class="file-path">metadata.rb</code>, making the entire file look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/metadata.rb
@@ -31,10 +33,10 @@ version '0.1.0'
 
 depends 'apt', '~> 2.9.2'
 depends 'firewall', '~> 2.4.0'
-depends 'httpd', '~> 0.3.4'
-depends 'mysql2_chef_gem', '~> 1.0.2'
-depends 'mysql', '~> 6.1.2'
-depends 'database', '~> 4.0.9'
+depends 'httpd', '~> 0.3.5'
+depends 'mysql', '~> 7.0.0'
+depends 'mysql2_chef_gem', '~> 1.1.0'
+depends 'database', '~> 5.1.2'
 ```
 
 [COMMENT] Don't confuse the `database` cookbook from Chef Supermarket with your `database` recipe.
@@ -43,7 +45,44 @@ depends 'database', '~> 4.0.9'
 
 [START_BOX]
 
-## 2. Create the database instance
+## 2. Install the mysql2 Ruby gem
+
+Append the following to your `database` recipe, <% fp 'database.rb' %>. This code uses the `mysql2_chef_gem` resource to install the `mysql2` Ruby gem.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
+# Install the mysql2 Ruby gem.
+mysql2_chef_gem 'default' do
+  action :install
+end
+```
+
+The entire file looks like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
+# Configure the MySQL client.
+mysql_client 'default' do
+  action :create
+end
+
+# Configure the MySQL service.
+mysql_service 'default' do
+  initial_root_password node['awesome_customers_ubuntu']['database']['root_password']
+  action [:create, :start]
+end
+
+# Install the mysql2 Ruby gem.
+mysql2_chef_gem 'default' do
+  action :install
+end
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create the database instance
 
 Now we can set up the database instance. We'll name our database `my_company`.
 
@@ -64,13 +103,13 @@ mysql_database 'my_company' do
 end
 ```
 
-This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. We specify the root user's credentials (recall that we used the root password "mysql\_root_password" when we created the data bag item for the database passwords.) Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the host name.
+This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the hostname. We also specify the logon credentials for the root account. 
 
-[WARN] Remember to never hard-code passwords in your recipes. We'll replace it with our decryption mechanism shortly.
+[WARN] Remember to never hard-code passwords in your recipes. We'll replace it with our node attributes in the next step.
 
 ### Refactor the database configuration
 
-Let's factor your data so that your recipe is more reusable. We'll factor out the database name and the connection info (host name and user name).
+Let's factor your data so that your recipe is more reusable and doesn't use a hard-coded password. We'll factor out the database name and the connection info (hostname and username).
 
 Append the following to your default attributes file, <code class="file-path">default.rb</code>.
 
@@ -85,6 +124,11 @@ The entire file looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/attributes/default.rb
+def random_password
+  require 'securerandom'
+  SecureRandom.base64
+end
+
 default['firewall']['allow_ssh'] = true
 default['awesome_customers_ubuntu']['open_ports'] = 80
 
@@ -92,8 +136,8 @@ default['awesome_customers_ubuntu']['user'] = 'web_admin'
 default['awesome_customers_ubuntu']['group'] = 'web_admin'
 default['awesome_customers_ubuntu']['document_root'] = '/var/www/customers/public_html'
 
-default['awesome_customers_ubuntu']['secret_file'] = '/etc/chef/encrypted_data_bag_secret'
-
+default_unless['awesome_customers_ubuntu']['database']['root_password'] = random_password
+default_unless['awesome_customers_ubuntu']['database']['admin_password'] = random_password
 default['awesome_customers_ubuntu']['database']['dbname'] = 'my_company'
 default['awesome_customers_ubuntu']['database']['host'] = '127.0.0.1'
 default['awesome_customers_ubuntu']['database']['root_username'] = 'root'
@@ -108,50 +152,30 @@ mysql_database node['awesome_customers_ubuntu']['database']['dbname'] do
   connection(
     :host => node['awesome_customers_ubuntu']['database']['host'],
     :username => node['awesome_customers_ubuntu']['database']['root_username'],
-    :password => 'mysql_root_password'
+    :password => node['awesome_customers_ubuntu']['database']['root_password']
   )
   action :create
 end
 ```
-
-Finally, replace the hard-coded password with the decrypted database password.
-
-```ruby
-# ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
-# Create the database instance.
-mysql_database node['awesome_customers_ubuntu']['database']['dbname'] do
-  connection(
-    :host => node['awesome_customers_ubuntu']['database']['host'],
-    :username => node['awesome_customers_ubuntu']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
-  )
-  action :create
-end
-```
-
-Here, we want to use the MySQL root password, so we reuse the value of `password_data_bag_item['root_password']` that you created when you installed MySQL.
 
 <code class="file-path">database.rb</code> now looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
-mysql2_chef_gem 'default' do
-  action :install
-end
-
 # Configure the MySQL client.
 mysql_client 'default' do
   action :create
 end
 
-# Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_ubuntu']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'mysql_customers', password_secret)
-
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password password_data_bag_item['root_password']
+  initial_root_password node['awesome_customers_ubuntu']['database']['root_password']
   action [:create, :start]
+end
+
+# Install the mysql2 Ruby gem.
+mysql2_chef_gem 'default' do
+  action :install
 end
 
 # Create the database instance.
@@ -159,7 +183,7 @@ mysql_database node['awesome_customers_ubuntu']['database']['dbname'] do
   connection(
     :host => node['awesome_customers_ubuntu']['database']['host'],
     :username => node['awesome_customers_ubuntu']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_ubuntu']['database']['root_password']
   )
   action :create
 end
@@ -169,7 +193,7 @@ end
 
 [START_BOX]
 
-## 3. Create a MySQL database user
+## 4. Create a MySQL database user
 
 Like we did for your Apache site's default home page, let's assign a user to your database who has just enough permissions to modify the system.
 
@@ -193,9 +217,9 @@ mysql_database_user 'db_admin' do
 end
 ```
 
-This code sets up the `db_admin` user with `CREATE` and `GRANT` permissions to the `my_company` database. It also sets the user's initial password (recall that we used the admin password "mysql\_admin_password" when we created the data bag item for the database passwords.)
+This code sets up the `db_admin` user with `CREATE` and `GRANT` permissions to the `my_company` database. It also sets the user's initial password.
 
-Let's perform a similar process to separate the logic from the data. We already know how to update the connection info. We also already have node attributes that define the host name and database name, and we already have access to the database passwords.
+Let's perform a similar process to separate the logic from the data. We already know how to update the connection info. We also already have node attributes that define the hostname and database name, and we already have access to the database passwords.
 
 All we need to do is create a node attribute for the name of the user.
 
@@ -212,6 +236,11 @@ The entire file looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/attributes/default.rb
+def random_password
+  require 'securerandom'
+  SecureRandom.base64
+end
+
 default['firewall']['allow_ssh'] = true
 default['awesome_customers_ubuntu']['open_ports'] = 80
 
@@ -219,15 +248,16 @@ default['awesome_customers_ubuntu']['user'] = 'web_admin'
 default['awesome_customers_ubuntu']['group'] = 'web_admin'
 default['awesome_customers_ubuntu']['document_root'] = '/var/www/customers/public_html'
 
-default['awesome_customers_ubuntu']['secret_file'] = '/etc/chef/encrypted_data_bag_secret'
-
+default_unless['awesome_customers_ubuntu']['database']['root_password'] = random_password
+default_unless['awesome_customers_ubuntu']['database']['admin_password'] = random_password
 default['awesome_customers_ubuntu']['database']['dbname'] = 'my_company'
 default['awesome_customers_ubuntu']['database']['host'] = '127.0.0.1'
 default['awesome_customers_ubuntu']['database']['root_username'] = 'root'
 default['awesome_customers_ubuntu']['database']['admin_username'] = 'db_admin'
 ```
 
-Now refactor your `mysql_database_user` resource by replacing the data with the appropriate node attributes and the decrypted passwords from the data bag.
+Now refactor your `mysql_database_user` resource by replacing the data with the appropriate node attributes.
+
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
@@ -236,9 +266,9 @@ mysql_database_user node['awesome_customers_ubuntu']['database']['admin_username
   connection(
     :host => node['awesome_customers_ubuntu']['database']['host'],
     :username => node['awesome_customers_ubuntu']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_ubuntu']['database']['root_password']
   )
-  password password_data_bag_item['admin_password']
+  password node['awesome_customers_ubuntu']['database']['admin_password']
   database_name node['awesome_customers_ubuntu']['database']['dbname']
   host node['awesome_customers_ubuntu']['database']['host']
   action [:create, :grant]
@@ -249,23 +279,20 @@ The entire `database` recipe now looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
-mysql2_chef_gem 'default' do
-  action :install
-end
-
 # Configure the MySQL client.
 mysql_client 'default' do
   action :create
 end
 
-# Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_ubuntu']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'mysql_customers', password_secret)
-
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password password_data_bag_item['root_password']
+  initial_root_password node['awesome_customers_ubuntu']['database']['root_password']
   action [:create, :start]
+end
+
+# Install the mysql2 Ruby gem.
+mysql2_chef_gem 'default' do
+  action :install
 end
 
 # Create the database instance.
@@ -273,7 +300,7 @@ mysql_database node['awesome_customers_ubuntu']['database']['dbname'] do
   connection(
     :host => node['awesome_customers_ubuntu']['database']['host'],
     :username => node['awesome_customers_ubuntu']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_ubuntu']['database']['root_password']
   )
   action :create
 end
@@ -283,9 +310,9 @@ mysql_database_user node['awesome_customers_ubuntu']['database']['admin_username
   connection(
     :host => node['awesome_customers_ubuntu']['database']['host'],
     :username => node['awesome_customers_ubuntu']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_ubuntu']['database']['root_password']
   )
-  password password_data_bag_item['admin_password']
+  password node['awesome_customers_ubuntu']['database']['admin_password']
   database_name node['awesome_customers_ubuntu']['database']['dbname']
   host node['awesome_customers_ubuntu']['database']['host']
   action [:create, :grant]
@@ -296,7 +323,7 @@ end
 
 [START_BOX]
 
-## 4. Create a database table and some sample data
+## 5. Create a database table and some sample data
 
 Now the `my_company` database is set up, along with a user to manage it. Next, let's create a database table along with some sample data.
 
@@ -307,6 +334,7 @@ From your <% fp '~/learn-chef' %> directory, start by running the following `che
 ```bash
 # ~/learn-chef
 $ chef generate file cookbooks/awesome_customers_ubuntu create-tables.sql
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::cookbook_file
   * directory[cookbooks/awesome_customers_ubuntu/files/default] action create
@@ -334,12 +362,22 @@ INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Jan
 INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Dave', 'Richards', 'dave.richards@example.com' );
 ```
 
-We'll use the built-in [cookbook_file](https://docs.chef.io/resource_cookbook_file.html) resource to copy your SQL script to a temporary directory. Append the following to your `database` recipe.
+Next, we'll use the built-in [cookbook_file](https://docs.chef.io/resource_cookbook_file.html) resource to copy your SQL script to a temporary directory. We'll refer to the full path to <code class="file-path">create-database.sql</code> multiple times in our recipe, so let's create a variable that defines the location one time, but we can reference multiple times. Append the following to your `database` recipe.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
-# Write schema seed file to filesystem.
-cookbook_file '/tmp/create-tables.sql' do
+# Create a path to the SQL file in the Chef cache.
+create_tables_script_path = File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
+```
+
+This code uses `Chef::Config[:file_cache_path]` to read the location of the Chef cache from the [chef-client configuration file](https://docs.chef.io/config_rb_client.html). Although the location of the Chef cache can vary, it's typically located at <code class="file-path">/var/chef/cache</code> on Linux.
+
+Next, append this to <code class="file-path">database.rb</code>.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
+# Write the SQL script to the filesystem.
+cookbook_file create_tables_script_path do
   source 'create-tables.sql'
   owner 'root'
   group 'root'
@@ -349,7 +387,7 @@ end
 
 Previously, you used the `file` resource to set up a file. When you used the `file` resource, you specified the contents of the file directly in your recipe. The `cookbook_file` resource transfers an external file in your cookbook to a destination on your node.
 
-We'll use the `execute` resource to run the script. Append the following to <% fp 'database.rb' %>.
+Next, we'll use the `execute` resource to run the script. Append the following to <% fp 'database.rb' %>.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
@@ -393,46 +431,18 @@ Our `not_if` guard tests only for when the `customers` table doesn't exist; it d
 
 ### Refactor the database table creation
 
-Like we've done before, let's look at how we can factor out the data. In your `cookbook_file` resource, we specified the destination path for your SQL script. Let's create a node attribute to describe it.
+Like we've done before, let's look at how we can factor out the data. 
 
-Append the `node['awesome_customers_ubuntu']['database']['create_tables_script']` attribute to your default attribute file, <code class="file-path">default.rb</code>, making the entire file look like this.
+We can factor out most parts of your `execute` resource, such as the hostname, username, and password. We already have the node attributes to describe those, so we're ready to modify the recipe.
 
-```ruby
-# ~/learn-chef/cookbooks/awesome_customers_ubuntu/attributes/default.rb
-default['firewall']['allow_ssh'] = true
-default['awesome_customers_ubuntu']['open_ports'] = 80
-
-default['awesome_customers_ubuntu']['user'] = 'web_admin'
-default['awesome_customers_ubuntu']['group'] = 'web_admin'
-default['awesome_customers_ubuntu']['document_root'] = '/var/www/customers/public_html'
-
-default['awesome_customers_ubuntu']['secret_file'] = '/etc/chef/encrypted_data_bag_secret'
-
-default['awesome_customers_ubuntu']['database']['dbname'] = 'my_company'
-default['awesome_customers_ubuntu']['database']['host'] = '127.0.0.1'
-default['awesome_customers_ubuntu']['database']['root_username'] = 'root'
-default['awesome_customers_ubuntu']['database']['admin_username'] = 'db_admin'
-default['awesome_customers_ubuntu']['database']['create_tables_script'] ='/tmp/create-tables.sql'
-```
-
-We can also factor out most parts of your `execute` resource, such as the host name, user name, and password. We already have the node attributes and data bag items to describe those, so we're ready to modify the recipe.
-
-Make your `cookbook_file` and `execute` resources look like this.
+Make your `execute` resource look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
-# Write schema seed file to filesystem.
-cookbook_file node['awesome_customers_ubuntu']['database']['create_tables_script'] do
-  source 'create-tables.sql'
-  owner 'root'
-  group 'root'
-  mode '0600'
-end
-
 # Seed the database with a table and test data.
 execute "initialize #{node['awesome_customers_ubuntu']['database']['dbname']} database" do
-  command "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{password_data_bag_item['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} < #{node['awesome_customers_ubuntu']['database']['create_tables_script']}"
-  not_if  "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{password_data_bag_item['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} -e 'describe customers;'"
+  command "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} < #{create_tables_script_path}"
+  not_if  "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} -e 'describe customers;'"
 end
 ```
 
@@ -440,23 +450,20 @@ The entire recipe looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
-mysql2_chef_gem 'default' do
-  action :install
-end
-
 # Configure the MySQL client.
 mysql_client 'default' do
   action :create
 end
 
-# Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_ubuntu']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'mysql_customers', password_secret)
-
 # Configure the MySQL service.
 mysql_service 'default' do
-  initial_root_password password_data_bag_item['root_password']
+  initial_root_password node['awesome_customers_ubuntu']['database']['root_password']
   action [:create, :start]
+end
+
+# Install the mysql2 Ruby gem.
+mysql2_chef_gem 'default' do
+  action :install
 end
 
 # Create the database instance.
@@ -464,7 +471,7 @@ mysql_database node['awesome_customers_ubuntu']['database']['dbname'] do
   connection(
     :host => node['awesome_customers_ubuntu']['database']['host'],
     :username => node['awesome_customers_ubuntu']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_ubuntu']['database']['root_password']
   )
   action :create
 end
@@ -474,16 +481,19 @@ mysql_database_user node['awesome_customers_ubuntu']['database']['admin_username
   connection(
     :host => node['awesome_customers_ubuntu']['database']['host'],
     :username => node['awesome_customers_ubuntu']['database']['root_username'],
-    :password => password_data_bag_item['root_password']
+    :password => node['awesome_customers_ubuntu']['database']['root_password']
   )
-  password password_data_bag_item['admin_password']
+  password node['awesome_customers_ubuntu']['database']['admin_password']
   database_name node['awesome_customers_ubuntu']['database']['dbname']
   host node['awesome_customers_ubuntu']['database']['host']
   action [:create, :grant]
 end
 
-# Write schema seed file to filesystem.
-cookbook_file node['awesome_customers_ubuntu']['database']['create_tables_script'] do
+# Create a path to the SQL file in the Chef cache.
+create_tables_script_path = File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
+
+# Write the SQL script to the filesystem.
+cookbook_file create_tables_script_path do
   source 'create-tables.sql'
   owner 'root'
   group 'root'
@@ -492,72 +502,73 @@ end
 
 # Seed the database with a table and test data.
 execute "initialize #{node['awesome_customers_ubuntu']['database']['dbname']} database" do
-  command "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{password_data_bag_item['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} < #{node['awesome_customers_ubuntu']['database']['create_tables_script']}"
-  not_if  "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{password_data_bag_item['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} -e 'describe customers;'"
+  command "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} < #{create_tables_script_path}"
+  not_if  "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} -e 'describe customers;'"
 end
-
 ```
 
 [END_BOX]
 
 [START_BOX]
 
-## 5. Apply and verify the configuration
+## 6. Apply and verify the configuration
 
-Let's apply the configuration and verify that `my_company` database, `db_admin` user, and `customers` table are properly configured. If you chose a root database password other than "mysql\_root_password", be sure to use that password in the commands that follow.
+Let's apply the configuration and verify that `my_company` database, `db_admin` user, and `customers` table are properly configured.
 
 First, run `kitchen converge` to apply the `awesome_customers_ubuntu` cookbook.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
-       Preparing data_bags
-       Preparing secret
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-ubuntu-1404>
-       Starting Chef Client, version 12.6.0
+       Starting Chef Client, version 12.9.38
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
          - awesome_customers_ubuntu (0.1.0)
          - apt (2.9.2)
          - firewall (2.4.0)
-         - mysql2_chef_gem (1.0.2)
-         - httpd (0.3.4)
-         - mysql (6.1.2)
+         - httpd (0.3.5)
+         - mysql (7.0.0)
+         - mysql2_chef_gem (1.1.0)
          - chef-sugar (3.3.0)
-         - compat_resource (12.7.1)
-         - build-essential (2.2.4)
-         - database (4.0.9)
+         - database (5.1.2)
+         - yum-mysql-community (0.2.0)
+         - compat_resource (12.9.1)
+         - smf (2.2.8)
+         - build-essential (3.2.0)
          - mariadb (0.3.1)
-         - yum-mysql-community (0.1.21)
-         - smf (2.2.7)
-         - postgresql (4.0.0)
-         - yum (3.10.0)
+         - postgresql (4.0.6)
+         - seven_zip (2.0.0)
          - rbac (1.0.3)
-         - yum-epel (0.6.5)
+         - yum-epel (0.6.6)
+         - yum (3.10.0)
          - openssl (4.4.0)
+         - chef_handler (1.3.0)
+         - windows (1.40.0)
+       Installing Cookbook Gems:
        Compiling Cookbooks...
 [...]
+       Recipe: awesome_customers_rhel::database
+         * mysql_database[my_company] action create
            - Creating schema 'my_company'
          * mysql_database_user[db_admin] action create
            - Creating user 'db_admin'@'127.0.0.1'
          * mysql_database_user[db_admin] action grant
            - Granting privs for 'db_admin'@'127.0.0.1'
-         * mysql_database_user[db_admin] action create (up to date)
-         * mysql_database_user[db_admin] action grant (up to date)
          * cookbook_file[/tmp/create-tables.sql] action create
            - create new file /tmp/create-tables.sql
            - update content in file /tmp/create-tables.sql from none to 326217
-           --- /tmp/create-tables.sql	2016-02-11 03:06:03.686187118 +0000
-           +++ /tmp/.create-tables.sql20160211-15806-corac	2016-02-11 03:06:03.682187118 +0000
+           --- /tmp/create-tables.sql	2016-04-25 18:45:05.953642500 +0000
+           +++ /tmp/.chef-create-tables.sql20160425-29022-zj6f77	2016-04-25 18:45:05.950641000 +0000
            @@ -1 +1,11 @@
            +CREATE TABLE customers(
            +  id CHAR (32) NOT NULL,
@@ -572,21 +583,22 @@ $ kitchen converge
            - change mode from '' to '0600'
            - change owner from '' to 'root'
            - change group from '' to 'root'
+           - restore selinux security context
          * execute[initialize my_company database] action run
            - execute mysql -h 127.0.0.1 -u db_admin -pmysql_admin_password -D my_company < /tmp/create-tables.sql
        Recipe: firewall::default
          * firewall[default] action restart
             (skipped due to only_if)
-          (skipped due to only_if)
-        (skipped due to only_if)
-       * file[/etc/default/ufw-chef.rules] action create (up to date)
-        (up to date)
+         * file[/etc/sysconfig/firewalld-chef.rules] action create (up to date)
+       [2016-04-25T18:45:06+00:00] WARN: Cloning resource attributes for service[firewalld] from prior resource (CHEF-3694)
+       [2016-04-25T18:45:06+00:00] WARN: Previous service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:38:in `block (2 levels) in <class:FirewallFirewalld>'
+       [2016-04-25T18:45:06+00:00] WARN: Current  service[firewalld]: /tmp/kitchen/cache/cookbooks/firewall/libraries/provider_firewall_firewalld.rb:92:in `block in <class:FirewallFirewalld>'
+          (up to date)
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 8/232 resources updated in 06 seconds
-       Finished converging <default-ubuntu-1404> (0m13.30s).
------> Kitchen is finished. (0m13.89s)
+       Chef Client finished, 18/203 resources updated in 01 minutes 59 seconds
+       Finished converging <default-centos-72> (2m11.03s).
 ```
 
 Now let's verify the database configuration. Start by logging in to your instance.
@@ -594,10 +606,10 @@ Now let's verify the database configuration. Start by logging in to your instanc
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
-Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 4.2.0-34-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com/
-Last login: Thu Feb 11 03:05:55 2016 from 10.0.2.2
+Last login: Tue Apr 26 02:18:48 2016 from 10.0.2.2
 ```
 
 First, verify that the `my_company` database exists.

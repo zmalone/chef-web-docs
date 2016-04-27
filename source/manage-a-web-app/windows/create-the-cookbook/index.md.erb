@@ -11,7 +11,9 @@ In this part, you'll create the `awesome_customers_windows` cookbook. You'll als
 
 Recall that a cookbook provides structure to your Chef code. A cookbook contains things such as recipes and templates.
 
-We'll create one cookbook, named `awesome_customers_windows`, to describe our web application's configuration. To keep things basic, the cookbook will contain both the web application code and the Chef configuration code to manage it. In practice, you might separate the web application code from its configuration code. For example, the web team might maintain the application code in its own source control repository and the operations or another development team might maintain the configuration code &ndash; the Chef cookbook &ndash; in a separate repository. The cookbook would need to pull from the application sources repository and deploy the web content to the appropriate location.
+We'll create one cookbook, named `awesome_customers_windows`, to describe our web application's configuration. To keep things basic, the cookbook will contain both the web application code and the Chef configuration code to manage it.
+
+In practice, you might separate the web application code from its configuration code. For example, the web team might maintain the application code in its own source control repository and the operations or another development team might maintain the configuration code &ndash; the Chef cookbook &ndash; in a separate repository. The cookbook would need to pull from the application sources repository and deploy the web content to the appropriate location.
 
 [START_BOX]
 
@@ -36,6 +38,7 @@ Run the following `chef generate cookbook` command to create the `awesome_custom
 ```bash
 # ~/learn-chef
 $ chef generate cookbook cookbooks/awesome_customers_windows
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::cookbook
   * directory[/Users/user/learn-chef/cookbooks/awesome_customers_windows] action create
@@ -215,23 +218,23 @@ Now run `kitchen converge`. This command downloads the base Windows Server 2012 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Creating <default-windows-2012r2>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'windows-2012r2'...
 [...]
+       Synchronizing Cookbooks:
+         - awesome_customers_windows (0.1.0)
+       Installing Cookbook Gems:
        Compiling Cookbooks...
        Converging 0 resources
-       [2016-02-11T18:33:28+00:00] INFO: Chef Run complete in 0.343755 seconds
 
        Running handlers:
-       [2016-02-11T18:33:28+00:00] INFO: Running report handlers
        Running handlers complete
-       [2016-02-11T18:33:28+00:00] INFO: Report handlers complete
-       Chef Client finished, 0/0 resources updated in 55 seconds
+       Chef Client finished, 0/0 resources updated in 36 seconds
 
-       Finished converging <default-windows-2012r2> (1m40.97s).
------> Kitchen is finished. (3m51.49s)
+       Finished converging <default-windows-2012r2> (2m13.49s).
+-----> Kitchen is finished. (4m27.37s)
 ```
 
 As expected, 0 resources were applied because the cookbook is empty. But it's a great first step to verifying that the instance comes up and `chef-client` runs successfully.

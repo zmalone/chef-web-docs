@@ -5,7 +5,7 @@ keywords: TODO
 layout: lesson
 sections: []
 appendix: true
-time_to_complete: 20 minutes
+time_to_complete: 15 minutes
 ---
 If you've gone through the tutorial previously, or you have enough familiarity with Chef and just want to see the Customers web application in action, here's how to bring things up quickly using Test Kitchen.
 
@@ -49,65 +49,7 @@ Checking connectivity... done.
 
 [START_BOX]
 
-## 2. Encrypt your database passwords
-
-Here, you'll create a secret key and use that key to encrypt passwords that allow access to MySQL. The tutorial [describes the process](/manage-a-web-app/ubuntu/create-a-password-store/) in greater detail.
-
-First, create these directories.
-
-```bash
-# ~/learn-chef/cookbooks
-$ cd ~/learn-chef
-$ mkdir .chef
-$ mkdir data_bags
-$ mkdir data_bags/database_passwords
-```
-
-Run the commands that match your workstation setup to create a secret key in the<br><% fp('~/learn-chef/.chef') %> directory.
-
-### From a Linux or Mac OS workstation
-
-```bash
-# ~/learn-chef
-$ openssl rand -base64 512 | tr -d '\r\n' > ~/learn-chef/.chef/encrypted_data_bag_secret
-```
-
-### From a Windows workstation
-
-```ps
-# ~\learn-chef
-$ $key = New-Object byte[](512)
-$ $rng = [System.Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($key)
-$ [Convert]::ToBase64String($key) | Out-File "~\learn-chef\.chef\encrypted_data_bag_secret" -encoding "UTF8"
-$ [array]::Clear($key, 0, $key.Length)
-```
-
-<hr>
-
-Write this to <% fp 'mysql_customers.json' %>
-
-```ruby
-# ~/learn-chef/data_bags/database_passwords/mysql_customers.json
-{
-  "id": "mysql_customers",
-  "root_password": "mysql_root_password",
-  "admin_password": "mysql_admin_password"
-}
-```
-
-Encrypt the file.
-
-```bash
-# ~/learn-chef
-$ knife data bag from file database_passwords mysql_customers.json --secret-file .chef/encrypted_data_bag_secret --local-mode
-Updated data_bag_item[database_passwords::mysql_customers]
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Run Test Kitchen
+## 2. Run Test Kitchen
 
 From your cookbook's directory, <% fp '~/learn-chef/cookbooks/awesome_customers_ubuntu' %>, run `kitchen converge`.
 
@@ -115,7 +57,7 @@ From your cookbook's directory, <% fp '~/learn-chef/cookbooks/awesome_customers_
 # ~/learn-chef
 $ cd ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Creating <default-ubuntu-1404>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'opscode-ubuntu-14.04'...
@@ -131,7 +73,7 @@ $ kitchen converge
 
 [START_BOX]
 
-## 4. Verify the result
+## 3. Verify the result
 
 From a web browser on your workstation, navigate to your site at http://192.168.34.34.
 
@@ -141,7 +83,7 @@ From a web browser on your workstation, navigate to your site at http://192.168.
 
 [START_BOX]
 
-## 5. Destroy your Test Kitchen instance
+## 4. Destroy your Test Kitchen instance
 
 When you're done experimenting, run `kitchen destroy` to clean things up.
 
@@ -149,7 +91,7 @@ When you're done experimenting, run `kitchen destroy` to clean things up.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen destroy
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Destroying <default-ubuntu-1404>...
        Vagrant instance <default-ubuntu-1404> destroyed.
        Finished destroying <default-ubuntu-1404> (0m3.62s).

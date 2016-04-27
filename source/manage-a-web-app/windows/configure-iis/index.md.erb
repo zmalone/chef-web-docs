@@ -43,6 +43,7 @@ The first step is to create the recipe file, <code class="file-path">web.rb</cod
 ```bash
 # ~/learn-chef
 $ chef generate recipe cookbooks/awesome_customers_windows web
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::recipe
   * directory[cookbooks/awesome_customers_windows/spec/unit/recipes] action create (up to date)
@@ -227,40 +228,31 @@ Let's apply and then verify the configuration. Run `kitchen converge` to apply t
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen converge
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-windows-2012r2>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 [...]
        Recipe: awesome_customers_windows::lcm
-         * powershell_script[Configure the LCM] action run[2016-02-11T21:42:33+00:00] INFO: Processing powershell_script[Configure the LCM] action run (awesome_customers_windows::lcm line 6)
-       [2016-02-11T21:42:33+00:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
-       [2016-02-11T21:42:34+00:00] INFO: powershell_script[Guard resource] ran successfully
-        (skipped due to not_if)
+         * powershell_script[Configure the LCM] action run (skipped due to not_if)
        Recipe: awesome_customers_windows::web
-         * dsc_script[Web-Server] action run[2016-02-11T21:42:34+00:00] INFO: Processing dsc_script[Web-Server] action run (awesome_customers_windows::web line 7)
-       [2016-02-11T21:43:33+00:00] INFO: DSC resource configuration completed successfully
-
+         * dsc_script[Web-Server] action run
            - converge DSC configuration 'Web-Server'
            - converge DSC resource [[WindowsFeature]InstallWebServer] by Continue with installation?
            Performing installation for "[Web Server (IIS)] Web Server (IIS)".
            Files for "[Web Server (IIS)] Web Server (IIS)" are not available on the target server.
            Performing installation for "[Web Server (IIS)] Web Server".
-           Files for "[Web Server (IIS)] Web Server" are not available on the target server.
 [...]
-       [2016-02-11T21:45:04+00:00] INFO: Chef Run complete in 150.686965 seconds
-
        Running handlers:
-       [2016-02-11T21:45:04+00:00] INFO: Running report handlers
        Running handlers complete
-       [2016-02-11T21:45:04+00:00] INFO: Report handlers complete
-       Chef Client finished, 3/4 resources updated in 03 minutes 18 seconds
+       Chef Client finished, 3/4 resources updated in 03 minutes 23 seconds
 
-       Finished converging <default-windows-2012r2> (3m28.81s).
------> Kitchen is finished. (3m31.17s)
+       Finished converging <default-windows-2012r2> (5m6.19s).
+-----> Kitchen is finished. (7m21.67s)
 ```
 
 You'll see from the output that the LCM configuration is not applied a second time because the configuration mode is already `ApplyOnly`. You'll also see that IIS, ASP.NET 4.5, and the IIS Management Console are configured.
@@ -318,7 +310,7 @@ First, you'll need the instance's IP address or hostname. They way you get that 
 
 [START_TAB getipaddrEC2 active]
 
-You can lookup your EC2 instance's IP address or hostname from the EC2 Management Console. Or run this command from your <% fp '~/learn-chef/cookbooks/awesome_customers_windows' %> directory to get the hostname.
+You can lookup your EC2 instance's IP address or hostname from the EC2 Management Console. Or run this command from your<br><% fp '~/learn-chef/cookbooks/awesome_customers_windows' %> directory to get the hostname.
 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows

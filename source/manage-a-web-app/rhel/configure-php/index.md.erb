@@ -140,7 +140,7 @@ end
 
 Now that we've set up the `web` recipe to configure PHP, we can convert our recipe to configure <code class="file-path">index.php</code> instead of <code class="file-path">index.html</code>.
 
-However, our PHP code will require access to the `customers` database. In other words, it will need the `db_admin` user's password. To do that, let's convert our `file` resource to a `template` resource.
+However, our PHP code will require access to the `customers` database. In other words, it will need the `db_admin` user's password. To do that, let's convert our `file` resource to a `template` resource. Recall that the `template` resource enables you to provide placeholders that are later filled in when the recipe runs.
 
 From your <% fp '~/learn-chef' %> directory, start by running this `chef generate template` command to create a home page template.
 
@@ -207,7 +207,7 @@ Now we can write the PHP program. Add this to <code class="file-path">index.php.
 $servername = "127.0.0.1";
 $username = "db_admin";
 $password = "database_password";
-$dbname = "products";
+$dbname = "my_company";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -262,49 +262,18 @@ In this case, no.
 
 Notice that our PHP code contains hard-coded values for the server name, database username, password, and database name.
 
-```html
-<!-- ~/learn-chef/cookbooks/awesome_customers_rhel/templates/default/index.php.erb -->
-<!-- [...] -->
-
+```php
 <?php
+// ~/learn-chef/cookbooks/awesome_customers_rhel/templates/default/index.php.erb
 $servername = "127.0.0.1";
 $username = "db_admin";
 $password = "database_password";
-$dbname = "products";
+$dbname = "my_company";
 
-<!-- [...] -->
+// [...]
 ```
 
-Let's do one final bit of refactoring to modify the PHP script to use custom node attributes and the encrypted database password.
-
-First, we need to make the database password available to the PHP template.
-
-In <code class="file-path">web.rb</code>, before the `template` resource for the home page, add code to load the secrets file and the encrypted data bag item that holds the database password, just like you did when you set up the database.
-
-```ruby
-# ~/learn-chef/cookbooks/awesome_customers_rhel/recipes/web.rb
-# Load the secrets file and the encrypted data bag item that holds the root password.
-password_secret = Chef::EncryptedDataBagItem.load_secret(node['awesome_customers_rhel']['secret_file'])
-password_data_bag_item = Chef::EncryptedDataBagItem.load('database_passwords', 'mysql_customers', password_secret)
-```
-
-Now modify the `template` resource that follows to pass the decrypted database password to the template.
-
-```ruby
-# ~/learn-chef/cookbooks/awesome_customers_rhel/recipes/web.rb
-# Write the home page.
-template "#{node['awesome_customers_rhel']['document_root']}/index.php" do
-  source 'index.php.erb'
-  mode '0644'
-  owner node['awesome_customers_rhel']['user']
-  group node['awesome_customers_rhel']['group']
-  variables(
-    :database_password => password_data_bag_item['admin_password']
-  )
-end
-```
-
-[RUBY] The [variables](https://docs.chef.io/resource_template.html#variables) attribute is a [Hash](http://ruby-doc.org/core-2.1.1/Hash.html) of values.
+Let's do one final bit of refactoring to modify the PHP script to use our custom node attributes.
 
 In <code class="file-path">index.php.erb</code>, find the part of the PHP program that looks like this.
 
@@ -314,14 +283,12 @@ In <code class="file-path">index.php.erb</code>, find the part of the PHP progra
 $servername = "127.0.0.1";
 $username = "db_admin";
 $password = "database_password";
-$dbname = "products";
+$dbname = "my_company";
 ```
 
-Replace the values of the variables with the appropriate node attributes and the variable for the database password, like this:
+Replace the values of the variables with the appropriate node attributes, like this:
 
 <%= partial 'index-php-template' %>
-
-The `@` syntax references the variable that was passed from the `web` recipe to the template.
 
 [END_BOX]
 
@@ -336,14 +303,12 @@ Run `kitchen converge` to apply the `awesome_customers_rhel` cookbook.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-centos-72>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
-       Preparing data_bags
-       Preparing secret
        Preparing validation.pem
        Preparing client.rb
 [...]
@@ -387,7 +352,7 @@ First, destroy the current instance.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
 $ kitchen destroy
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Destroying <default-centos-72>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
@@ -401,7 +366,7 @@ Now run `kitchen converge` to bring up a clean instance and apply your cookbook.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_rhel
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Creating <default-centos-72>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'opscode-centos-7.2'...

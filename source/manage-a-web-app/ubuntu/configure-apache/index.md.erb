@@ -31,7 +31,7 @@ version '0.1.0'
 
 depends 'apt', '~> 2.9.2'
 depends 'firewall', '~> 2.4.0'
-depends 'httpd', '~> 0.3.4'
+depends 'httpd', '~> 0.3.5'
 ```
 
 Remember, you can get the latest version of a community cookbook from its page on Chef Supermarket or by running the `knife cookbook site show` command, like this.
@@ -39,7 +39,7 @@ Remember, you can get the latest version of a community cookbook from its page o
 ```bash
 # ~/learn-chef
 $ knife cookbook site show httpd | grep latest_version
-latest_version:     https://supermarket.chef.io/api/v1/cookbooks/httpd/versions/0.3.4
+latest_version:     https://supermarket.chef.io/api/v1/cookbooks/httpd/versions/0.3.5
 ```
 
 [END_BOX]
@@ -59,8 +59,10 @@ We'll call our custom site `customers`, and we'll store it in the <code class="f
 The first step is to create the recipe file, <code class="file-path">web.rb</code>. Run the following command to generate it.
 
 ```bash
-# ~/learn-chef
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu
+$ cd ~/learn-chef
 $ chef generate recipe cookbooks/awesome_customers_ubuntu web
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::recipe
   * directory[cookbooks/awesome_customers_ubuntu/spec/unit/recipes] action create (up to date)
@@ -188,6 +190,7 @@ First, run this command to create your template file, <code class="file-path">cu
 ```bash
 # ~/learn-chef
 $ chef generate template cookbooks/awesome_customers_ubuntu customers.conf
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::template
   * directory[cookbooks/awesome_customers_ubuntu/templates/default] action create
@@ -237,25 +240,26 @@ Like you did previously, run the cookbook and verify that it's configured as we 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-ubuntu-1404>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-ubuntu-1404>
-       Starting Chef Client, version 12.6.0
+       Starting Chef Client, version 12.9.38
        resolving cookbooks for run list: ["awesome_customers_ubuntu::default"]
        Synchronizing Cookbooks:
-         - awesome_customers_ubuntu (0.1.0)
-         - firewall (2.4.0)
          - apt (2.9.2)
-         - httpd (0.3.4)
+         - firewall (2.4.0)
+         - awesome_customers_ubuntu (0.1.0)
          - chef-sugar (3.3.0)
-         - compat_resource (12.7.1)
+         - httpd (0.3.5)
+         - compat_resource (12.9.1)
+       Installing Cookbook Gems:
        Compiling Cookbooks...
 [...]
           * apt_package[apache2] action install
@@ -338,10 +342,10 @@ Now let's log in to the instance and verify that the configuration is exactly as
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu
 $ kitchen login
-Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.19.0-25-generic x86_64)
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 4.2.0-34-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com/
-Last login: Wed Feb 10 21:10:29 2016 from 10.0.2.2
+Last login: Tue Apr 26 01:44:21 2016 from 10.0.2.2
 vagrant@default-ubuntu-1404:~$
 ```
 
