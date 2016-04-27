@@ -13,7 +13,7 @@ Now let's configure a database instance named `my_company`. You'll also assign a
 
 In the previous part, you used the `mysql` cookbook to set up the MySQL installation. For this part, we'll use the [database](https://supermarket.chef.io/cookbooks/database) cookbook from Chef Supermarket, which enables us to configure MySQL database instances.
 
-The `database` cookbook uses the [mysql2](https://rubygems.org/gems/mysql2/versions/0.4.3) Ruby library (called a [gem](http://guides.rubygems.org/what-is-a-gem/)) to connect to MySQL. To install this gem, we'll use the [mysql2\_chef_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem) cookbook.
+The `database` cookbook uses the [mysql2](https://rubygems.org/gems/mysql2/versions/0.4.3) Ruby library (a Ruby library is often packaged as a [gem](http://guides.rubygems.org/what-is-a-gem/)) to connect to MySQL. To install this gem, we'll use the [mysql2\_chef_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem) cookbook.
 
 [START_BOX]
 
@@ -36,7 +36,7 @@ depends 'firewall', '~> 2.4.0'
 depends 'httpd', '~> 0.3.5'
 depends 'mysql', '~> 7.0.0'
 depends 'mysql2_chef_gem', '~> 1.0.2'
-depends 'database', '~> 4.0.9'
+depends 'database', '~> 5.1.2'
 ```
 
 [COMMENT] Don't confuse the `database` cookbook from Chef Supermarket with your `database` recipe.
@@ -103,13 +103,13 @@ mysql_database 'my_company' do
 end
 ```
 
-This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the host name. We also specify the logon credentials for the root account. 
+This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the hostname. We also specify the logon credentials for the root account. 
 
 [WARN] Remember to never hard-code passwords in your recipes. We'll replace it with our node attributes in the next step.
 
 ### Refactor the database configuration
 
-Let's factor your data so that your recipe is more reusable and doesn't use a hard-coded password. We'll factor out the database name and the connection info (host name and user name).
+Let's factor your data so that your recipe is more reusable and doesn't use a hard-coded password. We'll factor out the database name and the connection info (hostname and username).
 
 Append the following to your default attributes file, <code class="file-path">default.rb</code>.
 
@@ -219,7 +219,7 @@ end
 
 This code sets up the `db_admin` user with `CREATE` and `GRANT` permissions to the `my_company` database. It also sets the user's initial password.
 
-Let's perform a similar process to separate the logic from the data. We already know how to update the connection info. We also already have node attributes that define the host name and database name, and we already have access to the database passwords.
+Let's perform a similar process to separate the logic from the data. We already know how to update the connection info. We also already have node attributes that define the hostname and database name, and we already have access to the database passwords.
 
 All we need to do is create a node attribute for the name of the user.
 
@@ -362,12 +362,22 @@ INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Jan
 INSERT INTO customers ( id, first_name, last_name, email ) VALUES ( uuid(), 'Dave', 'Richards', 'dave.richards@example.com' );
 ```
 
-We'll use the built-in [cookbook_file](https://docs.chef.io/resource_cookbook_file.html) resource to copy your SQL script to a temporary directory. Append the following to your `database` recipe.
+Next, we'll use the built-in [cookbook_file](https://docs.chef.io/resource_cookbook_file.html) resource to copy your SQL script to a temporary directory. We'll refer to the full path to <code class="file-path">create-database.sql</code> multiple times in our recipe, so let's create a variable that defines the location one time, but we can reference multiple times. Append the following to your `database` recipe.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
-# Write schema seed file to filesystem.
-cookbook_file '/tmp/create-tables.sql' do
+# Create a path to the SQL file in the Chef cache.
+create_tables_script_path = File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
+```
+
+This code uses `Chef::Config[:file_cache_path]` to read the location of the Chef cache from the [chef-client configuration file](https://docs.chef.io/config_rb_client.html). Although the location of the Chef cache can vary, it's typically located at <code class="file-path">/var/chef/cache</code> on Linux.
+
+Next, append this to <code class="file-path">database.rb</code>.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
+# Write the SQL script to the filesystem.
+cookbook_file create_tables_script_path do
   source 'create-tables.sql'
   owner 'root'
   group 'root'
@@ -377,7 +387,7 @@ end
 
 Previously, you used the `file` resource to set up a file. When you used the `file` resource, you specified the contents of the file directly in your recipe. The `cookbook_file` resource transfers an external file in your cookbook to a destination on your node.
 
-We'll use the `execute` resource to run the script. Append the following to <% fp 'database.rb' %>.
+Next, we'll use the `execute` resource to run the script. Append the following to <% fp 'database.rb' %>.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
@@ -421,50 +431,17 @@ Our `not_if` guard tests only for when the `customers` table doesn't exist; it d
 
 ### Refactor the database table creation
 
-Like we've done before, let's look at how we can factor out the data. In your `cookbook_file` resource, we specified the destination path for your SQL script. Let's create a node attribute to describe it.
+Like we've done before, let's look at how we can factor out the data. 
 
-Append the `node['awesome_customers_ubuntu']['database']['create_tables_script']` attribute to your default attribute file, <code class="file-path">default.rb</code>, making the entire file look like this.
+We can factor out most parts of your `execute` resource, such as the hostname, username, and password. We already have the node attributes to describe those, so we're ready to modify the recipe.
 
-```ruby
-# ~/learn-chef/cookbooks/awesome_customers_ubuntu/attributes/default.rb
-def random_password
-  require 'securerandom'
-  SecureRandom.base64
-end
-
-default['firewall']['allow_ssh'] = true
-default['awesome_customers_ubuntu']['open_ports'] = 80
-
-default['awesome_customers_ubuntu']['user'] = 'web_admin'
-default['awesome_customers_ubuntu']['group'] = 'web_admin'
-default['awesome_customers_ubuntu']['document_root'] = '/var/www/customers/public_html'
-
-default_unless['awesome_customers_ubuntu']['database']['root_password'] = random_password
-default_unless['awesome_customers_ubuntu']['database']['admin_password'] = random_password
-default['awesome_customers_ubuntu']['database']['dbname'] = 'my_company'
-default['awesome_customers_ubuntu']['database']['host'] = '127.0.0.1'
-default['awesome_customers_ubuntu']['database']['root_username'] = 'root'
-default['awesome_customers_ubuntu']['database']['admin_username'] = 'db_admin'
-default['awesome_customers_ubuntu']['database']['create_tables_script'] ='/tmp/create-tables.sql'
-```
-
-We can also factor out most parts of your `execute` resource, such as the host name, user name, and password. We already have the node attributes to describe those, so we're ready to modify the recipe.
-
-Make your `cookbook_file` and `execute` resources look like this.
+Make your `execute` resource look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/recipes/database.rb
-# Write schema seed file to filesystem.
-cookbook_file node['awesome_customers_ubuntu']['database']['create_tables_script'] do
-  source 'create-tables.sql'
-  owner 'root'
-  group 'root'
-  mode '0600'
-end
-
 # Seed the database with a table and test data.
 execute "initialize #{node['awesome_customers_ubuntu']['database']['dbname']} database" do
-  command "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} < #{node['awesome_customers_ubuntu']['database']['create_tables_script']}"
+  command "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} < #{create_tables_script_path}"
   not_if  "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} -e 'describe customers;'"
 end
 ```
@@ -512,8 +489,11 @@ mysql_database_user node['awesome_customers_ubuntu']['database']['admin_username
   action [:create, :grant]
 end
 
-# Write schema seed file to filesystem.
-cookbook_file node['awesome_customers_ubuntu']['database']['create_tables_script'] do
+# Create a path to the SQL file in the Chef cache.
+create_tables_script_path = File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
+
+# Write the SQL script to the filesystem.
+cookbook_file create_tables_script_path do
   source 'create-tables.sql'
   owner 'root'
   group 'root'
@@ -522,7 +502,7 @@ end
 
 # Seed the database with a table and test data.
 execute "initialize #{node['awesome_customers_ubuntu']['database']['dbname']} database" do
-  command "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} < #{node['awesome_customers_ubuntu']['database']['create_tables_script']}"
+  command "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} < #{create_tables_script_path}"
   not_if  "mysql -h #{node['awesome_customers_ubuntu']['database']['host']} -u #{node['awesome_customers_ubuntu']['database']['admin_username']} -p#{node['awesome_customers_ubuntu']['database']['admin_password']} -D #{node['awesome_customers_ubuntu']['database']['dbname']} -e 'describe customers;'"
 end
 ```
@@ -560,7 +540,7 @@ $ kitchen converge
          - mysql (7.0.0)
          - mysql2_chef_gem (1.0.2)
          - chef-sugar (3.3.0)
-         - database (4.0.9)
+         - database (5.1.2)
          - yum-mysql-community (0.2.0)
          - compat_resource (12.9.1)
          - smf (2.2.8)
