@@ -31,7 +31,6 @@ After completing this tutorial, you should be able to:
 
 * use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
 * use community cookbooks from Chef Supermarket to perform common tasks.
-* use encrypted data bags to protect sensitive data.
 * use Berkshelf to resolve dependencies among your cookbooks.
 
 [COMMENT] You don't need to understand all the details about how IIS and SQL Server work to complete this tutorial. The goal is to learn skills and patterns that will help you apply Chef to your specific infrastructure challenges.

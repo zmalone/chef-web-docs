@@ -17,7 +17,7 @@ Because we'll use Chef to monitor for configuration drift, it's not necessary to
 
 ## 1. Verify the current configuation mode
 
-`ApplyAndMonitor` is the default configuration mode, but let's verify. From your Windows Server instance, run this command.
+`ApplyAndMonitor` is the default configuration mode, but let's verify. From a PowerShell windows on your Windows Server instance, run this command.
 
 ```ps
 $ Get-DscLocalConfigurationManager | select -ExpandProperty "ConfigurationMode"
@@ -37,6 +37,7 @@ The first step to setting the configuration mode is to create a recipe. From the
 ```bash
 # ~/learn-chef
 $ chef generate recipe cookbooks/awesome_customers_windows lcm
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::recipe
   * directory[cookbooks/awesome_customers_windows/spec/unit/recipes] action create (up to date)
@@ -57,7 +58,7 @@ Recipe: code_generator::recipe
 
 ## 3. Write the lcm recipe to configure the LCM
 
-Now write the recipe. Add this code to <% fp '~/learn-chef/cookbooks/awesome_customers_windows/recipes/lcm.rb' %>.
+Now write the recipe. Add this code to<br><% fp '~/learn-chef/cookbooks/awesome_customers_windows/recipes/lcm.rb' %>.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_windows/recipes/lcm.rb
@@ -85,7 +86,7 @@ This code creates a DSC configuration named `ConfigLCM`. The configuration sets 
 
 Line 14 writes the configuration to the <% fp 'DSC_LCM' %> directory under Chef's cache directory. Line 15 uses the [Set-DscLocalConfigurationManager](https://technet.microsoft.com/en-us/library/dn521621.aspx) cmdlet to apply the LCM settings to the local system.
 
-`Chef::Config[:file_cache_path]` reads the location of the Chef cache from the [chef-client configuration file](https://docs.chef.io/config_rb_client.html). The Chef cache is the location that holds cookbooks and temporary files. It's commonly used to store downloaded files and scripts, such as our SQL commands file, in a location that's isolated from the rest of the system.
+`Chef::Config[:file_cache_path]` reads the location of the Chef cache from the [chef-client configuration file](https://docs.chef.io/config_rb_client.html). The Chef cache is the location that holds cookbooks and temporary files. It's commonly used to store downloaded files and scripts in a location that's isolated from the rest of the system.
 
 The `not_if` part ensures that the configuration is applied only if the system is not in the desired state. In this case, the configuration won't be set if the configuration mode is already `ApplyOnly`.
 
@@ -122,45 +123,24 @@ $ kitchen converge
 -----> Converging <default-windows-2012r2>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 [...]
        Recipe: awesome_customers_windows::lcm
-         * powershell_script[Configure the LCM] action run[2016-02-11T20:14:12+00:00] INFO: Processing powershell_script[Configure the LCM] action run (awesome_customers_windows::lcm line 6)
-
-           [execute]
-
-
-
-                  Directory: C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\DSC_LCM
-
-
-
-
-
-              Mode                LastWriteTime     Length Name
-
-              ----                -------------     ------ ----
-
-              -a---         2/11/2016   8:14 PM        878 localhost.meta.mof
-
-       [2016-02-11T20:14:14+00:00] INFO: powershell_script[Configure the LCM] ran successfully
-           - execute "C:\Windows\system32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -InputFormat None -File "C:/Users/vagrant/AppData/Local/Temp/chef-script20160211-304-ejdsak.ps1"
-       [2016-02-11T20:14:14+00:00] INFO: Chef Run complete in 1.953076 seconds
+         * powershell_script[Configure the LCM] action run
+           - execute "C:\Windows\system32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -InputFormat None -File "C:/Users/vagrant/AppData/Local/Temp/chef-script20160427-1920-1o4v017.ps1"
 
        Running handlers:
-       [2016-02-11T20:14:14+00:00] INFO: Running report handlers
        Running handlers complete
-       [2016-02-11T20:14:14+00:00] INFO: Report handlers complete
-       Chef Client finished, 1/1 resources updated in 49 seconds
+       Chef Client finished, 1/1 resources updated in 38 seconds
 
-       Finished converging <default-windows-2012r2> (0m59.50s).
------> Kitchen is finished. (1m1.26s)
+       Finished converging <default-windows-2012r2> (0m44.95s).
+-----> Kitchen is finished. (0m47.62s)
 ```
 
-The output shows that the configuration file was written, but let's verify that the LCM is configured to use the new configuration mode.
+Now let's verify that the LCM is configured to use the new configuration mode.
 
 From your Windows Server instance, run the same command that you ran in step 1.
 

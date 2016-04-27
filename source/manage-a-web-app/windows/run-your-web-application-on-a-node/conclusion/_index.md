@@ -1,6 +1,6 @@
 In this tutorial, you set up a basic yet complete web application stack that includes a web server, database, and scripting. Through local development, you're able to iterate, experiment, and get fast feedback as you develop your configuration policy. It also gives you greater confidence that your cookbooks will behave as you expect before you upload them to Chef server and run them on a bootstrapped node.
 
-You also learned a few new skills, such as how to use Berkshelf to manage cookbook dependencies and how to use encrypted data bags to work with passwords and other sensitive data.
+You also learned a few new skills, such as how to use Berkshelf to manage cookbook dependencies and how to use node attributes to work with passwords and other sensitive data.
 
 [GITHUB] Get the final version of the `awesome_customers_windows` cookbook on [GitHub](https://github.com/learn-chef/awesome_customers_windows).
 

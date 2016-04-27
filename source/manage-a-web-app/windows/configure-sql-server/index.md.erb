@@ -32,7 +32,7 @@ Remember that Chef Supermarket is a place for the community to share cookbooks. 
 
 The `sql_server` cookbook works by downloading the SQL Server installer to a temporary location. Then it runs the installer in quiet mode by [providing a configuration file](https://technet.microsoft.com/en-us/library/Dd239405\(v=SQL.110\).aspx) that lists the required configuration options. The cookbook uses the template mechanism that you worked with in the previous tutorial to build the configuration file. You'll learn in this lesson how to use node attributes to customize the contents of the configuration file when the cookbook runs.
 
-The `sql_server` cookbook implements Chef's _test and repair_ model by downloading the installer only if it doesn't already exist and by running the installer only if SQL Server isn't installed.
+The `sql_server` cookbook adheres to Chef's _test and repair_ model by downloading the installer only if it doesn't already exist and by running the installer only if SQL Server isn't installed.
 
 [COMMENT] Keep in mind that for now your goal is to learn how Chef works. It's OK if you don't understand every detail of how the community cookbooks work because you're working in a safe environment. As you gain experience, you'll want to evaluate the code and documentation to ensure that the cookbooks you get from Chef Supermarket do exactly what you expect before you apply them to your production environment.
 
@@ -96,6 +96,7 @@ Now let's create a recipe to hold all of our database configuration code. From y
 ```bash
 # ~/learn-chef
 $ chef generate recipe cookbooks/awesome_customers_windows database
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::recipe
   * directory[cookbooks/awesome_customers_windows/spec/unit/recipes] action create (up to date)
@@ -136,6 +137,7 @@ Run the following to create an attributes file named <code class="file-path">def
 ```bash
 # ~/learn-chef
 $ chef generate attribute cookbooks/awesome_customers_windows default
+Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::attribute
   * directory[cookbooks/awesome_customers_windows/attributes] action create
@@ -186,7 +188,8 @@ One way to solve this might be to include the `vagrant` user in the list of syst
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_windows/attributes/default.rb
-default['sql_server']['sysadmins'] = ['Administrator', 'vagrant'] # This is not a recommended practice.
+# This is not a recommended practice.
+default['sql_server']['sysadmins'] = ['Administrator', 'vagrant']
 ```
 
 However, this is not a recommened practice because the `vagrant` user is only part of your development and testing environment. You don't want this user name to be included in a production environment.
@@ -308,9 +311,9 @@ end
 
 [COMMENT] In practice, you might add the `random_password` to a helper library to make it more resusable. The [openssl cookbook](https://github.com/chef-cookbooks/openssl/blob/master/libraries/random_password.rb) shows an example. 
 
-### Set the node attribute
+### Set the node attribute for the SA password
 
-Now a node attribute to your attributes file that defines the SA password. The entire file looks like this.
+Now add a node attribute to your attributes file that defines the SA password. The entire file looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_windows/attributes/default.rb
@@ -348,7 +351,7 @@ provisioner:
 [...]
 ```
 
-The `provisioner` section specifies how to run Chef. You specify `chef_zero_scheduled_task` to mimic a Chef server environment on your local machine. Because the Chef server environment is reset between each Test Kitchen run, your node attributes are not preserved. This can cause problems when you run `kitchen converge` multiple times on the same test instance because your node attributes (for example, the database passwords) won't match the existing configuration.
+The `provisioner` section specifies how to run Chef. You specify `chef_zero_scheduled_task` to mimic a Chef server environment on your local machine. Because the Chef server environment is reset between each Test Kitchen run, your node attributes are not preserved. This can cause problems when you run `kitchen converge` multiple times on the same test instance because your node attributes (for example, one that defines a database password) won't match the existing configuration.
 
 Other reasons you might specify the passwords during development are to support testing and debugging. For example, if your database is not configured as you expect, it may be easier to connect to the database to troubleshoot the issue using an easy to remember password that you specify. 
 
@@ -444,59 +447,48 @@ Like before, let's apply and then verify the configuration. Run `kitchen converg
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen converge
+-----> Starting Kitchen (v1.7.2)
 -----> Converging <default-windows-2012r2>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 4.0.1...
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
 [...]
        Recipe: sql_server::server
-         * template[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini] action create[2016-02-12T02:44:46+00:00] INFO: Processing template[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini] action create (sql_server::server line 44)
-       [2016-02-12T02:44:46+00:00] INFO: template[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini] created file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini
-
-           - create new file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini[2016-02-12T02:44:46+00:00] INFO: template[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini] updated file contents C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini
+         * template[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini] action create
+           - create new file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini
+           - update content in file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini from none to 9128b2
+           --- C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\ConfigurationFile.ini	2016-04-27 02:03:50.000000000 +0000
+           +++ C:\Users\vagrant\AppData\Local\Temp\kitchen\cache/chef-ConfigurationFile.ini20160427-2192-1bv5bkh	2016-04-27 02:03:50.000000000 +0000
+           @@ -1 +1,202 @@
+           +; SQLSERVER2012 Configuration File
+           +; Generated by Chef Software Chef
+           +[OPTIONS]
+           +
+           +; Auto accept the license terms
+           +
+           +IACCEPTSQLSERVERLICENSETERMS="True"
 [...]
+         * windows_package[Microsoft SQL Server 2012 (64-bit)] action install
          Recipe: <Dynamically Defined Resource>
-           * remote_file[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe] action create[2016-02-12T02:44:46+00:00] INFO: Processing remote_file[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe] action create (dynamically defined)
-       [2016-02-12T02:45:37+00:00] INFO: remote_file[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe] created file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe
-
-             - create new file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe[2016-02-12T02:45:37+00:00] INFO: remote_file[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe] updated file contents C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe
-
+           * remote_file[C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe] action create
+             - create new file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe
              - update content in file C:\Users\vagrant\AppData\Local\Temp\kitchen\cache\package\SQLEXPR_x64_ENU.exe from none to 7f5e3d
              (file sizes exceed 10000000 bytes, diff output suppressed)
-       [2016-02-12T02:48:04+00:00] INFO: windows_package[Microsoft SQL Server 2012 (64-bit)] installed Microsoft SQL Server 2012 (64-bit) at 11.0.2100.60
-           - install version 11.0.2100.60 of package Microsoft SQL Server 2012 (64-bit)
+           - install version latest of package Microsoft SQL Server 2012 (64-bit)
        Recipe: sql_server::server
-         * windows_service[MSSQLSERVER] action nothing[2016-02-12T02:48:04+00:00] INFO: Processing windows_service[MSSQLSERVER] action nothing (sql_server::server line 75)
-        (skipped due to action :nothing)
-         * registry_key[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQLServer\SuperSocketNetLib\Tcp\IPAll] action create[2016-02-12T02:48:04+00:00] INFO: Processing registry_key[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQLServer\SuperSocketNetLib\Tcp\IPAll] action create (sql_server::server line 80)
-
-           - create key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQLServer\SuperSocketNetLib\Tcp\IPAll
-           - set value {:name=>"TcpPort", :type=>:string, :data=>"1433"}
-           - set value {:name=>"TcpDynamicPorts", :type=>:string, :data=>""}
-       [2016-02-12T02:48:04+00:00] INFO: registry_key[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQLServer\SuperSocketNetLib\Tcp\IPAll] sending restart action to windows_service[MSSQLSERVER] (immediate)
-         * windows_service[MSSQLSERVER] action restart[2016-02-12T02:48:04+00:00] INFO: Processing windows_service[MSSQLSERVER] action restart (sql_server::server line 75)
-       [2016-02-12T02:48:06+00:00] INFO: windows_service[MSSQLSERVER] configured with {:service_name=>"MSSQLSERVER"}
-       [2016-02-12T02:48:07+00:00] INFO: windows_service[MSSQLSERVER] restarted
-
-           - restart service windows_service[MSSQLSERVER]
-       Recipe: sql_server::client
-         * gem_package[tiny_tds] action install[2016-02-12T02:48:07+00:00] INFO: Processing gem_package[tiny_tds] action install (sql_server::client line 45)
-       [2016-02-12T02:48:19+00:00] INFO: gem_package[tiny_tds] installed tiny_tds at 0.7.0
-
-           - install version 0.7.0 of package tiny_tds
-       [2016-02-12T02:48:20+00:00] INFO: Chef Run complete in 223.718729 seconds
+         * registry_key[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQLServer\SuperSocketNetLib\Tcp\IPAll] action create (up to date)
+         * windows_service[MSSQLSERVER] action start (up to date)
+         * windows_service[MSSQLSERVER] action enable (up to date)
 
        Running handlers:
-       [2016-02-12T02:48:20+00:00] INFO: Running report handlers
        Running handlers complete
-       [2016-02-12T02:48:20+00:00] INFO: Report handlers complete
-       Chef Client finished, 6/11 resources updated in 04 minutes 38 seconds
+       Chef Client finished, 3/10 resources updated in 03 minutes 50 seconds
 
-       Finished converging <default-windows-2012r2> (5m7.96s).
------> Kitchen is finished. (5m10.31s)
+       Finished converging <default-windows-2012r2> (4m10.30s).
+-----> Kitchen is finished. (4m12.90s)
 ```
 
 You'll see from the output that the SQL Server install configuration file, <% fp 'ConfigurationFile.ini' %>, is generated and SQL Server 2012 Express is downloaded and installed.
