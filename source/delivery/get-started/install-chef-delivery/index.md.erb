@@ -20,7 +20,8 @@ Here are the steps to perform:
 1. [Review the installation](#step1)
 1. [Gather prerequisites](#step2)
 1. [Run the CloudFormation template](#step3)
-1. [Connect to the Windows workstation](#step4)
+1. [Copy your license key to the Chef Delivery server](#step4)
+1. [Connect to the Windows workstation](#step5)
 
 [START_BOX]
 
@@ -106,7 +107,7 @@ MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438, function(form
 
 [END_MODAL]
 
-After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory. Move this file to your home directory. The final path is <% fp '~/delivery.license' %>. The automation you'll run in the next step uploads your license key to your Delivery server.
+After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory.
 
 [END_BOX]
 
@@ -121,14 +122,17 @@ Now you're ready to run the [CloudFormation](https://aws.amazon.com/cloudformati
   ![](delivery/aws_sign_in.png)
 1. From the **Services** menu, select **Management Tools** and then **CloudFormation**.
   ![](delivery/aws_open_cloudformation.png)
-1. Click **Create Stack**
+1. If you've used CloudFormation in the past, click **Create Stack**.
   ![](delivery/aws_create_stack.png)
+  
+  If you have no running stacks, click **Create New Stack**.
+  ![](delivery/aws_create_stack_first.png)
 1. Under **Choose a template**, choose **Specify an Amazon S3 template URL**.
   ![](delivery/aws_stack_choose_template.png)
 1. Enter the URL that matches your SSH key pair's region. Then click **Next**.
-  * us-east-1 (N. Virginia) &mdash; [https://s3.amazonaws.com/ned-virginia-pup-cf-templates/delivery-tutorial.json](https://s3.amazonaws.com/ned-virginia-pup-cf-templates/delivery-tutorial.json)
-  * us-west-1 (N. California) &mdash; [https://s3-us-west-1.amazonaws.com/ned-pub-cf-templates/delivery-tutorial.json](https://s3-us-west-1.amazonaws.com/ned-pub-cf-templates/delivery-tutorial.json)
-  * us-west-2 (Oregon) &mdash; [https://s3-us-west-2.amazonaws.com/ned-oregon-pup-templates/delivery-tutorial.json](https://s3-us-west-2.amazonaws.com/ned-oregon-pup-templates/delivery-tutorial.json)
+  * us-east-1 (N. Virginia) &mdash; [https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-east-1.json](https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-east-1.json)
+  * us-west-1 (N. California) &mdash; [https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-west-1.json](https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-west-1.json)
+  * us-west-2 (Oregon) &mdash; [https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-west-2.json](https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-west-2.json)
 1. From the **Specify Details** screen, fill in the required details. When you're finished, click **Next**.
   * **Stack name** can be any name you choose. This value uniquely identifies your stack in AWS. Note your stack name for later.
   * **KeyName** specifies the name of your SSH key pair. If you're new to AWS, this is the name you created in [step 2](#step2).
@@ -145,15 +149,109 @@ The process is done when the **Status** reads **CREATE_COMPLETE**.
 
 ![](delivery/aws_stack_create_complete.png)
 
+The **Outputs** tab displays the public IP address for each server in the cluster. You can also get information about your cluster from the EC2 console.
+
+![](delivery/ec2_console_instances.png)
+
 [COMMENT] The appendix explains and how to [temporarily suspend the AWS instances](/delivery/get-started/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and how to [tear down the installation](/delivery/get-started/managing-your-aws-instances#tearingdownyourdeliveryinstallation) when you're finished with your Delivery evaluation.
 
-Congratulations. You're almost ready to set up Delivery for your users. As a final step, you'll connect to the virtual Windows workstation.
+Congratulations. You're almost ready to set up Delivery for your users. As final steps, you'll copy your license key to the Delivery server and then connect to the virtual Windows workstation over Remote Desktop.
 
 [END_BOX]
 
 [START_BOX]
 
-## 4. Connect to the Windows workstation
+## 4. Copy your license key to the Chef Delivery server
+
+> In this step, you copy your license key file from your workstation to Chef Delivery to complete the installation.
+
+Here you'll run the secure copy utility, `scp`, to transfer your license file to a temporary location on your Delivery server. Then you log into the Chef Delivery server over SSH, copy the license file to its final location, and finally restart Chef Delivery to apply the changes.
+
+[WINDOWS] In this part, you'll run the `scp` and `ssh` commands, which are typically available on Linux systems and Mac OS. From Windows, the easiest way to access these tools is to [install Git for Windows](/manage-a-node/rhel/get-set-up#step4). Git for Windows includes Git Bash, a terminal emulator that makes it easy to run Linux commands.
+
+Start by running the `scp` command to copy your license key file to a temporary directory on your server. 
+
+Replace:
+
+ * <% ph 'SSH_KEY' %> with your AWS SSH private key.
+ * <% ph 'LICENSE_KEY_FILE' %> with the location of the Delivery license key file that you [downloaded in step 2](#step2). 
+ * <% ph 'IP_ADDRESS' %> with the public IP address of your Chef Delivery server. You can get the public IP address from the **Outputs** tab in the CloudFormation console or from the EC2 console.
+
+```bash
+$ scp -i SSH_KEY LICENSE_KEY_FILE ubuntu@IP_ADDRESS:/home/ubuntu/delivery.license
+```
+
+Here's an example.
+
+```bash
+$ scp -i ~/.ssh/jsmith.pem ~/Downloads/delivery.license ubuntu@54.89.95.232:/home/ubuntu/delivery.license
+delivery.license                                                 100% 2560     2.5KB/s   00:00
+```
+
+Next, create an SSH connection to your Delivery server. Replace <% ph 'SSH_KEY' %> and <% ph 'IP_ADDRESS' %> with the same values you used in the previous step.
+
+```bash
+$ ssh -i SSH_KEY ubuntu@IP_ADDRESS
+```
+
+Here's an example.
+
+```bash
+$ ssh -i ~/.ssh/jsmith.pem ubuntu@54.89.95.232
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-74-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+  System information as of Fri Apr 29 03:16:55 UTC 2016
+
+  System load:  0.19              Processes:           121
+  Usage of /:   28.5% of 7.74GB   Users logged in:     0
+  Memory usage: 1%                IP address for eth0: 10.0.0.12
+  Swap usage:   0%
+
+  Graph this data and manage this system at:
+    https://landscape.canonical.com/
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+63 packages can be updated.
+33 updates are security updates.
+
+
+Last login: Fri Apr 29 01:21:58 2016 from 96.243.179.162
+ubuntu@ip-10-0-0-12:~$
+```
+
+From your SSH session, run these three commands to copy the license file to its final location, reconfigure, and then restart the server. 
+
+```bash
+ubuntu@ip-10-0-0-12:~$ sudo mv ~/delivery.license /var/opt/delivery/license
+ubuntu@ip-10-0-0-12:~$ sudo delivery-ctl reconfigure
+ubuntu@ip-10-0-0-12:~$ sudo delivery-ctl restart
+```
+
+As an optional step, run `sudo delivery-ctl service-list` to confirm the configuration.
+ 
+```bash
+ubuntu@ip-10-0-0-12:~$ sudo delivery-ctl service-list
+delivery*
+nginx*
+postgresql*
+```
+
+Finally, logout.
+
+```bash
+ubuntu@ip-10-0-0-12:~$ logout
+Connection to 54.89.95.232 closed.
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Connect to the Windows workstation
 
 For the remainder of the tutorial, you'll work from the virtual Windows workstation that's part of the automated installation.
 
