@@ -30,7 +30,7 @@ Like you did in [Manage a node](/manage-a-node/windows/), bring up a Windows Ser
 
 [Read this page](/manage-a-node/windows/get-a-node-to-bootstrap/) if you need a refresher on how to prepare your node for the bootstrap process.
 
-At this point, your node should have ports 80, 443, 3389, and 5986 open through the firewall. You should have also verified that you can establish an SSL connection to your node using the `knife wsman test` command. You also need your node's host name or public IP address, as well as an account that has Administrator access and its password.
+At this point, your node should have ports 80, 443, 3389, and 5986 open through the firewall. You should have also verified that you can establish a connection to your node using the `knife wsman test` command. You also need your node's host name or public IP address, as well as an account that has Administrator access and its password.
 
 [END_BOX]
 
@@ -173,26 +173,14 @@ Run this command to bootstrap your node. Replace <code class="placeholder">ADDRE
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name customers_web_app --run-list 'recipe[awesome_customers_windows]' --winrm-transport ssl --winrm-ssl-verify-mode verify_none 
+$ knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name customers_web_app --run-list 'recipe[awesome_customers_windows]'
 ```
 
 Here's an example.
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap windows winrm ec2-52-36-120-7.us-west-2.compute.amazonaws.com --winrm-user Administrator --winrm-password 'R7dP$f(JN3' --node-name customers_web_app --run-list 'recipe[awesome_customers_windows]' --winrm-transport ssl --winrm-ssl-verify-mode verify_none
-WARNING: * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-SSL validation of HTTPS requests for the WinRM transport is disabled. HTTPS WinRM
-connections are still encrypted, but knife is not able to detect forged replies
-or spoofing attacks.
-
-To fix this issue add an entry like this to your knife configuration file:
-
-``
-  # Verify all WinRM HTTPS connections (default, recommended)
-  knife[:winrm_ssl_verify_mode] = :verify_peer
-``
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+$ knife bootstrap windows winrm ec2-52-36-120-7.us-west-2.compute.amazonaws.com --winrm-user Administrator --winrm-password 'R7dP$f(JN3' --node-name customers_web_app --run-list 'recipe[awesome_customers_windows]'
 Creating new client for customers_web_app
 Creating new node for customers_web_app
 

@@ -13,13 +13,13 @@ time_to_complete: 20 minutes
 
 Recall that any computer that's managed by a Chef server is called a _node_, and that `chef-client` is the command that applies the policy defined by your cookbooks to a node.
 
-Let's bootstrap a node and execute the IIS cookbook on it.
+Let's bootstrap a node and apply the IIS cookbook to it.
 
 [START_BOX]
 
 ## 1. Bootstrap your node
 
-Now that you've verified that you can connect to your node over WinRM secured with SSL, you're now ready to bootstrap it.
+Now that you've verified that you can connect to your node over WinRM, you're now ready to bootstrap it.
 
 First, from your workstation, make sure you're in the <code class="file-path">~/learn-chef</code> directory.
 
@@ -31,37 +31,40 @@ Run this command to bootstrap your node. Replace <code class="placeholder">ADDRE
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name node1 --run-list 'recipe[learn_chef_iis]' --winrm-transport ssl --winrm-ssl-verify-mode verify_none 
+$ knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name node1 --run-list 'recipe[learn_chef_iis]' 
 ```
 
 Here's an example.
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap windows winrm ec2-52-35-73-30.us-west-2.compute.amazonaws.com --winrm-user Administrator --winrm-password 'K5?kbs.7Eo-' --node-name node1 --run-list 'recipe[learn_chef_iis]' --winrm-transport ssl --winrm-ssl-verify-mode verify_none
-WARNING: * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-SSL validation of HTTPS requests for the WinRM transport is disabled. HTTPS WinRM
-connections are still encrypted, but knife is not able to detect forged replies
-or spoofing attacks.
-[...]
-Waiting for remote response before bootstrap.
-ec2-52-35-73-30.us-west-2.compute.amazonaws.com Response received.
+$ knife bootstrap windows winrm 52.201.225.210 --winrm-user Administrator --winrm-password 'HhrQCP&e*Ey' --node-name node1 --run-list 'recipe[learn_chef_iis]'
+Creating new client for node1
+Creating new node for node1
+
+Waiting for remote response before bootstrap.52.201.225.210 .
+52.201.225.210 Response received.
 Remote node responded after 0.01 minutes.
-Bootstrapping Chef on ec2-52-35-73-30.us-west-2.compute.amazonaws.com
-ec2-52-35-73-30.us-west-2.compute.amazonaws.com Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-59390-1458832605.bat" chunk 1
+52.201.225.210 AMD64
+Bootstrapping Chef on 52.201.225.210
 [...]
-ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:44+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
-ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO: Chef Run complete in 36.374973 seconds
-ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO: Running report handlers
-ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO: Report handlers complete
-ec2-52-35-73-30.us-west-2.compute.amazonaws.com [2016-01-19T22:03:46+00:00] INFO: Sending resource update report (run-id: c4f69dad-7182-477b-b1c9-f2aaf858e462)
+52.201.225.210 [2016-05-03T16:17:08+00:00] INFO: Processing powershell_script[Install IIS] action run (learn_chef_iis::default line 9)
+52.201.225.210 [2016-05-03T16:17:08+00:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
+52.201.225.210 [2016-05-03T16:17:35+00:00] INFO: powershell_script[Install IIS] ran successfully
+52.201.225.210 [2016-05-03T16:17:35+00:00] INFO: Processing windows_service[w3svc] action enable (learn_chef_iis::default line 15)
+52.201.225.210 [2016-05-03T16:17:35+00:00] INFO: Processing windows_service[w3svc] action start (learn_chef_iis::default line 15)
+52.201.225.210 [2016-05-03T16:17:35+00:00] INFO: Processing template[c:\inetpub\wwwroot\Default.htm] action create (learn_chef_iis::default line 19)
+52.201.225.210 [2016-05-03T16:17:35+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] created file c:\inetpub\wwwroot\Default.htm
+52.201.225.210 [2016-05-03T16:17:35+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
+52.201.225.210 [2016-05-03T16:17:36+00:00] INFO: Chef Run complete in 28.593762 seconds
+52.201.225.210 [2016-05-03T16:17:36+00:00] INFO: Running report handlers
+52.201.225.210 [2016-05-03T16:17:36+00:00] INFO: Report handlers complete
+52.201.225.210 [2016-05-03T16:17:36+00:00] INFO: Sending resource update report (run-id: b30ed40e-22ec-4542-940e-7cdf93109dea)
 ```
 
 The optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's FQDN is the default. If you previously used the name `node1` to bootstrap a different node, you'll need to choose a different name or [remove the previous node](/manage-a-node/windows/update-your-nodes-configuration#howtocleanupyourenvironment).
 
-[COMMENT] Remember, you used a self-signed certificate when setting up your node. The `--winrm-ssl-verify-mode verify_none` part turns off SSL certificate validation on your workstation. In production, we recommend that you replace the  `--winrm-ssl-verify-mode` with the `--ca-trust-file` option to supply the certificate that validates the identity of your node.
-
-<hr>
+[COMMENT] By default, the bootstrap process uses Negotiate authentication and encryption, helping protect your password an other sensitive information.
 
 <% reveal_modal('knife-help-modal', 'Need help troubleshooting?') do %>
 
@@ -76,10 +79,10 @@ The optional `--node-name` argument uniquely identifies the node with the Chef s
 * Ensure your workstation has outbound access (including firewall) on these ports:
   * 80 (HTTP)
   * 443 (HTTPS)
-  * 5986 (WinRM)
+  * 5985 (WinRM)
 * Ensure your node has inbound access (including firewall) on these ports:
   * 80 (HTTP)
-  * 5986 (WinRM)
+  * 5985 (WinRM)
 * Ensure your node has outbound access (including firewall) on these ports:
   * 443 (HTTPS)
 
@@ -115,8 +118,8 @@ You can use the `knife node show` command to view data about your node.
 $ knife node show node1
 Node Name:   node1
 Environment: _default
-FQDN:        WIN-8RGNJ4ID662
-IP:          10.0.2.15
+FQDN:        WIN-CCAB05V5AFB
+IP:          52.201.225.210
 Run List:    recipe[learn_chef_iis]
 Roles:
 Recipes:     learn_chef_iis, learn_chef_iis::default
@@ -127,8 +130,6 @@ Tags:
 The second thing that happened was that your node did an initial checkin with the Chef server and ran the IIS cookbook. To verify this, open a web browser from your workstation and navigate to your web server.
 
 ![The basic home page](misc/webserver-basic-remote.png)
-
-[WARN] The IP address that's returned by the `knife node show` command is often the node's _internal_ IP address. Make sure you're using your node's public IP address or host name.
 
 [END_BOX]
 
