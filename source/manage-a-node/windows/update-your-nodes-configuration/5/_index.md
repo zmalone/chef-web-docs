@@ -26,7 +26,7 @@ If you plan to bootstrap your node a second time, for example, to practice the p
 $ rm C:\chef\client.pem
 ```
 
-### Optional: Tear down your node
+### Optional: Tear down your instance
 
 Deleting a node from your Chef server removes any data about that node from the server &ndash; it doesn't automatically tear down the instance.
 
