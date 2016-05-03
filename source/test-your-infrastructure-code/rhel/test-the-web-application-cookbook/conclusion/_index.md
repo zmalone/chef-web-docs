@@ -1,3 +1,8 @@
+If you're involved in your company's compliance and audit process, you may be interested in [Chef Compliance](compliance-assess/rhel/), which uses InSpec as its auditing and testing framework.
+
+If you're new to Ruby programming or testing with RSpec, The best way to get started is to adapt other examples that you see. The [InSpec documentation](http://serverspec.org/resource_types.html) provides the full list of available resource types, and has many good examples.
+
+
 This tutorial proposed these questions:
 
 * Did our cookbook place the system in the desired state?

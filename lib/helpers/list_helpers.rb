@@ -10,9 +10,7 @@ module ListHelpers
   def icon_list_item(foundation_icon, &block)
     concat(
       content_tag(:li) do
-        content_tag(:span) do
-          "<i class='fa fa-#{foundation_icon}' style='min-width: 21px;'></i>&nbsp;" + capture(&block)
-        end
+        "<i class='fa fa-#{foundation_icon}' style='min-width: 21px;'></i>&nbsp;" + capture(&block)
       end
     )
   end

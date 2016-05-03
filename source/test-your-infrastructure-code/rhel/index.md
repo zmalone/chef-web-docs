@@ -5,13 +5,17 @@ platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
-redirect: /test_tutorial_offline/
 ---
-In [Develop your Red Hat Enterprise Linux infrastructure code locally](/local-development/rhel/), you used [Test Kitchen](http://kitchen.ci) to configure and run a web application in an isolated environment that resembles your production environment.
+With Chef, you use _code_ to create cookbooks that express the desired state of your systems. You can also use code in a similar way to verify that the cookbooks you write do what you expect.
 
-Local development with Test Kitchen can greatly speed up the development process because it shortens the time it takes to bring up a machine and apply your Chef code. If you make a mistake or want to try something new, you can run your cookbook again or simply destroy the instance and create a new one.
+This tutorial builds on the local development skills you learned in the previous tutorials to show how testing your infrastructure code can speed up the development even further. Here's a quick recap of what you learned so far:
 
-<img src="/assets/images/networks/workstation-vm.png" style="width:40%; box-shadow: none;" alt="Your workstation, Test Kitchen, and a virtual machine" />
+* In [Develop your infrastructure code locally](/local-development/rhel/), you learned how _local development_ with Test Kitchen helps shorten the development process. With Test Kitchen, you apply your cookbook to a temporary instance that resembles production before you apply your work to a bootstrapped node.
+* In [Manage a basic web application](/manage-a-web-app/rhel/), you built a basic but complete web application on Red Hat Enterprise Linux or CentOS called Customers that uses a web server, a database, and scripting. You used an iterative process to build and verify each part of the application on a local virtual machine using Test Kitchen.
+
+Local development with Test Kitchen shortens the time it takes to bring up a machine and apply your Chef code. If you make a mistake or want to try something new, you can run your cookbook again or simply destroy the instance and create a new one.
+
+<img src="/assets/images/networks/workstation-vm.png" style="width:30%; height:auto; box-shadow:none;" alt="Your workstation, Test Kitchen, and a virtual machine" />
 
 One advantage to developing locally is that it enables you to confirm that `chef-client` completes successfully in your target environment. However, you still need to verify that your instance was configured as you expect. As your project gets more complex, making a small change to one component can affect the behavior of another.
 
@@ -19,17 +23,9 @@ For example, say you have a cookbook that configures a web application. A recipe
 
 How would you diagnose the error? You might start by manually verifying that the database software is installed and running and that you can run basic queries. Or you might start by looking at other aspects of your configuration, such as user, group, and file permissions. It might take some time to discover that the firewall is blocking access to the required port. After you remedy the error, you may need to repeat the verification process to ensure that other functionality continues to work like you expect.
 
-With Chef, you use _code_ to create cookbooks that express the desired state of your systems. You can also use code in a similar way to verify that the cookbooks you write do what you expect. The article [Overview of test driven infrastructure with Chef](/skills/test-driven-development/) outlines some of the more popular testing tools, and in this tutorial you'll use several of them.
+There are several ways to approach cookbook testing. Many Chef users take a _test-driven approach, where you write your tests first before you write any Chef code. With this approach, you write tests that initially fail and then write just enough code to make them pass. Other users have code they've already written and want to test or simply prefer to write their Chef code first. Both approaches are acceptable, and in this tutorial, you'll use both.
 
-[START_MODAL video-overview Watch the video]
-
-In this video, Frank Webber outlines why testing is an important part of your Chef workflow.
-
-<iframe class="embedded-video" src="//www.youtube.com/embed/HnalNLa8Pbo" frameborder="0" allowfullscreen></iframe>
-
-[END_MODAL]
-
-Rather than focusing on the specific kinds of software testing, like unit and integration testing, in this tutorial we'll focus on these questions:
+Rather than focusing on the [specific kinds of software testing](/skills/test-driven-development/), like unit and integration testing, in this tutorial we'll focus on these questions:
 
 * Did our cookbook place the system in the desired state?
 * Are our resources properly defined?
@@ -37,12 +33,12 @@ Rather than focusing on the specific kinds of software testing, like unit and in
 
 After completing this tutorial, you should be able to:
 
-* use [Serverspec](http://serverspec.org) to verify that your cookbook configures the system as you expect.
-* use [ChefSpec](http://sethvargo.github.io/chefspec/) to verify that your resources are properly defined, even before you apply your cookbook.
-* use [RuboCop](https://github.com/bbatsov/rubocop) and [Foodcritic](http://acrmp.github.io/foodcritic/) to verify that your cookbook adheres to accepted coding standards and avoids common defects.
+As optional exercises, learn how to write a _custom resource_ that includes test coverage to brings up a basic web server configuration on both Red Hat Enterprise Linux and Ubuntu. As a second exercise, you'll refactor the `awesome_customers_rhel` cookbook that you've built in the previous tutorial to make it more readable. You'll write test code first to remove the need to manually test your refactored cookbook. 
 
-You'll also have increased confidence that the `awesome_customers` cookbook that you've built in the previous tutorials will behave as you expect in production.
+* use [InSpec](https://docs.chef.io/inspec_reference.html) to verify that your cookbook configures the system as you expect.
+* use [ChefSpec](https://docs.chef.io/chefspec.html) to verify that your resources are properly defined, even before you run your cookbook.
+* use [RuboCop](https://docs.chef.io/rubocop.html) and [Foodcritic](https://docs.chef.io/foodcritic.html) to verify that your cookbook adheres to accepted coding standards and avoids common defects.
 
-You'll get started by setting up the Chef Development Kit and familiarize yourself with Test Kitchen.
+You'll get started by ensuring that you're set up for local development.
 
-[GITHUB] After you complete this tutorial, you can refer back to the final version of the code on [GitHub](https://github.com/learn-chef/test-your-infrastructure-code-rhel).
+[GITHUB] After you complete this tutorial, you can [refer to the final version](https://github.com/learn-chef/awesome_customers_test_rhel) of the code on GitHub.
