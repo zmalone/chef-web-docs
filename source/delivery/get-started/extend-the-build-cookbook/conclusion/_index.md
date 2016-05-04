@@ -13,12 +13,12 @@ To access the Chef server web interface, navigate to [https://10.0.0.11/login](h
   <tbody>
     <tr>
       <td>us-east-1 (N. Virginia)</td>
-      <td id="chef-server-us-east-1"><code>jcamy921UeSqknfqGjDEPhsV1Uk4rI2Yyrc=</code></td>
+      <td id="chef-server-us-east-1"><code>EycY1IqWI5KHFdftYqLOXJ0piro=</code></td>
       <td><a data-copytarget="#chef-server-us-east-1" class='small-button radius'>Copy</a></td>
     </tr>
     <tr>
       <td>us-west-1 (N. California)</td>
-      <td id="chef-server-us-west-1"><code>yfXtgDjlCdykUr7kpDeqd4m+LEzqrtv67w4=</code></td>
+      <td id="chef-server-us-west-1"><code>qUrNZDrN742wbLPwb/UUipTX6AI=</code></td>
       <td><a data-copytarget="#chef-server-us-west-1" class='small-button radius'>Copy</a></td>
     </tr>
     <tr>
