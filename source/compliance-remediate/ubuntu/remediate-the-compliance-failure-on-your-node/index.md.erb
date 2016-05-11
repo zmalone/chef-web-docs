@@ -8,30 +8,30 @@ next: {heading: Conclusion, partial: conclusion}
 time_to_complete: 30 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-In this part, you'll apply the SSH configuration to your Ubuntu node and then rerun the compliance scan to verify the fix.
+In this part, you'll apply the firewall configuration to your Ubuntu node and then rerun the compliance scan to verify the fix.
 
-To apply the SSH configuration, you'll upload the `ssh` cookbook to your Chef server and then bootstrap your Ubuntu node.
+To apply the firewall configuration, you'll upload the `ufw` cookbook to your Chef server and then bootstrap your Ubuntu node.
 
 Recall that during the bootstrap process, a node installs `chef-client` and performs the initial check-in to the Chef server. When you bootstrap a node, you specify the _run-list_, which includes the recipes that you want to apply. `chef-client` fetches the latest cookbooks from the Chef server. To update your node's configuration, you upload a new version of your cookbook to the Chef server and run `chef-client` on your node.
 
 Here's what you'll do in this part:
 
-1. [Upload the ssh cookbook to your Chef server](#step1)
+1. [Upload the ufw cookbook to your Chef server](#step1)
 1. [Bootstrap your node](#step2)
 1. [Rerun the compliance scan](#step3)
 
 [START_BOX]
 
-## 1. Upload the ssh cookbook to your Chef server
+## 1. Upload the ufw     cookbook to your Chef server
 
-The first step is to upload the `ssh` cookbook to the Chef server. This allows the node to fetch the cookbook during the bootstrap process.
+The first step is to upload the `ufw` cookbook to the Chef server. This allows the node to fetch the cookbook during the bootstrap process.
 
 Run this comand from your <% fp '~/learn-chef' %> directory.
 
 ```bash
 # ~/learn-chef
-$ knife cookbook upload ssh
-Uploading ssh            [0.1.0]
+$ knife cookbook upload ufw
+Uploading ufw            [0.1.0]
 Uploaded 1 cookbook.
 ```
 
@@ -43,43 +43,36 @@ Uploaded 1 cookbook.
 
 Next, bootstrap your Ubuntu 14.04 node. In the _Manage a node_ tutorial, you chose whether to bootstrap [using a password or key-based authentication](/manage-a-node/ubuntu/bootstrap-your-node#step1). Here, you'll use the second apprach with the SSH private key that you created in the previous tutorial.
 
-Run this `knife bootstrap` command. Replace the IP address and the value of `--identify-file` as needed.
+Run this `knife bootstrap` command. Replace the IP address and the values of `--ssh-user` and `--identify-file` as needed.
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap 192.168.145.134 --ssh-user vagrant --sudo --identity-file ~/.ssh/node1 --node-name node1 --run-list 'recipe[ssh]'
+$ knife bootstrap 192.168.145.134 --ssh-user vagrant --sudo --identity-file ~/.ssh/node1 --node-name node1 --run-list 'recipe[ufw]'
 Creating new client for node1
 Creating new node for node1
 Connecting to 192.168.145.134
-192.168.145.134 -----> Existing Chef installation detected
+192.168.145.134 -----> Installing Chef Omnibus (-v 12)
+[...]
 192.168.145.134 Starting the first Chef Client run...
-192.168.145.134 Starting Chef Client, version 12.9.38
-192.168.145.134 resolving cookbooks for run list: ["ssh"]
+192.168.145.134 Starting Chef Client, version 12.9.41
+192.168.145.134 resolving cookbooks for run list: ["ufw"]
 192.168.145.134 Synchronizing Cookbooks:
-192.168.145.134   - ssh (0.1.0)
+192.168.145.134   - ufw (0.1.0)
 192.168.145.134 Installing Cookbook Gems:
 192.168.145.134 Compiling Cookbooks...
-192.168.145.134 Converging 1 resources
-192.168.145.134 Recipe: ssh::default
-192.168.145.134   * cookbook_file[/etc/ssh/sshd_config] action create
-192.168.145.134     - update content in file /etc/ssh/sshd_config from 648219 to 09447b
-192.168.145.134     --- /etc/ssh/sshd_config	2015-12-23 15:38:33.070000000 +0000
-192.168.145.134     +++ /etc/ssh/.chef-sshd_config20160415-32201-19zavg0	2016-04-15 13:11:17.367581956 +0000
-192.168.145.134     @@ -1,155 +1,2 @@
-192.168.145.134     -#	$OpenBSD: sshd_config,v 1.93 2014/01/10 05:59:19 djm Exp $
-192.168.145.134     -
-[...]
-192.168.145.134     -UseDNS no
-192.168.145.134     +Protocol 2
-192.168.145.134     - change mode from '0600' to '0644'
-192.168.145.134     - restore selinux security context
+192.168.145.134 Converging 2 resources
+192.168.145.134 Recipe: ufw::default
+192.168.145.134   * execute[Enable SSH access] action run
+192.168.145.134     - execute ufw allow ssh
+192.168.145.134   * execute[Enable UFW] action run
+192.168.145.134     - execute ufw --force enable
 192.168.145.134
 192.168.145.134 Running handlers:
 192.168.145.134 Running handlers complete
-192.168.145.134 Chef Client finished, 1/1 resources updated in 06 seconds
+192.168.145.134 Chef Client finished, 2/2 resources updated in 05 seconds
 ```
 
-`chef-client` runs during the bootstrap process. You see the SSH configuration file, <% fp '/etc/ssh/sshd_config' %>, get updated to include the `Protocol 2` setting.
+`chef-client` runs during the bootstrap process. You see from the output that `ufw` is enabled and allows SSH access.
 
 [END_BOX]
 
@@ -93,11 +86,12 @@ We expect the rule to pass because we verified the configuration on a test insta
 
 From the dashboard in the web interface, select your node and click **Scan**.
 
-![](compliance/scan_button_centos7.png)
+![](compliance/scan_button_ubuntu1404.png)
 
 Clear the checkbox for **Operating System Patch Level** and select **cis/cis-ubuntu14.04lts-level1**.
 
-![](compliance/select_profiles_centos7.png)
+![](compliance/select_profiles_ubuntu1404a.png)
+![](compliance/select_profiles_ubuntu1404b.png)
 
 Click **Scan now** to start the scan.
 
@@ -109,7 +103,7 @@ Watch as your node is scanned. The scan may take a few minutes to complete.
 
 From the scan report, scroll to the **Ensure Firewall is active** rule. You see that the test passes.
 
-![](compliance/ssh_protocol2_compliant_centos7.png)
+![](compliance/firewall_ufw_compliant_ubuntu1404.png)
 
 Congratulations. You're one step closer to meeting your compliance goals.
 
@@ -121,17 +115,17 @@ Congratulations. You're one step closer to meeting your compliance goals.
 
 [Follow these steps](/manage-a-node/ubuntu/update-your-nodes-configuration#howtocleanupyourenvironment) from the _Manage a node_ tutorial if you want to clean up your Chef server after you complete this tutorial or you want to repeat the tutorial from the beginning.
 
-To remove the `ssh` cookbook from your Chef server, run `knife cookbook delete ssh`.
+To remove the `ufw` cookbook from your Chef server, run `knife cookbook delete ufw`.
 
 ```bash
 # ~/learn-chef
-$ knife cookbook delete ssh
-Do you really want to delete ssh version 0.1.0? (Y/N) y
-Deleted cookbook[ssh version 0.1.0]
+$ knife cookbook delete ufw
+Do you really want to delete ufw version 0.1.0? (Y/N) y
+Deleted cookbook[ufw version 0.1.0]
 ```
 
 To remove the node from your Chef Compliance server, select the node from the dashboard and click **Remove**.
 
-![](compliance/remove_node_centos7.png)
+![](compliance/remove_node_ubuntu1404.png)
 
 [END_BOX]

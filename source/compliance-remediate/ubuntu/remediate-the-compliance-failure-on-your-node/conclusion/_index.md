@@ -2,7 +2,7 @@ In this tutorial, you used Chef to remediate a failure of one of the predefined 
 
 You started with local development using Test Kitchen. Developing your code on local instances helps you to experiment and iterate more quickly.
 
-After verifying that your cookbook properly remediates the compliance failure on a test instance, you uploaded your cookbook to the Chef server and applied the configuration to your node. You then repeated the compliance scan to verify that the SSH configuration satisfies the compliance rule.
+After verifying that your cookbook properly remediates the compliance failure on a test instance, you uploaded your cookbook to the Chef server and applied the configuration to your node. You then repeated the compliance scan to verify that the firewall configuration satisfies the compliance rule.
 
 At the [start of the previous tutorial](/compliance-assess/ubuntu/), we proposed 5 stages that, together, will let you meet your compliance challenges:
 
@@ -16,6 +16,6 @@ With remediation in place, you've successfully completed 4 of these 5 stages. Th
 
 The built-in compliance profiles are a great start, but they may not cover your organization's unique requirements. We're working on a tutorial that teaches you how to write custom compliance profiles. [Follow us on Twitter](https://twitter.com/learnchef) to get the latest updates.
 
-[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/ssh) on GitHub.
+[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/ufw) on GitHub.
 
 You can also learn more about building a high velocity, highly compliant organization at [complianceatvelocity.com](http://complianceatvelocity.com/).
