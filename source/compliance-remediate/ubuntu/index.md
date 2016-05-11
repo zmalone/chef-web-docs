@@ -2,9 +2,8 @@
 title: 'Remediate compliance failures on your Ubuntu infrastructure with Chef'
 layout: lesson-overview
 platform: 'Ubuntu'
-logo: redhat.svg
+logo: ubuntu.svg
 order: 2
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In the previous tutorial, [Assess your infrastructure with Chef Compliance](/compliance-assess/ubuntu/), you set up a Chef Compliance server and scanned an Ubuntu 14.04 server against the predefined CIS Security Benchmarks.
 
