@@ -6,7 +6,6 @@ layout: lesson
 sections: []
 time_to_complete: 60 minutes
 next: {heading: Next, partial: next}
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Recall that in the previous tutorial you ran the **cis-centos7-level1** compliance profile and that it failed the **Set SSH Protocol to 2** rule.
 
@@ -42,8 +41,6 @@ The code you see is [InSpec](https://github.com/chef/inspec), an auditing and te
 InSpec provides [built-in resource types](https://docs.chef.io/inspec_reference.html) that describe the various parts of a system, such as files, users, and services. In this example, you see the [file](https://docs.chef.io/inspec_reference.html#file) resource used 2 times.
 
 The first `file` resource uses a regular expression to verify whether the SSH configuration file, <% fp '/etc/ssh/sshd_conf' %>, contains at least one occurence of the `Protocol` setting. The regular expression does not match any settings that begin with a comment `#`.
-
-[COMMENT] [Learn more about regular expressions in Ruby](http://www.tutorialspoint.com/ruby/ruby_regular_expressions.htm).
 
 The second `file` resource uses the same regular expression, but uses the [capture group](http://www.regular-expressions.info/refcapture.html) `(\S+)` to verify that each occurence of the `Protocol` setting specifies 2 as its value.
 
@@ -233,7 +230,7 @@ suites:
     attributes:
 ```
 
-This configuration uses the Vagrant driver and brings up a CentOS 7.2 instance. The `verifier` section tells Test Kitchen to look for InSpec tests.
+This configuration uses the Vagrant driver and brings up a CentOS 7.2 instance. The `verifier` section tells Test Kitchen to look for InSpec tests. More on that later.
 
 Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/ssh') %> directory.
 
@@ -484,7 +481,7 @@ $ cat verify.txt | grep '\d*).*should match /^\\s\*Protocol'
 
 Success! The output no longer contains the failure. This gives you confidence that the SSH-2 rule would pass after this cookbook is applied to your node.
 
-If the test were to fail, you would examine the failure, modify your cookbook to try something else, and then run `kitchen converge` to apply the change followed by `kitchen verify` to run your InSpec test.
+If the test were to fail, you would examine the failure, modify your cookbook to try something else, and then run `kitchen converge` to apply the change followed by `kitchen verify` to run your compliance scan.
 
 [COMMENT] Test Kitchen instances are meant to be disposable. If you place your test instance in an unrepairable state or want to start over, run `kitchen destroy` to destroy your instance followed by `kitchen converge` to bring up a new one. The copy of your cookbook on your workstation is unaffected.
 
