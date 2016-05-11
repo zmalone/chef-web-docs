@@ -8,30 +8,29 @@ next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-In this part, you'll prepare a CentOS 7 node to scan, add your node to Chef Compliance, and verify that Chef Compliance can connect to your node.
+In this part, you'll prepare an Ubuntu 14.04 node to scan, add your node to Chef Compliance, and verify that Chef Compliance can connect to your node.
 
-Recall that for Linux systems, Chef Compliance runs compliance tests remotely over SSH. To enable communication, in this part you'll set up your node to use key-based authentication. (Key-based authentication is recommended over password-based authentication.) You'll also configure your node to use non-interactive sessions by default.
+Recall that for Linux systems, Chef Compliance runs compliance tests remotely over SSH. To enable communication, in this part you'll set up your node to use key-based authentication. (Key-based authentication is recommended over password-based authentication.)
 
 Here's what you'll do:
 
-1. [Get a CentOS 7 node to scan](#step1)
+1. [Get an Ubuntu 14.04 node to scan](#step1)
 1. [Create an SSH key pair to connect to your node](#step2)
-1. [Configure your node for non-interactive sessions](#step3)
-1. [Provide your SSH private key to Chef Compliance](#step4)
-1. [Add your node to Chef Compliance](#step5)
-1. [Create a test connection to your node](#step6)
+1. [Provide your SSH private key to Chef Compliance](#step3)
+1. [Add your node to Chef Compliance](#step4)
+1. [Create a test connection to your node](#step5)
 
-[COMMENT] Although Chef Compliance works with many Linux distributions, for learning purposes we recommend that you use CentOS 7 to ensure that what you see matches the procedures and output that's shown here.
+[COMMENT] Although Chef Compliance works with many Linux distributions, for learning purposes we recommend that you use Ubuntu 14.04 to ensure that what you see matches the procedures and output that's shown here.
 
 Before you begin, open a command prompt or terminal window on your workstation.
 
-[WINDOWS] In this part, you'll run commands such as `ssh-keygen`, `ssh`, and `scp`, which are typically available on Linux systems and Mac OS. From Windows, the easiest way to access these tools is to [install Git for Windows](/manage-a-node/rhel/get-set-up#step4). Git for Windows includes Git Bash, a terminal emulator that makes it easy to run Linux commands.
+[WINDOWS] In this part, you'll run commands such as `ssh-keygen`, `ssh`, and `scp`, which are typically available on Linux systems and Mac OS. From Windows, the easiest way to access these tools is to [install Git for Windows](/manage-a-node/ubuntu/get-set-up#step4). Git for Windows includes Git Bash, a terminal emulator that makes it easy to run Linux commands.
 
 [START_BOX]
 
-## 1. Get a CentOS 7 node to scan
+## 1. Get an Ubuntu 14.04 node to scan
 
-For this part, you need to bring up a CentOS 7 server that has the standard configuration. Your server also needs:
+For this part, you need to bring up an Ubuntu 14.04 server that has the standard configuration. Your server also needs:
 
 * an IP address that's reachable from both your workstation and your Chef Compliance server.
 * access to the `root` user account or an account with `sudo` access.
@@ -41,11 +40,11 @@ Although not required, you may find it easiest to bring up your node in the same
 
 If you're interested in using Chef to remediate compliance failures, as you'll do in the next tutorial, now's a good time to make sure that your node has port 443 (HTTPS) open for network traffic. This will enable your node to communicate with a Chef server (you'll set up a Chef server in the next tutorial if you don't have one already).
 
-The [Manage a node](/manage-a-node/rhel/get-a-node-to-bootstrap/) tutorial describes some options on how to set up a CentOS 7 node in the cloud or on a virtual machine, as well as how to prepare your node for use with Chef.
+The [Manage a node](/manage-a-node/ubuntu/get-a-node-to-bootstrap/) tutorial describes some options on how to set up an Ubuntu 14.04 node in the cloud or on a virtual machine, as well as how to prepare your node for use with Chef.
 
-Bring up a CentOS 7 system now. In the next step, you set up your node to be connectable using key-based authentication.
+Bring up an Ubuntu 14.04 system now. In the next step, you set up your node to be connectable using key-based authentication.
 
-[COMMENT] You'll see the username `vagrant` and the IP address 192.168.77.78 in the commands and sample output. Be sure to change these to match your environment.
+[COMMENT] You'll see the username `vagrant` and the IP address 192.168.145.134 in the commands and sample output. Be sure to change these to match your environment.
 
 [END_BOX]
 
@@ -58,7 +57,7 @@ Bring up a CentOS 7 system now. In the next step, you set up your node to be con
 You need to generate an SSH key pair on your workstation so that Chef Compliance can connect to your node.
 
 
-[COMMENT] If your node is already set to be connectable through key-based authentication, such as with an Amazon EC2 instance, you can [skip to the next step](#step3) to configure your node for non-interactive sessions.
+[COMMENT] If your node is already set to be connectable through key-based authentication, such as with an Amazon EC2 instance, you can [skip to the next step](#step3) to provide your SSH private key to Chef Compliance.
 
 In this part, you first create an SSH key pair. Then, you copy the public part of your key to your node. Finally, you create a test connection to your node to verify connectivity.
 
@@ -100,21 +99,24 @@ The key's randomart image is:
 Next, copy the public part of your key pair (the public part has the <% fp '.pub' %> file extension) to your node. An easy way to do that is to run the `scp` command. Specify the username and password for the user account that you want Chef Compliance to connect to. Your user account can be the root account or one that has `sudo` access. Here's an example:
 
 ```bash
-$ scp ~/.ssh/node1.pub vagrant@192.168.77.78:/home/vagrant/.ssh
-The authenticity of host '192.168.77.78 (192.168.77.78)' can't be established.
+$ scp ~/.ssh/node1.pub vagrant@192.168.145.134:/home/vagrant/.ssh
+The authenticity of host '192.168.145.134 (192.168.145.134)' can't be established.
 ECDSA key fingerprint is SHA256:J+lrvc6OeB1Wtc1Tz2IKoMJrPyHFXR4K6cJLBoLk20k.
 Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '192.168.77.78' (ECDSA) to the list of known hosts.
-vagrant@192.168.77.78's password:
+Warning: Permanently added '192.168.145.134' (ECDSA) to the list of known hosts.
+vagrant@192.168.145.134's password:
 node1.pub                                     100%  404     0.4KB/s   00:00
 ```
 
 Next, connect to your node over SSH.
 
 ```bash
-$ ssh vagrant@192.168.77.78
-vagrant@192.168.77.78's password:
-Last login: Wed Apr 13 19:51:49 2016 from 192.168.77.1
+$ ssh vagrant@192.168.145.134
+vagrant@192.168.145.134's password:
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 4.2.0-35-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Tue May 10 01:26:23 2016 from 192.168.145.1
 ```
 
 Append the contents of your public key to <% fp '~/.ssh/authorized_keys' %>. Then, delete the public key file because it is no longer needed.
@@ -128,7 +130,7 @@ Log out of your SSH session.
 
 ```bash
 [vagrant@node-1 ~]$ logout
-Connection to 192.168.77.78 closed.
+Connection to 192.168.145.134 closed.
 ```
 
 If you're running Linux or Mac OS on your workstation, you need to set permissions so that only the owner can read and write the private key file. Run this command to set those permissions.
@@ -140,11 +142,12 @@ $ chmod 600 ~/.ssh/node1
 Finally, create a test connection to your node to verify that your node is connectable through key-based authentication.
 
 ```bash
-$ ssh -i ~/.ssh/node1 vagrant@192.168.77.78
-Last login: Fri Apr 15 13:11:09 2016 from 192.168.77.1
-```
+$ ssh -i ~/.ssh/node1 vagrant@192.168.145.134
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 4.2.0-35-generic x86_64)
 
-Keep your connection open for the next step.
+ * Documentation:  https://help.ubuntu.com/
+Last login: Tue May 10 01:26:23 2016 from 192.168.145.1
+```
 
 [COMMENT] In production, you might disable password authentication entirely to improve security even further. This is typically done by specifying `PasswordAuthentication no` in your SSH configuration file, <% fp '/etc/ssh/sshd_config' %>.
 
@@ -152,31 +155,7 @@ Keep your connection open for the next step.
 
 [START_BOX]
 
-## 3. Configure your node for non-interactive sessions
-
-> In this step, you'll configure the node to only use non-interactive sessions.
-
-Chef Compliance requires a non-interactive session to run compliance scans on a node.
-
-For Red Hat Enterprise Linux based systems, you need to modify the user account's configuration to use non-interactive sessions by default.
-
-Modify the configuration file under <% fp '/etc/sudoers.d' %> for the account you want Chef Compliance to connect through. Here's an example &ndash; replace <% ph 'vagrant' %> with your account name.
-
-```ruby
-# /etc/sudoers.d/vagrant
-vagrant ALL=(root) NOPASSWD:ALL
-Defaults:vagrant !requiretty
-```
-
-[COMMENT] In production, you can set up a user account that's reserved specifically for Chef Compliance if you have other accounts that require an interactive session.
-
-If you use a platform such as Chef to manage your production servers, you can automate this modification. [Here's an example Chef recipe](https://github.com/chef/train/blob/master/contrib/fixup_requiretty.rb).
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Provide your SSH private key to Chef Compliance
+## 3. Provide your SSH private key to Chef Compliance
 
 > You do this part from the Chef Compliance web interface.
 
@@ -233,7 +212,7 @@ Click **Add Private Key**. You see this confirmation.
 
 [START_BOX]
 
-## 5. Add your node to Chef Compliance
+## 4. Add your node to Chef Compliance
 
 Now you add your node to Chef Compliance.
 
@@ -243,7 +222,7 @@ From the **Dashboard** menu, click **Add** or **Add Nodes**.
 
 Enter your node's hostname or IP address. Leave the **Add to environment** field empty. Chef Compliance creates a default environment for you.
 
-![](compliance/add_node_ip_env.png)
+![](compliance/add_node_ip_env_ubuntu.png)
 
 Under **Access configuration**, enter the account Chef Compliance will connect through and specify your private key.
 
@@ -259,13 +238,13 @@ Click the **Add 1 node** button.
 
 You're taken back to the dashboard.
 
-![](compliance/add_node_confirm.png)
+![](compliance/add_node_confirm_ubuntu.png)
 
 As an optional step, you can give your node a name to help you identify it later. To do so, click on your node from the dashboard.
 
-In the **Name** field, give your node a descriptive name, for example, **node1-centos7**.
+In the **Name** field, give your node a descriptive name, for example, **node1-ubuntu1404**.
 
-![](compliance/name_node-centos7.png)
+![](compliance/name_node-ubuntu1404.png)
 
 Scroll to the bottom of the page and click **Save**.
 
@@ -277,17 +256,17 @@ Scroll to the bottom of the page and click **Save**.
 
 [START_BOX]
 
-## 6. Create a test connection to your node
+## 5. Create a test connection to your node
 
 You've already manually verified that your node is connectable from your workstation over SSH using key-based authentication. But let's verify that Chef Compliance is also properly set up to use your key pair.
 
 From the dashboard, select your node and click the **Connectivity** button.
 
-![](compliance/connectivity_button_centos7.png)
+![](compliance/connectivity_button_ubuntu1404.png)
 
 Chef Compliance creates a test connection over SSH. You see this in the connectivity report.
 
-![](compliance/connectivity_report_centos7.png)
+![](compliance/connectivity_report_ubuntu1404.png)
 
 <% accordion('troubleshooting-connectivity', 'Troubleshooting connectivity issues') do %>
 
