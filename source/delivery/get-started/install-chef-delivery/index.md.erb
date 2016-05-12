@@ -188,6 +188,8 @@ $ scp -i ~/.ssh/jsmith.pem ~/Downloads/delivery.license ubuntu@54.89.95.232:/hom
 delivery.license                                                 100% 2560     2.5KB/s   00:00
 ```
 
+Keep in mind that after the automated setup completes, it might take a few minutes for the Delivery server to be fully connectable. If you receive "Permission denied (publickey)" or a similar error, try again in a few minutes.
+
 Next, create an SSH connection to your Delivery server. Replace <% ph 'SSH_KEY' %> and <% ph 'IP_ADDRESS' %> with the same values you used in the previous step.
 
 ```bash
@@ -223,15 +225,19 @@ Last login: Fri Apr 29 01:21:58 2016 from 96.243.179.162
 ubuntu@ip-10-0-0-12:~$
 ```
 
-From your SSH session, run these three commands to copy the license file to its final location, reconfigure, and then restart the server. 
+From your SSH session, copy the license file to its final location.
 
 ```bash
 ubuntu@ip-10-0-0-12:~$ sudo mv ~/delivery.license /var/opt/delivery/license
-ubuntu@ip-10-0-0-12:~$ sudo delivery-ctl reconfigure
-ubuntu@ip-10-0-0-12:~$ sudo delivery-ctl restart
 ```
 
-As an optional step, run `sudo delivery-ctl service-list` to confirm the configuration.
+Next, run this command to reconfigure the server.
+
+```bash
+ubuntu@ip-10-0-0-12:~$ sudo delivery-ctl reconfigure
+```
+
+As an optional step, run this command to confirm that the services are running.
  
 ```bash
 ubuntu@ip-10-0-0-12:~$ sudo delivery-ctl service-list

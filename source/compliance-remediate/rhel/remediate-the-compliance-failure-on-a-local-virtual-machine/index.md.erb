@@ -6,7 +6,6 @@ layout: lesson
 sections: []
 time_to_complete: 60 minutes
 next: {heading: Next, partial: next}
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Recall that in the previous tutorial you ran the **cis-centos7-level1** compliance profile and that it failed the **Set SSH Protocol to 2** rule.
 
@@ -16,12 +15,14 @@ The failure tells us that the node potentially enables [SSH version 1 connection
 
 In this part, you'll verify the failure of the **Set SSH Protocol to 2** rule on a local virtual machine and remediate it. By starting with local development, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers.
 
+You can configure Test Kitchen to download and run compliance profiles on your test instances. For example, you can pull compliance profiles from [Chef Supermarket](https://docs.chef.io/supermarket.html), a Git repository, or from your Chef Compliance server. Here, you'll configure Test Kitchen to download the **cis-centos7-level1** profile from your Chef Compliance server.
+
 Here's what you'll do:
 
 1. [Understand the compliance failure](#step1)
-1. [Create the ssh cookbook](#step2)
-1. [Install kitchen-inspec](#step3)
-1. [Apply the ssh cookbook on a Test Kitchen instance](#step4)
+1. [Install kitchen-inspec](#step2)
+1. [Login to Chef Compliance through the InSpec CLI](#step3)
+1. [Create the ssh cookbook](#step4)
 1. [Replicate the failure on your Test Kitchen instance](#step5)
 1. [Remediate the failure](#step6)
 
@@ -41,11 +42,9 @@ InSpec provides [built-in resource types](https://docs.chef.io/inspec_reference.
 
 The first `file` resource uses a regular expression to verify whether the SSH configuration file, <% fp '/etc/ssh/sshd_conf' %>, contains at least one occurence of the `Protocol` setting. The regular expression does not match any settings that begin with a comment `#`.
 
-[COMMENT] [Learn more about regular expressions in Ruby](http://www.tutorialspoint.com/ruby/ruby_regular_expressions.htm).
-
 The second `file` resource uses the same regular expression, but uses the [capture group](http://www.regular-expressions.info/refcapture.html) `(\S+)` to verify that each occurence of the `Protocol` setting specifies 2 as its value.
 
-[COMMENT] See the regular expression in action. Go to [rubular.com](http://rubular.com) and enter the regular expression `^\s*Protocol\s+(\S+)\s*(?:#.*)?$`. Then test it against a few strings and note the behavior. Some strings you might test against are `Protocol 2,1`, `# Protocol 2`, and `Protocol 2 # only 2`.
+[COMMENT] [Learn more about regular expressions in Ruby](http://www.tutorialspoint.com/ruby/ruby_regular_expressions.htm). Then see the regular expression in action. Go to [rubular.com](http://rubular.com) and enter the regular expression `^\s*Protocol\s+(\S+)\s*(?:#.*)?$`. Then test it against a few strings and note the behavior. Some strings you might test against are `Protocol 2,1`, `# Protocol 2`, and `Protocol 2 # only 2`.
 
 When you scanned your CentOS node, you saw that the first `file` resource failed.
 
@@ -75,7 +74,7 @@ Now search <% fp '/etc/ssh/sshd_config' %> for the string "Protocol". This examp
 #   MACs hmac-md5,hmac-sha1,umac-64@openssh.com,hmac-ripemd160
 ```
 
-The line `#   Protocol 2,1` appears in the file. However, the line begins with a comment `#` character. Recall that the regular expression does not match commented settings.
+Your output may differ, but in this example the line `#   Protocol 2,1` appears in the file. However, the line begins with a comment `#` character. Recall that the regular expression does not match commented settings.
 
 Now that you better understand why the rule failed, you can begin to write Chef code to remediate the failure.
 
@@ -83,7 +82,87 @@ Now that you better understand why the rule failed, you can begin to write Chef 
 
 [START_BOX]
 
-## 2. Create the ssh cookbook
+## 2. Install kitchen-inspec
+
+Later in this part, you'll scan a test instance against the CIS profile through Test Kitchen. To do so, you need the `kitchen-inspec` gem. `kitchen-inspec` is a plugin that enables you to run InSpec tests from Test Kitchen. 
+
+Install `kitchen-inspec` like this.
+
+```bash
+# ~/learn-chef
+$ chef gem install kitchen-inspec
+Fetching: kitchen-inspec-0.13.0.gem (100%)
+Successfully installed kitchen-inspec-0.13.0
+1 gem installed
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Login to Chef Compliance through the InSpec CLI
+
+To download compliance profiles from your Chef Compliance server, `kitchen-inspec` requires login credentials.
+
+To do so, you run the `inspec compliance login` command. The [inspec](https://docs.chef.io/ctl_inspec.html) command-line interface (CLI) utility comes with the Chef DK.
+
+To login from the CLI, you first need an authorization token. To get that, select **About** from the menu located at the upper-right corner.in the web interface. 
+
+![](compliance/webui_about.png)
+
+Then copy the contents of the **Refresh token** field to the clipboard.
+
+![](compliance/webui_token.png)
+
+Next, run this command to connect InSpec to your Chef Compliance server. Replace <% ph 'FQDN' %> with your Chef Compliance server's FQDN, <% ph 'USER' %> with the username you use to login to the Chef Compliance web interface, and <% ph 'TOKEN' %> with your authorization token.
+
+```bash
+# ~/learn-chef
+$ inspec compliance login https://FQDN --user USER --insecure --refresh_token 'TOKEN'
+```
+
+Here's an example:
+
+```bash
+# ~/learn-chef
+$ inspec compliance login https://chef-compliance.local --user john-smith --insecure --refresh_token '2/Ksux-Hx7UVilz6PFOray5od0HK70rVr8MJhdyGUwVV4ypelVBkGsgHXla0RpLZybCtBzuSuJgK4NkoWq7a1qNA=='
+Successfully authenticated
+```
+
+[COMMENT] The `--insecure` flag bypasses SSL verification because Chef Compliance comes with a self-signed certificate. In a production environment, you can [configure an SSL certificate](https://docs.chef.io/install_compliance.html#configure-ssl) that's rooted by a trusted certificate authority (CA) and omit the `--insecure` flag.
+
+As a verification step, you can run `inspec compliance profiles` to prove that you've successfully authenticated. 
+
+```bash
+# ~/learn-chef
+$ inspec compliance profiles
+Available profiles:
+-------------------
+ * base/apache
+ * base/linux
+ * base/mysql
+ * base/postgres
+ * base/ssh
+ * base/windows
+ * cis/cis-centos6-level1
+ * cis/cis-centos6-level2
+ * cis/cis-centos7-level1
+ * cis/cis-centos7-level2
+ * cis/cis-rhel6-level1
+ * cis/cis-rhel6-level2
+ * cis/cis-rhel7-level1
+ * cis/cis-rhel7-level2
+ * cis/cis-ubuntu12.04lts-level1
+ * cis/cis-ubuntu12.04lts-level2
+ * cis/cis-ubuntu14.04lts-level1
+ * cis/cis-ubuntu14.04lts-level2
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Create the ssh cookbook
 
 To remediate the failure, you'll write a Chef cookbook named `ssh`. Recall that a cookbook provides structure to your Chef code. A cookbook contains recipes, which in turn contain resources that descibe the desired state of the system.
 
@@ -123,22 +202,6 @@ Recipe: code_generator::cookbook
 
 [START_BOX]
 
-## 3. Install kitchen-inspec
-
-Later in this part, you'll add InSpec code to your cookbook to verify the SSH-2 compliance rule. To run InSpec tests from Test Kitchen, you need the `kitchen-inspec` gem. Install `kitchen-inspec` like this.
-
-```bash
-# ~/learn-chef
-$ chef gem install kitchen-inspec
-Fetching: kitchen-inspec-0.12.5.gem (100%)
-Successfully installed kitchen-inspec-0.12.5
-1 gem installed
-```
-
-[END_BOX]
-
-[START_BOX]
-
 ## 4. Apply the ssh cookbook on a Test Kitchen instance
 
 Now you'll verify that the empty cookbook runs successfully on a CentOS 7 test instance. Replace the contents of your copy of <% fp('~/learn-chef/cookbooks/ssh/.kitchen.yml') %> with this.
@@ -154,6 +217,8 @@ provisioner:
 
 verifier:
   name: inspec
+  inspec_tests:
+    - compliance://cis/cis-centos7-level1
 
 platforms:
   - name: centos-7.2
@@ -165,7 +230,7 @@ suites:
     attributes:
 ```
 
-This configuration uses the Vagrant driver and brings up a CentOS 7.2 instance. The `verifier` section tells Test Kitchen to look for InSpec tests.
+This configuration uses the Vagrant driver and brings up a CentOS 7.2 instance. The `verifier` section tells Test Kitchen to look for InSpec tests. More on that later.
 
 Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/ssh') %> directory.
 
@@ -188,10 +253,10 @@ Now run `kitchen converge`. This command downloads the base CentOS 7.2 box if ne
 ```bash
 # ~/learn-chef/cookbooks/ssh
 $ kitchen converge
------> Starting Kitchen (v1.7.2)
+-----> Starting Kitchen (v1.7.3)
 -----> Creating <default-centos-72>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'opscode-centos-7.2'...
+       ==> default: Importing base box 'bento/centos-7.2'...
 [...]
        resolving cookbooks for run list: ["ssh::default"]
        Synchronizing Cookbooks:
@@ -203,8 +268,8 @@ $ kitchen converge
        Running handlers:
        Running handlers complete
        Chef Client finished, 0/0 resources updated in 01 seconds
-       Finished converging <default-centos-72> (0m22.51s).
------> Kitchen is finished. (2m21.09s)
+       Finished converging <default-centos-72> (0m23.75s).
+-----> Kitchen is finished. (1m2.06s)
 ```
 
 As expected, 0 resources were applied because the cookbook is empty. But it's a great first step to verifying that the instance comes up and `chef-client` runs successfully.
@@ -217,61 +282,58 @@ As expected, 0 resources were applied because the cookbook is empty. But it's a 
 
 In the previous tutorial, you saw the SSH-2 rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
 
-Recall that the InSpec code for the rule looks like this. You'll add this code to your cookbook.
+Recall that the InSpec code for the rule looks like this. This rule comes from the **cis/cis-centos7-level1** profile.
 
 ![](compliance/ssh_protocol_2_rule.png)
 
-Start by creating the <% fp '~/learn-chef/cookbooks/ssh/test/integration/default/inspec' %> directory.
+Also recall that your <% fp '.kitchen.yml' %> file looks like this.
 
-```bash
-# ~/learn-chef/cookbooks/ssh
-$ mkdir ~/learn-chef/cookbooks/ssh/test/integration/default/inspec
+```yaml
+# ~/learn-chef/cookbooks/ssh/.kitchen.yml
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: inspec
+  inspec_tests:
+    - compliance://cis/cis-centos7-level1
+
+platforms:
+  - name: centos-7.2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[ssh::default]
+    attributes:
 ```
 
-Now add the following code to a file named <% fp 'default_spec.rb' %> in that directory.
+The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-centos7-level1** profile from Chef Compliance when it runs tests. You specified your Chef Compliance server when you ran `inspec compliance login` earlier. 
 
-```ruby
-# ~/learn-chef/cookbooks/ssh/test/integration/default/inspec/default_spec.rb
-control "xccdf_org.cisecurity.benchmarks_rule_6.2.1_Set_SSH_Protocol_to_2" do
-  title "Set SSH Protocol to 2"
-  desc  "SSH supports two different and incompatible protocols: SSH1 and SSH2. SSH1 was the original protocol and was subject to security issues. SSH2 is more advanced and secure."
-  impact 1.0
-  describe file("/etc/ssh/sshd_config") do
-    its(:content) { should match /^\s*Protocol\s+(\S+)\s*(?:#.*)?$/ }
-  end
-  file("/etc/ssh/sshd_config").content.to_s.scan(/^\s*Protocol\s+(\S+)\s*(?:#.*)?$/).flatten.each do |entry|
-    describe entry do
-    it { should eq "2" }
-  end
-  end
-end
-```
-
-Next, run `kitchen verify` to run your InSpec test.
+You're now ready to scan your test instance. Run `kitchen verify` to run the compliance profile.
 
 ```bash
 # ~/learn-chef/cookbooks/ssh
 $ kitchen verify
------> Starting Kitchen (v1.7.2)
+-----> Starting Kitchen (v1.7.3)
+-----> Setting up <default-centos-72>...
+       Finished setting up <default-centos-72> (0m0.00s).
 -----> Verifying <default-centos-72>...
        Detected alternative framework tests for `inspec`
-       Detected alternative framework tests for `serverspec`
-       Search `/Users/user/learn-chef/cookbooks/ssh/test/integration/default/inspec` for tests
-F
-
-Failures:
-
-  1) File /etc/ssh/sshd_config content should match /^\s*Protocol\s+(\S+)\s*(?:#.*)?$/
-
 [...]
-
-Finished in 0.02289 seconds (files took 0.88217 seconds to load)
-1 example, 1 failure
+Finished in 9.11 seconds (files took 12.7 seconds to load)
+529 examples, 166 failures, 8 pending
 
 Failed examples:
 
 rspec  # File /etc/ssh/sshd_config content should match /^\s*Protocol\s+(\S+)\s*(?:#.*)?$/
-
+rspec  # Mount /tmp should be mounted
+rspec  # Mount /tmp should be mounted
+[...]
 >>>>>> Verify failed on instance <default-centos-72>.
 >>>>>> Please see .kitchen/logs/default-centos-72.log for more details
 >>>>>> ------Exception-------
@@ -280,14 +342,30 @@ rspec  # File /etc/ssh/sshd_config content should match /^\s*Protocol\s+(\S+)\s*
 >>>>>> ----------------------
 ```
 
-You see that the test produces the same failure on your local test instance as it did on your node.
+When you scanned your node from the web interface, you likely noticed that many tests fail the CIS recommendations. You'll see a similar number of failures when you run the same tests against your test instance.
+
+For now, we're only interested in seeing the **Set SSH Protocol to 2** rule fail. We're working to make it easier to pinpoint specific failures in the output. For now, run `kitchen verify` a second time and redirect the output to a text file, like this.
+ 
+```bash
+# ~/learn-chef/cookbooks/ssh
+$ kitchen verify > verify.txt 2>&1
+```
+
+You can locate the status of a test by searching for code from that test. The **Set SSH Protocol to 2** rule contains this matcher:
+
+> should match /^\s\*Protocol\s+(\S+)\s\*(?:#.\*)?$/
+
+From a text editor, search <% fp 'verify.txt' %> for this string. Or run this command if you have access to the `grep` utility.
 
 ```bash
 # ~/learn-chef/cookbooks/ssh
-Failed examples:
-
-rspec  # File /etc/ssh/sshd_config content should match /^\s*Protocol\s+(\S+)\s*(?:#.*)?$/
+$ cat verify.txt | grep '\d*).*should match /^\\s\*Protocol'
+  71) File /etc/ssh/sshd_config content should match /^\s*Protocol\s+(\S+)\s*(?:#.*)?$/
 ```
+
+You see that the error appears in the output. You can investigate the output further for more details. 
+
+Now that you've replicated the failure on a test instance, you can write Chef code to remediate it.
 
 [END_BOX]
 
@@ -345,7 +423,7 @@ Run `kitchen converge` to apply the configuration.
 ```bash
 # ~/learn-chef/cookbooks/ssh
 $ kitchen converge
------> Starting Kitchen (v1.7.2)
+-----> Starting Kitchen (v1.7.3)
 -----> Converging <default-centos-72>...
        Preparing files for transfer
        Preparing dna.json
@@ -355,7 +433,7 @@ $ kitchen converge
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-centos-72>
-       Starting Chef Client, version 12.9.38
+       Starting Chef Client, version 12.9.41
        resolving cookbooks for run list: ["ssh::default"]
        Synchronizing Cookbooks:
          - ssh (0.1.0)
@@ -364,61 +442,67 @@ $ kitchen converge
        Converging 1 resources
        Recipe: ssh::default
          * cookbook_file[/etc/ssh/sshd_config] action create
-           - update content in file /etc/ssh/sshd_config from 22def2 to 09447b
-           --- /etc/ssh/sshd_config	2015-11-20 12:01:34.000000000 +0000
-           +++ /etc/ssh/.chef-sshd_config20160414-27979-r7hvjh	2016-04-14 19:41:56.487172486 +0000
-           @@ -1,67 +1,2 @@
-           -#	$OpenBSD: sshd_config,v 1.28 2013/09/16 11:35:43 sthen Exp $
+           - update content in file /etc/ssh/sshd_config from 648219 to 09447b
+           --- /etc/ssh/sshd_config	2016-04-28 11:36:35.816000000 +0000
+           +++ /etc/ssh/.chef-sshd_config20160511-16395-m0n0e2	2016-05-11 15:22:50.065363256 +0000
+           @@ -1,155 +1,2 @@
+           -#	$OpenBSD: sshd_config,v 1.93 2014/01/10 05:59:19 djm Exp $
            -
+           -# This is the sshd server system-wide configuration file.  See
+           -# sshd_config(5) for more information.
 [...]
-           -	SendEnv LC_IDENTIFICATION LC_ALL LANGUAGE
-           -	SendEnv XMODIFIERS
+           -UseDNS no
            +Protocol 2
+           - change mode from '0600' to '0644'
            - restore selinux security context
 
        Running handlers:
        Running handlers complete
        Chef Client finished, 1/1 resources updated in 01 seconds
-       Finished converging <default-centos-72> (0m3.21s).
------> Kitchen is finished. (0m5.50s)
+       Finished converging <default-centos-72> (0m3.28s).
+-----> Kitchen is finished. (0m5.33s)
 ```
 
 You see from the output that the contents of <% fp '/etc/ssh/sshd_config' %> were changed.
 
-Now run `kitchen verify` to run the InSpec test a second time.
+Now run `kitchen verify` to run the compliance profile a second time.
 
 ```bash
 # ~/learn-chef/cookbooks/ssh
-$ kitchen verify
------> Starting Kitchen (v1.7.2)
------> Setting up <default-centos-72>...
-       Finished setting up <default-centos-72> (0m0.00s).
------> Verifying <default-centos-72>...
-       Detected alternative framework tests for `inspec`
-       Detected alternative framework tests for `serverspec`
-       Search `/Users/user/learn-chef/cookbooks/ssh/test/integration/default/inspec` for tests
-..
-
-Finished in 0.00259 seconds (files took 1.08 seconds to load)
-2 examples, 0 failures
-
-       Finished verifying <default-centos-72> (0m0.81s).
------> Kitchen is finished. (0m2.92s)
-zlib(finalizer): the stream was freed prematurely.
+$ kitchen verify > verify.txt 2>&1
 ```
 
-Success! This time the test passes. This gives you confidence that the SSH-2 rule would pass after this cookbook is applied to your node.
+Repeat the step where you search <% fp 'verify.txt' %> for the string "should match /^\s\*Protocol\s+(\S+)\s\*(?:#.\*)?$/".
 
-If the test were to fail, you would examine the failure, modify your cookbook to try something else, and then run `kitchen converge` to apply the change followed by `kitchen verify` to run your InSpec test.
+```bash
+# ~/learn-chef/cookbooks/ssh
+$ cat verify.txt | grep '\d*).*should match /^\\s\*Protocol'
+```
+
+Success! The output no longer contains the failure. This gives you confidence that the SSH-2 rule would pass after this cookbook is applied to your node.
+
+If the test were to fail, you would examine the failure, modify your cookbook to try something else, and then run `kitchen converge` to apply the change followed by `kitchen verify` to run your compliance scan.
 
 [COMMENT] Test Kitchen instances are meant to be disposable. If you place your test instance in an unrepairable state or want to start over, run `kitchen destroy` to destroy your instance followed by `kitchen converge` to bring up a new one. The copy of your cookbook on your workstation is unaffected.
+
+As a final verification step, you can login to your test instance and verify that the SSH configuration file contains the expected protocol setting. 
+
+```bash
+# ~/learn-chef/cookbooks/ssh
+$ kitchen login
+Last login: Wed May 11 15:22:47 2016 from 10.0.2.2
+[vagrant@default-centos-72 ~]$ cat /etc/ssh/sshd_config
+Protocol 2
+[vagrant@default-centos-72 ~]$ logout
+Connection to 127.0.0.1 closed.
+```
 
 When you're finished, run `kitchen destroy` to tear down your test instance.
 
 ```bash
 # ~/learn-chef/cookbooks/ssh
 $ kitchen destroy
------> Starting Kitchen (v1.7.2)
+-----> Starting Kitchen (v1.7.3)
 -----> Destroying <default-centos-72>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...

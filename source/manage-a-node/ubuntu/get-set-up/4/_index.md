@@ -14,17 +14,17 @@ git version 2.7.3.windows.1
 If you receive an error, you'll need to add Git to your `PATH` environment variable manually. Here's how to do that for the 64-bit version of Git.
 
 ```ps
-$ $path = [Environment]::GetEnvironmentVariable("PATH")
+$ $path = [Environment]::GetEnvironmentVariable("PATH", "User")
 $ $git_path = "C:\Program Files\Git\cmd"
-$ [Environment]::SetEnvironmentVariable("PATH", "$path;$git_path")
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$git_path", "User")
 ```
 
 Here's how for the 32-bit version of Git.
 
 ```ps
-$ $path = [Environment]::GetEnvironmentVariable("PATH")
+$ $path = [Environment]::GetEnvironmentVariable("PATH", "User")
 $ $git_path = "C:\Program Files (x86)\Git\cmd"
-$ [Environment]::SetEnvironmentVariable("PATH", "$path;$git_path")
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$git_path", "User")
 ```
 
 [WINDOWS] Many Git users use Git Bash, which is part of Git for Windows, to work with Git from Windows. [posh-git](https://github.com/dahlbyk/posh-git) is another popular option, which provides access to Git from Windows PowerShell.

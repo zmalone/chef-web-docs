@@ -4,7 +4,6 @@ layout: lesson-overview
 platform: 'Red Hat Enterprise Linux'
 logo: redhat.svg
 order: 1
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In the previous tutorial, [Assess your infrastructure with Chef Compliance](/compliance-assess/rhel/), you set up a Chef Compliance server and scanned a CentOS 7 server against the predefined CIS Security Benchmarks.
 
