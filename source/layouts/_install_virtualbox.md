@@ -9,9 +9,9 @@
 By default, VirtualBox is installed to <code class="file-path">C:\Program Files\Oracle\VirtualBox</code> on Windows. However, the installer does not add this path to your `PATH` environment variable. Run these commands to add VirtualBox to your system path.
 
 ```ps
-$ $path = [Environment]::GetEnvironmentVariable("PATH")
+$ $path = [Environment]::GetEnvironmentVariable("PATH", "User")
 $ $vbox_path = "C:\Program Files\Oracle\VirtualBox"
-$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vbox_path")
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vbox_path", "User")
 ```
 
 <hr>
