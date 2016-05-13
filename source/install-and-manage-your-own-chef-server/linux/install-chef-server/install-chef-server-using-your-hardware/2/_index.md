@@ -1,22 +1,12 @@
 ## 2. Install Chef server
 
-It's likely that you're viewing this web page from your workstation, and that your system for running Chef server is running without a graphical user interface. The easiest way to get the download link from your workstation to your Chef server is to [copy the link you need from the download page](https://downloads.chef.io/chef-server/) and then paste it into a `wget` command through an SSH session to your Chef server.
-
-Here's an example of how to download and install Chef server on Red Hat Enterprise Linux or CentOS. Replace <code class="placeholder">PACKAGE\_URL</code> and <code class="placeholder">PACKAGE\_NAME</code> with the latest one from the download page.
+Run this command to install Chef server.
 
 ```bash
-$ sudo yum install wget -y
-$ wget PACKAGE_URL
-$ sudo rpm -Uvh PACKAGE_NAME
+$ curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -P chef-server
 ```
 
-And here's an example for Ubuntu.
-
-```bash
-$ sudo apt-get install wget -y
-$ wget PACKAGE_URL
-$ sudo dpkg -i PACKAGE_NAME
-```
+Alternatively, you can [download and install the package manually](https://downloads.chef.io/chef-server/).
 
 ### Install a text editor on your Chef server
 
