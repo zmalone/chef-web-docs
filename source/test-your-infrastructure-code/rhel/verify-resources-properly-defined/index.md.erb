@@ -82,8 +82,10 @@ You'll start by writing ChefSpec tests that verify your existing CentOS web serv
 Here's what you'll do:
 
 1. [Write ChefSpec tests that verify the current web server configuration](#step1)
-1. [B](#step2)
-1. [C](#step3)
+1. [Define the CentOS context](#step2)
+1. [Write ChefSpec tests for the Ubuntu web server configuration](#step3)
+1. [Revise the webserver_test cookbook to support Ubuntu](#step4)
+1. [Refactor the tests to reduce repeated code](#step5)
 
 Here's a 60-minute webcast that goes in greater depth on ChefSpec and shows working examples. You can watch the video before or after you complete this tutorial.
 
@@ -217,13 +219,13 @@ You see that no failures were reported. You've successfully validated the first 
   <% end %>
 <% end %>
 
-[COMMENT] Remember, ChefSpec only simluates the execution of your resources; it doesn't run the code on a real instance. Therefore we can't verify things like whether port 80 would be open or whether `curl localhost` would succeed because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.
+[COMMENT] Remember, ChefSpec only simluates the execution of your resources; it doesn't run the code on a real instance. Therefore we can't verify things like whether port 80 would be open or whether `curl localhost` would succeed like you did in your InSpec tests because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.
 
 [END_BOX]
 
 [START_BOX]
 
-## 2. TBD
+## 2. Define the CentOS context
 
 The next step is to write tests for the Ubuntu web server configuration. The Ubuntu tests will resemble the CentOS tests, but will use the `apache2` package and service name instead of `httpd`.
 
@@ -278,19 +280,28 @@ end
 
 Notice two differences in this example.
 
-The first difference is that the tests are grouped in a `context` block.
+The first difference is that the tests are grouped in a `context` block. A `context` block groups related tests.
 
 The second difference is that the `ServerRunner` object is created by specifying the platform and version. ChefSpec uses these values to construct [automatic node attributes](https://docs.chef.io/ohai.html#automatic-attributes), for example `node['platform']` and `node['platform_version']`.
 
 Recall Chef server holds information about your nodes, called _node attributes_, and that your node can access these attributes when `chef-client` runs. 
 
-[Ohai](https://docs.chef.io/ohai.html) is the tool that detects certain attributes on a node, and then provide these attributes to the `chef-client` at the start of every run.
+Because ChefSpec simulates your recipes, but does not run them, it needs a way to also simulate access to node attributes. [Ohai](https://docs.chef.io/ohai.html) is the tool that normally detects node attributes and provides them to the `chef-client` at the start of every run. To simulate the process, ChefSpec uses [fauxhai](https://github.com/customink/fauxhai). Fauxhai provides _mock_, or test, data for [common platforms](https://github.com/customink/fauxhai/tree/master/lib/fauxhai/platforms).
 
-Because both the `chef-client` run and the Chef server are simulated in memory, ChefSpec needs a way to mimic the built-in node attributes. To do this, ChefSpec uses [fauxhai](). 
+For CentOS, to know which value to specify for `version`, you can log into a Test Kitchen instance and run `cat /etc/centos-release`.
+
+```bash
+# ~/learn-chef/cookbooks/webserver_test
+$ kitchen login
+Last login: Tue May  3 04:30:02 2016 from 10.0.2.2
+[vagrant@default-centos-72 ~]$ cat /etc/centos-release
+CentOS Linux release 7.2.1511 (Core)
+```
+
+Fauxhai provides node attributes for [CentOS 7.2.1511](https://github.com/customink/fauxhai/blob/master/lib/fauxhai/platforms/centos/7.2.1511.json). Although these values might not match your configuration, you can use them to verify the correctness of your resources.
+
+[COMMENT] You can [override](https://github.com/customink/fauxhai#overriding) node attributes in your test code. You can also use [real server data](https://github.com/customink/fauxhai#fetching) or [provide your own attributes file](https://github.com/customink/fauxhai#fixturing).
  
-Talk about how we know to say 7.2.1511 and not 7.2? (in fauxhai and kitchen login => print version.)
- 
-(REMEMBER to later say how the test fails because the default recipe configures `httpd` not matter what the platform is.)
  
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
@@ -307,6 +318,10 @@ Next, you'll add a second `context` block that holds the tests for Ubuntu.
 
 [START_BOX]
 
+## 3. Write ChefSpec tests for the Ubuntu web server configuration 
+
+Now let's repeat the pattern for CentOS by adding ChefSpec tests for the Ubuntu configuration.
+ 
 Begin by adding tests to <% fp 'spec/unit/recipes/default_spec.rb' %> that validate that the proper package and service names are used on both CentOS and Ubuntu. The entire file looks like this.
 
 ```ruby
@@ -362,6 +377,8 @@ describe 'webserver_test::default' do
 end
 ```
 
+Now run the ChefSpec tests, like this.
+
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ chef exec rspec --color spec/unit/recipes/default_spec.rb
@@ -406,8 +423,7 @@ rspec ./spec/unit/recipes/default_spec.rb:94 # webserver_test::default when run 
 rspec ./spec/unit/recipes/default_spec.rb:98 # webserver_test::default when run on Ubuntu 14.04 starts the apache2 service
 ```
 
-As you might expect, the CentOS tests pass, but the Ubuntu tests fail. As with our InSpec tests, having failing tests shows what functionality is missing and gives us clear goals to work towards.
-
+As you might expect, the CentOS tests pass, but the Ubuntu tests fail. 
 
 ```bash
 Failed examples:
@@ -417,10 +433,16 @@ rspec ./spec/unit/recipes/default_spec.rb:94 # webserver_test::default when run 
 rspec ./spec/unit/recipes/default_spec.rb:98 # webserver_test::default when run on Ubuntu 14.04 starts the apache2 service
 ```
 
+The Ubuntu tests fail because the default recipe configures `httpd` unconditionally on all platforms. Your ChefSpec tests expect the recipe to configure `apache2` when run on Ubuntu.
+
+As with our InSpec tests, having failing tests shows what functionality is missing and gives us clear goals to work towards.
+
 [END_BOX]
 
 [START_BOX]
 
+## 4. Revise the webserver_test cookbook to support Ubuntu
+ 
 Let's revise the `webserver_test` cookbook to run on both CentOS and Ubuntu. To do so, we'll define variables that hold the name of the package and service to manage. We'll use the built-in `node['platform']` node attribute to set these variables to their appropriate values.
 
 Modify your `webserver_test` cookbook's default recipe like this.
@@ -452,7 +474,7 @@ end
 
 This code uses a [case](http://ruby-doc.org/docs/keywords/1.9/Object.html#method-i-case) statement to match the platform name to the name of the package and the service. The `package_name` and `service_name` variables are later used in the `package` and `service` resources.
 
-[COMMENT] For learning purposes, we're building a basic multi-platform cookbook from scratch. A more robust solution might use the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket, which already supports multiple platforms.
+[COMMENT] For learning purposes, we're building a basic multi-platform cookbook from scratch. In practice, you might use the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket, which already supports multiple platforms.
 
 Now let's verify whether our updated cookbook passes our ChefSpec tests. We want to see whether the tests for Ubuntu now pass and also verify that the tests for CentOS continue to pass.
 
@@ -468,5 +490,132 @@ Finished in 1 second (files took 2.01 seconds to load)
 Great! All tests pass. In this example, the entire run took about 2 seconds to complete. This process is much faster than applying the configuration on real CentOS and Ubuntu instances, and is a great way to quickly validate that the resources are properly defined.
 
 [COMMENT] We introduced InSpec testing first because many people find this kind of testing to be the easiest way to understand the concept and the value of testing. In practice, you might actually create your ChefSpec tests first because ChefSpec tests typically run more quickly, and can help identify potential issues earlier in the process.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Refactor the tests to reduce repeated code
+
+Notice that the tests for Ubuntu and CentOS are similar. Each set of tests validates the same concerns. The only difference is the names used for the package and the service.
+
+```ruby
+# ~/learn-chef/cookbooks/webserver_test/spec/unit/recipes/default_spec.rb
+require 'spec_helper'
+
+describe 'webserver_test::default' do
+  context 'when run on CentOS 7.2.1511' do
+    let(:chef_run) do
+      runner = ChefSpec::ServerRunner.new(platform: 'centos', version: '7.2.1511')
+      runner.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      expect { chef_run }.to_not raise_error
+    end
+
+    it 'installs httpd' do
+      expect(chef_run).to install_package 'httpd'
+    end
+
+    it 'enables the httpd service' do
+      expect(chef_run).to enable_service 'httpd'
+    end
+
+    it 'starts the httpd service' do
+      expect(chef_run).to start_service 'httpd'
+    end
+  end
+
+  context 'when run on Ubuntu 14.04' do
+    let(:chef_run) do
+      runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '14.04')
+      runner.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      expect { chef_run }.to_not raise_error
+    end
+
+    it 'installs apache2' do
+      expect(chef_run).to install_package 'apache2'
+    end
+
+    it 'enables the apache2 service' do
+      expect(chef_run).to enable_service 'apache2'
+    end
+
+    it 'starts the apache2 service' do
+      expect(chef_run).to start_service 'apache2'
+    end
+  end
+end
+```
+
+If you wanted to add a new test or modify an existing one, you would need to repeat that code for each platform you support. As you support additional platforms, the process can become tedious and error-prone.
+
+Although not required, you might refactor some tests to reduce the amount of repeated code. One way you might refactor these tests is to use a [shared example](http://modocache.io/shared-examples-in-rspec).
+
+A shared example enables you to define reusable test code. A shared example can contain parameters that are specified by other tests.
+
+To try it, replace the contents of <% fp 'default_spec.rb' %> with this code.
+
+```ruby
+# ~/learn-chef/cookbooks/webserver_test/spec/unit/recipes/default_spec.rb
+require 'spec_helper'
+
+shared_examples 'webserver_test' do |platform, version, package, service|
+  context "when run on #{platform} #{version}" do
+    let(:chef_run) do
+      runner = ChefSpec::ServerRunner.new(platform: platform, version: version)
+      runner.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      expect { chef_run }.to_not raise_error
+    end
+
+    it "installs #{package}" do
+      expect(chef_run).to install_package package
+    end
+
+    it "enables the #{service} service" do
+      expect(chef_run).to enable_service service
+    end
+
+    it "starts the #{service} service" do
+      expect(chef_run).to start_service service
+    end
+  end
+end
+
+describe 'webserver_test::default' do
+  platforms = {
+    'centos' => ['7.2.1511', 'httpd', 'httpd'],
+    'ubuntu' => ['14.04', 'apache2', 'apache2']
+  }
+
+  platforms.each do |platform, platform_data|
+    include_examples 'webserver_test', platform, *platform_data
+  end
+end
+```
+
+The `shared_examples` block takes as its arguments the platform name and version, as well as the Apache package and service names. These values are filled-in when the tests run. 
+
+The `describe` block at the end of this example defines the test data. The `include_examples` method calls the `webserver_test` shared examples two times, once for Ubuntu and once for CentOS.
+
+[COMMENT] `*platform_data` is an example of a [splat](http://www.justinweiss.com/articles/fun-with-keyword-arguments/). A splat extracts the values of an array so they can be used as individual arguments to the `webserver_test` shared examples.
+
+Run ChefSpec to verify that the refactored tests continue to pass.
+
+```bash
+# ~/learn-chef/cookbooks/webserver_test
+$ chef exec rspec --color spec/unit/recipes/default_spec.rb
+........
+
+Finished in 0.97828 seconds (files took 3.22 seconds to load)
+8 examples, 0 failures
+```
 
 [END_BOX]
