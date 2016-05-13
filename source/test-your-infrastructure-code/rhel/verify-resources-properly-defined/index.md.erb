@@ -14,6 +14,8 @@ In the previous lesson, you wrote InSpec tests that automatically verify that yo
 
 You'll want to verify your work on a virtual instance before you run your cookbook in production, but as you develop your cookbook, you can use [ChefSpec](https://docs.chef.io/chefspec.html) to speed up the feedback cycle even more. ChefSpec _simulates_ the execution of your resources in memory, and does not involve the creation of a virtual instance. It's the fastest way to test your resources and is a great way to validate the correctness of your work, even before you set up a virtual instance to test on.
 
+ChefSpec testing is also helpful when you use [continuous delivery](https://en.wikipedia.org/wiki/Continuous_delivery) (CD) systems such as [Chef Delivery](/delivery/get-started/) because ChefSpec enables you to verify your code without the need to bring up additional test systems.
+
 ChefSpec provides a kind of _unit_ testing, where you verify that a single component, such as a Chef resource, functions correctly. Unlike integration testing, unit testing does not focus on how multiple components work together.
 
 ChefSpec testing is most useful when a component's behavior varies based on the environment or other variable input. For example, say you define this `package` resource to install the `vim` text editor.
@@ -36,9 +38,9 @@ end
 
 In this case, you might want to validate that when the `node['text_editor']` attribute is set, that the appropriate text editor would be installed.
 
-In this lesson, you'll modify the `webserver` cookbook to work on both CentOS and Ubuntu. The way Apache is installed and managed differs slightly on both platforms.
+In this lesson, you'll modify the `webserver_test` cookbook to work on both CentOS and Ubuntu. The way Apache is installed and managed differs slightly on both platforms.
 
-Recall that our `webserver` cookbook's default recipe looks like this.
+Recall that your `webserver_test` cookbook's default recipe looks like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
@@ -60,7 +62,7 @@ file '/var/www/html/index.html' do
 end
 ```
 
-We know that this configuration works on CentOS, but on Ubuntu, both the package and service name is `apache2`.
+You know that this configuration works on CentOS, but on Ubuntu, both the package and service name is `apache2`, not `httpd`.
 
 For this part, let's revise the requirements for the web server configuration to focus on these two criteria:
 
@@ -75,6 +77,14 @@ For this part, let's revise the requirements for the web server configuration to
 
 You need to write code to ensure that your cookbook performs the correct steps in both environments. Here you'll write ChefSpec tests that verify that the code is defined correctly for both platforms &ndash; without the need to run it on a local instance.
 
+You'll start by writing ChefSpec tests that verify your existing CentOS web server configuration. Then you'll add additional tests for the same configuration on Ubuntu. After seeing the tests fail, you'll go back to your recipe and add just enough code to make the tests pass.
+
+Here's what you'll do:
+
+1. [Write ChefSpec tests that verify the current web server configuration](#step1)
+1. [B](#step2)
+1. [C](#step3)
+
 Here's a 60-minute webcast that goes in greater depth on ChefSpec and shows working examples. You can watch the video before or after you complete this tutorial.
 
 <% accordion('tdd-webcast', 'Watch the webcast') do %>
@@ -86,9 +96,9 @@ Here's a 60-minute webcast that goes in greater depth on ChefSpec and shows work
 
 [START_BOX]
 
-## 1. Write tests that verify the web server configuration on CentOS and Ubuntu
+## 1. Write ChefSpec tests that verify the current web server configuration
 
-Let's begin by again writing our tests first, watching them fail, and then writing just enough code to make them pass.
+Let's begin by writing ChefSpec tests that verify the CentOS web server configuration.
 
 For ChefSpec, tests go in your cookbook's `spec` directory. The `chef generate cookbook` command creates this directory for you. 
 
@@ -124,14 +134,15 @@ describe 'webserver_test::default' do
     end
   end
 end
-
 ```
 
 The `describe` blocks tells ChefSpec to run the `webserver_test::default` recipe in memory. The `let` block simulates the `chef-client` run. It also defines the `chef_run` variable, which is used in each test to validate the result.
 
-`ChefSpec::ServerRunner` specifies how to run `chef-client` in memory. It's a common option because it also simulates an in-memory Chef server, allowing you to access data bags and other features.
+`ChefSpec::ServerRunner` specifies how to run `chef-client` in memory. It's a common option because it also simulates an in-memory Chef server, allowing you to access [data bags](https://docs.chef.io/data_bags.html) and other features.
 
-In the previous part, you used RSpec's `should` syntax. In this part, you'll use the `expect` syntax ([this blog post explains the difference](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/)). 
+ChefSpec code resembles InSpec because both are based on the [RSpec](http://rspec.info) testing framework. RSpec [provides two ways to express tests](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/). In the previous lesson, you used what's commonly called RSpec's _should_ syntax. In this part, you'll use RSpec's _expectation_ syntax. 
+
+Modify your copy of <% fp 'default_spec.rb' %> like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/spec/unit/recipes/default_spec.rb
@@ -139,7 +150,8 @@ require 'spec_helper'
 
 describe 'webserver_test::default' do
   let(:chef_run) do
-    ChefSpec::SoloRunner.new().converge(described_recipe)
+    runner = ChefSpec::ServerRunner.new
+    runner.converge(described_recipe)
   end
 
   it 'converges successfully' do
@@ -160,6 +172,137 @@ describe 'webserver_test::default' do
 end
 ```
 
+Like InSpec, ChefSpec tests resemble natural language. For example, this test expects the Chef run to install the `httpd` package.
+
+```ruby
+# ~/learn-chef/cookbooks/webserver_test/spec/unit/recipes/default_spec.rb
+it 'installs httpd' do
+  expect(chef_run).to install_package 'httpd'
+end
+```
+
+The `install_package` part is known as a _matcher_. The [ChefSpec documentation](http://www.rubydoc.info/github/sethvargo/chefspec) lists the matchers that are available in your tests. For example, [ServiceMatchers](http://www.rubydoc.info/github/sethvargo/chefspec/ChefSpec/API/ServiceMatchers) describes the `enable_service` and `start_service` matchers.
+
+[COMMENT] A great way to learn how to write good tests is by example. The ChefSpec project contains [example tests](https://github.com/sethvargo/chefspec/tree/master/examples) for many common Chef resource types.
+
+Now let's run your tests. In the previous lesson, you ran your InSpec tests through Test Kitchen. To run ChefSpec tests, you run a program called [rspec](https://relishapp.com/rspec/rspec-core/docs/command-line).
+
+First, make sure you're in the <% fp 'webserver_test' %> directory.
+
+```bash
+$ cd ~/learn-chef/cookbooks/webserver_test
+```
+
+Now run this command run your tests. The [chef exec](https://docs.chef.io/ctl_chef.html#chef-exec) part ensures that `rpsec` is run using Chef's Ruby. The `--color` part is optional, but can help you visually distinguish passing from failing tests.
+
+```bash
+# ~/learn-chef/cookbooks/webserver_test
+$ chef exec rspec --color spec/unit/recipes/default_spec.rb
+....
+
+Finished in 0.50257 seconds (files took 2.34 seconds to load)
+4 examples, 0 failures
+```
+
+[COMMENT] If you had multiple ChefSpec files, you would use `chef exec rspec --color spec/unit/recipes/*.rb` to run them all.
+
+You see that no failures were reported. You've successfully validated the first requirement, which is to configure Apache on CentOS.
+
+<% unstyled_list do %>
+  <% icon_list_item('check-square-o') do %> 
+    On CentOS, install the <code>httpd</code> package and enable and start the <code>httpd</code> service.
+  <% end %>
+  <% icon_list_item('square-o') do %>
+    On Ubuntu, install the <code>apache2</code> package and enable and start the <code>apache2</code> service.
+  <% end %>
+<% end %>
+
+[COMMENT] Remember, ChefSpec only simluates the execution of your resources; it doesn't run the code on a real instance. Therefore we can't verify things like whether port 80 would be open or whether `curl localhost` would succeed because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. TBD
+
+The next step is to write tests for the Ubuntu web server configuration. The Ubuntu tests will resemble the CentOS tests, but will use the `apache2` package and service name instead of `httpd`.
+
+To keep the tests organized by platform, you'll use a _context_ block. You define one context for CentOS and one for Ubuntu. The following example illustrates this structure. 
+
+```ruby
+# default_spec.rb
+require 'spec_helper'
+
+describe 'webserver_test::default' do
+  context 'when run on CentOS 7.2.1511' do
+    # CentOS tests go here...
+  end
+  
+  context 'when run on Ubuntu 14.04' do
+    # Ubuntu tests go here...
+  end
+end
+```
+
+Before we write tests for Ubuntu, let's first add a context for CentOS. Modify your copy of <% fp 'default_spec.rb' %> like this.
+
+```ruby
+# ~/learn-chef/cookbooks/webserver_test/spec/unit/recipes/default_spec.rb
+require 'spec_helper'
+
+describe 'webserver_test::default' do
+  context 'when run on CentOS 7.2.1511' do
+    let(:chef_run) do
+      runner = ChefSpec::ServerRunner.new(platform: 'centos', version: '7.2.1511')
+      runner.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      expect { chef_run }.to_not raise_error
+    end
+
+    it 'installs httpd' do
+      expect(chef_run).to install_package 'httpd'
+    end
+
+    it 'enables the httpd service' do
+      expect(chef_run).to enable_service 'httpd'
+    end
+
+    it 'starts the httpd service' do
+      expect(chef_run).to start_service 'httpd'
+    end
+  end
+end
+```
+
+Notice two differences in this example.
+
+The first difference is that the tests are grouped in a `context` block.
+
+The second difference is that the `ServerRunner` object is created by specifying the platform and version. ChefSpec uses these values to construct [automatic node attributes](https://docs.chef.io/ohai.html#automatic-attributes), for example `node['platform']` and `node['platform_version']`.
+
+Recall Chef server holds information about your nodes, called _node attributes_, and that your node can access these attributes when `chef-client` runs. 
+
+[Ohai](https://docs.chef.io/ohai.html) is the tool that detects certain attributes on a node, and then provide these attributes to the `chef-client` at the start of every run.
+
+Because both the `chef-client` run and the Chef server are simulated in memory, ChefSpec needs a way to mimic the built-in node attributes. To do this, ChefSpec uses [fauxhai](). 
+ 
+Talk about how we know to say 7.2.1511 and not 7.2? (in fauxhai and kitchen login => print version.)
+ 
+(REMEMBER to later say how the test fails because the default recipe configures `httpd` not matter what the platform is.)
+ 
+```bash
+# ~/learn-chef/cookbooks/webserver_test
+$ chef exec rspec --color spec/unit/recipes/default_spec.rb
+....
+
+Finished in 0.54235 seconds (files took 1.97 seconds to load)
+4 examples, 0 failures
+```
+
+Next, you'll add a second `context` block that holds the tests for Ubuntu.
+
 [END_BOX]
 
 [START_BOX]
@@ -171,9 +314,9 @@ Begin by adding tests to <% fp 'spec/unit/recipes/default_spec.rb' %> that valid
 require 'spec_helper'
 
 describe 'webserver_test::default' do
-  context 'on CentOS' do
+  context 'when run on CentOS 7.2.1511' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'centos', version: '7.2')
+      runner = ChefSpec::ServerRunner.new(platform: 'centos', version: '7.2.1511')
       runner.converge(described_recipe)
     end
 
@@ -194,7 +337,7 @@ describe 'webserver_test::default' do
     end
   end
 
-  context 'on Ubuntu' do
+  context 'when run on Ubuntu 14.04' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '14.04')
       runner.converge(described_recipe)
@@ -219,23 +362,6 @@ describe 'webserver_test::default' do
 end
 ```
 
-This spec file contains two `context` blocks &ndash; one that simulates the application of the default recipe on CentOS 7.2 and one that simulates the default recipe on Ubuntu 14.04. Because we provide a platform name and version when we call `ChefSpec::ServerRunner.new`, ChefSpec can set the appropriate [automatic node attributes](https://docs.chef.io/ohai.html#automatic-attributes
-), such as `node['platform']` and `node['platform_version']`.
-
-[COMMENT] The [ChefSpec documentation](http://www.rubydoc.info/github/sethvargo/chefspec) lists the matchers that are available in your tests. For example, [ServiceMatchers](http://www.rubydoc.info/github/sethvargo/chefspec/ChefSpec/API/ServiceMatchers) describes the `enable_service` and `start_service` matchers.<br/>You can also browse these [additional examples](https://github.com/sethvargo/chefspec/tree/master/examples).
-
-Remember, ChefSpec only simluates the execution of your resources; it doesn't run the code on a real instance. Therefore we can't verify things like whether port 80 would be open or whether `curl localhost` would succeed because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.
-
-[END_BOX]
-
-[START_BOX]
-
-## 2. Run the ChefSpec tests
-
-In the previous lesson, you ran your InSpec tests through Test Kitchen. To run ChefSpec tests, you run a program called [rspec](https://relishapp.com/rspec/rspec-core/docs/command-line).
-
-Run the following command run your tests. The [chef exec](https://docs.chef.io/ctl_chef.html#chef-exec) part ensures that `rpsec` is run using Chef's Ruby. The `--color` part is optional, but can help you visually distinguish passing from failing tests.
-
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ chef exec rspec --color spec/unit/recipes/default_spec.rb
@@ -243,53 +369,61 @@ $ chef exec rspec --color spec/unit/recipes/default_spec.rb
 
 Failures:
 
-  1) webserver_test::default on Ubuntu installs apache2
+  1) webserver_test::default when run on Ubuntu 14.04 installs apache2
      Failure/Error: expect(chef_run).to install_package 'apache2'
+
        expected "package[apache2]" with action :install to be in Chef run. Other package resources:
 
          apt_package[httpd]
 
-     # ./spec/unit/recipes/default_spec.rb:44:in `block (3 levels) in <top (required)>'
+     # ./spec/unit/recipes/default_spec.rb:91:in `block (3 levels) in <top (required)>'
 
-  2) webserver_test::default on Ubuntu enables the apache2 service
+  2) webserver_test::default when run on Ubuntu 14.04 enables the apache2 service
      Failure/Error: expect(chef_run).to enable_service 'apache2'
+
        expected "service[apache2]" with action :enable to be in Chef run. Other service resources:
 
          service[httpd]
 
-     # ./spec/unit/recipes/default_spec.rb:48:in `block (3 levels) in <top (required)>'
+     # ./spec/unit/recipes/default_spec.rb:95:in `block (3 levels) in <top (required)>'
 
-  3) webserver_test::default on Ubuntu starts the apache2 service
+  3) webserver_test::default when run on Ubuntu 14.04 starts the apache2 service
      Failure/Error: expect(chef_run).to start_service 'apache2'
+
        expected "service[apache2]" with action :start to be in Chef run. Other service resources:
 
          service[httpd]
 
-     # ./spec/unit/recipes/default_spec.rb:52:in `block (3 levels) in <top (required)>'
+     # ./spec/unit/recipes/default_spec.rb:99:in `block (3 levels) in <top (required)>'
 
-Finished in 1.94 seconds (files took 13.16 seconds to load)
+Finished in 1.04 seconds (files took 2.29 seconds to load)
 8 examples, 3 failures
 
 Failed examples:
 
-rspec ./spec/unit/recipes/default_spec.rb:43 # webserver_test::default on Ubuntu installs apache2
-rspec ./spec/unit/recipes/default_spec.rb:47 # webserver_test::default on Ubuntu enables the apache2 service
-rspec ./spec/unit/recipes/default_spec.rb:51 # webserver_test::default on Ubuntu starts the apache2 service
+rspec ./spec/unit/recipes/default_spec.rb:90 # webserver_test::default when run on Ubuntu 14.04 installs apache2
+rspec ./spec/unit/recipes/default_spec.rb:94 # webserver_test::default when run on Ubuntu 14.04 enables the apache2 service
+rspec ./spec/unit/recipes/default_spec.rb:98 # webserver_test::default when run on Ubuntu 14.04 starts the apache2 service
 ```
 
-[COMMENT] To run all tests, you could run `chef exec rspec --color spec/unit/recipes/*.rb`.
-
 As you might expect, the CentOS tests pass, but the Ubuntu tests fail. As with our InSpec tests, having failing tests shows what functionality is missing and gives us clear goals to work towards.
+
+
+```bash
+Failed examples:
+
+rspec ./spec/unit/recipes/default_spec.rb:90 # webserver_test::default when run on Ubuntu 14.04 installs apache2
+rspec ./spec/unit/recipes/default_spec.rb:94 # webserver_test::default when run on Ubuntu 14.04 enables the apache2 service
+rspec ./spec/unit/recipes/default_spec.rb:98 # webserver_test::default when run on Ubuntu 14.04 starts the apache2 service
+```
 
 [END_BOX]
 
 [START_BOX]
 
-## 3. Write code to configure Apache for multiple platforms
+Let's revise the `webserver_test` cookbook to run on both CentOS and Ubuntu. To do so, we'll define variables that hold the name of the package and service to manage. We'll use the built-in `node['platform']` node attribute to set these variables to their appropriate values.
 
-Let's revise the `webserver` cookbook to run on both CentOS and Ubuntu. To do so, we'll define variables that hold the name of the package and service to manage. We'll use the built-in `node['platform']` node attribute to set these variables to their appropriate values.
-
-Modify your `webserver` cookbook's default recipe like this.
+Modify your `webserver_test` cookbook's default recipe like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
@@ -298,12 +432,15 @@ when 'centos' then 'httpd'
 when 'ubuntu' then 'apache2'
 end
 
+# Install the package.
 package package_name
 
+# Start and enable the service.
 service service_name do
   action [:enable, :start]
 end
 
+# Serve a custom home page.
 file '/var/www/html/index.html' do
   content '<html>
   <body>
@@ -317,12 +454,6 @@ This code uses a [case](http://ruby-doc.org/docs/keywords/1.9/Object.html#method
 
 [COMMENT] For learning purposes, we're building a basic multi-platform cookbook from scratch. A more robust solution might use the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket, which already supports multiple platforms.
 
-[END_BOX]
-
-[START_BOX]
-
-## 4. Run the ChefSpec tests a second time
-
 Now let's verify whether our updated cookbook passes our ChefSpec tests. We want to see whether the tests for Ubuntu now pass and also verify that the tests for CentOS continue to pass.
 
 ```bash
@@ -330,11 +461,11 @@ Now let's verify whether our updated cookbook passes our ChefSpec tests. We want
 $ chef exec rspec --color spec/unit/recipes/default_spec.rb
 ........
 
-Finished in 1.83 seconds (files took 13.04 seconds to load)
+Finished in 1 second (files took 2.01 seconds to load)
 8 examples, 0 failures
 ```
 
-Great! All tests pass. In this example, the entire run took less than 15 seconds to complete. This process is much faster than applying the configuration on real CentOS and Ubuntu instances, and is a great way to quickly validate that the resources are properly defined.
+Great! All tests pass. In this example, the entire run took about 2 seconds to complete. This process is much faster than applying the configuration on real CentOS and Ubuntu instances, and is a great way to quickly validate that the resources are properly defined.
 
 [COMMENT] We introduced InSpec testing first because many people find this kind of testing to be the easiest way to understand the concept and the value of testing. In practice, you might actually create your ChefSpec tests first because ChefSpec tests typically run more quickly, and can help identify potential issues earlier in the process.
 
