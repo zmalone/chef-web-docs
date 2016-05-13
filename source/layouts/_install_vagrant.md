@@ -9,9 +9,9 @@
 By default, Vagrant is installed to <code class="file-path">C:\HashiCorp\Vagrant\bin</code> on Windows. However, the installer does not add this path to your `PATH` environment variable. Run these commands to add Vagrant to your system path.
 
 ```ps
-$ $path = [Environment]::GetEnvironmentVariable("PATH", "User")
+$ $path = [Environment]::GetEnvironmentVariable("PATH")
 $ $vagrant_path = "C:\HashiCorp\Vagrant\bin"
-$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vagrant_path", "User")
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vagrant_path")
 ```
 
 <hr>
