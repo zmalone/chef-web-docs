@@ -14,6 +14,8 @@ Start by choosing whether to install Chef Compliance on your own system or throu
 
 ### Option 1: Install on your own hardware or virtual machine
 
+[COMMENT] We use `sudo` to highlight where root access is required. You can omit `sudo` from the commands if you're running as the root user.
+
 Follow these steps to run Chef Compliance on your own hardware or virtual machine:
 
 1. [Choose your platform](https://docs.chef.io/install_compliance.html#supported-platforms) and bring up a system to run Chef Compliance.
@@ -24,32 +26,32 @@ Follow these steps to run Chef Compliance on your own hardware or virtual machin
     If you're running Chef Compliance on Red Hat Enterprise Linux or CentOS, these commands will perform the prerequisite tasks on most configurations. Replace <% ph 'HOSTNAME' %> and <% ph 'IP_ADDRESS' %> with your values.
 
     ```bash
-    $ yum install ntp
-    $ chkconfig ntpd on
+    $ sudo yum install -y ntp
+    $ sudo chkconfig ntpd on
     $ ntpdate -s time.nist.gov
-    $ hostname HOSTNAME
-    $ echo "IP_ADDRESS HOSTNAME" | tee -a /etc/hosts
+    $ sudo hostname HOSTNAME
+    $ echo "IP_ADDRESS HOSTNAME" | sudo tee -a /etc/hosts
     ```
 
     Here are the corresponding commands for Ubuntu:
     
     ```bash
-    $ apt-get update
-    $ apt-get install -y curl ntp
-    $ service ntp start
+    $ sudo apt-get update
+    $ sudo apt-get install -y curl ntp
+    $ sudo service ntp start
     $ ntpdate -s time.nist.gov
-    $ hostname HOSTNAME
-    $ echo "IP_ADDRESS HOSTNAME" | tee -a /etc/hosts
+    $ sudo hostname HOSTNAME
+    $ echo "IP_ADDRESS HOSTNAME" | sudo tee -a /etc/hosts
     ```
 
     Here's a complete example that sets up a CentOS virtual machine to run Chef Compliance.
 
     ```bash
-    $ yum install ntp
-    $ chkconfig ntpd on
+    $ sudo yum install ntp
+    $ sudo chkconfig ntpd on
     $ ntpdate -s time.nist.gov
-    $ hostname chef-compliance.local
-    $ echo "192.168.145.140 chef-compliance.local" | tee -a /etc/hosts
+    $ sudo hostname chef-compliance.local
+    $ echo "192.168.145.140 chef-compliance.local" | sudo tee -a /etc/hosts
     ```
 
     If you're running Chef Compliance on a virtual machine or other system that's not registered with a name server, add a corresponding entry to your local <% fp '/etc/hosts' %> file to enable access to Chef Compliance from your workstation. For example:
@@ -77,8 +79,8 @@ Follow these steps to run Chef Compliance on your own hardware or virtual machin
 1. Run these commands to ensure the services are configured and ready to accept connections.
 
     ```bash
-    $ chef-compliance-ctl reconfigure --accept-license
-    $ chef-compliance-ctl restart
+    $ sudo chef-compliance-ctl reconfigure --accept-license
+    $ sudo chef-compliance-ctl restart
     ```
 
     The `--accept-license` flag is required to accept the [Chef Master License and Services Agreement](https://docs.chef.io/chef_license.html#chef-mlsa) (Chef MLSA).
