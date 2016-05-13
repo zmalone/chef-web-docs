@@ -39,7 +39,7 @@ On the Chef server, you would see this environment.
 
 ![](delivery/chef_server_acceptance_environment.png)
 
-To see this on your Chef server, log in to the Chef server web interface at [https://10.0.0.11/organizations/delivery-demo](https://10.0.0.11/organizations/delivery-demo) from a browser on the Windows workstation. Use the credentials that match your SSH key pair's region.
+To access the Chef server web interface, log in to the Chef server web interface at [https://10.0.0.11/organizations/delivery-demo](https://10.0.0.11/organizations/delivery-demo) from a browser on the Windows workstation. Use the credentials that match your SSH key pair's region.
 
 <table>
   <tbody>
@@ -51,17 +51,17 @@ To see this on your Chef server, log in to the Chef server web interface at [htt
     <tr>
       <td>us-east-1 (N. Virginia)</td>
       <td><code>delivery</code></td>
-      <td id="chef-server-us-east-1"><code>AjfXXMfhlv5fHVhOJOSzUpDLhTU=</code> <a data-copytarget="#chef-server-us-east-1" class='small-button radius'>Copy</a></td>
+      <td id="chef-server-us-east-1"><code>EycY1IqWI5KHFdftYqLOXJ0piro=</code> <a data-copytarget="#chef-server-us-east-1" class='small-button radius'>Copy</a></td>
     </tr>
     <tr>
       <td>us-west-1 (N. California)</td>
       <td><code>delivery</code></td>
-      <td id="chef-server-us-west-1"><code>d2GuUYUrYqLq2vzhVIulu7P+iII=</code> <a data-copytarget="#chef-server-us-west-1" class='small-button radius'>Copy</a></td>
+      <td id="chef-server-us-west-1"><code>qUrNZDrN742wbLPwb/UUipTX6AI=</code> <a data-copytarget="#chef-server-us-west-1" class='small-button radius'>Copy</a></td>
     </tr>
     <tr>
       <td>us-west-2 (Oregon)</td>
       <td><code>delivery</code></td>
-      <td id="chef-server-us-west-2"><code>jYaW0x4EenaZdxODWgtHkvnw/yE=</code> <a data-copytarget="#chef-server-us-west-2" class='small-button radius'>Copy</a></td>
+      <td id="chef-server-us-west-2"><code>PNH6fKWLr6xsTLZemG/r3lM19bU=</code> <a data-copytarget="#chef-server-us-west-2" class='small-button radius'>Copy</a></td>
     </tr>
   </tbody>
 </table>
