@@ -1,1 +1,0 @@
-Next, you'll apply what you've learned about Serverspec, ChefSpec, RuboCop, and Foodcritic by applying these tools to the `awesome_customers` web application cookbook that you've developed in the previous tutorials.
