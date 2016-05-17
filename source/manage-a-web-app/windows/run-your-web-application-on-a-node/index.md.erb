@@ -161,7 +161,17 @@ Chef server now contains everything you need to run `chef-client` on your node.
 
 ## 3. Bootstrap your node
 
-Now you can bootstrap your node. You'll specify the `awesome_customers_windows` cookbook's default recipe in the node's run-list, which will apply your web application configuration.
+Now you can bootstrap your node.
+
+Recall that when you bootstrap a node, you specify the run-list. Normally, you would specify the `awesome_customers_windows` cookbook's default recipe in the node's run-list, which would apply your web application configuration.
+
+However, SQL Server does not support remote installation over the WinRM protocol. The installation succeeded on Test Kitchen because you used the `chef-zero-scheduled-task` plugin. This plugin creates a scheduled task that runs `chef-client` immediately and connects to that task so that Test Kitchen can receive the output of the `chef-client` run. This mechanism enables you to kick off and monitor the `chef-client` run remotely, but the installation and configuration happen entirely in the context of the local account.
+
+We're investigating how to improve Chef to enable remote installation of software such as SQL Server. But for now, here's how you'll work around the issue:
+
+1. Bootstrap your Windows Server node by specifying an empty run-list.
+1. Manually update your node node's run-list to include the `awesome_customers_windows` cookbook.
+1. Log in to your Windows Server node and run `chef-client`. 
 
 First, from your workstation, make sure you're in the <code class="file-path">~/learn-chef</code> directory.
 
@@ -169,33 +179,98 @@ First, from your workstation, make sure you're in the <code class="file-path">~/
 $ cd ~/learn-chef
 ```
 
+### Bootstrap your Windows Server node
+
 Run this command to bootstrap your node. Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your password.
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name customers_web_app --run-list 'recipe[awesome_customers_windows]'
+$ knife bootstrap windows winrm ADDRESS --winrm-user USER --winrm-password 'PASSWORD' --node-name customers_web_app
 ```
 
 Here's an example.
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap windows winrm ec2-52-36-120-7.us-west-2.compute.amazonaws.com --winrm-user Administrator --winrm-password 'R7dP$f(JN3' --node-name customers_web_app --run-list 'recipe[awesome_customers_windows]'
+$ knife bootstrap windows winrm 52.10.45.144 --winrm-user Administrator --winrm-password '(QGuv&zTTH' --node-name customers_web_app
 Creating new client for customers_web_app
 Creating new node for customers_web_app
 
-Waiting for remote response before bootstrap.ec2-52-36-120-7.us-west-2.compute.amazonaws.com .
-ec2-52-36-120-7.us-west-2.compute.amazonaws.com Response received.
+Waiting for remote response before bootstrap.52.10.45.144 .
+52.10.45.144 Response received.
 Remote node responded after 0.03 minutes.
-Bootstrapping Chef on ec2-52-36-120-7.us-west-2.compute.amazonaws.com
-ec2-52-36-120-7.us-west-2.compute.amazonaws.com Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-11242-1455323378.bat" chunk 1
+52.10.45.144 AMD64
+Bootstrapping Chef on 52.10.45.144
 [...]
-ec2-52-36-120-7.us-west-2.compute.amazonaws.com [2016-02-13T00:37:12+00:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
-ec2-52-36-120-7.us-west-2.compute.amazonaws.com [2016-02-13T00:37:19+00:00] INFO: powershell_script[Grant SQL access to IIS APPPOOL\Products] ran successfully
-ec2-52-36-120-7.us-west-2.compute.amazonaws.com [2016-02-13T00:37:20+00:00] INFO: Chef Run complete in 362.303736 seconds
-ec2-52-36-120-7.us-west-2.compute.amazonaws.com [2016-02-13T00:37:20+00:00] INFO: Running report handlers
-ec2-52-36-120-7.us-west-2.compute.amazonaws.com [2016-02-13T00:37:20+00:00] INFO: Report handlers complete
-ec2-52-36-120-7.us-west-2.compute.amazonaws.com [2016-02-13T00:37:20+00:00] INFO: Sending resource update report (run-id: c05a53c8-8bf1-40d5-b857-21429b90cd68)
+52.10.45.144 [2016-05-17T01:34:39+00:00] INFO: *** Chef 12.10.24 ***
+52.10.45.144 [2016-05-17T01:34:39+00:00] INFO: Platform: x64-mingw32
+52.10.45.144 [2016-05-17T01:34:39+00:00] INFO: Chef-client pid: 1232
+52.10.45.144 [2016-05-17T01:34:47+00:00] INFO: Setting the run_list to [] from CLI options
+52.10.45.144 [2016-05-17T01:34:47+00:00] INFO: Run List is []
+52.10.45.144 [2016-05-17T01:34:47+00:00] INFO: Run List expands to []
+52.10.45.144 [2016-05-17T01:34:47+00:00] INFO: Starting Chef Run for customers_web_app
+52.10.45.144 [2016-05-17T01:34:47+00:00] INFO: Running start handlers
+52.10.45.144 [2016-05-17T01:34:47+00:00] INFO: Start handlers complete.
+52.10.45.144 [2016-05-17T01:34:48+00:00] INFO: Loading cookbooks []
+52.10.45.144 [2016-05-17T01:34:48+00:00] WARN: Node customers_web_app has an empty run list.
+52.10.45.144 [2016-05-17T01:34:49+00:00] INFO: Chef Run complete in 2.171813 seconds
+52.10.45.144 [2016-05-17T01:34:49+00:00] INFO: Running report handlers
+52.10.45.144 [2016-05-17T01:34:49+00:00] INFO: Report handlers complete
+52.10.45.144 [2016-05-17T01:34:49+00:00] INFO: Sending resource update report (run-id: d6d3d555-e568-4006-abdd-5474c44d033f)
+```
+
+### Manually update your node node's run-list
+
+Now run this command to update your node's run-list.
+
+```bash
+# ~/learn-chef
+$ knife node run_list set customers_web_app 'recipe[awesome_customers_windows]'
+customers_web_app:
+  run_list: recipe[awesome_customers_windows]
+```
+
+### Log in to your Windows Server node and run chef-client
+
+Finally, log in to your node, either directly or over RDP. Then open a PowerShell window (as Administrator) and run `chef-client`.
+
+```ps
+$ chef-client
+PS C:\Users\Administrator> chef-client
+Starting Chef Client, version 12.10.24
+[2016-05-17T01:37:46+00:00] INFO: *** Chef 12.10.24 ***
+[2016-05-17T01:37:46+00:00] INFO: Platform: x64-mingw32
+[2016-05-17T01:37:46+00:00] INFO: Chef-client pid: 2464
+[2016-05-17T01:37:51+00:00] INFO: Run List is [recipe[awesome_customers_windows]]
+[2016-05-17T01:37:51+00:00] INFO: Run List expands to [awesome_customers_windows]
+[2016-05-17T01:37:51+00:00] INFO: Starting Chef Run for customers_web_app
+[2016-05-17T01:37:51+00:00] INFO: Running start handlers
+[2016-05-17T01:37:51+00:00] INFO: Start handlers complete.
+resolving cookbooks for run list: ["awesome_customers_windows"]
+[2016-05-17T01:37:52+00:00] INFO: Loading cookbooks [awesome_customers_windows@0.1.0, sql_server@2.5.0, windows@1.39.1,
+chef_handler@1.2.0, iis@4.1.6]
+Synchronizing Cookbooks:
+[...]
+[2016-05-17T01:46:44+00:00] INFO: powershell_script[Grant SQL access to IIS APPPOOL\Products] ran successfully
+    - execute "C:\Windows\system32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionP
+olicy Bypass -InputFormat None -File "C:/Users/ADMINI~1/AppData/Local/Temp/2/chef-script20160517-2464-6dfss.ps1"
+[2016-05-17T01:46:45+00:00] INFO: Chef Run complete in 534.017394 seconds
+←[0m
+Running handlers:
+[2016-05-17T01:46:45+00:00] INFO: Running report handlers
+Running handlers complete
+[2016-05-17T01:46:45+00:00] INFO: Report handlers complete
+←[0m
+Deprecated features used!
+  chef_gem[rubyzip] chef_gem compile_time installation is deprecated at 1 location:
+    - c:/chef/cache/cookbooks/windows/providers/zipfile.rb:85:in `rescue in ensure_rubyzip_gem_installed'
+  chef_gem[rubyzip] Please set `compile_time false` on the resource to use the new behavior. at 1 location:
+    - c:/chef/cache/cookbooks/windows/providers/zipfile.rb:85:in `rescue in ensure_rubyzip_gem_installed'
+  chef_gem[rubyzip] or set `compile_time true` on the resource if compile_time behavior is required. at 1 location:
+    - c:/chef/cache/cookbooks/windows/providers/zipfile.rb:85:in `rescue in ensure_rubyzip_gem_installed'
+←[0m
+Chef Client finished, 22/28 resources updated in 08 minutes 59 seconds
+[2016-05-17T01:46:45+00:00] INFO: Sending resource update report (run-id: 11e1d868-b6f3-45b0-992d-ef9761232cca)
 ```
 
 [END_BOX]
