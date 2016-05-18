@@ -1,0 +1,438 @@
+---
+title: 'Appendix: Refactor the web application cookbook'
+appendix: true
+order: 5
+keywords: TODO
+layout: lesson
+sections: [1, 2, 3]
+time_to_complete: 60 minutes
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
+---
+The [Manage a basic web application](/manage-a-web-app/rhel/) tutorial walks you through the creation of a cookbook named `awesome_customers_rhel` that manages a basic web application called Customers that reads customer records from a database and displays them as a table.
+
+![the resulting web page](misc/manage_customers_node.png)
+
+To summarize, the web application configuration:
+
+* uses the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket to configure Apache web server.
+* creates a user named `web_admin` that is given file ownership of the web content.
+* uses the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook to ensure that the firewall is open on ports 22 (SSH) and 80 (HTTP).
+* uses the [mysql](https://supermarket.chef.io/cookbooks/mysql) and [database](https://supermarket.chef.io/cookbooks/database) cookbooks to configure a MySQL database server and a database instance that holds ficticious customer records.
+* uses PHP scripting to connect to the database from the web server.
+
+If you examine the cookbook's source code, you'll notice that much of the information is repeated. For example, here's an excerpt from the cookbook's `database` recipe:
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_rhel/recipes/database.rb
+# Create the database instance.
+mysql_database node['awesome_customers_rhel']['database']['dbname'] do
+  connection(
+    :host => node['awesome_customers_rhel']['database']['host'],
+    :username => node['awesome_customers_rhel']['database']['root_username'],
+    :password => node['awesome_customers_rhel']['database']['root_password']
+  )
+  action :create
+end
+
+# Add a database user.
+mysql_database_user node['awesome_customers_rhel']['database']['admin_username'] do
+  connection(
+    :host => node['awesome_customers_rhel']['database']['host'],
+    :username => node['awesome_customers_rhel']['database']['root_username'],
+    :password => node['awesome_customers_rhel']['database']['root_password']
+  )
+  password node['awesome_customers_rhel']['database']['admin_password']
+  database_name node['awesome_customers_rhel']['database']['dbname']
+  host node['awesome_customers_rhel']['database']['host']
+  action [:create, :grant]
+end
+```
+
+Here, you see that the same node attributes are repeated. Other information, such as how to connect to the database, are also repeated.
+
+It's common to refactor such code to make it easier to read and maintain. However, with refactoring comes risk. During the refactoring process, you might accidently change the cookbook's behavior. You would need to verify that each change preserves the functionality you expect. As your project expands, manual testing can become tedious and error-prone.
+
+Here you'll apply what you learned and write a few tests to validate the existing configuration before refactoring the database recipe. As you refactor your recipe, you can run your tests to verify the changes are good.
+
+Although a complete solution might involve writing InSpec and ChefSpec tests, along with running Rubocop and Foodcritic, let's focus just on writing ChefSpec tests for now. This scenario is a good candidate for ChefSpec testing because the database configuration uses node attributes to define its behavior. 
+
+[COMMENT] If you haven't worked through this tutorial, [follow the quickstart](/manage-a-web-app/rhel/bring-up-the-web-app-using-test-kitchen/) to get a copy of the cookbook from GitHub and run it on a local Test Kitchen instance.
+
+[START_BOX]
+
+## 1. Define what you'll refactor
+
+* node attributes
+* connection information
+
+[END_BOX]
+
+Here's what the default tests look like.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_rhel/spec/unit/recipes/database_spec.rb
+require 'spec_helper'
+
+describe 'awesome_customers_rhel::database' do
+  context 'When all attributes are default, on an unspecified platform' do
+    let(:chef_run) do
+      runner = ChefSpec::ServerRunner.new
+      runner.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      expect { chef_run }.to_not raise_error
+    end
+  end
+end
+```
+
+Modify it to 1) specify CentOS and 2) define node attributes.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_rhel/spec/unit/recipes/database_spec.rb
+require 'spec_helper'
+
+describe 'awesome_customers_rhel::database' do
+  context 'When all attributes are default, on an unspecified platform' do
+    let(:chef_run) do
+      ChefSpec::ServerRunner.new(platform: 'centos', version: '7.2.1511') do |node|
+        node.set['awesome_customers_rhel']['database']['root_password'] = 'fake_root_password'
+        node.set['awesome_customers_rhel']['database']['admin_password'] = 'fake_admin_password'
+        node.set['awesome_customers_rhel']['database']['dbname'] = 'fake_database'
+        node.set['awesome_customers_rhel']['database']['host'] = 'fake_host'
+        node.set['awesome_customers_rhel']['database']['root_username'] = 'fake_root'
+        node.set['awesome_customers_rhel']['database']['admin_username'] = 'fake_admin'
+      end.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      expect { chef_run }.to_not raise_error
+    end
+  end
+end
+```
+
+It doesn't matter what values you assign to the attributes. What matters is that they're checked consistently among your tests.
+
+Run it to see what happens.
+
+```bash
+$ cd ~/learn-chef/cookbooks/awesome_customers_rhel
+```
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ chef exec rspec --color spec/unit/recipes/database_spec.rb
+[...]
+F
+
+Failures:
+
+  1) awesome_customers_rhel::database When all attributes are default, on an unspecified platform converges successfully
+     Failure/Error: expect { chef_run }.to_not raise_error
+
+       expected no Exception, got #<ChefSpec::Error::CommandNotStubbed: Executing a real command is disabled. Unregistered command:
+
+           command("mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database -e 'describe customers;'")
+
+       You can stub this command with:
+
+           stub_command("mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database -e 'describe customers;'").and_return(...)
+       > with backtrace:
+         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/extensions/chef/conditional.rb:9:in `evaluate_command'
+         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/extensions/chef/resource.rb:19:in `run_action'
+         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/solo_runner.rb:126:in `converge'
+         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/server_runner.rb:68:in `converge'
+         # ./spec/unit/recipes/database_spec.rb:19:in `block (3 levels) in <top (required)>'
+         # ./spec/unit/recipes/database_spec.rb:23:in `block (4 levels) in <top (required)>'
+         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/expect_exception.rb:15:in `matches?'
+         # ./spec/unit/recipes/database_spec.rb:23:in `block (3 levels) in <top (required)>'
+     # ./spec/unit/recipes/database_spec.rb:23:in `block (3 levels) in <top (required)>'
+
+Finished in 6.82 seconds (files took 2.81 seconds to load)
+1 example, 1 failure
+
+Failed examples:
+
+rspec ./spec/unit/recipes/database_spec.rb:22 # awesome_customers_rhel::database When all attributes are default, on an unspecified platform converges successfully
+```
+
+In the output, you'll likely see a number of warnings prior to the test output. These warnings come from the `httpd` cookbook, and can be safely ignored.
+ 
+It fails because the `execute` resource contains a `not_if` guard.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_rhel/recipes/database.rb
+# Seed the database with a table and test data.
+execute "initialize #{node['awesome_customers_rhel']['database']['dbname']} database" do
+  command "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{node['awesome_customers_rhel']['database']['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} < #{create_tables_script_path}"
+  not_if  "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{node['awesome_customers_rhel']['database']['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} -e 'describe customers;'"
+end
+```
+
+Because ChefSpec doesn't actually run the code, it needs a way to determine whether the command should run.
+
+To fix, you add a stub.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_rhel/spec/unit/recipes/database_spec.rb
+require 'spec_helper'
+
+describe 'awesome_customers_rhel::database' do
+  context 'When all attributes are default, on an unspecified platform' do
+    before do
+      stub_command("mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database -e 'describe customers;'").and_return(false)
+    end
+
+    let(:chef_run) do
+      ChefSpec::ServerRunner.new(platform: 'centos', version: '7.2.1511') do |node|
+        node.set['awesome_customers_rhel']['database']['root_password'] = 'fake_root_password'
+        node.set['awesome_customers_rhel']['database']['admin_password'] = 'fake_admin_password'
+        node.set['awesome_customers_rhel']['database']['dbname'] = 'fake_database'
+        node.set['awesome_customers_rhel']['database']['host'] = 'fake_host'
+        node.set['awesome_customers_rhel']['database']['root_username'] = 'fake_root'
+        node.set['awesome_customers_rhel']['database']['admin_username'] = 'fake_admin'
+      end.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      expect { chef_run }.to_not raise_error
+    end
+  end
+end
+```
+
+Notice that the arguments to the `mysql` command use the node attribute values.
+
+Run it again.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ chef exec rspec --color spec/unit/recipes/database_spec.rb
+[...]
+.
+
+Finished in 7.07 seconds (files took 2.97 seconds to load)
+1 example, 0 failures
+```
+
+This time it passes.
+
+Now add one test that verifies that it sets the MySQL service root password.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_rhel/spec/unit/recipes/database_spec.rb
+require 'spec_helper'
+
+describe 'awesome_customers_rhel::database' do
+  context 'When all attributes are default, on an unspecified platform' do
+    before do
+      stub_command("mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database -e 'describe customers;'").and_return(false)
+    end
+
+    let(:chef_run) do
+      ChefSpec::ServerRunner.new(platform: 'centos', version: '7.2.1511') do |node|
+        node.set['awesome_customers_rhel']['database']['root_password'] = 'fake_root_password'
+        node.set['awesome_customers_rhel']['database']['admin_password'] = 'fake_admin_password'
+        node.set['awesome_customers_rhel']['database']['dbname'] = 'fake_database'
+        node.set['awesome_customers_rhel']['database']['host'] = 'fake_host'
+        node.set['awesome_customers_rhel']['database']['root_username'] = 'fake_root'
+        node.set['awesome_customers_rhel']['database']['admin_username'] = 'fake_admin'
+      end.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      expect { chef_run }.to_not raise_error
+    end
+
+    it 'sets the MySQL service root password' do
+      expect(chef_run).to create_mysql_service('default')
+        .with(initial_root_password: 'fake_root_password')
+    end
+  end
+end
+```
+
+Run it to verify it passes.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ chef exec rspec --color spec/unit/recipes/database_spec.rb
+[...]
+.
+
+Finished in 9.84 seconds (files took 2.11 seconds to load)
+2 examples, 0 failures
+```
+
+Write the remaining tests
+
+* it 'creates the database instance'
+* it 'creates the database user'
+* it 'seeds the database with a table and test data'
+  * file_cache_path
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_rhel/spec/unit/recipes/database_spec.rb
+require 'spec_helper'
+
+describe 'awesome_customers_rhel::database' do
+  context 'When all attributes are default, on an unspecified platform' do
+    before do
+      stub_command("mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database -e 'describe customers;'").and_return(false)
+    end
+    
+    let(:connection_info) do
+      { host: 'fake_host', username: 'fake_root', password: 'fake_root_password' }
+    end
+
+    let(:chef_run) do
+      ChefSpec::ServerRunner.new(platform: 'centos', version: '7.2.1511') do |node|
+        node.set['awesome_customers_rhel']['database']['root_password'] = 'fake_root_password'
+        node.set['awesome_customers_rhel']['database']['admin_password'] = 'fake_admin_password'
+        node.set['awesome_customers_rhel']['database']['dbname'] = 'fake_database'
+        node.set['awesome_customers_rhel']['database']['host'] = 'fake_host'
+        node.set['awesome_customers_rhel']['database']['root_username'] = 'fake_root'
+        node.set['awesome_customers_rhel']['database']['admin_username'] = 'fake_admin'
+      end.converge(described_recipe)
+    end
+
+    it 'converges successfully' do
+      expect { chef_run }.to_not raise_error
+    end
+
+    it 'sets the MySQL service root password' do
+      expect(chef_run).to create_mysql_service('default')
+        .with(initial_root_password: 'fake_root_password')
+    end
+
+    it 'creates the database instance' do
+      expect(chef_run).to create_mysql_database('fake_database')
+        .with(connection: connection_info)
+    end
+
+    it 'creates the database user' do
+      expect(chef_run).to create_mysql_database_user('fake_admin')
+        .with(connection: connection_info, password: 'fake_admin_password', database_name: 'fake_database', host: 'fake_host')
+    end
+
+    it 'seeds the database with a table and test data' do
+      expect(chef_run).to run_execute('initialize fake_database database')
+        .with(command: "mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database < /tmp/create-tables.sql")
+    end
+  end
+end
+```
+
+The `let(:connection_info)` part enables us to blah blah blah..
+ 
+Run it.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ chef exec rspec --color spec/unit/recipes/database_spec.rb
+[...]
+F
+
+Failures:
+
+  1) awesome_customers_rhel::database When all attributes are default, on an unspecified platform seeds the database with a table and test data
+     Failure/Error:
+       expect(chef_run).to run_execute('initialize fake_database database')
+         .with(command: "mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database < /tmp/create-tables.sql")
+
+       expected "execute[initialize fake_database database]" to have parameters:
+
+         command "mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database < /tmp/create-tables.sql", was "mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database < /var/folders/8t/yfsrbt5n4170hdcjvdq8nhrc0000gp/T/chefspec20160517-60700-161rocufile_cache_path/create-tables.sql"
+     # ./spec/unit/recipes/database_spec.rb:50:in `block (3 levels) in <top (required)>'
+
+Finished in 20.29 seconds (files took 2.82 seconds to load)
+5 examples, 1 failure
+
+Failed examples:
+
+rspec ./spec/unit/recipes/database_spec.rb:49 # awesome_customers_rhel::database When all attributes are default, on an unspecified platform seeds the database with a table and test data
+```
+
+This time you get an error.
+
+Notice that the `mysql` command uses a uniquely-generated path to the <% fp 'create-tables.sql' %> file.
+
+> "mysql -h fake_host -u fake_admin -pfake_admin_password -D fake_database < /var/folders/8t/yfsrbt5n4170hdcjvdq8nhrc0000gp/T/chefspec20160517-60700-161rocufile_cache_path/create-tables.sql"
+
+That's because XXX.
+
+[ChefSpec is configurable](https://github.com/sethvargo/chefspec#configuration).
+
+Modify the `let` block that defines the runner like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_rhel/spec/unit/recipes/database_spec.rb
+  let(:chef_run) do
+      ChefSpec::ServerRunner.new(platform: 'centos', version: '7.2.1511', file_cache_path: '/tmp') do |node|
+        node.set['awesome_customers_rhel']['database']['root_password'] = 'fake_root_password'
+        node.set['awesome_customers_rhel']['database']['admin_password'] = 'fake_admin_password'
+        node.set['awesome_customers_rhel']['database']['dbname'] = 'fake_database'
+        node.set['awesome_customers_rhel']['database']['host'] = 'fake_host'
+        node.set['awesome_customers_rhel']['database']['root_username'] = 'fake_root'
+        node.set['awesome_customers_rhel']['database']['admin_username'] = 'fake_admin'
+      end.converge(described_recipe)
+    end
+```
+
+Run it.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ chef exec rspec --color spec/unit/recipes/database_spec.rb
+[...]
+.
+
+Finished in 16.76 seconds (files took 3.14 seconds to load)
+5 examples, 0 failures
+```
+
+All tests pass.
+
+[START_BOX]
+
+hi
+
+[END_BOX]
+
+[START_BOX]
+
+## X. Refactor the database configuration
+
+(Benefit: writing tests helps show what can be refactored!)
+
+
+REWRITE DATABASE RECIPE LIKE THIS:
+
+```
+TODO
+```
+
+RUN IT.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_rhel
+$ chef exec rspec --color spec/unit/recipes/database_spec.rb
+[...]
+.
+
+Finished in 16.94 seconds (files took 2.86 seconds to load)
+5 examples, 0 failures
+```
+
+SUCCESS! 
+
+(At teh end - you might write InSpec or additional ChefSpec tests - compare what you come up with to the [reference implemenation](xxx).
+
+You might run `kitchen verify` at the end to verify your work.
+
+TODO
+
+
+[END_BOX]
