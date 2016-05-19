@@ -45,14 +45,14 @@ execute "upload the site" do
   cwd File.join(node['delivery_builder']['repo'], 'build')
 end
 
-include_recipe 'build-cookbook::_install_dependencies'
+include_recipe 'cia_infra::bundler_install_deps'
 
 execute 'create redirects' do
   command "bundle exec rake build_redirects"
   cwd node['delivery_builder']['repo']
   user node['delivery_builder']['build_user']
   environment(
-    'PATH' => '/opt/chefdk/embedded/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games',
+    'PATH' => '/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games',
     'S3_BUCKET' => bucket_name,
     'AWS_ACCESS_KEY_ID' => aws_creds['access_key_id'],
     'AWS_SECRET_ACCESS_KEY' => aws_creds['secret_access_key']
