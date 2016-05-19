@@ -30,5 +30,3 @@ route53_record old_opscode_fqdn do
   zone_id aws_creds['route53'][OPSCODE_DOMAIN_NAME]
   sensitive true
 end
-
-Chef_Delivery::ClientHelper.leave_client_mode_as_delivery
