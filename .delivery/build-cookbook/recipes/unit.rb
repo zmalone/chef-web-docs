@@ -16,7 +16,7 @@ execute 'run rspec' do
   command "bundle exec rspec --format doc"
   cwd node['delivery_builder']['repo']
   environment({
-    "PATH" => '/opt/chefdk/embedded/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games'
+    "PATH" => '/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games'
   })
   user node['delivery_builder']['build_user']
 end
