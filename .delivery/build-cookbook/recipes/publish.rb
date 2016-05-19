@@ -32,7 +32,7 @@ aws_s3_bucket artifact_bucket do
   }
 end
 
-include_recipe 'build-cookbook::_install_dependencies'
+include_recipe 'cia_infra::bundler_install_deps'
 
 execute 'build the site' do
   command 'bundle exec middleman build --clean --verbose'

@@ -3,10 +3,13 @@
 # Welcome to chef-web-learn
 #
 # This is the default recipe. It is the only recipe that runs as root. Here we
-# install all the components we need to be functional or have to be done as 
+# install all the components we need to be functional or have to be done as
 # root.
 #
 ################################################################################
+
+# Install our chosen version of Ruby
+include_recipe 'cia_infra::ruby'
 
 # We include chef-sugar because it gives us easy ways to interact with encrypted
 # data bags. It may go away in the future.
@@ -25,7 +28,7 @@ include_recipe 'chef_slack::default'
 # from github as the chef-delivery user.
 include_recipe 'build-cookbook::_github'
 
-# We include the delivery-truck default recipe so any setup that delivery-truck 
+# We include the delivery-truck default recipe so any setup that delivery-truck
 # needs gets done.
 include_recipe 'delivery-truck::default'
 
@@ -49,9 +52,7 @@ execute 'install linkchecker' do
   not_if { File::exists?('/usr/local/bin/linkchecker') }
 end
 
-# We enter client mode, which means we are now talking to the delivery chef server
-# instead of the chef-zero invocation this run was started in context of.
-Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
+load_delivery_chef_config
 
 # We need slack creds later on, so we get them here.
 slack_creds = encrypted_data_bag_item_for_environment('cia-creds','slack')
@@ -84,7 +85,7 @@ execute 'install awscli' do
   not_if { File::exists?('/usr/local/bin/aws') }
 end
 
-# chef-provisioning requires an aws config file. This generates the content for 
+# chef-provisioning requires an aws config file. This generates the content for
 # that file.
 aws_config_contents = <<EOF
 [default]
@@ -101,7 +102,3 @@ file aws_config_filename do
   sensitive true
   content aws_config_contents
 end
-
-# Here we leave client mode. I don't actually understand the implications of not leaving,
-# but it seems like a good idea.
-Chef_Delivery::ClientHelper.leave_client_mode_as_delivery

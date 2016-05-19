@@ -45,7 +45,7 @@ execute "upload the site" do
   cwd File.join(node['delivery_builder']['repo'], 'build')
 end
 
-include_recipe 'build-cookbook::_install_dependencies'
+include_recipe 'cia_infra::bundler_install_deps'
 
 execute 'create redirects' do
   command "bundle exec rake build_redirects"
