@@ -46,6 +46,9 @@ end
 
 load_delivery_chef_config
 
+# We need aws creds so we get them here.
+aws_creds = encrypted_data_bag_item_for_environment('cia-creds', 'chef-cia')
+
 # Here we are installing the aws cli that is needed durring publish. The python
 # install is actually done during the setup of the build nodes.
 #
