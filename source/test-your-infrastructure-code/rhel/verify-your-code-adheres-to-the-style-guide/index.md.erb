@@ -18,7 +18,12 @@ Lint testing is a form of [static program analysis](https://en.wikipedia.org/wik
 
 Lint testing can identify a range of issues, from code that's correct but difficult to read (such as code that uses non-uniform indentation) all the way to code that surely has an error (such as using an invalid character in a variable name.)
 
-In this lesson, you'll use two popular tools that are part of the Chef DK &ndash; [RuboCop](http://batsov.com/rubocop/) and [Foodcritic](https://acrmp.github.io/foodcritic/) &ndash; to identify potential issues in variations of the `webserver_test` cookbook you created previously. You'll also learn how to disable certain rules and also create new rules that define your team's preferred style.
+In this lesson, you'll use two popular tools that are part of the Chef DK &ndash; [RuboCop](http://batsov.com/rubocop/) and [Foodcritic](https://acrmp.github.io/foodcritic/) &ndash; to identify potential issues in variations of the `webserver_test` cookbook you created previously. 
+
+Here's what you'll do:
+
+1. [Use RuboCop to make your code easier to read and maintain](#step1)
+1. [Use Foodcritic to identify better usage patterns](#step2)
 
 [START_BOX]
 
@@ -55,7 +60,7 @@ Note how the code is formatted.
 * The `action` attribute is broken into multiple lines.
 * The `file` resource uses two spaces to indent the `end` keyword.
 
-When you run the `rubocop` command with no arguments, RuboCop checks all Ruby source files in the current directory.
+When you run the `rubocop` command with no arguments, RuboCop checks all Ruby source files in the current directory and its subdirectories.
 
 Start by moving to your <% fp 'webserver_test' %> cookbook's directory.
 
@@ -73,13 +78,13 @@ W
 
 Offenses:
 
-recipes/default.rb:5:1: C: Use 2 (not 4) spaces for indentation.
+recipes/default.rb:6:1: C: Use 2 (not 4) spaces for indentation.
     action [:enable,
 ^^^^
-recipes/default.rb:6:8: C: Align the elements of an array literal if they span more than one line.
+recipes/default.rb:7:8: C: Align the elements of an array literal if they span more than one line.
        :start]
        ^^^^^^
-recipes/default.rb:16:3: W: end at 16, 2 is not aligned with file '/var/www/html/index.html' do at 10, 0.
+recipes/default.rb:17:3: W: end at 16, 2 is not aligned with file '/var/www/html/index.html' do at 10, 0.
   end
   ^^^
 
@@ -112,12 +117,15 @@ Modify <code class="file-path">default.rb</code> like this to fix the violations
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
+# Install the httpd package.
 package 'httpd'
 
+# Start and enable the httpd service.
 service 'httpd' do
   action [:enable, :start]
 end
 
+# Serve a custom home page.
 file '/var/www/html/index.html' do
     content '<html>
   <body>
@@ -150,12 +158,15 @@ Correct the indentation, making your default recipe look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
+# Install the httpd package.
 package 'httpd'
 
+# Start and enable the httpd service.
 service 'httpd' do
   action [:enable, :start]
 end
 
+# Serve a custom home page.
 file '/var/www/html/index.html' do
   content '<html>
   <body>
@@ -192,12 +203,15 @@ Start by modifying your default recipe to look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
+# Install the httpd package.
 package 'httpd'
 
+# Start and enable the httpd service.
 service 'httpd' do
     action [:enable, :start]
 end
 
+# Serve a custom home page.
 file '/var/www/html/index.html' do
     content '<html>
   <body>
@@ -229,7 +243,7 @@ recipes/default.rb:8:1: C: Use 2 (not 4) spaces for indentation.
 
 You customize RuboCop's behavior through a file named <code class="file-path">.rubocop.yml</code>. When RuboCop runs, it loads all predefined rules and then overrides any rules that you specify.
 
-Add the following code to <code class="file-path">.rubocop.yml</code> in your cookbook directory, <code class="file-path">~/learn-chef/cookbooks/webserver_test</code>.
+Add the following code to <code class="file-path">.rubocop.yml</code> in your cookbook directory,<br><code class="file-path">~/learn-chef/cookbooks/webserver_test</code>.
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/.rubocop.yml
@@ -303,17 +317,22 @@ Let's examine a case where lint testing can help identify the use of unnecessary
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
-package_name = service_name = case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end
+package_name =
+  service_name = 
+    case node['platform']
+    when 'centos' then 'httpd'
+    when 'ubuntu' then 'apache2'
+    end
 
+# Install the httpd package.
 package "#{package_name}"
 
+# Start and enable the httpd service.
 service "#{service_name}" do
   action [:enable, :start]
 end
 
+# Serve a custom home page.
 file '/var/www/html/index.html' do
   content '<html>
   <body>
@@ -327,7 +346,7 @@ This code resembles the code you wrote in the previous lesson that configures Ap
 
 Notice the use of double quoted strings. Although this program is valid and behaves as you would expect, its intention might not be clear to others. Because string interpolation is not required, it might appear to others that the code intends to use string interpolation but the string is missing additional information.
 
-From your <% fp 'webserver_test' %> cookbook's directory, run `foodcritic recipes default.rb` to run the Foodcritic rules against the default recipe.
+From your <% fp 'webserver_test' %> cookbook's directory, run `foodcritic ./recipes/*` to run the Foodcritic rules against the default recipe.
 
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
@@ -342,17 +361,22 @@ Now remove the string interpolation to fix the violation. Your recipe should res
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
-package_name = service_name = case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end
+package_name =
+  service_name = 
+    case node['platform']
+    when 'centos' then 'httpd'
+    when 'ubuntu' then 'apache2'
+    end
 
+# Install the httpd package.
 package package_name
 
+# Start and enable the httpd service.
 service service_name do
   action [:enable, :start]
 end
 
+# Serve a custom home page.
 file '/var/www/html/index.html' do
   content '<html>
   <body>
@@ -428,17 +452,22 @@ The `service` resource takes care of all of the details required to enable and s
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
-package_name = service_name = case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end
+package_name =
+  service_name = 
+    case node['platform']
+    when 'centos' then 'httpd'
+    when 'ubuntu' then 'apache2'
+    end
 
+# Install the httpd package.
 package package_name
 
+# Start and enable the httpd service.
 service service_name do
   action [:enable, :start]
 end
 
+# Serve a custom home page.
 file '/var/www/html/index.html' do
   content '<html>
   <body>
@@ -457,9 +486,9 @@ $ foodcritic ./recipes/*
 
 By fixing the violations, you've created a recipe that's easier to read, maintain, and verify.
 
-Check out the [Foodcritic documention](http://www.foodcritic.io) to learn more, including:
+Check out the [Foodcritic documention](http://www.foodcritic.io) to learn more, including how to:
 
-* how to specify [which rules to run](http://www.foodcritic.io/#choosing-rules-to-run).
-* how to use rules [written by the community](http://www.foodcritic.io/#extra-rules), which you can use as a model for writing your own rules. 
+* specify [which rules to run](http://www.foodcritic.io/#choosing-rules-to-run).
+* use rules [written by the community](http://www.foodcritic.io/#extra-rules), which you can use as a model for writing your own rules. 
 
 [END_BOX]

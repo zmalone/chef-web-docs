@@ -8,7 +8,7 @@ next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-> ChefSpec simulates the execution of your resources, giving you an even faster feedback loop as you create and refine your recipes.
+[HEADLINE] ChefSpec simulates the execution of your resources, giving you an even faster feedback loop as you create and refine your recipes.
 
 In the previous lesson, you wrote InSpec tests that automatically verify that your basic web server cookbook configures Apache as you expect. Although automated testing is faster than manual testing, it can still take some time for the instance to come up, run `chef-client`, and run the tests.
 
@@ -62,7 +62,7 @@ file '/var/www/html/index.html' do
 end
 ```
 
-You know that this configuration works on CentOS, but on Ubuntu, both the package and service name is `apache2`, not `httpd`.
+You know that this configuration works on CentOS. But on Ubuntu, both the Apache package and service name are `apache2`, not `httpd`.
 
 For this part, let's revise the requirements for the web server configuration to focus on these two criteria:
 
@@ -105,9 +105,9 @@ Let's begin by writing ChefSpec tests that verify the CentOS web server configur
 For ChefSpec, tests go in your cookbook's `spec` directory. The `chef generate cookbook` command creates this directory for you. 
 
 ```bash
-# ~/learn-chef
-$ tree cookbooks/webserver_test/spec
-spec
+# ~/learn-chef/cookbooks/webserver_test/spec
+$ tree 
+.
 ├── spec_helper.rb
 └── unit
     └── recipes
@@ -206,7 +206,7 @@ Finished in 0.50257 seconds (files took 2.34 seconds to load)
 4 examples, 0 failures
 ```
 
-[COMMENT] If you had multiple ChefSpec files, you would use `chef exec rspec --color spec/unit/recipes/*.rb` to run them all.
+[COMMENT] If you had multiple ChefSpec files, you would use `chef exec rspec --color spec/unit/recipes/*.rb` or `chef exec rspec --color` to run them all.
 
 You see that no failures were reported. You've successfully validated the first requirement, which is to configure Apache on CentOS.
 
@@ -280,13 +280,12 @@ end
 
 Notice two differences in this example.
 
-The first difference is that the tests are grouped in a `context` block. A `context` block groups related tests.
-
-The second difference is that the `ServerRunner` object is created by specifying the platform and version. ChefSpec uses these values to construct [automatic node attributes](https://docs.chef.io/ohai.html#automatic-attributes), for example `node['platform']` and `node['platform_version']`.
+* The tests are grouped in a `context` block. A `context` block groups related tests.
+* `ServerRunner` is created by specifying the platform and version. ChefSpec uses these values to construct [automatic node attributes](https://docs.chef.io/ohai.html#automatic-attributes), for example `node['platform']` and `node['platform_version']`.
 
 Recall Chef server holds information about your nodes, called _node attributes_, and that your node can access these attributes when `chef-client` runs. 
 
-Because ChefSpec simulates your recipes, but does not run them, it needs a way to also simulate access to node attributes. [Ohai](https://docs.chef.io/ohai.html) is the tool that normally detects node attributes and provides them to the `chef-client` at the start of every run. To simulate the process, ChefSpec uses [fauxhai](https://github.com/customink/fauxhai). Fauxhai provides _mock_, or test, data for [common platforms](https://github.com/customink/fauxhai/tree/master/lib/fauxhai/platforms).
+Because ChefSpec simulates your recipes, but does not run them, it needs a way to also simulate access to node attributes. [Ohai](https://docs.chef.io/ohai.html) is the tool that normally detects node attributes and provides them to `chef-client` at the start of every run. To simulate the process, ChefSpec uses [fauxhai](https://github.com/customink/fauxhai). Fauxhai provides _mock_, or test, data for [common platforms](https://github.com/customink/fauxhai/tree/master/lib/fauxhai/platforms).
 
 For CentOS, to know which value to specify for `version`, you can log into a Test Kitchen instance and run `cat /etc/centos-release`.
 
@@ -298,11 +297,12 @@ Last login: Tue May  3 04:30:02 2016 from 10.0.2.2
 CentOS Linux release 7.2.1511 (Core)
 ```
 
-Fauxhai provides node attributes for [CentOS 7.2.1511](https://github.com/customink/fauxhai/blob/master/lib/fauxhai/platforms/centos/7.2.1511.json). Although these values might not match your configuration, you can use them to verify the correctness of your resources.
+Fauxhai provides node attributes for [CentOS 7.2.1511](https://github.com/customink/fauxhai/blob/master/lib/fauxhai/platforms/centos/7.2.1511.json). Although these values might not exactly match your configuration, think of them as test data that you can use to verify the correctness of your resources.
 
 [COMMENT] You can [override](https://github.com/customink/fauxhai#overriding) node attributes in your test code. You can also use [real server data](https://github.com/customink/fauxhai#fetching) or [provide your own attributes file](https://github.com/customink/fauxhai#fixturing).
- 
- 
+
+Run the tests to verify that they continue to pass.
+
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ chef exec rspec --color spec/unit/recipes/default_spec.rb
@@ -311,6 +311,8 @@ $ chef exec rspec --color spec/unit/recipes/default_spec.rb
 Finished in 0.54235 seconds (files took 1.97 seconds to load)
 4 examples, 0 failures
 ```
+
+The tests still pass.
 
 Next, you'll add a second `context` block that holds the tests for Ubuntu.
 
@@ -435,7 +437,7 @@ rspec ./spec/unit/recipes/default_spec.rb:98 # webserver_test::default when run 
 
 The Ubuntu tests fail because the default recipe configures `httpd` unconditionally on all platforms. Your ChefSpec tests expect the recipe to configure `apache2` when run on Ubuntu.
 
-As with our InSpec tests, having failing tests shows what functionality is missing and gives us clear goals to work towards.
+As with InSpec tests, having failing ChefSpec tests shows what functionality is missing and gives you clear goals to work towards.
 
 [END_BOX]
 
@@ -449,10 +451,12 @@ Modify your `webserver_test` cookbook's default recipe like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
-package_name = service_name = case node['platform']
-when 'centos' then 'httpd'
-when 'ubuntu' then 'apache2'
-end
+package_name = 
+  service_name = 
+    case node['platform']
+    when 'centos' then 'httpd'
+    when 'ubuntu' then 'apache2'
+    end
 
 # Install the package.
 package package_name

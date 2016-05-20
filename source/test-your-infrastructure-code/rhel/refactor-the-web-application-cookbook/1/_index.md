@@ -194,7 +194,7 @@ Let's run our tests. Run `kitchen test` to destroy the previous instance if it e
 ```bash
 # ~/manage-a-web-app-rhel/chef-repo/cookbooks/awesome_customers
 $ kitchen test
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.8.0)
 -----> Cleaning up any prior instances of <default-centos-66>
 -----> Destroying <default-centos-66>...
        ==> default: Forcing shutdown of VM...

@@ -8,13 +8,13 @@ next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-> Running InSpec tests through Test Kitchen gives you a way to automatically verify your configuration on temporary instances, giving you added confidence that your changes will work as you expect in production.
+[HEADLINE] Running InSpec tests through Test Kitchen gives you a way to automatically verify your configuration on temporary instances, giving you added confidence that your changes will work as you expect in production.
 
 In this part, you'll learn how to use [InSpec](https://docs.chef.io/inspec_reference.html) to automatically verify a basic web server configuration. You'll run InSpec from Test Kitchen on a virtual machine running on your workstation.
 
 InSpec provides a kind of _integration_ testing, where you verify that multiple components function correctly together. With InSpec, you write code that describes the desired state of the server. InSpec translates this code into SSH commands that it runs on the server.
 
-[COMMENT] If you've used [Serverspec](http://serverspec.org/), InSpec code will look familiar to you. You can continue to use the Serverspec tests that you've already written and also write new Serverspec tests. One difference between InSpec and Serverspec is that InSpec does not install additional software on your target system. On Linux, it performs all tests over SSH. On Windows, it performs tests over WinRM. 
+[COMMENT] If you've used [RSpec](http://rspec.info) or [Serverspec](http://serverspec.org/), InSpec code will look familiar to you. You can continue to use the Serverspec tests that you've already written and also write new Serverspec tests. One difference between InSpec and Serverspec is that InSpec does not install additional software on your target system. On Linux, it performs all tests over SSH. On Windows, it performs tests over WinRM. 
 
 It's common to write InSpec tests after you write your configuration code. But another way is to take a _test-driven_ approach, where you write your tests first before you write any Chef code.
 
@@ -31,7 +31,7 @@ Here's a 60-minute webcast that goes in greater depth on the test-driven process
 
 An important benefit of test-driven development is that it helps limit scope. You know you're done when all tests pass. And because the tests are code, they're versionable through source control. When a requirement changes, you capture that change by updating the tests. This gives you the complete history of your requirements and better insight to when and how your requirements evolved.
 
-In this lesson, you'll create a basic cookbook that resembles the Apache web server configuration that you wrote in the [previous tutorials](/learn-the-basics/rhel/configure-a-package-and-service/). Let's begin by defining clear goals for the web server configuration.
+In this lesson, you'll create a basic cookbook that resembles the Apache web server configuration that you wrote [previously](/learn-the-basics/rhel/configure-a-package-and-service/). Let's begin by defining clear goals for the web server configuration.
 
 Here's the criteria for the web server configuration:
 
@@ -66,8 +66,7 @@ Next, run the following `chef generate cookbook` command to create a cookbook na
 
 ```bash
 # ~/learn-chef
-$ chef generate cookbook webserver_test
-chef generate cookbook cookbooks/webserver_test
+$ chef generate cookbook cookbooks/webserver_test
 Installing Cookbook Gems:
 Compiling Cookbooks...
 Recipe: code_generator::cookbook
@@ -153,7 +152,7 @@ cookbooks/webserver_test/test
 Before writing any configuration code, let's write a test that verifies the first requirement:
 
 <% unstyled_list do %>
-  <% icon_list_item('check-square-o') do %> 
+  <% icon_list_item('square-o') do %> 
     <b>Install the Apache package, <code>httpd</code>, on Red Hat Enterprise Linux systems.</b>
   <% end %>
   <% icon_list_item('square-o') do %>
@@ -169,7 +168,7 @@ Before writing any configuration code, let's write a test that verifies the firs
 
 The file <% fp 'test/integration/default/inspec/default_spec.rb' %> will hold our tests. You typically have one test file for each recipe in your cookbooks. Here, <% fp 'default_spec.rb' %> contains tests for the default recipe, <% fp 'default.rb' %>. For this tutorial, you'll add all configuration code to the default recipe.
 
-As with many test frameworks, Inspec code resembles natural language. Here's the format of an InSpec test.
+As with many test frameworks, InSpec code resembles natural language. Here's the format of an InSpec test.
 
 ```ruby
 # default_spec.rb
@@ -191,7 +190,7 @@ describe package 'httpd' do
 end
 ```
 
-This code uses InSpec's [package](https://docs.chef.io/inspec_reference.html#package) resource to Xxx.
+This code uses InSpec's [package](https://docs.chef.io/inspec_reference.html#package) resource to test whether the `httpd` package is installed on the system.
 
 [END_BOX]
 
@@ -251,7 +250,7 @@ In the previous tutorials, you ran `kitchen converge` to bring up your virtual m
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ kitchen verify
------> Starting Kitchen (v1.7.3)
+-----> Starting Kitchen (v1.8.0)
 -----> Creating <default-centos-72>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'bento/centos-7.2'...
@@ -287,7 +286,7 @@ Failures:
      Failure/Error: DEFAULT_FAILURE_NOTIFIER = lambda { |failure, _opts| raise failure }
        expected that `System Package httpd` is installed
      # ./test/integration/default/inspec/default_spec.rb:2:in `block (2 levels) in load'
-     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.12.5/lib/kitchen/verifier/inspec.rb:47:in `call'
+     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.13.0/lib/kitchen/verifier/inspec.rb:47:in `call'
 
 Finished in 0.28576 seconds (files took 1 minute 5.77 seconds to load)
 1 example, 1 failure
@@ -342,7 +341,7 @@ The `kitchen verify` command already brought up a CentOS instance. Now run `kitc
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ kitchen converge
------> Starting Kitchen (v1.7.3)
+-----> Starting Kitchen (v1.8.0)
 -----> Converging <default-centos-72>...
        Preparing files for transfer
        Preparing dna.json
@@ -352,7 +351,7 @@ $ kitchen converge
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-centos-72>
-       Starting Chef Client, version 12.9.38
+       Starting Chef Client, version 12.10.24
        resolving cookbooks for run list: ["webserver_test::default"]
        Synchronizing Cookbooks:
          - webserver_test (0.1.0)
@@ -377,7 +376,7 @@ The next step is to verify that it placed the system in the desired state. Run `
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ kitchen verify
------> Starting Kitchen (v1.7.3)
+-----> Starting Kitchen (v1.8.0)
 -----> Setting up <default-centos-72>...
        Finished setting up <default-centos-72> (0m0.00s).
 -----> Verifying <default-centos-72>...
@@ -400,7 +399,7 @@ Run `kitchen list`. You'll see in the `Last Action` column that the instance's s
 
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
-$ kitchen verify
+$ kitchen list
 Instance           Driver   Provisioner  Verifier  Transport  Last Action
 default-centos-72  Vagrant  ChefZero     Inspec    Ssh        Verified
 ```
@@ -452,11 +451,9 @@ describe port 80 do
 end
 ```
 
-This code uses the [SERVICE](https://docs.chef.io/inspec_reference.html#service), [COMMAND](), and [PORT]() resources to Xxx. The `command` resource, which verifies the contents of the home page. (LOOKS FOR HELLO AND WHY AND THAT IT USES A REGEX.) 
+This code uses InSpec's [service](https://docs.chef.io/inspec_reference.html#service), [command](https://docs.chef.io/inspec_reference.html#command), and [port](https://docs.chef.io/inspec_reference.html#port) resources. The `command` resource uses a regular expression to verify that the home page contains the string "hello".
 
-FIXUP VVV:
-
-[RUBY] This example uses a regular expression to compare the result against the expected value. Regular expressions in Ruby are usually surrounded with forward slashes `/`. [Rubular](http://rubular.com) is a handy way to test out your regular expressions.
+[RUBY] Regular expressions in Ruby are usually surrounded with forward slashes `/`. [Rubular](http://rubular.com) is a handy way to test out your regular expressions.
 
 [END_BOX]
 
@@ -469,7 +466,7 @@ From your cookbook directory, run `kitchen verify`.
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ kitchen verify
------> Starting Kitchen (v1.7.3)
+-----> Starting Kitchen (v1.8.0)
 -----> Verifying <default-centos-72>...
        Detected alternative framework tests for `inspec`
        Search `/Users/user/learn-chef/cookbooks/webserver_test/test/integration/default/inspec` for tests
@@ -481,13 +478,13 @@ Failures:
      Failure/Error: DEFAULT_FAILURE_NOTIFIER = lambda { |failure, _opts| raise failure }
        expected that `Service httpd` is enabled
      # ./test/integration/default/inspec/default_spec.rb:6:in `block (2 levels) in load'
-     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.12.5/lib/kitchen/verifier/inspec.rb:47:in `call'
+     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.13.0/lib/kitchen/verifier/inspec.rb:47:in `call'
 
   2) Service httpd should be running
      Failure/Error: DEFAULT_FAILURE_NOTIFIER = lambda { |failure, _opts| raise failure }
        expected that `Service httpd` is running
      # ./test/integration/default/inspec/default_spec.rb:7:in `block (2 levels) in load'
-     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.12.5/lib/kitchen/verifier/inspec.rb:47:in `call'
+     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.13.0/lib/kitchen/verifier/inspec.rb:47:in `call'
 
   3) Command curl localhost stdout should match /hello/
      Failure/Error: DEFAULT_FAILURE_NOTIFIER = lambda { |failure, _opts| raise failure }
@@ -498,13 +495,13 @@ Failures:
        -/hello/
        +""
      # ./test/integration/default/inspec/default_spec.rb:11:in `block (2 levels) in load'
-     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.12.5/lib/kitchen/verifier/inspec.rb:47:in `call'
+     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.13.0/lib/kitchen/verifier/inspec.rb:47:in `call'
 
   4) Port  80 should be listening
      Failure/Error: DEFAULT_FAILURE_NOTIFIER = lambda { |failure, _opts| raise failure }
        expected `Port  80.listening?` to return true, got false
      # ./test/integration/default/inspec/default_spec.rb:15:in `block (2 levels) in load'
-     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.12.5/lib/kitchen/verifier/inspec.rb:47:in `call'
+     # /Users/user/.chefdk/gem/ruby/2.1.0/gems/kitchen-inspec-0.13.0/lib/kitchen/verifier/inspec.rb:47:in `call'
 
 Finished in 0.67324 seconds (files took 0.80633 seconds to load)
 5 examples, 4 failures
@@ -583,7 +580,7 @@ Run `kitchen converge` to apply your web server cookbook to your instance.
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ kitchen converge
------> Starting Kitchen (v1.7.3)
+-----> Starting Kitchen (v1.8.0)
 -----> Converging <default-centos-72>...
        Preparing files for transfer
        Preparing dna.json
@@ -593,7 +590,7 @@ $ kitchen converge
        Preparing client.rb
 -----> Chef Omnibus installation detected (install only if missing)
        Transferring files to <default-centos-72>
-       Starting Chef Client, version 12.9.38
+       Starting Chef Client, version 12.10.24
        resolving cookbooks for run list: ["webserver_test::default"]
        Synchronizing Cookbooks:
          - webserver_test (0.1.0)
@@ -633,7 +630,7 @@ Now run `kitchen verify` to run your InSpec tests.
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ kitchen verify
------> Starting Kitchen (v1.7.3)
+-----> Starting Kitchen (v1.8.0)
 -----> Setting up <default-centos-72>...
        Finished setting up <default-centos-72> (0m0.00s).
 -----> Verifying <default-centos-72>...
@@ -667,6 +664,8 @@ Congratulations. You've successfully satisfied the basic requirements for your w
   <% end %>
 <% end %>
 
+You don't need to write additional code open port 80 because the default configuration handles that.
+
 As your requirements evolve, you can repeat the process by writing additional tests, watching them fail, and then writing just enough code to make them pass.
  
 [END_BOX]
@@ -694,7 +693,7 @@ Run `kitchen test` to apply and test your configuration one final time.
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
 $ kitchen test
------> Starting Kitchen (v1.7.3)
+-----> Starting Kitchen (v1.8.0)
 -----> Cleaning up any prior instances of <default-centos-72>
 -----> Destroying <default-centos-72>...
        ==> default: Forcing shutdown of VM...
