@@ -62,7 +62,7 @@ Here's what you'll do:
 1. [Write the pending tests](#step4)
 1. [Refactor the database configuration](#step5)
 
-Although a complete solution might involve writing InSpec and ChefSpec tests, along with running Rubocop and Foodcritic, let's focus just on writing ChefSpec tests for now. This scenario is a good candidate for ChefSpec testing because the database configuration uses node attributes to define its behavior. 
+Although a complete solution might involve writing InSpec and ChefSpec tests, along with running Rubocop and Foodcritic, let's focus just on writing ChefSpec tests for now. This scenario is a good candidate for ChefSpec testing because the database recipe uses node attributes. Node attributes introduce variations that can change the way a resource behaves.
 
 [COMMENT] If you haven't worked through the _Manage a basic web application_ tutorial, [follow the quickstart](/manage-a-web-app/rhel/bring-up-the-web-app-using-test-kitchen/) to get a copy of the cookbook from GitHub and run it on a local Test Kitchen instance.
 
@@ -72,8 +72,8 @@ Although a complete solution might involve writing InSpec and ChefSpec tests, al
 
 The goal is to make the `database` recipe easier to read. To do that, you'll:
 
-* Replace each occurence of a node attribute with a variable. 
-* Define the database connection information one time.
+* replace each occurence of a node attribute with a variable. 
+* define the database connection information one time.
 
 By outlining clear goals, we'll know when we're done.
 
@@ -83,7 +83,7 @@ By outlining clear goals, we'll know when we're done.
 
 ## 2. Make the default ChefSpec test pass
 
-When you run `chef generate` to create a cookbook or recipe, Chef creates a default ChefSpec file for you. Here's what the file looks like for the `database` recipe.
+When you run `chef generate` to create a cookbook or recipe, Chef creates a default ChefSpec test for you. Here's what the test looks like for the `database` recipe.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/spec/unit/recipes/database_spec.rb
@@ -124,13 +124,13 @@ Failures:
 
            stub_command("mysql -h 127.0.0.1 -u db_admin -pkWifydPx2hIR8mmJv4uemw== -D my_company -e 'describe customers;'").and_return(...)
        > with backtrace:
-         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/extensions/chef/conditional.rb:9:in `evaluate_command'
-         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/extensions/chef/resource.rb:19:in `run_action'
-         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/solo_runner.rb:126:in `converge'
-         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/server_runner.rb:68:in `converge'
+         # /Users/user/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/extensions/chef/conditional.rb:9:in `evaluate_command'
+         # /Users/user/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/extensions/chef/resource.rb:19:in `run_action'
+         # /Users/user/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/solo_runner.rb:126:in `converge'
+         # /Users/user/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/server_runner.rb:68:in `converge'
          # ./spec/unit/recipes/database_spec.rb:13:in `block (3 levels) in <top (required)>'
          # ./spec/unit/recipes/database_spec.rb:17:in `block (4 levels) in <top (required)>'
-         # /Users/thomaspetchel/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/expect_exception.rb:15:in `matches?'
+         # /Users/user/.chefdk/gem/ruby/2.1.0/gems/chefspec-4.6.1/lib/chefspec/expect_exception.rb:15:in `matches?'
          # ./spec/unit/recipes/database_spec.rb:17:in `block (3 levels) in <top (required)>'
      # ./spec/unit/recipes/database_spec.rb:17:in `block (3 levels) in <top (required)>'
 
@@ -221,7 +221,7 @@ end
 
 This code also specifies the platform name and version.
 
-Because the code isn't actually run, node attributes values can be whatever you want as long as the format matches what's expected (for example, a node attribute that defines a port number might expect a numeric value.) What does matter is that the values are used correctly in your recipe. Here, each node attribute is a string. Each node attribute value includes the string "fake" to indicate that these are fictitious values. 
+Because the code isn't actually run, node attributes values can be whatever you want as long as the format matches what's expected (for example, a cookbook might expect a numeric value to define a port number.) What does matter is that the values are used correctly in your recipe. Here, each node attribute is a string. Each node attribute value includes the string "fake" to indicate that these are fictitious values. 
 
 Notice that the command stub uses the node attribute values. It's stubbed to return `false` to tell ChefSpec that the `execute` resource should be run. 
 
@@ -350,7 +350,7 @@ This gives you a checklist to work from.
   <% end %>
 <% end %>
 
-You can define the tests you want to write up-front and then implement them one at a time. One way to do that is to use [pending examples](https://relishapp.com/rspec/rspec-core/v/3-4/docs/pending-and-skipped-examples/pending-examples#`pending`-for-an-example-that-is-currently-passing). Pending examples have several uses; here you'll use them to indicate tests you wan tto write later.
+You can define the tests you want to write up-front and then implement them one at a time. One way to do that is to use [pending examples](https://relishapp.com/rspec/rspec-core/v/3-4/docs/pending-and-skipped-examples/pending-examples#`pending`-for-an-example-that-is-currently-passing). Pending examples have several uses; here you'll use them to indicate tests you want to write later.
 
 Modify <% fp 'database_spec.rb' %> like this.
 
@@ -434,7 +434,7 @@ rspec ./spec/unit/recipes/database_spec.rb:38 # awesome_customers_rhel::database
 rspec ./spec/unit/recipes/database_spec.rb:42 # awesome_customers_rhel::database When all attributes are set, on CentOS 7.2.1511 seeds the database with a table and test data
 ```
 
-Each pending test is marked as a failure. But with failing tests in place, you now have clear goals to work towards.
+Each pending test is marked as a failure. But with failing tests in place, you have clear goals to work towards.
 
 [END_BOX]
 
@@ -546,7 +546,7 @@ The first pending test now passes, leaving us with 3 remaining tests to write.
 
 ### it 'creates the database instance' and it 'creates the database user'
 
-The next two resources to test look like this.
+The next two resources to test look like this. These resources create the database instance and the user.
 
 ```ruby
 # database.rb
@@ -576,7 +576,7 @@ end
 
 Both resources share the same `connection` property. To make the test code less redundant, you can define a `let` block at the top of your test that defines the connection info.
 
-To define the connection info and implement the second and third test, make <% fp 'database_spec.rb' %> look like this.
+To define the connection info and implement the second and third tests, make <% fp 'database_spec.rb' %> look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_rhel/spec/unit/recipes/database_spec.rb
@@ -757,7 +757,7 @@ Now run the tests.
 # ~/learn-chef/cookbooks/awesome_customers_rhel
 $ chef exec rspec --color spec/unit/recipes/database_spec.rb
 [...]
-.
+.....
 
 Finished in 21.18 seconds (files took 1.94 seconds to load)
 5 examples, 0 failures
@@ -877,6 +877,6 @@ Great! All tests continue to pass. If any test failed, you would examine the err
 
 If your project had integration tests, such as InSpec tests, you might run `kitchen test` to verify the configuration on a Test Kitchen instance before checking in your change or uploading your cookbook to your Chef server.
 
-Although it's completely acceptable to write test code after you've written your cookbook, in practice you might take the test-driven approach of writing your tests first. Writing your tests first gives you clear goals to work towards. Clearly understanding your requiements  up front may even lead to better quality code, eliminating the need to refactor it later.
+Although it's completely acceptable to write test code after you've written your cookbook, in practice you might take the test-driven approach of writing your tests first. Writing your tests first gives you clear goals to work towards. Clearly understanding your requiements  up front may even lead to better quality code, reducing the need to refactor it later.
 
 [END_BOX]

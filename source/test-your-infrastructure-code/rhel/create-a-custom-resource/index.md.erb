@@ -12,19 +12,22 @@ Consider the `web` recipe you created [earlier in this tutorial](/test-your-infr
 
 ```ruby
 # web.rb
-package_name =
+package_name = 
   service_name = 
     case node['platform']
     when 'centos' then 'httpd'
     when 'ubuntu' then 'apache2'
     end
 
+# Install the package.
 package package_name
 
+# Start and enable the service.
 service service_name do
   action [:enable, :start]
 end
 
+# Serve a custom home page.
 file '/var/www/html/index.html' do
   content '<html>
   <body>
@@ -44,19 +47,22 @@ Another way might be to use a node attribute that defines the location of the ho
 
 ```ruby
 # web.rb
-package_name =
+package_name = 
   service_name = 
     case node['platform']
     when 'centos' then 'httpd'
     when 'ubuntu' then 'apache2'
     end
 
+# Install the package.
 package package_name
 
+# Start and enable the service.
 service service_name do
   action [:enable, :start]
 end
 
+# Serve a custom home page.
 cookbook_file '/var/www/html/index.html' do
   source node['web']['homepage_file']
 end
@@ -186,7 +192,7 @@ Finished in 0.13944 seconds (files took 0.77301 seconds to load)
 6 examples, 0 failures
 ```
 
-As an optional step, log in to your Test Kitchen instance and run `curl localhost` to see the resulting configuration.
+As an optional step, log in to your CentOS Test Kitchen instance and run `curl localhost` to see the resulting configuration.
 
 ```bash
 # ~/learn-chef/cookbooks/custom_web
@@ -290,7 +296,7 @@ module CustomWebCookbook
 end
 ```
 
-Although not required, a helper library can keep your custom resources more organized. They can help make your resource code more readable and also provide functionality that's shared among multiple resources.
+Although not required, a helper library can keep your custom resources more organized. They can also help make your resource code more readable and also provide functionality that's shared among multiple resources.
 
 <% fp 'site.rb' %> includes the helper library like this:
 
@@ -305,7 +311,7 @@ include CustomWebCookbook::Helpers
 
 ## Testing the custom\_web_site resource
 
-To verify the `custom_web_site` resource, the `custom_web` cookbook provides a test cookbook named `hello_world_test`, located at <% fp 'cookbooks/custom_web/test/cookbooks/hello_world_test' %>. It's default recipe simply loads the `custom_web_site` using the default properties.
+To verify the `custom_web_site` resource, the `custom_web` cookbook provides a test cookbook named `hello_world_test`, located at <% fp 'cookbooks/custom_web/test/cookbooks/hello_world_test' %>. Its default recipe simply declares a `custom_web_site` resource using the default properties.
 
 ```ruby
 # ~/learn-chef/cookbooks/custom_web/test/cookbooks/hello_world_test/recipes/default.rb
@@ -372,7 +378,7 @@ end
 
 These tests are basic, but they validate the basic requirements of a running Apache system.
 
-As your custom resource cookbook evolves, you could write additional test cookbooks, along with ChefSpec and InSpec tests to help validate that your resource works as expected.
+As your custom resource cookbook evolves, you could write additional test cookbooks, along with ChefSpec and InSpec tests, to help validate that your resource works as expected.
 
 [END_BOX]
 
