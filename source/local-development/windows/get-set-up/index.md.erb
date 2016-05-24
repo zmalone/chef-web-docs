@@ -24,31 +24,7 @@ At this point, your workstation should:
 
 [START_BOX]
 
-## 2. Install the chef-zero-scheduled-task plugin
-
-No matter which virtualization option you choose, you'll install the `chef-zero-scheduled-task` plugin.
-
-Chef uses the WinRM protocol by default to remotely manage both bootstrapped nodes and Test Kitchen instances. In practice, complications can arise when performing certain actions, such as a remote installation of SQL Server, over the WinRM protocol.
-
-To work around these complications, it's common to use the [chef-zero-scheduled-task](https://github.com/smurawski/chef-zero-scheduled-task) Test Kitchen plugin to run your cookbooks. `chef-zero-scheduled-task` creates a scheduled task that runs `chef-client` immediately and connects to that task so that Test Kitchen can receive the output of the `chef-client` run. This mechanism enables you to kick off and monitor the `chef-client` run remotely, but the installation and configuration happen entirely in the context of the local account.
-
-The Chef DK does not come with this plugin, so run the following command to install it.
-
-```bash
-# ~/chef-repo
-$ chef gem install chef-zero-scheduled-task
-Fetching: chef-zero-scheduled-task-0.0.8.gem (100%)
-Successfully installed chef-zero-scheduled-task-0.0.8
-1 gem installed
-```
-
-When it comes time to apply your work to a bootstrapped node, you can set up `chef-client` to run as a scheduled task or use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client` on your node if your software cannot be installed or configured remotely over WinRM.
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Set up your Test Kitchen environment for local development
+## 2. Set up your Test Kitchen environment for local development
 
 Test Kitchen works with virtualization and cloud providers to create temporary instances to test your infrastructure code. We often call the software that connects Test Kitchen to the provider a _driver_.
 

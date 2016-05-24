@@ -135,7 +135,7 @@ suites:
 
 [COMMENT] On Linux and Mac OS, <code class="file-path">.kitchen.yml</code> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
-Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want Windows Server, modify <code class="file-path">~/learn-chef/cookbooks/settings_windows/.kitchen.yml</code> according to the Test Kitchen driver that you're using.
+Test Kitchen can manage more than one instance at a time. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want Windows Server, modify<br><code class="file-path">~/learn-chef/cookbooks/settings_windows/.kitchen.yml</code> according to the Test Kitchen driver that you're using.
 
 [START_TABS config EC2, Hyper-V, Vagrant]
 
@@ -158,7 +158,7 @@ driver:
   retryable_tries: 120
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
 
 transport:
   ssh_key: C:\Users\LearnChef\.ssh\learnchef.pem
@@ -196,7 +196,7 @@ driver:
   memory_startup_bytes: 2GB
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
 
 transport:
   password: H24?6;H.QaV8JP2&
@@ -222,7 +222,7 @@ driver:
   name: vagrant
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
 
 platforms:
   - name: windows-2012r2
@@ -241,7 +241,7 @@ suites:
 Here's how the file breaks down.
 
 * **driver** specifies the software that manages the machine. It's the Test Kitchen driver that you set up in the previous lesson.
-* **provisioner** specifies how to run Chef. When working with Linux instances, `chef_zero` is a common choice because it enables you to mimic a Chef server environment on your local machine. For working with Windows Server, we use the `chef_zero_scheduled_task` plugin that you installed in the previous lesson. `chef_zero_scheduled_task` works like `chef_zero`, but also creates a scheduled task that runs `chef-client` immediately and connects to that task so that Test Kitchen can receive the output of the `chef-client` run.
+* **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and other Chef server features.
 * **transport** specifies the protocol, port, and other network settings that allow Test Kitchen to communicate with the instance.
 * **platforms** specifies the target operating systems. We're targeting just one &ndash; Windows Server 2012 R2.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `settings_windows` cookbook's default recipe.
@@ -265,8 +265,8 @@ We often call the set of virtual environments that's created by Test Kitchen sim
 ```bash
 # ~/learn-chef/cookbooks/settings_windows
 $ kitchen list
-Instance                Driver  Provisioner            Verifier  Transport  Last Action
-default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      <Not Created>
+Instance                Driver   Provisioner  Verifier  Transport  Last Action
+default-windows-2012r2  Ec2      ChefZero     Busser    Winrm      Converged
 ```
 
 If you're using a driver other than the EC2 driver, you would see that driver listed in the **Driver** column.
@@ -308,7 +308,7 @@ Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual 
   </span><span class="nb">name</span><span class="p">:</span> <span class="n">vagrant</span>
 
 <span class="ss">provisioner:
-  </span><span class="nb">name</span><span class="p">:</span> <span class="n">chef_zero_scheduled_task</span>
+  </span><span class="nb">name</span><span class="p">:</span> <span class="n">chef_zero</span>
 
 <span class="ss">platforms:
   </span><span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">windows</span><span class="o">-</span><span class="mi">2012</span><span class="n">r2</span>
@@ -332,7 +332,7 @@ Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual 
               <div class="deactivate"></div>
             </nav>
             <h1 class="titleInside">Terminal: ~/learn-chef/cookbooks/settings_windows</h1>
-            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">kitchen list</span><span class="line output">Instance                           Driver   Provisioner            Verifier  Transport  Last Action</span><span class="line output">development-windows-2012r2         Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">development-windows-2012r2-secure  Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2                Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2-secure         Vagrant  ChefZeroScheduledTask  Busser    Winrm      &lt;Not Created&gt;</span></code></pre></td></tr></tbody></table></div></div>
+            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">kitchen list</span><span class="line output">Instance                           Driver   Provisioner  Verifier  Transport  Last Action</span><span class="line output">development-windows-2012r2         Vagrant  ChefZero     Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">development-windows-2012r2-secure  Vagrant  ChefZero     Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2                Vagrant  ChefZero     Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2-secure         Vagrant  ChefZero     Busser    Winrm      &lt;Not Created&gt;</span></code></pre></td></tr></tbody></table></div></div>
           </div>
 <p>Test matrices enable you to define multiple configurations, and test each configuration against one or more platforms.</p>
   <a class="close-reveal-modal" aria-label="Close">&#215;</a>
@@ -343,7 +343,7 @@ Create the instance now by running `kitchen create`.
 ```bash
 # ~/learn-chef/cookbooks/settings_windows
 $ kitchen create
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.8.0)
 -----> Creating <default-windows-2012r2>...
        If you are not using an account that qualifies under the AWS
 free-tier, you may be charged to run these suites. The charge
@@ -385,8 +385,8 @@ Now run `kitchen list` again.
 ```bash
 # ~/learn-chef/cookbooks/settings_windows
 $ kitchen list
-Instance                Driver  Provisioner            Verifier  Transport  Last Action
-default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      Created
+Instance                Driver   Provisioner  Verifier  Transport  Last Action
+default-windows-2012r2  Ec2      ChefZero     Busser    Winrm      Created
 ```
 
 The `Last Action` column now shows that the virtual machine has been created.
@@ -404,7 +404,7 @@ Now run `kitchen converge` to apply the cookbook to the Windows Server virtual m
 ```bash
 # ~/learn-chef/cookbooks/settings_windows
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.8.0)
 -----> Converging <default-windows-2012r2>...
        Preparing files for transfer
        Preparing dna.json
@@ -465,8 +465,8 @@ Run `kitchen list` to see the latest status.
 ```bash
 # ~/learn-chef/cookbooks/settings_windows
 $ kitchen list
-Instance                Driver  Provisioner            Verifier  Transport  Last Action
-default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      Converged
+Instance                Driver   Provisioner  Verifier  Transport  Last Action
+default-windows-2012r2  Ec2      ChefZero     Busser    Winrm      Converged
 ```
 
 `kitchen converge` takes longer the first time you run it on a new instance because Test Kitchen needs to install the Chef tools. Run `kitchen converge` a second time to see how much faster it is.
@@ -474,7 +474,7 @@ default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      Conv
 ```bash
 # ~/learn-chef/cookbooks/settings_windows
 $ kitchen converge
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.8.0)
 -----> Converging <default-windows-2012r2>...
        Preparing files for transfer
        Preparing dna.json
@@ -590,7 +590,7 @@ We're all done with our virtual machine, so now run the `kitchen destroy` comman
 ```bash
 # ~/learn-chef/cookbooks/settings_windows
 $ kitchen destroy
------> Starting Kitchen (v1.4.2)
+-----> Starting Kitchen (v1.8.0)
 -----> Destroying <default-windows-2012r2>...
        EC2 instance <i-a2354a67> destroyed.
        Finished destroying <default-windows-2012r2> (0m1.27s).
@@ -602,8 +602,8 @@ Run `kitchen list` and you'll see that the `Last Action` column shows that the v
 ```bash
 # ~/learn-chef/cookbooks/settings_windows
 $ kitchen list
-Instance                Driver  Provisioner            Verifier  Transport  Last Action
-default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      <Not Created>
+Instance                Driver   Provisioner  Verifier  Transport  Last Action
+default-windows-2012r2  Ec2      ChefZero     Busser    Winrm      <Not Created>
 ```
 
 [END_BOX]
