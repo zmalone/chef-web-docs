@@ -14,6 +14,8 @@ As with any kind of software testing, there's a time tradeoff. It can take some 
 
 But once you have automated testing in place and the skills to start writing tests, verifying changes becomes significantly faster. What once took days or weeks to manually verify can now take hours or even minutes. And because automated testing enables you to more quickly and easily build confidence in your changes, you'll be better able to tackle those small but important changes that you were once hesitant to commit to.
 
+Learn more about how to test and debug your Chef code in our [Joy of Automating](/skills/) video series, hosted by Franklin Webber.
+
 If you're involved in your company's compliance and audit process, you may be interested in [Chef Compliance](/compliance-assess/rhel/), which uses InSpec as its auditing and testing framework.
 
 You may also be interested in [Chef Delivery](/delivery/get-started/), which gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. Chef Delivery reinforces the Chef workflow, where you begin by developing and testing your configuration from your local workstation. Then, you submit your change to Delivery's pipeline, where your change goes through sets of automated tests before going out into production. If you have many different teams, each delivering software in its own way, you can use Delivery to bring a standard, proven approach to all of your organization's deployments.
