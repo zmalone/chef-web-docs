@@ -4,13 +4,13 @@ This tutorial proposed these questions:
 * Are our resources properly defined?
 * Does the code adhere to our style guide?
 
-In this tutorial, you used InSpec, ChefSpec, and the lint tools RuboCop and Foodcritic to help answer these questions. Each of these tools plays an important role to helping ensure that your cookbooks behave like you intend, are well-defined, adhere to accepted standards, and avoid common potential defects.
+In this tutorial, you used InSpec, ChefSpec, and the lint tools RuboCop and Foodcritic to help answer these questions. Each of these tools plays an important role in helping ensure that your cookbooks behave like you intend, are well-defined, adhere to accepted standards, and avoid common defects.
 
 An increasingly popular way to write cookbooks is to write your tests before you write your Chef code. This _test-driven_ approach helps document your requirements and goals, and the scope of your project. Once all your tests pass, you've satisfied the requirements for your project and can move it to the next phase.
 
 If you're new to Ruby programming or testing with InSpec or ChefSpec, the best way to get started is to adapt other examples that you see. The [InSpec documentation](https://docs.chef.io/inspec_reference.html) provides the full list of available resource types, and has many good examples. The ChefSpec project also contains many good [example tests](https://github.com/sethvargo/chefspec/tree/master/examples). Learn more about writing great tests and see practical examples at [betterspecs.org](http://betterspecs.org).
 
-As with any kind of software testing, there's a time tradeoff. It can take some time to write your initial tests and incorporate them into your workflow &ndash; arguably, it can take more time to set up your test process than it would take to test your initial configuration manually. Writing test code is a also a new skill for many, and it can take time to ramp up your skills.
+As with any kind of software testing, there's a time trade-off. It can take some time to write your initial tests and incorporate them into your workflow &ndash; arguably, it can take more time to set up your test process than it would take to test your initial configuration manually. Writing test code is also new to many people, and it can take time to ramp up your skills.
 
 But once you have automated testing in place and the skills to start writing tests, verifying changes becomes significantly faster. What once took days or weeks to manually verify can now take hours or even minutes. And because automated testing enables you to more quickly and easily build confidence in your changes, you'll be better able to tackle those small but important changes that you were once hesitant to commit to.
 

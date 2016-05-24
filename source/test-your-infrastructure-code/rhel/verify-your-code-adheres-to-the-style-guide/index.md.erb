@@ -12,13 +12,13 @@ meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 
 So far, you've learned how to use automated testing to speed up the feedback cycle. Getting feedback early and often can help you release more quickly and with higher quality.
 
-Although your code may behave as you expect, it's also important to ensure your code is easy to read and maintain, and avoids defects that can be difficult to fix later. Lint testing, or _linting_, is one way to help ensure that your code aheres to standard style guidelines and avoids common defects.
+Although your code may behave as you expect, it's also important to ensure your code is easy to read and maintain, and avoids defects that can be difficult to fix later. Lint testing, or _linting_, is one way to help ensure that your code aheres to standard style guidelines and avoids common problems.
 
-Lint testing is a form of [static program analysis](https://en.wikipedia.org/wiki/Static_program_analysis), also called _static code analytis_. Static code analysis involves the automated inspection of a program's source code for potential defects without actually running the program.
+Lint testing is a form of [static program analysis](https://en.wikipedia.org/wiki/Static_program_analysis), also called _static code analysis_. A static code analysis tool automatically inspects a program's source code for potential defects without actually running the program.
 
-Lint testing can identify a range of issues, from code that's correct but difficult to read (such as code that uses non-uniform indentation) all the way to code that surely has an error (such as using an invalid character in a variable name.)
+Lint testing can identify a range of issues, from code that's correct but difficult to read (such as code that uses non-uniform indentation) all the way to code that surely has an error (such as using an invalid character in a variable name).
 
-In this lesson, you'll use two popular tools that are part of the Chef DK &ndash; [RuboCop](http://batsov.com/rubocop/) and [Foodcritic](https://acrmp.github.io/foodcritic/) &ndash; to identify potential issues in variations of the `webserver_test` cookbook you created previously. 
+In this lesson, you'll use two popular tools that are part of the Chef DK &ndash; [RuboCop](http://batsov.com/rubocop/) and [Foodcritic](https://acrmp.github.io/foodcritic/) &ndash; to identify potential issues in variations of the `webserver_test` cookbook you created previously.
 
 Here's what you'll do:
 
@@ -313,14 +313,14 @@ file "#{node['document_root']}/index.html" do
 end
 ```
 
-You can use double-quotes even when string interpolation is not used. However, some prefer to use double-quotes only when string interpolation is required because it makes the intention of the string clear.
+You can use double quotes even when string interpolation is not used. However, some people prefer to use double-quotes only when string interpolation is required because it makes the intention of the string clear.
 
 Let's examine a case where lint testing can help identify the use of unnecessary string interpolation. Modify your default recipe to look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
 package_name =
-  service_name = 
+  service_name =
     case node['platform']
     when 'centos' then 'httpd'
     when 'ubuntu' then 'apache2'
@@ -364,7 +364,7 @@ Now remove the string interpolation to fix the violation. Your recipe should res
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
 package_name =
-  service_name = 
+  service_name =
     case node['platform']
     when 'centos' then 'httpd'
     when 'ubuntu' then 'apache2'
@@ -437,7 +437,7 @@ file '/var/www/html/index.html' do
 end
 ```
 
-Although this recipe might work as you expect, it's unnecessarily complex. The `execute` resource requires additional code to ensure that the service is enabled and started only when needed. This code would require additional testing to ensure that it accounts for differences among each version of CentOS and Ubuntu that you support.
+Although this recipe might work as you expect, it's unnecessarily complex. The `execute` resource requires additional code to ensure that the service is enabled and started only when needed. This code would require additional testing to ensure that it accounts for differences in each version of CentOS and Ubuntu that you support.
 
 Run `foodcritic` to apply Foodcritic's rules to your recipe.
 
@@ -455,7 +455,7 @@ The `service` resource takes care of all of the details required to enable and s
 ```ruby
 # ~/learn-chef/cookbooks/webserver_test/recipes/default.rb
 package_name =
-  service_name = 
+  service_name =
     case node['platform']
     when 'centos' then 'httpd'
     when 'ubuntu' then 'apache2'
@@ -479,7 +479,7 @@ file '/var/www/html/index.html' do
 end
 ```
 
-Run `foodcritic` a to verify that the violation is fixed.
+Run `foodcritic` to verify that the violation is fixed.
 
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
@@ -491,7 +491,7 @@ By fixing the violations, you've created a recipe that's easier to read, maintai
 Check out the [Foodcritic documention](http://www.foodcritic.io) to learn more, including how to:
 
 * specify [which rules to run](http://www.foodcritic.io/#choosing-rules-to-run).
-* use rules [written by the community](http://www.foodcritic.io/#extra-rules), which you can use as a model for writing your own rules. 
+* use rules [written by the community](http://www.foodcritic.io/#extra-rules), which you can use as a model for writing your own rules.
 
 [GITHUB] [Get the code for this lesson](https://github.com/learn-chef/webserver_test/tree/lesson3_rhel) on GitHub.
 
