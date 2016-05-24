@@ -220,7 +220,11 @@ driver:
     - ["private_network", {ip: "192.168.35.35"}]
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
+
+transport:
+  name: winrm
+  elevated: true
 
 platforms:
   - name: windows-2012r2
@@ -341,17 +345,17 @@ Typically, you use `default` to define a node attribute. To ensure that the pass
 
 It's common to specify a value for passwords and other sensitive information as you develop your cookbooks. Here are a few reasons why.
 
-First, recall that your Test Kitchen configuration file, <% fp '.kitchen.yml' %>, uses the `chef_zero_scheduled_task` provisioner.
+First, recall that your Test Kitchen configuration file, <% fp '.kitchen.yml' %>, uses the `chef_zero` provisioner.
   
 ```yaml
 # ~/learn-chef/cookbooks/awesome_customers_windows/.kitchen.yml
 [...]
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
 [...]
 ```
 
-The `provisioner` section specifies how to run Chef. You specify `chef_zero_scheduled_task` to mimic a Chef server environment on your local machine. Because the Chef server environment is reset between each Test Kitchen run, your node attributes are not preserved. This can cause problems when you run `kitchen converge` multiple times on the same test instance because your node attributes (for example, one that defines a database password) won't match the existing configuration.
+The `provisioner` section specifies how to run Chef. You specify `chef_zero` to mimic a Chef server environment on your local machine. Because the Chef server environment is reset between each Test Kitchen run, your node attributes are not preserved. This can cause problems when you run `kitchen converge` multiple times on the same test instance because your node attributes (for example, one that defines a database password) won't match the existing configuration.
 
 Other reasons you might specify the passwords during development are to support testing and debugging. For example, if your database is not configured as you expect, it may be easier to connect to the database to troubleshoot the issue using an easy to remember password that you specify. 
 
@@ -379,7 +383,11 @@ driver:
     - ["private_network", {ip: "192.168.35.35"}]
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
+
+transport:
+  name: winrm
+  elevated: true
 
 platforms:
   - name: windows-2012r2
@@ -447,7 +455,7 @@ Like before, let's apply and then verify the configuration. Run `kitchen converg
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen converge
------> Starting Kitchen (v1.7.2)
+-----> Starting Kitchen (v1.8.0)
 -----> Converging <default-windows-2012r2>...
        Preparing files for transfer
        Preparing dna.json

@@ -13,7 +13,7 @@ driver:
   retryable_tries: 120
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
 
 transport:
   ssh_key: <%= ENV['AWS_SSH_KEY_PATH'] %>

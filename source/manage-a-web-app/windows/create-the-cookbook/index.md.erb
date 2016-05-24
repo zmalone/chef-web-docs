@@ -84,9 +84,11 @@ driver:
   associate_public_ip: true
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
 
 transport:
+  name: winrm
+  elevated: true
   ssh_key: C:\Users\LearnChef\.ssh\learnchef.pem
 
 platforms:
@@ -126,9 +128,11 @@ driver:
   memory_startup_bytes: 2GB
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
 
 transport:
+  name: winrm
+  elevated: true
   password: H24?6;H.QaV8JP2&
 
 platforms:
@@ -154,7 +158,11 @@ driver:
     - ["private_network", {ip: "192.168.35.35"}]
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
+
+transport:
+  name: winrm
+  elevated: true
 
 platforms:
   - name: windows-2012r2
@@ -177,6 +185,19 @@ It also assigns the IP address 192.168.35.35 to the instance. You'll later use t
 
 [END_TABS]
 
+Each version of <% fp '.kitchen.yml' %> specifies these options:
+
+```yaml
+# .kitchen.yml
+transport:
+  name: winrm
+  elevated: true
+```
+
+Test Kitchen connects to instances over the SSH protocol by default, which is appropriate for configuring Linux instances. The `name` option tells Test Kitchen to connect over the Windows Remote Management (WinRM) protocol, which is typically used to remotely configure Windows Server.
+
+The `elevated` option tells Test Kitchen to run `chef-client` as a scheduled task. We need to specify this option perform remote installation of SQL Server, which does not support direct installation over WinRM. When Test Kitchen runs, it creates a scheduled task and immediately connects to that task so that it can receive the output of `chef-client`. This mechanism enables you to kick off and monitor the `chef-client` run remotely, but the installation and configuration happen entirely in the context of the local Windows account.
+
 Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/awesome_customers_windows') %> directory.
 
 ```bash
@@ -189,8 +210,8 @@ Now run `kitchen list`. You'll see that the instance was not yet created.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen list
-Instance                Driver   Provisioner            Verifier  Transport  Last Action
-default-windows-2012r2  Vagrant  ChefZeroScheduledTask  Busser    Winrm      <Not Created>
+Instance                Driver   Provisioner  Verifier  Transport  Last Action
+default-windows-2012r2  Vagrant  ChefZero     Busser    Winrm      <Not Created>
 ```
 
 Now run `kitchen converge`. This command downloads the base Windows Server 2012 R2 box if needed, brings up an instance, installs `chef-client`, and applies the cookbook.
@@ -198,7 +219,7 @@ Now run `kitchen converge`. This command downloads the base Windows Server 2012 
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen converge
------> Starting Kitchen (v1.7.2)
+-----> Starting Kitchen (v1.8.0)
 -----> Creating <default-windows-2012r2>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'windows-2012r2'...

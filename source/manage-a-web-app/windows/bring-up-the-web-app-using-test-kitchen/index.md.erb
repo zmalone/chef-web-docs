@@ -81,9 +81,11 @@ driver:
   associate_public_ip: true
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
 
 transport:
+  name: winrm
+  elevated: true
   ssh_key: C:\Users\LearnChef\.ssh\learnchef.pem
 
 [...]
@@ -110,9 +112,11 @@ driver:
   memory_startup_bytes: 2GB
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
 
 transport:
+  name: winrm
+  elevated: true
   password: H24?6;H.QaV8JP2&
 
 platforms:
@@ -137,8 +141,8 @@ From your cookbook's directory, <% fp '~/learn-chef/cookbooks/awesome_customers_
 # ~/learn-chef
 $ cd ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen list
-Instance                Driver  Provisioner            Verifier  Transport  Last Action
-default-windows-2012r2  Ec2     ChefZeroScheduledTask  Busser    Winrm      <Not Created>
+Instance                Driver  Provisioner  Verifier  Transport  Last Action
+default-windows-2012r2  Ec2     ChefZero     Busser    Winrm      <Not Created>
 ```
 
 [END_BOX]
@@ -244,7 +248,11 @@ driver:
     - ["private_network", {ip: "192.168.35.35"}]
 
 provisioner:
-  name: chef_zero_scheduled_task
+  name: chef_zero
+
+transport:
+  name: winrm
+  elevated: true
 
 platforms:
   - name: windows-2012r2
@@ -280,7 +288,7 @@ When you're done experimenting, run `kitchen destroy` to clean things up.
 ```bash
 # ~/learn-chef/cookbooks/awesome_customers_windows
 $ kitchen destroy
------> Starting Kitchen (v1.7.2)
+-----> Starting Kitchen (v1.8.0)
 -----> Destroying <default-windows-2012r2>...
        EC2 instance <i-4aa6298d> destroyed.
        Finished destroying <default-windows-2012r2> (0m1.25s).
