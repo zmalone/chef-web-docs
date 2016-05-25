@@ -4,7 +4,6 @@ layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
-meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 With Chef, you use _code_ to create cookbooks that express the desired state of your systems. You can also use code to verify that the cookbooks you write do what you expect.
 
