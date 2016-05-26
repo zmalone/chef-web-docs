@@ -39,10 +39,10 @@ Run this command to install it.
 ```ps
 # ~
 $ chef gem install kitchen-hyperv
-Fetching: kitchen-hyperv-0.1.7.gem (100%)
-Successfully installed kitchen-hyperv-0.1.7
-Parsing documentation for kitchen-hyperv-0.1.7
-Installing ri documentation for kitchen-hyperv-0.1.7
+Fetching: kitchen-hyperv-0.2.1.gem (100%)
+Successfully installed kitchen-hyperv-0.2.1
+Parsing documentation for kitchen-hyperv-0.2.1
+Installing ri documentation for kitchen-hyperv-0.2.1
 Done installing documentation for kitchen-hyperv after 0 seconds
 1 gem installed
 ```
@@ -104,21 +104,7 @@ Cmdlet          Test-VMReplicationConnection                       Hyper-V
 
 [START_BOX]
 
-## 3. Ensure your workstation's execution policy allows scripts to run
-
-Now let's ensure that your workstation's execution policy allows remote signed scripts to run. Doing so will enable Test Kitchen to run scripts when it creates new virtual machine instances.
-
-From your workstation, run this PowerShell command.
-
-```ps
-$ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Create a base virtual machine
+## 3. Create a base virtual machine
 
 For some operating systems, Test Kitchen can automatically download a base virtual machine for you. It's also common to build your own box if you need it to contain certain software or security updates. Because of the way Windows Server 2012 R2 is licensed, we can't provide you with a preconfigured virtual machine. Here, you'll use the evaluation version of Windows Server 2012 R2 to build your own.
 
@@ -245,26 +231,19 @@ From the **Settings** screen, you'll be prompted to create a password for the `A
 
 ### Configure the base virtual machine to accept remote WinRM connections
 
-In [Manage a basic Windows Server web application](/manage-a-web-app/windows), you configured your node to accept remote WinRM connections before you bootstrapped it. You'll need to follow a similar process on your base virtual machine.
+In [Manage a Windows Server node](/manage-a-node/windows), you configured your node to [accept remote WinRM connections](/manage-a-node/windows/get-a-node-to-bootstrap#step4) before you bootstrapped it. You'll need to follow a similar process on your base virtual machine.
 
-After the Windows Server installation completes, connect to your virtual machine as `Administrator`. Then, from a PowerShell window, run these commands.
+By default, the Windows firewall permits inbound traffic on port 5985 (WinRM) only from systems in the same local domain. Let's make sure that the firewall is configured to accept inbound connections from any remote address.
+
+After the Windows Server installation completes, connect to your virtual machine as `Administrator`. Then, from a PowerShell window, run this command to change the default rule to enable inbound traffic from any remote address.
 
 ```ps
-$ winrm quickconfig -q
-$ winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
-$ winrm set winrm/config '@{MaxTimeoutms="1800000"}'
-$ winrm set winrm/config/service '@{AllowUnencrypted="true"}'
-$ winrm set winrm/config/service/auth '@{Basic="true"}'
-
-$ netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow
-$ netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
-
-$ net stop winrm
-$ sc.exe config winrm start= auto
-$ net start winrm
+$ Get-NetFirewallPortFilter | ?{$_.LocalPort -eq 5985 } | Get-NetFirewallRule | ?{ $_.Direction –eq "Inbound" -and $_.Profile -eq "Public" -and $_.Action –eq "Allow"} | Set-NetFirewallRule -RemoteAddress "Any"
 ```
 
 ### Shut down your virtual machine
+
+In practice, at this point you might finalize your base VM's configuration by customizing any settings or installing any additional software you need.
 
 The final step is to shut down your virtual machine, either from the instance or through Hyper-V. This step is important because Test Kitchen requires the instance to be shut down so that it can properly create the differencing disk.
 
