@@ -231,22 +231,14 @@ From the **Settings** screen, you'll be prompted to create a password for the `A
 
 ### Configure the base virtual machine to accept remote WinRM connections
 
-In [Manage a Windows Server node](/manage-a-node/windows), you [configured your node](/manage-a-node/windows/get-a-node-to-bootstrap) to accept remote WinRM connections before you bootstrapped it. You'll need to follow a similar process on your base virtual machine.
+In [Manage a Windows Server node](/manage-a-node/windows), you configured your node to [accept remote WinRM connections](/manage-a-node/windows/get-a-node-to-bootstrap#step4) before you bootstrapped it. You'll need to follow a similar process on your base virtual machine.
 
-After the Windows Server installation completes, connect to your virtual machine as `Administrator`. Then, from a PowerShell window, run these commands.
+By default, the Windows firewall permits inbound traffic on port 5985 (WinRM) only from systems in the same local domain. Let's make sure that the firewall is configured to accept inbound connections from any remote address.
+
+After the Windows Server installation completes, connect to your virtual machine as `Administrator`. Then, from a PowerShell window, run this command to change the default rule to enable inbound traffic from any remote address.
 
 ```ps
-$ winrm quickconfig -q
-$ winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
-$ winrm set winrm/config '@{MaxTimeoutms="1800000"}'
-$ winrm set winrm/config/service '@{AllowUnencrypted="true"}'
-$ winrm set winrm/config/service/auth '@{Basic="true"}'
-
-$ netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow
-
-$ net stop winrm
-$ sc.exe config winrm start= auto
-$ net start winrm
+$ Get-NetFirewallPortFilter | ?{$_.LocalPort -eq 5985 } | Get-NetFirewallRule | ?{ $_.Direction –eq "Inbound" -and $_.Profile -eq "Public" -and $_.Action –eq "Allow"} | Set-NetFirewallRule -RemoteAddress "Any"
 ```
 
 ### Shut down your virtual machine
