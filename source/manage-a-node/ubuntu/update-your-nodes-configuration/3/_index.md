@@ -114,35 +114,3 @@ localhost Chef Client finished, 1/5 resources updated in 03 seconds
 ```
 
 [COMMENT] Remember, in practice it's common to configure Chef to act as a service that runs periodically or in response to an event, such as a commit to source control. For now, we're updating our server configuration by running `chef-client` manually.
-
-<hr>
-
-<a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
-
-<div id="knife-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-  <h3 id="modalTitle">If the operation times out or fails, here are some things to try</h3>
-  <ul>
-    <li>Ensure that you run <code>knife</code> commands from your <code class="file-path">learn-chef</code> directory or one of its sub-directories.</li>
-    <li>Ensure you have a <code class="file-path">learn-chef/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and your RSA private key file. If you don't, <a href="/manage-a-node/ubuntu/set-up-your-chef-server#step2" target="_blank">configure your workstation to communicate with Chef server</a>.</li>
-    <li>Ensure that your node's IP address is accessible from your network.</li>
-    <li>Ensure the user name you provide has root or <code>sudo</code> access on the node.</li>
-    <li>Ensure your workstation has outbound access (including firewall) on these ports:
-      <ul>
-        <li>22 (SSH)</li>
-        <li>80 (HTTP)</li>
-        <li>443 (HTTPS)</li>
-      </ul>
-    </li>
-    <li>Ensure your node has inbound access (including firewall) on these ports:
-      <ul>
-        <li>22 (SSH)</li>
-      </ul>
-    </li>
-    <li>Ensure your node has outbound access (including firewall) on these ports:
-      <ul>
-        <li>443 (HTTPS)</li>
-      </ul>
-    </li>
-  </ul>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-</div>
