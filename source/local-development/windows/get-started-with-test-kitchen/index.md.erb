@@ -273,70 +273,12 @@ If you're using a driver other than the EC2 driver, you would see that driver li
 
 Our kitchen includes just one instance &ndash; a Windows Server 2012 R2 virtual machine that's configured to run the `default` suite. The `Last Action` column shows that the virtual machine is not yet created.
 
-<a class="button radius" href="#" data-reveal-id="test-matrix-modal">Learn more about test matrices</a>
+<% accordion('test-matrices', 'Learn more about test matrices') do %>
 
-<div id="test-matrix-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-<p>Remember, you can target more than one platform, and also define more than one suite. Test Kitchen multiplies the number of platforms by the number of suites, creating a <em>matrix</em> of test scenarios. For example, imagine that you have two suites &ndash; one named <code>development</code> and one <code>test</code>. You also have two platforms that you want to test against &ndash; a standard Windows Server 2012 R2 configuration named <code>windows-2012r2</code> and a version that contains added security settings named <code>windows-2012r2-secure</code>. You want to ensure that your cookbook works as you expect on both platforms. Your <code class="file-path">.kitchen.yml</code> file might look like this.</p>
-<div class="window " ng-non-bindable="">
-              <nav class="control-window">
-                <div class="close">×</div>
-                <div class="minimize"></div>
-                <div class="deactivate"></div>
-              </nav>
-              <h1 class="titleInside">Editor: ~/learn-chef/cookbooks/settings_windows</h1>
-              <div class="container"><div class="editor"><div class="highlight ruby"><pre class="code_wrapper"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20</pre></td><td class="code"><pre><span class="o">---</span>
-<span class="ss">driver:
-  </span><span class="nb">name</span><span class="p">:</span> <span class="n">vagrant</span>
+<%= partial 'test_matrices' %>
 
-<span class="ss">provisioner:
-  </span><span class="nb">name</span><span class="p">:</span> <span class="n">chef_zero</span>
-
-<span class="ss">platforms:
-  </span><span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">windows</span><span class="o">-</span><span class="mi">2012</span><span class="n">r2</span>
-  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">windows</span><span class="o">-</span><span class="mi">2012</span><span class="n">r2</span><span class="o">-</span><span class="n">secure</span>
-
-<span class="ss">suites:
-  </span><span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">development</span>
-    <span class="ss">run_list:
-      </span><span class="o">-</span> <span class="n">recipe</span><span class="o">[</span><span class="n">settings</span><span class="o">::</span><span class="n">default</span><span class="o">]</span>
-    <span class="ss">attributes:
-  </span><span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="nb">test</span>
-    <span class="ss">run_list:
-      </span><span class="o">-</span> <span class="n">recipe</span><span class="o">[</span><span class="n">settings</span><span class="o">::</span><span class="n">default</span><span class="o">]</span>
-    <span class="n">attributes</span><span class="p">:</span><span class="w">
-</span></pre></td></tr></tbody></table></pre></div></div></div></div>
-<p>When you run <code>kitchen list</code>, you&#39;ll see the full test matrix.</p>
-<div class="window ">
-            <nav class="control-window">
-              <div class="close">×</div>
-              <div class="minimize"></div>
-              <div class="deactivate"></div>
-            </nav>
-            <h1 class="titleInside">Terminal: ~/learn-chef/cookbooks/settings_windows</h1>
-            <div class="container"><div class="terminal"><table><tbody><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">$</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span><span class="line-number">&nbsp;</span></pre></td><td class="code"><pre><code><span class="line command">kitchen list</span><span class="line output">Instance                           Driver   Provisioner  Verifier  Transport  Last Action</span><span class="line output">development-windows-2012r2         Vagrant  ChefZero     Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">development-windows-2012r2-secure  Vagrant  ChefZero     Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2                Vagrant  ChefZero     Busser    Winrm      &lt;Not Created&gt;</span><span class="line output">test-windows-2012r2-secure         Vagrant  ChefZero     Busser    Winrm      &lt;Not Created&gt;</span></code></pre></td></tr></tbody></table></div></div>
-          </div>
-<p>Test matrices enable you to define multiple configurations, and test each configuration against one or more platforms.</p>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-</div>
+<% end %>
+<br>
 
 Create the instance now by running `kitchen create`.
 
