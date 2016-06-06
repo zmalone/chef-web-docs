@@ -10,8 +10,8 @@ describe service 'postfix' do
 end
 
 describe file '/etc/postfix/main.cf' do
-  its('contents') { should match /^mydomain = example.com$/ }
-  its('contents') { should match /^myorigin = example.com$/ }
+  its('content') { should match /^mydomain = example.com$/ }
+  its('content') { should match /^myorigin = example.com$/ }
 end
 
 ```
