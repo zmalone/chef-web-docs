@@ -1,0 +1,1 @@
+Next, you'll create an organization and set up an initial user account.
