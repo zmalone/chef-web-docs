@@ -6,25 +6,204 @@ layout: lesson
 sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
-survey_id: 2mCgpoLBUQiBI9gS46TWiSMBYPVi_2FumGC4rJ8eJqMxJdJLzeR4SRdxnZWD5DzYU2
 show_disqus: false
 ---
-## Connect to Windows workstation
+In this part, you'll see how Chef Automate gives you visibility into your infrastructure.
 
-Create working dir, etc.
-Bring up visibility web ui
+Here's what you'll do:
 
-## Get awesome_customers_delivery cookbook
+* [A](#step1)
+* [B](#step2)
+* [C](#step3)
+* [D](#step4)
+* [E](#step5)
+* [F](#step6)
+* [Next steps](#nextsteps)
+
+[START_BOX]
+
+## 1. Connect to Windows workstation
+
+[LINK TO HOW]
+
+[Bring up visibility web ui - open Chrome, Demo > Chef Insights or URL https://delivery.chordata.biz/insights/. Note it's empty. Show screenshot.]
+
+[Create a working directory]
 
 ```ps
-$ git clone ...
+# ~
+$ mkdir ~\delivery-demo
+
+    Directory: C:\Users\Administrator
+
+
+Mode                LastWriteTime     Length Name
+----                -------------     ------ ----
+d----         6/23/2016   9:58 AM            delivery-demo
+
 ```
 
-## Upload cookbook to Chef server
+[END_BOX]
 
-Watch cookbook appear in UI!
+[START_BOX]
 
-## Add to infrastructure environments' run-list
+## 2. Clone the awesome\_customers_delivery repo from GitHub
+
+In this step, you clone the repository from GitHub to your local repository directory. The GitHub repository contains the `awesome_customers_delivery` cookbook, which configures the Customers web application.
+
+From a PowerShell prompt, move to your working directory, <% fp '~\delivery-demo' %>.
+
+```ps
+#
+$ cd ~\delivery-demo
+```
+
+Clone the `awesome_customers_delivery` repo from GitHub.
+
+```ps
+# ~\delivery-demo
+$ git clone https://github.com/learn-chef/awesome_customers_delivery.git
+Cloning into 'awesome_customers_delivery'...
+remote: Counting objects: 110, done.
+remote: Total 110 (delta 0), reused 0 (delta 0), pack-reused 110
+Receiving objects: 100% (110/110), 51.34 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (23/23), done.
+Checking connectivity... done.
+```
+
+Remember, for the tutorial, you're cloning an existing Git project to obtain starter code. You can configure Chef Automate to connect directly with your existing Git projects, import code from another source control system, or create a new repository.
+
+[COMMENT] The workstation comes with [posh-git](https://github.com/dahlbyk/posh-git), which integrates Git with PowerShell. posh-git provides useful features such as tab completion and the ability to show the current branch and the state of files.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Upload the awesome\_customers_delivery cookbook to the Chef server
+
+Move to the <% fp 'awesome_customers_delivery' %> directory.
+
+```ps
+# ~\delivery-demo
+$ cd awesome_customers_delivery
+```
+
+```ps
+# ~\delivery-demo\awesome_customers_delivery
+$ berks install
+Resolving cookbook dependencies...
+Fetching 'awesome_customers_delivery' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Using awesome_customers_delivery (0.1.0) from source at .
+Installing chef-sugar (3.3.0)
+Installing compat_resource (12.10.6)
+Installing firewall (2.4.0)
+Installing httpd (0.3.6)
+```
+
+```ps
+# ~\delivery-demo\awesome_customers_delivery
+$ berks upload --no-ssl-verify
+Uploaded awesome_customers_delivery (0.1.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded chef-sugar (3.3.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded compat_resource (12.10.6) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded firewall (2.4.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded httpd (0.3.6) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+```
+
+[TODO: Go back to visibility dashboard and see the cookbook upload events]
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Bootstrap your nodes
+
+Recall that the demo environment comes with infrastructure for each of the Acceptance, Union, Rehearsal, and Delivered stages. Each infrastructure environment is an Ubuntu 14.04 server.
+
+You'll learn more about the purpose of each of these infrastructure environments in the next tutorial. For now, you'll bootstrap each instance to the Chef server and run the `awesome_customers_delivery` cookbook.
+
+The Windows workstation comes preconfigured to communicate to your nodes [using fictitious hostnames](/automate/install/managing-your-aws-instances#connectingtoyourawsinstancesfromthewindowsworkstation). The hostnames for the infrastructure environments are:
+
+| Stage      | Hostname |
+|-----------:|----------|
+| Acceptance | acceptance.chordata.biz |
+| Union      | union.chordata.biz |
+| Rehearsal  | rehearsal.chordata.biz |
+| Delivered  | delivered.chordata.biz |
+
+Start by bootstrapping the infrastructure environment for the Acceptance stage, like this.
+
+```ps
+# ~\delivery-demo\awesome_customers_delivery
+$ knife bootstrap acceptance.chordata.biz --ssh-user ubuntu --sudo --node-name acceptance --run-list 'recipe[awesome_customers_delivery]' --yes
+Creating new client for acceptance
+Creating new node for acceptance
+Connecting to acceptance.chordata.biz
+acceptance.chordata.biz -----> Existing Chef installation detected
+acceptance.chordata.biz Starting the first Chef Client run...
+acceptance.chordata.biz Starting Chef Client, version 12.11.18
+acceptance.chordata.biz resolving cookbooks for run list: ["awesome_customers_delivery"]
+acceptance.chordata.biz Synchronizing Cookbooks:
+acceptance.chordata.biz   - awesome_customers_delivery (0.1.0)
+acceptance.chordata.biz   - chef-sugar (3.3.0)
+acceptance.chordata.biz   - firewall (2.4.0)
+acceptance.chordata.biz   - httpd (0.3.6)
+acceptance.chordata.biz   - compat_resource (12.10.6)
+acceptance.chordata.biz Installing Cookbook Gems:
+acceptance.chordata.biz Compiling Cookbooks...
+acceptance.chordata.biz Recipe: chef-sugar::default
+acceptance.chordata.biz   * chef_gem[chef-sugar] action install
+acceptance.chordata.biz     - install version 3.3.0 of package chef-sugar
+acceptance.chordata.biz   Converging 16 resources
+acceptance.chordata.biz Recipe: awesome_customers_delivery::package_cache
+acceptance.chordata.biz   * apt_update[Update the apt cache daily] action periodic
+acceptance.chordata.biz     - update new lists of packages
+[...]
+acceptance.chordata.biz Recipe: awesome_customers_delivery::web
+acceptance.chordata.biz   * httpd_service_debian_sysvinit[customers] action restart
+acceptance.chordata.biz     * service[apache2-customers] action restart
+acceptance.chordata.biz       - restart service service[apache2-customers]
+acceptance.chordata.biz
+acceptance.chordata.biz
+acceptance.chordata.biz Running handlers:
+acceptance.chordata.biz Running handlers complete
+acceptance.chordata.biz Chef Client finished, 108/187 resources updated in 43 seconds
+```
+
+[TODO: Go back to visibility dashboard and see the cookbook upload events]
+
+Next, repeat the bootstrap process for the Union, Rehearsal, and Delivered environments.
+
+```ps
+# ~\delivery-demo\awesome_customers_delivery
+$ knife bootstrap union.chordata.biz --ssh-user ubuntu --sudo --node-name union --run-list 'recipe[awesome_customers_delivery]' --yes
+Creating new client for union
+Creating new node for union
+Connecting to union.chordata.biz
+[...]
+union.chordata.biz Running handlers:
+union.chordata.biz Running handlers complete
+union.chordata.biz Chef Client finished, 108/187 resources updated in 43 seconds
+$ knife bootstrap rehearsal.chordata.biz --ssh-user ubuntu --sudo --node-name rehearsal --run-list 'recipe[awesome_customers_delivery]' --yes
+Creating new client for rehearsal
+Creating new node for rehearsal
+Connecting to rehearsal.chordata.biz
+[...]
+rehearsal.chordata.biz Running handlers:
+rehearsal.chordata.biz Running handlers complete
+rehearsal.chordata.biz Chef Client finished, 108/187 resources updated in 42 seconds
+$ knife bootstrap delivered.chordata.biz --ssh-user ubuntu --sudo --node-name delivered --run-list 'recipe[awesome_customers_delivery]' --yes
+Creating new client for delivered
+Creating new node for delivered
+Connecting to delivered.chordata.biz
+[...]
+delivered.chordata.biz Running handlers:
+delivered.chordata.biz Running handlers complete
+delivered.chordata.biz Chef Client finished, 108/187 resources updated in 42 seconds
+```
+
+[END_BOX]
 
 ## Run chef-client on nodes
 
@@ -59,3 +238,35 @@ Simply roll back cookbook.
 ## Next steps
 
 What you'll do in the next tutorial.
+
+
+-- -- --
+
+## When?
+
+```ps
+$ cd ~
+$ knife node list
+acceptance
+build-node-1
+build-node-2
+delivered
+rehearsal
+union
+```
+
+```
+# C:\Users\Administrator
+$ knife node show acceptance
+Node Name:   acceptance
+Environment: _default
+FQDN:        acceptance.chordata.biz
+IP:          50.112.27.84
+Run List:
+Roles:
+Recipes:
+Platform:    ubuntu 14.04
+Tags:
+```
+
+Let's give it a cookbook to run...
