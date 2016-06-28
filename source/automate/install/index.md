@@ -1,11 +1,13 @@
 ---
-title: 'Get the demo environment'
+title: 'Get the Chef Automate demo environment'
 layout: lesson-overview
-platform: Get the demo environment
-logo: delivery.svg
+platform: Get the Chef Automate demo environment
+logo: demo-environment.svg
 order: 1
 ---
 Chef Automate gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
+
+[PRODNOTE] Update diagram.
 
 ![](automate/Chef-Automate.png)
 
@@ -32,15 +34,6 @@ To help get started with Chef Automate more quickly, you begin by using automati
 
 The automation brings up a fully-functional Chef Automate system in an isolated AWS environment that won't affect anything else you're running. After you complete the tutorial, you can experiment further and then simply tear down the environment when you're done.
 
-## How to use the demo environment
+[PRODNOTE] Update www.chef.io/delivery link.
 
-The demo environment gives you access to a fully-functional Chef Automate system. You can use the demo environment to build a build proof of concept for how Chef Automate can help solve your infrastructure challenges.
-
-First, we recommend these Learn Chef tutorials, which walk you though Chef Automate's capabilities:
-
-* A
-* B
-
-As you have questions or suggestions on how Chef Automate can better fit your workflow, join us on [Discourse](https://discourse.chef.io/c/delivery).
-
-Also learn more about how to bring the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/delivery](https://www.chef.io/delivery) to read the whitepaper. [When you're ready], click **Get Demo** to talk to us about how Chef Automate can help transform your workflow.
+[COMMENT] Learn more about how to bring the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/delivery](https://www.chef.io/delivery) to read the whitepaper.

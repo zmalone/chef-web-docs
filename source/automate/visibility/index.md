@@ -1,8 +1,8 @@
 ---
-title: 'Gain visibility into your infrastructure'
+title: 'Gain visibility into your infrastructure with Chef Automate'
 layout: lesson-overview
-platform: Gain visibility into your infrastructure
-logo: delivery.svg
+platform: Gain visibility into your infrastructure with Chef Automate
+logo: insight.svg
 order: 2
 ---
 Whether you're managing ten nodes or ten thousand, having real-time visibility into what's happening on the Chef server can help you stay on top of your Chef infrastructure. For example, say you want to know:

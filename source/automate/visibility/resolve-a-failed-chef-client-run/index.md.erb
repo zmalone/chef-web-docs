@@ -4,7 +4,7 @@ order: 2
 keywords: TODO
 layout: lesson
 sections: []
-next: {heading: What's next, partial: next}
+next: {heading: Summary and what's next, partial: next}
 time_to_complete: 30 minutes
 show_disqus: false
 ---
@@ -12,43 +12,228 @@ In this part, you'll ...
 
 Here's what you'll do:
 
-* [A](#step1)
-* [B](#step2)
-* [C](#step3)
-* [D](#step4)
-* [E](#step5)
-* [F](#step6)
+* [Modify the awesome\_customers_delivery cookbook to fail](#step1)
+* [Upload the awesome\_customers_delivery cookbook to Chef server](#step2)
+* [Run chef-client on your nodes](#step3)
+* [Investigate the failure](#step4)
+* [Resolve the failure](#step5)
+* [Restore your local environment](#step6)
 
 [START_BOX]
 
-## Run chef-client on nodes
+## 1. Modify the awesome\_customers_delivery cookbook to fail
 
-```ps
-$ knife job ... --search ...
+Now let's modify the `awesome_customers_delivery` cookbook to fail so that we can see the failure in the web interface.
+Modify your cookbook's default recipe like this.
+
+```ruby
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery\recipes\default.rb
+
+raise 'A fatal error has occurred.' if node.name == 'acceptance'
+
+include_recipe 'awesome_customers_delivery::package_cache'
+include_recipe 'awesome_customers_delivery::firewall'
+include_recipe 'awesome_customers_delivery::user'
+include_recipe 'awesome_customers_delivery::web'
 ```
 
-Verify the config succeeded.
+This example [raises an exception](http://ruby-doc.org/core-2.1.1/Exception.html) to cause the `chef-client` run to fail if the node's name is "acceptance". In practice, you wouldn't likely write code that does this, but it illustrates the XXXX.
 
-Watch the nodes appear in the web ui!
+You should always [update your cookbook's version metadata](/manage-a-web-app/rhel/updating-your-nodes-configuration#updateyourcookbook39sversionmetadata) to ensure that each version is tied to a specific set of functionality.
 
-## Watch it fail
+Update the `version` field in your your cookbook's metadata file to `0.1.1`, making the entire file look like this.
 
-* Update cookbook to intentially fail
-* Update metadata.rb
-* `knife cookbook upload awesome_customers_delivery`
-* `knife job ...`
-* Watch web ui
+```ruby
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery\metadata.rb
+name 'awesome_customers_delivery'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures awesome_customers_delivery'
+long_description 'Installs/Configures awesome_customers_delivery'
+version '0.1.1'
 
-## Investigate the failure
+depends 'chef-sugar'
+depends 'firewall', '~> 2.4.0'
+depends 'httpd', '~> 0.3.4'
+```
 
-Pretend that ...
+[END_BOX]
 
-Investigate ...
+[START_BOX]
 
-## Resolve the failure
+## 2. Upload the awesome\_customers_delivery cookbook to Chef server
 
-Simply roll back cookbook.
+```ps
+# C:\Users\Administrator
+$ cd C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+```
 
-* `knife cookbook delete awesome_customers_delivery --version blah`
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ berks update
+Resolving cookbook dependencies...
+Fetching 'awesome_customers_delivery' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Using awesome_customers_delivery (0.1.1) from source at .
+Using chef-sugar (3.3.0)
+Using firewall (2.4.0)
+Using httpd (0.3.6)
+Using compat_resource (12.10.6)
+```
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ berks upload --no-ssl-verify
+Uploaded awesome_customers_delivery (0.1.1) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Skipping chef-sugar (3.3.0) (frozen)
+Skipping compat_resource (12.10.6) (frozen)
+Skipping firewall (2.4.0) (frozen)
+Skipping httpd (0.3.6) (frozen)
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Run chef-client on your nodes
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ knife job start 'chef-client' --search 'recipe:awesome_customers_delivery'
+WARNING: Falling back to Push Jobs v1 mode.
+Started.  Job ID: 2192bd742017e2274fcfa18f46e78523
+.Running (1/1 in progress) ...
+.Complete.
+command:     chef-client
+created_at:  Fri, 24 Jun 2016 15:58:13 GMT
+id:          2192bd742017e2274fcfa18f46e78523
+nodes:
+  failed: acceptance
+run_timeout: 3600
+status:      complete
+updated_at:  Fri, 24 Jun 2016 15:58:15 GMT
+```
+
+You'll see that it failed.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Investigate the failure
+
+* Login to web ui.
+* Note that a node failed.
+* Click on it.
+* See additional details.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Resolve the failure
+
+In practice, you and your team would decide the appropriate way to fix the error. A fix might involve modifying the `awesome_customers_delivery` cookbook to remedy the error and verifying the fix locally before [submitting it.]
+
+[SKILL] Something about local testing with TK...
+
+In this case, let's simply roll back the `awesome_customers_delivery` cookbook to the previous version, 0.1.0.
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ knife cookbook show awesome_customers_delivery
+awesome_customers_delivery   0.1.1  0.1.0
+```
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ knife cookbook delete awesome_customers_delivery 0.1.1 --yes
+Deleted cookbook[awesome_customers_delivery version 0.1.1]
+```
+
+Verify that only version 0.1.0 exists on the Chef server.
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ knife cookbook show awesome_customers_delivery
+awesome_customers_delivery   0.1.0
+```
+
+Rerun `chef-client` on your nodes.
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ knife job start 'chef-client' --search 'recipe:awesome_customers_delivery'
+WARNING: Falling back to Push Jobs v1 mode.
+Started.  Job ID: 2192bd7420172fa4913b6b16cd849482
+.Running (1/1 in progress) ...
+...Complete.
+command:     chef-client
+created_at:  Fri, 24 Jun 2016 16:22:37 GMT
+id:          2192bd7420172fa4913b6b16cd849482
+nodes:
+  succeeded: acceptance
+run_timeout: 3600
+status:      complete
+updated_at:  Fri, 24 Jun 2016 16:22:41 GMT
+```
+
+[You see it succeeded.]
+[Also note in the webui that everything's green.]
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Restore your local environment
+
+The next tutorial (LINK) uses the `awesome_customers_delivery` cookbook. So let's restore it...
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   metadata.rb
+        modified:   recipes/default.rb
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ git reset --hard HEAD
+HEAD is now at c0d2305 Merge pull request #2 from learn-chef/tp/rename1
+```
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working directory clean
+```
+
+If you're new to Git, you may also verify that the default recipe and metadata file are restored.
+
+Now run `berks update` to ensure your Berksfile.lock is up to date.
+
+```ps
+# C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+$ berks update
+Resolving cookbook dependencies...
+Fetching 'awesome_customers_delivery' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Using awesome_customers_delivery (0.1.0) from source at .
+Using chef-sugar (3.3.0)
+Using compat_resource (12.10.6)
+Using firewall (2.4.0)
+Using httpd (0.3.6)
+```
 
 [END_BOX]

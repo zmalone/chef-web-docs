@@ -5,13 +5,14 @@ keywords: TODO
 layout: lesson
 sections: []
 next: {heading: Next steps, partial: conclusion}
-time_to_complete: 30 minutes
-survey_id: 2mCgpoLBUQiBI9gS46TWiSMBYPVi_2FumGC4rJ8eJqMxJdJLzeR4SRdxnZWD5DzYU2
+time_to_complete: 60 minutes
 show_disqus: false
 ---
 In this part, you install Chef Automate on AWS using [CloudFormation](https://aws.amazon.com/cloudformation/).
 
 The automation you run brings up a fully-functional Chef Automate installation, which includes a Chef server, a Chef Automate server, and build nodes that run jobs scheduled by Chef Automate. The automation also sets up an end-user's Windows workstation as well as infrastructure that can run build artifacts.
+
+[PRODNOTE] Verify docs link.
 
 [COMMENT] The automation we provide for AWS gives you a preconfigured setup. We recommend that you use this approach to get a feel for how Chef Automate works. Later, you can [install Chef Automate](https://docs.chef.io/release/delivery/index.html) in another cloud environment or on your own hardware.
 
@@ -22,6 +23,7 @@ Here are the steps to perform:
 1. [Run the CloudFormation template](#step3)
 1. [Copy your license key to the Chef Automate server](#step4)
 1. [Connect to the Windows workstation](#step5)
+1. [Start a Chef Development Kit PowerShell session](#step6)
 
 [START_BOX]
 
@@ -31,11 +33,13 @@ The systems that make up Chef Automate reflect the types of software you want to
 
 The automation you run for this tutorial includes the minimum number of systems that are typical for many users. Here's a diagram:
 
+[PRODNOTE] Update diagram. What do we call Chef Delivery server? Light up URD. Add Compliance. Talk about Compliance below. Link to tutorial.
+
 <img src="/assets/images/delivery/delivery-scenario-architecture.svg" style="width: 100%; box-shadow: none;" alt="An example Chef Automate installation" />
 
 The diagram shows these components:
 
-**Chef Automate cluster** &ndash; These are the systems that make up a Chef Automate installation.
+**Chef Automate** &ndash; These are the systems that make up a Chef Automate installation.
 
 At a minimum, a Chef Automate cluster includes Chef Automate and one build node.
 
@@ -49,7 +53,7 @@ Recall that the final four stages of the pipeline are Acceptance, Union, Rehears
 
 Each environment is named for the stage in which it is used. These environments typically resemble your production environment, and can often be part of your production environment. Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
 
-The automation brings one Ubuntu 14.04 instance for each of the Acceptance, Union, Rehearsal, and Delivered environments. They come already [bootstrapped to the Chef server](https://docs.chef.io/install_bootstrap.html). In the following tutorial, you'll configure these environments to run the basic web application cookbook.
+The automation provides one Ubuntu 14.04 instance for each of the Acceptance, Union, Rehearsal, and Delivered environments. In the following tutorial, you'll bootstrap these environments and configure them each to run the basic web application cookbook.
 
 **Team member's workstation** &ndash; Workstations are typically either a laptop or desktop computer. A workstation can run Windows, Mac OS X, or Linux. From the workstation, users access Chef Automate using either the command line or the web interface. Other common tasks include creating projects, writing build cookbooks, submitting new features to the pipeline, and reviewing and approving others' changes.
 
@@ -76,8 +80,9 @@ To run the automated installation, you need:
 1. an [AWS account](https://aws.amazon.com/free/).
 1. an [IAM user role](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-an-iam-user) and [SSH key pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#create-a-key-pair) for one of these regions.
   * us-east-1 (N. Virginia)
-  * us-west-1 (N. California)
   * us-west-2 (Oregon)
+  * eu-west-1 (Ireland)
+  * ap-southeast-1 (Singapore)
 1. a Chef Automate license key.
 
 Place your SSH private key in the <% fp '.ssh' %> directory under your home directory. Also ensure that your IAM user role [includes the necessary permissions](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-iam-template.html) to work with CloudFormation stacks.
@@ -131,6 +136,8 @@ Windows comes with an RDP client. Run `mstsc` from the command prompt to bring u
 
 ## 3. Run the CloudFormation template
 
+[PRODNOTE] Recap all screenshots in this section as appropriate.
+
 Now you're ready to run the [CloudFormation](https://aws.amazon.com/cloudformation/) template to bring up the Chef Automate installation. A CloudFormation template is a code file (in JSON format) that defines a collection of resources, called a _stack_. When the template runs, it brings up the preconfigured server instances to run Chef Automate along with their required networking and security settings.
 
 1. From a web browser, start by navigating to the AWS home page. [https://aws.amazon.com/](https://aws.amazon.com/)
@@ -146,8 +153,10 @@ Now you're ready to run the [CloudFormation](https://aws.amazon.com/cloudformati
 1. Under **Choose a template**, choose **Specify an Amazon S3 template URL**.
   ![](delivery/aws_stack_choose_template.png)
 1. Enter the URL that matches your SSH key pair's region. Then click **Next**.
+  <div class="alert-box prod-note"><i class="fa fa-2x fa-sticky-note-o prod-note-icon"></i>&nbsp; <span class="prod-note-label">PRODUCTION:</span>&nbsp; For now you need to build your own, son. Build final CFN templates near release.</div>
   <%= partial 'urls' %>
 1. From the **Specify Details** screen, fill in the required details. When you're finished, click **Next**.
+  <div class="alert-box prod-note"><i class="fa fa-2x fa-sticky-note-o prod-note-icon"></i>&nbsp; <span class="prod-note-label">PRODUCTION:</span>&nbsp; Update this.</div>
   * **Stack name** can be any name you choose. This value uniquely identifies your stack in AWS. Note your stack name for later.
   * **KeyName** specifies the name of your SSH key pair. If you're new to AWS, this is the name you created in [step 2](#step2).
   * **SSHLocation** specifies the range of IP addresses (using [CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation)) that are permitted to connect to the AWS instances (users still require credentials to connect.) **0.0.0.0/0** permits access from any computer and gives you the most flexibility. Specify an address range if you want to limit who can connect.
@@ -163,7 +172,7 @@ The process is done when the **Status** reads **CREATE_COMPLETE**.
 
 ![](delivery/aws_stack_create_complete.png)
 
-The **Outputs** tab displays the public IP address for each server in the cluster. You can also get information about your cluster from the EC2 console.
+The **Outputs** tab displays the public IP address for the Windows workstation. You'll connect to the workstation in the next part. You can also get information about your cluster from the EC2 console.
 
 ![](delivery/ec2_console_instances.png)
 
@@ -178,6 +187,8 @@ Congratulations. You're almost ready to set up Chef Automate for your users. As 
 ## 4. Copy your license key to the Chef Automate server
 
 > In this step, you copy your license key file from your workstation to Chef Automate to complete the installation.
+
+[PRODNOTE] Verify that it doesn't work unless you do this step! Currently, it's all open.
 
 Here you'll run the secure copy utility, `scp`, to transfer your license file to a temporary location on your Chef Automate server. Then you log into the Chef Automate server over SSH, copy the license file to its final location, and finally restart Chef Automate to apply the changes.
 
@@ -294,7 +305,7 @@ From the CloudFormation console, select your stack and click the **Outputs** tab
 1. In the **User name** field, enter <span id="username-windows"><code>Administrator</code></span>. <a data-copytarget="#username-windows" class='small-button radius'>Copy</a>
 1. Select the **Allow me to save credentials** option.
 1. Click **Connect**.
-1. Enter the password <span id="password-windows"><code>P4ssw0rd</code></span> when prompted. <a data-copytarget="#password-windows" class='small-button radius'>Copy</a>
+1. Enter the password <span id="password-windows"><code>workstation!</code></span> when prompted. <a data-copytarget="#password-windows" class='small-button radius'>Copy</a>
 1. A warning appears stating that the identity of the remote computer cannot be verified. This is because the Windows workstation comes with a self-signed certificate. Click **Yes** to continue connecting.
 
 ![](/assets/images/misc/rdp_windows.png)
@@ -312,7 +323,7 @@ From the CloudFormation console, select your stack and click the **Outputs** tab
 1. In the **Connection name** field, enter a descriptive name, for example, **Chef Automate tutorial Windows workstation**.
 1. In the **PC name** field, enter the Windows workstation's public IP address or DNS name.
 1. In the **User name** field, enter <span id="username-mac"><code>Administrator</code></span>. <a data-copytarget="#username-mac" class='small-button radius'>Copy</a>
-1. In the **Password** field, enter <span id="password-mac"><code>P4ssw0rd</code></span>. <a data-copytarget="#password-mac" class='small-button radius'>Copy</a>
+1. In the **Password** field, enter <span id="password-mac"><code>workstation!</code></span>. <a data-copytarget="#password-mac" class='small-button radius'>Copy</a>
 1. Close the window.
 1. Select your connection and press **Start**.
 1. A warning appears stating that the certificate could not be verified back to a root certificate. This is because the Windows workstation comes with a self-signed certificate. Click **Continue** to continue connecting.
@@ -327,12 +338,11 @@ From the CloudFormation console, select your stack and click the **Outputs** tab
 
 [START_BOX]
 
-## 1. Open PowerShell
-
+## 6. Start a Chef Development Kit PowerShell session
 
 From the desktop on your Windows workstation, double click the **Chef Development Kit** icon.
 
-[UPDATE THIS]
+[PRODNOTE] Update screenshot to show desktop shortcut.
 
 ![](delivery/open_powershell_admin.png)
 

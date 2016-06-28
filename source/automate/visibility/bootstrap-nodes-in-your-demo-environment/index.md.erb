@@ -170,37 +170,19 @@ acceptance.chordata.biz Running handlers complete
 acceptance.chordata.biz Chef Client finished, 108/187 resources updated in 43 seconds
 ```
 
-[TODO: Go back to visibility dashboard and see the cookbook upload events]
+[TODO: Go back to visibility dashboard and see that the node appears]
 
 Next, repeat the bootstrap process for the Union, Rehearsal, and Delivered environments.
 
 ```ps
 # ~\delivery-demo\awesome_customers_delivery
 $ knife bootstrap union.chordata.biz --ssh-user ubuntu --sudo --node-name union --run-list 'recipe[awesome_customers_delivery]' --yes
-Creating new client for union
-Creating new node for union
-Connecting to union.chordata.biz
-[...]
-union.chordata.biz Running handlers:
-union.chordata.biz Running handlers complete
-union.chordata.biz Chef Client finished, 108/187 resources updated in 43 seconds
 $ knife bootstrap rehearsal.chordata.biz --ssh-user ubuntu --sudo --node-name rehearsal --run-list 'recipe[awesome_customers_delivery]' --yes
-Creating new client for rehearsal
-Creating new node for rehearsal
-Connecting to rehearsal.chordata.biz
-[...]
-rehearsal.chordata.biz Running handlers:
-rehearsal.chordata.biz Running handlers complete
-rehearsal.chordata.biz Chef Client finished, 108/187 resources updated in 42 seconds
 $ knife bootstrap delivered.chordata.biz --ssh-user ubuntu --sudo --node-name delivered --run-list 'recipe[awesome_customers_delivery]' --yes
-Creating new client for delivered
-Creating new node for delivered
-Connecting to delivered.chordata.biz
-[...]
-delivered.chordata.biz Running handlers:
-delivered.chordata.biz Running handlers complete
-delivered.chordata.biz Chef Client finished, 108/187 resources updated in 42 seconds
 ```
+
+[TODO: Go back to visibility dashboard and see that the nodes appear]
+
 
 [END_BOX]
 
@@ -208,20 +190,54 @@ delivered.chordata.biz Chef Client finished, 108/187 resources updated in 42 sec
 
 ## 5. Run chef-client a second time
 
-[END_BOX]
+The bootstrap process performed an initial `chef-client` run on your nodes. In previous tutorials, such as [Manage a node](/manage-a-node/rhel/update-your-nodes-configuration#step3), you ran `knife ssh` from your workstation to run `chef-client` remotely on your node.
 
-TODO: Things to show somewhere:
+Here's an example of how to run `knife ssh` to run `chef-client` on the `acceptance` node.
 
 ```ps
 # C:\Users\Administrator
-$ knife node list
-acceptance
-build-node-1
-build-node-2
-delivered
-rehearsal
-union
+$ knife ssh acceptance.chordata.biz 'sudo chef-client' --manual-list
+acceptance.chordata.biz Starting Chef Client, version 12.11.18
+acceptance.chordata.biz resolving cookbooks for run list: ["awesome_customers_delivery"]
+acceptance.chordata.biz Synchronizing Cookbooks:
+acceptance.chordata.biz   - chef-sugar (3.3.0)
+acceptance.chordata.biz   - awesome_customers_delivery (0.1.0)
+acceptance.chordata.biz   - firewall (2.4.0)
+acceptance.chordata.biz   - httpd (0.3.6)
+acceptance.chordata.biz   - compat_resource (12.10.6)
+acceptance.chordata.biz Installing Cookbook Gems:
+acceptance.chordata.biz Compiling Cookbooks...
+[...]
+acceptance.chordata.biz * file[/etc/default/ufw-chef.rules] action create (up to date)
+acceptance.chordata.biz  (up to date)
+acceptance.chordata.biz
+acceptance.chordata.biz Running handlers:
+acceptance.chordata.biz Running handlers complete
+acceptance.chordata.biz Chef Client finished, 3/181 resources updated in 02 seconds
 ```
+
+There are other ways to run `chef-client` on a node. You can log in directly over SSH and run `sudo chef-client`. Or you can run `chef-client` on a regular interval as a daemon, cron job, service, or scheduled task.
+
+You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. Chef push jobs client runs on a node and listens for job requests.
+
+Chef push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
+
+To know which nodes are available to accept jobs, you run the `knife node status` command.
+
+```ps
+# C:\Users\Administrator
+$ knife node status
+acceptance      available
+delivered       available
+rehearsal       available
+union   available
+```
+
+This feature is provided by the [knife push](https://github.com/chef/knife-push) plugin, and comes preinstalled on the Windows workstation.
+
+To start a job on a node, you run the [knife job start](https://docs.chef.io/push_jobs.html#job-start) command. To specify the node to submit the job to, you either specify the node name or search criteria.
+
+To illustrate the use of search criteria, run the `knife node show acceptance` command to display information about the `acceptance` node.
 
 ```ps
 # C:\Users\Administrator
@@ -229,10 +245,40 @@ $ knife node show acceptance
 Node Name:   acceptance
 Environment: _default
 FQDN:        acceptance.chordata.biz
-IP:          50.112.27.84
-Run List:
+IP:          52.41.234.114
+Run List:    recipe[awesome_customers_delivery]
 Roles:
-Recipes:
+Recipes:     awesome_customers_delivery, awesome_customers_delivery::default, awesome_customers_delivery::package_cache,
+ awesome_customers_delivery::firewall, firewall::default, chef-sugar::default, awesome_customers_delivery::user, awesome
+_customers_delivery::web
 Platform:    ubuntu 14.04
 Tags:
 ```
+
+You see that it contains the `awesome_customers_delivery` cookbook's default recipe in its run-list. You can use this fact to run `chef-client` on each node that contains the `awesome_customers_delivery` cookbook in its run-list.
+
+(TODO: All 4)
+
+```ps
+# C:\Users\Administrator
+$ knife job start 'chef-client' --search 'recipe:awesome_customers_delivery'
+WARNING: Falling back to Push Jobs v1 mode.
+Started.  Job ID: 2192bd742017a63aeaa32f6e02cea17e
+.Running (1/1 in progress) ...
+...Complete.
+command:     chef-client
+created_at:  Fri, 24 Jun 2016 14:40:32 GMT
+id:          2192bd742017a63aeaa32f6e02cea17e
+nodes:
+  succeeded: acceptance
+run_timeout: 3600
+status:      complete
+updated_at:  Fri, 24 Jun 2016 14:40:35 GMT
+```
+
+* How --search won't make the build nodes run.
+* Search is an important part of the pipeline you'll see in the next tutorial.
+
+(TODO: Then see from the web ui how it just ran...)
+
+[END_BOX]

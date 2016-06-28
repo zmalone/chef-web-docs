@@ -39,6 +39,99 @@ Recall that you can use Chef Automate to deploy almost any kind of software or i
 
 [COMMENT] If your administrator installed Chef Automate, be sure to [set up your workstation](/delivery/get-started/set-up-your-workstation/) before starting this part.
 
+## 0. Set environments
+
+```ps
+$ NOPE - [Environment]::SetEnvironmentVariable("EDITOR", "$(which atom)", "User")
+
+$ knife environment create acceptance-mammalia-diprotodontia-awesome_customers_delivery-master -d "The acceptance environment"
+$ knife environment create union -d "The union environment"
+$ knife environment create rehearsal -d "The rehearsal environment"
+$ knife environment create delivered -d "The delivered environment"
+
+$ knife node environment_set acceptance acceptance-mammalia-diprotodontia-awesome_customers_delivery-master
+$ knife node environment_set union union
+$ knife node environment_set rehearsal rehearsal
+$ knife node environment_set delivered delivered
+```
+
+```ps
+# C:\Users\Administrator\delivery-demo
+$ git clone https://github.com/chef-cookbooks/delivery-base
+Cloning into 'delivery-base'...
+remote: Counting objects: 103, done.
+Receiving objects:  48% (50/103)    0 (delta 0), pack-reused 103
+Receiving objects: 100% (103/103), 16.25 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (27/27), done.
+Checking connectivity... done.
+$ cd .\delivery-base\
+$ berks install
+Resolving cookbook dependencies...
+Fetching 'delivery-base' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Using chef-ingredient (0.19.0)
+Using chef_handler (1.4.0)
+Using compat_resource (12.10.6)
+Using delivery-base (0.2.2) from source at .
+Using packagecloud (0.2.3)
+Using push-jobs (3.2.0)
+Using runit (1.7.8)
+Using windows (1.44.0)
+$  berks upload --no-ssl-verify
+Uploaded chef-ingredient (0.19.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded chef_handler (1.4.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Skipping compat_resource (12.10.6) (frozen)
+Uploaded delivery-base (0.2.2) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded packagecloud (0.2.3) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded push-jobs (3.2.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded runit (1.7.8) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded windows (1.44.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+$ knife node run_list add acceptance 'recipe[delivery-base]'
+acceptance:
+  run_list:
+    recipe[awesome_customers_delivery]
+    recipe[delivery-base]
+$ knife node run_list add union 'recipe[delivery-base]'
+union:
+  run_list:
+    recipe[awesome_customers_delivery]
+    recipe[delivery-base]
+$ knife node run_list add rehearsal 'recipe[delivery-base]'
+
+rehearsal:
+  run_list:
+    recipe[awesome_customers_delivery]
+    recipe[delivery-base]
+$ knife node run_list add delivered 'recipe[delivery-base]'
+
+delivered:
+  run_list:
+    recipe[awesome_customers_delivery]
+    recipe[delivery-base]
+```
+
+```ps
+# C:
+# Priming CCR (important!)
+$ knife job start 'chef-client' --search 'recipes:awesome_customers_delivery'
+WARNING: Falling back to Push Jobs v1 mode.
+Started.  Job ID: 667795475002143f0c31a31dff609e0a
+.Running (1/4 in progress) ...
+.........Complete.
+command:     chef-client
+created_at:  Tue, 28 Jun 2016 15:19:37 GMT
+id:          667795475002143f0c31a31dff609e0a
+nodes:
+  succeeded:
+    acceptance
+    union
+    delivered
+    rehearsal
+run_timeout: 3600
+status:      complete
+updated_at:  Tue, 28 Jun 2016 15:19:48 GMT
+```
+
 [START_BOX]
 
 ## 1. Clone the awesome\_customers_delivery repo from GitHub
@@ -158,10 +251,10 @@ When you run `delivery init`, two things happen. The first stage of the pipeline
 
 ![](delivery/delivery-init-running.png)
 
-It's a good idea to watch each pipeline phase run at least once to gain a better understanding of what happens during the process. 
+It's a good idea to watch each pipeline phase run at least once to gain a better understanding of what happens during the process.
 
 As each of the unit, lint, and syntax phases moves to the <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/running_icon.png"/> state, click **>** to show the output log.
- 
+
 ![](delivery/syntax_open_log.png)
 
 ![](delivery/syntax_output_log.png)
@@ -472,7 +565,7 @@ The **Approve** action merges the `add-delivery-config` branch into the `master`
 
 <% markdown do %>
 
-In this tutorial, you approve and deliver your own changes. In practice, you'll need to decide with your organization the criteria for approving and shipping changes. 
+In this tutorial, you approve and deliver your own changes. In practice, you'll need to decide with your organization the criteria for approving and shipping changes.
 
 Even though just one person presses the **Approve** button, multiple people may be involved in the review process. At Chef, we follow the "four eyes" rule, where a total of four eyes is required to approve a code change.
 
@@ -520,7 +613,7 @@ The deploy phase deploys the artifact created in the Build stage. The `delivery-
 
 <br>
 
-The smoke and functional recipes do not have any logic, so nothing happens. You'll implement the smoke phase later in this tutorial. 
+The smoke and functional recipes do not have any logic, so nothing happens. You'll implement the smoke phase later in this tutorial.
 
 After the Acceptance stage completes, navigate to [http://10.0.0.15](http://10.0.0.15) from a second browser window. You'll see the Customers web application.
 

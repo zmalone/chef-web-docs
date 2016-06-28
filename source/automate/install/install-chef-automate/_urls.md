@@ -2,15 +2,19 @@
   <tbody>
     <tr>
       <td>us-east-1 (N. Virginia)</td>
-      <td>[https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-east-1.json](https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-east-1.json)</td>
-    </tr>
-    <tr>
-      <td>us-west-1 (N. California)</td>
-      <td>[https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-west-1.json](https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-west-1.json)</td>
+      <td>[TBD](https://s3.amazonaws.com/learn-chef-cf/TBD.json)</td>
     </tr>
     <tr>
       <td>us-west-2 (Oregon)</td>
-      <td>[https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-west-2.json](https://s3.amazonaws.com/learn-chef-cf/delivery-tutorial-us-west-2.json)</td>
+      <td>[TBD](https://s3.amazonaws.com/learn-chef-cf/TBD.json)</td>
+    </tr>
+    <tr>
+      <td>eu-west-1 (Ireland)</td>
+      <td>[TBD](https://s3.amazonaws.com/learn-chef-cf/TBD.json)</td>
+    </tr>
+    <tr>
+      <td>ap-southeast-1 (Singapore)</td>
+      <td>[TBD](https://s3.amazonaws.com/learn-chef-cf/TBD.json)</td>
     </tr>
   </tbody>
 </table>

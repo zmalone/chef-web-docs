@@ -1,8 +1,8 @@
 ---
-title: 'Deploy a Chef cookbook'
+title: 'Deploy a cookbook with Chef Automate'
 layout: lesson-overview
-platform: Deploy a Chef cookbook
-logo: delivery.svg
+platform: Deploy a cookbook with Chef Automate
+logo: workflow-cookbook.svg
 order: 3
 ---
 Chef Automate (Chef Automate) gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
