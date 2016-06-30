@@ -9,6 +9,10 @@ Chef Automate (Chef Automate) gives your operations and development teams a comm
 
 Chef Automate provides a workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production. If you have many different teams, each delivering software in its own way, you can use Chef Automate to bring a standard, proven approach to all of your organization's deployments.
 
+[PRODNOTE] Get updated diagram and create a version that highlights workflow.
+
+![](automate/Chef-Automate.png)
+
 With Chef Automate, you can, for example:
 
 * upload new and updated cookbooks to the Chef server that manages your infrastructure and applications.

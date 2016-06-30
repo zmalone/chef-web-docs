@@ -8,26 +8,41 @@ next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 show_disqus: false
 ---
-In this part, you'll see how Chef Automate gives you visibility into your infrastructure.
+Recall that the demo environment [comes with infrastructure](/automate/install/install-chef-automate#step1) that can receive build artifacts produced from Chef Automate's build pipeline. These environments are labeled **Acceptance**, **Union**, **Rehearsal**, and **Delivered** in this diagram.
+
+<img src="/assets/images/delivery/delivery-scenario-architecture.svg" style="width: 100%; box-shadow: none;" alt="An example Chef Automate installation" />
+
+[PRODNOTE] Use updated diagram from install tutorial. Perhaps highlight only AURD.
+
+In this part, you'll bootstrap these environments to your demo environment's Chef server. During the bootstrap process, each node will run the `awesome_customers_delivery` cookbook to configure the Customers web application.
+
+You'll also learn how to use _push jobs_ to trigger `chef-client` to run on all 4 of your nodes at the same time. The bootstrap process prepares your environment for the next tutorial, [Deploy a cookbook with Chef Automate](/automate/deploy-cookbook/), where you'll walk through delivering the web application cookbook using Chef Automate's workflow feature.
 
 Here's what you'll do:
 
-* [A](#step1)
-* [B](#step2)
-* [C](#step3)
-* [D](#step4)
-* [E](#step5)
-* [F](#step6)
+1. [Set up your Windows workstation](#step1)
+1. [Clone the awesome\_customers_delivery repo from GitHub](#step2)
+1. [Upload the awesome\_customers_delivery cookbook to the Chef server](#step3)
+1. [Bootstrap your nodes](#step4)
+1. [Use push jobs to run chef-client a second time](#step5)
 
 [START_BOX]
 
-## 1. Connect to Windows workstation
+## 1. Set up your Windows workstation
 
-[LINK TO HOW]
+If you closed the connection to the demo environment's Windows workstation, [connect to it now](/automate/install/install-chef-automate#step5) and [open up PowerShell](/automate/install/install-chef-automate#step6).
 
-[Bring up visibility web ui - open Chrome, Demo > Chef Insights or URL https://delivery.chordata.biz/insights/. Note it's empty. Show screenshot.]
+Next, open Google Chrome. Then navigate to [https://delivery.chordata.biz/insights/](https://delivery.chordata.biz/insights/). A bookmark is also available from the **Demo** folder in Google Chrome.
 
-[Create a working directory]
+[PRODNOTE] Be on the lookout for the URL and "Insights" logo to change.
+
+[PRODNOTE] Where/when should we introduce what this chordata.biz stuff is all about? Likely in the install tutorial...
+
+Notice that the dashboard is empty. During the bootstrap process, your nodes You'll populate the dashboard shortly.
+
+[PRODNOTE] Show screenshot.
+
+Next, from PowerShell, create a working directory.
 
 ```ps
 # ~
@@ -42,11 +57,15 @@ d----         6/23/2016   9:58 AM            delivery-demo
 
 ```
 
+[PRODNOTE] Perhaps change "delivery-demo" to "cookbooks". Global.
+
 [END_BOX]
 
 [START_BOX]
 
 ## 2. Clone the awesome\_customers_delivery repo from GitHub
+
+[PRODNOTE] Should we rename `awesome_customers_delivery` to something else? Perhaps `awesome_customers_workflow` or `awesome_customers_automate`? The reason it's not just `awesome_customers` is beacuse there are other versions of this project used in different tutorials - the name serves as a way to distinguish them.
 
 In this step, you clone the repository from GitHub to your local repository directory. The GitHub repository contains the `awesome_customers_delivery` cookbook, which configures the Customers web application.
 
@@ -188,7 +207,7 @@ $ knife bootstrap delivered.chordata.biz --ssh-user ubuntu --sudo --node-name de
 
 [START_BOX]
 
-## 5. Run chef-client a second time
+## 5. Use push jobs to run chef-client a second time
 
 The bootstrap process performed an initial `chef-client` run on your nodes. In previous tutorials, such as [Manage a node](/manage-a-node/rhel/update-your-nodes-configuration#step3), you ran `knife ssh` from your workstation to run `chef-client` remotely on your node.
 
@@ -218,7 +237,7 @@ acceptance.chordata.biz Chef Client finished, 3/181 resources updated in 02 seco
 
 There are other ways to run `chef-client` on a node. You can log in directly over SSH and run `sudo chef-client`. Or you can run `chef-client` on a regular interval as a daemon, cron job, service, or scheduled task.
 
-You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. Chef push jobs client runs on a node and listens for job requests.
+You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. A push job is a way to submit a task to a node, such as running `chef-client`. Chef push jobs client runs on a node and listens for job requests.
 
 Chef push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
 

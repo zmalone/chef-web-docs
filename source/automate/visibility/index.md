@@ -15,26 +15,24 @@ Whether you're managing ten nodes or ten thousand, having real-time visibility i
 
 To answer these questions, you could periodically check the Chef management console or run `knife` to get the current state of your infrastructure. But pulling data doesn't give you a real-time view into your infrastructure. You could have nodes report back, for example, by writing a [handler](https://docs.chef.io/handlers.html), when events you care about occur. But that would require you to set up a reporting mechanism on each node, which is extra process to maintain and something that's likely not realistic as your infrastructure grows.
 
-That's where Chef Automate's [visibility] capabilities come in. Chef Automate provides real-time visibility into what is happening on the Chef server, including what’s changing, who made those changes, and when they occurred.
+That's where Chef Automate's [visibility] capabilities come in. Chef Automate provides real-time visibility into what is happening on the Chef server, `chef-client`, and Chef Compliance, including what’s changing, who made those changes, and when they occurred.
 
-Background: Chef Analytics is/was a 1:1, where it was a Chef Server to Analytics interface. Chef Visibility/Insights is 1:many, where you can holistically understand the state of your infrastructure managed by Chef.
-
-Chef Insights integrates with Delivery Workflow, Chef Server, Chef Client, and Chef Compliance to give you actionable data into the status of your infrastructure and team.
+[PRODNOTE] Get updated diagram and create a version that highlights visibility.
 
 ![](automate/Chef-Automate.png)
 
-In this tutorial, you'll XYZ.
+In this tutorial, you'll bootstrap nodes provided by the demo environment to run a basic web application cookbook named `awesome_customers_delivery`, which displays fictitious customer data to the user. If you've gone through the [Manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook (this tutorial is not a prerequisite.)
 
-Then you'll ABC.
+Here's what the Customers web application looks like.
 
-After completing this tutorial, you should be able to:
+<img style="max-width:100%;" src="/assets/images/delivery/acceptance-customers-verify.png"/>
 
-* A
-* B
-* C
+[PRODNOTE] Update screenshot ^.
 
-[NOTE ABOUT GETTING DEMO ENV FIRST]
+You'll see how Chef Automate provides insight into what's happening on your Chef server, such as when `chef-client` completes. You'll also see how to use Chef Automate to detect when a `chef-client` run fails and then remedy the failure.
 
-[SOMEWHERE: NOTE ABOUT OTHER SKILLS YOU SHOULD KNOW]
+The bootstrap process prepares your environment for the next tutorial, [Deploy a cookbook with Chef Automate](/automate/deploy-cookbook/), where you'll walk through delivering the web application cookbook using Chef Automate's workflow feature.
 
-Let's get started by XXXXXX.
+## Before you begin
+
+The best way to get started with Chef Automate is to bring up a preconfigured demo environment that runs in Amazon Web Services (AWS). [Get the Chef Automate demo environment](/automate/install/) if you haven't already.
