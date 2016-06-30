@@ -5,32 +5,15 @@ platform: Deploy a cookbook with Chef Automate
 logo: workflow-cookbook.svg
 order: 3
 ---
-Chef Automate (Chef Automate) gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
+So far, you've [brought up a preconfigured Chef Automate demo environment](/automate/install/) and [bootstrapped infrastructure nodes](/automate/visibility/) to run a basic web application cookbook. Along the way, you learned how to use push jobs to run `chef-client` on your nodes. You also used Chef Automate's ability to report the status of your nodes to resolve a failed `chef-client` run.
 
-Chef Automate provides a workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production. If you have many different teams, each delivering software in its own way, you can use Chef Automate to bring a standard, proven approach to all of your organization's deployments.
+In this tutorial, you'll use Chef Automate's _workflow_ capabilities to deliver changes to the web application cookbook to the Chef server and to verify the cookbook's behavior in a production-like environment.
 
 [PRODNOTE] Get updated diagram and create a version that highlights workflow.
 
 ![](automate/Chef-Automate.png)
 
-With Chef Automate, you can, for example:
-
-* upload new and updated cookbooks to the Chef server that manages your infrastructure and applications.
-* publish new and updated cookbooks to a Chef Supermarket installation.
-* release source code or build artifacts (for example, a Java or PHP application) to a repository such as GitHub or Artifactory.
-* run automated tests to identify potential defects or bugs in your code.
-* detect cases where a different team's code causes an incompatibility with yours.
-* push build artifacts to production servers in real time.
-
-Chef uses Chef Automate to deploy its own software. With it, we have:
-
-* increased the number of features per release by 50%.
-* reduced the number of defects per release by 70%.
-* went from 1 release every two days to 12 releases per day.
-
-We are shipping code faster, with less effort, and with higher quality. In this tutorial, you'll take Chef Automate for a spin and see what sorts of benefits you can deliver for your organization.
-
-[COMMENT] Chef Automate relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. We'll provide all the Git commands that you'll need, but you can also [check out the documentation](https://git-scm.com/doc) to learn more.
+Two important parts of Chef Automate are _pipelines_ and _phases_.
 
 [START_BOX]
 
@@ -66,45 +49,31 @@ You determine what happens in each phase with a _build cookbook_. Each phase is 
 
 ## What you'll do
 
-This tutorial comes in multiple parts. In the first three parts, you bring up a Chef Automate installation and configure a workstation to communicate with it. In the last three parts, you  use Chef Automate to deliver a cookbook to Chef server and to verify the cookbook's behavior in a production-like environment.
+This tutorial comes in multiple parts. In the first part, you set up a Chef Automate user and configure the Windows workstation for that user. In the last three parts, you use Chef Automate to deliver the web application cookbook to Chef server and to verify the cookbook's behavior in a production-like environment.
 
-### Part 1: Install Chef Automate on AWS
+### Part 1: Create the organization and add a user
 
-To help you get started with Chef Automate more quickly, you begin by using automation to build infrastructure that runs in Amazon Web Services (AWS). All you need is an AWS account and a Chef Automate license key (you sign up for a trial key on the next page).
+Here you set up the user that will perform the last three parts of this tutorial.
 
-The automation brings up a fully-functional Chef Automate system in an isolated AWS environment that won't affect anything else you're running. After you complete the tutorial, you can experiment further and then simply tear down the environment when you're done.
+You log in to the Chef Automate web interface and create an organization and a user account. Organizations group related projects. User accounts enable end users to access Chef Automate through its web interface or from the command line. You also set up the virtual Windows workstation you can access Chef Automate through the user account.
 
-### Part 2: Create the organization and add a user
-
-Here you add the users that will perform the last three parts of this tutorial.
-
-You log in to the Chef Automate web interface and create an organization and a user account. Organizations group related projects. User accounts enable end users to access Chef Automate through its web interface or from the command line.
-
-### Part 3: Set up your workstation
-
-Next, you configure a workstation to communicate with Chef Automate.
-
-The automation sets up a virtual Windows workstation. You install the Chef Automate command-line interface (CLI) tools and set up a user account so you can access Chef Automate.
-
-### Part 4: Create the project
+### Part 2: Create the project
 
 You can use Chef Automate to build and deploy almost any kind of software system. For example, you can publish changes to a Chef cookbook to Chef server, Chef Supermarket, or GitHub. Alternatively, you might deploy a service to an application server.
 
-In this tutorial, the project is a Chef cookbook named `awesome_customers_delivery`. This cookbook configures a web application named Customers, which displays customer data to the user. If you've gone through the [Manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook (this tutorial is not a prerequisite.)
-
-The project's build cookbook publishes the web application cookbook to a Chef server and then runs the web application cookbook on a node that's bootstrapped to the Chef server. Both the Chef server and the node are included in the automated setup.
-
-By the end of this part, your web application looks like this:
+In this tutorial, the project is the `awesome_customers_delivery` cookbook that you worked with in the previous tutorial. Recall that this cookbook configures a web application named Customers, which displays customer data to the user.
 
 <img style="max-width:100%;" src="/assets/images/delivery/acceptance-customers-verify.png"/>
 
-### Part 5: Add a feature to the web application
+The project's build cookbook publishes the web application cookbook to a Chef server and then runs the web application cookbook on the nodes that you previously bootstrapped to the Chef server.
 
-In this part, you integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You follow the change through each pipeline stage, from your workstation all the way out to your node. By the end of this part, your web application looks like this:
+### Part 3: Add a feature to the web application
+
+In this part, you integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You follow the change through each pipeline stage, from your workstation all the way out to your nodes. By the end of this part, your web application looks like this:
 
 ![](delivery/customers-visualize-data-delivered.png)
 
-### Part 6: Extend the build cookbook
+### Part 4: Extend the build cookbook
 
 In this tutorial, you learn about the `delivery-truck` cookbook, which helps perform many common tasks that are needed to deliver Chef cookbooks. However, this cookbook can't do everything.
 
@@ -114,13 +83,7 @@ In this part, you extend your build cookbook to include a smoke test. Smoke test
 
 [START_BOX]
 
-## How to approach this tutorial
-
-This tutorial walks you through setting up and using Chef Automate as an individual. But because Chef Automate is team oriented, you can approach the tutorial as a team as well.
-
-If you are most interested in using Chef Automate to deploy projects, you might want to get a system administrator to help by [running the AWS automation](/delivery/get-started/install-chef-delivery/) and [creating the organization and a user account](/delivery/get-started/create-the-organization-and-add-a-user). If you're a project leader, you might find that the lesson that [sets up a project](/delivery/get-started/create-the-project/) is a good place to start. If your interest is primarily day-to-day use of Chef Automate, then the part of the tutorial that [walks through delivering a change](/delivery/get-started/add-a-feature-to-the-web-application/) and [extends the build cookbook](/delivery/get-started/extend-the-build-cookbook/) might be of the most interest.
-
-In other words, it's possible to go through this tutorial with your team, with different team members doing the parts of the tutorial that most closely map to their jobs. Of course, you can also go through the entire tutorial yourself.
+## What you'll learn
 
 After completing this tutorial, you should be able to:
 
@@ -129,6 +92,19 @@ After completing this tutorial, you should be able to:
 * approve code changes made by others.
 * verify new features and deliver them to your users.
 
+[COMMENT] Chef Automate relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. We'll provide all the Git commands that you'll need, but you can also [check out the documentation](https://git-scm.com/doc) to learn more.
+
 [GITHUB] After you complete this tutorial, you can [refer to the final version of the code](https://github.com/learn-chef/awesome_customers_delivery) on GitHub.
+
+[END_BOX]
+
+[START_BOX]
+
+## Before you begin
+
+This tutorial relies on the Chef Automate demo environment and nodes that are bootstrapped to run the `awesome_customers_delivery` cookbook. Be sure to complete these tutorials if you haven't already.
+
+* [Get the Chef Automate demo environment](/automate/install/)
+* [Gain visibility into your infrastructure with Chef Automate](/automate/visibility/)
 
 [END_BOX]
