@@ -6,26 +6,23 @@ layout: lesson
 sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 60 minutes
-survey_id: 5_2FtQ38ITqH6xDkuIca5JK6ZMtURQII1qH6ozW6Q51ciJmVEbUcHRPoSnZ259KAy1
 show_disqus: false
 ---
-> Continue on the virtual Windows workstation that you set up in the previous part.
-
 Chef Automate uses _projects_ to organize work across multiple teams. You can create as many projects as you need. A common approach is to have one project for each major component of your system.
 
 Each project has its own Git repository. Chef Automate can host the Git repository for you or you can connect Chef Automate to an existing project, such as one on GitHub or Atlassian Bitbucket. In this tutorial, you get starter code from GitHub but host your project in Chef Automate's Git repository.
 
 In this part, you create a project and watch the `awesome_customers_delivery` cookbook move through each stage of the Chef Automate pipeline. You perform these tasks:
 
-1. [Clone the awesome\_customers_delivery repo from GitHub](#step1)
-1. [Create the project and the pipeline](#step2)
-1. [Watch the Verify stage run](#step3)
-1. [Take a closer look at your Chef Automate project](#step4)
-1. [Configure the build cookbook to publish to Chef server](#step5)
-1. [Submit the change](#step6)
-1. [Approve the change](#step7)
-1. [Deliver the change](#step8)
-1. [Integrate the change to your local master branch](#step9)
+1. [Create the project and the pipeline](#step1)
+1. [Watch the Verify stage run](#step2)
+1. [Take a closer look at your Chef Automate project](#step3)
+1. [Configure the build cookbook to publish to Chef server](#step4)
+1. [Submit the change](#step5)
+1. [Approve the change](#step6)
+1. [Deliver the change](#step7)
+1. [Integrate the change to your local master branch](#step8)
+1. Learn how to [delete your Chef Automate project](#deletingthechefautomateproject)
 
 During the process, you'll see how the `delivery-truck` cookbook can perform many common tasks that are needed to deliver Chef cookbooks.
 
@@ -37,323 +34,11 @@ Recall that you can use Chef Automate to deploy almost any kind of software or i
 * Publishing your cookbook to Chef server, Chef Supermarket, GitHub, Atlassian Bitbucket, or another Git server.
 * Triggering `chef-client` to run on nodes that use your cookbook.
 
-[COMMENT] If your administrator installed Chef Automate, be sure to [set up your workstation](/delivery/get-started/set-up-your-workstation/) before starting this part.
-
-###A
-
-### Environments and push jobs
-
-Each of the Acceptance, Union, Rehearsal, and Delivered stages deploys build artifacts, or the pipeline's output, to some environment. For our project, this means running the `awesome_customers_delivery` cookbook on the `acceptance`, `union`, `rehearsal`, and `delivered` nodes.
-
-Recall from the previous tutorial that _push jobs_ enable you to submit tasks, such as running `chef-client`, to your nodes. For example, you ran this command to run `chef-client` on each node that includes the `awesome_customers_delivery` cookbook in its run-list.
-
-(TODO: Update to show all 4 in the output.)
-
-```ps
-# C:\Users\Administrator
-$ knife job start 'chef-client' --search 'recipe:awesome_customers_delivery'
-WARNING: Falling back to Push Jobs v1 mode.
-Started.  Job ID: 2192bd742017a63aeaa32f6e02cea17e
-.Running (1/1 in progress) ...
-...Complete.
-command:     chef-client
-created_at:  Fri, 24 Jun 2016 14:40:32 GMT
-id:          2192bd742017a63aeaa32f6e02cea17e
-nodes:
-  succeeded: acceptance
-run_timeout: 3600
-status:      complete
-updated_at:  Fri, 24 Jun 2016 14:40:35 GMT
-```
-
-This example runs `chef-client` on all 4 nodes. To run `chef-client` in the runtime environment only for a given stage, for example, Acceptance, you would need to provide additional search criteria to the `--search` option.
-
-Chef Automate uses Chef [environments](https://docs.chef.io/environments.html) to provide this additional search criteria. A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as a way to tag a node for a specific purpose.
-
-Every pipeline phase is associated with the name of a Chef environment. For the Acceptance stage, the name comes in this form:
-
-<code class='placeholder'>\<STAGE></code>-<code class='placeholder'>\<ENTERPRISE></code>-<code class='placeholder'>\<ORGANIZATION></code>-<code class='placeholder'>\<PROJECT></code>-<code class='placeholder'>\<PIPELINE></code>
-
-For this project, the environment name during the Acceptance stage is:
-
-**acceptance-mammalia-diprotodontia-awesome\_customers_delivery-master**
-
-where:
-
-* **acceptance** is the current stage.
-* **mammalia** is the enterprise.
-* **diprotodontia** is the organization.
-* **awesome\_customers\_delivery** is the project.
-* **master** is the pipeline.
-
-Similar logic applies to the Union, Rehearsal, and Delivered stages. However, because the Union, Rehearsal, and Delivered stages can be shared among multiple projects, their environment names are `union`, `rehearsal`, and `delivered`, respectively.
-
-Because the push job's search mechanism finds all nodes that are associated with the given Chef environment, you can associate multiple nodes with a given stage, for example, to run a cookbook that configures a multi-tiered application.
-
-
-----
-
-The deploy phase triggers `chef-client` to run on the node that's associated with the current stage, in our case an Ubuntu 14.04 server. The deploy phase's recipe, <code class='file-path'>deploy.rb</code>, is shared among the Acceptance, Union, Rehearsal, and Delivered stages. We use Chef [environments](https://docs.chef.io/environments.html) and [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`.
-
-A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as a way to tag a node for a specific purpose.
-
-Every pipeline phase is associated with the name of a Chef environment. For the Acceptance stage, the name comes in this form:
-
-<code class='placeholder'>\<STAGE></code>-<code class='placeholder'>\<ENTERPRISE></code>-<code class='placeholder'>\<ORGANIZATION></code>-<code class='placeholder'>\<PROJECT></code>-<code class='placeholder'>\<PIPELINE></code>
-
-For this project, the environment name during the Acceptance stage is:
-
-**acceptance-mammalia-diprotodontia-awesome\_customers_delivery-master**
-
-where:
-
-* **acceptance** is the current stage.
-* **mammalia** is the enterprise.
-* **diprotodontia** is the organization.
-* **awesome\_customers\_delivery** is the project.
-* **master** is the pipeline.
-
-A push job is a way to submit a task to a node, such as running `chef-client`. Running push jobs involves software components that exist on both the Chef server and on each node.
-
-### Connecting environments and push jobs to the Chef Automate project
-
-Establishing the Chef environment and running the `chef-client` push job requires coordination between the bootstrap process and the build cookbook.
-
-The process that creates the preconfigured Chef Automate setup runs [knife environment create](https://docs.chef.io/knife_environment.html#create) to create the environment on the Chef server.
-
-```bash
-$ knife environment create acceptance-delivery-demo-delivery-demo-awesome_customers_delivery-master
-```
-
-On the Chef server, you would see this environment.
-
-![](delivery/chef_server_acceptance_environment.png)
-
-To access the Chef server web interface, log in to the Chef server web interface at [https://10.0.0.11/organizations/delivery-demo](https://10.0.0.11/organizations/delivery-demo) from a browser on the Windows workstation. Use the credentials that match your SSH key pair's region.
-
-<table>
-  <tbody>
-    <tr>
-      <th>Region</th>
-      <th>Username</th>
-      <th>Password</th>
-    </tr>
-    <tr>
-      <td>us-east-1 (N. Virginia)</td>
-      <td><code>delivery</code></td>
-      <td id="chef-server-us-east-1"><code>EycY1IqWI5KHFdftYqLOXJ0piro=</code> <a data-copytarget="#chef-server-us-east-1" class='small-button radius'>Copy</a></td>
-    </tr>
-    <tr>
-      <td>us-west-1 (N. California)</td>
-      <td><code>delivery</code></td>
-      <td id="chef-server-us-west-1"><code>qUrNZDrN742wbLPwb/UUipTX6AI=</code> <a data-copytarget="#chef-server-us-west-1" class='small-button radius'>Copy</a></td>
-    </tr>
-    <tr>
-      <td>us-west-2 (Oregon)</td>
-      <td><code>delivery</code></td>
-      <td id="chef-server-us-west-2"><code>PNH6fKWLr6xsTLZemG/r3lM19bU=</code> <a data-copytarget="#chef-server-us-west-2" class='small-button radius'>Copy</a></td>
-    </tr>
-  </tbody>
-</table>
-
-The process that creates the preconfigured Chef Automate setup also bootstraps the Ubuntu 14.04 instance to the Chef server, like this.
-
-```bash
-$ knife bootstrap 10.0.0.15 --node-name awesome_customers_delivery-acceptance \
---environment acceptance-delivery-demo-delivery-demo-awesome_customers_delivery-master \
---run-list "recipe[apt],recipe[delivery-base],recipe[awesome_customers_delivery]" \
---ssh-user ubuntu --sudo --identity-file /home/ec2-user/.ssh/USER.pem
-```
-
-The `--environment` argument associates the node with the environment created in the previous step. The `--run-list` argument includes the `awesome_customers_delivery` cookbook as well as the `delivery-base` cookbook in the node's run-list. The [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook installs push jobs client on the node.
-
-From your Chef server, you see this.
-
-![](delivery/chef_server_node_details.png)
-
-With the Chef environment and push jobs set up, the build cookbook can trigger `chef-client` to run.
-
-Here's the deploy recipe that `delivery-truck` defines. ([source](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/deploy.rb))
-
-```ruby
-# deploy.rb
-# Send CCR requests to every node that is running this cookbook or any
-# other one in the current project
-search_terms = []
-get_all_project_cookbooks.each do |cookbook|
-  search_terms << "recipes:#{cookbook.name}*"
-end
-
-unless search_terms.empty?
-  search_query = "(#{search_terms.join(' OR ')}) " \
-                 "AND chef_environment:#{delivery_environment} " \
-                 "AND #{deployment_search_query}"
-
-  my_nodes = delivery_chef_server_search(:node, search_query)
-
-  my_nodes.map!(&:name)
-
-  delivery_push_job "deploy_#{node['delivery']['change']['project']}" do
-    command 'chef-client'
-    nodes my_nodes
-  end
-end
-```
-
-This code uses [search](https://docs.chef.io/chef_search.html) to find the nodes that match the current Chef environment and contains at least one of the project's cookbooks.
-
-Although we provide infrastructure for only the Acceptance stage, similar logic applies to the Union, Rehearsal, and Delivered stages. However, because the Union, Rehearsal, and Delivered stages can be shared among multiple projects, their environment names are `union`, `rehearsal`, and `delivered`, respectively.
-
-For example, to prepare an Ubuntu server to run the `awesome_customers_delivery` cookbook in the Union stage, you would create an environment named `union` on your Chef server and then bootstrap your node to that environment.
-
-```bash
-$ knife environment create union
-$ knife bootstrap 10.0.0.16 --node-name awesome_customers_delivery-union \
---environment union \
---run-list "recipe[apt],recipe[delivery-base],recipe[awesome_customers_delivery]" \
---ssh-user ubuntu --sudo --identity-file /home/ec2-user/.ssh/USER.pem
-```
-
-Because this mechanism finds all nodes that are associated with the current Chef environment, you can associate multiple nodes with a given stage, for example, to run a cookbook that configures a multi-tiered application.
-
-###Z
-
-## 0. Prepare your nodes for the Chef Automate pipeline
-
-
-```ps
-$ NOPE - [Environment]::SetEnvironmentVariable("EDITOR", "$(which atom)", "User")
-
-$ knife environment create acceptance-mammalia-diprotodontia-awesome_customers_delivery-master -d "The acceptance environment"
-$ knife environment create union -d "The union environment"
-$ knife environment create rehearsal -d "The rehearsal environment"
-$ knife environment create delivered -d "The delivered environment"
-
-$ knife node environment_set acceptance acceptance-mammalia-diprotodontia-awesome_customers_delivery-master
-$ knife node environment_set union union
-$ knife node environment_set rehearsal rehearsal
-$ knife node environment_set delivered delivered
-```
-
-```ps
-# C:\Users\Administrator\delivery-demo
-$ git clone https://github.com/chef-cookbooks/delivery-base
-Cloning into 'delivery-base'...
-remote: Counting objects: 103, done.
-Receiving objects:  48% (50/103)    0 (delta 0), pack-reused 103
-Receiving objects: 100% (103/103), 16.25 KiB | 0 bytes/s, done.
-Resolving deltas: 100% (27/27), done.
-Checking connectivity... done.
-$ cd .\delivery-base\
-$ berks install
-Resolving cookbook dependencies...
-Fetching 'delivery-base' from source at .
-Fetching cookbook index from https://supermarket.chef.io...
-Using chef-ingredient (0.19.0)
-Using chef_handler (1.4.0)
-Using compat_resource (12.10.6)
-Using delivery-base (0.2.2) from source at .
-Using packagecloud (0.2.3)
-Using push-jobs (3.2.0)
-Using runit (1.7.8)
-Using windows (1.44.0)
-$  berks upload --no-ssl-verify
-Uploaded chef-ingredient (0.19.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
-Uploaded chef_handler (1.4.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
-Skipping compat_resource (12.10.6) (frozen)
-Uploaded delivery-base (0.2.2) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
-Uploaded packagecloud (0.2.3) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
-Uploaded push-jobs (3.2.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
-Uploaded runit (1.7.8) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
-Uploaded windows (1.44.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
-$ knife node run_list add acceptance 'recipe[delivery-base]'
-acceptance:
-  run_list:
-    recipe[awesome_customers_delivery]
-    recipe[delivery-base]
-$ knife node run_list add union 'recipe[delivery-base]'
-union:
-  run_list:
-    recipe[awesome_customers_delivery]
-    recipe[delivery-base]
-$ knife node run_list add rehearsal 'recipe[delivery-base]'
-
-rehearsal:
-  run_list:
-    recipe[awesome_customers_delivery]
-    recipe[delivery-base]
-$ knife node run_list add delivered 'recipe[delivery-base]'
-
-delivered:
-  run_list:
-    recipe[awesome_customers_delivery]
-    recipe[delivery-base]
-```
-
-```ps
-# C:
-# Priming CCR (important!)
-$ knife job start 'chef-client' --search 'recipes:awesome_customers_delivery'
-WARNING: Falling back to Push Jobs v1 mode.
-Started.  Job ID: 667795475002143f0c31a31dff609e0a
-.Running (1/4 in progress) ...
-.........Complete.
-command:     chef-client
-created_at:  Tue, 28 Jun 2016 15:19:37 GMT
-id:          667795475002143f0c31a31dff609e0a
-nodes:
-  succeeded:
-    acceptance
-    union
-    delivered
-    rehearsal
-run_timeout: 3600
-status:      complete
-updated_at:  Tue, 28 Jun 2016 15:19:48 GMT
-```
-
-[START_BOX]
-
-## 1. Clone the awesome\_customers_delivery repo from GitHub
-
-In this step, you clone the repository from GitHub to your local repository directory. The GitHub repository contains the `awesome_customers_delivery` cookbook, which configures the Customers web application.
-
-From a PowerShell prompt, move to your working directory, <% fp '~\delivery-demo' %>.
-
-```ps
-#
-$ cd ~\delivery-demo
-```
-
-Clone the `awesome_customers_delivery` repo from GitHub.
-
-```ps
-# ~\delivery-demo
-$ git clone https://github.com/learn-chef/awesome_customers_delivery.git
-Cloning into 'awesome_customers_delivery'...
-remote: Counting objects: 110, done.
-remote: Total 110 (delta 0), reused 0 (delta 0), pack-reused 110
-Receiving objects: 100% (110/110), 49.38 KiB | 0 bytes/s, done.
-Resolving deltas: 100% (30/30), done.
-Checking connectivity... done.
-```
-
-Move to the <% fp 'awesome_customers_delivery' %> directory.
-
-```ps
-# ~\delivery-demo
-$ cd awesome_customers_delivery
-```
-
-Remember, for the tutorial, you're cloning an existing Git project to obtain starter code. You can configure Chef Automate to connect directly with your existing Git projects, import code from another source control system, or create a new repository.
-
-[COMMENT] The workstation comes with [posh-git](https://github.com/dahlbyk/posh-git), which integrates Git with PowerShell. posh-git provides useful features such as tab completion and the ability to show the current branch and the state of files.
-
 [END_BOX]
 
 [START_BOX]
 
-## 2. Create the project and the pipeline
+## 1. Create the project and the pipeline
 
 There are a few ways to [create a Chef Automate project](https://docs.chef.io/delivery_cookbooks.html#set-up-projects). Here, you use the `delivery init` command. This command:
 
@@ -364,7 +49,14 @@ There are a few ways to [create a Chef Automate project](https://docs.chef.io/de
 * creates the <% fp '.delivery' %> directory and adds to it a build cookbook and a configuration file.
 * submits the change for review.
 
-Run `delivery init` from your local repository directory. When prompted, enter the password that's associated with your Chef Automate account.
+First, move to the <% fp 'awesome_customers_delivery' %> directory.
+
+```ps
+# C:\Users\Administrator
+$ cd C:\Users\Administrator\delivery-demo\awesome_customers_delivery
+```
+
+Next, run `delivery init` from your local repository directory. When prompted, enter the password that's associated with your Chef Automate account.
 
 If you're prompted to choose the default web browser, choose Google Chrome.
 
@@ -425,7 +117,7 @@ A browser window appears and the first stage of the pipeline, Verify, begins run
 
 [START_BOX]
 
-## 3. Watch the Verify stage run
+## 2. Watch the Verify stage run
 
 When you run `delivery init`, two things happen. The first stage of the pipeline, Verify, begins and the Chef Automate web interface appears. With it, you can trace the progress of the cookbook as it moves through each stage and its associated phases.
 
@@ -455,7 +147,7 @@ Now that the Verify stage has completed, let's take a closer look at your projec
 
 [START_BOX]
 
-## 4. Take a closer look at your Chef Automate project
+## 3. Take a closer look at your Chef Automate project
 
 The `delivery init` command creates the <% fp '.delivery' %> directory at the root of your project. This directory contains two important pieces &ndash; a configuration file (<% fp 'config.json' %>) and the build cookbook (under the <% fp 'build-cookbook' %> directory).
 
@@ -520,12 +212,12 @@ Our project is a Chef cookbook. Here's a brief summary of what each phase accomp
 * syntax &ndash; run [knife cookbook test](https://docs.chef.io/knife_cookbook.html#test).
 * unit &ndash; run [ChefSpec](https://docs.chef.io/chefspec.html).
 * publish &ndash; upload `awesome_customers_delivery` and the cookbooks it depends on to the Chef server.
-* deploy &ndash; run `chef-client` on the node that runs the web application.
+* deploy &ndash; use push jobs to run `chef-client` on the node that runs the web application.
 * smoke &ndash; verify that the web server is at least minimally functional.
 
 For this project, no specific action is required for the security, quality, provision, and functional phases.
 
-[TIP] [Learn more about Foodcritic, RuboCop, and other Chef testing tools](/skills/test-driven-development/).
+[SKILL] [Learn more about Foodcritic, RuboCop, and other Chef testing tools](/tutorials/#test-your-infrastructure-code).
 
 To help implement these steps, we use the `delivery-truck` cookbook. This cookbook performs tasks that are typical for a cookbook project. For example, its unit recipe runs ChefSpec and its lint recipe runs Foodcritic and RuboCop. The `delivery-truck` cookbook is already included for you as a dependency of your build cookbook.
 
@@ -604,7 +296,7 @@ We're not quite ready yet to to merge the change to `master`. First, we need to 
 
 [START_BOX]
 
-## 5. Configure the build cookbook to publish to Chef server
+## 4. Configure the build cookbook to publish to Chef server
 
 In this step, you configure your build cookbook to publish the `awesome_customers_delivery` cookbook to the Chef server during the publish phase. Then you commit that change to the `add-delivery-config` branch and submit the change for review.
 
@@ -688,7 +380,7 @@ The file will have its original line endings in your working directory.
 
 [START_BOX]
 
-## 6. Submit the change
+## 5. Submit the change
 
 Run `delivery review` to submit your change to the `add-delivery-config` branch for review as a new patchset.
 
@@ -711,7 +403,7 @@ A browser window opens to show the pipeline in Chef Automate. The Verify stage i
 
 [START_BOX]
 
-## 7. Approve the change
+## 6. Approve the change
 
 The next step is to approve the change. This is a manual step, where people on your team have a chance to review the code and promote it to the Build stage.
 
@@ -761,7 +453,7 @@ After two people approve a code change in the **Review** tab and there are no un
 
 [START_BOX]
 
-## 8. Deliver the change
+## 7. Deliver the change
 
 After you approve the change, it moves to the Build stage.
 
@@ -811,9 +503,9 @@ You'll see the process move through the Union, Rehearsal, and Delivered stages.
 
 <img src="/assets/images/delivery/delivery_full_workflow_shared.svg" style="width: 100%; box-shadow: none;" />
 
-The automation you ran to install Chef Automate provides infrastructure only for the Acceptance stage. If you had infrastructure for the Union, Rehearsal, and Delivered stages, the Customers web application would deploy to each of those environments as the change moves through the pipeline.
+The automation you ran to install Chef Automate provides infrastructure for the Acceptance, Union, Rehearsal, and Delivered stages. We recommend you watch as these stages run. Then come back to take a closer look at the role of each stage.
 
-While the Union, Rehearsal, and Delivered stages run, let's take a closer look at the role of each stage.
+[PRODNOTE] Have user bring up each env. in a browser. Show screenshots.
 
 The Union, Rehearsal, and Delivered stages form a shared pipeline, where all the projects that make up the entire system come together. All three stages have the same phases.
 
@@ -824,6 +516,8 @@ If all phases of Union succeed, then the Rehearsal stage is triggered. Rehearsal
 If a failure occurs in Union, Rehearsal serves a different purpose. When you submit a new change and it fixes the break in Union, you know that a sequence of two changes, one that breaks the system, and one that comes after and fixes it, results in a healthy system. You do not yet know what happens when you apply the cumulative change to an environment that never saw the failure. The Rehearsal stage provides that environment.
 
 Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean publishing a set of artifacts so they are accessible to your customers.
+
+[PRODNOTE] REMOVE
 
 Return to the Chef Automate web interface and watch the Union, Rehearsal, and Delivered stages complete.
 
@@ -849,7 +543,7 @@ You can set up a distinct runtime environment for each of the Acceptance, Union,
 
 [START_BOX]
 
-## 9. Integrate the change to your local master branch
+## 8. Integrate the change to your local master branch
 
 When you clicked **Approve** during the Verify stage, Chef Automate merged the `add-delivery-config` branch into `master` on Chef Automate's Git server. Now you need to pull Chef Automate's updated `master` into your local `master` branch.
 
@@ -888,5 +582,34 @@ The [--prune](https://git-scm.com/docs/git-prune) option removes references to a
 <%= partial 'delivery-and-git' %>
 
 <% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## Deleting the Chef Automate project
+
+If you ever need to start over, or you complete the tutorial and want to delete this project, you'll need to log in to the Chef Automate server (for example, over SSH) and run the `delivery-ctl delete-project` command.
+
+The Windows workstation [provides a hosts file and SSH config](/automate/install/managing-your-aws-instances#connectingtoyourawsinstancesfromthewindowsworkstation) to make it easy to access each system over SSH.
+
+Here's how to connect to the Chef Automate server over SSH.
+
+```ps
+$ ssh delivery.chordata.biz
+```
+
+The `delivery-ctl delete-project` command takes your enterprise, organization, and project names as arguments, like this.
+
+```bash
+$ sudo delivery-ctl delete-project ENTERPRISE ORGANIZATION PROJECT
+```
+
+Here's how to delete the `awesome_customers_delivery` project in the tutorial environment from your SSH session:
+
+```bash
+$ sudo delivery-ctl delete-project mammalia diprotodontia awesome_customers_delivery
+Successfully deleted project: 'mammalia/diprotodontia/awesome_customers_delivery'
+```
 
 [END_BOX]
