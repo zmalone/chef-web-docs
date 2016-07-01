@@ -8,56 +8,46 @@ next: {heading: Next, partial: next}
 time_to_complete: 15 minutes
 show_disqus: false
 ---
-> Continue on the virtual Windows workstation that you connected to in the previous part.
-
-In this part, you perform two administrative tasks &ndash; create the organization and add a user account.
+In this part, you perform three administrative tasks &ndash; create the organization, add a user account, and configure the Windows workstation to connect to Chef Automate as that user.
 
 An organization enables you to group related projects and provide scope for authorization rules. User accounts enable end users to access Chef Automate through its web interface or from the command line.
 
 Here's what you'll do:
 
-1. [Log in to the Chef Automate web interface](#step1)
-1. [Create the organization](#step2)
-1. [Add a user](#step3)
-1. [Sign out of the Chef Automate web interface](#step4)
+1. [Connect to the Windows workstation](#step1)
+1. [Log in to the Chef Automate web interface](#step2)
+1. [Create the organization](#step3)
+1. [Add a user](#step4)
+1. [Sign out of the Chef Automate web interface](#step5)
+1. [Update your Chef Automate user with an SSH public key](#step6)
+1. [Connect the Chef Automate CLI to the Chef Automate server](#step7)
+1. [Set your Git identity](#step8)
 
 [START_BOX]
 
-## 1. Log in to the Chef Automate web interface
+## 1. Connect to the Windows workstation
+
+If you temporarily stopped your instances, [restart them now](/automate/install/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and [update your RDP connection](/automate/install/managing-your-aws-instances#gettingthewindowsworkstationpublicipaddress) with the Windows workstation's new public IP address.
+
+If you closed the connection to the demo environment's Windows workstation, [connect to it now](/automate/install/install-chef-automate#step5) and [open up PowerShell](/automate/install/install-chef-automate#step6).
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Log in to the Chef Automate web interface
 
 ### Open Google Chrome
 
-Start by opening **Google Chrome** on your Windows workstation. The browser's home page is set to the Chef Automate web interface, [https://10.0.0.12/e/delivery-demo](https://10.0.0.12/e/delivery-demo).
-
-[COMMENT] The Windows workstation is preconfigured to accept Chef Automate's self-signed SSL certificate. In a production environment, you would typically set up a certificate chain that's rooted by a trusted certificate authority (CA) to enable the Chef Automate server to verify its authenticity.
-
-After you connect, you may find it easier to continue this tutorial by opening this page in a second Chrome browser from your RDP connection.
+Start by opening **Google Chrome** on your Windows workstation. Then navigate to [https://delivery.chordata.biz/e/mammalia/#/dashboard](https://delivery.chordata.biz/e/mammalia/#/dashboard). Or choose the **Chef Delivery** bookmark from the **Demo** folder in Google Chrome.
 
 ### Log in
 
-From the Chef Automate web interface, log in as the `admin` user.
+From the Chef Automate web interface, log in as the `admin` user. The password is `eval4me!`.
 
-The Chef Automate installation comes with a preconfigured password. Use the password that matches your SSH key pair's region.
+The [appendix](/automate/install/managing-your-aws-instances#connectingtowebbasedservicesfromthewindowsworkstation) lists login credentials for each of Chef Automate's web services.
 
-<table>
-  <tbody>
-    <tr>
-      <td>us-east-1 (N. Virginia)</td>
-      <td id="admin-us-east-1"><code>oKfHtHeFyINKv5YAbyEg/fbuyQMJB9vsb/8=</code></td>
-      <td><a data-copytarget="#admin-us-east-1" class='small-button radius'>Copy</a></td>
-    </tr>
-    <tr>
-      <td>us-west-1 (N. California)</td>
-      <td id="admin-us-west-1"><code>gnjCvpiUFmDOR47Min/v3uVOqHWV2UQf1ZA=</code></td>
-      <td><a data-copytarget="#admin-us-west-1" class='small-button radius'>Copy</a></td>
-    </tr>
-    <tr>
-      <td>us-west-2 (Oregon)</td>
-      <td id="admin-us-west-2"><code>AoSTmN+YDAxr3rR9Gj242ylFXA0YQ7Pe1dY=</code></td>
-      <td><a data-copytarget="#admin-us-west-2" class='small-button radius'>Copy</a></td>
-    </tr>
-  </tbody>
-</table>
+[PRODNOTE] Update the referenced table to list the `admin` user.
 
 ![](delivery/admin_sign_in.png)
 
@@ -69,13 +59,13 @@ You'll see the Chef Automate dashboard.
 
 [START_BOX]
 
-## 2. Create the organization
+## 3. Create the organization
 
 Select **Organizations** from the drop-down menu in the upper right corner.
 
 ![](delivery/web_ui_orgs.png)
 
-Under **Organization Name**, enter **delivery-demo**. Then click **Save & Close**.
+Under **Organization Name**, enter **diprotodontia**. Then click **Save & Close**.
 
 ![](delivery/create_org.png)
 
@@ -83,7 +73,7 @@ Under **Organization Name**, enter **delivery-demo**. Then click **Save & Close*
 
 [START_BOX]
 
-## 3. Add a user
+## 4. Add a user
 
 Now you'll add a user.
 
@@ -109,14 +99,118 @@ When you're done, click **Save & Close**.
 
 [START_BOX]
 
-## 4. Sign out of the Chef Automate web interface
+## 5. Sign out of the Chef Automate web interface
 
-In the next part, you or another team member will set up the Windows workstation to interact with Chef Automate. Sign out of the Chef Automate web interface &ndash; you or another team member will sign back in using the credentials you just set up.
+In the next part, you'll set up the Windows workstation to interact with Chef Automate. Sign out of the Chef Automate web interface &ndash; you'll sign back in using the credentials you just set up.
 
 From the menu in the upper-right corner of the web interface, select **Sign Out**.
 
 ![](delivery/sign_out.png)
 
-If you're setting up the user account for somoene else, close your RDP connection. Otherwise, keep your connection open for the next part.
+[END_BOX]
+
+[START_BOX]
+
+## 6. Update your Chef Automate user with an SSH public key
+
+At this point, you should have a [user account and its initial password](/delivery/get-started/create-the-organization-and-add-a-user#step3) set up.
+
+You need to associate your public SSH key with your Chef Automate user. This key enables you to authenticate requests to Chef Automate from the command line.
+
+Start by generating an SSH key. Run this from your PowerShell prompt. You can replace you@example.com with your email address. Press Enter at each prompt (in other words, enter an empty response.)
+
+```ps
+# ~\delivery-demo
+$ ssh-keygen -t rsa -b 4096 -C "you@example.com"
+Generating public/private rsa key pair.
+Enter file in which to save the key (/c/Users/Administrator/.ssh/id_rsa):
+Created directory '/c/Users/Administrator/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /c/Users/Administrator/.ssh/id_rsa.
+Your public key has been saved in /c/Users/Administrator/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:MVAmN/3Y0dW82pBnZ7doI5MRyGEHzUrnqXTgOSZAj7A you@example.com
+The key's randomart image is:
++---[RSA 4096]----+
+|   ...o.*=*. . oo|
+|    o.o=.*o=. . o|
+|   E ...= *+o.. .|
+|       . X.=oo ++|
+|        S + o B.+|
+|         . + = o |
+|            + .  |
+|                 |
+|                 |
++----[SHA256]-----+
+```
+
+Now copy the public part of your SSH key, <% fp '~\\\\.ssh\id_rsa.pub' %>, to the clipboard. You can open the file in a text editor or run this from your PowerShell prompt.
+
+```ps
+# ~\delivery-demo
+$ Get-Content ~\.ssh\id_rsa.pub | clip
+```
+
+Next, log into the Chef Automate web interface from Google Chrome. [https://10.0.0.12/e/delivery-demo](https://10.0.0.12/e/delivery-demo)
+
+Enter your username and initial password.
+
+Next, select **Organizations** from the drop-down menu in the upper right corner.
+
+![](delivery/web_ui_users.png)
+
+From the **Users** tab, select your username and then paste your SSH key into the text area under **Security Information**. If you were assigned an initial password, change it and save your profile.
+
+![](delivery/add_ssh_key.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Connect the Chef Automate CLI to the Chef Automate server
+
+Next, you'll run the `delivery setup` command to configure the CLI to contact the Chef Automate server. The command creates a configuration file named <% fp '.delivery\cli.toml' %>.
+
+The placement of the `.delivery` directory in your file hierarchy is significant. Like Git, the delivery CLI searches the current directory and parent directories for its server settings. Because server settings are unique to an organization, we recommend that you create a directory for each organization you belong to and run the `delivery setup` command from that directory.
+
+From your command prompt, configure the CLI to contact the Chef Automate server at <code class="placeholder">10.0.0.12</code>, replacing <code class="placeholder">USER</code> with your username.
+
+```ps
+# ~\delivery-demo
+$ delivery setup --server=10.0.0.12 --ent=delivery-demo --org=delivery-demo --user=USER
+Chef Automate
+Loading configuration from C:\Users\Administrator\delivery-demo
+Writing configuration to C:\Users\Administrator\delivery-demo\.delivery\cli.toml
+New configuration
+-----------------
+api_protocol = "https"
+enterprise = "delivery-demo"
+git_port = "8989"
+organization = "delivery-demo"
+pipeline = "master"
+server = "10.0.0.12"
+user = "USER"
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 8. Set your Git identity
+
+Run `git config` to set your [Git identity](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup#Your-Identity). Git includes this information as metadata when you commit changes.
+
+If you have an existing Git account, such as with GitHub, you can use the same information here (changes you make in this tutorial won't be published as public activity on your GitHub account.)
+
+Here's an example.
+
+```ps
+# ~\delivery-demo
+$ git config --global user.name "John Smith"
+$ git config --global user.email jsmith@example.com
+```
+
+Your workstation is now set up.
 
 [END_BOX]
