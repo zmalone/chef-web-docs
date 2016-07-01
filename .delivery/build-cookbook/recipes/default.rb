@@ -11,6 +11,9 @@
 # Install our chosen version of Ruby
 include_recipe 'cia_infra::ruby'
 
+# Install Python for the aws cli
+include_recipe 'python::default'
+
 # We include chef-sugar because it gives us easy ways to interact with encrypted
 # data bags. It may go away in the future.
 include_recipe 'chef-sugar::default'
@@ -49,10 +52,6 @@ load_delivery_chef_config
 # We need aws creds so we get them here.
 aws_creds = encrypted_data_bag_item_for_environment('cia-creds', 'chef-cia')
 
-# Here we are installing the aws cli that is needed durring publish. The python
-# install is actually done during the setup of the build nodes.
-#
-# TODO Move the python recipe back into the build cookbook
 execute 'install awscli' do
   command 'pip install awscli'
   not_if { File::exists?('/usr/local/bin/aws') }
