@@ -4,7 +4,7 @@ Be sure to [review the appendix](/automate/install/managing-your-aws-instances) 
 
 In the next tutorial, [Gain visibility into your infrastructure with Chef Automate](/automate/visibility/), you'll bootstrap nodes provided by the demo environment to run a basic web application cookbook. You'll see how Chef Automate provides insight into what's happening on your Chef server, such as when `chef-client` completes. You'll also see how to use Chef Automate to detect when a `chef-client` run fails and remedy the failure.
 
-After that, the [Deploy a cookbook with Chef Automate](/automate/deploy-cookbook/) tutorial walks you through delivering the web application cookbook using Chef Automate's workflow feature. You'll learn how to manage changes as they flow through the pipeline, beginning with a local workstation, through sets of automated tests, and out into production.
+After that, the [Deploy a cookbook with Chef Automate](/automate/deploy-cookbook/) tutorial walks you through delivering the web application cookbook using Chef Automate's workflow features. You'll learn how to manage changes as they flow through the pipeline, beginning with a local workstation, through sets of automated tests, and out into production.
 
 When you're finished with the demo environment, [talk to us](http://lolw.ut) about how Chef Automate can help solve your infrastructure challenges.
 
@@ -18,4 +18,4 @@ Using Chef Automate to it's fullest requires some understanding of Chef's approa
 
 After you complete the tutorial, [review these additional resources](http://lolw.ut) to help build your Chef skills.
 
-[PRODNOTE] Update resources link ^.
+[PRODNOTE] Colin wanted to have something that speaks to this. Is it still on tap?
