@@ -7,7 +7,7 @@ order: 1
 ---
 Chef Automate gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
 
-![](automate/automate-architecture.png)
+![](automate/automate-architecture.svg)
 
 Chef Automate provides a workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production. If you have many different teams, each delivering software in its own way, you can use Chef Automate to bring a standard, proven approach to all of your organization's deployments.
 
@@ -32,6 +32,4 @@ To help get started with Chef Automate more quickly, you begin by using automati
 
 The automation brings up a fully-functional Chef Automate system in an isolated AWS environment that won't affect anything else you're running. After you complete the tutorial, you can experiment further and then simply tear down the environment when you're done.
 
-[PRODNOTE] Update www.chef.io/delivery link.
-
-[COMMENT] Learn more about how to bring the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/delivery](https://www.chef.io/delivery) to read the whitepaper.
+[COMMENT] Learn more about how to bring the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the whitepaper.
