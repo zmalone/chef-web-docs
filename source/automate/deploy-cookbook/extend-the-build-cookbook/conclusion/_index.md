@@ -1,3 +1,5 @@
+[PRODNOTE] Maybe show the original image and point folks to the things not discussed here (Compliacne, InSpec, Habitat)
+
 In this tutorial you installed Chef Automate in an AWS environment and created a build cookbook that deploys a Chef cookbook. You used the `delivery-truck` cookbook to automatically publish your cookbook to the Chef server and run `chef-client` on your node. You also implemented the smoke phase to help verify that your web site is up and running.
 
 Along the way, you learned about Chef Automate's pipeline stages and phases. You configured them to run automated tests and to publish your changes. As a bonus, you got to practice your Git skills.

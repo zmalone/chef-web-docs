@@ -17,17 +17,13 @@ To answer these questions, you could periodically check the Chef management cons
 
 That's where Chef Automate come in. Chef Automate provides real-time visibility into what is happening on the Chef server, `chef-client`, and Chef Compliance, including what’s changing, who made those changes, and when they occurred.
 
-[PRODNOTE] Get updated diagram and create a version that highlights visibility.
-
-![](automate/Chef-Automate.png)
+![](automate/automate-architecture-visibility.svg)
 
 In the [previous tutorial](/automate/install/), you brought up a preconfigured demo environment that runs in Amazon Web Services (AWS). In this tutorial, you'll bootstrap nodes provided by the demo environment to run a basic web application cookbook named `awesome_customers_delivery`, which displays fictitious customer data to the user. If you've gone through the [Manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook (this tutorial is not a prerequisite).
 
 Here's what the Customers web application looks like.
 
-<img style="max-width:100%;" src="/assets/images/delivery/acceptance-customers-verify.png"/>
-
-[PRODNOTE] Update screenshot ^.
+<img style="max-width:100%;" src="/assets/images/automate/acceptance-customers-verify.png"/>
 
 You'll see how Chef Automate provides insight into what's happening on your Chef server, such as when `chef-client` completes. You'll also see how to use Chef Automate to detect when a `chef-client` run fails and then remedy the failure.
 

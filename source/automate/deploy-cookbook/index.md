@@ -9,9 +9,7 @@ So far, you've [brought up a preconfigured Chef Automate demo environment](/auto
 
 In this tutorial, you'll use Chef Automate's _workflow_ capabilities to deliver changes to the web application cookbook to the Chef server and to verify the cookbook's behavior in a production-like environment.
 
-[PRODNOTE] Get updated diagram and create a version that highlights workflow.
-
-![](automate/Chef-Automate.png)
+![](automate/automate-architecture-workflow.svg)
 
 Two important parts of Chef Automate are _pipelines_ and _phases_.
 
