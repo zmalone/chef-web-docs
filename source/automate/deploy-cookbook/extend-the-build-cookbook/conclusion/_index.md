@@ -17,7 +17,7 @@ From the web interface, you see your Chef Automate server, build nodes, and the 
 
 ![](delivery/chef_server_webui.png)
 
-If you need a break, you can [temporarily stop your AWS instances](/delivery/get-started/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and resume them later. When you're completely finished with the evaluation or wish to start over, be sure to [tear down your installation](/delivery/get-started/managing-your-aws-instances#tearingdownyourdeliveryinstallation).
+If you need a break, you can [temporarily stop your AWS instances](/automate/install/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and restart them later when you're ready. When you're completely finished with the evaluation or wish to start over, be sure to [tear down your installation](/automate/install/managing-your-aws-instances#tearingdownyourchefautomateinstallation).
 
 Learn more about how to bring the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the whitepaper. Then click **Get Demo** to talk to us about how Chef Automate can help transform your workflow.
 

@@ -7,8 +7,8 @@ To see this, run `git remote -v` to see your remote repositories.
 ```ps
 # C:\Users\Administrator\cookbooks\awesome_customers_delivery
 $ git remote -v
-delivery        ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery (fetch)
-delivery        ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery (push)
+delivery        ssh://jsmith@mammalia@delivery.chordata.biz:8989/mammalia/diprotodontia/awesome_customers_delivery (fetch)
+delivery        ssh://jsmith@mammalia@delivery.chordata.biz:8989/mammalia/diprotodontia/awesome_customers_delivery (push)
 origin  https://github.com/learn-chef/awesome_customers_delivery.git (fetch)
 origin  https://github.com/learn-chef/awesome_customers_delivery.git (push)
 ```
@@ -19,8 +19,8 @@ You can also run `git remote show delivery` to see that `git pull` merges change
 # C:\Users\Administrator\cookbooks\awesome_customers_delivery
 $ git remote show delivery
 * remote delivery
-  Fetch URL: ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery
-  Push  URL: ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery
+  Fetch URL: ssh://jsmith@mammalia@delivery.chordata.biz:8989/mammalia/diprotodontia/awesome_customers_delivery
+  Push  URL: ssh://jsmith@mammalia@delivery.chordata.biz:8989/mammalia/diprotodontia/awesome_customers_delivery
   HEAD branch: master
   Remote branch:
     master tracked

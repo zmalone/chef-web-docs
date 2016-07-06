@@ -1,6 +1,6 @@
 Congratulations. Your demo environment is now set up, giving you access to a fully-functional Chef Automate system.
 
-Be sure to [review the appendix](/automate/install/managing-your-aws-instances) to learn how to manage your demo environment.
+Be sure to [review the appendix](/automate/install/managing-your-aws-instances) to learn how to manage your demo environment. If you need a break, you can [temporarily stop your AWS instances](/automate/install/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and restart them later when you're ready. When you're completely finished with the evaluation or wish to start over, be sure to [tear down your installation](/automate/install/managing-your-aws-instances#tearingdownyourchefautomateinstallation).
 
 In the next tutorial, [Gain visibility into your infrastructure with Chef Automate](/automate/visibility/), you'll bootstrap nodes provided by the demo environment to run a basic web application cookbook. You'll see how Chef Automate provides insight into what's happening on your Chef server, such as when `chef-client` completes. You'll also see how to use Chef Automate to detect when a `chef-client` run fails and remedy the failure.
 
