@@ -29,7 +29,14 @@ Here's what you'll do:
 
 If you temporarily stopped your instances, [restart them now](/automate/install/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and [update your RDP connection](/automate/install/managing-your-aws-instances#gettingthewindowsworkstationpublicipaddress) with the Windows workstation's new public IP address.
 
-If you closed the connection to the demo environment's Windows workstation, [connect to it now](/automate/install/install-chef-automate#step5) and [open up PowerShell](/automate/install/install-chef-automate#step6).
+If you closed the connection to the demo environment's Windows workstation, [connect to it now](/automate/install/install-chef-automate#step5) and [open up PowerShell](/automate/install/install-chef-automate#step6) through the Chef DK desktop shortcut.
+
+From PowerShell, ensure you're in the home directory.
+
+```ps
+# C:\Users\Administrator\Desktop
+$ cd C:\Users\Administrator
+```
 
 [END_BOX]
 
@@ -47,13 +54,11 @@ From the Chef Automate web interface, log in as the `admin` user. The password i
 
 The [appendix](/automate/install/managing-your-aws-instances#connectingtowebbasedservicesfromthewindowsworkstation) lists login credentials for each of Chef Automate's web services.
 
-[PRODNOTE] Update the referenced table to list the `admin` user.
-
 ![](delivery/admin_sign_in.png)
 
 You'll see the Chef Automate dashboard.
 
-![](delivery/delivery-dashboard.png)
+<img style="max-width:100%;" src="/assets/images/automate/wf-dashboard.png"/>
 
 [END_BOX]
 
@@ -63,11 +68,11 @@ You'll see the Chef Automate dashboard.
 
 Select **Organizations** from the drop-down menu in the upper right corner.
 
-![](delivery/web_ui_orgs.png)
+![](automate/wf-orgs.png)
 
 Under **Organization Name**, enter **diprotodontia**. Then click **Save & Close**.
 
-![](delivery/create_org.png)
+![](automate/wf-create-org.png)
 
 [END_BOX]
 
@@ -79,17 +84,15 @@ Now you'll add a user.
 
 Select **Users** from the web interface.
 
-![](delivery/users_tab.png)
+![](automate/wf-users-tab.png)
 
-Click **+**, then fill in the fields. The screen image below is an example. Specify the user's real info if you prefer.
+Click **+ New User**, then fill in the fields. The screen image below is an example. You can specify your real info if you prefer.
 
-If you're setting up the account for someone else, enter an initial password and then give that person the username and password.
-
-Leave the **Enter SSH Public Key** field blank &ndash; the user will set that up in the next part.
+Leave the **Enter SSH Public Key** field blank &ndash; you'll set that up in the next part.
 
 In practice, you would determine the appropriate [roles and permissions](https://docs.chef.io/release/delivery/delivery_users_and_roles.html#roles-and-permissions) for your user. For now, select all roles.
 
-![](delivery/add_a_user.png)
+![](automate/wf-add-user.png)
 
 When you're done, click **Save & Close**.
 
@@ -105,7 +108,7 @@ In the next part, you'll set up the Windows workstation to interact with Chef Au
 
 From the menu in the upper-right corner of the web interface, select **Sign Out**.
 
-![](delivery/sign_out.png)
+![](automate/wf-admin-sign-out.png)
 
 [END_BOX]
 
@@ -113,56 +116,35 @@ From the menu in the upper-right corner of the web interface, select **Sign Out*
 
 ## 6. Update your Chef Automate user with an SSH public key
 
-At this point, you should have a [user account and its initial password](/delivery/get-started/create-the-organization-and-add-a-user#step3) set up.
+At this point, you have a user account and its initial password set up.
 
 You need to associate your public SSH key with your Chef Automate user. This key enables you to authenticate requests to Chef Automate from the command line.
 
 Start by generating an SSH key. Run this from your PowerShell prompt. You can replace you@example.com with your email address. Press Enter at each prompt (in other words, enter an empty response.)
 
 ```ps
-# C:\Users\Administrator\cookbooks
-$ ssh-keygen -t rsa -b 4096 -C "you@example.com"
-Generating public/private rsa key pair.
-Enter file in which to save the key (/c/Users/Administrator/.ssh/id_rsa):
-Created directory '/c/Users/Administrator/.ssh'.
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in /c/Users/Administrator/.ssh/id_rsa.
-Your public key has been saved in /c/Users/Administrator/.ssh/id_rsa.pub.
-The key fingerprint is:
-SHA256:MVAmN/3Y0dW82pBnZ7doI5MRyGEHzUrnqXTgOSZAj7A you@example.com
-The key's randomart image is:
-+---[RSA 4096]----+
-|   ...o.*=*. . oo|
-|    o.o=.*o=. . o|
-|   E ...= *+o.. .|
-|       . X.=oo ++|
-|        S + o B.+|
-|         . + = o |
-|            + .  |
-|                 |
-|                 |
-+----[SHA256]-----+
+# C:\Users\Administrator
+$ ssh-keygen -t rsa -b 4096 -C "you@example.com" -f C:\Users\Administrator\.ssh\id_rsa-user -q -N "''"
 ```
 
-Now copy the public part of your SSH key, <% fp '~\\\\.ssh\id_rsa.pub' %>, to the clipboard. You can open the file in a text editor or run this from your PowerShell prompt.
+Now copy the public part of your SSH key, <% fp 'C:\Users\Administrator\.ssh\id_rsa-user.pub' %>, to the clipboard. You can open the file in a text editor or run this from your PowerShell prompt.
 
 ```ps
-# C:\Users\Administrator\cookbooks
-$ Get-Content ~\.ssh\id_rsa.pub | clip
+# C:\Users\Administrator
+$ Get-Content C:\Users\Administrator\.ssh\id_rsa-user.pub | clip
 ```
 
-Next, log into the Chef Automate web interface from Google Chrome. [https://10.0.0.12/e/delivery-demo](https://10.0.0.12/e/delivery-demo)
+Next, log into the Chef Automate web interface from Google Chrome. [https://delivery.chordata.biz/e/mammalia/#/login](https://delivery.chordata.biz/e/mammalia/#/login)
 
-Enter your username and initial password.
+Enter your username and password for the user you set up in [step 4](#step4).
 
 Next, select **Organizations** from the drop-down menu in the upper right corner.
 
-![](delivery/web_ui_users.png)
+![](automate/wf-select-admin.png)
 
-From the **Users** tab, select your username and then paste your SSH key into the text area under **Security Information**. If you were assigned an initial password, change it and save your profile.
+From the **Users** tab, select your username and then paste your SSH key into the text area under **Security Information**.
 
-![](delivery/add_ssh_key.png)
+![](automate/wf-add-ssh-key.png)
 
 [END_BOX]
 
@@ -174,22 +156,22 @@ Next, you'll run the `delivery setup` command to configure the CLI to contact th
 
 The placement of the `.delivery` directory in your file hierarchy is significant. Like Git, the delivery CLI searches the current directory and parent directories for its server settings. Because server settings are unique to an organization, we recommend that you create a directory for each organization you belong to and run the `delivery setup` command from that directory.
 
-From your command prompt, configure the CLI to contact the Chef Automate server at <code class="placeholder">10.0.0.12</code>, replacing <code class="placeholder">USER</code> with your username.
+From your command prompt, configure the CLI to contact the Chef Automate server at <code class="placeholder">delivery.chordata.biz</code>, replacing <code class="placeholder">USER</code> with your username.
 
 ```ps
-# C:\Users\Administrator\cookbooks
-$ delivery setup --server=10.0.0.12 --ent=delivery-demo --org=delivery-demo --user=USER
-Chef Automate
-Loading configuration from C:\Users\Administrator\delivery-demo
-Writing configuration to C:\Users\Administrator\cookbooks\.delivery\cli.toml
+# C:\Users\Administrator
+$ delivery setup --server=delivery.chordata.biz --ent=mammalia --org=diprotodontia --user=USER
+Chef Delivery
+Loading configuration from C:\Users\Administrator
+Writing configuration to C:\Users\Administrator\.delivery\cli.toml
 New configuration
 -----------------
 api_protocol = "https"
-enterprise = "delivery-demo"
+enterprise = "mammalia"
 git_port = "8989"
-organization = "delivery-demo"
+organization = "diprotodontia"
 pipeline = "master"
-server = "10.0.0.12"
+server = "delivery.chordata.biz"
 user = "USER"
 ```
 
@@ -206,7 +188,7 @@ If you have an existing Git account, such as with GitHub, you can use the same i
 Here's an example.
 
 ```ps
-# C:\Users\Administrator\cookbooks
+# C:\Users\Administrator
 $ git config --global user.name "John Smith"
 $ git config --global user.email jsmith@example.com
 ```

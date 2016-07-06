@@ -4,8 +4,8 @@ In this tutorial you installed Chef Automate in an AWS environment and created a
 
 Along the way, you learned about Chef Automate's pipeline stages and phases. You configured them to run automated tests and to publish your changes. As a bonus, you got to practice your Git skills.
 
-Now's a great time to experiment further with your Chef Automate installation and practice the skills you just learned. Because Chef Automate is all about collaboration, a great next step is to add a second user to your organization and set up the Windows workstation for that user (you can create a working directory for the user on the same level as <code class="file-path">C:\Users\Administrator\cookbooks</code>.) Then add a new feature to the Customers web application and watch it move down the pipeline. Even a small change to the CSS or the addition of a new unit test is enough to practice the workflow.
-Submit a change and use your established review process to approve and deliver new features.
+Now's a great time to experiment further with your Chef Automate installation and practice the skills you just learned. Because Chef Automate is all about collaboration, a great next step is to add a second user to your organization and set up the Windows workstation for that user (you can create a working directory for the user on the same level as <code class="file-path">C:\Users\Administrator</code>.) Then add a new feature to the Customers web application and watch it move down the pipeline. Even a small change to the CSS or the addition of a new unit test is enough to practice the workflow.
+Submit a change and use your established review process to approve and deliver new features. If you pair up with a coworker, you can each perform the tasks that map most closely to your job role.
 
 To help you explore and experiment, the Windows workstation comes preconfigured to communicate with the Chef server. You can find the <code class="file-path">knife.rb</code> and validation key in the <code class="file-path">C:\Users\Administrator\\\.chef</code> directory, which enables you to run `knife` commands from any directory.
 
