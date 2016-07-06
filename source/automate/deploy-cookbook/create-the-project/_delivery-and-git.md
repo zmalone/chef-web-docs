@@ -5,7 +5,7 @@ To help distinguish between remotes pulled from other servers, Chef Automate and
 To see this, run `git remote -v` to see your remote repositories.
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# C:\Users\Administrator\cookbooks\awesome_customers_delivery
 $ git remote -v
 delivery        ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery (fetch)
 delivery        ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery (push)
@@ -16,7 +16,7 @@ origin  https://github.com/learn-chef/awesome_customers_delivery.git (push)
 You can also run `git remote show delivery` to see that `git pull` merges changes from Chef Automate's `master` branch.
 
 ```ps
-# ~/delivery-demo/awesome_customers_delivery
+# C:\Users\Administrator\cookbooks\awesome_customers_delivery
 $ git remote show delivery
 * remote delivery
   Fetch URL: ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery
