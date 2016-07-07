@@ -4,6 +4,7 @@ layout: lesson-overview
 platform: Get started with Chef Delivery on AWS
 logo: delivery.svg
 order: 1
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Chef Delivery (Delivery) gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
 
@@ -14,7 +15,7 @@ With Delivery, you can, for example:
 * upload new and updated cookbooks to the Chef server that manages your infrastructure and applications.
 * publish new and updated cookbooks to a Chef Supermarket installation.
 * release source code or build artifacts (for example, a Java or PHP application) to a repository such as GitHub or Artifactory.
-* run automated tests to identify potential defects or bugs in your code. 
+* run automated tests to identify potential defects or bugs in your code.
 * detect cases where a different team's code causes an incompatibility with yours.
 * push build artifacts to production servers in real time.
 
