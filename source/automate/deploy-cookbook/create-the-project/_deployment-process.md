@@ -1,6 +1,6 @@
 Throughout this and the previous tutorial, you saw how push jobs enable you to submit tasks, such as running `chef-client`, to your nodes.
 
-Now that your `awesome_customers_delivery` cookbook is part of a Chef Automate pipeline, the `delivery-truck` cookbook can now run these push jobs for you automatically when your cookbook changes.
+Now that your `awesome_customers_delivery` cookbook is part of a Chef Automate pipeline, the `delivery-truck` cookbook can run these push jobs for you automatically when your cookbook changes.
 
 To give you a sense of how `delivery-truck` does this, here's the deploy recipe that `delivery-truck` defines. ([source](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/deploy.rb))
 
