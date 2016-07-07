@@ -6,16 +6,16 @@ In the next tutorial, [Gain visibility into your infrastructure with Chef Automa
 
 After that, the [Deploy a cookbook with Chef Automate](/automate/deploy-cookbook/) tutorial walks you through delivering the web application cookbook using Chef Automate's workflow feature. You'll learn how to manage changes as they flow through the pipeline, beginning with a local workstation, through sets of automated tests, and out into production.
 
-When you're finished with the demo environment, [talk to us](http://lolw.ut) about how Chef Automate can help solve your infrastructure challenges.
+### Talk to us
 
-[PRODNOTE] Update "talk to us" link ^.
+Learn more about how to bring the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the whitepaper. Then click the **Contact Us** button to talk to us about how Chef Automate can help transform your workflow.
 
-As you have questions or suggestions on how Chef Automate can better fit your workflow, join us on [Discourse](https://discourse.chef.io/c/delivery).
+Have questions or suggestions on how Chef Automate can better fit your workflow? Join us on [Discourse](https://discourse.chef.io/c/delivery).
 
 ### New to Chef?
 
-Using Chef Automate to its fullest requires some understanding of Chef's approach to infrastructure management. If you're new to Chef, you can still complete this tutorial successfully &ndash; we provide everything you need to get started.
+Using Chef Automate to its fullest requires some understanding of Chef's approach to infrastructure management. If you're new to Chef, you can still complete these tutorials successfully &ndash; we provide everything you need to get started.
 
-After you complete the tutorial, [review these additional resources](http://lolw.ut) to help build your Chef skills.
+After you complete these tutorials, [review these additional resources](http://lolw.ut) to help build your Chef skills.
 
-[PRODNOTE] Colin wanted to have something that speaks to this. Is it still on tap?
+[PRODNOTE] Link to new Skills article ^.
