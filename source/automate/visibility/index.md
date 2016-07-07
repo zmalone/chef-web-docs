@@ -13,9 +13,9 @@ Whether you're managing ten nodes or ten thousand, having real-time visibility c
 * when are new nodes added or existing ones removed?
 * are my servers meeting our compliance requirements?
 
-To answer these questions, you could periodically check the Chef management console or run `knife` to get the current state of your infrastructure. But pulling data doesn't give you a real-time view into your infrastructure. You could have nodes report back, for example, by writing a [handler](https://docs.chef.io/handlers.html), when events you care about occur. But that would require you to set up a reporting mechanism on each node, which is extra process to maintain and something that's likely not realistic as your infrastructure grows.
+To answer these questions, you could periodically check the Chef management console or run `knife` to get the current state of your infrastructure. But pulling data doesn't give you a real-time view into your infrastructure. You could have nodes report back, for example, by writing a [handler](https://docs.chef.io/handlers.html), when events you care about occur. But that would require you to set up a reporting mechanism on each node, which is an extra process to maintain and something that's likely not realistic as your infrastructure grows.
 
-That's where Chef Automate come in. Chef Automate provides real-time visibility into what is happening on the Chef server, `chef-client`, and Chef Compliance, including what’s changing, who made those changes, and when they occurred.
+That's where Chef Automate comes in. Chef Automate provides real-time visibility into what is happening on the Chef server, `chef-client`, and Chef Compliance, including what’s changing, who made those changes, and when they occurred.
 
 ![](automate/automate-architecture-visibility.svg)
 
