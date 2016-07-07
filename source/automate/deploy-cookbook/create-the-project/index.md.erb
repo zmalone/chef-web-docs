@@ -34,8 +34,6 @@ Recall that you can use Chef Automate to deploy almost any kind of software or i
 * Publishing your cookbook to Chef server, Chef Supermarket, GitHub, Atlassian Bitbucket, or another Git server.
 * Triggering `chef-client` to run on nodes that use your cookbook.
 
-[END_BOX]
-
 [START_BOX]
 
 ## 1. Create the project and the pipeline
@@ -63,55 +61,53 @@ If you're prompted to choose the default web browser, choose Google Chrome.
 ```ps
 # C:\Users\Administrator\cookbooks\awesome_customers_delivery
 $ delivery init
-Chef Automate
-Loading configuration from C:\Users\chef\cookbooks\awesome_customers_delivery
-Is C:\Users\chef\cookbooks\awesome_customers_delivery a git repo?  yes
-adding remote delivery: ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery_delive
+Chef Delivery
+Loading configuration from C:\Users\Administrator\awesome_customers_delivery
+Creating delivery project: awesome_customers_delivery  created
+adding remote delivery: ssh://jsmith@mammalia@delivery.chordata.biz:8989/mammalia/diprotodontia/awesome_customers_delive
 ry
 Remote 'delivery' added to git config!
-Requesting Token
-Chef Automate password:
-token: 3dwML65wQ6K5aiYaEozIyGG66M6fmjKpN4rC787fkdA=
-saved API token to: C:\Users\chef\.delivery\api-tokens
-Creating project: awesome_customers_delivery
 Checking for content on the git remote delivery: No upstream content
-No upstream content; pushing local content to server.
-To ssh://tpetchel@delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery
+Pushing local content to server:
+To ssh://jsmith@mammalia@delivery.chordata.biz:8989/mammalia/diprotodontia/awesome_customers_delivery
 *       refs/heads/master:refs/heads/master     [new branch]
 Branch master set up to track remote branch master from delivery.
 Done
 
-Creating master pipeline for project: awesome_customers_delivery ... done
+Creating master pipeline for project: awesome_customers_delivery:  created
+Creating and checking out add-delivery-config feature branch: done
 Generating build cookbook skeleton
-Cloning build cookbook generator dir "C:\\Users\\chef\\.delivery/cache/generator-cookbooks/pcb"
-PCB generate: "powershell.exe" "-noprofile" "-nologo" "-command" "chef" "generate" "cookbook" ".delivery/build-cookbook"
- "-g" "C:\\Users\\chef\\.delivery/cache/generator-cookbooks/pcb"
-Git add and commit of build-cookbook
-Writing configuration to C:\Users\chef\cookbooks\awesome_customers_delivery\.delivery\config.json
+Using cached copy of build-cookbook generator "C:\\Users\\Administrator\\.delivery/cache/generator-cookbooks\\pcb"
+Build-cookbook generated: "powershell.exe" "-noprofile" "-nologo" "-command" "chef" "generate" "cookbook" ".delivery/bui
+ld-cookbook" "-g" "C:\\Users\\Administrator\\.delivery/cache/generator-cookbooks\\pcb"
+Adding and commiting build-cookbook: done
+Writing configuration to C:\Users\Administrator\awesome_customers_delivery\.delivery\config.json
 New delivery configuration
 --------------------------
 {
   "version": "2",
   "build_cookbook": {
-    "name": "build-cookbook",
-    "path": ".delivery/build-cookbook"
+    "path": ".delivery/build-cookbook",
+    "name": "build-cookbook"
   },
   "skip_phases": [],
   "build_nodes": {},
   "dependencies": []
-}Chef Automate
-Loading configuration from C:\Users\chef\cookbooks\awesome_customers_delivery
+}
+Git add and commit delivery config: done
+Chef Delivery
+Loading configuration from C:\Users\Administrator\awesome_customers_delivery
 Review for change add-delivery-config targeted for pipeline master
 Created new patchset
-https://10.0.0.12/e/delivery-demo/#/organizations/delivery-demo/projects/awesome_customers_delivery/changes/44786e79-878
-1-4b31-8b29-d10f87098cb6
+https://delivery.chordata.biz/e/mammalia/#/organizations/diprotodontia/projects/awesome_customers_delivery/changes/217a8
+449-bb4d-4ff8-b617-7e5b4d446fac
 ```
 
-The `delivery` command uses your password to generate an API token that's used to make authorized requests to your Chef Automate server. The `delivery` command writes this API token to <% fp '~\\\\.delivery\api-tokens' %>.
+The `delivery` command uses your password to generate an API token that's used to make authorized requests to your Chef Automate server. The `delivery` command writes this API token to <% fp 'C:\Users\Administrator\.delivery\api-tokens' %>.
 
 A browser window appears and the first stage of the pipeline, Verify, begins running its phases.
 
-[COMMENT] The appendix explains how to [delete your project](/delivery/get-started/managing-your-aws-instances#deletingthedeliveryproject) if you need to start over or want to do the tutorial a second time.
+[COMMENT] The bottom of this page explains how to [delete your project](#deletingthechefautomateproject) if you need to start over or want to do the tutorial a second time.
 
 [END_BOX]
 
@@ -121,15 +117,15 @@ A browser window appears and the first stage of the pipeline, Verify, begins run
 
 When you run `delivery init`, two things happen. The first stage of the pipeline, Verify, begins and the Chef Automate web interface appears. With it, you can trace the progress of the cookbook as it moves through each stage and its associated phases.
 
-![](delivery/delivery-init-running.png)
+<img style="max-width:100%;" src="/assets/images/automate/wf-add-delivery-config-verify.png"/>
 
 It's a good idea to watch each pipeline phase run at least once to gain a better understanding of what happens during the process.
 
 As each of the unit, lint, and syntax phases moves to the <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/running_icon.png"/> state, click **>** to show the output log.
 
-![](delivery/syntax_open_log.png)
+![](automate/wf-unit-open-log.png)
 
-![](delivery/syntax_output_log.png)
+<img style="max-width:100%;" src="/assets/images/automate/wf-unit-output-log.png"/>
 
 Every time a phase runs, the build node first runs the build cookbook's default recipe, <% fp 'default.rb' %>, as the `root` user to ensure that the build node has everything it needs to run. This step is important because you can have multiple build nodes &ndash; a build node that runs one phase will not necessarily have run any of the prior phases.
 
@@ -139,7 +135,7 @@ After the default recipe completes, the build node runs the recipe for the phase
 
 Watch as each phase completes and enters the <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/passed_icon.png"/> state.
 
-![](delivery/delivery-init-result.png)
+<img style="max-width:100%;" src="/assets/images/automate/wf-add-delivery-config-verify-passed.png"/>
 
 Now that the Verify stage has completed, let's take a closer look at your project.
 
@@ -152,10 +148,11 @@ Now that the Verify stage has completed, let's take a closer look at your projec
 The `delivery init` command creates the <% fp '.delivery' %> directory at the root of your project. This directory contains two important pieces &ndash; a configuration file (<% fp 'config.json' %>) and the build cookbook (under the <% fp 'build-cookbook' %> directory).
 
 ```ps
+# C:\Users\Administrator\awesome_customers_delivery
 $ tree .delivery /F
 Folder PATH listing
-Volume serial number is 9212-3B63
-C:\USERS\CHEF\cookbooks\awesome_customers_delivery\.DELIVERY
+Volume serial number is 6AAA-940D
+C:\USERS\ADMINISTRATOR\AWESOME_CUSTOMERS_DELIVERY\.DELIVERY
 │   config.json
 │
 └───build-cookbook
@@ -370,10 +367,10 @@ Now run `git commit` to commit the change.
 $ git commit -m "Publish to Chef server"
 [add-delivery-config warning: LF will be replaced by CRLF in .delivery/config.json.
 The file will have its original line endings in your working directory.
-bf5915e] Publish to Chef server
+c8200ed] Publish to Chef server
 warning: LF will be replaced by CRLF in .delivery/config.json.
 The file will have its original line endings in your working directory.
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 ```
 
 [END_BOX]
@@ -387,12 +384,12 @@ Run `delivery review` to submit your change to the `add-delivery-config` branch 
 ```ps
 # C:\Users\Administrator\cookbooks\awesome_customers_delivery
 $ delivery review
-Chef Automate
-Loading configuration from C:\Users\chef\cookbooks\awesome_customers_delivery
+Chef Delivery
+Loading configuration from C:\Users\Administrator\awesome_customers_delivery
 Review for change add-delivery-config targeted for pipeline master
 Created new patchset
-https://10.0.0.12/e/delivery-demo/#/organizations/delivery-demo/projects/awesome_customers_delivery/changes/44786e79-878
-1-4b31-8b29-d10f87098cb6
+https://delivery.chordata.biz/e/mammalia/#/organizations/diprotodontia/projects/awesome_customers_delivery/changes/650fe
+901-84a3-4e01-acc7-fb9a549eeaac
 ```
 
 [COMMENT] If you use GitHub, you know that pull requests let you tell others about your changes. The [delivery review](https://docs.chef.io/ctl_delivery.html#delivery-review) command is similar. It allows others to review your changes. Once approved, Chef Automate merges your changes into `master` and continues through the rest of the pipeline.
@@ -411,23 +408,23 @@ Let's review and approve the changes. In practice, others on your team would ass
 
 From the **Review** tab, click on a few files to see how they changed. Here's an example for the change you made to <% fp '.delivery\config.json' %>
 
-![](delivery/review_config.png)
+![](automate/wf-review-config.png)
 
 The files are new, so each change appears as an add <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/review_add_icon.png"/> operation. For an existing file that's been modified <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/review_modify_icon.png"/>, you would see the diff between the current version and the proposed change.
 
 Scroll down to the bottom of Patchset 2 and enter a comment.
 
-![](delivery/delivery-init-add-comment.png)
+![](automate/wf-review-add-comment.png)
 
 Click the **Add Comment** button.
 
 Scroll back to the top of the patchset and click **Approve**.
 
-![](delivery/delivery-init-approve.png)
+![](automate/wf-review-approve.png)
 
 Then click **Confirm**.
 
-![](delivery/delivery-init-approve-modal.png)
+![](automate/wf-review-approve-modal.png)
 
 The **Approve** action merges the `add-delivery-config` branch into the `master` branch and deletes the `add-delivery-config` branch from the server.
 
@@ -457,15 +454,15 @@ After two people approve a code change in the **Review** tab and there are no un
 
 After you approve the change, it moves to the Build stage.
 
-<img src="/assets/images/delivery/delivery_full_workflow_build.svg" style="width: 100%; box-shadow: none;" />
+<img src="/assets/images/automate/delivery_full_workflow_build.svg" style="width: 100%; box-shadow: none;" />
 
 The unit, lint, and syntax phases run again on the build node. Rerunning the tests ensures that they continue to pass after the change is merged to `master`.
 
 The Build stage also runs the security and quality phases. These recipes do not have any logic, so nothing happens. Then the publish phase runs. This phase creates an artifact (in our case, a cookbook) that is a release candidate. Recall that you configured `delivery-truck` to publish the `awesome_customers_delivery` cookbook to Chef server. `delivery-truck` runs the `knife cookbook upload` command to do that ([source code](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/publish.rb)).
 
-![](delivery/delivery-init-build.png)
+<img src="/assets/images/automate/wf-build-stage-running.png" style="width: 100%; box-shadow: none;" />
 
-After the Build stage completes, the process moves to the Acceptance stage.
+Trace the Build stage through each of its phases. After the Build stage completes, the process moves to the Acceptance stage.
 
 <img src="/assets/images/delivery/delivery_full_workflow_acceptance.svg" style="width: 100%; box-shadow: none;" />
 
@@ -475,7 +472,7 @@ The Acceptance stage runs the provision, deploy, smoke, and functional phases.
 
 The provision phase is where you can bring up infrastructure to run your artifact. The automated Chef Automate installation provides an Ubuntu server to run the cookbook during the Acceptance stage. This server is already bootstrapped to the Chef server, so no specific action is required.
 
-The deploy phase deploys the artifact created in the Build stage. The `delivery-truck` cookbook submits a [push job](https://docs.chef.io/push_jobs.html) that runs `chef-client` to deploy the `awesome_customers_delivery` cookbook to the infrastructure that's associated with the Acceptance stage.
+The deploy phase deploys the artifact created in the Build stage. The `delivery-truck` cookbook submits a push job that runs `chef-client` to deploy the `awesome_customers_delivery` cookbook to the infrastructure that's associated with the Acceptance stage.
 
 <% accordion('deployment-process', 'Learn more about the deployment process') do %>
 
@@ -487,17 +484,19 @@ The deploy phase deploys the artifact created in the Build stage. The `delivery-
 
 The smoke and functional recipes do not have any logic, so nothing happens. You'll implement the smoke phase later in this tutorial.
 
-After the Acceptance stage completes, navigate to [http://10.0.0.15](http://10.0.0.15) from a second browser window. You'll see the Customers web application.
+After the Acceptance stage completes, navigate to [http://acceptance.chordata.biz](http://acceptance.chordata.biz). You'll see the Customers web application:
 
-<img style="max-width:100%;" src="/assets/images/delivery/acceptance-customers-verify.png"/>
+<img style="max-width:100%;" src="/assets/images/automate/acceptance-customers-verify.png"/>
+
+You haven't yet made changes to the `awesome_customers_delivery` cookbook, so the Customers web application will look the same as it did when you ran `chef-client` manually in the previous tutorial.
 
 After confirming that the web application comes up as expected, navigate back to the Chef Automate web interface and press the **Deliver** button. Pressing the **Deliver** button is a confirmation that the artifact can be released. The artifact will move through the next three pipeline stages automatically.
 
-![](delivery/delivery-init-deliver.png)
+![](automate/wf-delivery-init-deliver.png)
 
 Press the **Confirm** button from the dialog that appears.
 
-![](delivery/delivery-init-confirm-delivery.png)
+![](automate/wf-delivery-init-confirm-delivery.png)
 
 You'll see the process move through the Union, Rehearsal, and Delivered stages.
 
@@ -505,7 +504,11 @@ You'll see the process move through the Union, Rehearsal, and Delivered stages.
 
 The automation you ran to install Chef Automate provides infrastructure for the Acceptance, Union, Rehearsal, and Delivered stages. We recommend you watch as these stages run. Then come back to take a closer look at the role of each stage.
 
-[PRODNOTE] Have user bring up each env. in a browser. Show screenshots.
+As the Union, Rehearsal, and Delivered stages finish, you can verify the Customers web application comes up in a browser. Here's an example for Union:
+
+<img style="max-width:100%;" src="/assets/images/automate/union-customers-verify.png"/>
+
+<hr />
 
 The Union, Rehearsal, and Delivered stages form a shared pipeline, where all the projects that make up the entire system come together. All three stages have the same phases.
 
@@ -517,11 +520,9 @@ If a failure occurs in Union, Rehearsal serves a different purpose. When you sub
 
 Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean publishing a set of artifacts so they are accessible to your customers.
 
-[PRODNOTE] REMOVE
+When all stages have finished, you'll see this.
 
-Return to the Chef Automate web interface and watch the Union, Rehearsal, and Delivered stages complete.
-
-<img style="max-width:90%;" src="/assets/images/delivery/delivery-init-delivered.png"/>
+<img src="/assets/images/automate/wf-delivery-init-delivered.png" style="width: 100%; box-shadow: none;" />
 
 Congratulations! You now have a functioning Chef Automate pipeline.
 
@@ -553,8 +554,7 @@ First, switch to the `master` branch.
 # C:\Users\Administrator\cookbooks\awesome_customers_delivery
 $ git checkout master
 Switched to branch 'master'
-Your branch is ahead of 'delivery/master' by 1 commit.
-  (use "git push" to publish your local commits)
+Your branch is up-to-date with 'delivery/master'.
 ```
 
 Now pull the latest from Chef Automate to your local repo.
@@ -562,16 +562,58 @@ Now pull the latest from Chef Automate to your local repo.
 ```ps
 # C:\Users\Administrator\cookbooks\awesome_customers_delivery
 $ git pull --prune
-From ssh://delivery-demo@10.0.0.12:8989/delivery-demo/delivery-demo/awesome_customers_delivery
+From ssh://mammalia@delivery.chordata.biz:8989/mammalia/diprotodontia/awesome_customers_delivery
  x [deleted]         (none)     -> delivery/_for/master/add-delivery-config
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
 Unpacking objects: 100% (1/1), done.
-   c0d2305..d1d3eac  master     -> delivery/master
-Updating 36625be..d1d3eac
+   c0d2305..52073fb  master     -> delivery/master
+Updating c0d2305..52073fb
 Fast-forward
- .delivery/config.json | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ .delivery/build-cookbook/.kitchen.yml              |  21 +++
+ .delivery/build-cookbook/Berksfile                 |  18 +++
+ .delivery/build-cookbook/LICENSE                   |   3 +
+ .delivery/build-cookbook/README.md                 | 146 +++++++++++++++++++++
+ .delivery/build-cookbook/chefignore                |  97 ++++++++++++++
+ .../data_bags/keys/delivery_builder_keys.json      |   1 +
+ .delivery/build-cookbook/metadata.rb               |   7 +
+ .delivery/build-cookbook/recipes/default.rb        |   6 +
+ .delivery/build-cookbook/recipes/deploy.rb         |   6 +
+ .delivery/build-cookbook/recipes/functional.rb     |   6 +
+ .delivery/build-cookbook/recipes/lint.rb           |   6 +
+ .delivery/build-cookbook/recipes/provision.rb      |   6 +
+ .delivery/build-cookbook/recipes/publish.rb        |   6 +
+ .delivery/build-cookbook/recipes/quality.rb        |   6 +
+ .delivery/build-cookbook/recipes/security.rb       |   6 +
+ .delivery/build-cookbook/recipes/smoke.rb          |   6 +
+ .delivery/build-cookbook/recipes/syntax.rb         |   6 +
+ .delivery/build-cookbook/recipes/unit.rb           |   6 +
+ .delivery/build-cookbook/secrets/fakey-mcfakerton  |   0
+ .../test/fixtures/cookbooks/test/metadata.rb       |   2 +
+ .../fixtures/cookbooks/test/recipes/default.rb     |   7 +
+ .delivery/config.json                              |  15 +++
+ 22 files changed, 383 insertions(+)
+ create mode 100644 .delivery/build-cookbook/.kitchen.yml
+ create mode 100644 .delivery/build-cookbook/Berksfile
+ create mode 100644 .delivery/build-cookbook/LICENSE
+ create mode 100644 .delivery/build-cookbook/README.md
+ create mode 100644 .delivery/build-cookbook/chefignore
+ create mode 100644 .delivery/build-cookbook/data_bags/keys/delivery_builder_keys.json
+ create mode 100644 .delivery/build-cookbook/metadata.rb
+ create mode 100644 .delivery/build-cookbook/recipes/default.rb
+ create mode 100644 .delivery/build-cookbook/recipes/deploy.rb
+ create mode 100644 .delivery/build-cookbook/recipes/functional.rb
+ create mode 100644 .delivery/build-cookbook/recipes/lint.rb
+ create mode 100644 .delivery/build-cookbook/recipes/provision.rb
+ create mode 100644 .delivery/build-cookbook/recipes/publish.rb
+ create mode 100644 .delivery/build-cookbook/recipes/quality.rb
+ create mode 100644 .delivery/build-cookbook/recipes/security.rb
+ create mode 100644 .delivery/build-cookbook/recipes/smoke.rb
+ create mode 100644 .delivery/build-cookbook/recipes/syntax.rb
+ create mode 100644 .delivery/build-cookbook/recipes/unit.rb
+ create mode 100644 .delivery/build-cookbook/secrets/fakey-mcfakerton
+ create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/metadata.rb
+ create mode 100644 .delivery/build-cookbook/test/fixtures/cookbooks/test/recipes/default.rb
  create mode 100644 .delivery/config.json
 ```
 

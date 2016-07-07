@@ -1,1 +1,1 @@
-Next, you'll create a Chef Automate project and build cookbook that moves the `awesome_customers_delivery` cookbook through each stage of the pipeline.
+Next, you'll implement the necessary requirements so that your nodes are ready to run build artifacts when the Chef Automate pipeline runs.
