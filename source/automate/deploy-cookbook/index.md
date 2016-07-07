@@ -73,7 +73,7 @@ The project's build cookbook publishes the web application cookbook to a Chef se
 
 In this part, you integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You follow the change through each pipeline stage, from your workstation all the way out to your nodes. By the end of this part, your web application looks like this:
 
-![](delivery/customers-visualize-data-delivered.png)
+<img style="max-width:100%;" src="/assets/images/automate/acceptance-visualize_data.png"/>
 
 ### Part 4: Extend the build cookbook
 
