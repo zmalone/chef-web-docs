@@ -46,10 +46,6 @@ For enhanced security, you can disable root login. In the <code class="file-path
 
 Always install the latest security patches. Security patches for the Chef server are announced on the Chef blog: <https://www.chef.io/blog/>.
 
-####Use Chef Analytics to monitor security-related objects
-
-If Chef Analytics is enabled, write rules to generate notifications if activity occurs around sensitive objects. Examples include creating new organizations, creating new nodes, uploading cookbooks and removing cookbooks. For more information about Chef analytics, see: <https://docs.chef.io/analytics.html>.
-
 ####Use corporate credentials
 
 If you have the Chef management console installed, you can use your corporate credentials to log into the Chef server by using Active Directory or LDAP authentication. For more information, see: <https://docs.chef.io/server_ldap.html>.
