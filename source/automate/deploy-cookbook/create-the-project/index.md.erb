@@ -24,11 +24,11 @@ In this part, you create a project and watch the `awesome_customers_delivery` co
 1. [Integrate the change to your local master branch](#step8)
 1. Learn how to [delete your Chef Automate project](#deletingthechefautomateproject)
 
-During the process, you'll see how the `delivery-truck` cookbook can perform many common tasks that are needed to deliver Chef cookbooks.
+
 
 Recall that you can use Chef Automate to deploy almost any kind of software or infrastructure project and that a [build cookbook](https://docs.chef.io/release/delivery/build_cookbooks.html) defines how changes are verified, built, and deployed.
 
-[delivery-truck](https://github.com/chef-cookbooks/delivery-truck) is a build cookbook that's designed specifically for Chef cookbook projects. `delivery-truck` handles many common tasks, including:
+[delivery-truck](https://github.com/chef-cookbooks/delivery-truck) is a build cookbook that's designed specifically for Chef cookbook projects. You'll see how the `delivery-truck` cookbook can perform many common tasks that are needed to deliver Chef cookbooks, including:
 
 * Running common cookbook test suites like [ChefSpec](https://docs.chef.io/chefspec.html), [Foodcritic](https://docs.chef.io/foodcritic.html), and [RuboCop](https://docs.chef.io/rubocop.html).
 * Publishing your cookbook to Chef server, Chef Supermarket, GitHub, Atlassian Bitbucket, or another Git server.
@@ -125,9 +125,9 @@ As each of the unit, lint, and syntax phases moves to the <img style="box-shadow
 
 ![](automate/wf-unit-open-log.png)
 
-<img style="max-width:100%;" src="/assets/images/automate/wf-unit-output-log.png"/>
-
 Every time a phase runs, the build node first runs the build cookbook's default recipe, <% fp 'default.rb' %>, as the `root` user to ensure that the build node has everything it needs to run. This step is important because you can have multiple build nodes &ndash; a build node that runs one phase will not necessarily have run any of the prior phases.
+
+<img style="max-width:100%;" src="/assets/images/automate/wf-unit-output-log.png"/>
 
 After the default recipe completes, the build node runs the recipe for the phase as the `dbuild` user.
 
@@ -512,7 +512,7 @@ As the Union, Rehearsal, and Delivered stages finish, you can verify the Custome
 
 The Union, Rehearsal, and Delivered stages form a shared pipeline, where all the projects that make up the entire system come together. All three stages have the same phases.
 
-The Union stage assesses the impact of the change in the context of a complete (or as close as possible) installation of the set of projects that comprise the entire system. Union is where you test for interactions between interdependent projects.
+The Union stage is where you test for interactions between interdependent projects to see if your change has any impact.
 
 If all phases of Union succeed, then the Rehearsal stage is triggered. Rehearsal increases confidence in the artifacts and the deployment by repeating the process that occurred in Union in a different environment.
 
@@ -534,7 +534,7 @@ In this tutorial, we use the terms _stages_ and _environments_ quite frequently.
 
 In this example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this tutorial, the Acceptance environment is an Ubuntu 14.04 server that applies the `awesome_customers_delivery` cookbook to configure the Customers web application. The Acceptance stage deploys the Customers web application by triggering `chef-client` to run on the Ubuntu server.
 
-You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this tutorial your Chef Automate project is a Chef cookbook, a project can be an application and other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
+You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this tutorial your Chef Automate project is a Chef cookbook, a project can be an application or  some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
 
 <% end %>
 
