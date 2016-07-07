@@ -5,9 +5,11 @@ platform: Deploy a cookbook with Chef Automate
 logo: workflow-cookbook.svg
 order: 3
 ---
-So far, you've [brought up a preconfigured Chef Automate demo environment](/automate/install/) and [bootstrapped infrastructure nodes](/automate/visibility/) to run a basic web application cookbook. Along the way, you learned how to use push jobs to run `chef-client` on your nodes. You also used Chef Automate's ability to report the status of your nodes to resolve a failed `chef-client` run.
+In the previous tutorials, you [brought up a preconfigured Chef Automate demo environment](/automate/install/) and [bootstrapped infrastructure nodes](/automate/visibility/) to run a basic web application cookbook. Along the way, you learned how to use push jobs to run `chef-client` on your nodes. You also used Chef Automate's ability to report the status of your nodes to resolve a failed `chef-client` run.
 
-In this tutorial, you'll use Chef Automate's _workflow_ capabilities to deliver changes to the web application cookbook to the Chef server and to verify the cookbook's behavior in a production-like environment.
+However, the workflow you used was largely manual &ndash; you uploaded changes directly to the Chef server and ran `chef-client` on your nodes from your workstation. To successfully ship code faster, with less effort, and with higher quality, you need a more centralized approach that promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
+
+In this tutorial, you'll use Chef Automate's _workflow_ capabilities to deliver changes to the web application cookbook to the Chef server and to verify the cookbook's behavior in a production-like environment. Chef Automate enables multiple teams to work together on systems made up of multiple components and services, and promotes DevOps principles.
 
 ![](automate/automate-architecture-workflow.svg)
 
@@ -53,7 +55,9 @@ This tutorial comes in multiple parts. In the first part, you set up a Chef Auto
 
 Here you set up the user that will perform the last three parts of this tutorial.
 
-You log in to the Chef Automate web interface and create an organization and a user account. Organizations group related projects. User accounts enable end users to access Chef Automate through its web interface or from the command line. You also set up the virtual Windows workstation you can access Chef Automate through the user account.
+You log in to the Chef Automate web interface and create an organization and a user account. You also set up the virtual Windows workstation so you can access Chef Automate through that user account.
+
+Organizations group related projects. User accounts enable end users to access Chef Automate through its web interface or from the command line.
 
 ### Part 2: Create the project
 
@@ -61,7 +65,7 @@ You can use Chef Automate to build and deploy almost any kind of software system
 
 In this tutorial, the project is the `awesome_customers_delivery` cookbook that you worked with in the previous tutorial. Recall that this cookbook configures a web application named Customers, which displays customer data to the user.
 
-<img style="max-width:100%;" src="/assets/images/delivery/acceptance-customers-verify.png"/>
+<img style="max-width:100%;" src="/assets/images/automate/acceptance-customers-verify.png"/>
 
 The project's build cookbook publishes the web application cookbook to a Chef server and then runs the web application cookbook on the nodes that you previously bootstrapped to the Chef server.
 
@@ -69,7 +73,7 @@ The project's build cookbook publishes the web application cookbook to a Chef se
 
 In this part, you integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You follow the change through each pipeline stage, from your workstation all the way out to your nodes. By the end of this part, your web application looks like this:
 
-![](delivery/customers-visualize-data-delivered.png)
+<img style="max-width:100%;" src="/assets/images/automate/acceptance-visualize_data.png"/>
 
 ### Part 4: Extend the build cookbook
 

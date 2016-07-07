@@ -29,28 +29,30 @@ Each of the Acceptance, Union, Rehearsal, and Delivered stages deploys build art
 
 Recall from the previous tutorial that _push jobs_ enable you to submit tasks, such as running `chef-client`, to your nodes. For example, you ran this command to run `chef-client` on each node that includes the `awesome_customers_delivery` cookbook in its run-list.
 
-(TODO: Update to show all 4 in the output.)
-
 ```ps
 # C:\Users\Administrator
 $ knife job start 'chef-client' --search 'recipe:awesome_customers_delivery'
 WARNING: Falling back to Push Jobs v1 mode.
-Started.  Job ID: 2192bd742017a63aeaa32f6e02cea17e
-.Running (1/1 in progress) ...
-...Complete.
+Started.  Job ID: 9a1f1e1d7e6ae8647396d92a542f2da4
+.Running (1/4 in progress) ...
+.Complete.
 command:     chef-client
-created_at:  Fri, 24 Jun 2016 14:40:32 GMT
-id:          2192bd742017a63aeaa32f6e02cea17e
+created_at:  Tue, 05 Jul 2016 20:41:28 GMT
+id:          9a1f1e1d7e6ae8647396d92a542f2da4
 nodes:
-  succeeded: acceptance
+  succeeded:
+    acceptance
+    delivered
+    rehearsal
+    union
 run_timeout: 3600
 status:      complete
-updated_at:  Fri, 24 Jun 2016 14:40:35 GMT
+updated_at:  Tue, 05 Jul 2016 20:41:32 GMT
 ```
 
 This example runs `chef-client` on all 4 nodes. To run `chef-client` in the runtime environment only for a given stage, for example, Acceptance, you would need to provide additional search criteria to the `--search` option.
 
-Chef Automate uses Chef [environments](https://docs.chef.io/environments.html) to provide this additional search criteria. A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as a way to tag a node for a specific purpose.
+Chef Automate uses [environments](https://docs.chef.io/environments.html) to provide this additional search criteria. A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as a way to tag a node for a specific purpose.
 
 Every pipeline phase is associated with the name of a Chef environment. For the Acceptance stage, the name comes in this form:
 
@@ -78,13 +80,33 @@ Because the push job's search mechanism finds all nodes that are associated with
 
 ## 2. Create the Chef environments
 
-The first step to XXX is to create the Chef environments. Run the following [knife environment create](https://docs.chef.io/knife_environment.html#create) commands.
+The first step is to create the Chef environments. Run the following [knife environment create](https://docs.chef.io/knife_environment.html#create) command to create the environment for the Acceptance stage.
 
 ```ps
+# C:\Users\Administrator
 $ knife environment create acceptance-mammalia-diprotodontia-awesome_customers_delivery-master -d "The acceptance environment"
+Created acceptance-mammalia-diprotodontia-awesome_customers_delivery-master
+```
+
+Now repeat the process for the remaining stages.
+
+```ps
+# C:\Users\Administrator
 $ knife environment create union -d "The union environment"
 $ knife environment create rehearsal -d "The rehearsal environment"
 $ knife environment create delivered -d "The delivered environment"
+```
+
+Run `knife environment list` to verify the environments were properly created.
+
+```ps
+# C:\Users\Administrator
+$ knife environment list
+_default
+acceptance-mammalia-diprotodontia-awesome_customers_delivery-master
+delivered
+rehearsal
+union
 ```
 
 [END_BOX]
@@ -93,10 +115,19 @@ $ knife environment create delivered -d "The delivered environment"
 
 ## 3. Associate each Chef environment with an infrastructure environment
 
-Next, run these commands to connect each infrastructure environment, or node, with its corresponding Chef environment.
+Next, run this command to connect the infrastructure environment, or node, for the Acceptance stage with its corresponding Chef environment.
 
 ```ps
+# C:\Users\Administrator
 $ knife node environment_set acceptance acceptance-mammalia-diprotodontia-awesome_customers_delivery-master
+acceptance:
+  chef_environment: acceptance-mammalia-diprotodontia-awesome_customers_delivery-master
+```
+
+Now repeat the process for the remaining nodes.
+
+```ps
+# C:\Users\Administrator
 $ knife node environment_set union union
 $ knife node environment_set rehearsal rehearsal
 $ knife node environment_set delivered delivered
@@ -114,17 +145,17 @@ The recommended way to include the `push-jobs` cookbook is to include the [deliv
 
 One way to set up the `push-jobs` cookbook to run on your `acceptance`, `union`, `rehearsal`, and `delivered` nodes is to clone the `delivery-base` cookbook repo from GitHub, upload it and its dependencies to the Chef server, and then add it to each of your node's run-list.
 
-To begin, make sure you're in the <% fp 'C:\Users\Administrator\delivery-demo' %> directory.
+To begin, move to the <% fp 'C:\Users\Administrator\cookbooks' %> directory.
 
 ```ps
-# C:\Users\Administrator\delivery-demo????
-$ cd C:\Users\Administrator\delivery-demo
+# C:\Users\Administrator
+$ cd C:\Users\Administrator\cookbooks
 ```
 
 Next, clone the `delivery-base` repo from GitHub.
 
 ```ps
-# C:\Users\Administrator\delivery-demo
+# C:\Users\Administrator\cookbooks
 $ git clone https://github.com/chef-cookbooks/delivery-base
 Cloning into 'delivery-base'...
 remote: Counting objects: 103, done.
@@ -137,11 +168,11 @@ Checking connectivity... done.
 Next, move to the <% fp 'delivery-base' %> directory.
 
 ```ps
-# C:\Users\Administrator\delivery-demo
+# C:\Users\Administrator\cookbooks
 $ cd .\delivery-base\
 ```
 
-Next, run `berks install` to XXX.
+Next, run `berks install` to download the cookbooks that `delivery-base` depends on.
 
 ```ps
 # C:\Users\Administrator\cookbooks\delivery-base
@@ -163,7 +194,7 @@ Next, run `berks upload` to upload `delivery-base` and its dependencies to Chef 
 
 ```ps
 # C:\Users\Administrator\cookbooks\delivery-base
-$  berks upload --no-ssl-verify
+$ berks upload --no-ssl-verify
 Uploaded chef-ingredient (0.19.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
 Uploaded chef_handler (1.4.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
 Skipping compat_resource (12.10.6) (frozen)
@@ -174,7 +205,7 @@ Uploaded runit (1.7.8) to: 'https://chef-server.chordata.biz:443/organizations/d
 Uploaded windows (1.44.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
 ```
 
-Finally, add `delivery-base` to each node's run-list.
+Finally, add `delivery-base` to each node's run-list. Start with the `acceptance` node.
 
 ```ps
 # C:\Users\Administrator\cookbooks\delivery-base
@@ -183,23 +214,15 @@ acceptance:
   run_list:
     recipe[awesome_customers_delivery]
     recipe[delivery-base]
+```
+
+Repeat the process for `union`, `rehearsal`, and `delivered`.
+
+```ps
+# C:\Users\Administrator\cookbooks\delivery-base
 $ knife node run_list add union 'recipe[delivery-base]'
-union:
-  run_list:
-    recipe[awesome_customers_delivery]
-    recipe[delivery-base]
 $ knife node run_list add rehearsal 'recipe[delivery-base]'
-
-rehearsal:
-  run_list:
-    recipe[awesome_customers_delivery]
-    recipe[delivery-base]
 $ knife node run_list add delivered 'recipe[delivery-base]'
-
-delivered:
-  run_list:
-    recipe[awesome_customers_delivery]
-    recipe[delivery-base]
 ```
 
 [END_BOX]
@@ -208,21 +231,19 @@ delivered:
 
 ## 5. Verify the setup through the Chef server web interface
 
-[PRODNOTE] Will this information be available through visibilty?
-
-The output from the `knife node environment_set` and `knife node run_list add` commands confirm that your nodes are configured with the proper Chef environments and run-lists. As an extra verification step, let's log in to the Chef server web interface and see what's there.
+The output from the `knife node environment_set` and `knife node run_list add` commands confirm that your nodes are configured with the proper Chef environments and run-lists. Although not required, let's log in to the Chef server web interface and see what's there as an extra verification step.
 
 From Google Chrome, navigate to  [https://chef-server.chordata.biz/organizations/diprotodontia/nodes](https://chef-server.chordata.biz/organizations/diprotodontia/nodes). Or choose the **Chef Manage** bookmark from the **Demo** folder in Google Chrome.
 
 Log in as the `delivery` user. The password is `delivery!`.
 
-Click through each of the `acceptance`, `union`, `rehearsal`, and `delivered` nodes. You'll see that each is associated with the required environment and that each has `awesome_customers_delivery` and `dlivery-base` in its run-list.
+Click through each of the `acceptance`, `union`, `rehearsal`, and `delivered` nodes. You'll see that each is associated with the required environment and that each has `awesome_customers_delivery` and `delivery-base` in its run-list.
 
-![](delivery/chef_server_node_details.png)
+<img style="max-width:100%;" src="/assets/images/automate/chef_server_acceptance_node_details.png"/>
 
 Next, from the **Policy** tab, select **Environments** from the left. You'll see these environments.
 
-![](delivery/chef_server_acceptance_environment.png)
+<img style="max-width:100%;" src="/assets/images/automate/chef_server_acceptance_environment.png"/>
 
 [END_BOX]
 
@@ -230,9 +251,7 @@ Next, from the **Policy** tab, select **Environments** from the left. You'll see
 
 ## 6. Run push jobs to trigger chef-client on your nodes
 
-With the Chef environments and push jobs set up, the build cookbook can trigger `chef-client` to run.
-
-Let's run a few push jobs to ensure your nodes can successfully run `chef-client`. The first push job expands each node's run-list, which prepares each node to [run the push job that follows].
+With the Chef environments and push jobs set up, your nodes are almost ready to receive push jobs when the pipeline runs. You need to run `chef-client` with each node's updated run-list so that the search index includes all the required information.
 
 The directory you're in doesn't matter, but move back to your home directory since you're finished with the `delivery-base` cookbook.
 
@@ -241,48 +260,46 @@ The directory you're in doesn't matter, but move back to your home directory sin
 $ cd C:\Users\Administrator
 ```
 
-[PRODNOTE] Verify we need this; e.g. run the next step first and verify it fails.
-
 Run the `knife job start` command you ran previously to run `chef-client` on your `acceptance`, `union`, `rehearsal`, and `delivered` nodes.
 
 ```ps
 # C:\Users\Administrator
 $ knife job start 'chef-client' --search 'recipes:awesome_customers_delivery'
 WARNING: Falling back to Push Jobs v1 mode.
-Started.  Job ID: 667795475002143f0c31a31dff609e0a
+Started.  Job ID: 9a1f1e1d7e6a7c1a736274c0b02e8113
 .Running (1/4 in progress) ...
 .........Complete.
 command:     chef-client
-created_at:  Tue, 28 Jun 2016 15:19:37 GMT
-id:          667795475002143f0c31a31dff609e0a
+created_at:  Wed, 06 Jul 2016 16:34:10 GMT
+id:          9a1f1e1d7e6a7c1a736274c0b02e8113
 nodes:
   succeeded:
     acceptance
-    union
     delivered
     rehearsal
+    union
 run_timeout: 3600
 status:      complete
-updated_at:  Tue, 28 Jun 2016 15:19:48 GMT
+updated_at:  Wed, 06 Jul 2016 16:34:21 GMT
 ```
 
-Next, run this command to run `chef-client` only on your `acceptance` node. This command resembles the one that your build cookbook will run later. Doing so helps you see the process and verify that the build cookbook will be able to successfully run `chef-client` when the pipeline runs.
+Next, run this command to run `chef-client` only on your `acceptance` node. This command resembles the one that your build cookbook will use later. Doing so helps you see the process and verify that the build cookbook will be able to successfully run `chef-client` when the pipeline runs.
 
 ```ps
 # C:\Users\Administrator
 $ knife job start 'chef-client' --search '(recipes:awesome_customers_delivery*) AND chef_environment:acceptance-mammalia-diprotodontia-awesome_customers_delivery-master AND recipes:*push-jobs*'
 WARNING: Falling back to Push Jobs v1 mode.
-Started.  Job ID: 66779547500273aa44ee532b51e1c7bf
+Started.  Job ID: 9a1f1e1d7e6abf8c0a4042a358d3e026
 .Running (1/1 in progress) ...
-..........Complete.
+.....Complete.
 command:     chef-client
-created_at:  Fri, 01 Jul 2016 18:03:58 GMT
-id:          66779547500273aa44ee532b51e1c7bf
+created_at:  Wed, 06 Jul 2016 16:34:57 GMT
+id:          9a1f1e1d7e6abf8c0a4042a358d3e026
 nodes:
   succeeded: acceptance
 run_timeout: 3600
 status:      complete
-updated_at:  Fri, 01 Jul 2016 18:04:10 GMT
+updated_at:  Wed, 06 Jul 2016 16:35:03 GMT
 ```
 
 As an optional exercise, you can run `chef-client` on your `union`, `rehearsal`, and `delivered` nodes. Here's an example for `union`.
@@ -291,17 +308,17 @@ As an optional exercise, you can run `chef-client` on your `union`, `rehearsal`,
 # C:\Users\Administrator
 $ knife job start 'chef-client' --search '(recipes:awesome_customers_delivery*) AND chef_environment:union AND recipes:*push-jobs*'
 WARNING: Falling back to Push Jobs v1 mode.
-Started.  Job ID: 6677954750022ee098167a7166ee1be3
+Started.  Job ID: 9a1f1e1d7e6a02d989230b8816ec27b2
 .Running (1/1 in progress) ...
-..........Complete.
+....Complete.
 command:     chef-client
-created_at:  Fri, 01 Jul 2016 18:07:59 GMT
-id:          6677954750022ee098167a7166ee1be3
+created_at:  Wed, 06 Jul 2016 16:48:01 GMT
+id:          9a1f1e1d7e6a02d989230b8816ec27b2
 nodes:
   succeeded: union
 run_timeout: 3600
 status:      complete
-updated_at:  Fri, 01 Jul 2016 18:08:11 GMT
+updated_at:  Wed, 06 Jul 2016 16:48:07 GMT
 ```
 
 [END_BOX]
