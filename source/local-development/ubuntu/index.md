@@ -15,7 +15,7 @@ The bootstrap process installed the Chef tools on your node, pulled the latest c
 1. Log in to your node and manually verify that it's configured as you expect.
 1. Repeat the process.
 
-<img src="/assets/images/misc/dev_cycle_4.png" style="width:60%; box-shadow: none;" alt="The current development cycle" />
+<img src="/assets/images/misc/dev_cycle_4.png" style="width:50%; box-shadow: none;" alt="The current development cycle" />
 
 What if you want to quickly experiment with a new feature, or you make a mistake and have to restart the process? It can take some time to tear down your existing node, provision and bootstrap a new one, upload your cookbooks, and run `chef-client`. How can we speed up this cycle and shorten the development process?
 
@@ -23,7 +23,15 @@ One answer is [Test Kitchen](http://kitchen.ci). Test Kitchen is a tool that run
 
 We consider using a temporary environment to be _local development_, no matter where that environment is located. With local development, you can iterate faster and correct mistakes earlier in the development process. Once you've written and verified your code locally, you can upload your cookbooks to the Chef server, bootstrap your node, and run `chef-client` on your node.
 
-<img src="/assets/images/networks/workstation-vm.png" style="width:40%; box-shadow: none;" alt="Your workstation, Test Kitchen, and a virtual machine" />
+Local development shifts the development workflow to one that focuses on correcting mistakes earlier in the development process, _before_ you apply  your changes to production systems. In this workflow, you:
+
+1. Write a small amount of Chef code that expresses some new policy or feature.
+1. Verify your change on local test instances.
+1. Upload your code to the Chef server.
+1. Run `chef-client` to apply the updated policy on your node.
+1. Repeat the process.
+
+<img src="/assets/images/misc/dev_cycle_4_2.png" style="width:50%; height:auto; box-shadow:none;" alt="The improved development cycle" />
 
 Another benefit to using Test Kitchen is that the operating system of your virtual environment doesn't need to match your workstation's. So even though you're configuring an Ubuntu server, your workstation can be Mac OS, Windows, or some other flavor of Linux.
 
