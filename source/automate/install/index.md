@@ -17,8 +17,9 @@ With Chef Automate, you can, for example:
 * publish new and updated cookbooks to a Chef Supermarket installation.
 * release source code or build artifacts (for example, a Java or PHP application) to a repository such as GitHub or Artifactory.
 * run automated tests to identify potential defects or bugs in your code.
-* detect cases where a different team's code causes an incompatibility with yours.
+* detect cases where a different team's code is incompatible with yours.
 * push build artifacts to production servers in real time.
+* deploy Habitat packages to a Habitat depot.
 
 Chef uses Chef Automate to deploy its own software. With it, we have:
 
@@ -32,4 +33,4 @@ To help get started with Chef Automate more quickly, you begin by using automati
 
 The automation brings up a fully-functional Chef Automate system in an isolated AWS environment that won't affect anything else you're running. After you complete the tutorial, you can experiment further and then simply tear down the environment when you're done.
 
-[COMMENT] Learn more about how to bring the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the whitepaper.
+[COMMENT] Learn more about how to use the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the whitepaper.

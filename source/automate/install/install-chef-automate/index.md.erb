@@ -41,17 +41,15 @@ The diagram shows these components:
 
 At a minimum, a Chef Automate cluster includes Chef Automate and one build node.
 
-Your setup includes Chef Automate and Chef server, along with two build nodes. When you use Chef Automate to manage infrastructure, the Chef server holds your Chef cookbooks, which are published as part of the pipeline. Having multiple build nodes enables phases to run in parallel.
+Your setup includes Chef Automate and Chef server, along with two build nodes. When you use Chef Automate to manage infrastructure, the Chef server holds your Chef cookbooks, which are published as part of the pipeline. A Chef Automate pipeline is made up of multiple stages. Each stage includes multiple phases that perform different functions such as running tests. Having multiple build nodes enables phases to run in parallel.
 
 Your setup also comes with [Chef Compliance](/tutorials/#compliance-assess), which helps you assess your infrastructure's adherence to compliance requirements.
 
 **Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Chef Automate deploys build artifacts, or the pipeline's final output, to these environments. The output of your pipeline informs how you set up your environments.
 
-For example, you might deploy a SQL Server database to a Windows Server environment. Or you might deploy web content and other media to an Amazon S3 bucket. In the following tutorials, you'll publish a cookbook that configures a basic web application on Ubuntu. Therefore, the Acceptance, Union, Rehearsal and Delivered environments would all run Ubuntu.
+For example, you might deploy a SQL Server database to a Windows Server environment. Or you might deploy web content and other media to an Amazon S3 bucket. In the following tutorials, you'll publish a cookbook that configures a basic web application on Ubuntu. Therefore, the Ubuntu runtime environment exists for each of these stages because the artifacts produced in the Build stage need to be deployed to each of them.
 
-Recall that the final four stages of the pipeline are Acceptance, Union, Rehearsal, Delivered. A runtime environment exists for each of these stages because the artifacts produced in the Build stage need to be deployed.
-
-Each environment is named for the stage in which it is used. These environments typically resemble your production environment, and can often be part of your production environment. Delivered is the final stage of the pipeline. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
+Each environment is named for the stage in which it is used. For example, the union environment is used in the Union stage of the pipeline. These environments typically resemble your production environment, and can often be part of your production environment. Delivered is the final environment. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
 
 The automation provides one Ubuntu 14.04 instance for each of the Acceptance, Union, Rehearsal, and Delivered environments. In the following tutorial, you'll bootstrap these environments and configure them each to run the basic web application cookbook.
 
@@ -108,7 +106,7 @@ MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438, function(form
 
 After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory.
 
-To connect to the Windows workstation, you'll need an RDP client. Here's how to set one up.
+To connect to the Windows workstation, you'll need a Remote Desktop (RDP) client. Here's how to set one up.
 
 <% accordion('install-rdp-windows', 'Windows users') do %>
 
@@ -176,7 +174,7 @@ The **Outputs** tab displays the public IP address for the Windows workstation. 
 
 [COMMENT] The appendix explains and how to [temporarily suspend the AWS instances](/automate/install/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and how to [tear down the installation](/automate/install/managing-your-aws-instances#tearingdownyourchefautomateinstallation) when you're finished with your Chef Automate evaluation.
 
-Congratulations. You're almost ready to set up Chef Automate for your users. As final steps, you'll copy your license key to the Chef Automate server and then connect to the virtual Windows workstation over Remote Desktop.
+Congratulations. You're almost ready to set up Chef Automate for your users. As final steps, you'll copy your license key to the Chef Automate server and then connect to the virtual Windows workstation over RDP.
 
 [END_BOX]
 
@@ -302,7 +300,7 @@ Connection to 52.41.125.55 closed.
 
 For the remainder of the tutorial, you'll work from the virtual Windows workstation that's part of the automated installation.
 
-Here you create a Remote Desktop Protocol (RDP) connection from your computer to your virtual workstation. Keep in mind that after the automated setup completes, it might take a few minutes for the Windows workstation to be fully connectable.
+Here you create an RDP connection from your computer to your virtual workstation. Keep in mind that after the automated setup completes, it might take a few minutes for the Windows workstation to be fully connectable.
 
 ### Get the workstation's public IP address
 
