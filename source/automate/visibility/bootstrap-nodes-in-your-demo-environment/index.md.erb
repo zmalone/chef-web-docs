@@ -38,7 +38,7 @@ Each system in the demo environment comes with the fictitious **chordata.biz** d
 
 Notice that the dashboard is empty. During the bootstrap process, your nodes will do an initial `chef-client` run and report data back to Chef Automate. You'll do that shortly.
 
-![](automate/vis-empty-dashboard.png)
+![](automate/vis-dashboard-0-nodes.png)
 
 Next, from PowerShell, move to the <% fp 'C:\Users\Administrator' %> directory and then create a working directory.
 
@@ -86,6 +86,23 @@ Receiving objects: 100% (110/110), 51.34 KiB | 0 bytes/s, done.
 Resolving deltas: 100% (23/23), done.
 Checking connectivity... done.
 ```
+
+<% accordion('powershell-paste', 'How to paste commands into your PowerShell window') do %>
+
+<% markdown do %>
+
+Although we believe typing in the code and commands is a great way to learn, you can also copy the text from the code and terminal boxes and paste them into your session.
+
+Select your PowerShell window and then right click your mouse to paste the contents of your clipboard into your session. If the title of your PowerShell window starts with the text "Select Administrator", first hit escape to exit text selection mode.
+
+You can also use the **Edit** <i class="fa fa-caret-right"></i> **Paste** option from the <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/delivery/powershell_icon.png"/> menu located in the upper-left of your PowerShell window.
+
+![](/assets/images/delivery/powershell_menu_paste.png)
+
+<% end %>
+
+<% end %>
+<br />
 
 Remember, for the tutorial, you're cloning an existing Git project to obtain starter code. You can configure Chef Automate to connect directly with your existing Git projects, import code from another source control system, or create a new repository.
 
@@ -176,7 +193,7 @@ Creating new node for acceptance
 Connecting to acceptance.chordata.biz
 acceptance.chordata.biz -----> Existing Chef installation detected
 acceptance.chordata.biz Starting the first Chef Client run...
-acceptance.chordata.biz Starting Chef Client, version 12.11.18
+acceptance.chordata.biz Starting Chef Client, version 12.12.13
 acceptance.chordata.biz resolving cookbooks for run list: ["awesome_customers_delivery"]
 acceptance.chordata.biz Synchronizing Cookbooks:
 acceptance.chordata.biz   - awesome_customers_delivery (0.1.0)
@@ -211,9 +228,11 @@ The output shows that `chef-client` succeeded. To verify the configuration, open
 
 <img style="max-width:100%;" src="/assets/images/automate/acceptance-customers-verify.png"/>
 
-Now go back to the Chef Automate web interface and refresh the page.
+Now go back to the Chef Automate web interface and refresh the page. You see that the `acceptance` node checked in and its initial `chef-client` run completed successfully.
 
-[PRODNOTE] MUST FIX!!!!!! THIS USED TO WORK, BUT IS NO LONGER IN THE BUILD. GET A BUILD THAT HAS THIS AND SHOW A SCREENSHOT.
+![](automate/vis-dashboard-1-nodes.png)
+
+[PRODNOTE] Can we point to docs.chef.io about how data_collector and the whole process works?
 
 Next, repeat the bootstrap process for the Union, Rehearsal, and Delivered environments. For brevity, sample output is omitted.
 
@@ -226,7 +245,7 @@ $ knife bootstrap delivered.chordata.biz --ssh-user ubuntu --sudo --node-name de
 
 Each commmand specifies a node name that corresponds to that node's function.
 
-If you like, you can verify each node's configuration from your web browser.
+If you like, you can verify each node's configuration from your web browser as each node completes its initial `chef-client` run.
 
 | Environment | URL |
 |-----------:|----------|
@@ -234,7 +253,9 @@ If you like, you can verify each node's configuration from your web browser.
 | Rehearsal  | [http://rehearsal.chordata.biz](http://rehearsal.chordata.biz) |
 | Delivered  | [http://delivered.chordata.biz](http://delivered.chordata.biz) |
 
-[PRODNOTE] TODO: Go back to dashboard and see that the nodes appear. Show screenshot.
+Refresh the Chef Automate dashboard. You see that 4 nodes now appear.
+
+![](automate/vis-dashboard-4-nodes.png)
 
 [END_BOX]
 
@@ -249,7 +270,7 @@ Here's an example that uses `knife ssh` to run `chef-client` on the `acceptance`
 ```ps
 # C:\Users\Administrator\cookbooks\awesome_customers_delivery
 $ knife ssh acceptance.chordata.biz 'sudo chef-client' --manual-list
-acceptance.chordata.biz Starting Chef Client, version 12.11.18
+acceptance.chordata.biz Starting Chef Client, version 12.12.13
 acceptance.chordata.biz resolving cookbooks for run list: ["awesome_customers_delivery"]
 acceptance.chordata.biz Synchronizing Cookbooks:
 acceptance.chordata.biz   - chef-sugar (3.3.0)
@@ -338,7 +359,9 @@ updated_at:  Tue, 05 Jul 2016 20:41:32 GMT
 
 The push job ran `chef-client` on the `acceptance`, `union`, `rehearsal`, and `delivered` nodes. It did not run `chef-client` on the build nodes because those nodes do not contain the `awesome_customers_delivery` cookbook in their run-lists.
 
-[PRODNOTE] Maybe have the user refresh their browser to see that `chef-client` just ran again. And maybe show off the trend graph or something, if that's available.
+Refresh the dashboard and you'll see that each of your nodes reported a recent check-in.
+
+![](automate/vis-dashboard-4-nodes-recent-checkin.png)
 
 You don't need to use push jobs to use Chef Automate to monitor your infrastructure. However, push jobs and search play an important role when you use Chef Automate to deliver cookbooks. You'll see why in the next tutorial.
 
