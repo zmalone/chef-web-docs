@@ -16,6 +16,4 @@ Have questions or suggestions on how Chef Automate can better fit your workflow?
 
 Using Chef Automate to its fullest requires some understanding of Chef's approach to infrastructure management. If you're new to Chef, you can still complete these tutorials successfully &ndash; we provide everything you need to get started.
 
-After you complete these tutorials, [review these additional resources](http://lolw.ut) to help build your Chef skills.
-
-[PRODNOTE] Link to new Skills article ^.
+After you complete these tutorials, [review these additional resources](/skills/how-to-learn-chef/) to help build your Chef skills.
