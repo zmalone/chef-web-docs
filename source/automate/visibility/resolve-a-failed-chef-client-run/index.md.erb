@@ -152,7 +152,21 @@ From Google Chrome, refresh the web interface. You see that out of 4 nodes, 3 su
 
 You already understand the failure because you made the change, uploaded the cookbook to Chef server, and triggered `chef-client` to run. But say `chef-client` ran as part of some automated process. How would you know what caused the failure?
 
-[PRODNOTE] TODO: Update this when the feature is available. Have the user click on FAILED NODES, drilld own into `acceptance`, and investigate what happened.
+To understand the failure, first click **Failed Nodes** to filter the list to only those nodes that recently failed. Then click **acceptance** to see additional details.
+
+![](automate/vis-dashboard-filter-failed-acceptance.png)
+
+From the details page, click **view error log**.
+
+![](automate/vis-acceptance-details-summary.png)
+
+You see the error message "A fatal error has occurred."
+
+![](automate/vis-acceptance-failed-run-log.png)
+
+You also see the backtrace, which lists which function calls are active and can help you understand how your program got where it is. You see that the error occurred on line 6 of the default recipe, <% fp 'default.rb' %>. You can verify the source code location in your text editor.
+
+![](automate/atom-raise-exception.png)
 
 [END_BOX]
 
@@ -161,8 +175,6 @@ You already understand the failure because you made the change, uploaded the coo
 ## 5. Resolve the failure
 
 In practice, you and your team would decide the appropriate way to fix the error. The fix might involve modifying the `awesome_customers_delivery` cookbook to remedy the error, verifying the fix locally,  uploading the cookbook to Chef server, and running `chef-client` on your nodes.
-
-
 
 [SKILL] After you complete this tutorial, you can [learn more](/tutorials/#local-development) about how to develop and test your cookbooks in temporary environments using Test Kitchen.
 
@@ -215,9 +227,9 @@ status:      complete
 updated_at:  Wed, 06 Jul 2016 01:01:23 GMT
 ```
 
-You see that `chef-client` succeeded on all 4 nodes. As a final verification step, refresh the web interface. You see that all nodes report successful `chef-client` runs.
+You see that `chef-client` succeeded on all 4 nodes. As a final verification step, return to the web interface. From the **Nodes** tab, you see that all nodes report successful `chef-client` runs.
 
-[PRODNOTE] TODO: Show screenshot. ^^
+![](automate/vis-dashboard-4-nodes-resolved.png)
 
 [END_BOX]
 
