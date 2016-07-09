@@ -6,11 +6,13 @@ Now's a great time to experiment further with your Chef Automate installation an
 
 Submit a change and use your established review process to approve and deliver new features. If you pair up with a coworker, you can perform the tasks that most closely map to your job roles.
 
-The [appendix](/automate/install/managing-your-aws-instances) explains how to connect to the other systems and services that come with the Chef Automate demo environment.
+The [appendix](/automate/install/managing-your-aws-instances) explains how to connect to the other systems and services that come with the Chef Automate environment.
 
 If you need a break, you can [temporarily stop your AWS instances](/automate/install/managing-your-aws-instances#stoppingandrestartingyourawsinstances) and restart them later when you're ready. When you're completely finished with the evaluation or wish to start over, be sure to [tear down your installation](/automate/install/managing-your-aws-instances#tearingdownyourchefautomateinstallation).
 
 ### Learn more
+
+Be sure to [explore the Chef documentation](https://docs.chef.io/chef_automate.html) to learn more about Chef Automate's features.
 
 This tutorial and the previous one focused on Chef Automate's workflow and visibility features. Chef Automate also includes [Chef Compliance](https://www.chef.io/compliance/), which enables you to assess your infrastructure's adherence to compliance requirements and to monitor that infrastructure on an ongoing basis.
 
