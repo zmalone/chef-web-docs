@@ -25,7 +25,7 @@ A _pipeline_ is a series of automated and manual quality gates that take softwar
 
 Changes progress from one stage to another by passing a suite of automated tests. To advance past the Verify and Acceptance stages, explicit approval by a designated person is required (in addition to completion of the associated tests.)
 
-[Learn more about pipeline stages](https://docs.chef.io/release/delivery/delivery_overview.html#pipeline-stages)
+[Learn more about pipeline stages](https://docs.chef.io/workflow.html#pipeline-stages)
 
 [END_BOX]
 
@@ -41,7 +41,7 @@ Here are the phases for each stage.
 
 You determine what happens in each phase with a _build cookbook_. Each phase is configured with a recipe in that cookbook. Build cookbooks also control other aspects of the pipeline, such as the types of artifacts you build and where you store them.
 
-[Learn more about build cookbooks](https://docs.chef.io/delivery_cookbooks.html)
+[Learn more about build cookbooks](https://docs.chef.io/delivery_build_cookbook.html)
 
 [END_BOX]
 
@@ -106,7 +106,7 @@ After completing this tutorial, you should be able to:
 
 This tutorial relies on the Chef Automate demo environment and nodes that are bootstrapped to run the `awesome_customers_delivery` cookbook. Be sure to complete these tutorials if you haven't already.
 
-* [Get the Chef Automate demo environment](/automate/install/)
+* [Get started with a Chef Automate environment](/automate/install/)
 * [Gain visibility into your infrastructure with Chef Automate](/automate/visibility/)
 
 [END_BOX]

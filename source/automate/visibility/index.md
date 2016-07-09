@@ -31,4 +31,4 @@ The bootstrap process prepares your environment for the next tutorial, [Deploy a
 
 ## Before you begin
 
-The best way to get started with Chef Automate is to bring up a preconfigured demo environment that runs in Amazon Web Services (AWS). [Get the Chef Automate demo environment](/automate/install/) if you haven't already.
+The best way to get started with Chef Automate is to bring up a preconfigured demo environment that runs in Amazon Web Services (AWS). [Get started with a Chef Automate environment](/automate/install/) if you haven't already.

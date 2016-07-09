@@ -1,7 +1,7 @@
 ---
-title: 'Get the Chef Automate demo environment'
+title: 'Get started with a Chef Automate environment'
 layout: lesson-overview
-platform: Get the Chef Automate demo environment
+platform: Get started with a Chef Automate environment
 logo: demo-environment.svg
 order: 1
 ---
