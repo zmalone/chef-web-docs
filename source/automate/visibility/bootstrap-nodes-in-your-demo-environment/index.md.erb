@@ -1,5 +1,5 @@
 ---
-title: 'Bootstrap nodes in your demo environment'
+title: 'Bootstrap nodes in your environment'
 order: 1
 keywords: TODO
 layout: lesson
@@ -8,11 +8,11 @@ next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 show_disqus: false
 ---
-Recall that the demo environment [comes with infrastructure](/automate/install/install-chef-automate#step1) that can receive build artifacts produced from Chef Automate's build pipeline. These environments are labeled **Acceptance**, **Union**, **Rehearsal**, and **Delivered** in this diagram.
+Recall that the preconfigured environment [comes with infrastructure](/automate/install/install-chef-automate#step1) that can receive build artifacts produced from Chef Automate's build pipeline. These environments are labeled **Acceptance**, **Union**, **Rehearsal**, and **Delivered** in this diagram.
 
 <img src="/assets/images/automate/automate-scenario-architecture.svg" style="width: 100%; box-shadow: none;" alt="An example Chef Automate installation" />
 
-In this part, you'll bootstrap these environments to your demo environment's Chef server. During the bootstrap process, each node will run the `awesome_customers_delivery` cookbook to configure the Customers web application.
+In this part, you'll bootstrap these environments to your Chef server. During the bootstrap process, each node will run the `awesome_customers_delivery` cookbook to configure the Customers web application.
 
 You'll also learn how to use _push jobs_ to trigger `chef-client` to run on all 4 of your nodes at the same time. The bootstrap process prepares your environment for the next tutorial, [Deploy a cookbook with Chef Automate](/automate/deploy-cookbook/), where you'll walk through delivering the web application cookbook using Chef Automate's workflow features.
 
@@ -28,13 +28,13 @@ Here's what you'll do:
 
 ## 1. Set up your Windows workstation
 
-If you closed the connection to the demo environment's Windows workstation, [connect to it now](/automate/install/install-chef-automate#step5) and [open up PowerShell](/automate/install/install-chef-automate#step6) through the Chef DK desktop shortcut.
+If you closed the connection to the Windows workstation, [connect to it now](/automate/install/install-chef-automate#step5) and [open up PowerShell](/automate/install/install-chef-automate#step6) through the Chef DK desktop shortcut.
 
 Next, open **Google Chrome**. Then navigate to [https://delivery.chordata.biz/insights/](https://delivery.chordata.biz/insights/). Or choose the **Chef Insights** bookmark from the **Demo** folder in Google Chrome.
 
 [COMMENT] The Windows workstation is preconfigured to accept Chef Automate's self-signed SSL certificate. In a production environment, you would typically set up a certificate chain that's rooted by a trusted certificate authority (CA) to enable the Chef Automate server to verify its authenticity.
 
-Each system in the demo environment comes with the fictitious **chordata.biz** domain as part of its hostname. The setup [uses hosts files](/automate/install/managing-your-aws-instances#connectingtoyourawsinstancesfromthewindowsworkstation) to associate each server's private IP address with its hostname.
+Each system in the preconfigured environment comes with the fictitious **chordata.biz** domain as part of its hostname. The setup [uses hosts files](/automate/install/managing-your-aws-instances#connectingtoyourawsinstancesfromthewindowsworkstation) to associate each server's private IP address with its hostname.
 
 Notice that the dashboard is empty. During the bootstrap process, your nodes will do an initial `chef-client` run and report data back to Chef Automate. You'll do that shortly.
 
@@ -170,7 +170,7 @@ httpd                        0.3.6
 
 ## 4. Bootstrap your nodes
 
-Recall that the demo environment comes with infrastructure for each of the Acceptance, Union, Rehearsal, and Delivered stages. Each infrastructure environment is an Ubuntu 14.04 server.
+Recall that the preconfigured environment comes with infrastructure for each of the Acceptance, Union, Rehearsal, and Delivered stages. Each infrastructure environment is an Ubuntu 14.04 server.
 
 You'll learn more about the purpose of each of these infrastructure environments in the next tutorial. For now, you'll bootstrap each instance to the Chef server and run the `awesome_customers_delivery` cookbook.
 
@@ -308,7 +308,7 @@ rehearsal       available
 union   available
 ```
 
-You see `acceptance`, `union`, `rehearsal`, and `delivered` are available to receive push jobs. `build-node-1` and `build-node-2` are build nodes that come with the demo environment. You'll use these nodes to run build tasks in the next tutorial.
+You see `acceptance`, `union`, `rehearsal`, and `delivered` are available to receive push jobs. `build-node-1` and `build-node-2` are build nodes that come with the preconfigured environment. You'll use these nodes to run build tasks in the next tutorial.
 
 The ability to see which nodes are available is provided by the [knife push](https://github.com/chef/knife-push) plugin, which comes preinstalled on the Windows workstation.
 

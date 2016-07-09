@@ -5,7 +5,7 @@ platform: Deploy a cookbook with Chef Automate
 logo: workflow-cookbook.svg
 order: 3
 ---
-In the previous tutorials, you [brought up a preconfigured Chef Automate demo environment](/automate/install/) and [bootstrapped infrastructure nodes](/automate/visibility/) to run a basic web application cookbook. Along the way, you learned how to use push jobs to run `chef-client` on your nodes. You also used Chef Automate's ability to report the status of your nodes to resolve a failed `chef-client` run.
+In the previous tutorials, you [brought up a preconfigured Chef Automate environment](/automate/install/) and [bootstrapped infrastructure nodes](/automate/visibility/) to run a basic web application cookbook. Along the way, you learned how to use push jobs to run `chef-client` on your nodes. You also used Chef Automate's ability to report the status of your nodes to resolve a failed `chef-client` run.
 
 However, the workflow you used was largely manual &ndash; you uploaded changes directly to the Chef server and ran `chef-client` on your nodes from your workstation. To successfully ship code faster, with less effort, and with higher quality, you need a more centralized approach that promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
 
@@ -104,7 +104,7 @@ After completing this tutorial, you should be able to:
 
 ## Before you begin
 
-This tutorial relies on the Chef Automate demo environment and nodes that are bootstrapped to run the `awesome_customers_delivery` cookbook. Be sure to complete these tutorials if you haven't already.
+This tutorial relies on the preconfigured Chef Automate environment and nodes that are bootstrapped to run the `awesome_customers_delivery` cookbook. Be sure to complete these tutorials if you haven't already.
 
 * [Get started with a Chef Automate environment](/automate/install/)
 * [Gain visibility into your infrastructure with Chef Automate](/automate/visibility/)
