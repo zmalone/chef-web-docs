@@ -55,9 +55,9 @@ This tutorial comes in multiple parts. In the first part, you set up a Chef Auto
 
 Here you set up the user that will perform the last three parts of this tutorial.
 
-You log in to the Chef Automate web interface and create an organization and a user account. You also set up the virtual Windows workstation so you can access Chef Automate through that user account.
+User accounts enable end users to access Chef Automate through its web interface or from the command line.
 
-Organizations group related projects. User accounts enable end users to access Chef Automate through its web interface or from the command line.
+You log in to the Chef Automate web interface and create a user account. You also set up the virtual Windows workstation so you can access Chef Automate through that user account.
 
 ### Part 2: Create the project
 

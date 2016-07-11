@@ -14,7 +14,7 @@ If you need a break, you can [temporarily stop your AWS instances](/automate/ins
 
 Be sure to [explore the Chef documentation](https://docs.chef.io/chef_automate.html) to learn more about Chef Automate's features.
 
-This tutorial and the previous one focused on Chef Automate's workflow and visibility features. Chef Automate also includes [Chef Compliance](https://www.chef.io/compliance/), which enables you to assess your infrastructure's adherence to compliance requirements and to monitor that infrastructure on an ongoing basis.
+This tutorial and the previous one focused on Chef Automate's workflow and visibility features. Chef Automate also includes [Chef Compliance scanner](https://www.chef.io/compliance/), which enables you to assess your infrastructure's adherence to compliance requirements and to monitor that infrastructure on an ongoing basis.
 
 ![](automate/automate-architecture.svg)
 

@@ -19,7 +19,7 @@ With Chef Automate, you can, for example:
 * run automated tests to identify potential defects or bugs in your code.
 * detect cases where a different team's code is incompatible with yours.
 * push build artifacts to production servers in real time.
-* deploy Habitat packages to a Habitat depot.
+* deploy [Habitat](https://www.habitat.sh) packages to a Habitat depot.
 
 Chef uses Chef Automate to deploy its own software. With it, we have:
 
@@ -31,6 +31,6 @@ We are shipping code faster, with less effort, and with higher quality. In this 
 
 To help get started with Chef Automate more quickly, you begin by using automation to build infrastructure that runs in Amazon Web Services (AWS). All you need is an AWS account and a Chef Automate license key (you sign up for a trial key on the next page).
 
-The automation brings up a fully-functional Chef Automate system in an isolated AWS environment that won't affect anything else you're running. After you complete the tutorial, you can experiment further and then simply tear down the environment when you're done.
+The automation brings up a fully-functional Chef Automate system in an isolated AWS environment that won't affect anything else you're running. After you complete the tutorials, you can experiment further and then simply tear down the environment when you're done.
 
 [COMMENT] Learn more about how to use the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the white paper.
