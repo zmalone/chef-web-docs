@@ -8,6 +8,7 @@ next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 survey_id: 2mCgpoLBUQiBI9gS46TWiSMBYPVi_2FumGC4rJ8eJqMxJdJLzeR4SRdxnZWD5DzYU2
 show_disqus: false
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In this part, you install Chef Delivery on AWS using [CloudFormation](https://aws.amazon.com/cloudformation/).
 
@@ -57,7 +58,7 @@ The automation sets up a Windows workstation because Windows provides an easy wa
 
 **VPC** &ndash; Although a [virtual private cloud](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-vpc.html) (VPC) is not required to use Chef Delivery on AWS, the automation creates one to give you an environment that's isolated from the rest of your AWS account. When you tear down your Delivery installation, only the resources that belong to this isolated environment are destroyed.
 
-An added benefit to using a VPC is that it assigns a static IP adddress to each server. These IP addresses remain fixed so that you can temporarily stop and restart your AWS instances as you evaluate Chef Delivery. In a complete setup, it's common to keep the instances running so that users can access Delivery at any time.
+An added benefit to using a VPC is that it assigns a static IP address to each server. These IP addresses remain fixed so that you can temporarily stop and restart your AWS instances as you evaluate Chef Delivery. In a complete setup, it's common to keep the instances running so that users can access Delivery at any time.
 
 ### Instance types, network, and ports
 
@@ -124,7 +125,7 @@ Now you're ready to run the [CloudFormation](https://aws.amazon.com/cloudformati
   ![](delivery/aws_open_cloudformation.png)
 1. If you've used CloudFormation in the past, click **Create Stack**.
   ![](delivery/aws_create_stack.png)
-  
+
   If you have no running stacks, click **Create New Stack**.
   ![](delivery/aws_create_stack_first.png)
 1. Under **Choose a template**, choose **Specify an Amazon S3 template URL**.
@@ -167,12 +168,12 @@ Here you'll run the secure copy utility, `scp`, to transfer your license file to
 
 [WINDOWS] In this part, you'll run the `scp` and `ssh` commands, which are typically available on Linux systems and Mac OS. From Windows, the easiest way to access these tools is to [install Git for Windows](/manage-a-node/rhel/get-set-up#step4). Git for Windows includes Git Bash, a terminal emulator that makes it easy to run Linux commands.
 
-Start by running the `scp` command to copy your license key file to a temporary directory on your server. 
+Start by running the `scp` command to copy your license key file to a temporary directory on your server.
 
 Replace:
 
  * <% ph 'SSH_KEY' %> with your AWS SSH private key.
- * <% ph 'LICENSE_KEY_FILE' %> with the location of the Delivery license key file that you [downloaded in step 2](#step2). 
+ * <% ph 'LICENSE_KEY_FILE' %> with the location of the Delivery license key file that you [downloaded in step 2](#step2).
  * <% ph 'IP_ADDRESS' %> with the public IP address of your Chef Delivery server. You can get the public IP address from the **Outputs** tab in the CloudFormation console or from the EC2 console.
 
 ```bash
@@ -236,7 +237,7 @@ ubuntu@ip-10-0-0-12:~$ sudo delivery-ctl reconfigure
 ```
 
 As an optional step, run this command to confirm that the services are running.
- 
+
 ```bash
 ubuntu@ip-10-0-0-12:~$ sudo delivery-ctl service-list
 delivery*

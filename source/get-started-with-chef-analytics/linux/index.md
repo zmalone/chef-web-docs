@@ -4,6 +4,7 @@ layout: lesson-overview
 platform: 'Get started with Chef Analytics'
 logo: chef-analytics.svg
 order: 3
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Whether you're managing ten nodes or ten thousand, having real-time visibility into what's happening on the Chef server can help you stay on top of your Chef infrastructure. For example, say you want to know:
 
