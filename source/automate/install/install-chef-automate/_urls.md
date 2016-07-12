@@ -10,11 +10,11 @@
     </tr>
     <tr>
       <td>eu-west-1</td>
-      <td>Coming soon</td>
+      <td>[https://s3.amazonaws.com/learn-chef-cf/chef-automate-eval-eu-west-1-20160712.json](https://s3.amazonaws.com/learn-chef-cf/chef-automate-eval-eu-west-1-20160712.json)</td>
     </tr>
     <tr>
       <td>ap-southeast-1</td>
-      <td>Coming soon</td>
+      <td>[https://s3.amazonaws.com/learn-chef-cf/chef-automate-eval-ap-southeast-1-20160712.json](https://s3.amazonaws.com/learn-chef-cf/chef-automate-eval-ap-southeast-1-20160712.json)</td>
     </tr>
   </tbody>
 </table>
