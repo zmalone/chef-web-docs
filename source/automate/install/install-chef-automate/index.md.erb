@@ -102,7 +102,7 @@ MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", 1438, function(form
 
 [END_MODAL]
 
-After you click the link in the email, the license file named <% fp 'delivery.license' %> will be downloaded to your web browser’s downloads directory.
+After you click the link in the email, the license file named <% fp 'automate.license' %> will be downloaded to your web browser’s downloads directory.
 
 To connect to the Windows workstation, you'll need a Remote Desktop (RDP) client. Here's how to set one up.
 
@@ -203,18 +203,18 @@ Replace:
 Type 'yes' when prompted.
 
 ```bash
-$ scp -i SSH_KEY LICENSE_KEY_FILE ubuntu@IP_ADDRESS:/home/ubuntu/delivery.license
+$ scp -i SSH_KEY LICENSE_KEY_FILE ubuntu@IP_ADDRESS:/home/ubuntu/automate.license
 ```
 
 Here's an example.
 
 ```bash
-$ scp -i ~/.ssh/jsmith.pem ~/Downloads/delivery.license ubuntu@52.41.125.55:/home/ubuntu/delivery.license
+$ scp -i ~/.ssh/jsmith.pem ~/Downloads/automate.license ubuntu@52.41.125.55:/home/ubuntu/automate.license
 The authenticity of host '52.41.125.55 (52.41.125.55)' can't be established.
 ECDSA key fingerprint is SHA256:sqT6XOG/TjQM87gdmqz9ZMMEQ5MUSdCPweCwBzetig4.
 Are you sure you want to continue connecting (yes/no)? yes
 Warning: Permanently added '52.41.125.55' (ECDSA) to the list of known hosts.
-delivery.license                              100% 2560     2.5KB/s   00:00
+automate.license                              100% 3072     3.0KB/s   00:00
 ```
 
 Keep in mind that after the automated setup completes, it might take a few minutes for the Chef Automate server to be fully connectable. If you receive "Permission denied (publickey)" or a similar error, try again in a few minutes.
@@ -257,8 +257,10 @@ ubuntu@delivery:~$
 From your SSH session, copy the license file to its final location.
 
 ```bash
-ubuntu@delivery:~$ sudo mv ~/delivery.license /var/opt/delivery/license
+ubuntu@delivery:~$ sudo mv ~/automate.license /var/opt/delivery/license/delivery.license
 ```
+
+[COMMENT] The license key file you downloaded is named `automate.license`. This version of Chef Automate requires the file to be named `delivery.license`. We'll update the file names to match in a future version.
 
 Next, run this command to reconfigure the server.
 
