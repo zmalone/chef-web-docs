@@ -13,7 +13,7 @@ The fourth stage is **Remediate**. Knowing the state of your servers is a great 
 
 With Chef, you write code to describe the desired state of your infrastructure. When Chef runs, it applies the configuration only when the current state differs from the desired state. This approach is called _test and repair_.
 
-You can use Chef's test and repair approach to remediate compliance failures. A complete workflow might use an automated pipeline, such as [Chef Delivery](/delivery/get-started/). This diagram shows a more basic workflow that you can use to get started.
+You can use Chef's test and repair approach to remediate compliance failures. A complete workflow might use an automated pipeline, such as [Chef Automate](https://www.chef.io/automate/). This diagram shows a more basic workflow that you can use to get started.
 
 <img src="/assets/images/networks/compliance_workflow.svg" style="width: 100%; box-shadow: none;" />
 
