@@ -62,6 +62,7 @@ module Middleman
               # line to the lines of code
               gutters.push gutter("&nbsp;")
               line = "&nbsp;" if line == "" # work-around fact that blank lines are eaten
+              line = "[...]" if line =~ /\[TRIMMED_OUTPUT\]/
               lines_of_code.push line_of_code(line, in_command, !in_command && line == "[...]")
               in_command = in_command && is_continuation?(line)
             end
