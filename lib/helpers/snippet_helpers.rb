@@ -1,20 +1,21 @@
 module SnippetHelpers
-  def command_snippet(page, step, snippet_id = 'default', features = [:stdin, :stdout])
-    render_snippet(page, step, snippet_id) do |snippet, snippet_path|
+  def command_snippet(step, snippet_id = 'default', features = [:stdin, :stdout])
+    render_snippet(step, snippet_id) do |snippet, snippet_path|
       [*features].map{|feature| IO.read(File.join(snippet_path, snippet[:output_base] + '.' + feature.to_s)) }.join
     end
   end
 
-  def code_snippet(page, step, snippet_id = 'default')
-    render_snippet(page, step, snippet_id) do |snippet, snippet_path|
+  def code_snippet(step, snippet_id = 'default')
+    render_snippet(step, snippet_id) do |snippet, snippet_path|
       IO.read(File.join(snippet_path, snippet[:file]))
     end
   end
 
   private
 
-  def render_snippet(page, step, snippet_id, &block)
+  def render_snippet(step, snippet_id, &block)
     begin
+      page = current_page
       snippet_path = File.join('snippets', File.dirname(page.path))
       manifest = load_manifest(snippet_path, step)
 
