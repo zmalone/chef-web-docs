@@ -1,7 +1,7 @@
-$(document).ready(function() { 
+$(document).ready(function() {
   // Nav Interactions
   const $navLinks = $(".nav-links");
-  const navBreakpoint = 620; // navBreakpoint should be the same as breakpoint in _nav.scss file
+  const navBreakpoint = 714; // navBreakpoint should be the same as breakpoint in _nav.scss file
   var largeScreen;
 
   var checkWindowSize = function() {
