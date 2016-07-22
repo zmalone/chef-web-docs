@@ -1,4 +1,11 @@
 module SnippetHelpers
+  def load_machine_config
+    require 'pathname'
+    machine_config_path = File.join('snippets', File.dirname(current_page.path), '..', 'machine_config.yml')
+    machine_config_path = Pathname.new(machine_config_path).cleanpath
+    File.exist?(machine_config_path) ? YAML.load_file(machine_config_path) : nil
+  end
+
   def command_snippet(step, snippet_id = 'default', features = [:stdin, :stdout])
     render_snippet(step, snippet_id) do |snippet, snippet_path|
       [*features].map{|feature| IO.read(File.join(snippet_path, snippet[:output_base] + '.' + feature.to_s)) }.join
