@@ -35,7 +35,7 @@ module SnippetHelpers
 
       concat "```#{language}\n#{path}\n#{body}```"
     rescue
-      concat "```plaintext\n\# error\nFailed to load snippet #{snippet_id}\n```"
+      concat "```plaintext\n\# error\nFailed to load snippet #{snippet_id}\n\tpath: #{snippet_path}\n\tid: #{snippet_id}\n```"
     end
   end
 
