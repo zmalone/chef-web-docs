@@ -1,11 +1,10 @@
 ## 1. Create a cookbook
 
-First, from your <code class="file-path">~/chef-repo</code> directory, create a <code class="file-path">cookbooks</code> directory and `cd` there.
+First, from your <code class="file-path">~/chef-repo</code> directory, create a <code class="file-path">cookbooks</code> directory.
 
 ```bash
 # ~/chef-repo
 $ mkdir cookbooks
-$ cd cookbooks
 ```
 
 Now run the `chef` command to generate a cookbook named `learn_chef_apache2`.
@@ -14,6 +13,8 @@ Now run the `chef` command to generate a cookbook named `learn_chef_apache2`.
 # ~/chef-repo/cookbooks
 $ chef generate cookbook learn_chef_apache2
 ```
+
+The <% fp 'cookbooks/learn_chef_apache2' %> part tells Chef to create a cookbook named `learn_chef_apache2` under the <% fp 'cookbooks' %> directory.
 
 Here's the directory structure that the command created.
 
