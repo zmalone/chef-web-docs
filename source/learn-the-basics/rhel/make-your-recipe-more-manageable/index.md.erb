@@ -7,6 +7,7 @@ layout: lesson
 sections: [summary, exercises]
 next: {heading: Conclusion, partial: conclusion}
 time_to_complete: 15 minutes
+snippet_path: learn-the-basics/rhel/vagrant/make-your-recipe-more-manageable
 ---
 [HEADLINE] A _cookbook_ provides structure to your recipes and enables you to more easily reference external files, such as our web server's home page. In essence, a cookbook helps you stay organized.
 
@@ -25,7 +26,7 @@ First, from your <code class="file-path">~/chef-repo</code> directory, create a 
 $ mkdir cookbooks
 ```
 
-<% command_snippet('create-a-cookbook', 'mkdir-cookbooks') %>
+<% command_snippet(page: current_page, path: 'create-a-cookbook/mkdir-cookbooks') %>
 
 Now run the `chef` command to generate a cookbook named `learn_chef_httpd`.
 
@@ -43,7 +44,7 @@ Recipe: code_generator::cookbook
     - restore selinux security context
 ```
 
-<% command_snippet('create-a-cookbook', 'chef-generate-cookbook') %>
+<% command_snippet(page: current_page, path: 'create-a-cookbook/chef-generate-cookbook') %>
 
 The <% fp 'cookbooks/learn_chef_httpd' %> part tells Chef to create a cookbook named `learn_chef_httpd` under the <% fp 'cookbooks' %> directory.
 
@@ -79,7 +80,7 @@ $ tree
 
 [COMMENT] If the `tree` command is not available, run `sudo yum install tree -y` to install the `tree` package.
 
-<% command_snippet('create-a-cookbook', 'tree-cookbook') %>
+<% command_snippet(page: current_page, path: 'create-a-cookbook/tree-cookbook') %>
 
 Note the default recipe, named <code class="file-path">default.rb</code>. This is where we'll move our Apache recipe in a moment.
 
@@ -107,7 +108,7 @@ Recipe: code_generator::template
     - restore selinux security context
 ```
 
-<% command_snippet('create-a-template', 'chef-generate-template') %>
+<% command_snippet(page: current_page, path: 'create-a-template/chef-generate-template') %>
 
 The file <code class="file-path">index.html.erb</code> gets created under <code class="file-path">learn\_chef\_httpd/templates/default</code>.
 
@@ -142,7 +143,7 @@ $ tree
 13 directories, 10 files
 ```
 
-<% command_snippet('create-a-template', 'tree-template') %>
+<% command_snippet(page: current_page, path: 'create-a-template/tree-template') %>
 
 The .erb extension simply means that the file can have placeholders. More on that later.
 
@@ -157,7 +158,7 @@ Now copy the contents of the HTML file from your recipe to the new HTML file, <c
 </html>
 ```
 
-<% code_snippet('create-a-template', 'index-1') %>
+<% code_snippet(page: current_page, path: 'create-a-template/index-1') %>
 
 [COMMENT] Here, you're adding the web site content directly to your cookbook for learning purposes. In practice, your web site content would more likely be some build artifact, for example a .zip file on your build server. With Chef, you could pull updated web content from your build server and deploy it to your web server.
 
@@ -182,7 +183,7 @@ template '/var/www/html/index.html' do
 end
 ```
 
-<% code_snippet('update-the-recipe-to-reference-the-html-template', 'default-1') %>
+<% code_snippet(page: current_page, path: 'update-the-recipe-to-reference-the-html-template/default-1') %>
 
 [END_BOX]
 
@@ -217,7 +218,7 @@ Running handlers complete
 Chef Client finished, 1/4 resources updated in 02 seconds
 ```
 
-<% command_snippet('run-the-cookbook', 'cookbook-ccr-1') %>
+<% command_snippet(page: current_page, path: 'run-the-cookbook/cookbook-ccr-1') %>
 
 Previously, you ran `chef-client` to run a single recipe from the command line. A run-list specifies each of the individual recipes from your cookbook that you want to apply. Here, you applied just one recipe, but the run-list can contain multiple recipes from multiple cookbooks.<br><br>In this example, `recipe[learn_chef_httpd]` is the same as specifying `recipe[learn_chef_httpd::default]`, meaning we want to run the `learn_chef_httpd` cookbook's default recipe, <code class="file-path">default.rb</code>.
 
@@ -233,7 +234,7 @@ $ curl localhost
 </html>
 ```
 
-<% command_snippet('run-the-cookbook', 'cookbook-curl-localhost') %>
+<% command_snippet(page: current_page, path: 'run-the-cookbook/cookbook-curl-localhost') %>
 
 The result is the same as before, but with a cookbook things are now easier to manage.
 

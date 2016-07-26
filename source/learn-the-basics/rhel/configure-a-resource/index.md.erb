@@ -4,6 +4,7 @@ description: 'Learn how Chef keeps your system in line with the policy you speci
 order: 2
 layout: lesson
 time_to_complete: 15 minutes
+snippet_path: learn-the-basics/rhel/vagrant/configure-a-resource
 ---
 [HEADLINE] A Chef _resource_ describes some piece of infrastructure, such as a file, a template, or a package. A Chef _recipe_ is a file that groups related resources, such as everything needed to configure a web server, database server, or a load balancer.
 
@@ -19,7 +20,7 @@ From your virtual machine, create the <code class="file-path">chef-repo</code> d
 $ mkdir ~/chef-repo
 ```
 
-<% command_snippet('set-up-your-working-directory', 'mkdir-chef-repo') %>
+<% command_snippet(page: current_page, path: 'set-up-your-working-directory/mkdir-chef-repo') %>
 
 Now `cd` there.
 
@@ -27,7 +28,7 @@ Now `cd` there.
 $ cd ~/chef-repo
 ```
 
-<% command_snippet('set-up-your-working-directory', 'cd-chef-repo') %>
+<% command_snippet(page: current_page, path: 'set-up-your-working-directory/cd-chef-repo') %>
 
 [TIP] We believe typing in the code and commands is the best way to learn. If you prefer to copy and paste things and are using our free trial VM, you may find it easier to continue this tutorial by opening this page in a browser from your VM. You can also copy and paste the text into your remote session. Use the **Clipboard** <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/skytap/clipboard.png"/> command in the menu bar to copy text to your session's clipboard.
 
@@ -50,7 +51,7 @@ file '/tmp/motd' do
 end
 ```
 
-<% code_snippet('create-the-motd-file', 'hello-1') %>
+<% code_snippet(page: current_page, path: 'create-the-motd-file/hello-1') %>
 
 From your terminal window, run the following `chef-client` command to apply what you've written.
 
@@ -81,7 +82,7 @@ Running handlers complete
 Chef Client finished, 1/1 resources updated in 01 seconds
 ```
 
-<% command_snippet('create-the-motd-file', 'ccr-1') %>
+<% command_snippet(page: current_page, path: 'create-the-motd-file/ccr-1') %>
 
 The output tells us that a new file, <code class="file-path">/tmp/motd</code>, was created. (The warnings you see relate to concepts we haven't introduced yet, and can be safely ignored for now.)
 
@@ -93,7 +94,7 @@ $ more /tmp/motd
 hello world
 ```
 
-<% command_snippet('create-the-motd-file', 'more-tmp-motd') %>
+<% command_snippet(page: current_page, path: 'create-the-motd-file/more-tmp-motd') %>
 
 
 ### Run the command a second time
@@ -120,7 +121,7 @@ Running handlers complete
 Chef Client finished, 0/1 resources updated in 01 seconds
 ```
 
-<% command_snippet('create-the-motd-file', 'ccr-2') %>
+<% command_snippet(page: current_page, path: 'create-the-motd-file/ccr-2') %>
 
 This time you get a different response &ndash; the file is already up to date. This is because Chef applies the configuration only when it needs to.
 
@@ -143,7 +144,7 @@ file '/tmp/motd' do
 end
 ```
 
-<% code_snippet('update-the-motd-files-contents', 'hello-2') %>
+<% code_snippet(page: current_page, path: 'update-the-motd-files-contents/hello-2') %>
 
 Run `chef-client`.
 
@@ -174,7 +175,7 @@ Running handlers complete
 Chef Client finished, 1/1 resources updated in 01 seconds
 ```
 
-<% command_snippet('update-the-motd-files-contents', 'ccr-3') %>
+<% command_snippet(page: current_page, path: 'update-the-motd-files-contents/ccr-3') %>
 
 This time Chef applies the action because you've changed the desired state of the file.
 
@@ -193,7 +194,7 @@ Imagine that a co-worker manually changes <code class="file-path">/tmp/motd</cod
 $ echo 'hello robots' > /tmp/motd
 ```
 
-<% command_snippet('ensure-the-motd-files-contents-are-not-changed-by-anyone-else', 'echo-robots') %>
+<% command_snippet(page: current_page, path: 'ensure-the-motd-files-contents-are-not-changed-by-anyone-else/echo-robots') %>
 
 Now run `chef-client`.
 
@@ -224,7 +225,7 @@ Running handlers complete
 Chef Client finished, 1/1 resources updated in 01 seconds
 ```
 
-<% command_snippet('ensure-the-motd-files-contents-are-not-changed-by-anyone-else', 'ccr-4') %>
+<% command_snippet(page: current_page, path: 'ensure-the-motd-files-contents-are-not-changed-by-anyone-else/ccr-4') %>
 
 Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resource matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
 
@@ -245,7 +246,7 @@ file '/tmp/motd' do
 end
 ```
 
-<% code_snippet('delete-the-motd-file', 'goodbye') %>
+<% code_snippet(page: current_page, path: 'delete-the-motd-file/goodbye') %>
 
 Now apply <code class="file-path">goodbye.rb</code> to delete the file.
 
@@ -270,7 +271,7 @@ Running handlers complete
 Chef Client finished, 1/1 resources updated in 01 seconds
 ```
 
-<% command_snippet('delete-the-motd-file', 'ccr-5') %>
+<% command_snippet(page: current_page, path: 'delete-the-motd-file/ccr-5') %>
 
 The output shows that <code class="file-path">/tmp/motd</code> is now gone, but let's prove it.
 
@@ -280,7 +281,7 @@ $ more /tmp/motd
 /tmp/motd: No such file or directory
 ```
 
-<% command_snippet('delete-the-motd-file', 'more-tmp-motd-2', [:stdin, :stderr]) %>
+<% command_snippet(page: current_page, path: 'delete-the-motd-file/more-tmp-motd-2', features: [:stdin, :stderr]) %>
 
 [END_BOX]
 

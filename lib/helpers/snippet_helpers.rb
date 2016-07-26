@@ -1,41 +1,44 @@
 module SnippetHelpers
   def load_machine_config
     require 'pathname'
-    machine_config_path = File.join('snippets', File.dirname(current_page.path), '..', 'machine_config.yml')
+    machine_config_path = current_page.data[:machine_config] || current_page.parent.data[:machine_config] || nil
+    return nil unless machine_config_path
+    machine_config_path = File.join('snippets', machine_config_path, 'machine_config.yml')
     machine_config_path = Pathname.new(machine_config_path).cleanpath
     File.exist?(machine_config_path) ? YAML.load_file(machine_config_path) : nil
   end
 
-  def command_snippet(step, snippet_id = 'default', features = [:stdin, :stdout])
-    render_snippet(step, snippet_id) do |snippet, snippet_path|
-      [*features].map{|feature| IO.read(File.join(snippet_path, snippet[:output_base] + '.' + feature.to_s)) }.join
+  def command_snippet(page: nil, path:, features: [:stdin, :stdout])
+    path = File.join(page.data.snippet_path, path) if page
+
+    render_snippet(path) do |_metadata|
+       [*features].map{|feature| IO.read(File.join('snippets', path, feature.to_s)) }.join
     end
   end
 
-  def code_snippet(step, snippet_id = 'default')
-    render_snippet(step, snippet_id) do |snippet, snippet_path|
-      IO.read(File.join(snippet_path, snippet[:file]))
+  def code_snippet(page: nil, path:)
+    path = File.join(page.data.snippet_path, path) if page
+
+    render_snippet(path) do |metadata|
+      IO.read(File.join('snippets', path, metadata[:file]))
     end
   end
 
   private
 
-  def render_snippet(step, snippet_id, &block)
+  def render_snippet(path, &block)
     begin
-      page = current_page
-      snippet_path = File.join('snippets', File.dirname(page.path))
-      manifest = load_manifest(snippet_path, step)
+      snippet_path = File.join('snippets', path)
+      metadata = load_metadata(snippet_path)
 
-      snippet = manifest[:snippets].find {|s| s[:id] == snippet_id}
-
-      language = snippet[:language]
-      path = commentize_path(snippet[:path], language)
-      body = yield snippet, snippet_path
+      language = metadata[:language]
+      path = commentize_path(metadata[:display_path], language)
+      body = yield metadata
       body += "\n" unless body.end_with? "\n"
 
       concat "```#{language}\n#{path}\n#{body}```"
     rescue
-      concat "```plaintext\n\# error\nFailed to load snippet #{snippet_id}\n\tpath: #{snippet_path}\n\tid: #{snippet_id}\n```"
+      concat "```plaintext\n\# error\nFailed to load snippet '#{snippet_path}'\n```"
     end
   end
 
@@ -52,15 +55,15 @@ module SnippetHelpers
     end
   end
 
-  # Remember the previous manifest to reduce I/O.
-  @@cached_manifest = { path: 'dummy', manifest: nil }
+  # Remember the previous metadata to reduce I/O.
+  @@cached_metadata = { path: 'dummy', metadata: nil }
 
-  def load_manifest(path, snippet_id)
+  def load_metadata(path)
     require 'yaml'
-    manifest_path = File.join(path, snippet_id + '.yml')
-    unless @@cached_manifest[:path] == manifest_path
-      @@cached_manifest = { path: manifest_path, manifest: YAML.load_file(manifest_path) }
+    metadata_path = File.join(path, 'metadata.yml')
+    unless @@cached_metadata[:path] == metadata_path
+      @@cached_metadata = { path: metadata_path, metadata: YAML.load_file(metadata_path) }
     end
-    @@cached_manifest[:manifest]
+    @@cached_metadata[:metadata]
   end
 end
