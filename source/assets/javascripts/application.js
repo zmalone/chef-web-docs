@@ -8,5 +8,6 @@
 //= require section-links
 //= require clipboard
 //= require progress-bar
+//= require platform-tabs
 
 $(document).foundation();

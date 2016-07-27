@@ -1,0 +1,20 @@
+- if topics.count > 0
+  h2 style="text-align: center;" == header
+  - topics.each do |topic|
+    .row
+      .small-10.small-centered.columns
+        div.box id="#{ topic.data.name }" class="topic"
+          h2 = topic.data.title
+          - if topic.data.tags
+            div style="margin-top:-16px;margin-bottom:10px;"
+              = partial "layouts/add-tags", locals: { tags: topic.data.tags }
+          - if topic.data.time_to_complete
+            div style="font-size:12px;margin-top:-10px;margin-bottom:10px;" == topic.data.time_to_complete
+          - if topic.data.description
+            = topic.data.description
+            br
+            br
+            = partial 'layouts/tutorials/platform_grid', locals: { topic: topic }
+          - if topic.data.coming_soon
+            .coming-soon
+              = "Coming soon: #{topic.data.coming_soon.join(', ')}"
