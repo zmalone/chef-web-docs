@@ -1,5 +1,9 @@
 $(function() {
   $('a.platform-tab').on('click', function(event){
+    // Highlight the selected option.
+    $(this).parent().parent().find("a.platform-tab").removeClass("highlight-platform").addClass("hoverable-platform");
+    $(this).removeClass("hoverable-platform").addClass("highlight-platform");
+
     var target = 'learn_the_basics_' + $(this).data('platform');
     $("#"+target).show().siblings("div").hide();
 

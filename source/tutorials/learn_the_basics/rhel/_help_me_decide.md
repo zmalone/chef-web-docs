@@ -1,7 +1,5 @@
-I'LL HELP YOU!
+The free virtual machine runs in your browser and is the fastest way to get started.
 
-If you're a bear...
+If you . Normal cloud usage fees apply.
 
-If you're a rabbit...
-
-If you're a cat...
+If you prefer 

@@ -1,29 +1,45 @@
 - @children = topic.children.select{|p| p.data.platform}.reject{|p| p.no_index?}
 div.row
   div.medium-4.columns
-    ul.button-list
+    ul.platform-list
       - @children.each do |child|
-        li = link_to "#", class: "platform-tab", data: {platform: "#{child.data.platform_id}"} do
+        li = link_to "#", class: "platform-tab hoverable-platform", data: {platform: "#{child.data.platform_id}"} do
           = image_tag "rhel/platform-logos/#{child.data.logo}"
           span = "#{child.data.platform}"
   div.medium-8.columns#platform-details
     p#learn_the_basics_select_server_platform
-      = "<i class=\"fa fa-server\"></i>&nbsp;&nbsp;Start by choosing the server platform you want to manage from the list on the left."
+      = "<i class=\"fa fa-arrow-left\"></i>&nbsp;&nbsp;Start by choosing the server platform you want to manage from the list on the left."
     p#learn_the_basics_select_virtualization_platform style="display:none; margin-bottom: 0px;"
-      = "<i class=\"fa fa-cloud\"></i>&nbsp;&nbsp;Next, choose where you'll manage your server."
+      = "<i class=\"fa fa-arrow-down\"></i>&nbsp;&nbsp;Next, choose where you'll manage your server."
       span = "&nbsp;"
       - @children.each do |child|
         div id="learn_the_basics_#{child.data.platform_id}" style="display:none;"
-          = link_to "Help me decide", "#", style: "font-size: 70%;", class: "show-help-content", data: { target: "learn_the_basics_help_me_decide_content" }
-          div.help_me_decide#learn_the_basics_help_me_decide_content style="display:none;"
-            hr
-            = partial 'tutorials/learn_the_basics/rhel/help_me_decide'
-            br
-            = link_to "Hide", "#", style: "font-size: 70%;", class: "hide-help-content", data: { target: "learn_the_basics_help_me_decide_content" }
-            hr
-          ul
-            li = link_to "Get a free virtual machine that runs in your browser", "/tutorials/learn_the_basics/rhel/skytap"
-            li = link_to "Amazon Web Services", "/tutorials/learn_the_basics/rhel/aws"
-            li = link_to "Microsoft Azure", "/tutorials/learn_the_basics/rhel/azure"
-            li = link_to "Google Compute Engine", "/tutorials/learn_the_basics/rhel/gce"
-            li = link_to "Vagrant and VirtualBox", "/tutorials/learn_the_basics/rhel/vagrant"
+          <br>
+          ul.icon-list
+            li
+              span style="margin-right: 7px;"
+                = "<i class=\"fa fa-laptop\"></i>"
+              = link_to "Get a free virtual machine that runs in your browser", "/tutorials/learn_the_basics/rhel/skytap"
+            li
+              span style="margin-right: 7px;"
+                = "<i class=\"fa fa-cloud\"></i>"
+              = link_to "Amazon Web Services", "/tutorials/learn_the_basics/rhel/aws"
+            li
+              span style="margin-right: 7px;"
+                = "<i class=\"fa fa-cloud\"></i>"
+              = link_to "Microsoft Azure", "/tutorials/learn_the_basics/rhel/azure"
+            li
+              span style="margin-right: 7px;"
+                = "<i class=\"fa fa-cloud\"></i>"
+              = link_to "Google Compute Engine", "/tutorials/learn_the_basics/rhel/gce"
+            li
+              span style="margin-right: 7px;"
+                = "<i class=\"fa fa-server\"></i>"
+              = link_to "Vagrant and VirtualBox", "/tutorials/learn_the_basics/rhel/vagrant"
+            li
+              span style="margin-right: 7px;"
+                = "<i class=\"fa fa-server\"></i>"
+              = link_to "Hyper-V", "/tutorials/learn_the_basics/rhel/hyper-v"
+          // hr
+          // div
+          // = partial 'tutorials/learn_the_basics/rhel/help_me_decide'
