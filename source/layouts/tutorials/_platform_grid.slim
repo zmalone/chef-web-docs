@@ -8,38 +8,19 @@ div.row
           span = "#{child.data.platform}"
   div.medium-8.columns#platform-details
     p#learn_the_basics_select_server_platform
-      = "<i class=\"fa fa-arrow-left\"></i>&nbsp;&nbsp;Start by choosing the server platform you want to manage from the list on the left."
+      = "<i class=\"fa fa-arrow-left\"></i>&nbsp;&nbsp;1. Start by choosing the server platform you want to manage from the list."
     p#learn_the_basics_select_virtualization_platform style="display:none; margin-bottom: 0px;"
-      = "<i class=\"fa fa-arrow-down\"></i>&nbsp;&nbsp;Next, choose where you'll manage your server."
+      = "<i class=\"fa fa-arrow-down\"></i>&nbsp;&nbsp;2. Next, choose where you'll manage your server."
       span = "&nbsp;"
       - @children.each do |child|
         div id="learn_the_basics_#{child.data.platform_id}" style="display:none;"
-          <br>
           ul.icon-list
-            li
-              span style="margin-right: 7px;"
-                = "<i class=\"fa fa-laptop\"></i>"
-              = link_to "Get a free virtual machine that runs in your browser", "/tutorials/learn_the_basics/rhel/skytap"
-            li
-              span style="margin-right: 7px;"
-                = "<i class=\"fa fa-cloud\"></i>"
-              = link_to "Amazon Web Services", "/tutorials/learn_the_basics/rhel/aws"
-            li
-              span style="margin-right: 7px;"
-                = "<i class=\"fa fa-cloud\"></i>"
-              = link_to "Microsoft Azure", "/tutorials/learn_the_basics/rhel/azure"
-            li
-              span style="margin-right: 7px;"
-                = "<i class=\"fa fa-cloud\"></i>"
-              = link_to "Google Compute Engine", "/tutorials/learn_the_basics/rhel/gce"
-            li
-              span style="margin-right: 7px;"
-                = "<i class=\"fa fa-server\"></i>"
-              = link_to "Vagrant and VirtualBox", "/tutorials/learn_the_basics/rhel/vagrant"
-            li
-              span style="margin-right: 7px;"
-                = "<i class=\"fa fa-server\"></i>"
-              = link_to "Hyper-V", "/tutorials/learn_the_basics/rhel/hyper-v"
-          // hr
-          // div
-          // = partial 'tutorials/learn_the_basics/rhel/help_me_decide'
+            - if child.data.tracks
+              - child.data.tracks.each do |track|
+                li
+                  span style="margin-right: 7px;"
+                    = "<i class=\"fa #{track.icon}\"></i>"
+                  span == track.heading
+                  ul
+                    - track.options.each do |option|
+                      li == link_to option.title, File.join(File.dirname(child.path), option.path)
