@@ -1,24 +1,8 @@
-<%
-def to_friendly_date(date)
-  year, month, day = date.to_s.split('-')
-  %w(January February March April May June July August September October November December)[month.to_d-1] +
-  ' ' + day + ', ' + year
-end
-def describe_system(data)
-  <<-EOH
-    <li>
-    #{data['name']}: #{data['os']} on #{data['virtualization']}, #{data['products'].map{|_k,v| "#{v['display']} #{v['version']}"}.join(', ')}
-    </li>
-  EOH
-end
-machine_config = load_machine_config; if machine_config %>
+<% machine_config = load_machine_config; if machine_config %>
 
 <a name="machine_configuration"></a>
 <span style="font-size: 12px;">
-Last tested on <%= to_friendly_date(machine_config[:build_date]) %> using:</span>
-<ul style="font-size: 12px;">
-<%= machine_config[:machines].map{|m| concat(describe_system(m))}.join %>
-</ul>
+<%= machine_config %>
 <a style="font-size: 12px;" href="#">[top]</a>
 
 <% end %>

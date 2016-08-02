@@ -3,20 +3,19 @@ module SnippetHelpers
     require 'pathname'
     machine_config_path = current_page.data[:machine_config] || current_page.parent.data[:machine_config] || nil
     return nil unless machine_config_path
-    machine_config_path = File.join('snippets', machine_config_path, 'machine_config.yml')
+    machine_config_path = File.join('snippets', machine_config_path, 'machine_config.md')
     machine_config_path = Pathname.new(machine_config_path).cleanpath
-    File.exist?(machine_config_path) ? YAML.load_file(machine_config_path) : nil
+    File.exist?(machine_config_path) ? File.read(machine_config_path) : nil
   end
 
-  def command_snippet(page: nil, path:, features: [:stdin, :stdout])
-    path = File.join(page.data.snippet_path, path) if page
-
+  def command_snippet(page: nil, path:, workstation: 'linux', features: [:stdin, :stdout])
+    path = File.join(page.data.snippet_path, path, "-#{workstation}") if page
     render_snippet(path) do |_metadata|
        [*features].map{|feature| IO.read(File.join('snippets', path, feature.to_s)) }.join
     end
   end
 
-  def code_snippet(page: nil, path:)
+  def code_snippet(page: nil, workstation: 'linux', path:)
     path = File.join(page.data.snippet_path, path) if page
 
     render_snippet(path) do |metadata|
