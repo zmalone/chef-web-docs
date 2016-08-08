@@ -4,8 +4,13 @@ module SnippetHelpers
     concat(File.read(Pathname.new(path).cleanpath))
   end
 
-  def command_snippet(page: nil, path:, workstation: 'linux', features: [:stdin, :stdout])
-    path = File.join(page.data.snippet_path, path + "-#{workstation}") if page
+  def command_snippet(page: nil, path:, workstation: nil, features: [:stdin, :stdout])
+    workstation ||= page.data.snippet_workstation if page
+    if page
+      path = File.join(page.data.snippet_path, path + "-#{workstation}")
+    else
+      path = path + "-#{workstation}"
+    end
     render_snippet(path) do |_metadata|
        [*features].map{|feature| IO.read(File.join('snippets', path, feature.to_s)) }.join
     end
@@ -32,8 +37,8 @@ module SnippetHelpers
       body += "\n" unless body.end_with? "\n"
 
       concat "```#{language}\n#{path}\n#{body}```"
-    rescue
-      concat "```plaintext\n\# error\nFailed to load snippet '#{snippet_path}'\n```"
+    rescue Exception => e
+      concat "```plaintext\n\# error\nFailed to load snippet '#{snippet_path}'\n#{e.to_s}\n```"
     end
   end
 

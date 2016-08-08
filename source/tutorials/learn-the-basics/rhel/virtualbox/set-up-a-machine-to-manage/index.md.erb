@@ -6,6 +6,7 @@ keywords: TODO
 layout: lesson
 time_to_complete: 60 minutes
 snippet_path: learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage
+snippet_workstation: ubuntu
 ---
 <%= partial '../../shared/get-set-up/intro' %>
 
@@ -17,14 +18,21 @@ You'll follow these steps to bring up a CentOS 7 instance:
 1. [Install VirtualBox](#step2)
 1. [Install Vagrant](#step3)
 1. [Download a CentOS 7.2 Vagrant box](#step4)
+1. [Bring up a CentOS 7.2 instance](#step5)
+1. [If you're running Windows &ndash; verify your SSH client](#step6)
+1. [Connect to your CentOS instance](#step7)
+1. [Install the Chef DK on your CentOS instance](#step8)
+1. [Prepare a text editor on your CentOS instance](#step9)
+
+You'll also learn how to [clean up](#cleaningup) your virtual machine when you're done with this tutorial.
 
 [START_BOX]
 
 ## A note about versions
 
-The sample output you see might differ depending on your workstation's operating system. Differing software versions can also affect the output that you see.
+The sample output you see might differ depending on your workstation's operating system. Different software versions can also affect the output that you see.
 
-Chef integrates with other popular software such as VirtualBox and Vagrant. However, Chef does not maintain that software. If you're having trouble getting VirtualBox or Vagrant working, check the [Vagrant issues](https://github.com/mitchellh/vagrant/issues) and [VirtualBox Bugtracker](https://www.virtualbox.org/wiki/Bugtracker) pages. We're also happy to help as best we can.
+Chef integrates with other popular software such as VirtualBox and Vagrant. However, Chef does not maintain VirtualBox or Vagrant. If you're having trouble getting VirtualBox or Vagrant working, check the [Vagrant issues](https://github.com/mitchellh/vagrant/issues) and [VirtualBox Bugtracker](https://www.virtualbox.org/wiki/Bugtracker) pages. We're also happy to help as best we can.
 
 <% render_machine_config('snippets/learn-the-basics/rhel/virtualbox/machine_config.md') %>
 
@@ -52,11 +60,23 @@ If you are unable to run virtual machines on your workstation, you can [try a di
 
 <%= partial 'layouts/install_virtualbox' %>
 
-#### Verify the installation
+### Verify the installation
 
 Now run the following command to verify that VirtualBox is installed.
 
 <% command_snippet(page: current_page, path: 'install-virtualbox/vboxmanage--version') %>
+
+On Windows, if the command fails, you may need to update your `PATH` environment variable.
+
+By default, VirtualBox is installed to <code class="file-path">C:\Program Files\Oracle\VirtualBox</code> on Windows. Run these commands to add VirtualBox to your system path.
+
+```ps
+$ $path = [Environment]::GetEnvironmentVariable("PATH", "Machine")
+$ $vbox_path = "C:\Program Files\Oracle\VirtualBox"
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vbox_path", "Machine")
+```
+
+Then run `VBoxManage --version` a second time.
 
 [END_BOX]
 
@@ -66,11 +86,23 @@ Now run the following command to verify that VirtualBox is installed.
 
 <%= partial 'layouts/install_vagrant' %>
 
-#### Verify the installation
+### Verify the installation
 
 Now run the following to verify that Vagrant is installed.
 
 <% command_snippet(page: current_page, path: 'install-vagrant/vagrant--version') %>
+
+Like VirtualBox, you may need to update your `PATH` environment variable if the command fails on Windows.
+
+By default, Vagrant is installed to <code class="file-path">C:\HashiCorp\Vagrant\bin</code> on Windows. Run these commands to add Vagrant to your system path.
+
+```ps
+$ $path = [Environment]::GetEnvironmentVariable("PATH", "Machine")
+$ $vagrant_path = "C:\HashiCorp\Vagrant\bin"
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vagrant_path", "Machine")
+```
+
+Then run `vagrant --version` a second time.
 
 [END_BOX]
 
@@ -80,17 +112,11 @@ Now run the following to verify that Vagrant is installed.
 
 The next step is to download a base virtual machine image, called a _box_. Here's how to download a CentOS 7.2 box.
 
-```bash
-$ vagrant box add centos-7.2 http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.2_chef-provisionerless.box
-==> box: Box file was not detected as metadata. Adding it directly...
-==> box: Adding box 'centos-7.2' (v0) for provider:
-    box: Downloading: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.2_chef-provisionerless.box
-==> box: Successfully added box 'centos-7.2' (v0) for 'virtualbox'!
-```
-
 <% command_snippet(page: current_page, path: 'download-a-centos-72-vagrant-box/vagrant-box-add-centos-72') %>
 
-http://chef.github.io/bento/
+This command downloads a CentOS 7.2 box for Vagrant that's compatible with VirtualBox.
+
+The `bento/centos-7.2` part specifies to retrieve the box from [HashiCorp's Atlas](https://atlas.hashicorp.com/bento/boxes/centos-7.2). The `bento` part refers to the Chef [Bento](http://chef.github.io/bento/) project.
 
 [WINDOWS] [Due to an issue with newer versions of Vagrant](https://github.com/mitchellh/vagrant/issues/6852), if you're using a Windows workstation and the command fails with a blank error message, [you may need to install the Microsoft Visual C++ 2010 SP1 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=8328). Then try the command again.
 
@@ -102,43 +128,44 @@ http://chef.github.io/bento/
 
 Next, run these commands to bring up a CentOS 7.2 instance.
 
-```bash
-$ vagrant init centos-7.2
-A `Vagrantfile` has been placed in this directory. You are now
-ready to `vagrant up` your first virtual environment! Please read
-the comments in the Vagrantfile as well as documentation on
-`vagrantup.com` for more information on using Vagrant.
-$ vagrant up --provider=virtualbox
-Bringing machine 'default' up with 'virtualbox' provider...
-==> default: Importing base box 'centos-7.2'...
-==> default: Matching MAC address for NAT networking...
-[...]
-==> default: Machine booted and ready!
-GuestAdditions 5.0.16 running --- OK.
-==> default: Checking for guest additions in VM...
-==> default: Mounting shared folders...
-    default: /vagrant => /private/tmp
-```
-
 <% command_snippet(page: current_page, path: 'bring-up-a-centos-72-instance/vagrant-init') %>
 
 <% command_snippet(page: current_page, path: 'bring-up-a-centos-72-instance/vagrant-up') %>
+
+The [vagrant init](https://www.vagrantup.com/docs/cli/init.html) command creates a configuration file, named <% fp 'Vagrantfile' %>, which specifies memory, CPU, and network settings for the virtual machine.
+
+The [vagrant up](https://www.vagrantup.com/docs/cli/up.html) command uses the <% fp 'Vagrantfile' %> to create and configure the virtual machine.
 
 [END_BOX]
 
 [START_BOX]
 
-## Z. Windows workstation only &ndash; verify your SSH client
+## 6. If you're running Windows &ndash; verify your SSH client
 
-INSTALL FROM DL SITE OR IRW
+In this tutorial, you'll connect to your Linux instance over SSH. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you need to install one.
 
-In this tutorial, you'll connect to your Linux instance over an SSH connection. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you need to install one.
+The easiest way to set up an SSH client is to install the Chef Development Kit (Chef DK) on your workstation. Chef DK version 0.15 and later comes with [Git for Windows](https://git-scm.com/download/win), which includes an SSH client.
 
-The easiest way to set up an SSH client is to [install the Chef Development Kit](https://downloads.chef.io/chef-dk/) (Chef DK) on your workstation. Chef DK version 0.15 and later comes with [Git for Windows](https://git-scm.com/download/win), which includes an SSH client.
+Installing the Chef DK now also prepares you for the next tutorial, where you'll use Chef to manage a server remotely from your workstation.
 
-Installing the Chef DK now will prepare you for the next tutorial, where you'll use Chef to manage a server remotely from your workstation.
+There are two ways to install the Chef DK on Windows.
 
-After you install the Chef DK, verify that Git and an SSH client are set up properly. Open the **Chef Development Kit** shortcut from the desktop or **Start** menu and then run these commands.
+1. [Download and run the installer](https://downloads.chef.io/chef-dk/) from the Chef downloads page.
+2. Run the installer from PowerShell.
+
+<% command_snippet(page: current_page, path: 'install-the-chef-dk/install-chefdk', workstation: 'windows') %>
+
+After you install the Chef DK, verify that Git and an SSH client are set up properly.
+
+First, open the **Chef Development Kit** shortcut from the desktop or **Start** menu. Open the shortcut as **Adminstrator**.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+Next, run these commands.
+
+<% command_snippet(page: current_page, path: 'verify-your-ssh-client/git--version', workstation: 'windows') %>
+
+<% command_snippet(page: current_page, path: 'verify-your-ssh-client/ssh-no-args', workstation: 'windows', features: [:stdin, :stderr]) %>
 
 Keep your **Chef Development Kit** window open for the next part.
 
@@ -146,15 +173,9 @@ Keep your **Chef Development Kit** window open for the next part.
 
 [START_BOX]
 
-## Y. Connect to your CentOS instance
+## 7. Connect to your CentOS instance
 
-Next, run `vagrant ssh` to connect to your instance.
-
-```bash
-$ vagrant ssh
-[vagrant@localhost ~]$ logout
-Connection to 127.0.0.1 closed.
-```
+Next, from the directory where you ran `vagrant up`, run `vagrant ssh` to connect to your instance.
 
 <% command_snippet(page: current_page, path: 'connect-to-instance/vagrant-ssh', features: :stdin) %>
 
@@ -162,33 +183,21 @@ Connection to 127.0.0.1 closed.
 
 [START_BOX]
 
-## Y. Install the Chef DK
+## 8. Install the Chef DK on your CentOS instance
 
 Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
 From your SSH connection, run this from the command line to install the Chef DK.
 
-```bash
-$ curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P chefdk
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100 17892  100 17892    0     0  18700      0 --:--:-- --:--:-- --:--:-- 34080
-Downloading chefdk  for el...
-[...]
-Preparing...                ########################################### [100%]
-   1:chefdk                 ########################################### [100%]
-Thank you for installing Chef Development Kit!
-```
+<% command_snippet(path: 'learn-the-basics/rhel/virtualbox/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'centos', features: [:stdin, :stderr, :stdout]) %>
 
-<% command_snippet(path: 'learn-the-basics/rhel/virtualbox/set-up-your-own-server/install-the-chef-dk/install-chefdk-linux') %>
-
-The `-c` and `-v` arguments specify the Chef DK version this tutorial was last tested with. You can omit these arguments when you later set up your workstation for Chef development.
+The `-c` and `-v` arguments specify the Chef DK version this tutorial was last tested with.
 
 [END_BOX]
 
 [START_BOX]
 
-## X. Prepare a text editor
+## 9. Prepare a text editor on your CentOS instance
 
 Because Chef uses code to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
 
@@ -220,15 +229,14 @@ If you're new to using command-line text editors on CentOS, here are some resour
 
 ## Cleaning up
 
-After you complete the tutorial, you can destroy your virtual machine like this.
-
-```bash
-$ vagrant destroy
-    default: Are you sure you want to destroy the 'default' VM? [y/N] y
-==> default: Forcing shutdown of VM...
-==> default: Destroying VM and associated drives...
-```
+After you complete the tutorial, you can destroy your virtual machine like this. Remember to run this command from the directory where you ran `vagrant up`.
 
 <% command_snippet(page: current_page, path: 'cleaning-up/vagrant-destroy') %>
 
 [END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you have your virtual machine with the Chef DK and a text editor set up, let's use Chef to configure a file, a kind of _resource_, on it.
+
+<% end %>
