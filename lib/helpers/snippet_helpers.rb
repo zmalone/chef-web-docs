@@ -1,11 +1,7 @@
 module SnippetHelpers
-  def load_machine_config
+  def render_machine_config(path)
     require 'pathname'
-    machine_config_path = current_page.data[:machine_config] || current_page.parent.data[:machine_config] || nil
-    return nil unless machine_config_path
-    machine_config_path = File.join('snippets', machine_config_path, 'machine_config.md')
-    machine_config_path = Pathname.new(machine_config_path).cleanpath
-    File.exist?(machine_config_path) ? File.read(machine_config_path) : nil
+    concat(File.read(Pathname.new(path).cleanpath))
   end
 
   def command_snippet(page: nil, path:, workstation: 'linux', features: [:stdin, :stdout])
