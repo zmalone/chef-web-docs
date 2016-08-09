@@ -5,7 +5,7 @@ platform: 'Ubuntu'
 logo: ubuntu.svg
 order: 2
 ---
-In the previous tutorial, [Assess your infrastructure with Chef Compliance](/compliance-assess/ubuntu/), you set up a Chef Compliance server and scanned an Ubuntu 14.04 server against the predefined CIS Security Benchmarks.
+In the previous tutorial, [Assess your infrastructure with the Chef compliance scanner](/compliance-assess/ubuntu/), you set up a Chef compliance scanner server and scanned an Ubuntu 14.04 server against the predefined CIS Security Benchmarks.
 
 We proposed these 5 stages for meeting your compliance challenges: **Analyze**, **Specify**, **Test**, **Remediate**, and **Certify**. In the previous tutorial, you covered the first 3 of these 5 stages.
 

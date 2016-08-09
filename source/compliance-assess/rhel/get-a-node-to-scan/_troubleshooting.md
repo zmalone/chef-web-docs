@@ -1,4 +1,4 @@
-If Chef Compliance fails to create a connection, you'll see something like this:
+If the Chef compliance scanner fails to create a connection, you'll see something like this:
 
 ![](compliance/connectivity_report_fail_centos7.png)
 
@@ -6,9 +6,9 @@ If you see this error, verify that:
 
 * you can [manually connect over SSH](#step2) using your key pair.
 * your node is [configured for non-interactive sessions](#step3).
-* Chef Compliance has the [SSH private key](#step4).
+* the Chef compliance scanner has the [SSH private key](#step4).
 
-If the connectivity test still fails, log in to your Chef Compliance server and run this command. The output may help you find the source of the failure.
+If the connectivity test still fails, log in to your Chef compliance scanner server and run this command. The output may help you find the source of the failure.
 
 ```bash
 [vagrant@chef-compliance ~]$ sudo chef-compliance-ctl tail core

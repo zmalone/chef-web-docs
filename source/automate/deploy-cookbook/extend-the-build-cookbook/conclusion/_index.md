@@ -14,11 +14,11 @@ If you need a break, you can [temporarily stop your AWS instances](/automate/ins
 
 Be sure to [explore the Chef documentation](https://docs.chef.io/chef_automate.html) to learn more about Chef Automate's features.
 
-This tutorial and the previous one focused on Chef Automate's workflow and visibility features. Chef Automate also includes [Chef Compliance scanner](https://www.chef.io/compliance/), which enables you to assess your infrastructure's adherence to compliance requirements and to monitor that infrastructure on an ongoing basis.
+This tutorial and the previous one focused on Chef Automate's workflow and visibility features. Chef Automate also includes the [Chef compliance scanner](https://www.chef.io/compliance/), which enables you to assess your infrastructure's adherence to compliance requirements and to monitor that infrastructure on an ongoing basis.
 
 ![](automate/automate-architecture.svg)
 
-[See the Learn Chef tutorial](/tutorials/#compliance-assess) to get started with Chef Compliance.
+[See the Learn Chef tutorial](/tutorials/#compliance-assess) to get started with the Chef compliance scanner.
 
 You may also be interested in Chef's other open-source projects &ndash; [Habitat](https://www.habitat.sh) and [InSpec](https://www.chef.io/inspec/).
 

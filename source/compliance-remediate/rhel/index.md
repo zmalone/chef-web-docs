@@ -5,7 +5,7 @@ platform: 'Red Hat Enterprise Linux'
 logo: redhat.svg
 order: 1
 ---
-In the previous tutorial, [Assess your infrastructure with Chef Compliance](/compliance-assess/rhel/), you set up a Chef Compliance server and scanned a CentOS 7 server against the predefined CIS Security Benchmarks.
+In the previous tutorial, [Assess your infrastructure with Chef compliance scanner](/compliance-assess/rhel/), you set up a Chef compliance scanner server and scanned a CentOS 7 server against the predefined CIS Security Benchmarks.
 
 We proposed these 5 stages for meeting your compliance challenges: **Analyze**, **Specify**, **Test**, **Remediate**, and **Certify**. In the previous tutorial, you covered the first 3 of these 5 stages.
 

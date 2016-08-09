@@ -12,7 +12,7 @@ At the [start of the previous tutorial](/compliance-assess/ubuntu/), we proposed
 * **Remediate**
 * **Certify**
 
-With remediation in place, you've successfully completed 4 of these 5 stages. The final stage, **Certify**, depends on your compliance process. Chef Compliance provides automated tests and reports that prove the state of your infrastructure. This independent evidence can greatly decrease the time it takes to receive a final human sign off. Also, when nodes are managed by Chef, you can use automation to repair compliance failures and ensure that the nodes remain within compliance guidelines.
+With remediation in place, you've successfully completed 4 of these 5 stages. The final stage, **Certify**, depends on your compliance process. The Chef compliance scanner provides automated tests and reports that prove the state of your infrastructure. This independent evidence can greatly decrease the time it takes to receive a final human sign off. Also, when nodes are managed by Chef, you can use automation to repair compliance failures and ensure that the nodes remain within compliance guidelines.
 
 The built-in compliance profiles are a great start, but they may not cover your organization's unique requirements. We're working on a tutorial that teaches you how to write custom compliance profiles. [Follow us on Twitter](https://twitter.com/learnchef) to get the latest updates.
 

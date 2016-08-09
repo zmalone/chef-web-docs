@@ -1,6 +1,6 @@
 ## Exercises 
 
-These optional exercises are open-ended to help you think about how you might apply Chef Compliance to your organization.
+These optional exercises are open-ended to help you think about how you might apply Chef compliance scanner to your organization.
 
 <span style="font-size:16px;">1. Set up a recurring scan on your node. What might be the appropriate interval for the servers in your network?</span>
 
