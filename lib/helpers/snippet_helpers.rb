@@ -12,7 +12,13 @@ module SnippetHelpers
       path = path + "-#{workstation}"
     end
     render_snippet(path) do |_metadata|
-       [*features].map{|feature| IO.read(File.join('snippets', path, feature.to_s)) }.join
+      [*features].map do |feature|
+        content = IO.read(File.join('snippets', path, feature.to_s))
+        if feature == :stdin && page && page.data.replace_prompt
+          content.sub!(/^.+\$/, page.data.replace_prompt)
+        end
+        content
+      end.join
     end
   end
 
