@@ -1,4 +1,4 @@
-In this tutorial, you set up a Chef Compliance server and scanned an Ubuntu 14.04 server against the predefined CIS Security Benchmarks.
+In this tutorial, you set up a Chef compliance scanner server and scanned an Ubuntu 14.04 server against the predefined CIS Security Benchmarks.
 
 At the [beginning of the tutorial](/compliance-assess/ubuntu/), we proposed 5 stages for keeping your infrastructure in compliance. Let's review them.
 
@@ -12,7 +12,7 @@ You've already covered 3 of these 5 stages.
 
 In the Analyze stage, you define your compliance requirements. In this tutorial, this means adhering to the CIS Security Benchmarks.
 
-In the Specify stage, you translate your requirements into a formal language. Chef Compliance does this for you by providing tests for the CIS Security Benchmarks. In the next tutorial, you'll learn about the testing framework Chef Compliance uses, called [InSpec](https://www.chef.io/inspec/).
+In the Specify stage, you translate your requirements into a formal language. The Chef compliance scanner does this for you by providing tests for the CIS Security Benchmarks. In the next tutorial, you'll learn about the testing framework the Chef compliance scanner uses, called [InSpec](https://www.chef.io/inspec/).
 
 In the Test stage, you run the automated tests to see how closely your servers adhere to compliance. In this tutorial, you ran a compliance scan and noted which tests passed and which tests failed.
 

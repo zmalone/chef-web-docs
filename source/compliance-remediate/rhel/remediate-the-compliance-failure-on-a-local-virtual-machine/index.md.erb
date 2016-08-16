@@ -15,13 +15,13 @@ The failure tells us that the node potentially enables [SSH version 1 connection
 
 In this part, you'll verify the failure of the **Set SSH Protocol to 2** rule on a local virtual machine and remediate it. By starting with local development, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers.
 
-You can configure Test Kitchen to download and run compliance profiles on your test instances. For example, you can pull compliance profiles from [Chef Supermarket](https://docs.chef.io/supermarket.html), a Git repository, or from your Chef Compliance server. Here, you'll configure Test Kitchen to download the **cis-centos7-level1** profile from your Chef Compliance server.
+You can configure Test Kitchen to download and run compliance profiles on your test instances. For example, you can pull compliance profiles from [Chef Supermarket](https://docs.chef.io/supermarket.html), a Git repository, or from your Chef compliance scanner server. Here, you'll configure Test Kitchen to download the **cis-centos7-level1** profile from your Chef compliance scanner server.
 
 Here's what you'll do:
 
 1. [Understand the compliance failure](#step1)
 1. [Install kitchen-inspec](#step2)
-1. [Login to Chef Compliance through the InSpec CLI](#step3)
+1. [Login to the Chef compliance scanner through the InSpec CLI](#step3)
 1. [Create the ssh cookbook](#step4)
 1. [Replicate the failure on your Test Kitchen instance](#step5)
 1. [Remediate the failure](#step6)
@@ -32,7 +32,7 @@ Here's what you'll do:
 
 Let's take a closer look at what the **Set SSH Protocol to 2** rule checks for.
 
-From the **Compliance** menu in the Chef Compliance web interface, select the **CIS CentOS Linux 7 Benchmark Level 1** profile. Then scroll to the **Set SSH Protocol to 2** rule. You'll see this:
+From the **Compliance** menu in the Chef compliance scanner web interface, select the **CIS CentOS Linux 7 Benchmark Level 1** profile. Then scroll to the **Set SSH Protocol to 2** rule. You'll see this:
 
 ![](compliance/ssh_protocol_2_rule.png)
 
@@ -84,7 +84,7 @@ Now that you better understand why the rule failed, you can begin to write Chef 
 
 ## 2. Install kitchen-inspec
 
-Later in this part, you'll scan a test instance against the CIS profile through Test Kitchen. To do so, you need the `kitchen-inspec` gem. `kitchen-inspec` is a plugin that enables you to run InSpec tests from Test Kitchen. 
+Later in this part, you'll scan a test instance against the CIS profile through Test Kitchen. To do so, you need the `kitchen-inspec` gem. `kitchen-inspec` is a plugin that enables you to run InSpec tests from Test Kitchen.
 
 Install `kitchen-inspec` like this.
 
@@ -100,13 +100,13 @@ Successfully installed kitchen-inspec-0.13.0
 
 [START_BOX]
 
-## 3. Login to Chef Compliance through the InSpec CLI
+## 3. Login to the Chef compliance scanner through the InSpec CLI
 
-To download compliance profiles from your Chef Compliance server, `kitchen-inspec` requires login credentials.
+To download compliance profiles from your Chef compliance scanner server, `kitchen-inspec` requires login credentials.
 
 To do so, you run the `inspec compliance login` command. The [inspec](https://docs.chef.io/ctl_inspec.html) command-line interface (CLI) utility comes with the Chef DK.
 
-To login from the CLI, you first need an authorization token. To get that, select **About** from the menu located at the upper-right corner.in the web interface. 
+To login from the CLI, you first need an authorization token. To get that, select **About** from the menu located at the upper-right corner.in the web interface.
 
 ![](compliance/webui_about.png)
 
@@ -114,7 +114,7 @@ Then copy the contents of the **Refresh token** field to the clipboard.
 
 ![](compliance/webui_token.png)
 
-Next, run this command to connect InSpec to your Chef Compliance server. Replace <% ph 'FQDN' %> with your Chef Compliance server's FQDN, <% ph 'USER' %> with the username you use to login to the Chef Compliance web interface, and <% ph 'TOKEN' %> with your authorization token.
+Next, run this command to connect InSpec to your Chef compliance scanner server. Replace <% ph 'FQDN' %> with your Chef compliance scanner server's FQDN, <% ph 'USER' %> with the username you use to login to the Chef compliance scanner web interface, and <% ph 'TOKEN' %> with your authorization token.
 
 ```bash
 # ~/learn-chef
@@ -129,9 +129,9 @@ $ inspec compliance login https://chef-compliance.local --user john-smith --inse
 Successfully authenticated
 ```
 
-[COMMENT] The `--insecure` flag bypasses SSL verification because Chef Compliance comes with a self-signed certificate. In a production environment, you can [configure an SSL certificate](https://docs.chef.io/install_compliance.html#configure-ssl) that's rooted by a trusted certificate authority (CA) and omit the `--insecure` flag.
+[COMMENT] The `--insecure` flag bypasses SSL verification because Chef compliance scanner comes with a self-signed certificate. In a production environment, you can [configure an SSL certificate](https://docs.chef.io/install_compliance.html#configure-ssl) that's rooted by a trusted certificate authority (CA) and omit the `--insecure` flag.
 
-As a verification step, you can run `inspec compliance profiles` to prove that you've successfully authenticated. 
+As a verification step, you can run `inspec compliance profiles` to prove that you've successfully authenticated.
 
 ```bash
 # ~/learn-chef
@@ -312,7 +312,7 @@ suites:
     attributes:
 ```
 
-The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-centos7-level1** profile from Chef Compliance when it runs tests. You specified your Chef Compliance server when you ran `inspec compliance login` earlier. 
+The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-centos7-level1** profile from Chef compliance scanner when it runs tests. You specified your Chef compliance scanner server when you ran `inspec compliance login` earlier.
 
 You're now ready to scan your test instance. Run `kitchen verify` to run the compliance profile.
 
@@ -345,7 +345,7 @@ rspec  # Mount /tmp should be mounted
 When you scanned your node from the web interface, you likely noticed that many tests fail the CIS recommendations. You'll see a similar number of failures when you run the same tests against your test instance.
 
 For now, we're only interested in seeing the **Set SSH Protocol to 2** rule fail. We're working to make it easier to pinpoint specific failures in the output. For now, run `kitchen verify` a second time and redirect the output to a text file, like this.
- 
+
 ```bash
 # ~/learn-chef/cookbooks/ssh
 $ kitchen verify > verify.txt 2>&1
@@ -363,7 +363,7 @@ $ cat verify.txt | grep '\d*).*should match /^\\s\*Protocol'
   71) File /etc/ssh/sshd_config content should match /^\s*Protocol\s+(\S+)\s*(?:#.*)?$/
 ```
 
-You see that the error appears in the output. You can investigate the output further for more details. 
+You see that the error appears in the output. You can investigate the output further for more details.
 
 Now that you've replicated the failure on a test instance, you can write Chef code to remediate it.
 
@@ -485,7 +485,7 @@ If the test were to fail, you would examine the failure, modify your cookbook to
 
 [COMMENT] Test Kitchen instances are meant to be disposable. If you place your test instance in an unrepairable state or want to start over, run `kitchen destroy` to destroy your instance followed by `kitchen converge` to bring up a new one. The copy of your cookbook on your workstation is unaffected.
 
-As a final verification step, you can login to your test instance and verify that the SSH configuration file contains the expected protocol setting. 
+As a final verification step, you can login to your test instance and verify that the SSH configuration file contains the expected protocol setting.
 
 ```bash
 # ~/learn-chef/cookbooks/ssh

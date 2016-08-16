@@ -7,20 +7,20 @@ sections: []
 next: {heading: Next, partial: next}
 time_to_complete: 30 minutes
 ---
-In this part, you'll prepare a CentOS 7 node to scan, add your node to Chef Compliance, and verify that Chef Compliance can connect to your node.
+In this part, you'll prepare a CentOS 7 node to scan, add your node to the Chef compliance scanner, and verify that the Chef compliance scanner can connect to your node.
 
-Recall that for Linux systems, Chef Compliance runs compliance tests remotely over SSH. To enable communication, in this part you'll set up your node to use key-based authentication. (Key-based authentication is recommended over password authentication.) You'll also configure your node to use non-interactive sessions by default.
+Recall that for Linux systems, the Chef compliance scanner runs compliance tests remotely over SSH. To enable communication, in this part you'll set up your node to use key-based authentication. (Key-based authentication is recommended over password authentication.) You'll also configure your node to use non-interactive sessions by default.
 
 Here's what you'll do:
 
 1. [Get a CentOS 7 node to scan](#step1)
 1. [Create an SSH key pair to connect to your node](#step2)
 1. [Configure your node for non-interactive sessions](#step3)
-1. [Provide your SSH private key to Chef Compliance](#step4)
-1. [Add your node to Chef Compliance](#step5)
+1. [Provide your SSH private key to the Chef compliance scanner](#step4)
+1. [Add your node to the Chef compliance scanner](#step5)
 1. [Create a test connection to your node](#step6)
 
-[COMMENT] Although Chef Compliance works with many Linux distributions, for learning purposes we recommend that you use CentOS 7 to ensure that what you see matches the procedures and output that's shown here.
+[COMMENT] Although the Chef compliance scanner works with many Linux distributions, for learning purposes we recommend that you use CentOS 7 to ensure that what you see matches the procedures and output that's shown here.
 
 Before you begin, open a command prompt or terminal window on your workstation.
 
@@ -32,11 +32,11 @@ Before you begin, open a command prompt or terminal window on your workstation.
 
 For this part, you need to bring up a CentOS 7 server that has the standard configuration. Your server also needs:
 
-* an IP address that's reachable from both your workstation and your Chef Compliance server.
+* an IP address that's reachable from both your workstation and your Chef compliance scanner server.
 * access to the `root` user account or an account with `sudo` access.
 * the ability to connect over SSH.
 
-Although not required, you may find it easiest to bring up your node in the same environment as your Chef Compliance server. For example, if you're running Chef Compliance server on a virtual machine, your node can be a second virtual machine on the same private network.
+Although not required, you may find it easiest to bring up your node in the same environment as your Chef compliance scanner server. For example, if you're running the Chef compliance scanner server on a virtual machine, your node can be a second virtual machine on the same private network.
 
 If you're interested in using Chef to remediate compliance failures, as you'll do in the next tutorial, now's a good time to make sure that your node has port 443 (HTTPS) open for network traffic. This will enable your node to communicate with a Chef server (you'll set up a Chef server in the next tutorial if you don't have one already).
 
@@ -54,7 +54,7 @@ Bring up a CentOS 7 system now. In the next step, you set up your node to be con
 
 > You perform this part from your workstation and your node.
 
-You need to generate an SSH key pair on your workstation so that Chef Compliance can connect to your node.
+You need to generate an SSH key pair on your workstation so that the Chef compliance scanner can connect to your node.
 
 
 [COMMENT] If your node is already set to be connectable through key-based authentication, such as with an Amazon EC2 instance, and you have access to both the public and private parts of the key pair, you can [skip to the next step](#step3) to configure your node for non-interactive sessions.
@@ -96,7 +96,7 @@ The key's randomart image is:
 +----[SHA256]-----+
 ```
 
-Next, copy the public part of your key pair (the public part has the <% fp '.pub' %> file extension) to your node. An easy way to do that is to run the `scp` command. Specify the username and password for the user account that you want Chef Compliance to connect to. Your user account can be the root account or one that has `sudo` access. Here's an example:
+Next, copy the public part of your key pair (the public part has the <% fp '.pub' %> file extension) to your node. An easy way to do that is to run the `scp` command. Specify the username and password for the user account that you want the Chef compliance scanner to connect to. Your user account can be the root account or one that has `sudo` access. Here's an example:
 
 ```bash
 $ scp ~/.ssh/node1.pub vagrant@192.168.77.78:/home/vagrant/.ssh
@@ -155,11 +155,11 @@ Keep your connection open for the next step.
 
 > In this step, you'll configure the node to only use non-interactive sessions.
 
-Chef Compliance requires a non-interactive session to run compliance scans on a node.
+The Chef compliance scanner requires a non-interactive session to run compliance scans on a node.
 
 For Red Hat Enterprise Linux based systems, you need to modify the user account's configuration to use non-interactive sessions by default.
 
-Modify the configuration file under <% fp '/etc/sudoers.d' %> for the account you want Chef Compliance to connect through. Here's an example &ndash; replace <% ph 'vagrant' %> with your account name.
+Modify the configuration file under <% fp '/etc/sudoers.d' %> for the account you want the Chef compliance scanner to connect through. Here's an example &ndash; replace <% ph 'vagrant' %> with your account name.
 
 ```ruby
 # /etc/sudoers.d/vagrant
@@ -167,7 +167,7 @@ vagrant ALL=(root) NOPASSWD:ALL
 Defaults:vagrant !requiretty
 ```
 
-[COMMENT] In production, you can set up a user account that's reserved specifically for Chef Compliance if you have other accounts that require an interactive session.
+[COMMENT] In production, you can set up a user account that's reserved specifically for the Chef compliance scanner if you have other accounts that require an interactive session.
 
 If you use a platform such as Chef to manage your production servers, you can automate this modification. [Here's an example Chef recipe](https://github.com/chef/train/blob/master/contrib/fixup_requiretty.rb).
 
@@ -175,11 +175,11 @@ If you use a platform such as Chef to manage your production servers, you can au
 
 [START_BOX]
 
-## 4. Provide your SSH private key to Chef Compliance
+## 4. Provide your SSH private key to the Chef compliance scanner
 
-> You do this part from the Chef Compliance web interface.
+> You do this part from the Chef compliance scanner web interface.
 
-The next step is to provide Chef Compliance with your SSH private key so that it can connect to your node.
+The next step is to provide the Chef compliance scanner with your SSH private key so that it can connect to your node.
 
 An easy way to get your private key file's contents is to print the file to the terminal and copy the output to your clipboard. Run this command on your workstation.
 
@@ -226,25 +226,25 @@ Click **Add Private Key**. You see this confirmation.
 
 ![](compliance/add_pk_confirm.png)
 
-[COMMENT] Depending on your requirements, you can use the same key pair to connect to multiple nodes. You only need to generate and import the private part of the key into Chef Compliance one time. Each server requires the public part of the key.
+[COMMENT] Depending on your requirements, you can use the same key pair to connect to multiple nodes. You only need to generate and import the private part of the key into Chef compliance scanner one time. Each server requires the public part of the key.
 
 [END_BOX]
 
 [START_BOX]
 
-## 5. Add your node to Chef Compliance
+## 5. Add your node to the Chef compliance scanner
 
-Now you add your node to Chef Compliance.
+Now you add your node to the Chef compliance scanner.
 
 From the **Dashboard** menu, click **Add** or **Add Nodes**.
 
 ![](compliance/add_node_button.png)
 
-Enter your node's hostname or IP address. Leave the **Add to environment** field empty. Chef Compliance creates a default environment for you.
+Enter your node's hostname or IP address. Leave the **Add to environment** field empty. The Chef compliance scanner creates a default environment for you.
 
 ![](compliance/add_node_ip_env.png)
 
-Under **Access configuration**, enter the account Chef Compliance will connect through and specify your private key.
+Under **Access configuration**, enter the account the Chef compliance scanner will connect through and specify your private key.
 
 ![](compliance/add_node_access.png)
 
@@ -270,7 +270,7 @@ Scroll to the bottom of the page and click **Save**.
 
 ![](compliance/edit_node_save_button.png)
 
-[COMMENT] You can repeat these steps to add additional nodes. You can also add multiple nodes at the same time by separating each hostname or IP address with a comma or a space. Chef Compliance also provides a REST API that enables you to programatically [add multiple nodes in bulk](https://docs.chef.io/api_compliance.html#post-bulk).
+[COMMENT] You can repeat these steps to add additional nodes. You can also add multiple nodes at the same time by separating each hostname or IP address with a comma or a space. The Chef compliance scanner also provides a REST API that enables you to programatically [add multiple nodes in bulk](https://docs.chef.io/api_compliance.html#post-bulk).
 
 [END_BOX]
 
@@ -278,13 +278,13 @@ Scroll to the bottom of the page and click **Save**.
 
 ## 6. Create a test connection to your node
 
-You've already manually verified that your node is connectable from your workstation over SSH using key-based authentication. But let's verify that Chef Compliance is also properly set up to use your key pair.
+You've already manually verified that your node is connectable from your workstation over SSH using key-based authentication. But let's verify that the Chef compliance scanner is also properly set up to use your key pair.
 
 From the dashboard, select your node and click the **Connectivity** button.
 
 ![](compliance/connectivity_button_centos7.png)
 
-Chef Compliance creates a test connection over SSH. You see this in the connectivity report.
+The Chef compliance scanner creates a test connection over SSH. You see this in the connectivity report.
 
 ![](compliance/connectivity_report_centos7.png)
 

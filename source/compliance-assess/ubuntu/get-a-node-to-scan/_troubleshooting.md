@@ -1,13 +1,13 @@
-If Chef Compliance fails to create a connection, you'll see something like this:
+If the Chef compliance scanner fails to create a connection, you'll see something like this:
 
 ![](compliance/connectivity_report_fail_ubuntu1404.png)
 
 If you see this error, verify that:
 
 * you can [manually connect over SSH](#step2) using your key pair.
-* Chef Compliance has the [SSH private key](#step3).
+* the Chef compliance scanner has the [SSH private key](#step3).
 
-If the connectivity test still fails, log in to your Chef Compliance server and run this command. The output may help you find the source of the failure.
+If the connectivity test still fails, log in to your Chef compliance scanner server and run this command. The output may help you find the source of the failure.
 
 ```bash
 [vagrant@chef-compliance ~]$ sudo chef-compliance-ctl tail core
