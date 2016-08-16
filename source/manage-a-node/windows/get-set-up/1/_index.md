@@ -1,6 +1,6 @@
 ## 1. Install the Chef Development Kit
 
-In the first tutorial, [Learn the Chef basics](/learn-the-basics/windows/), you used the tools provided by the Chef Development Kit (Chef DK) to configure a virtual machine directly. Now it's time to install the Chef DK on your workstation so that you can manage a node remotely.
+In the first tutorial, [Learn the Chef basics](/tutorials/learn-the-basics/windows/free/), you used the tools provided by the Chef Development Kit (Chef DK) to configure a virtual machine directly. Now it's time to install the Chef DK on your workstation so that you can manage a node remotely.
 
 [COMMENT] You can also use a virtual machine as your workstation. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites).
 

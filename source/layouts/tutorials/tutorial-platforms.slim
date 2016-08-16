@@ -1,0 +1,21 @@
+= wrap_layout :layout do
+  div.row
+    div.medium-3.columns
+      ul.side-nav.box style="border:none; background-color:transparent;"
+        - current_page.parent.children.each do |child|
+          - if child == current_page
+            li.side-nav-active style="border: 0px solid #bbb; border-radius:5px; padding: 6px; font-weight:400;"
+              = image_tag "rhel/platform-logos/#{child.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
+              span == child.toc_title
+            ul.side-nav.box style="border:none; background-color:transparent;"
+              - child.children.each do |gchild|
+                li = link_to gchild, style:"display:inline-block; border: 0px solid #bbb; border-radius:5px; padding: 6px; font-weight:400;" do
+                  = image_tag "rhel/platform-logos/#{gchild.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
+                  span == gchild.toc_title
+          - else
+            li == link_to child, style:"border: 0px solid #bbb; border-radius:5px; padding: 6px; font-weight:400;" do
+              = image_tag "rhel/platform-logos/#{child.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
+              span == child.toc_title
+    div.medium-9.columns
+      = partial "layouts/breadcrumbs"
+      = yield

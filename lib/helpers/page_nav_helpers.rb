@@ -1,4 +1,33 @@
 module PageNavHelpers
+  # TODO: this can possibly be improved by using metadata
+  def get_categories(pages)
+    a = [
+      {:category => 'getting-started',
+        :display => 'Get started with Chef'.upcase,
+        :topics => []
+      },
+      {:category => 'local-development',
+        :display => 'Develop and test locally'.upcase,
+        :topics => []
+      },
+      # {:category => 'manage-and-premium-features',
+      #   :display => 'Manage your own Chef server'.upcase,
+      #   :topics => []
+      # },
+      {:category => 'chef-automate',
+        :display => 'Collaborative development'.upcase,
+        :topics => []
+      }
+    ]
+    pages.each do |t|
+      if t.data.type == "topic" && !t.data.deprecated
+        h = a.find{|h| h[:category] == t.data.category}
+        h[:topics] << t if h
+      end
+    end
+    a
+  end
+
   def next_page(page, &block)
     concat(
       content_tag(:div, class: 'box') do
