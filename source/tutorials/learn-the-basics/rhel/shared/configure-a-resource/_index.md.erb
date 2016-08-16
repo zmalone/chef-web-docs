@@ -8,17 +8,9 @@ To get started, let's look at a basic configuration management project. You'll l
 
 From your virtual machine, create the <code class="file-path">chef-repo</code> directory under your home directory, <code class="file-path">~/</code>.
 
-```bash
-$ mkdir ~/chef-repo
-```
-
 <% command_snippet(page: current_page, path: 'set-up-your-working-directory/mkdir-chef-repo', features: :stdin) %>
 
 Now `cd` there.
-
-```bash
-$ cd ~/chef-repo
-```
 
 <% command_snippet(page: current_page, path: 'set-up-your-working-directory/cd-chef-repo', features: :stdin) %>
 
@@ -36,43 +28,9 @@ Next, you'll write what's called a _recipe_ to describe the desired state of the
 
 From your <code class="file-path">~/chef-repo</code> directory, create a file named <code class="file-path">hello.rb</code>, add these contents, and then save the file.
 
-```ruby
-# ~/chef-repo/hello.rb
-file '/tmp/motd' do
-  content 'hello world'
-end
-```
-
 <% code_snippet(page: current_page, path: 'create-the-motd-file/hello-1') %>
 
 From your terminal window, run the following `chef-client` command to apply what you've written.
-
-```bash
-# ~/chef-repo
-$ chef-client --local-mode hello.rb
-2016-03-24T18:24:21+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-03-24T18:24:21+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
-Starting Chef Client, version 12.8.1
-resolving cookbooks for run list: []
-Synchronizing Cookbooks:
-Installing Cookbook Gems:
-Compiling Cookbooks...
-[2016-03-24T18:24:23+00:00] WARN: Node default-centos-72 has an empty run list.
-Converging 1 resources
-Recipe: @recipe_files::/root/chef-repo/hello.rb
-  * file[/tmp/motd] action create
-    - create new file /tmp/motd
-    - update content in file /tmp/motd from none to b94d27
-    --- /tmp/motd	2016-03-24 18:24:23.030000766 +0000
-    +++ /tmp/.chef-motd20160324-25656-75j2lz	2016-03-24 18:24:23.026999266 +0000
-    @@ -1 +1,2 @@
-    +hello world
-    - restore selinux security context
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 1/1 resources updated in 01 seconds
-```
 
 <% command_snippet(page: current_page, path: 'create-the-motd-file/ccr-1') %>
 
@@ -80,38 +38,11 @@ The output tells us that a new file, <code class="file-path">/tmp/motd</code>, w
 
 Now verify that the file was written. Run the `more` command, which prints a file to the console.
 
-```bash
-# ~/chef-repo
-$ more /tmp/motd
-hello world
-```
-
 <% command_snippet(page: current_page, path: 'create-the-motd-file/more-tmp-motd') %>
-
 
 ### Run the command a second time
 
 Now, let's see now what happens when you run the same `chef-client` command again.
-
-```bash
-# ~/chef-repo
-$ chef-client --local-mode hello.rb
-[2016-03-24T18:24:25+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-03-24T18:24:25+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
-Starting Chef Client, version 12.8.1
-resolving cookbooks for run list: []
-Synchronizing Cookbooks:
-Installing Cookbook Gems:
-Compiling Cookbooks...
-[2016-03-24T18:24:26+00:00] WARN: Node default-centos-72 has an empty run list.
-Converging 1 resources
-Recipe: @recipe_files::/root/chef-repo/hello.rb
-  * file[/tmp/motd] action create (up to date)
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 0/1 resources updated in 01 seconds
-```
 
 <% command_snippet(page: current_page, path: 'create-the-motd-file/ccr-2') %>
 
@@ -129,43 +60,9 @@ Now you're going to change the MOTD.
 
 Modify <code class="file-path">hello.rb</code> like this ('hello world' becomes 'hello chef'.)
 
-```ruby
-# ~/chef-repo/hello.rb
-file '/tmp/motd' do
-  content 'hello chef'
-end
-```
-
 <% code_snippet(page: current_page, path: 'update-the-motd-files-contents/hello-2') %>
 
 Run `chef-client`.
-
-```bash
-# ~/chef-repo
-$ chef-client --local-mode hello.rb
-[2016-03-24T18:24:29+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-03-24T18:24:29+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
-Starting Chef Client, version 12.8.1
-resolving cookbooks for run list: []
-Synchronizing Cookbooks:
-Installing Cookbook Gems:
-Compiling Cookbooks...
-[2016-03-24T18:24:30+00:00] WARN: Node default-centos-72 has an empty run list.
-Converging 1 resources
-Recipe: @recipe_files::/root/chef-repo/hello.rb
-  * file[/tmp/motd] action create
-    - update content in file /tmp/motd from b94d27 to c38c60
-    --- /tmp/motd	2016-03-24 18:24:23.026999266 +0000
-    +++ /tmp/.chef-motd20160324-26099-14hk6vy	2016-03-24 18:24:30.508737995 +0000
-    @@ -1,2 +1,2 @@
-    -hello world
-    +hello chef
-    - restore selinux security context
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 1/1 resources updated in 01 seconds
-```
 
 <% command_snippet(page: current_page, path: 'update-the-motd-files-contents/ccr-3') %>
 
@@ -181,41 +78,9 @@ You need to make sure that no other process can change the MOTD.
 
 Imagine that a co-worker manually changes <code class="file-path">/tmp/motd</code> by replacing 'hello chef' with 'hello robots'. Go ahead and change your copy of <code class="file-path">/tmp/motd</code> through your text editor. Or you can change the file from the command line like this.
 
-```bash
-# ~/chef-repo
-$ echo 'hello robots' > /tmp/motd
-```
-
 <% command_snippet(page: current_page, path: 'ensure-the-motd-files-contents-are-not-changed-by-anyone-else/echo-robots', features: :stdin) %>
 
 Now run `chef-client`.
-
-```bash
-# ~/chef-repo
-$ chef-client --local-mode hello.rb
-[2016-03-24T18:24:32+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-03-24T18:24:32+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
-Starting Chef Client, version 12.8.1
-resolving cookbooks for run list: []
-Synchronizing Cookbooks:
-Installing Cookbook Gems:
-Compiling Cookbooks...
-[2016-03-24T18:24:34+00:00] WARN: Node default-centos-72 has an empty run list.
-Converging 1 resources
-Recipe: @recipe_files::/root/chef-repo/hello.rb
-  * file[/tmp/motd] action create
-    - update content in file /tmp/motd from 548078 to c38c60
-    --- /tmp/motd	2016-03-24 18:24:31.701333952 +0000
-    +++ /tmp/.chef-motd20160324-26334-rexmjn	2016-03-24 18:24:34.061513366 +0000
-    @@ -1,2 +1,2 @@
-    -hello robots
-    +hello chef
-    - restore selinux security context
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 1/1 resources updated in 01 seconds
-```
 
 <% command_snippet(page: current_page, path: 'ensure-the-motd-files-contents-are-not-changed-by-anyone-else/ccr-4') %>
 
@@ -231,47 +96,13 @@ Chef restored the original configuration. This is actually a really good thing b
 
 OK, you're done experimenting with the MOTD, so let's clean up. From your <code class="file-path">~/chef-repo</code> directory, create a new file named <code class="file-path">goodbye.rb</code> and save the following content to it.
 
-```ruby
-# ~/chef-repo/goodbye.rb
-file '/tmp/motd' do
-  action :delete
-end
-```
-
 <% code_snippet(page: current_page, path: 'delete-the-motd-file/goodbye') %>
 
 Now apply <code class="file-path">goodbye.rb</code> to delete the file.
 
-```bash
-# ~/chef-repo
-$ chef-client --local-mode goodbye.rb
-[2016-03-24T18:24:36+00:00] WARN: No config file found or specified on command line, using command line options.
-[2016-03-24T18:24:36+00:00] WARN: No cookbooks directory found at or above current directory.  Assuming /root/chef-repo.
-Starting Chef Client, version 12.8.1
-resolving cookbooks for run list: []
-Synchronizing Cookbooks:
-Installing Cookbook Gems:
-Compiling Cookbooks...
-[2016-03-24T18:24:37+00:00] WARN: Node default-centos-72 has an empty run list.
-Converging 1 resources
-Recipe: @recipe_files::/root/chef-repo/goodbye.rb
-  * file[/tmp/motd] action delete
-    - delete file /tmp/motd
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 1/1 resources updated in 01 seconds
-```
-
 <% command_snippet(page: current_page, path: 'delete-the-motd-file/ccr-5') %>
 
 The output shows that <code class="file-path">/tmp/motd</code> is now gone, but let's prove it.
-
-```bash
-# ~/chef-repo
-$ more /tmp/motd
-/tmp/motd: No such file or directory
-```
 
 <% command_snippet(page: current_page, path: 'delete-the-motd-file/more-tmp-motd-2', features: [:stdin, :stderr]) %>
 
