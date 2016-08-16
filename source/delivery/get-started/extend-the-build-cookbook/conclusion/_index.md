@@ -14,17 +14,17 @@ To access the Chef server web interface, navigate to [https://10.0.0.11/login](h
     <tr>
       <td>us-east-1 (N. Virginia)</td>
       <td id="chef-server-us-east-1"><code>EycY1IqWI5KHFdftYqLOXJ0piro=</code></td>
-      <td><a data-copytarget="#chef-server-us-east-1" class='small-button radius'>Copy</a></td>
+      <td><a data-copytarget="#chef-server-us-east-1" class='small-button radius cta'>Copy</a></td>
     </tr>
     <tr>
       <td>us-west-1 (N. California)</td>
       <td id="chef-server-us-west-1"><code>qUrNZDrN742wbLPwb/UUipTX6AI=</code></td>
-      <td><a data-copytarget="#chef-server-us-west-1" class='small-button radius'>Copy</a></td>
+      <td><a data-copytarget="#chef-server-us-west-1" class='small-button radius cta'>Copy</a></td>
     </tr>
     <tr>
       <td>us-west-2 (Oregon)</td>
       <td id="chef-server-us-west-2"><code>PNH6fKWLr6xsTLZemG/r3lM19bU=</code></td>
-      <td><a data-copytarget="#chef-server-us-west-2" class='small-button radius'>Copy</a></td>
+      <td><a data-copytarget="#chef-server-us-west-2" class='small-button radius cta'>Copy</a></td>
     </tr>
   </tbody>
 </table>

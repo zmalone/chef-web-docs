@@ -4,7 +4,7 @@ The second part of this tutorial uses your own Chef server, an Ubuntu 14.04 node
 
 If you don't already have a Chef server and Chef Analytics set up, follow this Learn Chef tutorial before you continue.
 
-<a class='accent-button radius' href='/get-started-with-chef-analytics/linux/' target='_blank'>Get started with Chef Analytics&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+<a class='accent-button radius cta' href='/get-started-with-chef-analytics/linux/' target='_blank'>Get started with Chef Analytics&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
 After completing this tutorial, you'll have:
 

@@ -76,7 +76,7 @@ Replace <code class="placeholder">ADDRESS</code> with your remote node's externa
 $ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name webserver1 --run-list 'recipe[webserver::default],recipe[audit::default]'
 ```
 
-<a class="help-button radius" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
+<a class="help-button radius cta" href="#" data-reveal-id="knife-help-modal">Need help troubleshooting?</a>
 
 <div id="knife-help-modal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
   <h3 id="modalTitle">If the operation times out or fails, here are some things to try</h3>
