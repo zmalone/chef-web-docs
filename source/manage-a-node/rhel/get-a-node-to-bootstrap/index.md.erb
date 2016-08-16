@@ -22,7 +22,7 @@ Like before, we suggest that you work in a disposable environment such as a Red 
 
 ## 1. Get a Red Hat Enterprise Linux 7 or CentOS 7 node to bootstrap
 
-Your node must be reachable from your workstation &ndash; the system where you'll initiate the bootstrap process. We'll show you how to verify a connection before you bootstrap your node.  
+Your node must be reachable from your workstation &ndash; the system where you'll initiate the bootstrap process. We'll show you how to verify a connection before you bootstrap your node.
 
 The free trial virtual machine that we provide in the first tutorial is not reachable from the Internet because its IP address is allocated on the private network. Therefore, you'll need to bring up your own system.
 
@@ -32,13 +32,37 @@ If you don't have a preferred way to set up a server, here are some popular opti
 
 <% accordion('vm-aws', 'Amazon Web Services') do %>
 
-<%= partial 'layouts/partials/aws_centos_instance' %>
+<% markdown do %>
+
+AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier. Choose this option if you're familiar with or would like to get started with AWS.
+
+[Follow steps 1-3](/tutorials/learn-the-basics/rhel/aws/set-up-a-machine-to-manage/) from the previous tutorial, _Learn the Chef basics_, to learn how to set up a CentOS 7 instance on AWS. Ensure that your instance's security group enables inbound network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+
+<% end %>
 
 <% end %>
 
 <% accordion('vm-azure', 'Microsoft Azure') do %>
 
-<%= partial 'layouts/partials/azure_centos_instance' %>
+<% markdown do %>
+
+Microsoft Azure is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 of usage. Choose this option if you're familiar with or would like to get started with Azure.
+
+[Follow steps 1-3](/tutorials/learn-the-basics/rhel/azure/set-up-a-machine-to-manage/) from the previous tutorial, _Learn the Chef basics_, to learn how to set up a CentOS 7 instance on Azure. Ensure that your instance's network security group enables inbound network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+
+<% end %>
+
+<% end %>
+
+<% accordion('vm-compute', 'Google Compute Engine') do %>
+
+<% markdown do %>
+
+Google is offering a [60-day free trial](https://cloud.google.com/compute/) for up to $300 (USD) of usage. Choose this option if you're familiar with or would like to get started with Google Cloud Platform.
+
+[Follow steps 1-3](/tutorials/learn-the-basics/rhel/compute/set-up-a-machine-to-manage/) from the previous tutorial, _Learn the Chef basics_, to learn how to set up a CentOS 7 instance on Compute Engine. When you choose the firewall settings, select **Allow HTTP traffic** and **Allow HTTP traffic**. This ensures your system is connectable on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+
+<% end %>
 
 <% end %>
 
@@ -46,32 +70,22 @@ If you don't have a preferred way to set up a server, here are some popular opti
 
 <% markdown do %>
 
-[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances on your workstation.
+[VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) are free virtualization tools that enable you to manage virtual machine instances on your workstation. Choose this option if you don't have access to cloud resources or you prefer to work with local virtual machines.
 
-Choose this option if you don't have access to cloud resources or you prefer to work with local virtual machines. You'll also need reasonably powerful hardware. Ensure that:
-
-* your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS.
-* your workstation meets the [system requirements](https://www.virtualbox.org/wiki/End-user_documentation) requirements for running VirtualBox.
-* your workstation has at least 5GB of free disk space. This will enable you to download the base image and run a few virtual machine instances.
-* your workstation has at least 512MB memory available per virtual machine instance.
-* nested virtualization is enabled if you're using another virtual machine as your workstation through a program such as VMWare Fusion.
-
-Here's how to install VirtualBox and Vagrant and bring up a CentOS 7 instance.
-
-Start by installing Virtual Box and Vagrant.
-
-### Install VirtualBox
-
-<%= partial 'layouts/install_virtualbox' %>
-
-### Install Vagrant
-
-<%= partial 'layouts/install_vagrant' %>
-<%= partial 'layouts/vagrant_centos_box' %>
+[Follow steps 1-6](/tutorials/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage/) from the previous tutorial, _Learn the Chef basics_, to learn how to install VirtualBox and Vagrant and bring up a CentOS 7 instance.
 
 <% end %>
 
 <% end %>
+
+If you choose to bring up your system some other way, ensure that your system:
+
+* provides `root` or `sudo` access.
+* has a resolvable IP address.
+* can access the Internet.
+* provides network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+
+Although Chef can be run completely from behind the firewall, using a system with Internet access is the easiest way to install packages and perform other common tasks.
 
 [END_BOX]
 
