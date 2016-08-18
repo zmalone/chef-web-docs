@@ -102,8 +102,12 @@ module Middleman
             # Can come back and rethink this more fully later.
             if m = line.match(/(\[?.+@.+\s?~\]?\$\s?)(.*)/)
               "<span style='display: inline;' class='line-number'>#{m[1]}</span><span style='display: inline;' class='line command'>#{m[2]}</span><br>"
+            # Powershell. Example:
+            # C:\dev\packer-templates [master]>
+            elsif m = line.match(/(\w:\\.*\s+\[.+?\]&gt;)(\s+.*)/)
+              "<span style='display: inline;' class='line-number'>#{m[1]}</span><span style='display: inline;' class='line command'>#{m[2]}</span><span class='line #{line_class}'></span>"
             # TODO: A variation of the above (example: root@079f902cf103:/home/test_user $)
-          elsif m = line.match(/(\[?.+@.+:.+\s?\$\s?)(.*)/)
+            elsif m = line.match(/(\[?.+@.+:.+\s?\$\s?)(.*)/)
               "<span style='display: inline;' class='line-number'>#{m[1]}</span><span style='display: inline;' class='line command'>#{m[2]}</span><br>"
             # TODO: Perhaps another hack. The intention here is to highlight Git prompts (for example, "users git:(master) $").
             elsif m = line.match(/(.+\sgit:\(.+\)\s\$\s)(.*)/)
