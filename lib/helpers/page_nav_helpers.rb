@@ -47,7 +47,7 @@ module PageNavHelpers
         if next_page.nil?
           output << link_to("Back to Tutorials <i class='fa fa-angle-double-right'></i>", "/tutorials/", class: 'button radius')
         else
-          output << link_to("Next&nbsp;<i class='fa fa-angle-double-right'></i>", next_page, class: 'button radius')
+          output << link_to("Next&nbsp;<i class='fa fa-angle-double-right'></i>", next_page, class: 'button radius cta')
         end
 
         output.join

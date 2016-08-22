@@ -5,7 +5,7 @@ module AccordionHelpers
         content_tag(:dd, class: "accordion-navigation") do
           output = []
           output << link_to("#{title} <i class='fa fa-angle-double-right'></i>", "##{id}")
-          output << content_tag(:div, {id: id, class: "box content"}, false) do
+          output << content_tag(:div, {id: id, class: "box content", style: "border:none;"}, false) do
             capture(&block)
           end
           output.join
