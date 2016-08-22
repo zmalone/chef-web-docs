@@ -1,7 +1,15 @@
 module SnippetHelpers
   def render_machine_config(path)
     require 'pathname'
-    concat(File.read(Pathname.new(path).cleanpath))
+    begin
+      concat(File.read(Pathname.new(path).cleanpath))
+    rescue Errno::ENOENT => e
+      if deploy?
+        raise e
+      else
+        concat "**Failed to load machine config '#{path}'<br>#{e.to_s}**\n\n\n".gsub(/_/, '\_').gsub(/\\\\_/, '\_')
+      end
+    end
   end
 
   def command_snippet(page: nil, path:, workstation: nil, replace_prompt: nil, features: [:stdin, :stdout])
@@ -45,7 +53,11 @@ module SnippetHelpers
 
       concat "```#{language}\n#{path}\n#{body}```"
     rescue Exception => e
-      concat "```plaintext\n\# error\nFailed to load snippet '#{snippet_path}'\n#{e.to_s}\n```"
+      if deploy?
+        raise e
+      else
+        concat "```plaintext\n\# error\nFailed to load snippet '#{snippet_path}'\n#{e.to_s}\n```"
+      end
     end
   end
 
