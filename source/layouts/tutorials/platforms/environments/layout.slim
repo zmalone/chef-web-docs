@@ -2,20 +2,25 @@
   div.row
     div.medium-3.columns
       ul.side-nav.box style="border:none; background-color:transparent;"
-        - current_page.parent.children.each do |child|
-          - if child == current_page
-            li.side-nav-active style="border: border-radius:5px; padding: 6px; font-weight:400;"
+        li.side-nav-active style="border: border-radius:5px; padding: 6px; font-weight:400;"
+          = image_tag "rhel/platform-logos/#{current_page.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
+          span == current_page.toc_title
+        ul.side-nav.box style="border:none; background-color:transparent;"
+          - current_page.children.each do |child|
+            li = link_to child, style:"display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;" do
               = image_tag "rhel/platform-logos/#{child.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
               span == child.toc_title
-            ul.side-nav.box style="border:none; background-color:transparent;"
-              - child.children.each do |gchild|
-                li = link_to gchild, style:"display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;" do
-                  = image_tag "rhel/platform-logos/#{gchild.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
-                  span == gchild.toc_title
-          - else
-            li == link_to child, style:"border: border-radius:5px; padding: 6px; font-weight:400;" do
-              = image_tag "rhel/platform-logos/#{child.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
-              span == child.toc_title
+        <hr />
+        li
+          dl.accordion data-accordion="" style="border:none; background-color:transparent;"
+            dd.accordion-navigation style="background-color:transparent;"
+              = link_to("Other options <i class='fa fa-angle-double-right'></i>", "#other-options", style: "border:none; background-color:transparent; font-size:15px;")
+              ul.side-nav.box.content id="other-options" style="border:none; background-color:transparent;"
+                - current_page.parent.children.each do |sibling|
+                  - if sibling != current_page
+                    li == link_to sibling, style:"border: border-radius:5px; padding: 6px; font-weight:400;" do
+                      = image_tag "rhel/platform-logos/#{sibling.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
+                      span == sibling.toc_title
     div.medium-9.columns
       = partial "layouts/breadcrumbs"
       = yield
