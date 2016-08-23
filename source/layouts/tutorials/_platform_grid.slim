@@ -1,30 +1,9 @@
-- @children = topic.children.select{|p| p.data.platform}.reject{|p| p.no_index?}
-div.row
-  div.medium-4.columns
-    ul.platform-list
-      - @children.each do |child|
-        li = link_to "#", class: "platform-tab hoverable-platform", data: {platform: "#{child.data.platform_id}"} do
-          = image_tag "rhel/platform-logos/#{child.data.logo}"
-          span style="display: inline-block; white-space: nowrap;" = "#{child.data.platform}"
-  div.medium-8.columns#platform-details
-    p#learn_the_basics_select_server_platform
-      = "<i class=\"fa fa-arrow-left\"></i>&nbsp;&nbsp;1. #{topic.data.platform_step1}"
-    p#learn_the_basics_select_virtualization_platform style="display:none; margin-bottom: 0px;"
-      = "<i class=\"fa fa-arrow-down\"></i>&nbsp;&nbsp;2. #{topic.data.platform_step2}"
-      span = "&nbsp;"
-      - @children.each do |child|
-        div id="learn_the_basics_#{child.data.platform_id}" style="display:none;"
-          ul.icon-list
-            - if child.data.tracks
-              - child.data.tracks.each do |track|
-                li
-                  hr width="75%"
-                  span style="margin-right: 7px;"
-                    = "<i class=\"fa #{track.icon}\"></i>"
-                  span == track.heading
-                  ul
-                    - track.options.each do |option|
-                      li
-                        div
-                          = link_to option.title, File.join("/" + File.dirname(child.path), option.path), style: "vertical-align:middle; font-size:90%;"
-                          div style="margin-left: 25px; font-size:75%;" == "#{option.desc}" if option.desc
+- categories.each do |category|
+  <hr />
+  div.row
+    div.large-5.columns
+      ul style="list-style-type: none;"
+        - category[:platforms].each do |platform|
+          li == platform_button(platform[:path], platform[:logo], platform[:label])
+    div.large-7.columns
+      span == category[:description]
