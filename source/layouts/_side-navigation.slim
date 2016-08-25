@@ -1,18 +1,23 @@
 - @check_style = "fa fa-check-square"
 ul.side-nav.box style="border:none; background-color:transparent;"
-  li style="border: border-radius:5px; padding: 6px; font-weight:400;"
-    = image_tag "rhel/platform-logos/#{current_page.parent.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
-    span == current_page.parent.toc_title
-  ul.side-nav.box style="border:none; background-color:transparent;"
-    - current_page.parent.children.each do |child|
-      - if child == current_page
-        li.side-nav-active style="display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;"
-          <i class="fa fa-square" aria-hidden="true"></i>
-          | &nbsp;&nbsp;
-          span == child.toc_title
-        - @check_style = "fa fa-square-o"
-      - else
-        li = link_to child, style:"display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;" do
-          <i class="fa #{@check_style}" aria-hidden="true"></i>
-          | &nbsp;&nbsp;
-          span == child.toc_title
+  - current_page.parent.children.each do |child|
+    - if child == current_page
+      li.side-nav-active style="display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;"
+        <i class="fa fa-square" aria-hidden="true"></i>
+        | &nbsp;&nbsp;
+        span == child.toc_title
+      - if current_page.data.headings
+        - headings = current_page.data.headings
+        - headings << { label: 'Comments', href: '#disqus' } unless current_page.data.show_disqus == false
+        ul.side-nav.box style="border:none; background-color:transparent; list-style-type: bullets;"
+          - headings.each do |heading|
+            li style="font-size: 90%; margin: 0px;" == link_to heading[:href] do
+              <i style="color:#439995;" class="fa fa-chevron-right" aria-hidden="true"></i>
+              | &nbsp;&nbsp;
+              span == heading[:label]
+      - @check_style = "fa fa-square-o"
+    - else
+      li = link_to child, style:"display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;" do
+        <i class="fa #{@check_style}" aria-hidden="true"></i>
+        | &nbsp;&nbsp;
+        span == child.toc_title
