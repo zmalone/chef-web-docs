@@ -39,8 +39,9 @@ module PageNavHelpers
           next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
         end
 
+        heading = next_page ? "Next :&nbsp;#{next_page.data.title}" : "Conclusion"
         output << content_tag(:h2) do
-          "Next" + (next_page.nil? ? '' : ":&nbsp;#{next_page.data.title}")
+          heading
         end
         output << render_markdown(&block)
 
