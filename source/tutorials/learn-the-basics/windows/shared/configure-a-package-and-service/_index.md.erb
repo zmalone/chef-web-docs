@@ -10,66 +10,15 @@ Of course, you can set up one web server manually. But with Chef it'll be easier
 
 Let's install IIS. From your <code class="file-path">~\chef-repo</code> directory, add this recipe to a file named <code class="file-path">webserver.rb</code>.
 
-```ruby-Win32
-# ~\chef-repo\webserver.rb
-powershell_script 'Install IIS' do
-  code 'Add-WindowsFeature Web-Server'
-  guard_interpreter :powershell_script
-  not_if "(Get-WindowsFeature -Name Web-Server).Installed"
-end
-```
-
 <% code_snippet(page: current_page, path: 'install-iis/webserver-1') %>
 
 We don't need to specify an action because `:run` is the default.
 
 Now run `chef-client` in local mode to apply the recipe.
 
-```ps
-# ~\chef-repo
-$ chef-client --local-mode webserver.rb
-[2016-01-07T13:43:55-08:00] WARN: No config file found or specified on command line, using command line options.
-[2016-01-07T13:43:55-08:00] WARN: No cookbooks directory found at or above current directory.  Assuming C:/Users/Adminis
-trator/chef-repo.
-Starting Chef Client, version 12.6.0
-resolving cookbooks for run list: []
-Synchronizing Cookbooks:
-Compiling Cookbooks...
-[2016-01-07T13:44:32-08:00] WARN: Node WIN-8MV74EBIT8G has an empty run list.
-Converging 1 resources
-Recipe: @recipe_files::C:/Users/Administrator/chef-repo/webserver.rb
-  * powershell_script[Install IIS] action run
-    - execute "C:\Windows\system32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NonInteractive -NoProfile -ExecutionP
-olicy Bypass -InputFormat None -File "C:/Users/ADMINI~1/AppData/Local/Temp/chef-script20160107-2128-mwavgl.ps1"
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 1/1 resources updated in 57 seconds
-```
-
 <% command_snippet(page: current_page, path: 'install-iis/package-ccr-1') %>
 
 Run the recipe a second time.
-
-```ps
-# ~\chef-repo
-$ chef-client --local-mode webserver.rb
-[2016-01-07T13:46:38-08:00] WARN: No config file found or specified on command line, using command line options.
-[2016-01-07T13:46:38-08:00] WARN: No cookbooks directory found at or above current directory.  Assuming C:/Users/Adminis
-trator/chef-repo.
-Starting Chef Client, version 12.6.0
-resolving cookbooks for run list: []
-Synchronizing Cookbooks:
-Compiling Cookbooks...
-[2016-01-07T13:47:14-08:00] WARN: Node WIN-8MV74EBIT8G has an empty run list.
-Converging 1 resources
-Recipe: @recipe_files::C:/Users/Administrator/chef-repo/webserver.rb
-  * powershell_script[Install IIS] action run (skipped due to not_if)
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 0/1 resources updated in 36 seconds
-```
 
 <% command_snippet(page: current_page, path: 'install-iis/package-ccr-2') %>
 
@@ -83,46 +32,11 @@ This time, Chef does not reinstall IIS. That's because the `not_if` attribute sk
 
 Now let's first enable the IIS World Wide Web Publishing Service (W3SVC) service when the server boots and then start the service. Modify <code class="file-path">webserver.rb</code> to look like this.
 
-```ruby-Win32
-# ~\chef-repo\webserver.rb
-powershell_script 'Install IIS' do
-  code 'Add-WindowsFeature Web-Server'
-  guard_interpreter :powershell_script
-  not_if "(Get-WindowsFeature -Name Web-Server).Installed"
-end
-
-service 'w3svc' do
-  action [:enable, :start]
-end
-```
-
 <% code_snippet(page: current_page, path: 'start-the-world-wide-web-publishing-service/webserver-2') %>
 
 This code declares multiple actions.
 
 Now apply it.
-
-```ps
-# ~\chef-repo
-$ chef-client --local-mode webserver.rb
-[2016-01-07T13:48:27-08:00] WARN: No config file found or specified on command line, using command line options.
-[2016-01-07T13:48:27-08:00] WARN: No cookbooks directory found at or above current directory.  Assuming C:/Users/Adminis
-trator/chef-repo.
-Starting Chef Client, version 12.6.0
-resolving cookbooks for run list: []
-Synchronizing Cookbooks:
-Compiling Cookbooks...
-[2016-01-07T13:49:04-08:00] WARN: Node WIN-8MV74EBIT8G has an empty run list.
-Converging 2 resources
-Recipe: @recipe_files::C:/Users/Administrator/chef-repo/webserver.rb
-  * powershell_script[Install IIS] action run (skipped due to not_if)
-  * windows_service[w3svc] action enable (up to date)
-  * windows_service[w3svc] action start (up to date)
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 0/3 resources updated in 37 seconds
-```
 
 <% command_snippet(page: current_page, path: 'start-the-world-wide-web-publishing-service/package-ccr-3') %>
 
@@ -138,63 +52,9 @@ Let's spruce things up and add a custom home page.
 
 You already know how to configure a `file` resource; append one that configures the default home page, <code class="file-path">c:\inetpub\wwwroot\Default.htm</code>, to the end of <code class="file-path">webserver.rb</code>. The entire recipe now looks like this.
 
-```ruby-Win32
-# ~\chef-repo\webserver.rb
-powershell_script 'Install IIS' do
-  code 'Add-WindowsFeature Web-Server'
-  guard_interpreter :powershell_script
-  not_if "(Get-WindowsFeature -Name Web-Server).Installed"
-end
-
-service 'w3svc' do
-  action [:enable, :start]
-end
-
-file 'c:\inetpub\wwwroot\Default.htm' do
-  content '<html>
-  <body>
-    <h1>hello world</h1>
-  </body>
-</html>'
-end
-```
-
 <% code_snippet(page: current_page, path: 'add-a-home-page/webserver-3') %>
 
 Now apply it.
-
-```ps
-# ~\chef-repo
-$ chef-client --local-mode webserver.rb
-[2016-01-07T13:50:09-08:00] WARN: No config file found or specified on command line, using command line options.
-[2016-01-07T13:50:09-08:00] WARN: No cookbooks directory found at or above current directory.  Assuming C:/Users/Adminis
-trator/chef-repo.
-Starting Chef Client, version 12.6.0
-resolving cookbooks for run list: []
-Synchronizing Cookbooks:
-Compiling Cookbooks...
-[2016-01-07T13:50:45-08:00] WARN: Node WIN-8MV74EBIT8G has an empty run list.
-Converging 3 resources
-Recipe: @recipe_files::C:/Users/Administrator/chef-repo/webserver.rb
-  * powershell_script[Install IIS] action run (skipped due to not_if)
-  * windows_service[w3svc] action enable (up to date)
-  * windows_service[w3svc] action start (up to date)
-  * file[c:\inetpub\wwwroot\Default.htm] action create
-    - create new file c:\inetpub\wwwroot\Default.htm
-    - update content in file c:\inetpub\wwwroot\Default.htm from none to 2914aa
-    --- c:\inetpub\wwwroot\Default.htm  2016-01-07 13:50:46.000000000 -0800
-    +++ c:\inetpub\wwwroot/Default.htm20160107-1644-19jhr7h     2016-01-07 13:50:46.000000000 -0800
-    @@ -1 +1,6 @@
-    +<html>
-    +  <body>
-    +    <h1>hello world</h1>
-    +  </body>
-    +</html>
-
-Running handlers:
-Running handlers complete
-Chef Client finished, 1/4 resources updated in 36 seconds
-```
 
 <% command_snippet(page: current_page, path: 'add-a-home-page/package-ccr-4') %>
 
@@ -207,16 +67,6 @@ IIS and W3SVC are already in the desired state, but you'll see that the home pag
 ## 4. Confirm your web site is running
 
 Run the `Invoke-WebRequest` PowerShell cmdlet to confirm that your web page is available.
-
-```ps
-# ~\chef-repo
-$ (Invoke-WebRequest -UseBasicParsing localhost).Content
-<html>
-  <body>
-    <h1>hello world</h1>
-  </body>
-</html>
-```
 
 <% command_snippet(page: current_page, path: 'confirm-your-web-site-is-running/iwr-localhost') %>
 
