@@ -39,7 +39,16 @@ module PageNavHelpers
           next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
         end
 
-        heading = next_page ? "Next :&nbsp;#{next_page.data.title}" : "Conclusion"
+        if next_page
+          #output << link_to("#next", anchor: "next")
+          output << content_tag(:a, "", {"name"=>"next", "href"=>"#next"})
+          heading = "Next:&nbsp;#{next_page.data.title}"
+        else
+          output << content_tag(:a, "", {"name"=>"conclusion", "href"=>"#conclusion"})
+          #output << link_to("#conclusion", anchor: "conclusion")
+          heading = "Conclusion"
+        end
+
         output << content_tag(:h2) do
           heading
         end

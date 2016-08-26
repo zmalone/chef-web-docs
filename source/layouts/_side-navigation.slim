@@ -7,14 +7,15 @@ ul.side-nav.box style="border:none; background-color:transparent;"
         | &nbsp;&nbsp;
         span == child.toc_title
       - if current_page.data.headings
-        - headings = current_page.data.headings
+        - headings = current_page.data.headings.dup
+        - headings.insert(0, { label: 'Introduction', href: '#top' })
         - headings << { label: 'Comments', href: '#disqus' } unless current_page.data.show_disqus == false
-        ul.side-nav.box style="border:none; background-color:transparent; list-style-type: bullets;"
+        ul.side-nav.box style="border:none; background-color:transparent;"
           - headings.each do |heading|
-            li style="font-size: 90%; margin: 0px;" == link_to heading[:href] do
-              <i style="color:#439995;" class="fa fa-chevron-right" aria-hidden="true"></i>
-              | &nbsp;&nbsp;
+            li.track-nav style="font-size: 90%; margin: 0px;" == link_to heading[:href] do
               span == heading[:label]
+              | &nbsp;&nbsp;
+              <i class="fa fa-chevron-left nav-inactive" aria-hidden="true"></i>
       - @check_style = "fa fa-square-o"
     - else
       li = link_to child, style:"display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;" do

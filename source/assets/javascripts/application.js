@@ -9,5 +9,6 @@
 //= require clipboard
 //= require progress-bar
 //= require platform-tabs
+//= require nav-scroll
 
 $(document).foundation();
