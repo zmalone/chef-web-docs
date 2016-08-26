@@ -8,20 +8,20 @@ time_to_complete: 30 minutes
 snippet_path: learn-the-basics/windows/vmware_fusion/set-up-a-machine-to-manage
 snippet_workstation: windows
 replace_prompt: "[user@hostname ~]$"
+headings: [
+  { label: '1. Bring up a Windows Server 2012 R2 system', href: '#step1' },
+  { label: '2. Connect to your system', href: '#step2' },
+  { label: '3. Install the Chef DK on your Windows Server instance', href: '#step3' },
+  { label: '4. Prepare a text editor on your Windows Server instance', href: '#step4' },
+  { label: 'Cleaning up', href: '#cleaningup' },
+  { label: 'Next', href: '#next' }
+  ]
 ---
 <%= partial '../../shared/get-set-up/intro' %>
 
-This tutorial relies on a CentOS 7 or Windows Server 7 system that you provide.
+This tutorial relies on a Windows Server 2012 R2 system that you provide.
 
 If you use Amazon Web Services, Microsoft Azure, Google Cloud Platform, VirtualBox, or want to use a free trial virtual machine that runs in your browser, you can [switch to a different option](/tutorials/learn-the-basics/windows/) for this tutorial.
-
-You'll follow these steps to bring up a system:
-
-1. [Bring up a Windows Server 7 or CentOS 7 system](#step1)
-1. [If you're running Windows &ndash; verify your SSH client](#step2)
-1. [Connect to your system](#step3)
-1. [Install the Chef DK on your system](#step4)
-1. [Prepare a text editor on your system](#step5)
 
 <% accordion('test-configuration', 'Test configuration') do %>
 
@@ -37,15 +37,15 @@ The sample output you see might differ depending on your operating system and so
 
 [START_BOX]
 
-## 1. Bring up a Windows Server 7 or CentOS 7 system
+## 1. Bring up a Windows Server 2012 R2 system
 
-Bring up a Windows Server 7 or CentOS 7 system as you normally would. To enable you to experiment, we recommend using a system that you can easily destroy and bring back up, such as a virtual machine or cloud instance. Your instance might run on virtualization software such as Hyper-V or VMWare Fusion, your preferred cloud provider, your datacenter, or spare hardware.
+Bring up a Windows Server 2012 R2 system as you normally would. To enable you to experiment, we recommend using a system that you can easily destroy and bring back up, such as a virtual machine or cloud instance. Your instance might run on virtualization software such as Hyper-V or VMWare Fusion, your preferred cloud provider, your datacenter, or spare hardware.
 
 [COMMENT] Remember, [we provide versions of this tutorial](/tutorials/learn-the-basics/windows/) specifically for AWS, Azure, Google Cloud Platform, VirtualBox, or on a free virtual machine.
 
 Ensure that your system:
 
-* provides `root` or `sudo` access.
+* provides Administrator access.
 * has a resolvable IP address.
 * can access the Internet.
 * provides network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
@@ -58,42 +58,7 @@ Although Chef can be run completely from behind the firewall, using a system wit
 
 [START_BOX]
 
-## 2. If you're running Windows &ndash; verify your SSH client
-
-> If you’re physically at your Linux machine, you can skip this part.
-
-In this tutorial, you'll connect to your Linux system over SSH. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you need to install one.
-
-The easiest way to set up an SSH client is to install the Chef Development Kit (Chef DK) on your workstation. Chef DK version 0.15 and later comes with [Git for Windows](https://git-scm.com/download/win), which includes an SSH client.
-
-Installing the Chef DK now also prepares you for the next tutorial, where you'll use Chef to manage a server remotely from your workstation.
-
-There are two ways to install the Chef DK on Windows.
-
-1. [Download and run the installer](https://downloads.chef.io/chef-dk/) from the Chef downloads page.
-2. Run the installer from PowerShell.
-
-<% command_snippet(page: current_page, path: 'install-the-chef-dk/install-chefdk', workstation: 'windows') %>
-
-After you install the Chef DK, verify that Git and an SSH client are set up properly.
-
-First, open the **Chef Development Kit** shortcut from the desktop or **Start** menu. Open the shortcut as **Adminstrator**.
-
-![](misc/chefdk-desktop-shortcut-windows.png)
-
-Next, run these commands.
-
-<% command_snippet(page: current_page, path: 'verify-your-ssh-client/git--version', workstation: 'windows') %>
-
-<% command_snippet(page: current_page, path: 'verify-your-ssh-client/ssh-no-args', workstation: 'windows', features: [:stdin, :stderr]) %>
-
-Keep your **Chef Development Kit** window open for the next part.
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Connect to your system
+## 2. Connect to your system
 
 If you’re physically at your Linux machine, login now as `root` or a user with `sudo` access. Otherwise, connect to your instance over SSH.
 
@@ -126,13 +91,13 @@ Last login: Thu Aug 11 21:08:30 2016 from 96.228.248.180
 
 [START_BOX]
 
-## 4. Install the Chef DK on your system
+## 3. Install the Chef DK on your system
 
 Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your system. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
 From your system, run this from the command line to install the Chef DK.
 
-<% command_snippet(path: 'learn-the-basics/windows/vmware_fusion/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'centos', replace_prompt: current_page.data.replace_prompt, features: [:stdin, :stderr, :stdout]) %>
+<% command_snippet(path: 'learn-the-basics/windows/vmware_fusion/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'windows', replace_prompt: current_page.data.replace_prompt, features: [:stdin, :stderr, :stdout]) %>
 
 The `-c` and `-v` arguments specify the Chef DK version this tutorial was last tested with.
 
@@ -140,7 +105,7 @@ The `-c` and `-v` arguments specify the Chef DK version this tutorial was last t
 
 [START_BOX]
 
-## 5. Prepare a text editor on your system
+## 4. Prepare a text editor on your system
 
 Because Chef uses code to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
 

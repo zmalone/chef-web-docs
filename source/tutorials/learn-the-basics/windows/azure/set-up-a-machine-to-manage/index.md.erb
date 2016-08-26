@@ -7,21 +7,23 @@ layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 30 minutes
 snippet_path: learn-the-basics/windows/azure/set-up-a-machine-to-manage
 snippet_workstation: windows
+headings: [
+  { label: '1. Access your Azure account', href: '#step1' },
+  { label: '2. Launch a Windows Server 2012 R2 EC2 instance', href: '#step2' },
+  { label: '3. Connect to your Windows Server instance', href: '#step3' },
+  { label: '4. Install the Chef DK on your Windows Server instance', href: '#step4' },
+  { label: '5. Prepare a text editor on your Windows Server instance', href: '#step5' },
+  { label: 'Cleaning up', href: '#cleaningup' },
+  { label: 'Next', href: '#next' }
+  ]
 ---
 <%= partial '../../shared/get-set-up/intro' %>
 
-In this part, you'll follow these steps to bring up a CentOS 7 instance on Microsoft Azure.
-
-1. [Access your Azure account](#step1)
-1. [Launch a CentOS 7 instance](#step2)
-1. [If you're running Windows &ndash; verify your SSH client](#step3)
-1. [Connect to your CentOS instance](#step4)
-1. [Install the Chef DK on your CentOS instance](#step5)
-1. [Prepare a text editor on your CentOS instance](#step6)
+In this part, you'll bring up a Windows Server 2012 R2 instance on Microsoft Azure.
 
 You'll also learn how to [clean up](#cleaningup) your virtual machine when you're done with this tutorial.
 
-[TIP] This tutorial discusses CentOS 7, but you can also use Windows Server 7.
+[TIP] This tutorial discusses Windows Server 2012 R2, but you can also use Windows Server 7.
 
 <% accordion('test-configuration', 'Test configuration') do %>
 
@@ -49,9 +51,9 @@ Keep in mind that billing is done through your Azure account on an hourly basis.
 
 [START_BOX]
 
-## 2. Launch a CentOS 7 EC2 instance
+## 2. Launch a Windows Server 2012 R2 EC2 instance
 
-Next, bring up a CentOS instance on EC2.
+Next, bring up a Windows Server instance on EC2.
 
 If you're new to Azure, their [Create a Virtual Machine Running Linux using the Azure portal](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) tutorial walks you through the creation of your first Linux virtual machine.
 
@@ -60,7 +62,7 @@ If you're new to Azure, their [Create a Virtual Machine Running Linux using the 
 
 When you're ready to continue with this tutorial, bring up one of these systems:
 
-* **CentOS-based 7.2**, published by OpenLogic.
+* **Windows Server-based 7.2**, published by OpenLogic.
 * **Windows Server 7.2**, published by Red Hat.
 
 We recommend that you use key-based authentication when working with Linux instances. You can also use password authentication.
@@ -77,40 +79,7 @@ You can leave the remaining settings at their default values. If you choose to [
 
 [START_BOX]
 
-## 3. If you're running Windows &ndash; verify your SSH client
-
-In this tutorial, you'll connect to your Linux instance over SSH. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you need to install one.
-
-The easiest way to set up an SSH client is to install the Chef Development Kit (Chef DK) on your workstation. Chef DK version 0.15 and later comes with [Git for Windows](https://git-scm.com/download/win), which includes an SSH client.
-
-Installing the Chef DK now also prepares you for the next tutorial, where you'll use Chef to manage a server remotely from your workstation.
-
-There are two ways to install the Chef DK on Windows.
-
-1. [Download and run the installer](https://downloads.chef.io/chef-dk/) from the Chef downloads page.
-2. Run the installer from PowerShell.
-
-<% command_snippet(path: 'learn-the-basics/windows/vmware_fusion/set-up-a-machine-to-manage/install-the-chef-dk/install-chefdk', workstation: 'windows') %>
-
-After you install the Chef DK, verify that Git and an SSH client are set up properly.
-
-First, open the **Chef Development Kit** shortcut from the desktop or **Start** menu. Open the shortcut as **Adminstrator**.
-
-![](misc/chefdk-desktop-shortcut-windows.png)
-
-Next, run these commands.
-
-<% command_snippet(path: 'learn-the-basics/windows/vmware_fusion/set-up-a-machine-to-manage/verify-your-ssh-client/git--version', workstation: 'windows') %>
-
-<% command_snippet(path: 'learn-the-basics/windows/vmware_fusion/set-up-a-machine-to-manage/verify-your-ssh-client/ssh-no-args', workstation: 'windows', features: [:stderr, :stdin]) %>
-
-Keep your **Chef Development Kit** window open for the next part.
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Connect to your CentOS instance
+## 3. Connect to your Windows Server instance
 
 Next, connect to your instance.
 
@@ -150,13 +119,13 @@ Additional resources:
 
 [START_BOX]
 
-## 5. Install the Chef DK on your CentOS instance
+## 4. Install the Chef DK on your Windows Server instance
 
 Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
 From your SSH connection, run this from the command line to install the Chef DK.
 
-<% command_snippet(path: 'learn-the-basics/windows/azure/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'windows', features: [:stdin, :stderr, :stdout]) %>
+<% command_snippet(path: 'learn-the-basics/windows/azure/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'windows', features: [:stdin, :stdout]) %>
 
 The `-c` and `-v` arguments specify the Chef DK version this tutorial was last tested with.
 
@@ -164,7 +133,7 @@ The `-c` and `-v` arguments specify the Chef DK version this tutorial was last t
 
 [START_BOX]
 
-## 6. Prepare a text editor on your CentOS instance
+## 5. Prepare a text editor on your Windows Server instance
 
 Because Chef uses code to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
 
