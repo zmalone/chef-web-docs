@@ -17,7 +17,8 @@ $(document).ready(function(){
         var windowPos = $(window).scrollTop(); // get the offset of the window from the top of page
         var windowHeight = $(window).height(); // get the height of the window
         var docHeight = $(document).height();
-        var any = false; // are any highlighted?
+        var topDivPos = docHeight;
+        var topDivHeight = docHeight;
 
         for (var i=0; i < aArray.length; i++) {
             var theID = aArray[i];
@@ -29,16 +30,21 @@ $(document).ready(function(){
             var divPos = offset.top; // get the offset of the div from the top of page
             var divHeight = theEl.height(); // get the height of the div in question
 
+            if(divPos < topDivPos)
+            {
+              topDivPos = divPos;
+              topDivHeight = divHeight;
+            }
+
             var e = $("li.track-nav").children("a[href='#" + theID + "']").children("i.fa");
             if (windowPos + 50 >= divPos && windowPos < (divPos + divHeight)) {
                 e.removeClass("nav-inactive").addClass("nav-active");
-                any = true;
             } else {
                 e.removeClass("nav-active").addClass("nav-inactive");
             }
         }
 
-        if(!any) {
+        if(windowPos + 50 < topDivPos + topDivHeight) {
           var navActiveCurrent = $(".nav-active").attr("href");
           $("a[href='#" + navActiveCurrent + "']").children("i.fa").removeClass("nav-active");
           $("li.track-nav:first-child a").children("i.fa").removeClass("nav-inactive").addClass("nav-active");
