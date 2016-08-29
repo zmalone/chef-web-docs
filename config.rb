@@ -13,6 +13,8 @@ require 'lib/helpers/box_helpers'
 require 'lib/helpers/page_nav_helpers'
 require 'lib/helpers/list_helpers'
 require 'lib/helpers/inline_code_helpers'
+require 'lib/helpers/snippet_helpers'
+require 'lib/helpers/button_helpers'
 
 # In development you can use `binding.pry` anywhere to pause execution and bring
 # up a Ruby REPL
@@ -67,6 +69,8 @@ helpers do
   include InlineCodeHelpers
   include PageNavHelpers
   include ListHelpers
+  include SnippetHelpers
+  include ButtonHelpers
 end
 
 # CloudFront

@@ -11,4 +11,4 @@ In this article, Dr. Nicole Forsgren argues that DevOps doesn't just positively 
 
 Read this article to learn how companies that practice DevOps are more agile &ndash; reporting deployment, recovery, and lead time rates that are orders of magnitude better than their peers.
 
-<a class='accent-button radius' href='/assets/pdf/forsgren_article.pdf'>Read the article (PDF format)&nbsp;&nbsp;<i class='fa fa-file-pdf-o'></i></a>
+<a class='accent-button radius cta' href='/assets/pdf/forsgren_article.pdf'>Read the article (PDF format)&nbsp;&nbsp;<i class='fa fa-file-pdf-o'></i></a>

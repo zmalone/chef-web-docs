@@ -4,7 +4,7 @@
 
 From your workstation, fill out the form on our sign-up page.
 
-<a class='accent-button radius' href='https://manage.chef.io/signup/' target='_blank'>Sign up for a free trial of hosted Chef&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+<a class='accent-button radius cta' href='https://manage.chef.io/signup/' target='_blank'>Sign up for a free trial of hosted Chef&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
 After you sign up, you'll receive an email to confirm your account. Click the link in that email to verify your account and set your password.
 

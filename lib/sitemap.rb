@@ -20,7 +20,11 @@ end
 
 class Middleman::Sitemap::Resource
   def title
-    parents(true).map { |page| page.data.ignore_breadcrumb ? '' : (page.data.long_title || page.data.title) }.compact.join(' - ').presence
+    parents(true).map { |page| page.data.ignore_breadcrumb ? '' : (page.data.toc_title || page.data.title) }.compact.join(' - ').presence
+  end
+
+  def toc_title
+    self.data.short_title || self.data.title
   end
 
   def root?
@@ -59,7 +63,7 @@ class Middleman::Sitemap::Resource
   def no_index?
     self.data.meta_tags && self.data.meta_tags.any? {|h| h[:content].include?('NOINDEX') }
   end
-  
+
   def appendix?
     self.data.appendix == true
   end

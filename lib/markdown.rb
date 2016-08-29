@@ -105,7 +105,7 @@ module ZurbFoundation
       title = $2
       id = $1
       <<-EOH
-      <a class="button radius" href="#" data-reveal-id="#{id}">#{title}</a>
+      <a class="button radius cta" href="#" data-reveal-id="#{id}">#{title}</a>
       <div id="#{id}" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
       #{content}
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>

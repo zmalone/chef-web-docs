@@ -1,11 +1,10 @@
 ## 1. Create a cookbook
 
-First, from your <code class="file-path">~\chef-repo</code> directory, create a <code class="file-path">cookbooks</code> directory and `cd` there.
+First, from your <code class="file-path">~\chef-repo</code> directory, create a <code class="file-path">cookbooks</code> directory.
 
 ```ps
 # ~\chef-repo
 $ mkdir cookbooks
-$ cd cookbooks
 ```
 
 Now run the `chef` command to generate a cookbook named `learn_chef_iis`.
@@ -26,8 +25,10 @@ Recipe: code_generator::cookbook
     - create new file C:/Users/Administrator/chef-repo/cookbooks/learn_chef_iis/recipes/default.rb
     - update content in file C:/Users/Administrator/chef-repo/cookbooks/learn_chef_iis/recipes/default.rb from none to 0
 8b977
-    (diff output suppressed by config) 
+    (diff output suppressed by config)
 ```
+
+The <% fp 'cookbooks/learn_chef_iis' %> part tells Chef to create a cookbook named `learn_chef_iis` under the <% fp 'cookbooks' %> directory.
 
 Here's the directory structure that the command created.
 

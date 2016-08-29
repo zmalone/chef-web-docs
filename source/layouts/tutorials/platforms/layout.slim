@@ -1,0 +1,13 @@
+= wrap_layout :layout do
+  div.row
+    div.medium-3.columns.sidebar
+      ul.side-nav.box style="border:none; background-color:transparent;"
+        li.side-nav-active style="border: border-radius:5px; padding: 6px; font-weight:400;" == current_page.toc_title
+        ul.side-nav.box style="border:none; background-color:transparent;"
+          - current_page.children.each do |child|
+            li = link_to child, style:"display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;" do
+              = image_tag "rhel/platform-logos/#{child.data.logo}", style:"width:20px;display:inline;box-shadow:none;margin-top:0px;margin-bottom:0px;margin-right:10px;"
+              span == child.toc_title
+    div.medium-9.columns
+      = partial "layouts/breadcrumbs"
+      = yield

@@ -2,16 +2,11 @@
 - @pages = []
 - @p = current_page
 - until @p.nil?
-  - @pages.unshift @p unless @p.data.ignore_breadcrumb
+  - @pages.unshift @p
   - @p = @p.parent
-
-/ Special case for tutorials - add /tutorials to breadcrumb
-/ TODO: Remove this if/when we repath everything under the tutorials/ directory.
-- if %w(lesson lesson-options lesson-overview).include? current_page.data.layout then
-  - @pages.insert 1, sitemap.find_resource_by_path('/tutorials.html')
 
 / Create breadcrumb navigation
 span
-  ul.breadcrumbs
+  ul.breadcrumbs style="background-color: transparent;"
     - @pages.each do |page|
-      li class=(current_page == page ? "current" : nil) = link_to page.data.title, page
+      li class=(current_page == page ? "current" : nil) = link_to page.toc_title, page
