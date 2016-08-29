@@ -83,3 +83,43 @@ Assuming your VM's firewall is open for inbound access on port 80, you can acces
 <% end %>
 
 [END_BOX]
+
+[START_BOX]
+
+## Summary
+
+You saw how to work with the package and service resources. You now know how to work with three types of resources: [file](https://docs.chef.io/resource_file.html), [powershell_script](https://docs.chef.io/resource_powershell_script.html), and [service](https://docs.chef.io/resource_service.html).
+
+You also saw how to apply multiple actions. But how does Chef know what order to apply resources and actions?
+
+### Chef works in the order you specify
+
+Let's take another quick look at our web server recipe.
+
+<% code_snippet(page: current_page, path: 'add-a-home-page/webserver-3') %>
+
+The resources are applied in the order they are specified in the recipe. So here IIS is installed, then the W3SVC service is configured, and finally the home page is set. If any resource is already in the desired state, Chef simply moves on to the next one.
+
+The same idea applies to the action list `[:enable, :start]` for configuring the W3SVC service. The service is enabled when the server boots before the service is started.
+
+It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the W3SVC service before IIS is even installed.
+
+A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't be enabled on boot then we don't want to start it.
+
+[END_BOX]
+
+[START_BOX]
+
+## Exercises
+
+<%= partial "/layouts/exercises", locals: { path: '/tutorials/learn-the-basics/windows/shared/configure-a-package-and-service/exercises', questions: [1,2,3,4] } %>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+You may notice one big problem with our recipe &ndash; the HTML code lives inside it, so there is no clear separation between our web site code and our recipe to manage it. It's a good incremental step because it helps you get things working, but this of course would never scale to a full web site.
+
+Next you'll learn how to create a _cookbook_ to make your Chef recipes more manageable.
+
+<% end %>

@@ -23,7 +23,7 @@ In this part, you'll create a Windows Server 2012 R2 instance on [Amazon Elastic
 
 You'll also learn how to [clean up](#cleaningup) your virtual machine when you're done with this tutorial.
 
-<% accordion('test-configuration', 'Test configuration') do %>
+<% accordion('test-configuration', 'Test configuration', true) do %>
 
 <% markdown do %>
 
@@ -53,11 +53,11 @@ Keep in mind that billing is done through your AWS account on an hourly basis. I
 
 Next, bring up a Windows Server instance on EC2.
 
-If you're new to AWS, their ["Launch a Windows Virtual Machine" tutorial](https://aws.amazon.com/getting-started/tutorials/launch-windows-vm/) walks you through the creation of your first Windows Server virtual machine.
+If you're new to AWS, their [Launch a Windows Virtual Machine](https://aws.amazon.com/getting-started/tutorials/launch-windows-vm/) tutorial walks you through the creation of your first Windows Server virtual machine.
 
 When you're ready to continue with this tutorial, launch a Windows Server 2012 R2 instance from the AWS console. Although you can use a t2.micro instance to take advantage of the free usage tier, we recommend a t2.medium or larger instance for best performance.
 
-When you [create your security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html), ensure that ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) are open for inbound network traffic.
+When you [create your security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html), ensure that ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5985 (WinRM) are open for inbound and outbound network traffic.
 
 [COMMENT] Technically, port 443 is not required for this tutorial. But setting up that port now prepares you for the next tutorial, where you'll configure your server to be managed remotely.
 
@@ -67,17 +67,7 @@ When you [create your security group](https://docs.aws.amazon.com/AWSEC2/latest/
 
 ## 3. Connect to your Windows Server instance
 
-Next, connect to your instance.
-
-The AWS documention explains how to connect [using a web browser](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-connect-to-instance-linux) or [over SSH](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html).
-
-Here's an example of how to connect over SSH using key-based authentication.
-
-```bash
-$ ssh -i /path/to/private/key centos@52.87.191.240
-Last login: Tue Aug  9 17:34:35 2016 from 94.221.242.18
-[centos@ip-172-33-4-55 ~]$
-```
+Next, create a Remote Desktop connection to your instance. The AWS documention explains [how to connect using an RDP client](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html#ec2-connect-to-instance-windows).
 
 [END_BOX]
 
@@ -87,11 +77,17 @@ Last login: Tue Aug  9 17:34:35 2016 from 94.221.242.18
 
 Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
-From your SSH connection, run this from the command line to install the Chef DK.
+From your Remote Desktop connection, run this from the command line to install the Chef DK.
 
-<% command_snippet(path: 'learn-the-basics/windows/aws/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'windows', features: [:stdin, :stderr, :stdout]) %>
+<% command_snippet(path: 'learn-the-basics/windows/aws/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'windows', features: [:stdin, :stdout]) %>
 
-The `-c` and `-v` arguments specify the Chef DK version this tutorial was last tested with.
+The `-channel` and `-version` arguments specify the Chef DK version this tutorial was last tested with.
+
+Next, open a Chef Development Kit PowerShell window.
+
+The Chef Development Kit provides a desktop shortcut that brings up a PowerShell session that's configured to work with Chef. Open the **Chef Development Kit** shortcut from the desktop or **Start** menu.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
 
 [END_BOX]
 
@@ -101,9 +97,13 @@ The `-c` and `-v` arguments specify the Chef DK version this tutorial was last t
 
 Because Chef uses code to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
 
-From your SSH connection, install a text editor now. Because you're accessing your server from an SSH connection, choose a command-line text editor such as `emacs`, `nano`, or `vim`.
+From your Remote Desktop connection, install a text editor now.
 
-If you're new to using command-line text editors on Windows Server, here are some resources to help get you started.
+If you don't have a preferred text editor, here are some that are popular among Chef users:
+
+* [Atom](http://atom.io)
+* [Visual Studio Code](https://code.visualstudio.com)
+* [Sublime Text 2](http://www.sublimetext.com)
 
 [END_BOX]
 

@@ -9,7 +9,7 @@ snippet_path: learn-the-basics/windows/azure/set-up-a-machine-to-manage
 snippet_workstation: windows
 headings: [
   { label: '1. Access your Azure account', href: '#step1' },
-  { label: '2. Launch a Windows Server 2012 R2 EC2 instance', href: '#step2' },
+  { label: '2. Launch a Windows Server 2012 R2 instance', href: '#step2' },
   { label: '3. Connect to your Windows Server instance', href: '#step3' },
   { label: '4. Install the Chef DK on your Windows Server instance', href: '#step4' },
   { label: '5. Prepare a text editor on your Windows Server instance', href: '#step5' },
@@ -23,9 +23,7 @@ In this part, you'll bring up a Windows Server 2012 R2 instance on Microsoft Azu
 
 You'll also learn how to [clean up](#cleaningup) your virtual machine when you're done with this tutorial.
 
-[TIP] This tutorial discusses Windows Server 2012 R2, but you can also use Windows Server 7.
-
-<% accordion('test-configuration', 'Test configuration') do %>
+<% accordion('test-configuration', 'Test configuration', true) do %>
 
 <% markdown do %>
 
@@ -51,27 +49,22 @@ Keep in mind that billing is done through your Azure account on an hourly basis.
 
 [START_BOX]
 
-## 2. Launch a Windows Server 2012 R2 EC2 instance
+## 2. Launch a Windows Server 2012 R2 instance
 
-Next, bring up a Windows Server instance on EC2.
+Next, bring up a Windows Server instance on Azure.
 
-If you're new to Azure, their [Create a Virtual Machine Running Linux using the Azure portal](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) tutorial walks you through the creation of your first Linux virtual machine.
+If you're new to Azure, their [Create your first Windows virtual machine in the Azure portal](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-hero-tutorial/) tutorial walks you through the creation of your first Windows Server virtual machine.
 
-[COMMENT] This tutorial refers to the Azure Portal documentation to help you manage your virtual machine. Azure also provides a [command-line interface](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-quick-create-cli/) (CLI).
+[COMMENT] This tutorial refers to the Azure Portal documentation to help you manage your virtual machine. You can also create a virtual machine from [PowerShell](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-ps-create/) or from the Azure [command-line interface](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-quick-create-cli/) (CLI).
 
 
-When you're ready to continue with this tutorial, bring up one of these systems:
-
-* **Windows Server-based 7.2**, published by OpenLogic.
-* **Windows Server 7.2**, published by Red Hat.
-
-We recommend that you use key-based authentication when working with Linux instances. You can also use password authentication.
+When you're ready to continue with this tutorial, bring up a **Windows Server 2012 R2 Datacenter** instance, published by Microsoft Windows Server Group.
 
 When you choose the instance size, select **DS1_V2 Standard**.
 
-[COMMENT] Azure provides a monthly price estimate for your virtual machine. You'll need only about an hour to complete this tutorial, so the final cost will be about 10&cent; (USD). Just be sure to destroy your instance when you're done.
+[COMMENT] You'll need only about an hour to complete this tutorial, so the final cost will be less than 30&cent; (USD). Just be sure to destroy your instance when you're done.
 
-You can leave the remaining settings at their default values. If you choose to [assign a network security group](https://azure.microsoft.com/en-us/documentation/articles/virtual-networks-create-nsg-arm-pportal/) to your instance, be sure to enable access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+You can leave the remaining settings at their default values. If you choose to [assign a network security group](https://azure.microsoft.com/en-us/documentation/articles/virtual-networks-create-nsg-arm-pportal/) to your instance, be sure to enable access on ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5985 (WinRM).
 
 [COMMENT] Technically, port 443 is not required for this tutorial. But setting up that port now prepares you for the next tutorial, where you'll configure your server to be managed remotely.
 
@@ -81,39 +74,7 @@ You can leave the remaining settings at their default values. If you choose to [
 
 ## 3. Connect to your Windows Server instance
 
-Next, connect to your instance.
-
-When you created your instance, you chose whether to use key-based authentication or password authentication.
-
-Here's an example of how to connect over SSH using key-based authentication. (Replace <% fp '~/.ssh/id_rsa' %> with the path to your private key file, <% ph 'chef' %> with your username, and <% ph '40.117.150.107' %> with your IP address.)
-
-```bash
-$ ssh -i ~/.ssh/id_rsa chef@40.117.150.107
-The authenticity of host '40.117.150.107 (40.117.150.107)' can't be established.
-RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '40.117.150.107' (RSA) to the list of known hosts.
-Last login: Thu Aug 11 21:02:18 2016 from 96.228.248.180
-[chef@centos-azure ~]$
-```
-
-Here's an example using password authentication.
-
-```bash
-$ ssh chef@40.117.150.107
-The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
-RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
-chef@40.117.150.107's password:
-Last login: Thu Aug 11 21:08:30 2016 from 96.228.248.180
-[chef@centos-azure ~]$
-```
-
-Additional resources:
-
-* [How to Use SSH with Windows on Azure](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-ssh-from-windows/)
-* [How to Use SSH with Linux and Mac on Azure](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-ssh-from-linux/)
+Next, create a Remote Desktop connection to your instance. The Microsoft documention explains [how to connect using an RDP client](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-hero-tutorial/#connect-to-the-virtual-machine-and-log-on).
 
 [END_BOX]
 
@@ -123,11 +84,11 @@ Additional resources:
 
 Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
-From your SSH connection, run this from the command line to install the Chef DK.
+From your Remote Desktop connection, run this from the command line to install the Chef DK.
 
 <% command_snippet(path: 'learn-the-basics/windows/azure/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'windows', features: [:stdin, :stdout]) %>
 
-The `-c` and `-v` arguments specify the Chef DK version this tutorial was last tested with.
+The `-channel` and `-version` arguments specify the Chef DK version this tutorial was last tested with.
 
 [END_BOX]
 
@@ -137,9 +98,13 @@ The `-c` and `-v` arguments specify the Chef DK version this tutorial was last t
 
 Because Chef uses code to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
 
-From your SSH connection, install a text editor now. Because you're accessing your server from an SSH connection, choose a command-line text editor such as `emacs`, `nano`, or `vim`.
+From your Remote Desktop connection, install a text editor now.
 
-If you're new to using command-line text editors on CentOS, here are some resources to help get you started.
+If you don't have a preferred text editor, here are some that are popular among Chef users:
+
+* [Atom](http://atom.io)
+* [Visual Studio Code](https://code.visualstudio.com)
+* [Sublime Text 2](http://www.sublimetext.com)
 
 [END_BOX]
 
@@ -149,7 +114,7 @@ If you're new to using command-line text editors on CentOS, here are some resour
 
 Remember, billing is done through your Azure account. After you complete the tutorial, be sure to destroy your virtual machine. Or, you can leave your server running if you want to use it to complete the next tutorial.
 
-You can destroy your virtual machine from the Azure Portal or the [CLI](https://azure.microsoft.com/en-us/documentation/articles/azure-cli-arm-commands/#azure-vm-commands-to-manage-your-azure-virtual-machines).
+You can destroy your virtual machine from the Azure Portal, [PowerShell](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-ps-manage/#delete-a-virtual-machine), or from the [CLI](https://azure.microsoft.com/en-us/documentation/articles/azure-cli-arm-commands/#azure-vm-commands-to-manage-your-azure-virtual-machines).
 
 ![](partner/azure/delete_vm.png)
 
