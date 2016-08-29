@@ -20,7 +20,7 @@ end
 
 class Middleman::Sitemap::Resource
   def title
-    parents(true).map { |page| page.data.ignore_breadcrumb ? '' : page.data.title }.compact.join(' - ').presence
+    parents(true).map { |page| page.data.ignore_breadcrumb ? '' : (page.data.toc_title || page.data.title) }.compact.join(' - ').presence
   end
 
   def toc_title
