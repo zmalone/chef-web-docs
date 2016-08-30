@@ -1,21 +1,13 @@
 - @check_style = "fa fa-check-square"
 ul.side-nav.box style="border:none; background-color:transparent;"
+  li style="font-weight:700;" == current_page.parent.parent.parent.data.title.upcase
   - current_page.parent.children.each do |child|
     - if child == current_page
       li.side-nav-active style="display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;"
-        <i class="fa fa-square" aria-hidden="true"></i>
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
         | &nbsp;&nbsp;
         span == child.toc_title
-      - if current_page.data.headings
-        - headings = current_page.data.headings.dup
-        - headings.insert(0, { label: 'Introduction', href: '#top' })
-        - headings << { label: 'Comments', href: '#disqus' } unless current_page.data.show_disqus == false
-        ul.side-nav.box style="border:none; background-color:transparent;"
-          - headings.each do |heading|
-            li.track-nav style="font-size: 90%; margin: 0px;" == link_to heading[:href] do
-              span == heading[:label]
-              | &nbsp;&nbsp;
-              <i class="fa fa-chevron-left nav-inactive" aria-hidden="true"></i>
+      = partial "layouts/scroll-navigation"
       - @check_style = "fa fa-square-o"
     - else
       li = link_to child, style:"display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;" do
