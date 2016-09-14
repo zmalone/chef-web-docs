@@ -55,6 +55,26 @@ The output shows that the cookbook was successfully uploaded, but you can run th
 
 <% command_snippet(page: current_page, path: 'upload-0-1-0/knife-cookbook-list') %>
 
+<% if current_page.data.environment == 'aws-automate' %>
+
+Return to the Chef Automate dashboard and refresh the page. You see that the event is registered with Chef Automate.
+
+![](manage-a-node/chef_automate_nodes_upload_cookbook.png)
+
+TODO: ^^ Fix this
+
+Recall that when you set up your Chef server, you [configured Chef server to send server object data](https://docs.chef.io/setup_visibility_chef_automate.html#configure-chef-server-to-send-server-object-data) to Chef Automate.
+
+```bash
+$ echo "data_collector["root_url"] = "https://CHEF_AUTOMATE_FQDN/data-collector/v0/" | sudo tee -a /etc/opscode/chef-server.rb
+$ echo "data_collector["token"] = "93a49a4f2482c64126f7b6015e6b0f30284287ee4054ff8807fb63d9cbd1c506" | sudo tee -a /etc/opscode/chef-server.rb
+$ sudo chef-server-ctl reconfigure
+```
+
+Therefore, when you upload a cookbook to Chef server, Chef server sends the event to Chef Automate.
+
+<% end %>
+
 [END_BOX]
 
 [START_BOX]

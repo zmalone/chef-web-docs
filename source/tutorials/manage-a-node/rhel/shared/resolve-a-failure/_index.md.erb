@@ -61,6 +61,31 @@ cannot determine user id for 'web_admin', does the user exist on this system?
 
 As you may have already realized, the updated configuration attempts to assign the file owner to a user that does not exist.
 
+<% if current_page.data.environment == 'aws-automate' %>
+
+You can verify the failure from the **Nodes** tab in the Chef Automate dashboard.
+
+![](manage-a-node/chef_automate_nodes_node1_failure.png)
+
+Click on the node to view details about the failure.
+
+![](manage-a-node/chef_automate_nodes_failure_node1_details1.png)
+
+At the bottom of the page, you see that the `template` resource failed. Click **error log** to view details about the error.
+
+![](manage-a-node/chef_automate_nodes_failure_node1_details2.png)
+
+The run log displays details about the error as well as the backtrace, which lists which function calls are active and can help you understand how your program got where it is.
+
+![](manage-a-node/chef_automate_nodes_failure_node1_details_runlog.png)
+
+In this tutorial, you use the `knife ssh` command from your workstation to remotely trigger `chef-client` to run on your node. This is a manual process. When `chef-client` fails, you see the failure immediately in your terminal window.
+
+However, imagine that you have have dozens, hundreds, or even thousands of servers that run `chef-client` periodically as a service or as part of a continuous integration or continuous delivery (CI/CD) pipeline.  Chef Automate enables you to quickly scan the status of your nodes and investigate the root cause when a `chef-client` run fails.
+
+<% end %>
+
+
 [END_BOX]
 
 [START_BOX]
@@ -95,6 +120,18 @@ Now run `chef-client` like you did previously. This example uses key-based authe
 You see that the `chef-client` run succeeds. Verify the configuration by running `curl` or by refreshing your web browser.
 
 <% command_snippet(page: current_page, path: 'set-web-content-owner/curl-node1-3', features: [:stdin, :stderr, :stdout]) %>
+
+<% if current_page.data.environment == 'aws-automate' %>
+
+From the **Nodes** tab in the Chef Automate dashboard, you'll also see that the `chef-client` run succeeded and that your node's status returned to successful.
+
+![](manage-a-node/chef_automate_nodes_node1_ccr2.png)
+
+If you examine the details of the `chef-client` run, you'll see entries appear for the `group` and `user` resources you added to the `learn_chef_httpd` cookbook's default recipe.
+
+![](manage-a-node/chef_automate_nodes_node1_details_group_user.png)
+
+<% end %>
 
 [END_BOX]
 
