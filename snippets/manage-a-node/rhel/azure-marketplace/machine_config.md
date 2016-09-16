@@ -1,6 +1,6 @@
 This tutorial was last tested using this configuration:
 
-* Chef server 12.8.0 on Microsoft Azure
+* Chef server on Microsoft Azure
   * **Location:** East US
   * **Image URN:** chef-software:chef-server:azure\_marketplace\_25:3.1.0
   * **Size:** Standard\_D2\_v2
