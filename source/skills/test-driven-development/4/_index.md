@@ -40,7 +40,7 @@ Guard is included in the Chef DK. For specific integration with Test Kitchen, us
 
 #### More information
 
-* [Example Guardfile in a cookbook](https://github.com/chef-cookbooks/chef-server/blob/master/Guardfile)
+* [Example Guardfile](https://github.com/chef/chef-dk/blob/master/Guardfile)
 * [guardgem.org](http://guardgem.org/)
 
 ### RSpec
