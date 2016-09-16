@@ -12,19 +12,13 @@ headings: [
   { label: '3. Generate your knife config file', href: '#step3' },
   { label: '4. Generate your RSA private key', href: '#step4' },
   { label: '5. Verify your connection', href: '#step5' },
-
   ]
 ---
 [HEADLINE] Chef server acts as a central repository for your cookbooks as well as for information about every node it manages.<br>The `knife` command enables you to communicate with the Chef server from your workstation.
 
 Here you'll sign up for hosted Chef and set up your workstation to communicate with the Chef server.
 
-Recall that there are two ways to work with a Chef server.
-
-1. Install Chef server on your own infrastructure.
-2. Sign up for hosted Chef, a Chef server that we manage for you.
-
-In production, the decision to use hosted Chef or manage your own Chef server depends on your organization's requirements and preferences. If you're interested in setting up your own Chef server, you might want to first complete this tutorial using hosted Chef to see how Chef server works. Then you can [set up a Chef server in your environment](/tutorials/manage-a-node/rhel/).
+<%= partial '../../shared/set-up-your-chef-server/hosted_vs_on_prem' %>
 
 [START_BOX]
 
@@ -72,7 +66,7 @@ Here's how to create your `knife` configuration file. Your file will be located 
 1. From the **Administration** tab, select your organization.
 1. From the menu on the left, select **Generate Knife Config** and save the file.
 
-![](misc/manage_generate_knife_config.png)
+![](manage-a-node/chef_manage_generate_knife_config.png)
 
 From the command line, copy <code class="file-path">knife.rb</code> to your <code class="file-path">~/learn-chef/.chef</code> directory. For example:
 
@@ -90,13 +84,13 @@ Your `knife` configuration file should resemble this one. (Your user and organiz
 
 ## 4. Generate your RSA private key
 
-Here's how to create your RSA private key. Your file will be located at <code class="file-path">~/learn-chef/.chef/<i>\<your_name\></i>.pem</code>.
+Here's how to create your RSA private key. Your file will be located at <code class="file-path">~/learn-chef/.chef/<i>\<username\></i>.pem</code>, where _\<username\>_ is the name you chose when you created your hosted Chef account.
 
 1. Sign in to [https://manage.chef.io/](https://manage.chef.io/).
 1. From the **Administration** tab, select **Users** from the menu on the left.
 1. Select your user name, select **Reset key** from the menu on the left. Then select **Reset key** from the window that appears.
 
-![](misc/manage_reset_key.png)
+![](manage-a-node/chef_manage_reset_key.png)
 
 A second window appears that displays your private key. From the bottom of that window, click **Download** to download your private key file.
 
@@ -105,14 +99,14 @@ A second window appears that displays your private key. From the bottom of that 
 From the command line, copy your private key file to your <code class="file-path">~/learn-chef/.chef</code> directory. For example:
 
 ```bash
-$ cp ~/Downloads/your_name.pem ~/learn-chef/.chef
+$ cp ~/Downloads/username.pem ~/learn-chef/.chef
 ```
 
 Your RSA private key should resemble this one.
 
 ```bash
 # ~
-$ cat ~/learn-chef/.chef/your_name.pem
+$ cat ~/learn-chef/.chef/username.pem
 -----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAqJCxFv1BoqlTJeK5zTZ6vX6hvQuDzlaN0v+Fo5R2zobP72Ga
 N8GUOhaYSM0Zkg+epchPS9JX81Euv847g662BBneuT4+W6ImqtHtoqB2iEw9vJbZ
@@ -160,24 +154,12 @@ Now, run the `knife ssl check` command to validate your connection to the Chef s
 
 [END_BOX]
 
-[START_BOX]
+<% next_page(current_page) do %>
 
-## Summary
-
-REMOVE ME, ADD RELEVANT INFO TO NEXT SECTIONS
-
-At this point, you have two of the three elements of a typical Chef setup. You installed the Chef DK on your workstation and have access to the Chef server.
+At this point, you have two of the three elements of a typical Chef setup. Your workstation is set up and you have access to the Chef server.
 
 Chef server gives you a persistent location to store your cookbooks and information about your nodes. The `knife` command enables you to communicate with the Chef server.
 
-You also got a glimpse of the community cookbook site, [Chef Supermarket](https://supermarket.chef.io), and used it to retrieve a copy of the `learn_chef_httpd` cookbook. You then used `knife` to upload a copy of that cookbook to the Chef server.
-
-[END_BOX]
-
-<% next_page(current_page) do %>
-
-Great, you're all set up to use a Chef server. With your cookbook uploaded to the Chef server, you're now ready to scale-out your infrastructure!
-
-The next step is to configure a new node and run the cookbook on it. In [Learn the Chef basics](/tutorials/learn-the-basics/rhel/), you ran `chef-client` in local mode to configure the node directly. Now you'll use `knife` to trigger `chef-client` to run on your node remotely, from your workstation.
+Next, you'll get a copy of the `learn_chef_httpd` cookbook that you wrote in the previous tutorial and upload it to your Chef server.
 
 <% end %>

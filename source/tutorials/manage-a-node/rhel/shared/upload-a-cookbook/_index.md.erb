@@ -2,8 +2,8 @@ Here you'll upload a cookbook to the Chef server.
 
 Most Chef users maintain their cookbooks in a source control repository such as GitHub. However, maintaining a copy of your cookbooks on the Chef server provides these benefits:
 
-1. A central location for your cookbooks that's independent of your development source code.
-1. A versioning mechanism that enables you to associate different cookbook versions among your servers. This enables you to roll out new configuration policies only when you're ready.
+1. A central location for your cookbooks that's accessible from every node in your network.
+1. A versioning mechanism that enables you to associate different cookbook versions among your nodes. This enables you to roll out new configuration policies only when you're ready.
 
 [START_BOX]
 
@@ -13,7 +13,7 @@ In [Learn the Chef basics](/tutorials/learn-the-basics/rhel/), you wrote a cookb
 
 But the virtual machine you used earlier is likely gone! Instead of having you type in the cookbook again, let's get a copy from GitHub.
 
-First, you need a place to store your cookbooks locally on your workstation. Recall that your `knife` configuration file looks like this.
+First, you need a place to store your cookbooks locally on your workstation. Recall that your `knife` configuration file looks similar to this.
 
 <% code_snippet(page: current_page.previous_page, path: 'generate-knife-config/knife-rb') %>
 
@@ -24,6 +24,8 @@ First, you need a place to store your cookbooks locally on your workstation. Rec
 | <% fp '#{current_dir}' %> | The location of <% fp 'knife.rb' %>            | <% fp '~/learn-chef/.chef' %>     |
 | <% fp '..' %>             | Traverse up one directory                      | <% fp '~/learn-chef' %>           |
 | <% fp 'cookbooks' %>      | Traverse to the <% fp 'cookbooks' %> directory | <% fp '~/learn-chef/cookbooks' %> |
+
+[COMMENT] Your `knife` configuration file, like many files in Chef, is built on the Ruby programming language. The `#{current_dir}` syntax, for example, is how you insert variables into strings. The [Chef documentation](https://docs.chef.io/ruby.html#ruby-basics) provides a quick overview of the common Ruby patterns you'll use when you write Chef code.
 
 Start by creating the <code class="file-path">~/learn-chef/cookbooks</code> directory.
 
@@ -37,7 +39,7 @@ Next, clone the `learn_chef_httpd` cookbook from GitHub.
 
 <% command_snippet(page: current_page, path: 'git-clone-cookbook/git-clone-learn_chef_httpd', features: [:stdin, :stderr]) %>
 
-Although not required, you can examine <% fp '~/learn-chef/cookbooks/learn_chef_httpd' %> to verify its contents.
+The contents of <% fp '~/learn-chef/cookbooks/learn_chef_httpd' %> is the same as what you built in the previous tutorial. You can examine this directory to familiarize yourself with its contents.
 
 [COMMENT] [Chef Supermarket](https://supermarket.chef.io/) is also a place for the community to share cookbooks. You'll learn more about community cookbooks in later tutorials.
 
@@ -47,7 +49,9 @@ Although not required, you can examine <% fp '~/learn-chef/cookbooks/learn_chef_
 
 ## 2. Upload your cookbook to the Chef server
 
-Now upload the `learn_chef_httpd` cookbook to your Chef server. Run this command from anywhere under your <code class="file-path">~/learn-chef</code> directory.
+In practice, you would typically run your cookbook on a temporary instance, such as a virtual machine, before you upload it to the Chef server. You might also run a series of quality tests to ensure your cookbook does what you expect. You'll learn about this process in the next tutorial.
+
+For now, upload the `learn_chef_httpd` cookbook to your Chef server. Run this command from anywhere under your <code class="file-path">~/learn-chef</code> directory.
 
 <% command_snippet(page: current_page, path: 'upload-0-1-0/knife-cookbook-upload-learn_chef_httpd', features: [:stdin, :stderr]) %>
 
@@ -55,13 +59,13 @@ The output shows that the cookbook was successfully uploaded, but you can run th
 
 <% command_snippet(page: current_page, path: 'upload-0-1-0/knife-cookbook-list') %>
 
-<% if current_page.data.environment == 'aws-automate' %>
+<% if current_page.parent.data.environment == 'aws-automate' %>
 
 Return to the Chef Automate dashboard and refresh the page. You see that the event is registered with Chef Automate.
 
 ![](manage-a-node/chef_automate_nodes_upload_cookbook.png)
 
-TODO: ^^ Fix this
+**TODO**: ^^ Fix this. It should show 1.
 
 Recall that when you set up your Chef server, you [configured Chef server to send server object data](https://docs.chef.io/setup_visibility_chef_automate.html#configure-chef-server-to-send-server-object-data) to Chef Automate.
 
@@ -71,28 +75,18 @@ $ echo "data_collector["token"] = "93a49a4f2482c64126f7b6015e6b0f30284287ee4054f
 $ sudo chef-server-ctl reconfigure
 ```
 
-Therefore, when you upload a cookbook to Chef server, Chef server sends the event to Chef Automate.
+This enables Chef server to send events to Chef Automate, such as when you upload a cookbook to Chef server.
 
 <% end %>
 
 [END_BOX]
 
-[START_BOX]
-
-## Summary
-
-At this point, you have two of the three elements of a typical Chef setup. You installed the Chef DK on your workstation and have access to the Chef server.
-
-Chef server gives you a persistent location to store your cookbooks and information about your nodes. The `knife` command enables you to communicate with the Chef server.
-
-You also got a glimpse of the community cookbook site, [Chef Supermarket](https://supermarket.chef.io), and used it to retrieve a copy of the `learn_chef_httpd` cookbook. You then used `knife` to upload a copy of that cookbook to the Chef server.
-
-[END_BOX]
-
 <% next_page(current_page) do %>
 
-Great, you're all set up to use a Chef server. With your cookbook uploaded to the Chef server, you're now ready to scale-out your infrastructure!
-
-The next step is to configure a new node and run the cookbook on it. In [Learn the Chef basics](/tutorials/learn-the-basics/rhel/), you ran `chef-client` in local mode to configure the node directly. Now you'll use `knife` to trigger `chef-client` to run on your node remotely, from your workstation.
+<% if current_page.parent.data.environment == 'virtualbox' %>
+The next step is to bootstrap your node and run the `learn_chef_httpd` cookbook on it. In [Learn the Chef basics](/tutorials/learn-the-basics/), you ran `chef-client` in local mode to configure the server directly. Now you'll see how the bootstrap process triggers `chef-client` to run on your node remotely, from your workstation.
+<% else %>
+The next step is to bring up a Red Hat Enterprise Linux or CentOS server and prepare it for the bootstrap process.
+<% end %>
 
 <% end %>

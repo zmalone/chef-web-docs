@@ -1,6 +1,6 @@
 ---
 title: 'Bootstrap your node'
-order: 5
+order: 4
 description: 'Set up chef-client on your node,
  associate it with your Chef server, and apply your Apache cookbook to it.'
 keywords:
@@ -10,8 +10,7 @@ snippet_path: manage-a-node/rhel/virtualbox/bootstrap-your-node
 snippet_workstation: ubuntu
 headings: [
   { label: '1. Run the bootstrap command', href: '#step1' },
-  { label: '2. Confirm the result', href: '#step2' },
-
+  { label: '2. Confirm the result', href: '#step2' }
   ]
 ---
 Recall that any computer that's managed by a Chef server is called a _node_, and that `chef-client` is the command that applies the policy defined by your cookbooks to a node. We call the process that installs `chef-client` on a node and the initial checkin to the Chef server _bootstrapping_ the node.
@@ -42,7 +41,7 @@ In a more production-like environment, you would replace <% ph 'localhost' %> wi
 
 Two things just happened.
 
-First, your node was associated with your hosted Chef account. To verify this, run the `knife node list` command.
+First, your node was associated with your Chef server. To verify this, run the `knife node list` command.
 
 <% command_snippet(page: current_page, path: 'bootstrap-your-node/knife-node-list', features: [:stdin, :stdout]) %>
 
@@ -54,24 +53,14 @@ The second thing that happened was that your node did an initial checkin with th
 
 To verify the configuration, run the following `curl` command.
 
-<% command_snippet(page: current_page, path: 'bootstrap-your-node/curl-node1-1', features: [:stdin, :stderr, :stdout]) %>
-
-You can also open a web browser from your workstation and navigate to your web server.
-
-![The basic home page](misc/webserver-basic-remote.png)
-
-[END_BOX]
-
-[START_BOX]
-
-## Summary
-
-The `knife bootstrap` command established an SSH connection to the node, installed `chef-client`, downloaded the `learn_chef_httpd` cookbook on the node, and ran it. In one command, Chef carried out most of the steps you previously performed manually.
+<% command_snippet(page: current_page, path: 'bootstrap-your-node/curl-node1-1', features: [:stdin, :stdout]) %>
 
 [END_BOX]
 
 <% next_page(current_page) do %>
 
-Next let's spice things up and add some info about your web server to your home page.
+The `knife bootstrap` command established an SSH connection to the node, installed `chef-client`, downloaded the `learn_chef_httpd` cookbook on the node, and ran it. In one command, Chef carried out most of the steps you previously performed manually.
+
+Next let's modify your configuration by adding some info about your web server to your home page.
 
 <% end %>
