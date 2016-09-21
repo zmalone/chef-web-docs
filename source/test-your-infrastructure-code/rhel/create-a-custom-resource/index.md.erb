@@ -11,8 +11,8 @@ Consider the `web` recipe you created [earlier in this tutorial](/test-your-infr
 
 ```ruby
 # web.rb
-package_name = 
-  service_name = 
+package_name =
+  service_name =
     case node['platform']
     when 'centos' then 'httpd'
     when 'ubuntu' then 'apache2'
@@ -37,7 +37,7 @@ end
 ```
 
 Notice two features of this recipe. There are parts that are common to most Apache configurations &ndash; installing the package and starting the service, and a part that's unique &ndash; setting the contents of the home page.
- 
+
 Say you have multiple projects that configure Apache. How might you reuse this recipe in each of your cookbooks?
 
 One way is to copy the recipe to each cookbook. However, if you want to make a modification or improvement, you would need to duplicate your work in each cookbook. That process is tedious and error-prone.
@@ -46,8 +46,8 @@ Another way might be to use a node attribute that defines the location of the ho
 
 ```ruby
 # web.rb
-package_name = 
-  service_name = 
+package_name =
+  service_name =
     case node['platform']
     when 'centos' then 'httpd'
     when 'ubuntu' then 'apache2'
@@ -119,7 +119,7 @@ In this part, you'll get a custom resource cookbook named `custom_web` from GitH
 
 The `custom_web` cookbook contains a custom resource called `custom_web_site` which configures Apache on CentOS or Ubuntu, similar to the configuration you built previously.
 
-To get started, first move to your <% fp '~/learn-chef/cookbooks' %> directory. 
+To get started, first move to your <% fp '~/learn-chef/cookbooks' %> directory.
 
 ```bash
 $ cd ~/learn-chef/cookbooks
@@ -146,7 +146,7 @@ Next, move to the <% fp 'custom_web' %> directory.
 $ cd ~/learn-chef/cookbooks/custom_web
 ```
 
-Before running the cookbook on a Test Kitchen instance, run these commands to verify that ChefSpec, RuboCop, and Foodcritic tests all pass. 
+Before running the cookbook on a Test Kitchen instance, run these commands to verify that ChefSpec, RuboCop, and Foodcritic tests all pass.
 
 ```bash
 # ~/learn-chef/cookbooks/custom_web
@@ -181,7 +181,7 @@ Run this command to apply the cookbook and run InSpec tests that verify the conf
 $ kitchen converge && kitchen verify
 ```
 
-From the output, you'll see that all tests pass. 
+From the output, you'll see that all tests pass.
 
 ```bash
 # ~/learn-chef/cookbooks/custom_web
@@ -266,7 +266,7 @@ action :delete do
     action :delete
   end
 end
-``` 
+```
 
 Chef appends the name of your Ruby file to your cookbook's name. Therefore, this custom resource is named `custom_web_site`.
 
@@ -387,18 +387,18 @@ As your custom resource cookbook evolves, you could write additional test cookbo
 
 Try writing a custom resource for a piece of software that you manage. You can use the `custom_web` cookbook as a guide.
 
-Your implementation can help generalize common software components used throughout the industry, or it might configure a piece of proprietary software your company owns that you reguarly need to manage. If you write a cookbook that others can benefit from, [consider becoming a contributor](https://supermarket.chef.io/contributors) to Chef Supermarket! 
+Your implementation can help generalize common software components used throughout the industry, or it might configure a piece of proprietary software your company owns that you regularly need to manage. If you write a cookbook that others can benefit from, [consider becoming a contributor](https://supermarket.chef.io/contributors) to Chef Supermarket! 
 
 You might maintain your custom resource cookbook on Chef Supermarket (either through the public site or a [private server that you maintain](https://docs.chef.io/supermarket.html#private-supermarket)), in a source code repository such as GitHub, or both.
 
-To load your custom resource cookbook from another cookbook, you add a `depends` line to your cookbook's metadata file, <% fp 'metadata.rb' %>. Here's an example that loads the `custom_web` cookbook. 
+To load your custom resource cookbook from another cookbook, you add a `depends` line to your cookbook's metadata file, <% fp 'metadata.rb' %>. Here's an example that loads the `custom_web` cookbook.
 
 ```ruby
 # metadata.rb
 depends 'custom_web'
 ```
 
-Then you add a line to your <% fp 'Berksfile' %> to indicate where the cookbook is located. The location can be a relative path on your local system, Chef Supermarket, or Git. Here's an example that retrieves the `custom_web` cookbook from GitHub. 
+Then you add a line to your <% fp 'Berksfile' %> to indicate where the cookbook is located. The location can be a relative path on your local system, Chef Supermarket, or Git. Here's an example that retrieves the `custom_web` cookbook from GitHub.
 
 ```ruby
 # Berksfile
@@ -409,14 +409,14 @@ metadata
 cookbook 'custom_web', git: 'https://github.com/learn-chef/custom_web.git'
 ```
 
-You don't need to specify the location of custom resource cookbooks that are hosted on the public Chef Supermarket &ndash; the default value of `source` already points there. 
+You don't need to specify the location of custom resource cookbooks that are hosted on the public Chef Supermarket &ndash; the default value of `source` already points there.
 
 ```ruby
 # Berksfile
 source 'https://supermarket.chef.io'
 
 metadata
-``` 
+```
 
 [Learn more about custom resources in this webcast](https://www.chef.io/blog/2015/11/06/custom-resources-in-chef-client-12-5/)
 
