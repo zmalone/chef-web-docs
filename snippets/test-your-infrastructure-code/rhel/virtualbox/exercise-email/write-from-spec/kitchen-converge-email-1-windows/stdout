@@ -1,0 +1,183 @@
+-----> Starting Kitchen (v1.11.1)
+-----> Converging <default-centos-72>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.3.5...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Chef Omnibus installation detected (install only if missing)
+       Transferring files to <default-centos-72>
+       Starting Chef Client, version 12.14.77
+       resolving cookbooks for run list: ["email::default"]
+       Synchronizing Cookbooks:
+         - email (0.1.0)
+         - postfix (3.8.0)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+       Converging 8 resources
+       Recipe: postfix::_common
+         * yum_package[postfix] action install (up to date)
+         * service[sendmail] action nothing (skipped due to action :nothing)
+         * execute[switch_mailer_to_postfix] action run (skipped due to not_if)
+         * execute[update-postfix-sender_canonical] action nothing (skipped due to action :nothing)
+         * execute[update-postfix-smtp_generic] action nothing (skipped due to action :nothing)
+         * template[/etc/postfix/main.cf] action create
+           - update content in file /etc/postfix/main.cf from 0bd87e to 110cc5
+           --- /etc/postfix/main.cf	2014-06-10 01:39:24.000000000 +0000
+           +++ /etc/postfix/.chef-main20160922-11616-aet3kc.cf	2016-09-22 03:02:11.846389000 +0000
+           @@ -1,680 +1,23 @@
+            
+           -
+           -queue_directory = /var/spool/postfix
+           -
+           -command_directory = /usr/sbin
+           -
+           -daemon_directory = /usr/libexec/postfix
+           -
+           -data_directory = /var/lib/postfix
+           -
+           -mail_owner = postfix
+           -
+           -
+           -
+           -
+           -
+           -
+           -inet_interfaces = localhost
+           -
+           -inet_protocols = all
+           -
+           -
+           -mydestination = $myhostname, localhost.$mydomain, localhost
+           -
+           -
+           -unknown_local_recipient_reject_code = 550
+           -
+           -
+           -
+           -
+           -
+           -
+           -
+           -
+           -
+           -
+           -
+           -
+           -
+           -alias_maps = hash:/etc/aliases
+           -
+           -alias_database = hash:/etc/aliases
+           -
+           -
+           - 
+           -
+           -
+           -
+           -
+           -
+           -  
+           -
+           -
+           -
+           -
+           -
+           -
+           -debug_peer_level = 2
+           -
+           -
+           -debugger_command =
+           -	 PATH=/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
+           -	 ddd $daemon_directory/$process_name $process_id & sleep 5
+           -
+           -
+           -sendmail_path = /usr/sbin/sendmail.postfix
+           -
+           -newaliases_path = /usr/bin/newaliases.postfix
+           -
+           -mailq_path = /usr/bin/mailq.postfix
+           -
+           -setgid_group = postdrop
+           -
+           -html_directory = no
+           -
+           -manpage_directory = /usr/share/man
+           -
+           -sample_directory = /usr/share/doc/postfix-2.10.1/samples
+           -
+           -readme_directory = /usr/share/doc/postfix-2.10.1/README_FILES
+           +append_dot_mydomain = no
+           +biff = no
+           +inet_interfaces = loopback-only
+           +mailbox_size_limit = 0
+           +mydestination = default-centos-72, default-centos-72, localhost.localdomain, localhost
+           +mydomain = example.com
+           +myhostname = default-centos-72
+           +myorigin = example.com
+           +smtp_sasl_auth_enable = no
+           +smtp_tls_CAfile = /etc/pki/tls/cert.pem
+           +smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+           +smtp_use_tls = yes
+           +smtpd_tls_CAfile = /etc/pki/tls/cert.pem
+           +smtpd_tls_cert_file = /etc/ssl/certs/ssl-cert-snakeoil.pem
+           +smtpd_tls_key_file = /etc/ssl/private/ssl-cert-snakeoil.key
+           +smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+           +smtpd_use_tls = yes
+           - restore selinux security context
+         * template[/etc/postfix/master.cf] action create
+           - update content in file /etc/postfix/master.cf from 3ad144 to 12a5f7
+           --- /etc/postfix/master.cf	2014-06-10 01:39:23.000000000 +0000
+           +++ /etc/postfix/.chef-master20160922-11616-o99vyk.cf	2016-09-22 03:02:11.978455000 +0000
+           @@ -2,42 +2,20 @@
+            smtp      inet  n       -       n       -       -       smtpd
+           -pickup    unix  n       -       n       60      1       pickup
+           +pickup    fifo  n       -       n       60      1       pickup
+            cleanup   unix  n       -       n       -       0       cleanup
+           -qmgr      unix  n       -       n       300     1       qmgr
+           +qmgr      fifo  n       -       n       300     1       qmgr
+            tlsmgr    unix  -       -       n       1000?   1       tlsmgr
+            rewrite   unix  -       -       n       -       -       trivial-rewrite
+            bounce    unix  -       -       n       -       0       bounce
+           @@ -46,19 +24,19 @@
+            verify    unix  -       -       n       -       1       verify
+            flush     unix  n       -       n       1000?   0       flush
+            proxymap  unix  -       -       n       -       -       proxymap
+           -proxywrite unix -       -       n       -       1       proxymap
+           -smtp      unix  -       -       n       -       -       smtp
+           +smtp      unix  -       -       n       -       500     smtp
+            relay     unix  -       -       n       -       -       smtp
+           +	-o smtp_fallback_relay=
+            showq     unix  n       -       n       -       -       showq
+            error     unix  -       -       n       -       -       error
+           -retry     unix  -       -       n       -       -       error
+            discard   unix  -       -       n       -       -       discard
+            local     unix  -       n       n       -       -       local
+            virtual   unix  -       n       n       -       -       virtual
+            lmtp      unix  -       -       n       -       -       lmtp
+            anvil     unix  -       -       n       -       1       anvil
+           -scache    unix  -       -       n       -       1       scache
+           +scache	  unix	-	-	n	-	1	scache
+           @@ -72,57 +50,27 @@
+           +maildrop  unix  -       n       n       -       -       pipe
+           +  flags=DRhu user=vmail argv=/usr/local/bin/maildrop -d ${recipient}
+           +old-cyrus unix  -       n       n       -       -       pipe
+           +  flags=R user=cyrus argv=/usr/lib/cyrus-imapd/deliver -e -m ${extension} ${user}
+           +cyrus     unix  -       n       n       -       -       pipe
+           +  user=cyrus argv=/usr/lib/cyrus-imapd/deliver -e -r ${sender} -m ${extension} ${user}
+           +uucp      unix  -       n       n       -       -       pipe
+           +  flags=Fqhu user=uucp argv=uux -r -n -z -a$sender - $nexthop!rmail ($recipient)
+           +ifmail    unix  -       n       n       -       -       pipe
+           +  flags=F user=ftn argv=/usr/lib/ifmail/ifmail -r $nexthop ($recipient)
+           +bsmtp     unix  -       n       n       -       -       pipe
+           +  flags=Fq. user=foo argv=/usr/local/sbin/bsmtp -f $sender $nexthop $recipient
+           - restore selinux security context
+         * service[postfix] action enable (up to date)
+         * service[postfix] action restart
+           - restart service service[postfix]
+       
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 3/9 resources updated in 24 seconds
+       Finished converging <default-centos-72> (0m30.88s).
+-----> Kitchen is finished. (0m36.04s)
