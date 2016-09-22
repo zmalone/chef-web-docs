@@ -57,6 +57,11 @@ class Middleman::Sitemap::Resource
     siblings[siblings.find_index(self) - 1]
   end
 
+  def next_page
+    siblings = self.parent.children
+    siblings[siblings.find_index(self) + 1]
+  end
+
   def last_page
     siblings = self.parent.children
     siblings.last
