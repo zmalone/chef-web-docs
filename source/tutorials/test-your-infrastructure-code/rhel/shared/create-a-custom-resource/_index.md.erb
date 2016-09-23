@@ -1,31 +1,6 @@
-Consider the `web` recipe you created [earlier in this tutorial](/test-your-infrastructure-code/rhel/verify-resources-properly-defined/) that configures Apache on CentOS and Ubuntu.
+Consider the `web` recipe you created [earlier in this tutorial](/tutorials/test-your-infrastructure-code/rhel/<%= current_page.parent.data.environment %>/verify-resources-properly-defined) that configures Apache on CentOS and Ubuntu.
 
-```ruby
-# web.rb
-package_name =
-  service_name =
-    case node['platform']
-    when 'centos' then 'httpd'
-    when 'ubuntu' then 'apache2'
-    end
-
-# Install the package.
-package package_name
-
-# Start and enable the service.
-service service_name do
-  action [:enable, :start]
-end
-
-# Serve a custom home page.
-file '/var/www/html/index.html' do
-  content '<html>
-  <body>
-    <h1>hello world</h1>
-  </body>
-</html>'
-end
-```
+<% code_snippet(path: "test-your-infrastructure-code/rhel/#{current_page.parent.data.environment}/verify-resources-properly-defined/revise-cookbook-for-ubuntu/default-3-rhel") %>
 
 Notice two features of this recipe. There are parts that are common to most Apache configurations &ndash; installing the package and starting the service, and a part that's unique &ndash; setting the contents of the home page.
 
@@ -58,7 +33,7 @@ cookbook_file '/var/www/html/index.html' do
 end
 ```
 
-From your dependent cookbooks, you would set the `node['web']['homepage_file']` attribute and include the `web` recipe. Although this is a valid pattern, one drawback is that as you add features to your Apache configuration, you'll potentially need more node attributes to keep track of.
+From your dependent cookbooks, you would set the `node['web']['homepage_file']` attribute and include the `web` recipe. Although this is a valid pattern, one drawback is that as you add features to your Apache configuration, you'll potentially need more node attributes to keep track of. Another drawback is that this pattern does not allow you to instantiate multiple Apache configurations on the same server.
 
 What if you had a resource type that handles the details of configuring Apache but also allows you to set the contents of the home page? Here's an example of what that might look like:
 
@@ -112,74 +87,43 @@ The `custom_web` cookbook contains a custom resource called `custom_web_site` wh
 
 To get started, first move to your <% fp '~/learn-chef/cookbooks' %> directory.
 
-```bash
-$ cd ~/learn-chef/cookbooks
-```
+<% command_snippet(page: current_page, path: 'quickstart-custom_web/cd-learn-chef-cookbooks', features: :stdin) %>
 
 Next, clone the cookbook from GitHub.
 
-```bash
-# ~/learn-chef/cookbooks
-$ git clone https://github.com/learn-chef/custom_web.git
-Cloning into 'custom_web'...
-remote: Counting objects: 54, done.
-remote: Compressing objects: 100% (30/30), done.
-remote: Total 54 (delta 9), reused 54 (delta 9), pack-reused 0
-Unpacking objects: 100% (54/54), done.
-Checking connectivity... done.
-```
+<% command_snippet(page: current_page, path: 'quickstart-custom_web/git-clone-custom_web', features: [:stdin, :stderr]) %>
 
 The "custom" part of the cookbook's name is simply to distinguish it from other Learn Chef tutorials. In practice, you might name the cookbook simply `web`.
 
 Next, move to the <% fp 'custom_web' %> directory.
 
-```bash
-$ cd ~/learn-chef/cookbooks/custom_web
-```
+<% command_snippet(page: current_page, path: 'quickstart-custom_web/cd-learn-chef-cookbooks-custom_web', features: :stdin) %>
 
 Before running the cookbook on a Test Kitchen instance, run these commands to verify that ChefSpec, RuboCop, and Foodcritic tests all pass.
 
-```bash
-# ~/learn-chef/cookbooks/custom_web
-$ chef exec rspec --color
-..
+<% command_snippet(page: current_page, path: 'quickstart-custom_web/chef-exec-rspec-custom_web') %>
 
-Finished in 3.4 seconds (files took 3.03 seconds to load)
-2 examples, 0 failures
+<% command_snippet(page: current_page, path: 'quickstart-custom_web/rubocop-custom_web') %>
 
-$ rubocop .
-Inspecting 11 files
-...........
-
-11 files inspected, no offenses detected
-$ foodcritic .
-```
+<% command_snippet(page: current_page, path: 'quickstart-custom_web/foodcritic-custom_web', features: :stdin) %>
 
 Next, run `kitchen list`. You'll see that Test Kitchen is configured to run Ubuntu 14.04 and CentOS 7.2 instances.
 
-```bash
-# ~/learn-chef/cookbooks/custom_web
-$ kitchen list
-Instance             Driver   Provisioner  Verifier  Transport  Last Action
-default-ubuntu-1404  Vagrant  ChefZero     Inspec    Ssh        <Not Created>
-default-centos-72    Vagrant  ChefZero     Inspec    Ssh        <Not Created>
-```
+<% command_snippet(page: current_page, path: 'quickstart-custom_web/kitchen-list-custom_web') %>
 
 Run this command to apply the cookbook and run InSpec tests that verify the configuration on each instance.
 
-```bash
-# ~/learn-chef/cookbooks/custom_web
-$ kitchen converge && kitchen verify
-```
+<% command_snippet(page: current_page, path: 'quickstart-custom_web/kitchen-converge-verify-custom_web', features: :stdin) %>
+
+(Sample output is omitted for brevity.)
 
 From the output, you'll see that all tests pass.
 
 ```bash
 # ~/learn-chef/cookbooks/custom_web
-......
-
-Finished in 0.13944 seconds (files took 0.77301 seconds to load)
-6 examples, 0 failures
+Summary: 6 successful, 0 failures, 0 skipped
+       Finished verifying <default-centos-72> (0m1.53s).
+-----> Kitchen is finished. (0m3.84s)
 ```
 
 As an optional step, log in to your CentOS Test Kitchen instance and run `curl localhost` to see the resulting configuration.
@@ -201,22 +145,7 @@ You can browse the source code to get a sense of how the custom resource is buil
 
 When you're done with this lesson, you can destroy your test instances like this.
 
-```bash
-# ~/learn-chef/cookbooks/custom_web
-$ kitchen destroy
------> Starting Kitchen (v1.8.0)
------> Destroying <default-ubuntu-1404>...
-       ==> default: Forcing shutdown of VM...
-       ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-ubuntu-1404> destroyed.
-       Finished destroying <default-ubuntu-1404> (0m4.60s).
------> Destroying <default-centos-72>...
-       ==> default: Forcing shutdown of VM...
-       ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-centos-72> destroyed.
-       Finished destroying <default-centos-72> (0m4.21s).
------> Kitchen is finished. (0m10.81s)
-```
+<% command_snippet(page: current_page, path: 'quickstart-custom_web/kitchen-destroy-custom_web') %>
 
 [END_BOX]
 
@@ -226,38 +155,7 @@ $ kitchen destroy
 
 There are [several ways to write a custom resource](https://docs.chef.io/custom_resources_notes.html). The recommended way includes defining a Ruby file located in a cookbook's <% fp 'resources' %> directory. The `custom_web_site` resource is defined in a file named <% fp 'site.rb' %>.
 
-```ruby
-# ~/learn-chef/cookbooks/custom_web/resources/site.rb
-include CustomWebCookbook::Helpers
-
-property :homepage, String, default: '<h1>Hello world!</h1>'
-
-default_action :create
-
-load_current_value do
-  if ::File.exist?('/var/www/html/index.html')
-    homepage IO.read('/var/www/html/index.html')
-  end
-end
-
-action :create do
-  package package_name
-
-  service service_name do
-    action [:enable, :start]
-  end
-
-  file '/var/www/html/index.html' do
-    content homepage
-  end
-end
-
-action :delete do
-  package 'httpd' do
-    action :delete
-  end
-end
-```
+<% code_snippet(page: current_page, path: 'writing-the-custom_web_site-resource/site-rb') %>
 
 Chef appends the name of your Ruby file to your cookbook's name. Therefore, this custom resource is named `custom_web_site`.
 
@@ -265,35 +163,13 @@ This example resembles the one [shown in the documentation](https://docs.chef.io
 
 One difference is that the `custom_web_site` resource supports multiple platforms. To do so, it provides a helper library, located in <% fp 'libraries/helpers.rb' %>, that provides the Apache package and service names for the current platform.
 
-```ruby
-# ~/learn-chef/cookbooks/custom_web/libraries/helpers.rb
-module CustomWebCookbook
-  module Helpers
-    def package_name
-      case node['platform']
-      when 'centos' then 'httpd'
-      when 'ubuntu' then 'apache2'
-      end
-    end
-
-    def service_name
-      case node['platform']
-      when 'centos' then 'httpd'
-      when 'ubuntu' then 'apache2'
-      end
-    end
-  end
-end
-```
+<% code_snippet(page: current_page, path: 'writing-the-custom_web_site-resource/helpers-rb') %>
 
 Although not required, a helper library can keep your custom resources more organized. They can also help make your resource code more readable and also provide functionality that's shared among multiple resources.
 
 <% fp 'site.rb' %> includes the helper library like this:
 
-```ruby
-# ~/learn-chef/cookbooks/custom_web/resources/site.rb
-include CustomWebCookbook::Helpers
-```
+<% code_snippet(page: current_page, path: 'writing-the-custom_web_site-resource/site-rb-include') %>
 
 [END_BOX]
 
@@ -301,70 +177,27 @@ include CustomWebCookbook::Helpers
 
 ## Testing the custom\_web_site resource
 
-To verify the `custom_web_site` resource, the `custom_web` cookbook provides a test cookbook named `hello_world_test`, located at <% fp 'cookbooks/custom_web/test/cookbooks/hello_world_test' %>. Its default recipe simply declares a `custom_web_site` resource using the default properties.
+To verify the `custom_web_site` resource, the `custom_web` cookbook provides a test cookbook named `hello_world_test`, located at <% fp 'cookbooks/custom_web/test/cookbooks/hello_world_test' %>.
 
-```ruby
-# ~/learn-chef/cookbooks/custom_web/test/cookbooks/hello_world_test/recipes/default.rb
-custom_web_site 'default'
-```
+Its default recipe declares a `custom_web_site` resource using the default properties.
+
+<% code_snippet(page: current_page, path: 'testing-the-custom_web_site-resource/hello_world_test-default-rb') %>
+
+(The default recipe also uses the [apt_update](https://docs.chef.io/resource_apt_update.html) resource to ensure that the package cache is up-to-date on Ubuntu systems.)
 
 To validate the test cookbook, the `custom_web` cookbook includes both ChefSpec and InSpec tests.
 
 The ChefSpec test, located at <% fp 'cookbooks/custom_web/spec/unit/recipes/hello_world_spec.rb' %>, validates that the test recipe does not raise errors and runs the `custom_web_site` resource with the `:create` action.
 
-```ruby
-# ~/learn-chef/cookbooks/custom_web/spec/unit/recipes/hello_world_spec.rb
-require 'spec_helper'
+<% code_snippet(page: current_page, path: 'testing-the-custom_web_site-resource/hello_world_test-default-spec-rb') %>
 
-describe 'hello_world_test::default' do
-  context 'When all attributes are default, on an unspecified platform' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new
-      runner.converge(described_recipe)
-    end
+This test follows the shared examples pattern that you learned about [earlier in this tutorial](/tutorials/test-your-infrastructure-code/rhel/<%= current_page.parent.data.environment %>/verify-resources-properly-defined#step5).
 
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
+In this example, `create_custom_web_site` is a [custom matcher](https://github.com/sethvargo/chefspec#packaging-custom-matchers). A matcher helps you build expectations around how a resource behaves. ChefSpec provides matchers for the built-in Chef resource types; you need to provide your own matchers for custom types you define. You'll find the definition of the `create_custom_web_site` matcher in <% fp 'libraries/matchers.rb' %>.
 
-    it 'creates the default web site' do
-      expect(chef_run).to create_custom_web_site 'default'
-    end
-  end
-end
-```
+The corresponding InSpec tests for the `hello_world_test` test cookbook are located at <% fp 'test/recipes/default/default_spec.rb' %>. These tests resemble the InSpec tests you wrote [earlier in this tutorial](/test-your-infrastructure-code/rhel/verify-desired-state#step7). However, this version also verifies the configuration on CentOS and Ubuntu.
 
-In this example, `create_custom_web_site` is a [custom matcher](https://github.com/sethvargo/chefspec#packaging-custom-matchers). A matcher helps you build expectations around how a resource behaves. ChefSpec provides matchers for the built-in Chef resource types; you need to provide your own matchers for custom types you define.
-
-The corresponding InSpec tests for the `hello_world_test` test cookbook are located at <% fp 'cookbooks/custom_web/test/integration/default/inspec/default_spec.rb' %>. These tests resemble the InSpec tests you wrote [earlier in this tutorial](/test-your-infrastructure-code/rhel/verify-desired-state#step7). However, this version also verifies the configuration on CentOS and Ubuntu.
-
-```ruby
-# ~/learn-chef/cookbooks/custom_web/test/integration/default/inspec/default_spec.rb
-package_name =
-  service_name =
-    case os[:family]
-    when 'centos' then 'httpd'
-    when 'ubuntu' then 'apache2'
-    end
-
-describe package package_name do
-  it { should be_installed }
-end
-
-describe service service_name do
-  it { should be_enabled }
-  it { should be_running }
-end
-
-describe command 'curl localhost' do
-  its('stdout') { should match(/hello/i) }
-  its('exit_status') { should eq 0 }
-end
-
-describe port 80 do
-  it { should be_listening }
-end
-```
+<% code_snippet(page: current_page, path: 'testing-the-custom_web_site-resource/hello_world_test-default-test-rb') %>
 
 These tests are basic, but they validate the basic requirements of a running Apache system.
 
@@ -374,13 +207,13 @@ As your custom resource cookbook evolves, you could write additional test cookbo
 
 [START_BOX]
 
-## Next steps
+## Conclusion
 
 Try writing a custom resource for a piece of software that you manage. You can use the `custom_web` cookbook as a guide.
 
 Your implementation can help generalize common software components used throughout the industry, or it might configure a piece of proprietary software your company owns that you regularly need to manage. If you write a cookbook that others can benefit from, [consider becoming a contributor](https://supermarket.chef.io/contributors) to Chef Supermarket!
 
-You might maintain your custom resource cookbook on Chef Supermarket (either through the public site or a [private server that you maintain](https://docs.chef.io/supermarket.html#private-supermarket)), in a source code repository such as GitHub, or both.
+You might maintain your custom resource cookbook on Chef Supermarket (either through the public site or a [private Chef Supermarket server that you maintain](https://docs.chef.io/supermarket.html#private-supermarket)), in a source code repository such as GitHub, or both.
 
 To load your custom resource cookbook from another cookbook, you add a `depends` line to your cookbook's metadata file, <% fp 'metadata.rb' %>. Here's an example that loads the `custom_web` cookbook.
 
