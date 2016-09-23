@@ -4,7 +4,7 @@ You also learned a few new skills, such as how to use Berkshelf to manage cookbo
 
 [GITHUB] Get the final version of the `awesome_customers_ubuntu` cookbook on [GitHub](https://github.com/learn-chef/awesome_customers_ubuntu).
 
-In the next tutorial, [Test your infrastructure code](/test-your-infrastructure-code/ubuntu/), you'll learn how to speed up the feedback loop even more by writing test code that automatically verifies whether your policy behaves as you expect.
+In the next tutorial, [Test your infrastructure code](/tutorials/test-your-infrastructure-code/), you'll learn how to speed up the feedback loop even more by writing test code that automatically verifies whether your policy behaves as you expect.
 
 [TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
 
