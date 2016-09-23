@@ -1,0 +1,646 @@
+-----> Starting Kitchen (v1.11.1)
+-----> Creating <default-ubuntu-1404>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Box 'bento/ubuntu-14.04' could not be found. Attempting to find and install...
+           default: Box Provider: virtualbox
+           default: Box Version: >= 0
+       ==> default: Loading metadata for box 'bento/ubuntu-14.04'
+           default: URL: https://atlas.hashicorp.com/bento/ubuntu-14.04
+       ==> default: Adding box 'bento/ubuntu-14.04' (v2.2.9) for provider: virtualbox
+           default: Downloading: https://atlas.hashicorp.com/bento/boxes/ubuntu-14.04/versions/2.2.9/providers/virtualbox.box
+       ==> default: Successfully added box 'bento/ubuntu-14.04' (v2.2.9) for 'virtualbox'!
+       ==> default: Importing base box 'bento/ubuntu-14.04'...
+       ==> default: Checking if box 'bento/ubuntu-14.04' is up to date...
+       ==> default: Setting the name of the VM: kitchen-custom_web-default-ubuntu-1404_default_1474579401157_52351
+       ==> default: Fixed port collision for 22 => 2222. Now on port 2200.
+       ==> default: Clearing any previously set network interfaces...
+       ==> default: Preparing network interfaces based on configuration...
+           default: Adapter 1: nat
+       ==> default: Forwarding ports...
+           default: 22 (guest) => 2200 (host) (adapter 1)
+       ==> default: Booting VM...
+       ==> default: Waiting for machine to boot. This may take a few minutes...
+           default: SSH address: 127.0.0.1:2200
+           default: SSH username: vagrant
+           default: SSH auth method: private key
+           default: 
+           default: Vagrant insecure key detected. Vagrant will automatically replace
+           default: this with a newly generated keypair for better security.
+           default: 
+           default: Inserting generated public key within guest...
+           default: Removing insecure key from the guest if it's present...
+           default: Key inserted! Disconnecting and reconnecting using new SSH key...
+       ==> default: Machine booted and ready!
+       ==> default: Checking for guest additions in VM...
+       ==> default: Setting hostname...
+       ==> default: Machine not provisioned because `--no-provision` is specified.
+       [SSH] Established
+       Vagrant instance <default-ubuntu-1404> created.
+       Finished creating <default-ubuntu-1404> (2m17.49s).
+-----> Converging <default-ubuntu-1404>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.3.5...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Installing Chef Omnibus (install only if missing)
+       Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
+       Trying wget...
+       Download complete.
+       ubuntu 14.04 x86_64
+       Getting information for chef stable  for ubuntu...
+       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=ubuntu&pv=14.04&m=x86_64
+         to file /tmp/install.sh.1131/metadata.txt
+       trying wget...
+       sha1	ea771aa3cb5367393199cc342a4b3d3505085635
+       sha256	22bb016e2b5dc669e4bd46cf49ed954ad09f4bc29ff0524606ec03e25d564951
+       url	https://packages.chef.io/stable/ubuntu/14.04/chef_12.14.89-1_amd64.deb
+       version	12.14.89
+       downloaded metadata file looks valid...
+       downloading https://packages.chef.io/stable/ubuntu/14.04/chef_12.14.89-1_amd64.deb
+         to file /tmp/install.sh.1131/chef_12.14.89-1_amd64.deb
+       trying wget...
+       Comparing checksum with sha256sum...
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       You are installing an omnibus package without a version pin.  If you are installing
+       on production servers via an automated process this is DANGEROUS and you will
+       be upgraded without warning on new releases, even to new major releases.
+       Letting the version float is only appropriate in desktop, test, development or
+       CI/CD environments.
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       Installing chef 
+       installing with dpkg...
+       Selecting previously unselected package chef.
+       (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 32949 files and directories currently installed.)
+       Preparing to unpack .../chef_12.14.89-1_amd64.deb ...
+       Unpacking chef (12.14.89-1) ...
+       Setting up chef (12.14.89-1) ...
+       Thank you for installing Chef!
+       Transferring files to <default-ubuntu-1404>
+       Starting Chef Client, version 12.14.89
+       Creating a new client identity for default-ubuntu-1404 using the validator key.
+       resolving cookbooks for run list: ["hello_world_test::default", "hello_world_test::deps"]
+       Synchronizing Cookbooks:
+         - hello_world_test (0.1.0)
+         - custom_web (0.1.0)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+       Converging 3 resources
+       Recipe: hello_world_test::default
+         * apt_update[Update the apt cache daily] action periodic
+           - update new lists of packages
+           * directory[/var/lib/apt/periodic] action create (up to date)
+           * directory[/etc/apt/apt.conf.d] action create (up to date)
+           * file[/etc/apt/apt.conf.d/15update-stamp] action create_if_missing
+             - create new file /etc/apt/apt.conf.d/15update-stamp
+             - update content in file /etc/apt/apt.conf.d/15update-stamp from none to c399a7
+             --- /etc/apt/apt.conf.d/15update-stamp	2016-09-22 21:24:18.156679018 +0000
+             +++ /etc/apt/apt.conf.d/.chef-15update-stamp20160922-1230-1w5t43t	2016-09-22 21:24:18.156679018 +0000
+             @@ -1 +1,2 @@
+             +APT::Update::Post-Invoke-Success {"touch /var/lib/apt/periodic/update-success-stamp 2>/dev/null || true";};
+           * execute[apt-get -q update] action run
+             - execute apt-get -q update
+         
+         * custom_web_site[default] action create
+           * apt_package[apache2] action install
+             - install version 2.4.7-1ubuntu4.13 of package apache2
+           * service[apache2] action enable (up to date)
+           * service[apache2] action start (up to date)
+           * file[/var/www/html/index.html] action create
+             - update content in file /var/www/html/index.html from 538f31 to e3d095
+             --- /var/www/html/index.html	2016-09-22 21:24:34.168679018 +0000
+             +++ /var/www/html/.chef-index20160922-1230-kb50mh.html	2016-09-22 21:24:37.324679018 +0000
+             @@ -1,379 +1,2 @@
+             -
+             -<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+             -<html xmlns="http://www.w3.org/1999/xhtml">
+             -  <!--
+             -    Modified from the Debian original for Ubuntu
+             -    Last updated: 2014-03-19
+             -    See: https://launchpad.net/bugs/1288690
+             -  -->
+             -  <head>
+             -    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+             -    <title>Apache2 Ubuntu Default Page: It works</title>
+             -    <style type="text/css" media="screen">
+             -  * {
+             -    margin: 0px 0px 0px 0px;
+             -    padding: 0px 0px 0px 0px;
+             -  }
+             -
+             -  body, html {
+             -    padding: 3px 3px 3px 3px;
+             -
+             -    background-color: #D8DBE2;
+             -
+             -    font-family: Verdana, sans-serif;
+             -    font-size: 11pt;
+             -    text-align: center;
+             -  }
+             -
+             -  div.main_page {
+             -    position: relative;
+             -    display: table;
+             -
+             -    width: 800px;
+             -
+             -    margin-bottom: 3px;
+             -    margin-left: auto;
+             -    margin-right: auto;
+             -    padding: 0px 0px 0px 0px;
+             -
+             -    border-width: 2px;
+             -    border-color: #212738;
+             -    border-style: solid;
+             -
+             -    background-color: #FFFFFF;
+             -
+             -    text-align: center;
+             -  }
+             -
+             -  div.page_header {
+             -    height: 99px;
+             -    width: 100%;
+             -
+             -    background-color: #F5F6F7;
+             -  }
+             -
+             -  div.page_header span {
+             -    margin: 15px 0px 0px 50px;
+             -
+             -    font-size: 180%;
+             -    font-weight: bold;
+             -  }
+             -
+             -  div.page_header img {
+             -    margin: 3px 0px 0px 40px;
+             -
+             -    border: 0px 0px 0px;
+             -  }
+             -
+             -  div.table_of_contents {
+             -    clear: left;
+             -
+             -    min-width: 200px;
+             -
+             -    margin: 3px 3px 3px 3px;
+             -
+             -    background-color: #FFFFFF;
+             -
+             -    text-align: left;
+             -  }
+             -
+             -  div.table_of_contents_item {
+             -    clear: left;
+             -
+             -    width: 100%;
+             -
+             -    margin: 4px 0px 0px 0px;
+             -
+             -    background-color: #FFFFFF;
+             -
+             -    color: #000000;
+             -    text-align: left;
+             -  }
+             -
+             -  div.table_of_contents_item a {
+             -    margin: 6px 0px 0px 6px;
+             -  }
+             -
+             -  div.content_section {
+             -    margin: 3px 3px 3px 3px;
+             -
+             -    background-color: #FFFFFF;
+             -
+             -    text-align: left;
+             -  }
+             -
+             -  div.content_section_text {
+             -    padding: 4px 8px 4px 8px;
+             -
+             -    color: #000000;
+             -    font-size: 100%;
+             -  }
+             -
+             -  div.content_section_text pre {
+             -    margin: 8px 0px 8px 0px;
+             -    padding: 8px 8px 8px 8px;
+             -
+             -    border-width: 1px;
+             -    border-style: dotted;
+             -    border-color: #000000;
+             -
+             -    background-color: #F5F6F7;
+             -
+             -    font-style: italic;
+             -  }
+             -
+             -  div.content_section_text p {
+             -    margin-bottom: 6px;
+             -  }
+             -
+             -  div.content_section_text ul, div.content_section_text li {
+             -    padding: 4px 8px 4px 16px;
+             -  }
+             -
+             -  div.section_header {
+             -    padding: 3px 6px 3px 6px;
+             -
+             -    background-color: #8E9CB2;
+             -
+             -    color: #FFFFFF;
+             -    font-weight: bold;
+             -    font-size: 112%;
+             -    text-align: center;
+             -  }
+             -
+             -  div.section_header_red {
+             -    background-color: #CD214F;
+             -  }
+             -
+             -  div.section_header_grey {
+             -    background-color: #9F9386;
+             -  }
+             -
+             -  .floating_element {
+             -    position: relative;
+             -    float: left;
+             -  }
+             -
+             -  div.table_of_contents_item a,
+             -  div.content_section_text a {
+             -    text-decoration: none;
+             -    font-weight: bold;
+             -  }
+             -
+             -  div.table_of_contents_item a:link,
+             -  div.table_of_contents_item a:visited,
+             -  div.table_of_contents_item a:active {
+             -    color: #000000;
+             -  }
+             -
+             -  div.table_of_contents_item a:hover {
+             -    background-color: #000000;
+             -
+             -    color: #FFFFFF;
+             -  }
+             -
+             -  div.content_section_text a:link,
+             -  div.content_section_text a:visited,
+             -   div.content_section_text a:active {
+             -    background-color: #DCDFE6;
+             -
+             -    color: #000000;
+             -  }
+             -
+             -  div.content_section_text a:hover {
+             -    background-color: #000000;
+             -
+             -    color: #DCDFE6;
+             -  }
+             -
+             -  div.validator {
+             -  }
+             -    </style>
+             -  </head>
+             -  <body>
+             -    <div class="main_page">
+             -      <div class="page_header floating_element">
+             -        <img src="/icons/ubuntu-logo.png" alt="Ubuntu Logo" class="floating_element"/>
+             -        <span class="floating_element">
+             -          Apache2 Ubuntu Default Page
+             -        </span>
+             -      </div>
+             -<!--      <div class="table_of_contents floating_element">
+             -        <div class="section_header section_header_grey">
+             -          TABLE OF CONTENTS
+             -        </div>
+             -        <div class="table_of_contents_item floating_element">
+             -          <a href="#about">About</a>
+             -        </div>
+             -        <div class="table_of_contents_item floating_element">
+             -          <a href="#changes">Changes</a>
+             -        </div>
+             -        <div class="table_of_contents_item floating_element">
+             -          <a href="#scope">Scope</a>
+             -        </div>
+             -        <div class="table_of_contents_item floating_element">
+             -          <a href="#files">Config files</a>
+             -        </div>
+             -      </div>
+             --->
+             -      <div class="content_section floating_element">
+             -
+             -
+             -        <div class="section_header section_header_red">
+             -          <div id="about"></div>
+             -          It works!
+             -        </div>
+             -        <div class="content_section_text">
+             -          <p>
+             -                This is the default welcome page used to test the correct 
+             -                operation of the Apache2 server after installation on Ubuntu systems.
+             -                It is based on the equivalent page on Debian, from which the Ubuntu Apache
+             -                packaging is derived.
+             -                If you can read this page, it means that the Apache HTTP server installed at
+             -                this site is working properly. You should <b>replace this file</b> (located at
+             -                <tt>/var/www/html/index.html</tt>) before continuing to operate your HTTP server.
+             -          </p>
+             -
+             -
+             -          <p>
+             -                If you are a normal user of this web site and don't know what this page is
+             -                about, this probably means that the site is currently unavailable due to
+             -                maintenance.
+             -                If the problem persists, please contact the site's administrator.
+             -          </p>
+             -
+             -        </div>
+             -        <div class="section_header">
+             -          <div id="changes"></div>
+             -                Configuration Overview
+             -        </div>
+             -        <div class="content_section_text">
+             -          <p>
+             -                Ubuntu's Apache2 default configuration is different from the
+             -                upstream default configuration, and split into several files optimized for
+             -                interaction with Ubuntu tools. The configuration system is
+             -                <b>fully documented in
+             -                /usr/share/doc/apache2/README.Debian.gz</b>. Refer to this for the full
+             -                documentation. Documentation for the web server itself can be
+             -                found by accessing the <a href="/manual">manual</a> if the <tt>apache2-doc</tt>
+             -                package was installed on this server.
+             -
+             -          </p>
+             -          <p>
+             -                The configuration layout for an Apache2 web server installation on Ubuntu systems is as follows:
+             -          </p>
+             -          <pre>
+             -/etc/apache2/
+             -|-- apache2.conf
+             -|       `--  ports.conf
+             -|-- mods-enabled
+             -|       |-- *.load
+             -|       `-- *.conf
+             -|-- conf-enabled
+             -|       `-- *.conf
+             -|-- sites-enabled
+             -|       `-- *.conf
+             -          </pre>
+             -          <ul>
+             -                        <li>
+             -                           <tt>apache2.conf</tt> is the main configuration
+             -                           file. It puts the pieces together by including all remaining configuration
+             -                           files when starting up the web server.
+             -                        </li>
+             -
+             -                        <li>
+             -                           <tt>ports.conf</tt> is always included from the
+             -                           main configuration file. It is used to determine the listening ports for
+             -                           incoming connections, and this file can be customized anytime.
+             -                        </li>
+             -
+             -                        <li>
+             -                           Configuration files in the <tt>mods-enabled/</tt>,
+             -                           <tt>conf-enabled/</tt> and <tt>sites-enabled/</tt> directories contain
+             -                           particular configuration snippets which manage modules, global configuration
+             -                           fragments, or virtual host configurations, respectively.
+             -                        </li>
+             -
+             -                        <li>
+             -                           They are activated by symlinking available
+             -                           configuration files from their respective
+             -                           *-available/ counterparts. These should be managed
+             -                           by using our helpers
+             -                           <tt>
+             -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2enmod">a2enmod</a>,
+             -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2dismod">a2dismod</a>,
+             -                           </tt>
+             -                           <tt>
+             -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2ensite">a2ensite</a>,
+             -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2dissite">a2dissite</a>,
+             -                            </tt>
+             -                                and
+             -                           <tt>
+             -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2enconf">a2enconf</a>,
+             -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2disconf">a2disconf</a>
+             -                           </tt>. See their respective man pages for detailed information.
+             -                        </li>
+             -
+             -                        <li>
+             -                           The binary is called apache2. Due to the use of
+             -                           environment variables, in the default configuration, apache2 needs to be
+             -                           started/stopped with <tt>/etc/init.d/apache2</tt> or <tt>apache2ctl</tt>.
+             -                           <b>Calling <tt>/usr/bin/apache2</tt> directly will not work</b> with the
+             -                           default configuration.
+             -                        </li>
+             -          </ul>
+             -        </div>
+             -
+             -        <div class="section_header">
+             -            <div id="docroot"></div>
+             -                Document Roots
+             -        </div>
+             -
+             -        <div class="content_section_text">
+             -            <p>
+             -                By default, Ubuntu does not allow access through the web browser to
+             -                <em>any</em> file apart of those located in <tt>/var/www</tt>,
+             -                <a href="http://httpd.apache.org/docs/2.4/mod/mod_userdir.html">public_html</a>
+             -                directories (when enabled) and <tt>/usr/share</tt> (for web
+             -                applications). If your site is using a web document root
+             -                located elsewhere (such as in <tt>/srv</tt>) you may need to whitelist your
+             -                document root directory in <tt>/etc/apache2/apache2.conf</tt>.
+             -            </p>
+             -            <p>
+             -                The default Ubuntu document root is <tt>/var/www/html</tt>. You
+             -                can make your own virtual hosts under /var/www. This is different
+             -                to previous releases which provides better security out of the box.
+             -            </p>
+             -        </div>
+             -
+             -        <div class="section_header">
+             -          <div id="bugs"></div>
+             -                Reporting Problems
+             -        </div>
+             -        <div class="content_section_text">
+             -          <p>
+             -                Please use the <tt>ubuntu-bug</tt> tool to report bugs in the
+             -                Apache2 package with Ubuntu. However, check <a
+             -                href="https://bugs.launchpad.net/ubuntu/+source/apache2">existing
+             -                bug reports</a> before reporting a new bug.
+             -          </p>
+             -          <p>
+             -                Please report bugs specific to modules (such as PHP and others)
+             -                to respective packages, not to the web server itself.
+             -          </p>
+             -        </div>
+             -
+             -
+             -
+             -
+             -      </div>
+             -    </div>
+             -    <div class="validator">
+             -    <p>
+             -      <a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>
+             -    </p>
+             -    </div>
+             -  </body>
+             -</html>
+             -
+             +<h1>Hello world!</h1>
+         
+       Recipe: hello_world_test::deps
+         * apt_package[curl] action install
+           - install version 7.35.0-1ubuntu2.9 of package curl
+       
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 7/11 resources updated in 24 seconds
+       Finished converging <default-ubuntu-1404> (0m49.18s).
+-----> Creating <default-centos-72>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Importing base box 'bento/centos-7.2'...
+       ==> default: Checking if box 'bento/centos-7.2' is up to date...
+       ==> default: Setting the name of the VM: kitchen-custom_web-default-centos-72_default_1474579493706_92419
+       ==> default: Fixed port collision for 22 => 2222. Now on port 2201.
+       ==> default: Clearing any previously set network interfaces...
+       ==> default: Preparing network interfaces based on configuration...
+           default: Adapter 1: nat
+       ==> default: Forwarding ports...
+           default: 22 (guest) => 2201 (host) (adapter 1)
+       ==> default: Booting VM...
+       ==> default: Waiting for machine to boot. This may take a few minutes...
+           default: SSH address: 127.0.0.1:2201
+           default: SSH username: vagrant
+           default: SSH auth method: private key
+           default: Warning: Remote connection disconnect. Retrying...
+           default: 
+           default: Vagrant insecure key detected. Vagrant will automatically replace
+           default: this with a newly generated keypair for better security.
+           default: 
+           default: Inserting generated public key within guest...
+           default: Removing insecure key from the guest if it's present...
+           default: Key inserted! Disconnecting and reconnecting using new SSH key...
+       ==> default: Machine booted and ready!
+       ==> default: Checking for guest additions in VM...
+       ==> default: Setting hostname...
+       ==> default: Machine not provisioned because `--no-provision` is specified.
+       [SSH] Established
+       Vagrant instance <default-centos-72> created.
+       Finished creating <default-centos-72> (1m15.01s).
+-----> Converging <default-centos-72>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.3.5...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Installing Chef Omnibus (install only if missing)
+       Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
+       Trying wget...
+       Download complete.
+       el 7 x86_64
+       Getting information for chef stable  for el...
+       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=el&pv=7&m=x86_64
+         to file /tmp/install.sh.11046/metadata.txt
+       trying wget...
+       sha1	6b1d726cf45749a23420457d0fd666ba0a9d2579
+       sha256	63993b9f93d56b9fa4fd4258cdb0ba473397e4cc2fc9d2047099df8552864fa3
+       url	https://packages.chef.io/stable/el/6/chef-12.14.89-1.el6.x86_64.rpm
+       version	12.14.89
+       downloaded metadata file looks valid...
+       downloading https://packages.chef.io/stable/el/6/chef-12.14.89-1.el6.x86_64.rpm
+         to file /tmp/install.sh.11046/chef-12.14.89-1.el6.x86_64.rpm
+       trying wget...
+       Comparing checksum with sha256sum...
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       You are installing an omnibus package without a version pin.  If you are installing
+       on production servers via an automated process this is DANGEROUS and you will
+       be upgraded without warning on new releases, even to new major releases.
+       Letting the version float is only appropriate in desktop, test, development or
+       CI/CD environments.
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       Installing chef 
+       installing with rpm...
+       warning: /tmp/install.sh.11046/chef-12.14.89-1.el6.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+       Preparing...                                                            (100%)#                                 (100%)##                                (100%)###                               (100%)####                              (100%)#####                             (100%)######                            (100%)#######                           (100%)########                          (100%)#########                         (100%)##########                        (100%)###########                       (100%)############                      (100%)#############                     (100%)##############                    (100%)###############                   (100%)################                  (100%)#################                 (100%)##################                (100%)###################               (100%)####################              (100%)#####################             (100%)######################            (100%)#######################           (100%)########################          (100%)#########################         (100%)##########################        (100%)###########################       (100%)############################      (100%)#############################     (100%)##############################    (100%)###############################   (100%)################################  (100%)################################# (100%)################################# [100%]
+       Updating / installing...
+          1:chef-12.14.89-1.el6                                                (  2%)#                                 (  4%)##                                (  7%)###                               ( 10%)####                              ( 13%)#####                             ( 16%)######                            ( 19%)#######                           ( 22%)########                          ( 25%)#########                         ( 28%)##########                        ( 31%)###########                       ( 34%)############                      ( 37%)#############                     ( 40%)##############                    ( 43%)###############                   ( 46%)################                  ( 49%)#################                 ( 52%)##################                ( 54%)###################               ( 57%)####################              ( 60%)#####################             ( 63%)######################            ( 66%)#######################           ( 69%)########################          ( 72%)#########################         ( 75%)##########################        ( 78%)###########################       ( 81%)############################      ( 84%)#############################     ( 87%)##############################    ( 90%)###############################   ( 93%)################################  ( 96%)################################# ( 99%)################################# [100%]
+       Thank you for installing Chef!
+       Transferring files to <default-centos-72>
+       Starting Chef Client, version 12.14.89
+       Creating a new client identity for default-centos-72 using the validator key.
+       resolving cookbooks for run list: ["hello_world_test::default", "hello_world_test::deps"]
+       Synchronizing Cookbooks:
+         - custom_web (0.1.0)
+         - hello_world_test (0.1.0)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+       Converging 3 resources
+       Recipe: hello_world_test::default
+         * apt_update[Update the apt cache daily] action periodic (up to date)
+         * custom_web_site[default] action create
+           * yum_package[httpd] action install
+             - install version 2.4.6-40.el7.centos.4 of package httpd
+           * service[httpd] action enable
+             - enable service service[httpd]
+           * service[httpd] action start
+             - start service service[httpd]
+           * file[/var/www/html/index.html] action create
+             - create new file /var/www/html/index.html
+             - update content in file /var/www/html/index.html from none to e3d095
+             --- /var/www/html/index.html	2016-09-22 21:26:30.177568500 +0000
+             +++ /var/www/html/.chef-index20160922-11177-1whws96.html	2016-09-22 21:26:30.177568500 +0000
+             @@ -1 +1,2 @@
+             +<h1>Hello world!</h1>
+             - restore selinux security context
+         
+       Recipe: hello_world_test::deps
+         * yum_package[curl] action install (up to date)
+       
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 5/7 resources updated in 19 seconds
+       Finished converging <default-centos-72> (0m36.49s).
+-----> Kitchen is finished. (5m3.11s)
+-----> Starting Kitchen (v1.11.1)
+-----> Setting up <default-ubuntu-1404>...
+       Finished setting up <default-ubuntu-1404> (0m0.00s).
+-----> Verifying <default-ubuntu-1404>...
+       Use `C:/Users/vagrant/learn-chef/cookbooks/custom_web/test/recipes/default` for testing
+
+Target:  ssh://vagrant@127.0.0.1:2200
+
+  ✔  System Package apache2 should be installed
+  ✔  Service apache2 should be enabled; Service apache2 should be...
+  ✔  Command curl localhost stdout should match /hello/i; Command...
+  ✔  Port 80 should be listening
+
+Summary: 6 successful, 0 failures, 0 skipped
+       Finished verifying <default-ubuntu-1404> (0m1.42s).
+-----> Setting up <default-centos-72>...
+       Finished setting up <default-centos-72> (0m0.00s).
+-----> Verifying <default-centos-72>...
+       Use `C:/Users/vagrant/learn-chef/cookbooks/custom_web/test/recipes/default` for testing
+
+Target:  ssh://vagrant@127.0.0.1:2201
+
+  ✔  System Package httpd should be installed
+  ✔  Service httpd should be enabled; Service httpd should be run...
+  ✔  Command curl localhost stdout should match /hello/i; Command...
+  ✔  Port 80 should be listening
+
+Summary: 6 successful, 0 failures, 0 skipped
+       Finished verifying <default-centos-72> (0m1.50s).
+-----> Kitchen is finished. (0m9.05s)

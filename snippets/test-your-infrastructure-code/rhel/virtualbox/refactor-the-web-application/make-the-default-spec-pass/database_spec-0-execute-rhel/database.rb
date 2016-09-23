@@ -1,0 +1,4 @@
+execute "initialize #{node['awesome_customers_rhel']['database']['dbname']} database" do
+  command "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{node['awesome_customers_rhel']['database']['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} < #{create_tables_script_path}"
+  not_if  "mysql -h #{node['awesome_customers_rhel']['database']['host']} -u #{node['awesome_customers_rhel']['database']['admin_username']} -p#{node['awesome_customers_rhel']['database']['admin_password']} -D #{node['awesome_customers_rhel']['database']['dbname']} -e 'describe customers;'"
+end

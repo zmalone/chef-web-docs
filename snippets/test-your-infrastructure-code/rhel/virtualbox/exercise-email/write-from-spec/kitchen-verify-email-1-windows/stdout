@@ -1,0 +1,267 @@
+-----> Starting Kitchen (v1.11.1)
+-----> Creating <default-centos-72>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Importing base box 'bento/centos-7.2'...
+       ==> default: Checking if box 'bento/centos-7.2' is up to date...
+       ==> default: Setting the name of the VM: kitchen-email-default-centos-72_default_1474578644414_64442
+       ==> default: Clearing any previously set network interfaces...
+       ==> default: Preparing network interfaces based on configuration...
+           default: Adapter 1: nat
+       ==> default: Forwarding ports...
+           default: 22 (guest) => 2222 (host) (adapter 1)
+       ==> default: Running 'pre-boot' VM customizations...
+       ==> default: Booting VM...
+       ==> default: Waiting for machine to boot. This may take a few minutes...
+           default: SSH address: 127.0.0.1:2222
+           default: SSH username: vagrant
+           default: SSH auth method: private key
+           default: Warning: Remote connection disconnect. Retrying...
+           default: 
+           default: Vagrant insecure key detected. Vagrant will automatically replace
+           default: this with a newly generated keypair for better security.
+           default: 
+           default: Inserting generated public key within guest...
+           default: Removing insecure key from the guest if it's present...
+           default: Key inserted! Disconnecting and reconnecting using new SSH key...
+       ==> default: Machine booted and ready!
+       ==> default: Checking for guest additions in VM...
+       ==> default: Setting hostname...
+       ==> default: Machine not provisioned because `--no-provision` is specified.
+       [SSH] Established
+       Vagrant instance <default-centos-72> created.
+       Finished creating <default-centos-72> (1m44.19s).
+-----> Converging <default-centos-72>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.3.5...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Installing Chef Omnibus (install only if missing)
+       Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
+       Trying wget...
+       Download complete.
+       el 7 x86_64
+       Getting information for chef stable  for el...
+       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=el&pv=7&m=x86_64
+         to file /tmp/install.sh.11049/metadata.txt
+       trying wget...
+       sha1	6b1d726cf45749a23420457d0fd666ba0a9d2579
+       sha256	63993b9f93d56b9fa4fd4258cdb0ba473397e4cc2fc9d2047099df8552864fa3
+       url	https://packages.chef.io/stable/el/6/chef-12.14.89-1.el6.x86_64.rpm
+       version	12.14.89
+       downloaded metadata file looks valid...
+       downloading https://packages.chef.io/stable/el/6/chef-12.14.89-1.el6.x86_64.rpm
+         to file /tmp/install.sh.11049/chef-12.14.89-1.el6.x86_64.rpm
+       trying wget...
+       Comparing checksum with sha256sum...
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       You are installing an omnibus package without a version pin.  If you are installing
+       on production servers via an automated process this is DANGEROUS and you will
+       be upgraded without warning on new releases, even to new major releases.
+       Letting the version float is only appropriate in desktop, test, development or
+       CI/CD environments.
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       Installing chef 
+       installing with rpm...
+       warning: /tmp/install.sh.11049/chef-12.14.89-1.el6.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+       Updating / installing...
+       Thank you for installing Chef!
+       Transferring files to <default-centos-72>
+       Starting Chef Client, version 12.14.89
+       Creating a new client identity for default-centos-72 using the validator key.
+       resolving cookbooks for run list: ["email::default"]
+       Synchronizing Cookbooks:
+         - email (0.1.0)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+       Converging 0 resources
+       
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 0/0 resources updated in 04 seconds
+       Finished converging <default-centos-72> (0m29.09s).
+-----> Setting up <default-centos-72>...
+       Finished setting up <default-centos-72> (0m0.00s).
+-----> Verifying <default-centos-72>...
+       Use `C:/Users/vagrant/learn-chef/cookbooks/email/test/recipes/default` for testing
+
+Target:  ssh://vagrant@127.0.0.1:2222
+
+  ✔  System Package postfix should be installed
+  ✔  Service postfix should be enabled; Service postfix should be...
+  ✖  File /etc/postfix/main.cf content should match /^mydomain = ... (2 failed)
+     Diff:
+     @@ -1,2 +1,680 @@
+     -/^mydomain = example.com$/
+     +
+     +
+     +queue_directory = /var/spool/postfix
+     +
+     +command_directory = /usr/sbin
+     +
+     +daemon_directory = /usr/libexec/postfix
+     +
+     +data_directory = /var/lib/postfix
+     +
+     +mail_owner = postfix
+     +
+     +
+     +
+     +
+     +
+     +
+     +inet_interfaces = localhost
+     +
+     +inet_protocols = all
+     +
+     +
+     +mydestination = $myhostname, localhost.$mydomain, localhost
+     +
+     +
+     +unknown_local_recipient_reject_code = 550
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +alias_maps = hash:/etc/aliases
+     +
+     +alias_database = hash:/etc/aliases
+     +
+     +
+     + 
+     +
+     +
+     +
+     +
+     +
+     +  
+     +
+     +
+     +
+     +
+     +
+     +
+     +debug_peer_level = 2
+     +
+     +
+     +debugger_command =
+     +	 PATH=/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
+     +	 ddd $daemon_directory/$process_name $process_id & sleep 5
+     +
+     +
+     +sendmail_path = /usr/sbin/sendmail.postfix
+     +
+     +newaliases_path = /usr/bin/newaliases.postfix
+     +
+     +mailq_path = /usr/bin/mailq.postfix
+     +
+     +setgid_group = postdrop
+     +
+     +html_directory = no
+     +
+     +manpage_directory = /usr/share/man
+     +
+     +sample_directory = /usr/share/doc/postfix-2.10.1/samples
+     +
+     +readme_directory = /usr/share/doc/postfix-2.10.1/README_FILES
+     
+     Diff:
+     @@ -1,2 +1,680 @@
+     -/^myorigin = example.com$/
+     +
+     +
+     +queue_directory = /var/spool/postfix
+     +
+     +command_directory = /usr/sbin
+     +
+     +daemon_directory = /usr/libexec/postfix
+     +
+     +data_directory = /var/lib/postfix
+     +
+     +mail_owner = postfix
+     +
+     +
+     +
+     +
+     +
+     +
+     +inet_interfaces = localhost
+     +
+     +inet_protocols = all
+     +
+     +
+     +mydestination = $myhostname, localhost.$mydomain, localhost
+     +
+     +
+     +unknown_local_recipient_reject_code = 550
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +
+     +alias_maps = hash:/etc/aliases
+     +
+     +alias_database = hash:/etc/aliases
+     +
+     +
+     + 
+     +
+     +
+     +
+     +
+     +
+     +  
+     +
+     +
+     +
+     +
+     +
+     +
+     +debug_peer_level = 2
+     +
+     +
+     +debugger_command =
+     +	 PATH=/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
+     +	 ddd $daemon_directory/$process_name $process_id & sleep 5
+     +
+     +
+     +sendmail_path = /usr/sbin/sendmail.postfix
+     +
+     +newaliases_path = /usr/bin/newaliases.postfix
+     +
+     +mailq_path = /usr/bin/mailq.postfix
+     +
+     +setgid_group = postdrop
+     +
+     +html_directory = no
+     +
+     +manpage_directory = /usr/share/man
+     +
+     +sample_directory = /usr/share/doc/postfix-2.10.1/samples
+     +
+     +readme_directory = /usr/share/doc/postfix-2.10.1/README_FILES
+     
+
+Summary: 3 successful, 2 failures, 0 skipped

@@ -13,7 +13,7 @@ Now let's configure a database instance named `my_company`. You'll also assign a
 
 In the previous part, you used the `mysql` cookbook to set up the MySQL installation. For this part, we'll use the [database](https://supermarket.chef.io/cookbooks/database) cookbook from Chef Supermarket, which enables us to configure MySQL database instances.
 
-The `database` cookbook uses the [mysql2](https://rubygems.org/gems/mysql2/versions/0.4.3) Ruby library (a Ruby library is often packaged as a [gem](http://guides.rubygems.org/what-is-a-gem/)) to connect to MySQL. To install this gem, we'll use the [mysql2\_chef_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem) cookbook. 
+The `database` cookbook uses the [mysql2](https://rubygems.org/gems/mysql2/versions/0.4.3) Ruby library (a Ruby library is often packaged as a [gem](http://guides.rubygems.org/what-is-a-gem/)) to connect to MySQL. To install this gem, we'll use the [mysql2\_chef_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem) cookbook.
 
 [START_BOX]
 
@@ -103,7 +103,7 @@ mysql_database 'my_company' do
 end
 ```
 
-This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the hostname. We also specify the logon credentials for the root account. 
+This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the hostname. We also specify the logon credentials for the root account.
 
 [WARN] Remember to never hard-code passwords in your recipes. We'll replace it with our node attributes in the next step.
 
@@ -416,7 +416,7 @@ That's where the `execute` resource's `not_if` attribute comes in. The `not_if` 
 
 ### Refactor the database table creation
 
-Like we've done before, let's look at how we can factor out the data. 
+Like we've done before, let's look at how we can factor out the data.
 
 We can factor out most parts of your `execute` resource, such as the hostname, username, and password. We already have the node attributes to describe those, so we're ready to modify the recipe.
 
@@ -492,7 +492,7 @@ execute "initialize #{node['awesome_customers_rhel']['database']['dbname']} data
 end
 ```
 
-[COMMENT] You may notice that the `database` recipe repeats many node attributes, which can make it more difficult to read and maintain. In the next tutorial, [Test your infrastructure code](/test-your-infrastructure-code/rhel/), you'll [refactor the database recipe](/test-your-infrastructure-code/rhel/refactor-the-web-application-cookbook/) to make it more readable. You'll start by writing tests that verify the current configuration. Then, as you refactor your recipe, you can rerun your tests to verify the changes are good.
+[COMMENT] You may notice that the `database` recipe repeats many node attributes, which can make it more difficult to read and maintain. In the next tutorial, [Test your infrastructure code](/tutorials/test-your-infrastructure-code/rhel/), you'll [refactor the database recipe](/tutorials/test-your-infrastructure-code/rhel/virtualbox/refactor-the-web-application-cookbook/) to make it more readable. You'll start by writing tests that verify the current configuration. Then, as you refactor your recipe, you can rerun your tests to verify the changes are good.
 
 [END_BOX]
 
