@@ -1,6 +1,6 @@
 In this tutorial, you set up a Chef compliance scanner server and scanned a CentOS 7 server against the predefined CIS Security Benchmarks.
 
-At the [beginning of the tutorial](/tutorials/compliance-assess/rhel/), we proposed 5 stages for keeping your infrastructure in compliance. Let's review them.
+At the [beginning of the tutorial](/tutorials/compliance-assess/rhel/bring-your-own-system/), we proposed 5 stages for keeping your infrastructure in compliance. Let's review them.
 
 * **Analyze**
 * **Specify**
