@@ -10,7 +10,7 @@ Please pardon our dust!
 
 We've temporarily taken this tutorial offline.
 
-We're revising the Learn Chef tutorials to focus on our recommended Chef workflow, which starts by developing your infrastructure code locally on test instances. We're also revising this tutorial to work with an exciting new test framework called [InSpec](https://docs.chef.io/inspec_reference.html).
+We're revising the Learn Chef tutorials to focus on our recommended Chef workflow, which starts by developing your infrastructure code locally on test instances. We're also revising this tutorial to work with an exciting new test framework called [InSpec](http://inspec.io/docs/reference/resources/).
 
 We do have a version of this tutorial for [Red Hat Enterprise Linux](/tutorials/test-your-infrastructure-code/rhel/). We'd love to hear your feedback. 
 
