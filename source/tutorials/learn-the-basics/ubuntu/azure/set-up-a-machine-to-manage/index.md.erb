@@ -9,13 +9,12 @@ snippet_path: learn-the-basics/ubuntu/azure/set-up-a-machine-to-manage
 snippet_workstation: ubuntu
 headings: [
   { label: '1. Access your Azure account', href: '#step1' },
-  { label: '2. Launch an Ubuntu 14.04 instance', href: '#step2' },
-  { label: "3. If you're running Windows &ndash; verify your SSH client", href: '#step3' },
-  { label: '4. Connect to your Ubuntu instance', href: '#step4' },
-  { label: '5. Install the Chef DK on your Ubuntu instance', href: '#step5' },
-  { label: '6. Prepare a text editor on your Ubuntu instance', href: '#step6' },
-  { label: 'Cleaning up', href: '#cleaningup' },
-
+  { label: '2. Launch an instance', href: '#step2' },
+  { label: "3. Verify your SSH client", href: '#step3' },
+  { label: '4. Connect to your instance', href: '#step4' },
+  { label: '5. Install the Chef DK', href: '#step5' },
+  { label: '6. Prepare a text editor', href: '#step6' },
+  { label: 'Cleaning up', href: '#cleaningup' }
   ]
 ---
 <%= partial '../../shared/get-set-up/intro' %>
@@ -202,7 +201,15 @@ Additional resources:
 
 Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
-From your SSH connection, run this from the command line to install the Chef DK.
+From your SSH connection, first update the `apt` cache and then install `curl`.
+
+```bash
+# ~
+chef@ubuntu-azure:~$ sudo apt-get update
+chef@ubuntu-azure:~$ sudo apt-get -y install curl
+```
+
+Next, run this to install the Chef DK.
 
 <% command_snippet(path: 'learn-the-basics/ubuntu/azure/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'ubuntu', features: [:stdin, :stderr, :stdout]) %>
 
