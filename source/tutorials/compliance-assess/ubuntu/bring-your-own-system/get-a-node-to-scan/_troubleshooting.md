@@ -7,7 +7,7 @@ If you see this error, verify that:
 * you can [manually connect over SSH](#step2) using your key pair.
 * the Chef compliance scanner has the [SSH private key](#step3).
 
-If the connectivity test still fails, log in to your Chef compliance scanner server and run this command. The output may help you find the source of the failure.
+If the connectivity test still fails, log in to your Chef compliance scanner and run this command. The output may help you find the source of the failure.
 
 ```bash
 [root@chef-compliance ~]$ sudo chef-compliance-ctl tail core
