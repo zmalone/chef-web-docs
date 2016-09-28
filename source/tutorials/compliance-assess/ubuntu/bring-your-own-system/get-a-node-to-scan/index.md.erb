@@ -30,11 +30,11 @@ Before you begin, open a command prompt or terminal window on your workstation.
 
 For this part, you need to bring up an Ubuntu 14.04 server that has the standard configuration. Your server also needs:
 
-* an IP address that's reachable from both your workstation and your Chef compliance scanner server.
+* an IP address that's reachable from both your workstation and your Chef compliance scanner.
 * access to the `root` user account or an account with `sudo` access.
 * the ability to connect over SSH.
 
-Although not required, you may find it easiest to bring up your node in the same environment as your Chef compliance scanner server. For example, if you're running the Chef compliance scanner server on a virtual machine, your node can be a second virtual machine on the same private network.
+Although not required, you may find it easiest to bring up your node in the same environment as your Chef compliance scanner. For example, if you're running the Chef compliance scanner on a virtual machine, your node can be a second virtual machine on the same private network.
 
 If you're interested in using Chef to remediate compliance failures, as you'll do in the next tutorial, now's a good time to make sure that your node has port 443 (HTTPS) open for network traffic. This will enable your node to communicate with a Chef server (you'll set up a Chef server in the next tutorial if you don't have one already).
 
@@ -59,7 +59,7 @@ You need to generate an SSH key pair on your workstation so that the Chef compli
 
 In this part, you first create an SSH key pair. Then, you copy the public part of your key to your node. Finally, you create a test connection to your node to verify connectivity.
 
-First, ensure you have the <% fp '~/.ssh' %> directory on your workstation. This directory is commonly used to manage public and private SSH keys. This step is important for Windows workstations &ndash; Linux and Mac OS workstations typically already have this directory.
+First, ensure you have the <% fp '~/.ssh' %> directory on your workstation. This directory is commonly used to manage public and private SSH keys. This step is important for Windows workstations &ndash; Linux and Mac OS systems typically already have this directory.
 
 ```bash
 # ~
@@ -129,8 +129,9 @@ Also ensure that password authentication is disabled in <% fp '/etc/ssh/sshd_con
 ```bash
 # ~
 [root@node-1 ~]$ sudo sed -i -e 's/^PasswordAuthentication.*yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
-[root@node-1 ~]$ sudo service sshd restart
-Redirecting to /bin/systemctl restart  sshd.services
+[root@node-1 ~]$ $ sudo service ssh restart
+ssh stop/waiting
+ssh start/running, process 6162
 ```
 
 Log out of your SSH session.
@@ -210,8 +211,6 @@ Fill in the **Name** field. You can use a name other than **node1** if you'd lik
 Click **Add Private Key**. You see this confirmation.
 
 ![](compliance/add_pk_confirm.png)
-
-[COMMENT] Depending on your requirements, you can use the same key pair to connect to multiple nodes. You only need to generate and import the private part of the key into the Chef compliance scanner one time. Each server requires the public part of the key.
 
 [END_BOX]
 

@@ -8,7 +8,7 @@ If you see this error, verify that:
 * your node is [configured for non-interactive sessions](#step3).
 * the Chef compliance scanner has the [SSH private key](#step4).
 
-If the connectivity test still fails, log in to your Chef compliance scanner server and run this command. The output may help you find the source of the failure.
+If the connectivity test still fails, log in to your Chef compliance scanner and run this command. The output may help you find the source of the failure.
 
 ```bash
 [root@chef-compliance ~]$ sudo chef-compliance-ctl tail core

@@ -24,7 +24,7 @@ Configuring the firewall helps ensure that your server provides access to ports 
 
 In this part, you'll verify the failure of the **Ensure Firewall is active** rule on a local virtual machine and remediate it. By starting with local development with Test Kitchen, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers.
 
-You can configure Test Kitchen to download and run compliance profiles on your test instances. For example, you can pull compliance profiles from [Chef Supermarket](https://docs.chef.io/supermarket.html), a Git repository, or from your Chef compliance scanner server. Here, you'll configure Test Kitchen to download the **cis/cis-ubuntu14.04lts-level1** profile from your Chef compliance scanner server.
+You can configure Test Kitchen to download and run compliance profiles on your test instances. For example, you can pull compliance profiles from [Chef Supermarket](https://docs.chef.io/supermarket.html), a Git repository, or from your Chef compliance scanner. Here, you'll configure Test Kitchen to download the **cis/cis-ubuntu14.04lts-level1** profile from your Chef compliance scanner.
 
 [START_BOX]
 
@@ -79,11 +79,11 @@ Now that you better understand why the rule failed, you can begin to write Chef 
 
 Later in this part, you'll scan a test instance against the CIS profile through Test Kitchen. Test Kitchen uses the [kitchen-inspec](http://inspec.io/docs/reference/plugin_kitchen_inspec.html/) plugin to run InSpec tests. `kitchen-inspec` comes with the Chef DK.
 
-To download compliance profiles from your Chef compliance scanner server, `kitchen-inspec` requires login credentials.
+To download compliance profiles from your Chef compliance scanner, `kitchen-inspec` requires login credentials.
 
 To do so, you run the `inspec compliance login` command. The [inspec](http://inspec.io/docs/reference/cli/) command-line interface (CLI) utility comes with the Chef DK.
 
-To login from the CLI, you first need an authorization token. To get that, select **About** from the menu located at the upper-right corner.in the web interface.
+To login from the CLI, you first need an authorization token. To get that, select **About** from the menu located at the upper-right corner in the web interface.
 
 ![](compliance/webui_about.png)
 
@@ -91,7 +91,7 @@ Then copy the contents of the **Refresh token** field to the clipboard.
 
 ![](compliance/webui_token.png)
 
-Next, run this command to connect InSpec to your Chef compliance scanner server. Replace <% ph 'FQDN' %> with your Chef compliance scanner server's FQDN, <% ph 'USER' %> with the username you use to login to the Chef compliance scanner web interface, and <% ph 'TOKEN' %> with your authorization token.
+Next, run this command to connect InSpec to your Chef compliance scanner. Replace <% ph 'FQDN' %> with your Chef compliance scanner's FQDN, <% ph 'USER' %> with the username you use to login to the Chef compliance scanner web interface, and <% ph 'TOKEN' %> with your authorization token.
 
 ```bash
 # ~/learn-chef
@@ -172,7 +172,7 @@ Also recall that your <% fp '.kitchen.yml' %> file looks like this.
 
 <% code_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-2-yml') %>
 
-The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-ubuntu14.04lts-level1** profile from the Chef compliance scanner when it runs tests. You specified your Chef compliance scanner server when you ran `inspec compliance login` earlier.
+The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-ubuntu14.04lts-level1** profile from the Chef compliance scanner when it runs tests. You specified your Chef compliance scanner when you ran `inspec compliance login` earlier.
 
 You're now ready to scan your test instance. Run `kitchen verify` to run the compliance profile.
 
