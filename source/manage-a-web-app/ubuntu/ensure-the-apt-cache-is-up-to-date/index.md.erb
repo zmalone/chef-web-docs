@@ -27,7 +27,7 @@ Remember that Chef Supermarket is a place for the community to share cookbooks. 
 
 You don't need to manually download cookbooks from Chef Supermarket to use them. You'll learn how to automatically download cookbooks in a bit, but the first step is to reference the cookbooks you want to load.
 
-The way you load one cookbook from inside another is to reference it in your cookbook's metadata file,<br><% fp('~/learn-chef/cookbooks/awesome_customers_ubuntu/metadata.rb') %>. To use the `apt` cookbook, append the line `depends 'apt', '~> 2.9.2'` to <% fp('metadata.rb') %> making the entire file look like this.
+The way you load one cookbook from inside another is to reference it in your cookbook's metadata file,<br><% fp('~/learn-chef/cookbooks/awesome_customers_ubuntu/metadata.rb') %>. To use the `apt` cookbook, append the line `depends 'apt', '~> 4.0'` to <% fp('metadata.rb') %> making the entire file look like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/awesome_customers_ubuntu/metadata.rb
@@ -39,24 +39,32 @@ description 'Installs/Configures awesome_customers_ubuntu'
 long_description 'Installs/Configures awesome_customers_ubuntu'
 version '0.1.0'
 
-depends 'apt', '~> 2.9.2'
+depends 'apt', '~> 4.0'
 ```
 
 We also specify the version of the `apt` cookbook we want to use. Specifying, or _pinning_, the cookbook version helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production. That way, you can adopt the latest changes and functionality when you're ready.
 
-How did we know to specify version `2.9.2`? One way is by reading the latest version from the `apt` cookbook's [page](https://supermarket.chef.io/cookbooks/apt) on Supermarket.
+How did we know to specify version `4.0`? One way is by reading the latest version from the `apt` cookbook's [page](https://supermarket.chef.io/cookbooks/apt) on Supermarket.
 
 ![The apt cookbook version](misc/supermarket_apt_version.png)
 
-Another way to get version information is through the `knife cookbook site show` command. The following command retrieves information for the `apt` cookbook and searches the result for the latest version.
+Another way to get version information is through the `knife supermarket show` command. The following command retrieves information for the `apt` cookbook and searches the result for the latest version.
 
 ```bash
 # ~/learn-chef
-$ knife cookbook site show apt | grep latest_version
-latest_version:     https://supermarket.chef.io/api/v1/cookbooks/apt/versions/2.9.2
+$ knife supermarket show apt | grep latest_version
+latest_version:       https://supermarket.chef.io/api/v1/cookbooks/apt/versions/4.0.2
 ```
 
-There are [multiple ways to specify version constraints](http://docs.chef.io/cookbook_versions.html). The `~>` syntax, called the _pessimistic version constraint_, tells Chef that we want the latest version of the `apt` cookbook that is greater than or equal to `2.9.2` but less than `2.10.0`. The third digit in a Chef cookbook's version typically relates to bug fixes or patches that are compatible with prior versions.
+There are [multiple ways to specify version constraints](http://docs.chef.io/cookbook_versions.html). The `~>` syntax, called the _pessimistic version constraint_, tells Chef that we want the latest version of the `apt` cookbook that is greater than or equal to `4.0` but less than `5.0`.
+
+Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. Version numbers are typically written as MAJOR.MINOR.PATCH, where:
+
+* MAJOR specifies a change that's incompatible with previous versions.
+* MINOR specifies new functionality that's backwards-compatible with previous versions.
+* PATCH specifies backwards-compatible bug fixes.
+
+When you pin a cookbook, it's common to specify only the first two digits, for example, '4.0'. The second and third digits typically relate to changes that are compatible with prior versions. Therefore, we want the latest version that's less than the next MAJOR version, 5.0.
 
 [COMMENT] For this tutorial, just to ensure that what you see matches the output that is shown, we recommend that you use the versions that we specify, even if a newer version is available. We'll periodically update this tutorial to match newer versions of the community cookbooks.
 
