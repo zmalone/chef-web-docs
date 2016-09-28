@@ -1,5 +1,5 @@
 ```ruby
-# ~/learn-chef/cookbooks/awesome_customers_ubuntu/templates/default/customers.conf.erb
+# ~/learn-chef/cookbooks/awesome_customers_ubuntu/templates/customers.conf.erb
 <VirtualHost *:80>
   ServerName <%= node['hostname'] %>
   ServerAdmin 'ops@example.com'
