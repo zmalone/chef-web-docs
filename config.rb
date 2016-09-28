@@ -198,6 +198,10 @@ redirect '/fundamentals-series/week-6', '/skills/fundamentals-series-week-6/'
 redirect '/fundamentals-series/', '/skills/fundamentals-series-week-1/'
 redirect '/fundamentals-series/rhel', '/skills/fundamentals-series-week-1/'
 
+redirect '/test-your-infrastructure-code', '/tutorials/test-your-infrastructure-code/'
+redirect '/compliance-assess', '/tutorials/compliance-assess/'
+redirect '/compliance-remediate', '/tutorials/compliance-remediate/'
+
 # Build-specific configuration
 configure :build do
   # For example, change the Compass output style for deployment
