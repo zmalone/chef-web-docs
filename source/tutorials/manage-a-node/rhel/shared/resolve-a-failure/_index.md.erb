@@ -1,6 +1,6 @@
 Previously, you bootstrapped your node to your Chef server to apply a basic web server configuration. Later, you updated your configuration policy by modifying the contents of the home page to show the node's FQDN.
 
-In this part, you'll make a second modification to your `learn_chef_http` cookbook that, although might appear correct, will actually fail on your node. You'll then remedy the failure and verify that `chef-client` succeeds.
+In this part, you'll make a second modification to your `learn_chef_httpd` cookbook that, although might appear correct, will actually fail on your node. You'll then remedy the failure and verify that `chef-client` succeeds.
 
 You'll practice the process of updating your cookbook, bumping its version metadata, and applying your update to your node. You'll also gain insight into how to resolve failures when something goes wrong.
 
@@ -18,13 +18,13 @@ Here you'll modify the `learn_chef_httpd` cookbook's default recipe to assign th
 
 Recall that your default recipe looks like this.
 
-<% code_snippet(page: current_page, path: 'set-web-content-owner/initial-default-recipe') %>
+<% code_snippet(page: current_page, path: 'set-web-content-owner/initial-default-recipe-learn_chef_httpd') %>
 
 To assign the `web_admin` user as the home page owner and set file permissions, you use the [template resource's](https://docs.chef.io/resource_template.html#properties) `mode`, `owner` and `group` properties.
 
 Modify your default recipe like this.
 
-<% code_snippet(page: current_page, path: 'set-web-content-owner/httpd-add-web-user-err') %>
+<% code_snippet(page: current_page, path: 'set-web-content-owner/add-web-user-err-learn_chef_httpd') %>
 
 [END_BOX]
 
@@ -40,15 +40,15 @@ Next you'll repeat the steps you performed in the previous part to apply your up
 
 First, modify <% fp 'metadata.rb' %> by setting the `version` field to '0.3.0'.
 
-<% code_snippet(page: current_page, path: 'set-web-content-owner/metadata-0-3-0') %>
+<% code_snippet(page: current_page, path: 'set-web-content-owner/metadata-0-3-0-learn_chef_httpd') %>
 
 Next, run this `knife cookbook upload` command to upload your cookbook to the Chef server.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/upload-0-3-0', features: [:stdin, :stderr]) %>
+<% command_snippet(page: current_page, path: 'set-web-content-owner/upload-0-3-0-learn_chef_httpd', features: [:stdin, :stderr]) %>
 
 Finally, run `knife ssh` to trigger `chef-client` to run on your node. This example shows key-based authentication. <%= link_to("Choose the method you used in the previous part", current_page.previous_page, :anchor => 'step4') %>.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/knife-ccr-2') %>
+<% command_snippet(page: current_page, path: 'set-web-content-owner/knife-ccr-node1-centos-2') %>
 
 You see that the `chef-client` run failed! Here's the error.
 
@@ -101,27 +101,27 @@ Now you'll perform these steps to resolve the failure. Steps 2&mdash;4 should be
 
 First, modify your default recipe by using the [group](https://docs.chef.io/resource_group.html) and [user](https://docs.chef.io/resource_user.html) resources to define the `web_admin` group and user.
 
-<% code_snippet(page: current_page, path: 'set-web-content-owner/httpd-add-web-user-fix') %>
+<% code_snippet(page: current_page, path: 'set-web-content-owner/add-web-user-fix-learn_chef_httpd') %>
 
 Remember that the order you define your resources matters. Therefore, it's important to define the `web_admin` group and user _before_ you assign them as the file owner.
 
 Next, increment your cookbook's version metadata. Because you're making a bug fix, increment the last part of the version, making the version '0.3.1'.
 
-<% code_snippet(page: current_page, path: 'set-web-content-owner/metadata-0-3-1') %>
+<% code_snippet(page: current_page, path: 'set-web-content-owner/metadata-0-3-1-learn_chef_httpd') %>
 
 Next, upload your cookbook to the Chef server.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/upload-0-3-1', features: [:stdin, :stderr]) %>
+<% command_snippet(page: current_page, path: 'set-web-content-owner/upload-0-3-1-learn_chef_httpd', features: [:stdin, :stderr]) %>
 
 Now run `chef-client` like you did previously. This example uses key-based authentication.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/knife-ccr-3') %>
+<% command_snippet(page: current_page, path: 'set-web-content-owner/knife-ccr-node1-centos-3') %>
 
 You see that the `chef-client` run succeeds. You also see that the file ownership changed from the `root` user to the `web_admin` user.
 
 Verify the configuration by running `curl`<% if current_page.parent.data.environment != 'virtualbox' %> or by refreshing your web browser<% end %>.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/curl-node1-3', features: [:stdin, :stdout]) %>
+<% command_snippet(page: current_page, path: 'set-web-content-owner/curl-node1-centos-3', features: [:stdin, :stdout]) %>
 
 <% if current_page.parent.data.environment == 'aws-automate' %>
 
@@ -155,9 +155,9 @@ As you experiment, it's a good idea to delete information about your node from t
 
 From your workstation, run these commands to delete the data about your node from the Chef server.
 
-<% command_snippet(page: current_page, path: 'cleaning-up/knife-node-delete') %>
+<% command_snippet(page: current_page, path: 'cleaning-up/knife-node-delete-node1-centos') %>
 
-<% command_snippet(page: current_page, path: 'cleaning-up/knife-client-delete') %>
+<% command_snippet(page: current_page, path: 'cleaning-up/knife-client-delete-node1-centos') %>
 
 Chef makes a distinction between the nodes that are being managed and the clients that are authorized to make API calls to the Chef server. Therefore, you need to run [knife node delete](https://docs.chef.io/knife_node.html#delete) to remove the node's metadata from the Chef server and [knife client delete](https://docs.chef.io/knife_client.html#delete) to delete the entry (including the associated RSA public key-pair) from the Chef server's API client list.
 
@@ -165,7 +165,7 @@ Chef makes a distinction between the nodes that are being managed and the client
 
 Here's how to delete the `learn_chef_httpd` cookbook from the Chef server.
 
-<% command_snippet(page: current_page, path: 'cleaning-up/knife-cookbook-delete', features: [:stdin, :stderr]) %>
+<% command_snippet(page: current_page, path: 'cleaning-up/knife-cookbook-delete-learn_chef_httpd', features: [:stdin, :stderr]) %>
 
 If you omit the `--all` argument, you'll be prompted to select which version to delete. In practice, you might delete version '0.3.0' of the `learn_chef_httpd` cookbook because you know it contains a configuration policy that will always fail.
 
