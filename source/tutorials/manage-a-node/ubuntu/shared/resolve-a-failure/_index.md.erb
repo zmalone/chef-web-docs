@@ -1,0 +1,224 @@
+Previously, you bootstrapped your node to your Chef server to apply a basic web server configuration. Later, you updated your configuration policy by modifying the contents of the home page to show the node's FQDN.
+
+In this part, you'll make a second modification to your `learn_chef_apache2` cookbook that, although might appear correct, will actually fail on your node. You'll then remedy the failure and verify that `chef-client` succeeds.
+
+You'll practice the process of updating your cookbook, bumping its version metadata, and applying your update to your node. You'll also gain insight into how to resolve failures when something goes wrong.
+
+This is the final part of this tutorial, so you'll also learn how to optionally [clean up your environment](#howtocleanupyourenvironment) by removing your cookbook and node from the Chef server.
+
+[COMMENT] Just remember that this exercise is for learning purposes. You typically don't test configuration changes on a bootstrapped node. The recommended workflow involves first [verifying your changes locally on test instances](/local-development/ubuntu/) and then [submitting your change to an automated pipeline](/automate/), such as Chef Automate. You'll learn more about Chef's test-driven, team-based workflow in future tutorials.
+
+[START_BOX]
+
+## 1. Assign an owner to the home page
+
+It's a common practice to run your applications and services under a user who has enough access to modify the system, but who is not a root user.
+
+Here you'll modify the `learn_chef_apache2` cookbook's default recipe to assign the `web_admin` user as the owner of the home page, <% fp '/var/www/html/index.html' %>. While you're at it, you'll configure the home page so that the `web_admin` user has read and write access, and everyone else has read-only access.
+
+Recall that your default recipe looks like this.
+
+<% code_snippet(page: current_page, path: 'set-web-content-owner/initial-default-recipe-learn_chef_apache2') %>
+
+To assign the `web_admin` user as the home page owner and set file permissions, you use the [template resource's](https://docs.chef.io/resource_template.html#properties) `mode`, `owner` and `group` properties.
+
+Modify your default recipe like this.
+
+<% code_snippet(page: current_page, path: 'set-web-content-owner/add-web-user-err-learn_chef_apache2') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Apply the changes to your node
+
+Next you'll repeat the steps you performed in the previous part to apply your updated configuration on your node.
+
+1. Update the cookbook's version metadata.
+1. Upload the cookbook to Chef server.
+1. Run `chef-client` on your node.
+
+First, modify <% fp 'metadata.rb' %> by setting the `version` field to '0.3.0'.
+
+<% code_snippet(page: current_page, path: 'set-web-content-owner/metadata-0-3-0-learn_chef_apache2') %>
+
+Next, run this `knife cookbook upload` command to upload your cookbook to the Chef server.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/upload-0-3-0-learn_chef_apache2', features: [:stdin, :stderr]) %>
+
+Finally, run `knife ssh` to trigger `chef-client` to run on your node. This example shows key-based authentication. <%= link_to("Choose the method you used in the previous part", current_page.previous_page, :anchor => 'step4') %>.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/knife-ccr-node1-ubuntu-2') %>
+
+You see that the `chef-client` run failed! Here's the error.
+
+```bash
+# ~/learn-chef
+Chef::Exceptions::UserIDNotFound
+--------------------------------
+cannot determine user id for 'web_admin', does the user exist on this system?
+```
+
+As you may have already realized, the updated configuration attempts to assign the file owner to a user that does not exist.
+
+<% if current_page.parent.data.environment == 'aws-automate' %>
+
+You can verify the failure from the **Nodes** tab in the Chef Automate dashboard.
+
+![](manage-a-node/chef_automate_nodes_node1_failure.png)
+
+Click on the node to view details about the failure.
+
+![](manage-a-node/chef_automate_nodes_failure_node1_details1.png)
+
+At the bottom of the page, you see that the `template` resource failed. Click **error log** to view details about the error.
+
+![](manage-a-node/chef_automate_nodes_failure_node1_details2.png)
+
+The run log displays details about the error as well as the backtrace, which lists which function calls are active and can help you understand how your program got where it is.
+
+![](manage-a-node/chef_automate_nodes_failure_node1_details_runlog.png)
+
+In this tutorial, you use the `knife ssh` command from your workstation to remotely trigger `chef-client` to run on your node. This is a manual process. When `chef-client` fails, you see the failure immediately in your terminal window.
+
+However, imagine that you have have dozens, hundreds, or even thousands of servers that run `chef-client` periodically as a service or as part of a continuous integration or continuous delivery (CI/CD) pipeline.  Chef Automate enables you to quickly scan the status of your nodes and investigate the root cause when a `chef-client` run fails.
+
+<% end %>
+
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Resolve the failure
+
+Now you'll perform these steps to resolve the failure. Steps 2&mdash;4 should be famililar to you.
+
+1. Add the `web_admin` group and user to the system.
+1. Update the cookbook's version metadata.
+1. Upload the cookbook to Chef server.
+1. Run `chef-client` on your node.
+
+First, modify your default recipe by using the [group](https://docs.chef.io/resource_group.html) and [user](https://docs.chef.io/resource_user.html) resources to define the `web_admin` group and user.
+
+<% code_snippet(page: current_page, path: 'set-web-content-owner/add-web-user-fix-learn_chef_apache2') %>
+
+Remember that the order you define your resources matters. Therefore, it's important to define the `web_admin` group and user _before_ you assign them as the file owner.
+
+Next, increment your cookbook's version metadata. Because you're making a bug fix, increment the last part of the version, making the version '0.3.1'.
+
+<% code_snippet(page: current_page, path: 'set-web-content-owner/metadata-0-3-1-learn_chef_apache2') %>
+
+Next, upload your cookbook to the Chef server.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/upload-0-3-1-learn_chef_apache2', features: [:stdin, :stderr]) %>
+
+Now run `chef-client` like you did previously. This example uses key-based authentication.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/knife-ccr-node1-ubuntu-3') %>
+
+You see that the `chef-client` run succeeds. You also see that the file ownership changed from the `root` user to the `web_admin` user.
+
+Verify the configuration by running `curl`<% if current_page.parent.data.environment != 'virtualbox' %> or by refreshing your web browser<% end %>.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/curl-node1-ubuntu-3', features: [:stdin, :stdout]) %>
+
+<% if current_page.parent.data.environment == 'aws-automate' %>
+
+From the **Nodes** tab in the Chef Automate dashboard, you'll also see that the `chef-client` run succeeded and that your node's status returned to successful.
+
+![](manage-a-node/chef_automate_nodes_node1_ccr2.png)
+
+If you examine the details of the `chef-client` run, you'll see entries appear for the `group` and `user` resources you added to the `learn_chef_apache2` cookbook's default recipe.
+
+![](manage-a-node/chef_automate_nodes_node1_details_group_user.png)
+
+<% end %>
+
+Great work! In practice, you'll want to run your cookbook on a test instance before you upload your work to the Chef server. That way, you'll catch errors like the one you saw here earlier in the process. You learn more about local development in the next tutorial.
+
+Even when you develop your code locally, errors do occur in production. In this part, you were able to quickly fix the error and validate the configuration.
+
+[END_BOX]
+
+[START_BOX]
+
+## How to clean up your environment
+
+You can continue to experiment with your Chef server and your node. When you're done, you can perform these optional steps if you want to clean up your Chef server or you want to repeat the tutorial from the beginning.
+
+[WARN] In practice, use caution when using the `--yes` argument. The `--yes` argument suppresses any prompts for confirmation before performing a destructive operation.
+
+### Delete the node from the Chef server
+
+As you experiment, it's a good idea to delete information about your node from the Chef server when you no longer need it. That way, your Chef server contains only relevant information. In practice, it's up to you whether to delete node information when you retire a production system from service.
+
+From your workstation, run these commands to delete the data about your node from the Chef server.
+
+<% command_snippet(page: current_page, path: 'cleaning-up/knife-node-delete-node1-ubuntu') %>
+
+<% command_snippet(page: current_page, path: 'cleaning-up/knife-client-delete-node1-ubuntu') %>
+
+Chef makes a distinction between the nodes that are being managed and the clients that are authorized to make API calls to the Chef server. Therefore, you need to run [knife node delete](https://docs.chef.io/knife_node.html#delete) to remove the node's metadata from the Chef server and [knife client delete](https://docs.chef.io/knife_client.html#delete) to delete the entry (including the associated RSA public key-pair) from the Chef server's API client list.
+
+### Delete your cookbook from the Chef server
+
+Here's how to delete the `learn_chef_apache2` cookbook from the Chef server.
+
+<% command_snippet(page: current_page, path: 'cleaning-up/knife-cookbook-delete-learn_chef_apache2', features: [:stdin, :stderr]) %>
+
+If you omit the `--all` argument, you'll be prompted to select which version to delete. In practice, you might delete version '0.3.0' of the `learn_chef_apache2` cookbook because you know it contains a configuration policy that will always fail.
+
+### Delete the RSA private key from your node
+
+During the bootstrap process, an RSA private key is generated on your node to enable your node to make API calls to the Chef server. The default location of this key is <code class="file-path">/etc/chef/client.pem</code> on Linux systems.
+
+If you plan to bootstrap your node a second time, for example, to practice the process, you'll need to log in to your node and delete the RSA private key file, like this.
+
+```bash
+$ sudo rm /etc/chef/client.pem
+```
+
+<% if current_page.parent.data.environment == 'virtualbox' %>
+
+### Tear down your Vagrant and VirtualBox environment
+
+When you're done working through this tutorial, or need to start over, run the following command to destroy your environment. If you omit the `--force` flag, Vagrant prompts you to confirm the action.
+
+<% command_snippet(page: current_page, path: 'cleaning-up/vagrant-destroy') %>
+
+<% else %>
+
+### Tear down your instance
+
+Deleting a node from your Chef server removes any data about that node from the server &ndash; it doesn't automatically tear down the instance.
+
+Don't forget to tear down any cloud instances or local virtual machines that you used to complete the tutorial.
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## Conclusion
+
+In this tutorial, you brought up a <% if current_page.data.environment == 'aws-automate' %>Chef Automate server, a <% end %>Chef server, bootstrapped a node, and applied a basic web server configuration. You also practiced updating your cookbook, uploading it to the Chef server, and seeing the changes appear on your node. As a bonus, you resolved an error in your configuration.
+
+To update your cookbook you used a _template_. A [template](https://docs.chef.io/templates.html) enables you to write a single, general recipe that's customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node.
+
+You also ran `knife ssh` to update your node. [knife ssh](https://docs.chef.io/knife_ssh.html) invokes the command you specify over an SSH connection on a node &ndash; in our case `sudo chef-client`. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
+
+That's it for this tutorial. When you're done experimenting, be sure to [clean up your environment](#howtocleanupyourenvironment).
+
+Be sure to check out these videos, which go deeper into what happens during the bootstrap process and when `chef-client` runs.
+
+* [What happens during knife bootstrap](/skills/beyond-essentials-1)
+* [What happens during a chef-client run](/skills/beyond-essentials-2)
+* [What is the security model used by chef-client](/skills/beyond-essentials-3)
+
+In the next tutorial, [Develop your infrastructure code locally](/local-development/ubuntu/), you'll learn how _local development_ with Test Kitchen can help you iterate faster and correct mistakes earlier in the development process. With local development, you verify your cookbooks on local test instances that resemble production before you apply your work to a bootstrapped node.
+
+[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
+
+[END_BOX]
