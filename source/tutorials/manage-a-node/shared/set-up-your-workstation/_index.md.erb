@@ -1,4 +1,12 @@
-Recall that your workstation is the computer from which you author your cookbooks and administer your network. Although you're configuring an Ubuntu server, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
+<% platform_long_name = case current_page.parent.data.platform_id
+when 'rhel'
+  'Red Hat Enterprise Linux or CentOS'
+when 'ubuntu'
+  'Ubuntu'
+when 'windows'
+  'Windows Server'
+end %>
+Recall that your workstation is the computer from which you author your cookbooks and administer your network. Although you're configuring <%= platform_long_name %>, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
 
 [COMMENT] Remember, you can also use a virtual machine as your workstation. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites).
 
@@ -8,7 +16,7 @@ Recall that your workstation is the computer from which you author your cookbook
 
 ## 1. Install the Chef DK
 
-In the first tutorial, [Learn the Chef basics](/tutorials/learn-the-basics/ubuntu/free/), you used the tools provided by the Chef Development Kit (Chef DK) to configure a virtual machine directly. Now it's time to install the Chef DK on your workstation so that you can manage a node remotely.
+In the first tutorial, [Learn the Chef basics](/tutorials/learn-the-basics/), you used the tools provided by the Chef Development Kit (Chef DK) to configure a virtual machine directly. Now it's time to install the Chef DK on your workstation so that you can manage a node remotely.
 
 <a class='button radius cta' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install the Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
 
@@ -110,9 +118,45 @@ From your Chef DK PowerShell session, run `git --version` to verify the installa
 
 [END_BOX]
 
-<% if current_page.parent.data.platform_id != 'windows' %>
-
 [START_BOX]
+
+<% if current_page.parent.data.platform_id == 'windows' %>
+
+## 7. Verify your RDP client
+
+Although not required, you may find it useful to have an RDP client installed on your workstation. This enables you to connect to your Windows Server instance to verify your work.
+
+<% accordion('install-rdp-windows', 'Windows users') do %>
+
+<% markdown do %>
+
+Windows comes with an RDP client. Run `mstsc` from the command prompt to bring up Remote Desktop.
+
+<% end %>
+
+<% end %>
+
+<% accordion('install-rdp-macosx', 'Mac OS X users') do %>
+
+<% markdown do %>
+
+[Download Microsoft Remote Desktop](https://itunes.apple.com/us/app/microsoft-remote-desktop/id715768417?mt=12) from the Apple App Store. The RDP client from Microsoft's web site might not work.
+
+<% end %>
+
+<% end %>
+
+<% accordion('install-rdp-linux', 'Linux users') do %>
+
+<% markdown do %>
+
+[Remmina](http://www.remmina.org/wp/) is a popular RDP client for Linux.
+
+<% end %>
+
+<% end %>
+
+<% else %>
 
 ## 7. Verify your SSH client
 
@@ -124,9 +168,9 @@ From your Chef DK PowerShell session, run `ssh` to verify that your SSH client i
 
 <% command_snippet(path: 'learn-the-basics/ubuntu/virtualbox/set-up-a-machine-to-manage/verify-your-ssh-client/ssh-no-args', workstation: 'windows', replace_prompt: "PS >", features: [:stdin, :stderr]) %>
 
-[END_BOX]
-
 <% end %>
+
+[END_BOX]
 
 <% next_page(current_page) do %>
 
