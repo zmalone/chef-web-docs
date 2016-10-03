@@ -18,7 +18,7 @@ This tutorial and the previous one focused on Chef Automate's workflow and visib
 
 ![](automate/automate-architecture.svg)
 
-[See the Learn Chef tutorial](/tutorials/#compliance-assess) to get started with the Chef compliance scanner.
+[See the Learn Chef tutorial](/tutorials/compliance-assess) to get started with the Chef compliance scanner.
 
 You may also be interested in Chef's other open-source projects &ndash; [Habitat](https://www.habitat.sh) and [InSpec](https://www.chef.io/inspec/).
 

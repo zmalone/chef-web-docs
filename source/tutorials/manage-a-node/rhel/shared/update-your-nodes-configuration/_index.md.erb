@@ -14,7 +14,7 @@ When you bootstrapped your node, the Chef server created what's called a _node o
 
 For our home page, we want to display the server's fully qualified domain name (FQDN). To do so, we access the `fqdn` attribute of the `node` object. On the local workstation copy of your `learn_chef_httpd` cookbook, change <code class="file-path">index.html.erb</code> to look like this.
 
-<% code_snippet(page: current_page, path: 'add-template-code-to-your-html/index-html-erb') %>
+<% code_snippet(page: current_page, path: 'add-template-code-to-your-html/index-html-erb-node1-centos') %>
 
 The <code>&lt;%= %&gt;</code> syntax enables you to provide placeholders in your template file. Placeholders are replaced with their values when `chef-client` runs. You'll work more with templates in later tutorials, but you can [read more](https://docs.chef.io/templates.html) now in the Chef documentation.
 
@@ -30,7 +30,7 @@ Before you upload an updated cookbook to Chef server, you should always update y
 
 Your cookbook's <code class="file-path">metadata.rb</code> file holds the cookbook's version. When you run the<br>`chef generate cookbook` command to create your cookbook, the initial version is set to 0.1.0. Here's what your `learn_chef_httpd` cookbook's <code class="file-path">metadata.rb</code> file looks like.
 
-<% code_snippet(page: current_page, path: 'add-template-code-to-your-html/metadata-0-1-0') %>
+<% code_snippet(page: current_page, path: 'add-template-code-to-your-html/metadata-0-1-0-learn_chef_httpd') %>
 
 Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. Version numbers are typically written as MAJOR.MINOR.PATCH, where:
 
@@ -42,7 +42,7 @@ An update to the HTML template represents a minor change in functionality, so le
 
 Modify your copy of <% fp 'metadata.rb' %> like this. The `version` field changes to '0.2.0'.
 
-<% code_snippet(page: current_page, path: 'add-template-code-to-your-html/metadata-0-2-0') %>
+<% code_snippet(page: current_page, path: 'add-template-code-to-your-html/metadata-0-2-0-learn_chef_httpd') %>
 
 [Learn more about cookbook versioning](https://docs.chef.io/cookbook_versions.html)
 
@@ -54,7 +54,7 @@ Modify your copy of <% fp 'metadata.rb' %> like this. The `version` field change
 
 Now you're ready to upload your cookbook to the Chef server. Run the `knife cookbook upload` command like this.
 
-<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/upload-0-2-0', features: [:stdin, :stderr]) %>
+<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/upload-0-2-0-learn_chef_httpd', features: [:stdin, :stderr]) %>
 
 [END_BOX]
 
@@ -72,7 +72,7 @@ As with `knife bootstrap`, the options you provide to `knife ssh` depend on how 
 
 Run the following command to run `chef-client` on your node.
 
-<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/knife-ccr-1') %>
+<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/knife-ccr-node1-centos-1') %>
 
 <% else %>
 
@@ -99,9 +99,9 @@ $ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --identity-
 
 Here's an example.
 
-<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/knife-ccr-1') %>
+<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/knife-ccr-node1-centos-1') %>
 
-Here you see that the "hello world" message is replaced with one that includes the node's FQDN. This example uses an Amazon EC2 instance.
+Here you see that the "hello world" message is replaced with one that includes the node's FQDN. In this example, the node's FQDN is "node1-centos".
 
 ### Update your node using password authentication
 
@@ -137,13 +137,13 @@ The output will resemble the output shown for key-based authentication above.
 
 As before, run `curl` to verify the configuration. Replace the IP address you see here with yours. You'll see your node's FQDN appear instead of the example shown.
 
-<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/curl-node1-2') %>
+<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/curl-node1-centos-2') %>
 
 <% if current_page.parent.data.environment != 'virtualbox' %>
 
 You can also open a web browser from your workstation and navigate to your web server.
 
-![The home page with FQDN](misc/webserver-template-node1.png)
+![The home page with FQDN](manage-a-node/webserver-template-node1-centos.png)
 
 If you bootstrapped a Vagrant instance, one way to verify the configuration is to create an SSH connection to the instance and run `curl localhost`.
 
@@ -183,6 +183,6 @@ To update your cookbook you used a _template_. A [template](https://docs.chef.io
 
 You also ran `knife ssh` to update your node. [knife ssh](https://docs.chef.io/knife_ssh.html) invokes the command you specify over an SSH connection on a node &ndash; in our case `sudo chef-client`. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
 
-In the next part, you'll make a second modification to your `learn_chef_http` cookbook that, although might appear correct, will actually fail on your node. You'll then remedy the failure and verify that `chef-client` succeeds.
+In the next part, you'll make a second modification to your `learn_chef_httpd` cookbook that, although might appear correct, will actually fail on your node. You'll then remedy the failure and verify that `chef-client` succeeds.
 
 <% end %>
