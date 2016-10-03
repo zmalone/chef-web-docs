@@ -5,7 +5,7 @@ platform: Red Hat Enterprise Linux
 logo: redhat.svg
 order: 1
 ---
-In [Manage a Red Hat Enterprise Linux node](/manage-a-node/rhel/), you built a basic web server configuration on Red Hat Enterprise Linux or CentOS. As part of the process, you set up a Chef server, brought up a node to manage, and bootstrapped your node.
+In [Manage a Red Hat Enterprise Linux node](/tutorials/manage-a-node/rhel/), you built a basic web server configuration on Red Hat Enterprise Linux or CentOS. As part of the process, you set up a Chef server, brought up a node to manage, and bootstrapped your node.
 
 The bootstrap process installed the Chef tools on your node, pulled the latest cookbooks from the Chef server, and performed an initial `chef-client` run on your node. After the bootstrap process completed, you made a small change to your web server cookbook and applied that change to your node. The overall process looks like this:
 

@@ -5,7 +5,7 @@ platform: Windows Server
 logo: windows.svg
 order: 2
 ---
-In [Manage a Windows Server node](/manage-a-node/windows/), you built a basic web server configuration on Windows Server 2012 R2. As part of the process, you set up a Chef server, brought up a node to manage, and bootstrapped your node.
+In [Manage a Windows Server node](/tutorials/manage-a-node/windows/), you built a basic web server configuration on Windows Server 2012 R2. As part of the process, you set up a Chef server, brought up a node to manage, and bootstrapped your node.
 
 The bootstrap process installed the Chef tools on your node, pulled the latest cookbooks from the Chef server, and performed an initial `chef-client` run on your node. After the bootstrap process completed, you made a small change to your web server cookbook and applied that change to your node. The overall process looks like this:
 
