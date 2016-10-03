@@ -16,7 +16,7 @@ Choose the option that matches how you normally connect to your node over SSH.
 * [Bootstrap using password authentication](#bootstrapusingpasswordauthentication)
 * [Bootstrap a local virtual machine using a forwarded port](#bootstrapalocalvirtualmachineusingaforwardedport)
 
-[COMMENT] In each of the methods shown below, the optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's FQDN is the default. If you previously used the name `node1` to bootstrap a different node, you'll need to choose a different name or <%= link_to("remove the previous node", current_page.last_page, :anchor => 'deletethenodefromthechefserver') %> from your Chef server.
+[COMMENT] In each of the methods shown below, the optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's FQDN is the default. If you previously used the name `node1-centos` to bootstrap a different node, you can respond with 'Y' to overwrite that node's entry on your Chef server. Alternatively, you can choose a different name or <%= link_to("remove the previous node", current_page.last_page, :anchor => 'deletethenodefromthechefserver') %> from your Chef server.
 
 ### Bootstrap using key-based authentication
 
@@ -24,7 +24,7 @@ Replace <code class="placeholder">ADDRESS</code> with your remote node's externa
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name node1 --run-list 'recipe[learn_chef_httpd]'
+$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name node1-centos --run-list 'recipe[learn_chef_httpd]'
 ```
 
 Here's an example:
@@ -37,7 +37,7 @@ Replace <code class="placeholder">ADDRESS</code> with your remote node's externa
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name node1 --run-list 'recipe[learn_chef_httpd]'
+$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name node1-centos --run-list 'recipe[learn_chef_httpd]'
 ```
 
 The output will resemble the output shown for key-based authentication above.
@@ -48,7 +48,7 @@ Replace <code class="placeholder">PORT</code> with your SSH forwarded port, for 
 
 ```bash
 # ~/learn-chef
-$ knife bootstrap localhost --ssh-port PORT --ssh-user vagrant --sudo --identity-file IDENTITY_FILE --node-name node1 --run-list 'recipe[learn_chef_httpd]'
+$ knife bootstrap localhost --ssh-port PORT --ssh-user vagrant --sudo --identity-file IDENTITY_FILE --node-name node1-centos --run-list 'recipe[learn_chef_httpd]'
 ```
 
 The output will resemble the output shown for key-based authentication above.
@@ -72,6 +72,38 @@ If the operation times out or fails, here are some things to try.
 
 <% end %>
 
+<% accordion('bootstrap-detail', 'The bootstrap process in detail') do %>
+
+<% markdown do %>
+
+You can [review the documentation](https://docs.chef.io/knife_bootstrap.html#options) to better understand the role of each `knife bootstrap` option. Here are the options that you used:
+
+**General options**
+
+* `--ssh-user`
+* `--sudo`
+* `--node-name`
+* `--run-list`
+
+**Options specific to key-based authentication**
+
+* `--identity-file`
+
+**Options specific to password authentication**
+
+* `--ssh-password`
+* `--use-sudo-password`
+
+**Options specific to SSH forwarded port**
+
+* `--ssh-port`
+* `--identity-file`
+
+You can also watch [what happens during knife bootstrap](/skills/beyond-essentials-1) to further understand the process.
+
+<% end %>
+
+<% end %>
 
 [END_BOX]
 
