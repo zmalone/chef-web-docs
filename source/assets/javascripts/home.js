@@ -1,30 +1,30 @@
 $(document).ready(function() {
-  var $titles = $(".learn-section-title a");
-  var $description = $(".lg-description");
+  var $titles = $(".home--section--title");
+  var $description = $(".home--descriptions");
 
   $titles.hover(
     function() {
-      $titles.find(".learn-section-icon").removeClass("fade-in");
+      $titles.find(".home--section--icon").removeClass("fade-in");
 
       if ($(window).width() > 800) {
         var $this = $(this);
 
-        if ( $(this).parents(".tutorials-title").length)  {
+        if ( $(this).parents('[data-section="tutorials"]').length)  {
           $description.removeClass("skills-active docs-active training-active community-active")
             .addClass("tutorials-active");
 
-        } else if ( $(this).parents(".skills-title").length) {
+        } else if ( $(this).parents('[data-section="skills"]').length) {
           $description.removeClass("tutorials-active docs-active training-active community-active")
             .addClass("skills-active");
 
-        } else if ( $(this).parents(".docs-title").length) {
+        } else if ( $(this).parents('[data-section="docs"]').length) {
           $description.removeClass("skills-active tutorials-active training-active community-active")
             .addClass("docs-active");
 
-        } else if ( $(this).parents(".training-title").length) {
+        } else if ( $(this).parents('[data-section="training"]').length) {
           $description.removeClass("skills-active docs-active tutorials-active community-active")
             .addClass("training-active");
-        } else if ( $(this).parents(".community-title").length) {
+        } else if ( $(this).parents('[data-section="community"]').length) {
           $description.removeClass("skills-active docs-active tutorials-active training-active")
             .addClass("community-active");
         }
