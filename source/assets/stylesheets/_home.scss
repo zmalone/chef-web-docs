@@ -15,327 +15,373 @@ $hero-bg: $primary-dark-blue;
 
 $breakpoint: 800px;
 
+@mixin large-home {
+  @media (min-width: #{$breakpoint}) {
+    @content;
+  }
+}
+
+@mixin mobile-home {
+  @media (max-width: $breakpoint - 1px) {
+    @content;
+  }
+}
+
 // Home styles for all sizes
 .index .content {
   background: white;
   padding: 0;
+  font-family: $accent-font;
 }
 
-.learn-home {
-  font-family: $accent-font;
-  #hero {
-    background: $hero-bg;
-    color: white;
-    text-align: center;
-    p {
-      margin: 0;
-    }
-    .container {
-      width: 90%;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px 0;
-    }
+.home--hero {
+  padding: 20px 0;
+  background: $hero-bg;
+  color: white;
+}
+
+.home--hero--heading {
+  margin-top: 0;
+  font-family: inherit;
+  text-transform: uppercase;
+  color: inherit;
+}
+
+.home--hero--text {
+  margin: 0;
+}
+
+.home--section--title {
+  text-transform: uppercase;
+  color: inherit;
+}
+
+.home--section--heading {
+  margin: 0;
+  font-family: inherit;
+  color: inherit;
+
+  & > .fa {
+    font-size: 86%;
   }
-  h1 {
-    margin-top: 0;
-    font-family: inherit;
-    text-transform: uppercase;
-    color: inherit;
-  }
-  h2 {
-    margin: 0;
-    font-family: inherit;
-    color: inherit;
-    .fa {
-      font-size: 86%;
-    }
-  }
-  .learn-section-title {
-    text-transform: uppercase;
-    a {
-      color: inherit;
-    }
-  }
-  // Home at Mobile Size
-  @media screen and (max-width: $breakpoint) {
-    // TITLE AREA
-    .learn-section-title {
-      width: 100%;
-      padding: 10px 10%;
-    }
-    .tutorials-title {
+}
+
+@include mobile-home {
+  // title area
+  .home--section--title {
+    display: block;
+    width: 100%;
+    padding: 10px 10%;
+
+    [data-section="tutorials"] & {
       background: $tutorials-color;
     }
-    .skills-title {
+
+    [data-section="skills"] & {
       background: $skills-color;
     }
-    .docs-title {
+
+    [data-section="docs"] & {
       background: $docs-color;
     }
-    .training-title {
+
+    [data-section="training"] & {
       background: $training-color;
     }
-    .community-title {
+
+    [data-section="community"] & {
       background: $community-color;
     }
-    // TITLE AREA - Icon and Heading
-    .learn-section-icon {
-      vertical-align: middle;
-      display: inline-block;
-      margin-right: 20px;
-      svg {
-        width: 40px;
-        height: 40px;
-        @include transform(scale(1.7));
-      }
-      .learn-icon {
-        fill: #fff;
-      }
-      .learn-icon-circle {
-        fill: transparent;
-      }
-    }
-    h2 {
-      vertical-align: middle;
-      display: inline-block;
-      color: white;
-      padding: 10px 0;
-      .fa {
-        margin-left: 10px;
-      }
-    }
-    // DESCRIPTION
-    .description {
-      display: block;
-      padding: 15px 10% 34px;
-      p {
-        margin-bottom: 0;
-      }
-    }
-    .lg-description {
-      display: none;
-    }
   }
-  // Home at Large Size
-  @media screen and (min-width: $breakpoint) {
-    // Positioning the Titles and Icons
-    $cols: 5;
-    $col-width: 15.42%;
-    $gutters: $cols - 1;
-    $gutter-width: (100 - ($cols * $col-width)) / $gutters;
-    .learn-sections {
-      position: relative;
-      padding-top: 24%;
-      margin: 0 auto;
-      width: 90%;
-      max-width: 1200px;
-    }
-    .learn-section-title {
-      position: absolute;
-      top: 9%;
-      width: $col-width;
-      text-align: center;
-      opacity: 0.8;
-      @include transition(opacity 0.2s ease);
-      &:hover {
-        opacity: 1;
-        // hover animation for icons
-        .learn-section-icon {
-          @include pulse;
-        }
-      }
-    }
-    // first column
-    .tutorials-title {
-      left: 0;
-      color: $tutorials-color;
-      .fade-in {
-        @include fadeIn(0);
-      }
-      .learn-icon {
-        fill: $tutorials-color;
-      }
-      .learn-icon-circle {
-        fill: $tutorials-color;
-      }
-    }
-    // second column
-    .skills-title {
-      left: ($col-width * 1) + ($gutter-width * 1);
-      color: $skills-color;
-      .fade-in {
-        @include fadeIn(0.3s);
-      }
-      .learn-icon {
-        fill: $skills-color;
-      }
-      .learn-icon-circle {
-        fill: $skills-color;
-      }
-    }
-    // third column
-    .docs-title {
-      left: ($col-width * 2) + ($gutter-width * 2);
-      color: $docs-color;
-      .fade-in {
-        @include fadeIn(0.5s);
-      }
-      .learn-icon {
-        fill: $docs-color;
-      }
-      .learn-icon-circle {
-        fill: $docs-color;
-      }
-    }
-    // fourth column
-    .training-title {
-      left: ($col-width * 3) + ($gutter-width * 3);
-      color: $training-color;
-      .fade-in {
-        @include fadeIn(0.7s);
-      }
-      .learn-icon {
-        fill: $training-color;
-      }
-      .learn-icon-circle {
-        fill: $training-color;
-      }
-    }
-    // fifth column
-    .community-title {
-      left: ($col-width * 4) + ($gutter-width * 4);
-      color: $community-color;
-      .fade-in {
-        @include fadeIn(0.7s);
-      }
-      .learn-icon {
-        fill: $community-color;
-      }
-      .learn-icon-circle {
-        stroke: $community-color;
-        fill: none;
-        stroke-width: 3;
-      }
+
+  .home--section--icon {
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 20px;
+
+    & > svg {
+      width: 40px;
+      height: 40px;
+      @include transform(scale(1.7));
     }
 
-    h2 {
-      font-size: 15px;
-      .fa {
-        margin-left: 5px;
-      }
-    }
-    .learn-section-icon {
-      width: 100%;
-      margin: 0 auto 20px;
-      &.fade-in {
-        opacity: 0;
-      }
+    .learn-icon {
+      fill: white;
     }
 
-    .description {
-      display: none;
-    }
-    .lg-description {
-      position: relative;
-      z-index: 2;
-      display: block;
-      height: 161px;
-      @include transition(all 0.5s ease);
-      p {
-        position: absolute;
-        width: 90%;
-        max-width: 1200px;
-        padding: 40px 0;
-        top: 0;
-        left: 50%;
-        color: white;
-        opacity: 0;
-        @include transform(translateX(-50%));
-        @include transition(opacity 0.5s ease);
-        &:before { // CSS Triangle
-          content: "";
-          position: absolute;
-          z-index: 1;
-          bottom: 100%;
-          width: 0;
-          height: 0;
-          border-left: 14px solid transparent;
-          border-right: 14px solid transparent;
-          border-bottom: 14px solid transparent;
-          @include transform(translateX(-50%));
-          @media (max-width: 1010px) {
-            border-width: 0 7px 7px;
-          }
-        }
-      }
-      a {
-        color: inherit;
-        border-bottom: 2px solid white;
-      }
-      &.tutorials-active {
-        background: $tutorials-color;
-        .tutorials-description {
-          opacity: 1;
-          z-index: 3;
-          &:before {
-            left: 7.84%;
-            border-bottom-color: $tutorials-color;
-          }
-        }
-      }
-      &.skills-active {
-        background: $skills-color;
-        .skills-description {
-          opacity: 1;
-          z-index: 3;
-          &:before {
-            left: 28.74%;
-            border-bottom-color: $skills-color;
-          }
-        }
-      }
-      &.docs-active {
-        background: $docs-color;
-        .docs-description {
-          opacity: 1;
-          z-index: 3;
-          &:before {
-            left: 49.98%;
-            border-bottom-color: $docs-color;
-          }
-        }
-      }
-      &.training-active {
-        background: $training-color;
-        .training-description {
-          opacity: 1;
-          z-index: 3;
-          &:before {
-            left: 71.56%;
-            border-bottom-color: $training-color;
-          }
-        }
-      }
-      &.community-active {
-        background: $community-color;
-        .community-description {
-          opacity: 1;
-          z-index: 3;
-          &:before {
-            left: 92.26%;
-            border-bottom-color: $community-color;
-          }
-        }
-      }
+    .learn-icon-circle {
+      fill: transparent;
     }
   }
-  @media all and (min-width: 1320px) {
-    .learn-sections {
-      height: 350px;
-      padding-top: 0;
+
+  .home--section--heading {
+    padding: 10px 0;
+    vertical-align: middle;
+    display: inline-block;
+    color: white;
+
+    & > .fa {
+      margin-left: 10px;
     }
+  }
+
+  .home--section--description {
+    display: block;
+    padding: 15px 10% 34px;
+    margin-bottom: 0;
+  }
+
+  .home--descriptions {
+    display: none;
   }
 }
 
+@include large-home {
+  .home--sections {
+    display: flex;
+    justify-content: space-between;
+  }
 
+  .home--section {
+    width: 15.42%;
+    padding: 2% 0;
+    text-align: center;
+  }
+
+  .home--section--title {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+
+    &:hover,
+    &:focus,
+    &:active {
+      opacity: 1;
+
+      .home--section--icon {
+        @include pulse;
+      }
+    }
+  }
+
+  .home--section--heading {
+    font-size: 15px;
+
+    & > .fa {
+      margin-left: 5px;
+    }
+  }
+
+  .home--section--icon {
+    width: 100%;
+    margin: 0 auto 20px;
+
+    &.fade-in {
+      opacity: 0;
+    }
+  }
+
+  .home--section--description {
+    display: none;
+  }
+
+  [data-section="tutorials"] {
+    .home--section--title {
+      color: $tutorials-color;
+    }
+
+    .fade-in {
+      @include fadeIn(0s)
+    }
+
+    .learn-icon {
+      fill: $tutorials-color;
+    }
+
+    .learn-icon-circle {
+      fill: $tutorials-color;
+    }
+  }
+
+  [data-section="skills"] {
+    .home--section--title {
+      color: $skills-color;
+    }
+
+    .fade-in {
+      @include fadeIn(0.3s)
+    }
+
+    .learn-icon {
+      fill: $skills-color;
+    }
+
+    .learn-icon-circle {
+      fill: $skills-color;
+    }
+  }
+
+  [data-section="docs"] {
+    .home--section--title {
+      color: $docs-color;
+    }
+
+    .fade-in {
+      @include fadeIn(0.5s)
+    }
+
+    .learn-icon {
+      fill: $docs-color;
+    }
+
+    .learn-icon-circle {
+      fill: $docs-color;
+    }
+  }
+
+  [data-section="training"] {
+    .home--section--title {
+      color: $training-color;
+    }
+
+    .fade-in {
+      @include fadeIn(0.7s)
+    }
+
+    .learn-icon {
+      fill: $training-color;
+    }
+
+    .learn-icon-circle {
+      fill: $training-color;
+    }
+  }
+
+  [data-section="community"] {
+    .home--section--title {
+      color: $community-color;
+    }
+
+    .fade-in {
+      @include fadeIn(0.9s)
+    }
+
+    .learn-icon {
+      fill: $community-color;
+    }
+
+    .learn-icon-circle {
+      fill: none;
+      stroke: $community-color;
+      stroke-width: 3;
+    }
+  }
+
+  .home--descriptions {
+    position: relative;
+    z-index: 2;
+    display: block;
+    height: 161px;
+    transition: all 0.2s ease;
+
+    &.tutorials-active {
+      background: $tutorials-color;
+
+      & > [data-section="tutorials"] {
+        opacity: 1;
+        z-index: 3;
+
+        &:before {
+          left: 7.84%;
+          border-bottom-color: $tutorials-color;
+        }
+      }
+    }
+
+    &.skills-active {
+      background: $skills-color;
+
+      & > [data-section="skills"] {
+        opacity: 1;
+        z-index: 3;
+
+        &:before {
+          left: 28.7%;
+          border-bottom-color: $skills-color;
+        }
+      }
+    }
+
+    &.docs-active {
+      background: $docs-color;
+
+      & > [data-section="docs"] {
+        opacity: 1;
+        z-index: 3;
+
+        &:before {
+          left: 50%;
+          border-bottom-color: $docs-color;
+        }
+      }
+    }
+
+    &.training-active {
+      background: $training-color;
+
+      & > [data-section="training"] {
+        opacity: 1;
+        z-index: 3;
+
+        &:before {
+          left: 71.4%;
+          border-bottom-color: $training-color;
+        }
+      }
+    }
+
+    &.community-active {
+      background: $community-color;
+
+      & > [data-section="community"] {
+        opacity: 1;
+        z-index: 3;
+
+        &:before {
+          left: 93%;
+          border-bottom-color: $community-color;
+        }
+      }
+    }
+  }
+
+  .home--description {
+    opacity: 0;
+    z-index: 2;
+    position: absolute;
+    width: 90%;
+    max-width: 1200px;
+    padding: 40px 0;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.5s ease;
+    color: white;
+
+    & > a {
+      color: inherit;
+      border-bottom: 2px solid white;
+    }
+
+    &:before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      bottom: 100%;
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-bottom: 14px solid transparent;
+      transform: translateX(-50%);
+    }
+  }
+}
