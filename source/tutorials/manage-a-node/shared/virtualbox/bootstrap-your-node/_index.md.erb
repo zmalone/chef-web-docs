@@ -1,0 +1,59 @@
+<%
+  os, cookbook = case current_page.parent.data.platform_id
+  when 'rhel'
+    ['CentOS', 'learn_chef_httpd']
+  when 'ubuntu'
+    ['Ubuntu', 'learn_chef_apache2']
+  end
+%>
+Recall that any computer that's managed by a Chef server is called a _node_, and that `chef-client` is the command that applies the policy defined by your cookbooks to a node. We call the process that installs `chef-client` on a node and the initial checkin to the Chef server _bootstrapping_ the node.
+
+In this part you'll bootstrap your <%= os %> node and execute the `<%= cookbook %>` cookbook on it.
+
+[START_BOX]
+
+## 1. Run the bootstrap command
+
+[knife boostrap](https://docs.chef.io/knife_bootstrap.html) is the command you use to bootstrap a node. As part of the `knife bootstrap` command, you specify arguments depending on how you would normally connect to your node over SSH. For example, you might connect to your system using key-based authentication or password authentication.
+
+[The other versions of this tutorial](/tutorials/manage-a-node/rhel/) describe the bootstrap process more generally. But because your <%= os %> node is managed by Vagrant and VirtualBox, you bootstrap it by providing its SSH forwarded port.
+
+Run the following command to bootstrap your node.
+
+<% command_snippet(page: current_page, path: "bootstrap-your-node/bootstrap-node1-#{os.downcase}", features: [:stdin, :stderr, :stdout]) %>
+
+In a more production-like environment, you would replace <% ph 'localhost' %> with your node's IP address or hostname and omit the `--ssh-port` argument.
+
+[COMMENT] The optional `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. The server's FQDN is the default. Here we use `node1-<%= os.downcase %>`.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Confirm the result
+
+Two things just happened.
+
+First, your node was associated with your Chef server. To verify this, run the `knife node list` command.
+
+<% command_snippet(page: current_page, path: "bootstrap-your-node/knife-node-list-node1-#{os.downcase}", features: [:stdin, :stdout]) %>
+
+You can use the `knife node show` command to view data about your node.
+
+<% command_snippet(page: current_page, path: "bootstrap-your-node/knife-node-show-node1-#{os.downcase}", features: [:stdin, :stdout]) %>
+
+The second thing that happened was that your node did an initial checkin with the Chef server and ran the `<%= cookbook %>` cookbook.
+
+To verify the configuration, run the following `curl` command.
+
+<% command_snippet(page: current_page, path: "bootstrap-your-node/curl-node1-#{os.downcase}-1", features: [:stdin, :stdout]) %>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+The `knife bootstrap` command established an SSH connection to the node, installed `chef-client`, downloaded the `<%= cookbook %>` cookbook on the node, and ran it. In one command, Chef carried out most of the steps you previously performed manually.
+
+Next let's modify your configuration by adding some info about your web server to your home page.
+
+<% end %>
