@@ -1,0 +1,65 @@
+localhost Starting Chef Client, version 12.14.89
+localhost resolving cookbooks for run list: ["learn_chef_httpd"]
+localhost Synchronizing Cookbooks:
+localhost   - learn_chef_httpd (0.3.0)
+localhost Installing Cookbook Gems:
+localhost Compiling Cookbooks...
+localhost Converging 3 resources
+localhost Recipe: learn_chef_httpd::default
+localhost   * yum_package[httpd] action install (up to date)
+localhost   * service[httpd] action enable (up to date)
+localhost   * service[httpd] action start (up to date)
+localhost   * template[/var/www/html/index.html] action create
+localhost     * cannot determine user id for 'web_admin', does the user exist on this system?
+localhost     ================================================================================
+localhost     Error executing action `create` on resource 'template[/var/www/html/index.html]'
+localhost     ================================================================================
+localhost     
+localhost     Chef::Exceptions::UserIDNotFound
+localhost     --------------------------------
+localhost     cannot determine user id for 'web_admin', does the user exist on this system?
+localhost     
+localhost     Resource Declaration:
+localhost     ---------------------
+localhost     # In /var/chef/cache/cookbooks/learn_chef_httpd/recipes/default.rb
+localhost     
+localhost      12: template '/var/www/html/index.html' do
+localhost      13:   source 'index.html.erb'
+localhost      14:   mode '0644'
+localhost      15:   owner 'web_admin'
+localhost      16:   group 'web_admin'
+localhost      17: end
+localhost     
+localhost     Compiled Resource:
+localhost     ------------------
+localhost     # Declared in /var/chef/cache/cookbooks/learn_chef_httpd/recipes/default.rb:12:in `from_file'
+localhost     
+localhost     template("/var/www/html/index.html") do
+localhost       action [:create]
+localhost       retries 0
+localhost       retry_delay 2
+localhost       default_guard_interpreter :default
+localhost       source "index.html.erb"
+localhost       declared_type :template
+localhost       cookbook_name "learn_chef_httpd"
+localhost       recipe_name "default"
+localhost       mode "0644"
+localhost       owner "web_admin"
+localhost       group "web_admin"
+localhost       path "/var/www/html/index.html"
+localhost     end
+localhost     
+localhost     Platform:
+localhost     ---------
+localhost     x86_64-linux
+localhost     
+localhost 
+localhost Running handlers:
+localhost [2016-10-06T18:58:31+00:00] ERROR: Running exception handlers
+localhost Running handlers complete
+localhost [2016-10-06T18:58:31+00:00] ERROR: Exception handlers complete
+localhost Chef Client failed. 0 resources updated in 03 seconds
+localhost [2016-10-06T18:58:31+00:00] FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
+localhost [2016-10-06T18:58:31+00:00] FATAL: Please provide the contents of the stacktrace.out file if you file a bug report
+localhost [2016-10-06T18:58:31+00:00] ERROR: template[/var/www/html/index.html] (learn_chef_httpd::default line 12) had an error: Chef::Exceptions::UserIDNotFound: cannot determine user id for 'web_admin', does the user exist on this system?
+localhost [2016-10-06T18:58:31+00:00] FATAL: Chef::Exceptions::ChildConvergeError: Chef run process exited unsuccessfully (exit code 1)

@@ -1,0 +1,189 @@
+<%
+  os, os_version = case current_page.parent.data.platform_id
+  when 'rhel'
+    ['CentOS', 'CentOS 7.2']
+  when 'ubuntu'
+    ['Ubuntu', 'Ubuntu 14.04']
+  end
+%>
+
+[HEADLINE] Chef server acts as a central repository for your cookbooks as well as for information about every node it manages.<br>The `knife` command enables you to communicate with the Chef server from your workstation.
+
+Recall that there are two ways to work with a Chef server.
+
+1. Install Chef server on your own infrastructure.
+2. Sign up for hosted Chef, a Chef server that we manage for you.
+
+In terms of the first option, using a local machine environment to bring up a Chef server is a great way to learn how the server works. Here you'll bring up Chef server and a <%= os %> node to manage using Vagrant and VirtualBox.
+
+For production, you'll want to set up a dedicated Chef server for your team to use. After you complete this tutorial, consider [working through one of the other options](/tutorials/manage-a-node/rhel/) to set up Chef server in an environment that more closely matches your team's requirements.
+
+[COMMENT] Although you can use Vagrant and VirtualBox to run Chef cookbooks directly on test instances, the idea here is to set up a node that you manage through a Chef server. You'll learn about Chef's recommended local development workflow using a tool called Test Kitchen in the next tutorial.
+
+[START_BOX]
+
+## 1. Understand prerequisites
+
+Running local virtual machines requires relatively powerful hardware. Before you begin, ensure that:
+
+* your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS.
+* your workstation meets the [system requirements](https://www.virtualbox.org/wiki/End-user_documentation) for running VirtualBox.
+* your workstation has at least 15GB of free disk space so that you can download the base images and run a few virtual machine instances.
+* your workstation has at least 4GB of available memory.
+* nested virtualization, available through a program such as VMware Fusion, is enabled if you're using another virtual machine as your workstation.
+
+If you're new to Vagrant and VirtualBox, [the previous Learn Chef tutorial](/tutorials/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage/) can help you get set up. You can follow the steps that have you bring up a <%= os %>  instance to verify the installation. However, you don't need to connect to or install the Chef DK on your <%= os %>  instance.
+
+[WARN] For this tutorial, we recommend that you use Vagrant 1.8.4 and VirtualBox 5.0. There are known incompatibilities between later versions of Vagrant and VirtualBox.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Run the Vagrantfile
+
+In this part, you'll run a [Vagrantfile](https://www.vagrantup.com/docs/vagrantfile/) to bring up Chef server and a <%= os %>  node to manage.
+
+Start by creating a directory to hold your <% fp 'Vagrantfile' %> and your virtual machine instances, for example, <% fp '~/learn-chef/chef-server' %>.
+
+<% command_snippet(page: current_page, path: "mkdir-chef-server/mkdir-chef-server-#{current_page.parent.data.platform_id}", features: :stdin) %>
+
+Next, `cd` there.
+
+<% command_snippet(page: current_page, path: "mkdir-chef-server/cd-chef-server-#{current_page.parent.data.platform_id}", features: :stdin) %>
+
+Now add the following to a file named <% fp '~/learn-chef/chef-server/Vagrantfile' %>.
+
+<% code_snippet(page: current_page, path: "vagrant-up-chef-server/vagrantfile-#{current_page.parent.data.platform_id}") %>
+
+The <% fp 'Vagrantfile' %> contains the most recent version of the Chef server package that we've tested.
+
+Finally, run [vagrant up](https://www.vagrantup.com/docs/cli/up.html) to bring up the virtual machine instances.
+
+<% command_snippet(page: current_page, path: "vagrant-up-chef-server/vagrant-up-#{current_page.parent.data.platform_id}", features: :stdin) %>
+
+We've omitted sample output for brevity.
+
+The process will take a few minutes. Here's an overview of what's happening.
+
+* A Chef server and a node are provisioned with these characteristics:
+
+  | System      | Operating system  | CPUs | Memory              | Hostname         | IP address |
+  |-------------|-------------------|------|---------------------|------------------|------------|
+  | Chef server | Ubuntu 14.04      | 2    | 2GB                 | chef-server.test | 10.1.1.33  |
+  | node        | <%= os_version %> | 1    | 512MB (the default) | node1.test       | 10.1.1.34  |
+
+  Chef server can run on [multiple Linux distributions](https://docs.chef.io/install_server_pre.html#platforms). In this tutorial, you use Ubuntu.
+
+  The Vagrant [base boxes](https://www.vagrantup.com/docs/boxes.html) come from [HashiCorp Atlas](https://atlas.hashicorp.com/bento/boxes). The `bento` part refers to [Bento](http://chef.github.io/bento/), a Chef project that provides Vagrant boxes for many common platforms.
+
+  The IP addresses are allocated on the private network. If you get an error related to a host-only network conflict during `vagrant up`, you may need to modify your <% fp 'Vagrantfile' %> to specify IP addresses in a different [IP address space](https://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces). [Learn more in the Vagrant documentation](https://www.vagrantup.com/docs/networking/private_network.html).
+
+* The Chef server provisioning script:
+  * configures the system to meet the [prerequisite system requirements](https://docs.chef.io/install_server.html#prerequisites).
+  * [installs the Chef server package](https://docs.chef.io/install_server.html#standalone).
+  * creates the `admin` [user](https://docs.chef.io/server_users.html) and the `4thcoffee` [organization](https://docs.chef.io/server_orgs.html).
+  * copies files that you'll need later to <% fp '/vagrant/secrets' %>, which is [shared with the host machine](https://www.vagrantup.com/docs/synced-folders/).
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Configure your workstation
+
+<%= partial '../../shared/set-up-your-chef-server/knife_and_rsa_key' %>
+
+To set up these files, start by creating the <% fp '~/learn-chef/.chef' %> directory.
+
+<% command_snippet(workstation: 'ubuntu', path: "manage-a-node/rhel/virtualbox/set-up-your-chef-server/mkdir-dot-chef/mkdir-dot-chef", features: :stdin) %>
+
+Next, add the following to your `knife` configuration file, <% fp '~/learn-chef/.chef/knife.rb' %>
+
+<% code_snippet(page: current_page, path: "generate-knife-config/knife-rb-#{current_page.parent.data.platform_id}") %>
+
+Next, copy the RSA private key for the `admin` user from your Chef server. Recall that the Chef server provisioning script copies this file to a shared location you can easily access.
+
+<% command_snippet(page: current_page, path: "generate-knife-config/copy-admin-key-#{current_page.parent.data.platform_id}", features: :stdin) %>
+
+[The other versions of this tutorial](/tutorials/manage-a-node/rhel/) walk you though how you would set up these files in a more production-like environment.
+
+Your RSA private key should resemble this one.
+
+```bash
+# ~
+$ cat ~/learn-chef/.chef/admin.pem
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAqJCxFv1BoqlTJeK5zTZ6vX6hvQuDzlaN0v+Fo5R2zobP72Ga
+N8GUOhaYSM0Zkg+epchPS9JX81Euv847g662BBneuT4+W6ImqtHtoqB2iEw9vJbZ
+UoIpYRzVCMLpCc3hf3St5FcIz/t55VIAOML8O33CZMkY3o+EUHQx65aI3IDFVcmz
+xIFF+ziLbYc7Q1YHumXzv1pOP9o6QqFCcl/r4x5g9sj0eeYwYQBNppy9oELsrBuu
+/SEKs41X+tm1nP/sDrxOeI5ybytcN3MZN0SjniMTP+7Knh6xnfeFbmaC9Hp/bpbd
+lmaWv4iNJIhLBy/4LUkTh9jpC2knzJnq/bG4wQIDAQABAoIBAEbSXAUrrLr551xg
+kO3+eL1LCgtSXjOAPCAtiWl8BBqrm4uY92F7rJpnSd40hgzPETnYGjDiFF+/eSPP
+M0QVUJYShHhSBYMccqCMiQot3v9PARVOT8qRs28A3STMN3dkeK9761mPQX2Yy9Mk
+i8FNcwpPwS/1KcTAibf/ycWQvrndlflL3KCl/Nnv//Das3dn41npkAB6sGySOPir
+rajRuVR9REieRfx/vAGeOFkmWzuizBAxb+GXmYRy/Z+H+daEuqNd7QHAue4xg1s+
+7yPB4V+EobpQVVssNkidX5SUcMvu+pU5l7OF9PP1zNMhvQItmhi77VXOj61fVeKP
+JTaeHQECgYEA0lH6gVZRpmimoPJ5bNFeBKax/BzK1D7p7rD/z/i1qkiG3yCWYvQ/
+1T4pl9kVndhubxaTUug/DcCpSp+va8vnQ3jS7LvDfS2SxNySH/g8XZ/EyO8Zvbfk
+lqkpAdh3agKP310jB+dxqjbEwvdG9CdZyXK1ottXTzN07s0tCFcL7nECgYEAzS0X
+OTs0FNSLc667Nq99NdcuoHkKsqxYn7zpoyaslqc4o9tABBXCimQJzIWbY3u477B/
+1VrP8Ortepp0kev1ythYOGCAXBpukADLgw/1ygxVL51R+K6wbWDJyggMXvpOAhZX
+WT0RiVeyOE2tyLERlIV4Q3t7lyXiLJ1irdhBN1ECgYA7FmT2aTXPNp95oCWU+M0d
+KWffmIczUemO8ZMs7oa7LF0X2qPlcRFt62TsEEUOb3u3IfSJ2k28o1/sYyh5dHOo
+dQ53jk2108asH/u9l5P+CaDTgrkMn9lMqoGmzxXdZpLdAeGRmuhIFdL5o1b/yP5k
+piF5e33v9ljnriT0rt/fQQKBgGT9ZsrzzzXdoG2ublaFidnwerDeI1dk35JwqAd4
+R8c3s/djOdVI6KK5ruEOenezNEo2dBWOR3/sAswwLmSM4kTfzDyjs0qib/1Nht6S
+AodbHqr7IpfnVEviMjDRWVV+mtsIKCJynqkdk0mHYpzAG0khkRqWMzUonnUbWrD7
+Gs6hAoGBAKrv2c3/42gSNu8MZFG8r8xmLehRg/Rj6nfFizTu9FH+ph8B4HgECBnV
+1aHXvOsOaSDkjyPKa5hHCX145xWjme7blrSJfbsKiAAswSOJytc+PAPIULeocBr6
+hW6cD7rMrt5D/6Ofxts8nQnNQ5Z3UJOtB6V3CFzlvw5oRXw1sIE0
+-----END RSA PRIVATE KEY-----
+```
+
+Verify that your <% fp '.chef' %> directory contains your `knife` configuration file and RSA private key.
+
+<% command_snippet(page: current_page, path: "ls-dot-chef/ls-dot-chef-#{current_page.parent.data.platform_id}") %>
+
+You typically work with Chef server through its FQDN. Because your Chef server virtual machine is not backed by DNS, you need to first add an entry to your hosts file that maps your Chef server's hostname to its IP address. On a Mac OS or Linux workstation, you would run:
+
+<% command_snippet(page: current_page, path: "generate-knife-config/add-chef-server-to-hosts-file-#{current_page.parent.data.platform_id}") %>
+
+On Windows, you would run:
+
+```ps
+# ~\learn-chef
+$ Add-Content C:\Windows\System32\drivers\etc\hosts "10.1.1.33 chef-server.test"
+```
+
+Finally, run these commands to fetch and verify the SSL certificate from your Chef server.
+
+<% command_snippet(page: current_page, path: "validate-ssl-cert/knife-ssl-fetch-#{current_page.parent.data.platform_id}") %>
+
+<% command_snippet(page: current_page, path: "validate-ssl-cert/knife-ssl-check-#{current_page.parent.data.platform_id}") %>
+
+The certificate is added to your <% fp '~/learn-chef/.chef/trusted_certs' %> directory.
+
+[END_BOX]
+
+[START_BOX]
+
+## Destroying your environment
+
+When you complete this tutorial, or if you need to start over, run [vagrant destroy](https://www.vagrantup.com/docs/cli/destroy.html) to tear down your environment. You can later run `vagrant up` to bring up a new environment.
+
+<% command_snippet(workstation: 'ubuntu', path: "manage-a-node/#{current_page.parent.data.platform_id}/virtualbox/resolve-a-failure/cleaning-up/vagrant-destroy-node1-#{os.downcase}") %>
+
+In this example, the `--force` argument does not ask for confirmation before destroying the environment.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+At this point, you have each of the three parts of a typical Chef setup &ndash; your workstation, a Chef server, and a node to manage.
+
+Chef server gives you a persistent location to store your cookbooks and information about your nodes. The `knife` command enables you to communicate with the Chef server.
+
+Next, you'll get a copy of the web server cookbook that you wrote in the previous tutorial and upload it to your Chef server.
+
+<% end %>
