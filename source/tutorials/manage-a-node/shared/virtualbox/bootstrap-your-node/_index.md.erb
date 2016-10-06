@@ -12,13 +12,27 @@ In this part you'll bootstrap your <%= os %> node and execute the `<%= cookbook 
 
 [START_BOX]
 
-## 1. Run the bootstrap command
+## 1. Get your node's connection details
 
 [knife boostrap](https://docs.chef.io/knife_bootstrap.html) is the command you use to bootstrap a node. As part of the `knife bootstrap` command, you specify arguments depending on how you would normally connect to your node over SSH. For example, you might connect to your system using key-based authentication or password authentication.
 
-[The other versions of this tutorial](/tutorials/manage-a-node/rhel/) describe the bootstrap process more generally. But because your <%= os %> node is managed by Vagrant and VirtualBox, you bootstrap it by providing its SSH forwarded port.
+[The other versions of this tutorial](/tutorials/manage-a-node/rhel/) describe the bootstrap process more generally. But because your <%= os %> node is managed by Vagrant and VirtualBox, you can bootstrap it by providing its SSH [forwarded port](https://www.vagrantup.com/docs/networking/forwarded_ports.html).
 
-Run the following command to bootstrap your node.
+From your <% fp '~/learn-chef/chef-server' %> directory, run the following `vagrant ssh-config` command to get connection details for your node.
+
+<% command_snippet(page: current_page, path: "bootstrap-your-node/vagrant-ssh-config-node1-#{os.downcase}") %>
+
+Note the values of `Port` and `IdentityFile`. You'll use them in the next step.
+
+In this example, any network traffic that's sent to port 2200 on your workstation (**localhost** in the next step) will be forwarded to port 22 (the SSH port) on your virtual machine.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Run the bootstrap command
+
+From your <% fp '~/learn-chef' %> directory, run the following command to bootstrap your node. Replace the values of `--ssh-port` and `--identity-file` with your values.
 
 <% command_snippet(page: current_page, path: "bootstrap-your-node/bootstrap-node1-#{os.downcase}", features: [:stdin, :stderr, :stdout]) %>
 
@@ -30,7 +44,7 @@ In a more production-like environment, you would replace <% ph 'localhost' %> wi
 
 [START_BOX]
 
-## 2. Confirm the result
+## 3. Confirm the result
 
 Two things just happened.
 
@@ -42,7 +56,7 @@ You can use the `knife node show` command to view data about your node.
 
 <% command_snippet(page: current_page, path: "bootstrap-your-node/knife-node-show-node1-#{os.downcase}", features: [:stdin, :stdout]) %>
 
-The second thing that happened was that your node did an initial checkin with the Chef server and ran the `<%= cookbook %>` cookbook.
+The second thing that happened was that your node did an initial checkin with the Chef server and ran the `<%= cookbook %>` cookbook. That's because you specifed `<%= cookbook %>` as the `--run-list` argument.
 
 To verify the configuration, run the following `curl` command.
 
