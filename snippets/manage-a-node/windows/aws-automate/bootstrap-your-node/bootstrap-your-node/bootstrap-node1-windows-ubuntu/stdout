@@ -1,206 +1,207 @@
 
-Waiting for remote response before bootstrap.52.87.247.80 . 
-52.87.247.80 Response received.
-52.87.247.80 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4208-1475840043.bat" chunk 1 
-52.87.247.80 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4208-1475840043.bat" chunk 2 
-52.87.247.80 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4208-1475840043.bat" chunk 3 
-52.87.247.80 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4208-1475840043.bat" chunk 4 
-52.87.247.80 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4208-1475840043.bat" chunk 5 
-52.87.247.80 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4208-1475840043.bat" chunk 6 
-52.87.247.80 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4208-1475840043.bat" chunk 7 
-52.87.247.80 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4208-1475840043.bat" chunk 8 
-52.87.247.80 Checking for existing directory "C:\chef"...
-52.87.247.80 Existing directory not found, creating.
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>(
-52.87.247.80 echo.url = WScript.Arguments.Named("url")  
-52.87.247.80  echo.path = WScript.Arguments.Named("path")  
-52.87.247.80  echo.proxy = null  
-52.87.247.80  echo.'* Vaguely attempt to handle file:// scheme urls by url unescaping and switching all  
-52.87.247.80  echo.'* / into .  Also assume that file:/// is a local absolute path and that file://<foo>  
-52.87.247.80  echo.'* is possibly a network file path.  
-52.87.247.80  echo.If InStr(url, "file://") = 1 Then  
-52.87.247.80  echo.url = Unescape(url)  
-52.87.247.80  echo.If InStr(url, "file:///") = 1 Then  
-52.87.247.80  echo.sourcePath = Mid(url, Len("file:///") + 1)  
-52.87.247.80  echo.Else 
-52.87.247.80  echo.sourcePath = Mid(url, Len("file:") + 1)  
-52.87.247.80  echo.End If  
-52.87.247.80  echo.sourcePath = Replace(sourcePath, "/", "\")  
-52.87.247.80  echo. 
-52.87.247.80  echo.Set objFSO = CreateObject("Scripting.FileSystemObject")  
-52.87.247.80  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
-52.87.247.80  echo.objFSO.CopyFile sourcePath, path, true  
-52.87.247.80  echo.Set objFSO = Nothing  
-52.87.247.80  echo. 
-52.87.247.80  echo.Else 
-52.87.247.80  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP")  
-52.87.247.80  echo.Set wshShell = CreateObject( "WScript.Shell" )  
-52.87.247.80  echo.Set objUserVariables = wshShell.Environment("USER")  
-52.87.247.80  echo. 
-52.87.247.80  echo.rem http proxy is optional  
-52.87.247.80  echo.rem attempt to read from HTTP_PROXY env var first  
-52.87.247.80  echo.On Error Resume Next  
-52.87.247.80  echo. 
-52.87.247.80  echo.If NOT (objUserVariables("HTTP_PROXY") = "") Then  
-52.87.247.80  echo.proxy = objUserVariables("HTTP_PROXY")  
-52.87.247.80  echo. 
-52.87.247.80  echo.rem fall back to named arg  
-52.87.247.80  echo.ElseIf NOT (WScript.Arguments.Named("proxy") = "") Then  
-52.87.247.80  echo.proxy = WScript.Arguments.Named("proxy")  
-52.87.247.80  echo.End If  
-52.87.247.80  echo. 
-52.87.247.80  echo.If NOT isNull(proxy) Then  
-52.87.247.80  echo.rem setProxy method is only available on ServerXMLHTTP 6.0+  
-52.87.247.80  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")  
-52.87.247.80  echo.objXMLHTTP.setProxy 2, proxy  
-52.87.247.80  echo.End If  
-52.87.247.80  echo. 
-52.87.247.80  echo.On Error Goto 0  
-52.87.247.80  echo. 
-52.87.247.80  echo.objXMLHTTP.open "GET", url, false  
-52.87.247.80  echo.objXMLHTTP.send() 
-52.87.247.80  echo.If objXMLHTTP.Status = 200 Then  
-52.87.247.80  echo.Set objADOStream = CreateObject("ADODB.Stream")  
-52.87.247.80  echo.objADOStream.Open 
-52.87.247.80  echo.objADOStream.Type = 1  
-52.87.247.80  echo.objADOStream.Write objXMLHTTP.ResponseBody  
-52.87.247.80  echo.objADOStream.Position = 0  
-52.87.247.80  echo.Set objFSO = Createobject("Scripting.FileSystemObject")  
-52.87.247.80  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
-52.87.247.80  echo.Set objFSO = Nothing  
-52.87.247.80  echo.objADOStream.SaveToFile path  
-52.87.247.80  echo.objADOStream.Close 
-52.87.247.80  echo.Set objADOStream = Nothing  
-52.87.247.80  echo.End If  
-52.87.247.80  echo.Set objXMLHTTP = Nothing  
-52.87.247.80  echo.End If 
-52.87.247.80 ) 1>C:\chef\wget.vbs 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>(
-52.87.247.80 echo.param( 
-52.87.247.80  echo.   [String] $remoteUrl,  
-52.87.247.80  echo.   [String] $localPath  
-52.87.247.80  echo.) 
-52.87.247.80  echo. 
-52.87.247.80  echo.$ProxyUrl = $env:http_proxy;  
-52.87.247.80  echo.$webClient = new-object System.Net.WebClient;  
-52.87.247.80  echo. 
-52.87.247.80  echo.if ($ProxyUrl -ne '') {  
-52.87.247.80  echo.  $WebProxy = New-Object System.Net.WebProxy($ProxyUrl,$true)  
-52.87.247.80  echo.  $WebClient.Proxy = $WebProxy  
-52.87.247.80  echo.} 
-52.87.247.80  echo. 
-52.87.247.80  echo.$webClient.DownloadFile($remoteUrl, $localPath); 
-52.87.247.80 ) 1>C:\chef\wget.ps1 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>(
-52.87.247.80  
-52.87.247.80   
-52.87.247.80  
-52.87.247.80 ) 
-52.87.247.80 Detected Windows Version 6.3 Build 9600
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>goto Version6.3 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>goto Version6.2 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>goto architecture_select 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>IF "AMD64" == "x86" IF not defined PROCESSOR_ARCHITEW6432 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>goto install 
-52.87.247.80 Checking for existing downloaded package at "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi"
-52.87.247.80 No existing downloaded packages to delete.
-52.87.247.80 Attempting to download client package using PowerShell if available...
-52.87.247.80 powershell.exe -ExecutionPolicy Unrestricted -InputFormat None -NoProfile -NonInteractive -File  C:\chef\wget.ps1 "https://www.chef.io/chef/download?p=windows&pv=2012&m=x86_64&DownloadContext=PowerShell&v=12" "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi"
-52.87.247.80 Download via PowerShell succeeded.
-52.87.247.80 Installing downloaded client package...
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>msiexec /qn /log "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-msi20716.log" /i "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi" 
-52.87.247.80 Successfully installed Chef Client package.
-52.87.247.80 Installation completed successfully
-52.87.247.80 Writing validation key...
-52.87.247.80 Validation key written.
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>mkdir C:\chef\trusted_certs 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>(
-52.87.247.80 echo.-----BEGIN CERTIFICATE-----  
-52.87.247.80  echo.MIIEFzCCAv+gAwIBAgIBADANBgkqhkiG9w0BAQsFADBpMQswCQYDVQQGEwJVUzEQ 
-52.87.247.80  echo.MA4GA1UECgwHWW91Q29ycDETMBEGA1UECwwKT3BlcmF0aW9uczEzMDEGA1UEAwwq 
-52.87.247.80  echo.ZWMyLTU0LTIzNC0xNTktMTM4LmNvbXB1dGUtMS5hbWF6b25hd3MuY29tMB4XDTE2 
-52.87.247.80  echo.MTAwNzExMjUwNFoXDTI2MTAwNTExMjUwNFowaTELMAkGA1UEBhMCVVMxEDAOBgNV 
-52.87.247.80  echo.BAoMB1lvdUNvcnAxEzARBgNVBAsMCk9wZXJhdGlvbnMxMzAxBgNVBAMMKmVjMi01 
-52.87.247.80  echo.NC0yMzQtMTU5LTEzOC5jb21wdXRlLTEuYW1hem9uYXdzLmNvbTCCASIwDQYJKoZI 
-52.87.247.80  echo.hvcNAQEBBQADggEPADCCAQoCggEBAKnmTSJmuEObUxlK+tiywv1WJNRnDqgtK0Ac 
-52.87.247.80  echo.bOpYnx0OcEi1pUprFSkmNFgWWi7lCRvoAKbsCSu7OIlGyLwpxp8Qf/nVK4V4crjj 
-52.87.247.80  echo.EZMF3KAw4Tdzu2y/TC0BtlfXjNTkLblnOA9BTi2F9nj+954G6V/EmxhSqeVxj6LD 
-52.87.247.80  echo.6Al8TRwuz4QLkh/D0m3dN2VwAX6ymhqe4GjFjuFV7F6xjBa0eWo1EG9sJqxHI9rL 
-52.87.247.80  echo.TSL4kfMRVXGr0psOTY5bB4YxUxAI1gyzIVmFU1YkbXa1qvx51b2aQIS4Rzffcauv 
-52.87.247.80  echo.KPM5Wq6mTPLsMlHyh5LO2uF5KCz+7hc3CZq9qzjGa3/KJyVEPy0CAwEAAaOByTCB 
-52.87.247.80  echo.xjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBRA1L2FzYokjNfibs/5AJ66T2RI 
-52.87.247.80  echo.SzCBkwYDVR0jBIGLMIGIgBRA1L2FzYokjNfibs/5AJ66T2RIS6FtpGswaTELMAkG 
-52.87.247.80  echo.A1UEBhMCVVMxEDAOBgNVBAoMB1lvdUNvcnAxEzARBgNVBAsMCk9wZXJhdGlvbnMx 
-52.87.247.80  echo.MzAxBgNVBAMMKmVjMi01NC0yMzQtMTU5LTEzOC5jb21wdXRlLTEuYW1hem9uYXdz 
-52.87.247.80  echo.LmNvbYIBADANBgkqhkiG9w0BAQsFAAOCAQEACn5mRkXVCOI7YUvcG6lQ8uvvxGY+ 
-52.87.247.80  echo.DxyK7IGeN5bJNCIsJODjt5yLnKbQ9Ff0LlmtrFY3IY1u3DqqyaKtadLO+I75+4v1 
-52.87.247.80  echo.IiXBNj85sB7bOE8fSSaMEuKdSW4IxaYiBVvm3xkgUDwgXF+T6WJEC8gHUsiy/Wv/ 
-52.87.247.80  echo.ODcrsc//jclXxHCWymaEcKGff+AXoYp+1G2HNVmmYff5pq5HOaB0T1RoUWNgpKnm 
-52.87.247.80  echo.LjbTVMQ8KctXcc0eL0G5ncwE2BA+ztQoiBFXBnwE3A7j6q2DA8WweIictlm70Xcu 
-52.87.247.80  echo.pqPsdG+hOjHXZ0mr4cpMei9NG73zNTFibTSxmLuGDKqdRWA9NwVJzTKemg==  
-52.87.247.80  echo.-----END CERTIFICATE----- 
-52.87.247.80 ) 1>C:\chef/trusted_certs/ec2-54-234-159-138_compute-1_amazonaws_com.crt 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>(
-52.87.247.80 echo.log_level        :info  
-52.87.247.80  echo.log_location     STDOUT  
-52.87.247.80  echo. 
-52.87.247.80  echo.chef_server_url  "https://ec2-54-234-159-138.compute-1.amazonaws.com/organizations/4thcoffee"  
-52.87.247.80  echo.validation_client_name "chef-validator"  
-52.87.247.80  echo. 
-52.87.247.80  echo.file_cache_path   "c:/chef/cache"  
-52.87.247.80  echo.file_backup_path  "c:/chef/backup"  
-52.87.247.80  echo.cache_options     ({:path => "c:/chef/cache/checksums", :skip_expires => true})  
-52.87.247.80  echo. 
-52.87.247.80  echo.node_name "node1-windows"  
-52.87.247.80  echo.trusted_certs_dir "c:/chef/trusted_certs" 
-52.87.247.80 ) 1>C:\chef\client.rb 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>(echo.{"run_list":["recipe[learn_chef_iis]"]}) 1>C:\chef\first-boot.json 
-52.87.247.80 Starting chef to bootstrap the node...
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>SET "PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Amazon\cfn-bootstrap\;C:\ruby\bin;C:\opscode\chef\bin;C:\opscode\chef\embedded\bin" 
-52.87.247.80 
-52.87.247.80 C:\Users\Administrator>chef-client -c c:/chef/client.rb -j c:/chef/first-boot.json 
-52.87.247.80 [2016-10-07T11:37:14+00:00] INFO: *** Chef 12.14.89 ***
-52.87.247.80 [2016-10-07T11:37:14+00:00] INFO: Platform: x64-mingw32
-52.87.247.80 [2016-10-07T11:37:14+00:00] INFO: Chef-client pid: 2892
-52.87.247.80 [2016-10-07T11:37:46+00:00] INFO: Setting the run_list to ["recipe[learn_chef_iis]"] from CLI options
-52.87.247.80 [2016-10-07T11:37:46+00:00] INFO: Run List is [recipe[learn_chef_iis]]
-52.87.247.80 [2016-10-07T11:37:46+00:00] INFO: Run List expands to [learn_chef_iis]
-52.87.247.80 [2016-10-07T11:37:46+00:00] INFO: Starting Chef Run for node1-windows
-52.87.247.80 [2016-10-07T11:37:46+00:00] INFO: Running start handlers
-52.87.247.80 [2016-10-07T11:37:46+00:00] INFO: Start handlers complete.
-52.87.247.80 [2016-10-07T11:37:46+00:00] INFO: HTTP Request Returned 404 Not Found: 
-52.87.247.80 [2016-10-07T11:37:46+00:00] INFO: Loading cookbooks [learn_chef_iis@0.1.0]
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/chefignore in the cache.
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.gitignore in the cache.
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/Berksfile in the cache.
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/metadata.rb in the cache.
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/templates/Default.htm.erb in the cache.
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/README.md in the cache.
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/recipes/default.rb in the cache.
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.kitchen.yml in the cache.
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/LICENSE in the cache.
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Processing powershell_script[Install IIS] action run (learn_chef_iis::default line 6)
-52.87.247.80 [2016-10-07T11:37:47+00:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
-52.87.247.80 [2016-10-07T11:39:58+00:00] INFO: powershell_script[Install IIS] ran successfully
-52.87.247.80 [2016-10-07T11:39:58+00:00] INFO: Processing windows_service[w3svc] action enable (learn_chef_iis::default line 12)
-52.87.247.80 [2016-10-07T11:39:58+00:00] INFO: Processing windows_service[w3svc] action start (learn_chef_iis::default line 12)
-52.87.247.80 [2016-10-07T11:39:58+00:00] INFO: Processing template[c:\inetpub\wwwroot\Default.htm] action create (learn_chef_iis::default line 16)
-52.87.247.80 [2016-10-07T11:39:58+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] created file c:\inetpub\wwwroot\Default.htm
-52.87.247.80 [2016-10-07T11:39:58+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
-52.87.247.80 [2016-10-07T11:39:58+00:00] INFO: Chef Run complete in 131.966644 seconds
-52.87.247.80 [2016-10-07T11:39:58+00:00] INFO: Running report handlers
-52.87.247.80 [2016-10-07T11:39:58+00:00] INFO: Report handlers complete
+Waiting for remote response before bootstrap.54.163.31.72 . 
+54.163.31.72 Response received.
+54.163.31.72 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4300-1476205369.bat" chunk 1 
+54.163.31.72 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4300-1476205369.bat" chunk 2 
+54.163.31.72 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4300-1476205369.bat" chunk 3 
+54.163.31.72 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4300-1476205369.bat" chunk 4 
+54.163.31.72 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4300-1476205369.bat" chunk 5 
+54.163.31.72 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4300-1476205369.bat" chunk 6 
+54.163.31.72 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4300-1476205369.bat" chunk 7 
+54.163.31.72 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4300-1476205369.bat" chunk 8 
+54.163.31.72 Checking for existing directory "C:\chef"...
+54.163.31.72 Existing directory found, skipping creation.
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>(
+54.163.31.72 echo.url = WScript.Arguments.Named("url")  
+54.163.31.72  echo.path = WScript.Arguments.Named("path")  
+54.163.31.72  echo.proxy = null  
+54.163.31.72  echo.'* Vaguely attempt to handle file:// scheme urls by url unescaping and switching all  
+54.163.31.72  echo.'* / into .  Also assume that file:/// is a local absolute path and that file://<foo>  
+54.163.31.72  echo.'* is possibly a network file path.  
+54.163.31.72  echo.If InStr(url, "file://") = 1 Then  
+54.163.31.72  echo.url = Unescape(url)  
+54.163.31.72  echo.If InStr(url, "file:///") = 1 Then  
+54.163.31.72  echo.sourcePath = Mid(url, Len("file:///") + 1)  
+54.163.31.72  echo.Else 
+54.163.31.72  echo.sourcePath = Mid(url, Len("file:") + 1)  
+54.163.31.72  echo.End If  
+54.163.31.72  echo.sourcePath = Replace(sourcePath, "/", "\")  
+54.163.31.72  echo. 
+54.163.31.72  echo.Set objFSO = CreateObject("Scripting.FileSystemObject")  
+54.163.31.72  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
+54.163.31.72  echo.objFSO.CopyFile sourcePath, path, true  
+54.163.31.72  echo.Set objFSO = Nothing  
+54.163.31.72  echo. 
+54.163.31.72  echo.Else 
+54.163.31.72  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP")  
+54.163.31.72  echo.Set wshShell = CreateObject( "WScript.Shell" )  
+54.163.31.72  echo.Set objUserVariables = wshShell.Environment("USER")  
+54.163.31.72  echo. 
+54.163.31.72  echo.rem http proxy is optional  
+54.163.31.72  echo.rem attempt to read from HTTP_PROXY env var first  
+54.163.31.72  echo.On Error Resume Next  
+54.163.31.72  echo. 
+54.163.31.72  echo.If NOT (objUserVariables("HTTP_PROXY") = "") Then  
+54.163.31.72  echo.proxy = objUserVariables("HTTP_PROXY")  
+54.163.31.72  echo. 
+54.163.31.72  echo.rem fall back to named arg  
+54.163.31.72  echo.ElseIf NOT (WScript.Arguments.Named("proxy") = "") Then  
+54.163.31.72  echo.proxy = WScript.Arguments.Named("proxy")  
+54.163.31.72  echo.End If  
+54.163.31.72  echo. 
+54.163.31.72  echo.If NOT isNull(proxy) Then  
+54.163.31.72  echo.rem setProxy method is only available on ServerXMLHTTP 6.0+  
+54.163.31.72  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")  
+54.163.31.72  echo.objXMLHTTP.setProxy 2, proxy  
+54.163.31.72  echo.End If  
+54.163.31.72  echo. 
+54.163.31.72  echo.On Error Goto 0  
+54.163.31.72  echo. 
+54.163.31.72  echo.objXMLHTTP.open "GET", url, false  
+54.163.31.72  echo.objXMLHTTP.send() 
+54.163.31.72  echo.If objXMLHTTP.Status = 200 Then  
+54.163.31.72  echo.Set objADOStream = CreateObject("ADODB.Stream")  
+54.163.31.72  echo.objADOStream.Open 
+54.163.31.72  echo.objADOStream.Type = 1  
+54.163.31.72  echo.objADOStream.Write objXMLHTTP.ResponseBody  
+54.163.31.72  echo.objADOStream.Position = 0  
+54.163.31.72  echo.Set objFSO = Createobject("Scripting.FileSystemObject")  
+54.163.31.72  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
+54.163.31.72  echo.Set objFSO = Nothing  
+54.163.31.72  echo.objADOStream.SaveToFile path  
+54.163.31.72  echo.objADOStream.Close 
+54.163.31.72  echo.Set objADOStream = Nothing  
+54.163.31.72  echo.End If  
+54.163.31.72  echo.Set objXMLHTTP = Nothing  
+54.163.31.72  echo.End If 
+54.163.31.72 ) 1>C:\chef\wget.vbs 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>(
+54.163.31.72 echo.param( 
+54.163.31.72  echo.   [String] $remoteUrl,  
+54.163.31.72  echo.   [String] $localPath  
+54.163.31.72  echo.) 
+54.163.31.72  echo. 
+54.163.31.72  echo.$ProxyUrl = $env:http_proxy;  
+54.163.31.72  echo.$webClient = new-object System.Net.WebClient;  
+54.163.31.72  echo. 
+54.163.31.72  echo.if ($ProxyUrl -ne '') {  
+54.163.31.72  echo.  $WebProxy = New-Object System.Net.WebProxy($ProxyUrl,$true)  
+54.163.31.72  echo.  $WebClient.Proxy = $WebProxy  
+54.163.31.72  echo.} 
+54.163.31.72  echo. 
+54.163.31.72  echo.$webClient.DownloadFile($remoteUrl, $localPath); 
+54.163.31.72 ) 1>C:\chef\wget.ps1 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>(
+54.163.31.72  
+54.163.31.72   
+54.163.31.72  
+54.163.31.72 ) 
+54.163.31.72 Detected Windows Version 6.3 Build 9600
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>goto Version6.3 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>goto Version6.2 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>goto architecture_select 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>IF "AMD64" == "x86" IF not defined PROCESSOR_ARCHITEW6432 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>goto install 
+54.163.31.72 Checking for existing downloaded package at "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi"
+54.163.31.72 No existing downloaded packages to delete.
+54.163.31.72 Attempting to download client package using PowerShell if available...
+54.163.31.72 powershell.exe -ExecutionPolicy Unrestricted -InputFormat None -NoProfile -NonInteractive -File  C:\chef\wget.ps1 "https://www.chef.io/chef/download?p=windows&pv=2012&m=x86_64&DownloadContext=PowerShell&v=12" "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi"
+54.163.31.72 Download via PowerShell succeeded.
+54.163.31.72 Installing downloaded client package...
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>msiexec /qn /log "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-msi1301.log" /i "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi" 
+54.163.31.72 Successfully installed Chef Client package.
+54.163.31.72 A subdirectory or file C:\chef\trusted_certs already exists.
+54.163.31.72 Installation completed successfully
+54.163.31.72 Writing validation key...
+54.163.31.72 Validation key written.
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>mkdir C:\chef\trusted_certs 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>(
+54.163.31.72 echo.-----BEGIN CERTIFICATE-----  
+54.163.31.72  echo.MIIEFDCCAvygAwIBAgIBADANBgkqhkiG9w0BAQsFADBoMQswCQYDVQQGEwJVUzEQ 
+54.163.31.72  echo.MA4GA1UECgwHWW91Q29ycDETMBEGA1UECwwKT3BlcmF0aW9uczEyMDAGA1UEAwwp 
+54.163.31.72  echo.ZWMyLTU0LTE2NS0yNDYtMjIuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20wHhcNMTYx 
+54.163.31.72  echo.MDExMTYyMDEzWhcNMjYxMDA5MTYyMDEzWjBoMQswCQYDVQQGEwJVUzEQMA4GA1UE 
+54.163.31.72  echo.CgwHWW91Q29ycDETMBEGA1UECwwKT3BlcmF0aW9uczEyMDAGA1UEAwwpZWMyLTU0 
+54.163.31.72  echo.LTE2NS0yNDYtMjIuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20wggEiMA0GCSqGSIb3 
+54.163.31.72  echo.DQEBAQUAA4IBDwAwggEKAoIBAQDNjB3UzuCf/Tq5ShZ/R7cI0vTm8Yr3WO8U/gss 
+54.163.31.72  echo.QGLUovXmPugyfnGI8gNk1Gr7PhkoJuhvbuwnQDBKEmdctPRCdphcqZ6Hda9s3ubO 
+54.163.31.72  echo.nnHTbudZrLse846cJxpwxvP58xo7OrRMNyjz86HjSZVClu8GjF9w726LT8+iu/Vw 
+54.163.31.72  echo.K+EocXq01BWn/d+2gEJm3G32z2PEcvLdBaB6V2ArnWXQVMnVbMk2Z98OjAs9x+sB 
+54.163.31.72  echo.TVI5s4rOIxyLdGcXbo1bvpvJBrHxRN6YD15NZBHhjXkcfue3KQxapdhNKzN3g685 
+54.163.31.72  echo.GvYoijO6wz/kYLWYxrwGCg2O6oqP/WQJ980iLR0oeGi3/9hPAgMBAAGjgcgwgcUw 
+54.163.31.72  echo.DwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUkTVKIK1ZIUEdLUNjkbblKVAdRuMw 
+54.163.31.72  echo.gZIGA1UdIwSBijCBh4AUkTVKIK1ZIUEdLUNjkbblKVAdRuOhbKRqMGgxCzAJBgNV 
+54.163.31.72  echo.BAYTAlVTMRAwDgYDVQQKDAdZb3VDb3JwMRMwEQYDVQQLDApPcGVyYXRpb25zMTIw 
+54.163.31.72  echo.MAYDVQQDDCllYzItNTQtMTY1LTI0Ni0yMi5jb21wdXRlLTEuYW1hem9uYXdzLmNv 
+54.163.31.72  echo.bYIBADANBgkqhkiG9w0BAQsFAAOCAQEAH8t+dmwiuidzVtwHwwWhmfHp6EhmOwsj 
+54.163.31.72  echo./5ePC1wpBUGpUYQgeX1vgwXW8X4o2FZJ0z/WZ1sEmtMhCYOFVjtyN3cpYQEx0Xsm 
+54.163.31.72  echo.UiWRxpq5TUXxf4WMymv3AYrYuszVB6XiG3QqjHBYugonhJpH3c5mZWwYq4dV8ngC 
+54.163.31.72  echo.AlxlF7Bg1S2aLnCibISFV55I/ONvjN1NtemnKw9jDU5Ueu7O3dh6BHStEOG/N5JG 
+54.163.31.72  echo.U0M7lL31yBErTshdo3FWdbTtwMzpAxXuK2aWjJZyvhISMXHHVQoFJ0OpBDGoXwwe 
+54.163.31.72  echo.ECE9MPV6b7iM/ANLaXzrzGfyDA34/grGlt/hL4TOX9W3vzoBAdFhEQ==  
+54.163.31.72  echo.-----END CERTIFICATE----- 
+54.163.31.72 ) 1>C:\chef/trusted_certs/ec2-54-165-246-22_compute-1_amazonaws_com.crt 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>(
+54.163.31.72 echo.log_level        :info  
+54.163.31.72  echo.log_location     STDOUT  
+54.163.31.72  echo. 
+54.163.31.72  echo.chef_server_url  "https://ec2-54-165-246-22.compute-1.amazonaws.com/organizations/4thcoffee"  
+54.163.31.72  echo.validation_client_name "chef-validator"  
+54.163.31.72  echo. 
+54.163.31.72  echo.file_cache_path   "c:/chef/cache"  
+54.163.31.72  echo.file_backup_path  "c:/chef/backup"  
+54.163.31.72  echo.cache_options     ({:path => "c:/chef/cache/checksums", :skip_expires => true})  
+54.163.31.72  echo. 
+54.163.31.72  echo.node_name "node1-windows"  
+54.163.31.72  echo.trusted_certs_dir "c:/chef/trusted_certs" 
+54.163.31.72 ) 1>C:\chef\client.rb 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>(echo.{"run_list":["recipe[learn_chef_iis]"]}) 1>C:\chef\first-boot.json 
+54.163.31.72 Starting chef to bootstrap the node...
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>SET "PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Amazon\cfn-bootstrap\;C:\ruby\bin;C:\opscode\chef\bin;C:\opscode\chef\embedded\bin" 
+54.163.31.72 
+54.163.31.72 C:\Users\Administrator>chef-client -c c:/chef/client.rb -j c:/chef/first-boot.json 
+54.163.31.72 [2016-10-11T17:04:27+00:00] INFO: *** Chef 12.14.89 ***
+54.163.31.72 [2016-10-11T17:04:27+00:00] INFO: Platform: x64-mingw32
+54.163.31.72 [2016-10-11T17:04:27+00:00] INFO: Chef-client pid: 2244
+54.163.31.72 [2016-10-11T17:04:59+00:00] INFO: Setting the run_list to ["recipe[learn_chef_iis]"] from CLI options
+54.163.31.72 [2016-10-11T17:04:59+00:00] INFO: Run List is [recipe[learn_chef_iis]]
+54.163.31.72 [2016-10-11T17:04:59+00:00] INFO: Run List expands to [learn_chef_iis]
+54.163.31.72 [2016-10-11T17:04:59+00:00] INFO: Starting Chef Run for node1-windows
+54.163.31.72 [2016-10-11T17:04:59+00:00] INFO: Running start handlers
+54.163.31.72 [2016-10-11T17:04:59+00:00] INFO: Start handlers complete.
+54.163.31.72 [2016-10-11T17:04:59+00:00] INFO: HTTP Request Returned 404 Not Found: 
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Loading cookbooks [learn_chef_iis@0.1.0]
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Storing updated cookbooks/learn_chef_iis/metadata.rb in the cache.
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Storing updated cookbooks/learn_chef_iis/Berksfile in the cache.
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Storing updated cookbooks/learn_chef_iis/LICENSE in the cache.
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Storing updated cookbooks/learn_chef_iis/recipes/default.rb in the cache.
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Storing updated cookbooks/learn_chef_iis/templates/Default.htm.erb in the cache.
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Storing updated cookbooks/learn_chef_iis/chefignore in the cache.
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.kitchen.yml in the cache.
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.gitignore in the cache.
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Storing updated cookbooks/learn_chef_iis/README.md in the cache.
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Processing powershell_script[Install IIS] action run (learn_chef_iis::default line 6)
+54.163.31.72 [2016-10-11T17:05:00+00:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
+54.163.31.72 [2016-10-11T17:06:24+00:00] INFO: powershell_script[Install IIS] ran successfully
+54.163.31.72 [2016-10-11T17:06:24+00:00] INFO: Processing windows_service[w3svc] action enable (learn_chef_iis::default line 12)
+54.163.31.72 [2016-10-11T17:06:24+00:00] INFO: Processing windows_service[w3svc] action start (learn_chef_iis::default line 12)
+54.163.31.72 [2016-10-11T17:06:24+00:00] INFO: Processing template[c:\inetpub\wwwroot\Default.htm] action create (learn_chef_iis::default line 16)
+54.163.31.72 [2016-10-11T17:06:24+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] created file c:\inetpub\wwwroot\Default.htm
+54.163.31.72 [2016-10-11T17:06:24+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
+54.163.31.72 [2016-10-11T17:06:24+00:00] INFO: Chef Run complete in 84.984416 seconds
+54.163.31.72 [2016-10-11T17:06:24+00:00] INFO: Running report handlers
+54.163.31.72 [2016-10-11T17:06:24+00:00] INFO: Report handlers complete
