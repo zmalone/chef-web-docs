@@ -12,14 +12,14 @@ module SnippetHelpers
     end
   end
 
-  def command_snippet(page: nil, path:, workstation: nil, replace_prompt: nil, features: [:stdin, :stdout])
+  def command_snippet(page: nil, path:, workstation: nil, replace_prompt: nil, features: [:stdin, :stdout], indent_level: 0)
     workstation ||= page.data.snippet_workstation if page
     if page
       path = File.join(page.data.snippet_path, path + "-#{workstation}")
     else
       path = path + "-#{workstation}"
     end
-    render_snippet(path) do |_metadata|
+    render_snippet(path, indent_level) do |_metadata|
       [*features].map do |feature|
         content = IO.read(File.join('snippets', path, feature.to_s))
         if feature == :stdin && (replace_prompt || (page && page.data.replace_prompt))
@@ -31,17 +31,17 @@ module SnippetHelpers
     end
   end
 
-  def code_snippet(page: nil, path:)
+  def code_snippet(page: nil, path:, indent_level: 0)
     path = File.join(page.data.snippet_path, path) if page
 
-    render_snippet(path) do |metadata|
+    render_snippet(path, indent_level) do |metadata|
       IO.read(File.join('snippets', path, metadata[:file]))
     end
   end
 
   private
 
-  def render_snippet(path, &block)
+  def render_snippet(path, indent_level, &block)
     begin
       snippet_path = File.join('snippets', path)
       metadata = load_metadata(snippet_path)
@@ -51,7 +51,7 @@ module SnippetHelpers
       body = yield metadata
       body += "\n" unless body.end_with? "\n"
 
-      concat "```#{language}\n#{path}\n#{body}```"
+      concat "#{"  " * indent_level}```#{language}\n#{path}\n#{body}```"
     rescue Exception => e
       if deploy?
         raise e
@@ -63,7 +63,7 @@ module SnippetHelpers
 
   def commentize_path(path, language)
     case language
-    when 'conf', 'ruby', 'ini', 'yaml', 'powershell', 'bash', 'ps'
+    when 'conf', 'ruby', 'ini', 'yaml', 'powershell', 'bash', 'ps', 'shell'
       '# ' + path
     when 'html'
       "<!-- #{path} -->"

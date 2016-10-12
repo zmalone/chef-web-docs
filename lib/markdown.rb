@@ -63,7 +63,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[TIP\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-info-circle tip-icon\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[GITHUB\] (.+)<\/p>/)  { "<div class=\"alert-box github\"><i class=\"fa fa-2x fa-github\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[FEEDBACK\] (.+)<\/p>/)  { "<div class=\"alert-box feedback\"><i class=\"fa fa-2x fa-comment-o\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[HEADLINE\] (.+)<\/p>/)  { "<div class=\"alert-box headline\"><span class=\"key-point\">KEY POINT: </span>#{$1}</div>" }
+    content.gsub!(/<p>\[HEADLINE\] (.+)<\/p>/)  { "<div class=\"alert-box headline\"><span class=\"key-point-label\">KEY POINT: </span>#{$1}</div>" }
     content.gsub!(/<p>\[QUOTE\] (.+)<\/p>/)  { "<div class=\"alert-box quote\"><i class=\"fa fa-quote-left\"></i>&nbsp;<i>#{$1}</i></div>" }
     content.gsub!(/<p>\[AWS\] (.+)<\/p>/)  { "<div class=\"alert-box aws\"><img class=\"alert-box-icon-large\" src=\"/assets/images/partner/AWS-Cloud.svg\"></img>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[CLOUD\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-cloud blueiconcolor\"></i>&nbsp; #{$1}</div>" }

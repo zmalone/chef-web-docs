@@ -149,6 +149,81 @@ If you're still unable to connect, your company's firewall or proxy server might
 
 [END_BOX]
 
+<% if current_page.parent.data.environment == 'aws-automate' %>
+
+[START_BOX]
+
+## 5. Configure data collection
+
+Earlier, you configured Chef server [to send data](/manage-a-node/rhel/automate/set-up-your-chef-server#step8) to Chef Automate. Now you'll repeat a simlar process to enable your node to send data. The details of a `chef-client` run is one example of data that nodes can send.
+
+To configure your node to send data, you need:
+
+1. the Chef Automate server's SSL certificate.
+1. a configuration file that specifies how to authenticate with Chef Automate, similar to the one you [created for your Chef server](/tutorials/manage-a-node/rhel/automate/set-up-your-chef-server#step8).
+
+### Upload the Chef Automate server's SSL certificate
+
+On Linux nodes, trusted Chef SSL certificates go in the <% fp '/etc/chef/trusted_certs' %> directory. Create that directory now and make it writeable by all users.
+
+```bash
+$ sudo mkdir -p /etc/chef/trusted_certs
+$ sudo chmod 0777 /etc/chef/trusted_certs
+```
+
+Earlier, you [download your Chef Automate server's SSL certificate](/tutorials/manage-a-node/rhel/automate/set-up-your-chef-server#step7) to your workstation. Run `scp` to upload the certificate to your node. Here's an example.
+
+<% command_snippet(page: current_page, path: 'copy-server-certificate/upload-automate-certificate-to-node1-centos', features: [:stdin, :stderr]) %>
+
+### Create the data collection configuration file
+
+To [configure your node to send data](https://docs.chef.io/setup_visibility_chef_automate.html#configure-nodes) to Chef Automate, you can modify your Chef configuration file (typically located at <% fp '/etc/chef/client.rb' %>) or add an additinonal configuration file to the <% fp '/etc/chef/client.d' %> directory.
+
+Because Chef is not yet installed on your node, the configuration file <% fp '/etc/chef/client.rb' %> does not yet exist, so here you'll use the second option.
+
+Start by creating the <% fp '/etc/chef/client.d' %> directory on your node.
+
+```bash
+$ sudo mkdir -p /etc/chef/client.d
+```
+
+Next, add this to a file named <% fp '/etc/chef/client.d/data_collector.rb' %> on your node. Replace <% ph 'CHEF_AUTOMATE_FQDN' %> with your Chef Automate server's FQDN.
+
+```ruby
+# /etc/chef/client.d/data_collector.rb
+data_collector.server_url "https://CHEF_AUTOMATE_FQDN/data-collector/v0/"
+data_collector.token "93a49a4f2482c64126f7b6015e6b0f30284287ee4054ff8807fb63d9cbd1c506"
+```
+
+For example:
+
+```ruby
+data_collector.server_url "https://ec2-52-23-164-34.compute-1.amazonaws.com/data-collector/v0/"
+data_collector.token "93a49a4f2482c64126f7b6015e6b0f30284287ee4054ff8807fb63d9cbd1c506"
+```
+
+As with your Chef server, you can you can use the token value shown here for learning purposes. In a more production-like envirionment, you can [create your own token](https://docs.chef.io/setup_visibility_chef_automate.html#understand-and-optionally-create-data-collector-tokens).
+
+Your node is now ready to send data to Chef Automate.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Close your SSH session
+
+Now close the SSH connection to your Red Hat Enterprise Linux or CentOS node.
+
+```bash
+[root@40.76.28.32 ~]$ exit
+logout
+Connection to 40.76.28.32 closed.
+```
+
+[END_BOX]
+
+<% else %>
+
 [START_BOX]
 
 ## 5. Close your SSH session
@@ -162,6 +237,8 @@ Connection to 40.76.28.32 closed.
 ```
 
 [END_BOX]
+
+<% end %>
 
 <% next_page(current_page) do %>
 

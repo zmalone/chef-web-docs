@@ -63,21 +63,21 @@ The output shows that the cookbook was successfully uploaded, but you can run th
 
 <% if current_page.parent.data.environment == 'aws-automate' %>
 
-Return to the Chef Automate dashboard and refresh the page. You see that the event is registered with Chef Automate.
-
-![](manage-a-node/chef_automate_nodes_upload_cookbook.png)
-
-**TODO**: ^^ Fix this. It should show 1.
-
 Recall that when you set up your Chef server, you [configured Chef server to send server object data](https://docs.chef.io/setup_visibility_chef_automate.html#configure-chef-server-to-send-server-object-data) to Chef Automate.
 
-```bash
-$ echo "data_collector["root_url"] = "https://CHEF_AUTOMATE_FQDN/data-collector/v0/" | sudo tee -a /etc/opscode/chef-server.rb
-$ echo "data_collector["token"] = "93a49a4f2482c64126f7b6015e6b0f30284287ee4054ff8807fb63d9cbd1c506" | sudo tee -a /etc/opscode/chef-server.rb
-$ sudo chef-server-ctl reconfigure
+```ruby
+# /etc/opscode/chef-server.rb
+data_collector["root_url"] = "https://CHEF_AUTOMATE_FQDN/data-collector/v0/"
+data_collector["token"] = "93a49a4f2482c64126f7b6015e6b0f30284287ee4054ff8807fb63d9cbd1c506"
 ```
 
 This enables Chef server to send events to Chef Automate, such as when you upload a cookbook to Chef server.
+
+Return to the Chef Automate dashboard and refresh the page. Although you might expect to see the **Cookbooks Uploaded** field show 1, you see that it still shows 0.
+
+![](manage-a-node/chef_automate_nodes_upload_cookbook_0.png)
+
+That's because Chef Automate displays data only for Chef server organizations that have at least one node associated with it. This is to help provide a focused view on the nodes in your cluster. You'll see the event appear shortly when you bootstrap your node.
 
 <% end %>
 
