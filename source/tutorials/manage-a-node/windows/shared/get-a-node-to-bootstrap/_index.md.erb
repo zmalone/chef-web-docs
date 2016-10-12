@@ -148,6 +148,102 @@ Connected successfully to 52.201.225.210 at http://52.201.225.210:5985/wsman.
 
 [END_BOX]
 
+<% if current_page.parent.data.environment == 'aws-automate' %>
+
+[START_BOX]
+
+## 6. Configure data collection
+
+Earlier, you configured Chef server [to send data](/tutorials/manage-a-node/windows/automate/set-up-your-chef-server#step8) to Chef Automate. Now you'll repeat a simlar process to enable your node to send data. The details of a `chef-client` run is one example of data that nodes can send.
+
+To configure your node to send data, you need:
+
+1. the Chef Automate server's SSL certificate.
+1. a configuration file that specifies how to authenticate with Chef Automate, similar to the one you [created for your Chef server](/tutorials/manage-a-node/ubuntu/automate/set-up-your-chef-server#step8).
+
+### Upload the Chef Automate server's SSL certificate
+
+On Windows nodes, trusted Chef SSL certificates go in the <% fp 'C:\chef\trusted_certs' %> directory. From a PowerShell window on your Windows Server node, create that directory now.
+
+```ps
+$ New-Item C:\chef\trusted_certs -ItemType Directory -Force
+```
+
+Earlier, you [download your Chef Automate server's SSL certificate](/tutorials/manage-a-node/windows/automate/set-up-your-chef-server#step7) to your workstation. For a Linux node, you might run `scp` to upload the certificate to your node.
+
+For Windows nodes, you can write a small Ruby program to upload the SSL certificate from your workstation. Chef is built on Ruby, and the Chef DK provides you with the full Ruby programming language. You can run this program from any workstation &ndash; whether it's Linux, Mac OS, or Windows.
+
+Add the following to a file named <% fp 'upload-cert.rb' %> in a temporary directory on your workstation (either <% fp '/tmp' %> or <% fp 'C:\Temp' %>).
+
+```ruby
+# /tmp/upload-cert.rb
+require 'winrm'
+require 'winrm-fs'
+
+opts = {
+  endpoint: 'http://NODE_IP_ADDRESS:5985/wsman',
+  user: 'USERNAME',
+  password: 'PASSWORD'
+}
+connection = WinRM::Connection.new(opts)
+file_manager = WinRM::FS::FileManager.new(connection)
+file_manager.upload('/tmp/CHEF_AUTOMATE_FQDN.crt', 'C:/chef/trusted_certs/CHEF_AUTOMATE_FQDN.crt')
+```
+
+Next, replace:
+
+* <% ph 'NODE_IP_ADDRESS' %> with your node's IP address.
+* <% ph 'USERNAME' %> and <% ph 'PASSWORD' %> with the username and password you use to connect to your Windows node.
+* <% ph 'CHEF_AUTOMATE_FQDN' %> with your Chef Automate server's FQDN.
+* <% ph '/tmp/' %> with the directory name you used to [download your Chef Automate server's SSL certificate](/tutorials/manage-a-node/windows/automate/set-up-your-chef-server#step7) to your workstation.
+
+Here's a complete example of what this file might look like.
+
+<% code_snippet(path: 'manage-a-node/rhel/aws-automate/get-a-node-to-bootstrap/copy-server-certificate/upload-cert-rb') %>
+
+Next, run the program like this.
+
+<% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/aws-automate/get-a-node-to-bootstrap/copy-server-certificate/upload-automate-certificate-to-node1-windows', features: :stdin) %>
+
+As an optional step, you can verify that the SSL certificate exists in the <% fp 'C:\chef\trusted_certs' %> directory on your Windows node.
+
+[COMMENT] This Ruby program is for learning purposes. In a more production-like environment, you would use your established process to copy the SSL certificate to your node.
+
+### Create the data collection configuration file
+
+To [configure your node to send data](https://docs.chef.io/setup_visibility_chef_automate.html#configure-nodes) to Chef Automate, you can modify your Chef configuration file (typically located at <% fp 'C:\chef\client.rb' %>) or add an additinonal configuration file to the <% fp 'C:\chef\client.d' %> directory.
+
+Because Chef is not yet installed on your node, the configuration file <% fp 'C:\chef\client.rb' %> does not yet exist, so here you'll use the second option.
+
+Start by creating the <% fp 'C:\chef\client.d' %> directory on your node.
+
+```ps
+$ New-Item C:\chef\client.d -ItemType Directory -Force
+```
+
+Next, add this to a file named <% fp 'C:\chef\client.d\data_collector.rb' %> on your node. Replace <% ph 'CHEF_AUTOMATE_FQDN' %> with your Chef Automate server's FQDN.
+
+```ruby
+# C:\chef\client.d\data_collector.rb
+data_collector.server_url "https://CHEF_AUTOMATE_FQDN/data-collector/v0/"
+data_collector.token "93a49a4f2482c64126f7b6015e6b0f30284287ee4054ff8807fb63d9cbd1c506"
+```
+
+For example:
+
+```ruby
+data_collector.server_url "https://ec2-52-23-164-34.compute-1.amazonaws.com/data-collector/v0/"
+data_collector.token "93a49a4f2482c64126f7b6015e6b0f30284287ee4054ff8807fb63d9cbd1c506"
+```
+
+As with your Chef server, you can you can use the token value shown here for learning purposes. In a more production-like envirionment, you can [create your own token](https://docs.chef.io/setup_visibility_chef_automate.html#understand-and-optionally-create-data-collector-tokens).
+
+Your node is now ready to send data to Chef Automate.
+
+[END_BOX]
+
+<% end %>
+
 <% next_page(current_page) do %>
 
 In this part, you brought up a node that you'll configure using Chef. You also created a test connection to your node and verified the firewall enables remote WinRM connections.
