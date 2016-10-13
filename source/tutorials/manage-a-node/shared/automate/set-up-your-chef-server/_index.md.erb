@@ -26,7 +26,7 @@ The following sections outline the minimal setup that's required for this tutori
 
 You can add [additional components](https://docs.chef.io/workflow.html#components), such as build nodes or a Chef Supermarket server, at a later time.
 
-Configuring Chef server to send event data, for example, when a cookbook is uploaded to the Chef server, enables you to see the events in the Chef Automate dashboard. Later in this tutorial, you'll also bring up a node and configure it to send event data to Chef Automate when `chef-client` runs.
+Configuring Chef server to send event data when, for example, a cookbook is uploaded to the Chef server, enables you to see the events in the Chef Automate dashboard. Later in this tutorial, you'll also bring up a node and configure it to send event data to Chef Automate when `chef-client` runs.
 
 [END_BOX]
 
@@ -79,7 +79,7 @@ If your systems use key-based authentication, you would run `ssh` similar to thi
 $ ssh -i /PATH/TO/PRIVATE_KEY USER@IP_ADDRESS
 ```
 
-On this page, you'll run `ssh` and `scp` to connect to your systems. The examples you'll see use key-based authentication and skip host key checking. You may need to modify the commands you see if you connect to your systems. For example, if your systems use password authentication, you would run `ssh` similar to this.
+On this page, you'll run `ssh` and `scp` to connect to your systems. The examples you'll see use key-based authentication and skip host key checking. You may need to modify the commands you see depending on how you connect to your systems. For example, if your systems use password authentication, you would run `ssh` similar to this.
 
 ```bash
 $ ssh USER@IP_ADDRESS
@@ -125,7 +125,7 @@ $ sudo hostname chef-server.test
 
 You then need to [modify the hosts file](https://support.rackspace.com/how-to/modify-your-hosts-file/) on your other servers and your workstation to associate each hostname with its IP address.
 
-Following this example, say your Chef Automate server's IP address is 10.1.1.33. On a Mac OS or Linux workstation, you would a command similar to this:
+Following this example, say your Chef Automate server's IP address is 10.1.1.33. On a Mac OS or Linux workstation, you would run a command similar to this:
 
 ```bash
 # ~
@@ -140,7 +140,7 @@ On Windows, you would run:
 $ Add-Content C:\Windows\System32\drivers\etc\hosts "10.1.1.33 chef-automate.test"
 ```
 
-Similarly, say your Chef server's IP address is 10.1.1.34. On a Mac OS or Linux workstation, you would a command similar to this:
+Similarly, say your Chef server's IP address is 10.1.1.34. On a Mac OS or Linux workstation, you would run a command similar to this:
 
 ```bash
 # ~
@@ -155,7 +155,10 @@ On Windows, you would run:
 $ Add-Content C:\Windows\System32\drivers\etc\hosts "10.1.1.34 chef-server.test"
 ```
 
-Next, add the host file entry for Chef server to your Chef Automate server and the entry for Chef Automate to your Chef server.
+Finally, add host file entries to your Chef server and to your Chef Automate server.
+
+* Your Chef server's host file should have an entry for your Chef Automate server.
+* Your Chef Automate server's host file should have an entry for your Chef server.
 
 [END_BOX]
 
@@ -176,7 +179,7 @@ This script:
 * Updates the `apt` cache, installs `curl`, and sychronizes the system time.
 * Downloads and installs the Chef server package. The package version you see is the latest one this tutorial was tested with.
 * Configures, starts, and waits for all services to initialize.
-* Creates two users and two organiztions:
+* Creates two users and two organizations:
   * The **admin** user can administer the Chef server.
   * The **delivery** user is required by Chef Automate for internal use.
   * The **4thcoffee** and **cohovineyard** [organizations](https://docs.chef.io/server_orgs.html) provide role-based access control to objects on the Chef server.
@@ -213,9 +216,9 @@ Before you install Chef Automate, you'll need to copy two files to your Chef Aut
 
 You'll copy both of these files to the <% fp '/tmp' %> directory on your Chef Automate server.
 
-Using a file transfer utility such as `scp`, start by coping your license key file from your workstation to your Chef Automate server.
+Using a file transfer utility such as `scp`, start by copying your license key file from your workstation to your Chef Automate server.
 
-Here's an example. On Windows, the Chef DK installs Git for Windows, includes the `scp` utility.
+Here's an example. On Windows, the Chef DK installs Git for Windows, including the `scp` utility.
 
 <% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/aws-automate/set-up-your-chef-server/copy-license-to-chef-automate/scp-license', features: [:stdin, :stderr] ) %>
 
@@ -299,7 +302,7 @@ $ scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null USER@CHEF_AUTO
 
 Recall that event data enables you to see events in the Chef Automate dashboard.
 
-To [configure Chef server to send data](https://docs.chef.io/setup_visibility_chef_automate.html#configure-chef-server-to-send-server-object-data) to Chef Automate, you need to modify <% fp '/etc/opscode/chef-server.rb' %> on the Chef server to include data collection configuration.
+To [configure Chef server to send data](https://docs.chef.io/setup_visibility_chef_automate.html#configure-chef-server-to-send-server-object-data) to Chef Automate, you need to modify <% fp '/etc/opscode/chef-server.rb' %> on the Chef server to to include the FQDN and a token.
 
 Modify your copy of <% fp '/etc/opscode/chef-server.rb' %> like this. Replace <% ph 'CHEF_AUTOMATE_FQDN' %> with your Chef Automate server's FQDN.
 
@@ -334,7 +337,7 @@ Your `knife` configuration file should resemble this one. (`node_name`, `client_
 
 <% code_snippet(page: current_page, path: 'generate-knife-config/knife-rb') %>
 
-Earlier, you copied the RSA private key for the **delivery** user from your Chef server to a temporary location so that you could upload it to your Chef Automate server. Now copy private key for the **admin** user from your Chef server to your <% fp '.chef' %> directory. Here's an example that uses `scp`. Replace the hostname you see with your Chef server's IP address.
+Earlier, you copied the RSA private key for the **delivery** user from your Chef server to a temporary location so that you could upload it to your Chef Automate server. Now copy the private key for the **admin** user from your Chef server to your <% fp '.chef' %> directory. Here's an example that uses `scp`. Replace the hostname you see with your Chef server's IP address.
 
 <% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/aws-automate/set-up-your-chef-server/download-admin-pem/download-admin-pem-to-workstation', features: [:stdin, :stderr]) %>
 
@@ -388,9 +391,9 @@ Chef Automate provides a web interface where you can monitor and visualize the s
 
 1. From a web browser, navigate to your Chef Automate server over HTTPS using its hostname, for example, **https://chef-automate.test** or **https://ec2-54-205-85-17.compute-1.amazonaws.com**.
 
-  [COMMENT] When prompted, accept the server's certificate. Chef Automate's comes with a self-signed SSL certificate. In a production environment, you would typically set up a certificate chain that's rooted by a trusted certificate authority (CA) to enable the Chef Automate server to verify its authenticity.
+  [COMMENT] When prompted, accept the server's certificate. Chef Automate comes with a self-signed SSL certificate. In a production environment, you would typically set up a certificate chain that's rooted by a trusted certificate authority (CA) to enable the Chef Automate server to verify its authenticity.
 
-1. Enter the enterprise you created in [step 6](#step6). If you used the setup script we provdide, the name is **chordata**.
+1. Enter the enterprise you created in [step 6](#step6). If you used the setup script we provide, the name is **chordata**.
 
   ![](manage-a-node/chef_automate_sign_in_enterprise.png)
 
