@@ -1,0 +1,205 @@
+
+Waiting for remote response before bootstrap.13.90.35.16 . 
+13.90.35.16 Response received.
+13.90.35.16 Rendering "C:\Users\chef\AppData\Local\Temp\bootstrap-3808-1476466577.bat" chunk 1 
+13.90.35.16 Rendering "C:\Users\chef\AppData\Local\Temp\bootstrap-3808-1476466577.bat" chunk 2 
+13.90.35.16 Rendering "C:\Users\chef\AppData\Local\Temp\bootstrap-3808-1476466577.bat" chunk 3 
+13.90.35.16 Rendering "C:\Users\chef\AppData\Local\Temp\bootstrap-3808-1476466577.bat" chunk 4 
+13.90.35.16 Rendering "C:\Users\chef\AppData\Local\Temp\bootstrap-3808-1476466577.bat" chunk 5 
+13.90.35.16 Rendering "C:\Users\chef\AppData\Local\Temp\bootstrap-3808-1476466577.bat" chunk 6 
+13.90.35.16 Rendering "C:\Users\chef\AppData\Local\Temp\bootstrap-3808-1476466577.bat" chunk 7 
+13.90.35.16 Rendering "C:\Users\chef\AppData\Local\Temp\bootstrap-3808-1476466577.bat" chunk 8 
+13.90.35.16 Checking for existing directory "C:\chef"...
+13.90.35.16 Existing directory not found, creating.
+13.90.35.16 
+13.90.35.16 C:\Users\chef>(
+13.90.35.16 echo.url = WScript.Arguments.Named("url")  
+13.90.35.16  echo.path = WScript.Arguments.Named("path")  
+13.90.35.16  echo.proxy = null  
+13.90.35.16  echo.'* Vaguely attempt to handle file:// scheme urls by url unescaping and switching all  
+13.90.35.16  echo.'* / into .  Also assume that file:/// is a local absolute path and that file://<foo>  
+13.90.35.16  echo.'* is possibly a network file path.  
+13.90.35.16  echo.If InStr(url, "file://") = 1 Then  
+13.90.35.16  echo.url = Unescape(url)  
+13.90.35.16  echo.If InStr(url, "file:///") = 1 Then  
+13.90.35.16  echo.sourcePath = Mid(url, Len("file:///") + 1)  
+13.90.35.16  echo.Else 
+13.90.35.16  echo.sourcePath = Mid(url, Len("file:") + 1)  
+13.90.35.16  echo.End If  
+13.90.35.16  echo.sourcePath = Replace(sourcePath, "/", "\")  
+13.90.35.16  echo. 
+13.90.35.16  echo.Set objFSO = CreateObject("Scripting.FileSystemObject")  
+13.90.35.16  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
+13.90.35.16  echo.objFSO.CopyFile sourcePath, path, true  
+13.90.35.16  echo.Set objFSO = Nothing  
+13.90.35.16  echo. 
+13.90.35.16  echo.Else 
+13.90.35.16  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP")  
+13.90.35.16  echo.Set wshShell = CreateObject( "WScript.Shell" )  
+13.90.35.16  echo.Set objUserVariables = wshShell.Environment("USER")  
+13.90.35.16  echo. 
+13.90.35.16  echo.rem http proxy is optional  
+13.90.35.16  echo.rem attempt to read from HTTP_PROXY env var first  
+13.90.35.16  echo.On Error Resume Next  
+13.90.35.16  echo. 
+13.90.35.16  echo.If NOT (objUserVariables("HTTP_PROXY") = "") Then  
+13.90.35.16  echo.proxy = objUserVariables("HTTP_PROXY")  
+13.90.35.16  echo. 
+13.90.35.16  echo.rem fall back to named arg  
+13.90.35.16  echo.ElseIf NOT (WScript.Arguments.Named("proxy") = "") Then  
+13.90.35.16  echo.proxy = WScript.Arguments.Named("proxy")  
+13.90.35.16  echo.End If  
+13.90.35.16  echo. 
+13.90.35.16  echo.If NOT isNull(proxy) Then  
+13.90.35.16  echo.rem setProxy method is only available on ServerXMLHTTP 6.0+  
+13.90.35.16  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")  
+13.90.35.16  echo.objXMLHTTP.setProxy 2, proxy  
+13.90.35.16  echo.End If  
+13.90.35.16  echo. 
+13.90.35.16  echo.On Error Goto 0  
+13.90.35.16  echo. 
+13.90.35.16  echo.objXMLHTTP.open "GET", url, false  
+13.90.35.16  echo.objXMLHTTP.send() 
+13.90.35.16  echo.If objXMLHTTP.Status = 200 Then  
+13.90.35.16  echo.Set objADOStream = CreateObject("ADODB.Stream")  
+13.90.35.16  echo.objADOStream.Open 
+13.90.35.16  echo.objADOStream.Type = 1  
+13.90.35.16  echo.objADOStream.Write objXMLHTTP.ResponseBody  
+13.90.35.16  echo.objADOStream.Position = 0  
+13.90.35.16  echo.Set objFSO = Createobject("Scripting.FileSystemObject")  
+13.90.35.16  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
+13.90.35.16  echo.Set objFSO = Nothing  
+13.90.35.16  echo.objADOStream.SaveToFile path  
+13.90.35.16  echo.objADOStream.Close 
+13.90.35.16  echo.Set objADOStream = Nothing  
+13.90.35.16  echo.End If  
+13.90.35.16  echo.Set objXMLHTTP = Nothing  
+13.90.35.16  echo.End If 
+13.90.35.16 ) 1>C:\chef\wget.vbs 
+13.90.35.16 
+13.90.35.16 C:\Users\chef>(
+13.90.35.16 echo.param( 
+13.90.35.16  echo.   [String] $remoteUrl,  
+13.90.35.16  echo.   [String] $localPath  
+13.90.35.16  echo.) 
+13.90.35.16  echo. 
+13.90.35.16  echo.$ProxyUrl = $env:http_proxy;  
+13.90.35.16  echo.$webClient = new-object System.Net.WebClient;  
+13.90.35.16  echo. 
+13.90.35.16  echo.if ($ProxyUrl -ne '') {  
+13.90.35.16  echo.  $WebProxy = New-Object System.Net.WebProxy($ProxyUrl,$true)  
+13.90.35.16  echo.  $WebClient.Proxy = $WebProxy  
+13.90.35.16  echo.} 
+13.90.35.16  echo. 
+13.90.35.16  echo.$webClient.DownloadFile($remoteUrl, $localPath); 
+13.90.35.16 ) 1>C:\chef\wget.ps1 
+13.90.35.16 
+13.90.35.16 C:\Users\chef>(
+13.90.35.16  
+13.90.35.16   
+13.90.35.16  
+13.90.35.16 ) 
+13.90.35.16 Detected Windows Version 6.2 Build 9200
+13.90.35.16 
+13.90.35.16 C:\Users\chef>goto Version6.2 
+13.90.35.16 
+13.90.35.16 C:\Users\chef>goto architecture_select 
+13.90.35.16 
+13.90.35.16 C:\Users\chef>IF "AMD64" == "x86" IF not defined PROCESSOR_ARCHITEW6432 
+13.90.35.16 
+13.90.35.16 C:\Users\chef>goto install 
+13.90.35.16 Checking for existing downloaded package at "C:\Users\chef\AppData\Local\Temp\chef-client-latest.msi"
+13.90.35.16 No existing downloaded packages to delete.
+13.90.35.16 Attempting to download client package using PowerShell if available...
+13.90.35.16 powershell.exe -ExecutionPolicy Unrestricted -InputFormat None -NoProfile -NonInteractive -File  C:\chef\wget.ps1 "https://www.chef.io/chef/download?p=windows&pv=2012&m=x86_64&DownloadContext=PowerShell&v=12" "C:\Users\chef\AppData\Local\Temp\chef-client-latest.msi"
+13.90.35.16 Download via PowerShell succeeded.
+13.90.35.16 Installing downloaded client package...
+13.90.35.16 
+13.90.35.16 C:\Users\chef>msiexec /qn /log "C:\Users\chef\AppData\Local\Temp\chef-client-msi2332.log" /i "C:\Users\chef\AppData\Local\Temp\chef-client-latest.msi" 
+13.90.35.16 Successfully installed Chef Client package.
+13.90.35.16 Installation completed successfully
+13.90.35.16 Writing validation key...
+13.90.35.16 Validation key written.
+13.90.35.16 
+13.90.35.16 C:\Users\chef>mkdir C:\chef\trusted_certs 
+13.90.35.16 
+13.90.35.16 C:\Users\chef>(
+13.90.35.16 echo.-----BEGIN CERTIFICATE-----  
+13.90.35.16  echo.MIIEIDCCAwigAwIBAgIBADANBgkqhkiG9w0BAQsFADBsMQswCQYDVQQGEwJVUzEQ 
+13.90.35.16  echo.MA4GA1UECgwHWW91Q29ycDETMBEGA1UECwwKT3BlcmF0aW9uczE2MDQGA1UEAwwt 
+13.90.35.16  echo.Y2hlZi1zZXJ2ZXItYXp1cmUtMi5lYXN0dXMuY2xvdWRhcHAuYXp1cmUuY29tMB4X 
+13.90.35.16  echo.DTE2MTAxNDAwNDYzM1oXDTI2MTAxMjAwNDYzM1owbDELMAkGA1UEBhMCVVMxEDAO 
+13.90.35.16  echo.BgNVBAoMB1lvdUNvcnAxEzARBgNVBAsMCk9wZXJhdGlvbnMxNjA0BgNVBAMMLWNo 
+13.90.35.16  echo.ZWYtc2VydmVyLWF6dXJlLTIuZWFzdHVzLmNsb3VkYXBwLmF6dXJlLmNvbTCCASIw 
+13.90.35.16  echo.DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJmHx/svJIWa+Bkbaq0LfHwVvGVv 
+13.90.35.16  echo.UhPloDD2QfMKu7XUg+fSePxOylAduOBfm9hDUrF1tb9othK/1u978fgbQ4UWetno 
+13.90.35.16  echo.Z2997caiVO7ypJGNHsEHNv4RTVQWgGmlFd4XJJyiJx2clRzJqgp1/KANTaugNDMs 
+13.90.35.16  echo.bZ+ZJnEyDV+b6AURwsxF5jtFQbJOlvJSes9Ruow/JvOxhzuaOz8+Sll9mtldWDOk 
+13.90.35.16  echo.er4iW2cns0H2s3Dmf1k2b8zAUQ4AbKC6DN/qepSjUeeqr4n1QKwkCOwRw/QBs5Mb 
+13.90.35.16  echo.2Ovmxx6gW1y3Wek3k1D37PMA5u5QNDYTIpqtsdx1h2QDMnui2FE/xQ2CbXsCAwEA 
+13.90.35.16  echo.AaOBzDCByTAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBRKH/eDqjAMP/jUXgu4 
+13.90.35.16  echo.GzmETiibzDCBlgYDVR0jBIGOMIGLgBRKH/eDqjAMP/jUXgu4GzmETiibzKFwpG4w 
+13.90.35.16  echo.bDELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1lvdUNvcnAxEzARBgNVBAsMCk9wZXJh 
+13.90.35.16  echo.dGlvbnMxNjA0BgNVBAMMLWNoZWYtc2VydmVyLWF6dXJlLTIuZWFzdHVzLmNsb3Vk 
+13.90.35.16  echo.YXBwLmF6dXJlLmNvbYIBADANBgkqhkiG9w0BAQsFAAOCAQEAGR/VcKtKzeM2UWZ6 
+13.90.35.16  echo.a5vDyi8oyNZvoPSRddihgVBN8BHPkPr3gUjMLodcsCIhoFg+E0xFKkd/cQNyLlTr 
+13.90.35.16  echo.wASqRSOUEAqoi/9Q8ser1gz7EjNCz2zrggJGh82rDT0C2yka52jXTym9uERfzWUF 
+13.90.35.16  echo.tlyJBZQCOp9qYMTrlU2BbwtAZW2LfLEexs9o1JURJhj8Pe/FjwqZVEdrB06SboWB 
+13.90.35.16  echo.RXcirByBRE4EcsTGOMIPrQvE9brIt9NEE0t4CjwDXuYPGQTY6m+oYO0S9NADR3NK 
+13.90.35.16  echo.36lhqweVYtiauiFvxpJiZEvwSFBzbFCpoHb9IduEi+wdrpyU1cQe5uu8xV2AvzdQ 
+13.90.35.16  echo.ed/TxA==  
+13.90.35.16  echo.-----END CERTIFICATE----- 
+13.90.35.16 ) 1>C:\chef/trusted_certs/chef-server-azure-2_eastus_cloudapp_azure_com.crt 
+13.90.35.16 
+13.90.35.16 C:\Users\chef>(
+13.90.35.16 echo.log_level        :info  
+13.90.35.16  echo.log_location     STDOUT  
+13.90.35.16  echo. 
+13.90.35.16  echo.chef_server_url  "https://chef-server-azure-2.eastus.cloudapp.azure.com/organizations/4thcoffee"  
+13.90.35.16  echo.validation_client_name "chef-validator"  
+13.90.35.16  echo. 
+13.90.35.16  echo.file_cache_path   "c:/chef/cache"  
+13.90.35.16  echo.file_backup_path  "c:/chef/backup"  
+13.90.35.16  echo.cache_options     ({:path => "c:/chef/cache/checksums", :skip_expires => true})  
+13.90.35.16  echo. 
+13.90.35.16  echo.node_name "node1-windows"  
+13.90.35.16  echo.trusted_certs_dir "c:/chef/trusted_certs" 
+13.90.35.16 ) 1>C:\chef\client.rb 
+13.90.35.16 
+13.90.35.16 C:\Users\chef>(echo.{"run_list":["recipe[learn_chef_iis]"]}) 1>C:\chef\first-boot.json 
+13.90.35.16 Starting chef to bootstrap the node...
+13.90.35.16 
+13.90.35.16 C:\Users\chef>SET "PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\ruby\bin;C:\opscode\chef\bin;C:\opscode\chef\embedded\bin" 
+13.90.35.16 
+13.90.35.16 C:\Users\chef>chef-client -c c:/chef/client.rb -j c:/chef/first-boot.json 
+13.90.35.16 [2016-10-14T17:39:10+00:00] INFO: *** Chef 12.15.19 ***
+13.90.35.16 [2016-10-14T17:39:10+00:00] INFO: Platform: x64-mingw32
+13.90.35.16 [2016-10-14T17:39:10+00:00] INFO: Chef-client pid: 608
+13.90.35.16 [2016-10-14T17:39:46+00:00] INFO: Setting the run_list to ["recipe[learn_chef_iis]"] from CLI options
+13.90.35.16 [2016-10-14T17:39:46+00:00] INFO: Run List is [recipe[learn_chef_iis]]
+13.90.35.16 [2016-10-14T17:39:46+00:00] INFO: Run List expands to [learn_chef_iis]
+13.90.35.16 [2016-10-14T17:39:46+00:00] INFO: Starting Chef Run for node1-windows
+13.90.35.16 [2016-10-14T17:39:46+00:00] INFO: Running start handlers
+13.90.35.16 [2016-10-14T17:39:46+00:00] INFO: Start handlers complete.
+13.90.35.16 [2016-10-14T17:39:46+00:00] INFO: Loading cookbooks [learn_chef_iis@0.1.0]
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/README.md in the cache.
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.gitignore in the cache.
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.kitchen.yml in the cache.
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/Berksfile in the cache.
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/recipes/default.rb in the cache.
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/templates/Default.htm.erb in the cache.
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/metadata.rb in the cache.
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/chefignore in the cache.
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Storing updated cookbooks/learn_chef_iis/LICENSE in the cache.
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Processing powershell_script[Install IIS] action run (learn_chef_iis::default line 6)
+13.90.35.16 [2016-10-14T17:39:47+00:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: powershell_script[Install IIS] ran successfully
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: Processing windows_service[w3svc] action enable (learn_chef_iis::default line 12)
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: Processing windows_service[w3svc] action start (learn_chef_iis::default line 12)
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: Processing template[c:\inetpub\wwwroot\Default.htm] action create (learn_chef_iis::default line 16)
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] created file c:\inetpub\wwwroot\Default.htm
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: Chef Run complete in 126.551589 seconds
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: Running report handlers
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: Report handlers complete
+13.90.35.16 [2016-10-14T17:41:53+00:00] INFO: Sending resource update report (run-id: 688442e7-9281-45f3-beae-ba26322880b9)
