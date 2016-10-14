@@ -1,1 +1,0 @@
-Now that you have the basic skills you'll need, let's remediate the failure of the **Ensure Firewall is active** rule on a local virtual machine using Test Kitchen.

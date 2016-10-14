@@ -1,1 +1,0 @@
-Now that you've verified the remediation on a test instance, you'll upload your `ufw` cookbook to your Chef server and apply the configuration to your Ubuntu node. After that, you'll rerun the compliance scan on your node to verify the fix.

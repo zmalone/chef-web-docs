@@ -1,1 +1,0 @@
-The next step is to bootstrap your node and run the Apache cookbook on it. In [Learn the Chef basics](/tutorials/learn-the-basics/ubuntu/free/), you ran `chef-client` in local mode to configure the server directly. Now you'll see how the bootstrap process triggers `chef-client` to run on your node remotely, from your workstation.

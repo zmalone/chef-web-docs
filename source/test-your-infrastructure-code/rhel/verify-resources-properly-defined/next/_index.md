@@ -1,1 +1,0 @@
-After you've verified that your cookbook does what you intend, it's a recommended practice to run _lint_ tools to ensure that your code meets accepted code standards and avoids common defects. In the next lesson, you'll learn how.

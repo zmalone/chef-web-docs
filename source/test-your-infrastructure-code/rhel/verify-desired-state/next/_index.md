@@ -1,1 +1,0 @@
-InSpec is a great way to get fast feedback on whether your cookbook behaves as you expect on a real instance. Next, you'll see how _ChefSpec_ can help us speed up the feedback process even more by simulating a `chef-client` run in memory.

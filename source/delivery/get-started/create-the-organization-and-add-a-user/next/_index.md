@@ -1,1 +1,0 @@
-Next, you'll set up the workstation to enable the user to interact with Delivery.
