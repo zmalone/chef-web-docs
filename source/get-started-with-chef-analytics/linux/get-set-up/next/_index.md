@@ -1,1 +1,0 @@
-If you installed Chef server manually in your own infrastructure, next you'll install and configure Chef Analytics.
