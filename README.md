@@ -19,7 +19,7 @@ Installation
 1. Install [bundler](http://bundler.io/), if not already installed.
 
         $ gem install bundler
-   	
+
 1. Install the required Ruby gems. The dependencies are already provided for you in the Gemfile included in this repo.
 
         $ bundle install --without production
@@ -74,9 +74,6 @@ Contributing
 1. Build locally and make sure the build succeeds (exit 0)
 
 1. Submit a [Pull Request](https://github.com/chef/chef-web-learn/pull/new)
-
-1. (optional) Mention something in #learnchef on IRC or @learnchef on Twitter
-
 
 License and Authors
 -------------------
