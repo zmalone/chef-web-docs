@@ -9,13 +9,14 @@ snippet_path: learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage
 snippet_workstation: ubuntu
 headings: [
   { label: '1. Ensure your workstation supports CPU virtualization', href: '#step1' },
-  { label: '2. Install VirtualBox', href: '#step2' },
-  { label: '3. Install Vagrant', href: '#step3' },
-  { label: '4. Download a CentOS 7 Vagrant box', href: '#step4' },
-  { label: '5. Bring up a CentOS 7 instance', href: '#step5' },
-  { label: "6. If you're running Windows &ndash; verify your SSH client", href: '#step6' },
+  { label: "2. Verify your SSH client", href: '#step2' },
+  { label: '3. Install VirtualBox', href: '#step3' },
+  { label: '4. Install Vagrant', href: '#step4' },
+  { label: '5. Download a CentOS 7 Vagrant box', href: '#step5' },
+  { label: '6. Bring up a CentOS 7 instance', href: '#step6' },
   { label: "7. Install the Chef DK on your CentOS instance", href: '#step7' },
   { label: "8. Prepare a text editor on your CentOS instance", href: '#step8' },
+  { label: "9. Prepare a text editor", href: '#step9' },
   { label: 'Cleaning up', href: '#cleaningup' }
   ]
 ---
@@ -32,8 +33,6 @@ In this part you'll use [VirtualBox](https://www.virtualbox.org/) and [Vagrant](
 Chef integrates with other popular software such as VirtualBox and Vagrant. However, Chef does not maintain VirtualBox or Vagrant. If you're having trouble getting VirtualBox or Vagrant working, check the [Vagrant issues](https://github.com/mitchellh/vagrant/issues) and [VirtualBox Bugtracker](https://www.virtualbox.org/wiki/Bugtracker) pages. We're also happy to help as best we can. We recommend that you install the components as directed in the tutorial, using the specific versions that have been tested.
 
 <% render_machine_config('snippets/learn-the-basics/rhel/virtualbox/machine_config.md') %>
-
-[WARN] For this tutorial, we recommend that you use Vagrant 1.8.4 and VirtualBox 5.0. There are known incompatibilities between later versions of Vagrant and VirtualBox.
 
 <% end %>
 
@@ -57,93 +56,7 @@ If you are unable to run virtual machines on your workstation, you can [try a di
 
 [START_BOX]
 
-## 2. Install VirtualBox
-
-<%= partial 'layouts/install_virtualbox' %>
-
-### Verify the installation
-
-Now run the following command to verify that VirtualBox is installed.
-
-<% command_snippet(page: current_page, path: 'install-virtualbox/vboxmanage--version') %>
-
-On Windows, if the command fails, you may need to update your `PATH` environment variable.
-
-By default, VirtualBox is installed to <code class="file-path">C:\Program Files\Oracle\VirtualBox</code> on Windows. Run these commands to add VirtualBox to your system path.
-
-```ps
-$ $path = [Environment]::GetEnvironmentVariable("PATH", "Machine")
-$ $vbox_path = "C:\Program Files\Oracle\VirtualBox"
-$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vbox_path", "Machine")
-```
-
-Then run `VBoxManage --version` a second time.
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Install Vagrant
-
-[COMMENT] This tutorial was last tested on Vagrant 1.8.4. Version 1.8.5 has [known issues](https://github.com/mitchellh/vagrant/issues), so we recommend 1.8.4 until we can verify the procedures shown on a newer version.
-
-<%= partial 'layouts/install_vagrant' %>
-
-### Verify the installation
-
-Now run the following to verify that Vagrant is installed.
-
-<% command_snippet(page: current_page, path: 'install-vagrant/vagrant--version') %>
-
-Like VirtualBox, you may need to update your `PATH` environment variable if the command fails on Windows.
-
-By default, Vagrant is installed to <code class="file-path">C:\HashiCorp\Vagrant\bin</code> on Windows. Run these commands to add Vagrant to your system path.
-
-```ps
-$ $path = [Environment]::GetEnvironmentVariable("PATH", "Machine")
-$ $vagrant_path = "C:\HashiCorp\Vagrant\bin"
-$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vagrant_path", "Machine")
-```
-
-Then run `vagrant --version` a second time.
-
-[END_BOX]
-
-[START_BOX]
-
-## 4. Download a CentOS 7 Vagrant box
-
-The next step is to download a base virtual machine image, called a _box_. Here's how to download a CentOS 7.2 box.
-
-<% command_snippet(page: current_page, path: 'download-a-centos-72-vagrant-box/vagrant-box-add-centos-72') %>
-
-This command downloads a CentOS 7.2 box for Vagrant that's compatible with VirtualBox.
-
-The `bento/centos-7.2` part specifies to retrieve the box from [HashiCorp's Atlas](https://atlas.hashicorp.com/bento/boxes/centos-7.2). The `bento` part refers to [Bento](http://chef.github.io/bento/), a Chef project that provides Vagrant boxes for many common platforms.
-
-[WINDOWS] [Due to an issue with newer versions of Vagrant](https://github.com/mitchellh/vagrant/issues/6852), if you're using a Windows workstation and the command fails with a blank error message, [you may need to install the Microsoft Visual C++ 2010 SP1 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=8328). Then try the command again.
-
-[END_BOX]
-
-[START_BOX]
-
-## 5. Bring up a CentOS 7 instance
-
-Next, run these commands to bring up a CentOS 7.2 instance.
-
-<% command_snippet(page: current_page, path: 'bring-up-a-centos-72-instance/vagrant-init') %>
-
-<% command_snippet(page: current_page, path: 'bring-up-a-centos-72-instance/vagrant-up') %>
-
-The [vagrant init](https://www.vagrantup.com/docs/cli/init.html) command creates a configuration file, named <% fp 'Vagrantfile' %>, which specifies memory, CPU, and network settings for the virtual machine.
-
-The [vagrant up](https://www.vagrantup.com/docs/cli/up.html) command uses the <% fp 'Vagrantfile' %> to create and configure the virtual machine instance.
-
-[END_BOX]
-
-[START_BOX]
-
-## 6. If you're running Windows &ndash; verify your SSH client
+## 2. If you're running Windows &ndash; verify your SSH client
 
 In this tutorial, you'll connect to your Linux instance over SSH. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you need to install one.
 
@@ -171,6 +84,90 @@ Next, run these commands.
 <% command_snippet(page: current_page, path: 'verify-your-ssh-client/ssh-no-args', workstation: 'windows', features: [:stdin, :stderr]) %>
 
 Keep your **Chef Development Kit** window open for the next part.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Install VirtualBox
+
+<%= partial 'layouts/install_virtualbox' %>
+
+### Verify the installation
+
+Now run the following command to verify that VirtualBox is installed.
+
+<% command_snippet(page: current_page, path: 'install-virtualbox/vboxmanage--version') %>
+
+On Windows, if the command fails, you may need to update your `PATH` environment variable.
+
+By default, VirtualBox is installed to <code class="file-path">C:\Program Files\Oracle\VirtualBox</code> on Windows. Run these commands to add VirtualBox to your system path.
+
+```ps
+$ $path = [Environment]::GetEnvironmentVariable("PATH", "Machine")
+$ $vbox_path = "C:\Program Files\Oracle\VirtualBox"
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vbox_path", "Machine")
+```
+
+Then run `VBoxManage --version` a second time.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Install Vagrant
+
+<%= partial 'layouts/install_vagrant' %>
+
+### Verify the installation
+
+Now run the following to verify that Vagrant is installed.
+
+<% command_snippet(page: current_page, path: 'install-vagrant/vagrant--version') %>
+
+Like VirtualBox, you may need to update your `PATH` environment variable if the command fails on Windows.
+
+By default, Vagrant is installed to <code class="file-path">C:\HashiCorp\Vagrant\bin</code> on Windows. Run these commands to add Vagrant to your system path.
+
+```ps
+$ $path = [Environment]::GetEnvironmentVariable("PATH", "Machine")
+$ $vagrant_path = "C:\HashiCorp\Vagrant\bin"
+$ [Environment]::SetEnvironmentVariable("PATH", "$path;$vagrant_path", "Machine")
+```
+
+Then run `vagrant --version` a second time.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Download a CentOS 7 Vagrant box
+
+The next step is to download a base virtual machine image, called a _box_. Here's how to download a CentOS 7.2 box.
+
+<% command_snippet(page: current_page, path: 'download-a-centos-72-vagrant-box/vagrant-box-add-centos-72') %>
+
+This command downloads a CentOS 7.2 box for Vagrant that's compatible with VirtualBox.
+
+The `bento/centos-7.2` part specifies to retrieve the box from [HashiCorp's Atlas](https://atlas.hashicorp.com/bento/boxes/centos-7.2). The `bento` part refers to [Bento](http://chef.github.io/bento/), a Chef project that provides Vagrant boxes for many common platforms.
+
+[WINDOWS] [Due to an issue with newer versions of Vagrant](https://github.com/mitchellh/vagrant/issues/6852), if you're using a Windows workstation and the command fails with a blank error message, [you may need to install the Microsoft Visual C++ 2010 SP1 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=8328). Then try the command again.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Bring up a CentOS 7 instance
+
+Next, run these commands to bring up a CentOS 7.2 instance.
+
+<% command_snippet(page: current_page, path: 'bring-up-a-centos-72-instance/vagrant-init') %>
+
+<% command_snippet(page: current_page, path: 'bring-up-a-centos-72-instance/vagrant-up') %>
+
+The [vagrant init](https://www.vagrantup.com/docs/cli/init.html) command creates a configuration file, named <% fp 'Vagrantfile' %>, which specifies memory, CPU, and network settings for the virtual machine.
+
+The [vagrant up](https://www.vagrantup.com/docs/cli/up.html) command uses the <% fp 'Vagrantfile' %> to create and configure the virtual machine instance.
 
 [END_BOX]
 
