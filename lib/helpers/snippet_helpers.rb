@@ -22,7 +22,7 @@ module SnippetHelpers
     render_snippet(path, indent_level) do |_metadata|
       [*features].map do |feature|
         content = IO.read(File.join('snippets', path, feature.to_s))
-        if feature == :stdin && (replace_prompt || (page && page.data.replace_prompt))
+        if [:stdin, :exitstatus].include?(feature) && (replace_prompt || (page && page.data.replace_prompt))
           replace_prompt ||= current_page.data.replace_prompt
           content.sub!(/^.+\$/, replace_prompt)
         end

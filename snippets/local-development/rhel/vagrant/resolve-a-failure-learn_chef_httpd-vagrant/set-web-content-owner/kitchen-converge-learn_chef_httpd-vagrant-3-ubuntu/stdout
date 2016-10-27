@@ -1,0 +1,139 @@
+-----> Starting Kitchen (v1.13.2)
+-----> Creating <default-centos-72>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Importing base box 'bento/centos-7.2'...
+       ==> default: Checking if box 'bento/centos-7.2' is up to date...
+       ==> default: Setting the name of the VM: kitchen-learn_chef_httpd-default-centos-72_default_1477596779428_8076
+       ==> default: Clearing any previously set network interfaces...
+       ==> default: Preparing network interfaces based on configuration...
+           default: Adapter 1: nat
+       ==> default: Forwarding ports...
+           default: 22 (guest) => 2222 (host) (adapter 1)
+       ==> default: Booting VM...
+       ==> default: Waiting for machine to boot. This may take a few minutes...
+           default: SSH address: 127.0.0.1:2222
+           default: SSH username: vagrant
+           default: SSH auth method: private key
+           default: 
+           default: Vagrant insecure key detected. Vagrant will automatically replace
+           default: this with a newly generated keypair for better security.
+           default: 
+           default: Inserting generated public key within guest...
+           default: Removing insecure key from the guest if it's present...
+           default: Key inserted! Disconnecting and reconnecting using new SSH key...
+       ==> default: Machine booted and ready!
+       ==> default: Checking for guest additions in VM...
+       ==> default: Setting hostname...
+       ==> default: Machine not provisioned because `--no-provision` is specified.
+       [SSH] Established
+       Vagrant instance <default-centos-72> created.
+       Finished creating <default-centos-72> (0m45.72s).
+-----> Converging <default-centos-72>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 5.1.0...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Installing Chef Omnibus (install only if missing)
+       Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
+       Trying wget...
+       Download complete.
+       el 7 x86_64
+       Getting information for chef stable  for el...
+       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=el&pv=7&m=x86_64
+         to file /tmp/install.sh.7414/metadata.txt
+       trying wget...
+       sha1	cd53d4f6431e912d0ddafce3cabd113fec3dda05
+       sha256	66a514699bddd3f507a3b80b687cd71079a09e2aa01fa8111bee7f06a95c44c7
+       url	https://packages.chef.io/files/stable/chef/12.15.19/el/7/chef-12.15.19-1.el7.x86_64.rpm
+       version	12.15.19
+       downloaded metadata file looks valid...
+       downloading https://packages.chef.io/files/stable/chef/12.15.19/el/7/chef-12.15.19-1.el7.x86_64.rpm
+         to file /tmp/install.sh.7414/chef-12.15.19-1.el7.x86_64.rpm
+       trying wget...
+       Comparing checksum with sha256sum...
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       You are installing an omnibus package without a version pin.  If you are installing
+       on production servers via an automated process this is DANGEROUS and you will
+       be upgraded without warning on new releases, even to new major releases.
+       Letting the version float is only appropriate in desktop, test, development or
+       CI/CD environments.
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       Installing chef 
+       installing with rpm...
+       warning: /tmp/install.sh.7414/chef-12.15.19-1.el7.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+       Updating / installing...
+       Thank you for installing Chef!
+       Transferring files to <default-centos-72>
+       Starting Chef Client, version 12.15.19
+       Creating a new client identity for default-centos-72 using the validator key.
+       resolving cookbooks for run list: ["learn_chef_httpd::default"]
+       Synchronizing Cookbooks:
+         - learn_chef_httpd (0.1.0)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+       Converging 3 resources
+       Recipe: learn_chef_httpd::default
+         * yum_package[httpd] action install
+           - install version 2.4.6-40.el7.centos.4 of package httpd
+         * service[httpd] action enable
+           - enable service service[httpd]
+         * service[httpd] action start
+           - start service service[httpd]
+         * template[/var/www/html/index.html] action create
+           * cannot determine user id for 'web_admin', does the user exist on this system?
+           ================================================================================
+           Error executing action `create` on resource 'template[/var/www/html/index.html]'
+           ================================================================================
+           
+           Chef::Exceptions::UserIDNotFound
+           --------------------------------
+           cannot determine user id for 'web_admin', does the user exist on this system?
+           
+           Resource Declaration:
+           ---------------------
+           
+            12: template '/var/www/html/index.html' do
+            13:   source 'index.html.erb'
+            14:   mode '0644'
+            15:   owner 'web_admin'
+            16:   group 'web_admin'
+            17: end
+           
+           Compiled Resource:
+           ------------------
+           
+           template("/var/www/html/index.html") do
+             action [:create]
+             retries 0
+             retry_delay 2
+             default_guard_interpreter :default
+             source "index.html.erb"
+             declared_type :template
+             cookbook_name "learn_chef_httpd"
+             recipe_name "default"
+             mode "0644"
+             owner "web_admin"
+             group "web_admin"
+             path "/var/www/html/index.html"
+           end
+           
+           Platform:
+           ---------
+           x86_64-linux
+           
+       
+       Running handlers:
+       [2016-10-27T19:34:55+00:00] ERROR: Running exception handlers
+       Running handlers complete
+       [2016-10-27T19:34:55+00:00] ERROR: Exception handlers complete
+       Chef Client failed. 3 resources updated in 52 seconds
+       [2016-10-27T19:34:55+00:00] FATAL: Stacktrace dumped to /tmp/kitchen/cache/chef-stacktrace.out
+       [2016-10-27T19:34:55+00:00] FATAL: Please provide the contents of the stacktrace.out file if you file a bug report
+       [2016-10-27T19:34:55+00:00] ERROR: template[/var/www/html/index.html] (learn_chef_httpd::default line 12) had an error: Chef::Exceptions::UserIDNotFound: cannot determine user id for 'web_admin', does the user exist on this system?
+       [2016-10-27T19:34:55+00:00] FATAL: Chef::Exceptions::ChildConvergeError: Chef run process exited unsuccessfully (exit code 1)
