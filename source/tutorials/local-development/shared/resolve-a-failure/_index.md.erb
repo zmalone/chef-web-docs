@@ -1,0 +1,88 @@
+In the _Manage a node_ tutorial, you applied a configuration change that [failed on your node](/tutorials/manage-a-node/rhel/hosted/resolve-a-failure). Imagine your node represents a piece of your production infrastructure. A failure in production can cause both an interruption to your team as well as reduced access to services for your users.
+
+In this part, you'll repeat the exercise where you apply a change that, although might appear correct, will actually fail on your test instance. You'll then remedy the failure and verify that `chef-client` succeeds.
+
+In doing so, you'll see how with Test Kitchen, you can detect and remedy failures _before_ your change reaches production.
+
+[START_BOX]
+
+## 1. Assign an owner to the home page
+
+Let's make the same change to the web server cookbook that we did [previously](/tutorials/manage-a-node/rhel/hosted/resolve-a-failure#step1). Here, we want to assign the `web_admin` user as the owner of the home page, <% fp '/var/www/html/index.html' %>. We also want to configure the home page so that the `web_admin` user has read and write access, and everyone else has read-only access.
+
+Recall that your default recipe looks like this.
+
+<% code_snippet(page: current_page, path: 'set-web-content-owner/initial-default-recipe-learn_chef_httpd-vagrant') %>
+
+Modify your default recipe to looks like this. Note the use of the `template` resource's `mode`, `owner`, and `group` properties.
+
+<% code_snippet(page: current_page, path: 'set-web-content-owner/add-web-user-err-learn_chef_httpd-vagrant') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Apply the changes to your test instance
+
+Now see what happens when you run `kitchen converge`. Because you destroyed your test instance in the previous part, Test Kitchen creates a new instance for you.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-converge-learn_chef_httpd-vagrant-3', features: [:stdin, :stdout, :stderr]) %>
+
+Here you see the same failure that you saw [previously](/tutorials/manage-a-node/rhel/hosted/resolve-a-failure#step2) when you ran this code on your node.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+Chef::Exceptions::UserIDNotFound
+--------------------------------
+cannot determine user id for 'web_admin', does the user exist on this system?
+```
+
+You also see that Test Kitchen returns with a non-zero exit code.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-converge-learn_chef_httpd-vagrant-3', features: :exitstatus) %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Resolve the failure
+
+Now you'll resolve the failure just as you did [previously](/tutorials/manage-a-node/rhel/hosted/resolve-a-failure#step3).
+
+Modify your default recipe by using the [group](https://docs.chef.io/resource_group.html) and [user](https://docs.chef.io/resource_user.html) resources to define the `web_admin` group and user.
+
+<% code_snippet(page: current_page, path: 'set-web-content-owner/add-web-user-fix-learn_chef_httpd-vagrant') %>
+
+Now run `kitchen converge` to apply the configuration.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-converge-learn_chef_httpd-vagrant-4') %>
+
+As before, run `kitchen exec` to verify the contents of your web server's home page.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-exec-learn_chef_httpd-vagrant-2') %>
+
+Also verify that the `web_admin` user is the owner of the home page and that the home page has the expected file permissions.
+
+<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-exec-learn_chef_httpd-vagrant-3') %>
+
+Success! With local development, you can make changes, experiment, and verify that your configuration does what you expect using local test instances. You now have increased confidence that your change will work in production.
+
+[COMMENT] Unlike in the previous tutorial, you did not modify your cookbook's version in the <% fp 'metadata.rb' %> file. You only need to increment the version number when you upload your cookbook to the Chef server.
+
+Feel free to experiment further with your test instance. When you're done, be sure to run `kitchen destroy` to delete your instance.
+
+[END_BOX]
+
+[START_BOX]
+
+## Conclusion
+
+In this tutorial, you used Test Kitchen along with VirtualBox and Vagrant to configure a basic web server on a CentOS virtual machine, all from your workstation. You also saw how with local development, you can detect and resolve failures before your change appears in production.
+
+Local development gives you the time and flexibility to experiment, iterate, and fix problems early in the development cycle. You only upload your cookbooks to the Chef server and apply them to your bootstrapped node after you've confirmed from your workstation that your configuration code works as you expect.
+
+In the next tutorial, [Manage a basic web application](/manage-a-web-app/rhel/), you'll use the skills you've just learned to build a basic but complete web application that uses a web server, a database, and scripting. You'll learn how to leverage cookbooks that are written by the Chef community and resolve cookbook dependencies to create cookbooks that are more reusable.
+
+[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
+
+[END_BOX]
