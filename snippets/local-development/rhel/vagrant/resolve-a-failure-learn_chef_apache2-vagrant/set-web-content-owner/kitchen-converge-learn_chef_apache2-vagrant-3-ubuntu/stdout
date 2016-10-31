@@ -1,0 +1,147 @@
+-----> Starting Kitchen (v1.13.2)
+-----> Creating <default-ubuntu-1404>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Importing base box 'bento/ubuntu-14.04'...
+       ==> default: Checking if box 'bento/ubuntu-14.04' is up to date...
+       ==> default: Setting the name of the VM: kitchen-learn_chef_apache2-default-ubuntu-1404_default_1477600228444_68903
+       ==> default: Clearing any previously set network interfaces...
+       ==> default: Preparing network interfaces based on configuration...
+           default: Adapter 1: nat
+       ==> default: Forwarding ports...
+           default: 22 (guest) => 2222 (host) (adapter 1)
+       ==> default: Booting VM...
+       ==> default: Waiting for machine to boot. This may take a few minutes...
+           default: SSH address: 127.0.0.1:2222
+           default: SSH username: vagrant
+           default: SSH auth method: private key
+           default: 
+           default: Vagrant insecure key detected. Vagrant will automatically replace
+           default: this with a newly generated keypair for better security.
+           default: 
+           default: Inserting generated public key within guest...
+           default: Removing insecure key from the guest if it's present...
+           default: Key inserted! Disconnecting and reconnecting using new SSH key...
+       ==> default: Machine booted and ready!
+       ==> default: Checking for guest additions in VM...
+       ==> default: Setting hostname...
+       ==> default: Machine not provisioned because `--no-provision` is specified.
+       [SSH] Established
+       Vagrant instance <default-ubuntu-1404> created.
+       Finished creating <default-ubuntu-1404> (0m33.97s).
+-----> Converging <default-ubuntu-1404>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 5.1.0...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Installing Chef Omnibus (install only if missing)
+       Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
+       Trying wget...
+       Download complete.
+       ubuntu 14.04 x86_64
+       Getting information for chef stable  for ubuntu...
+       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=ubuntu&pv=14.04&m=x86_64
+         to file /tmp/install.sh.1439/metadata.txt
+       trying wget...
+       sha1	a2de7d933734d3a0c4b859576d0be472c5cd55f7
+       sha256	7073541beb4294c994d4035a49afcf06ab45b3b3933b98a65b8059b7591df6b8
+       url	https://packages.chef.io/files/stable/chef/12.15.19/ubuntu/14.04/chef_12.15.19-1_amd64.deb
+       version	12.15.19
+       downloaded metadata file looks valid...
+       downloading https://packages.chef.io/files/stable/chef/12.15.19/ubuntu/14.04/chef_12.15.19-1_amd64.deb
+         to file /tmp/install.sh.1439/chef_12.15.19-1_amd64.deb
+       trying wget...
+       Comparing checksum with sha256sum...
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       You are installing an omnibus package without a version pin.  If you are installing
+       on production servers via an automated process this is DANGEROUS and you will
+       be upgraded without warning on new releases, even to new major releases.
+       Letting the version float is only appropriate in desktop, test, development or
+       CI/CD environments.
+       
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+       
+       Installing chef 
+       installing with dpkg...
+       Selecting previously unselected package chef.
+       Preparing to unpack .../chef_12.15.19-1_amd64.deb ...
+       Unpacking chef (12.15.19-1) ...
+       Setting up chef (12.15.19-1) ...
+       Thank you for installing Chef!
+       Transferring files to <default-ubuntu-1404>
+       Starting Chef Client, version 12.15.19
+       Creating a new client identity for default-ubuntu-1404 using the validator key.
+       resolving cookbooks for run list: ["learn_chef_apache2::default"]
+       Synchronizing Cookbooks:
+         - learn_chef_apache2 (0.1.0)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+       Converging 4 resources
+       Recipe: learn_chef_apache2::default
+         * apt_update[Update the apt cache daily] action periodic
+           - update new lists of packages
+           * directory[/var/lib/apt/periodic] action create (up to date)
+           * directory[/etc/apt/apt.conf.d] action create (up to date)
+           * file[/etc/apt/apt.conf.d/15update-stamp] action create_if_missing (up to date)
+           * execute[apt-get -q update] action run
+             - execute apt-get -q update
+         
+         * apt_package[apache2] action install
+           - install version 2.4.7-1ubuntu4.13 of package apache2
+         * service[apache2] action enable (up to date)
+         * service[apache2] action start (up to date)
+         * template[/var/www/html/index.html] action create
+           * cannot determine user id for 'web_admin', does the user exist on this system?
+           ================================================================================
+           Error executing action `create` on resource 'template[/var/www/html/index.html]'
+           ================================================================================
+           
+           Chef::Exceptions::UserIDNotFound
+           --------------------------------
+           cannot determine user id for 'web_admin', does the user exist on this system?
+           
+           Resource Declaration:
+           ---------------------
+           
+            18: template '/var/www/html/index.html' do
+            19:   source 'index.html.erb'
+            20:   mode '0644'
+            21:   owner 'web_admin'
+            22:   group 'web_admin'
+            23: end
+           
+           Compiled Resource:
+           ------------------
+           
+           template("/var/www/html/index.html") do
+             action [:create]
+             retries 0
+             retry_delay 2
+             default_guard_interpreter :default
+             source "index.html.erb"
+             declared_type :template
+             cookbook_name "learn_chef_apache2"
+             recipe_name "default"
+             mode "0644"
+             owner "web_admin"
+             group "web_admin"
+             path "/var/www/html/index.html"
+           end
+           
+           Platform:
+           ---------
+           x86_64-linux
+           
+       
+       Running handlers:
+       [2016-10-27T20:31:37+00:00] ERROR: Running exception handlers
+       Running handlers complete
+       [2016-10-27T20:31:37+00:00] ERROR: Exception handlers complete
+       Chef Client failed. 3 resources updated in 25 seconds
+       [2016-10-27T20:31:37+00:00] FATAL: Stacktrace dumped to /tmp/kitchen/cache/chef-stacktrace.out
+       [2016-10-27T20:31:37+00:00] FATAL: Please provide the contents of the stacktrace.out file if you file a bug report
+       [2016-10-27T20:31:37+00:00] ERROR: template[/var/www/html/index.html] (learn_chef_apache2::default line 18) had an error: Chef::Exceptions::UserIDNotFound: cannot determine user id for 'web_admin', does the user exist on this system?
+       [2016-10-27T20:31:37+00:00] FATAL: Chef::Exceptions::ChildConvergeError: Chef run process exited unsuccessfully (exit code 1)

@@ -1,8 +1,10 @@
 <%
-  cookbook_name = current_page.parent.parent.data.cookbook_name
-  cookbook_name_escaped = cookbook_name.gsub('_', '\_')
+  metadata = current_page.parent.parent.data
+  cookbook = metadata.cookbook
+  cookbook_escaped = cookbook.gsub('_', '\_')
+  environment = metadata.environment
 %>
-[HEADLINE] Test Kitchen enables you to run your cookbooks in a temporary environment that resembles production. With Test Kitchen, you confirm that things are working before you deploy your code to a test, preproduction, or production environment. Many users incorporate this kind of local development as part of their overall Chef workflow.
+<% key_point "Test Kitchen enables you to run your cookbooks in a temporary environment that resembles production. With Test Kitchen, you confirm that things are working before you deploy your code to a test, preproduction, or production environment. Many users incorporate this kind of local development as part of their overall Chef workflow." %>
 
 In this part, you'll run through the Test Kitchen workflow to get the hang of things.
 
@@ -37,29 +39,29 @@ Here, you'll get a copy of the web server cookbook that you created in the earli
 
 [START_BOX]
 
-## 1. Get the <%= cookbook_name_escaped %> cookbook from GitHub
+## 1. Get the <%= cookbook_escaped %> cookbook from GitHub
 
-In the previous tutorials, [Learn the Chef basics](/tutorials/learn-the-basics/rhel/) and [Manage a node](/tutorials/manage-a-node/rhel/), you wrote a cookbook named `learn_chef_httpd` that configures Apache web server. You'll run that cookbook on your test instance.
+In the previous tutorials, [Learn the Chef basics](/tutorials/learn-the-basics/rhel/) and [Manage a node](/tutorials/manage-a-node/rhel/), you wrote a cookbook named `<%= cookbook %>` that configures Apache web server. You'll run that cookbook on your test instance.
 
-If you still have the `learn_chef_httpd` cookbook on your system, you're all set up. Otherwise, follow these steps to get it.
+If you still have the `<%= cookbook %>` cookbook on your system, you're all set up. Otherwise, follow these steps to get it.
 
 Start by creating the <% fp '~/learn-chef/cookbooks' %> directory.
 
-<% command_snippet(workstation: 'ubuntu', path: 'local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/mkdir-learn-chef-cookbooks', features: :stdin) %>
+<% command_snippet(workstation: 'ubuntu', path: "local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/mkdir-learn-chef-cookbooks", features: :stdin) %>
 
 Now `cd` there.
 
-<% command_snippet(workstation: 'ubuntu', path: 'local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/cd-learn-chef-cookbooks', features: :stdin) %>
+<% command_snippet(workstation: 'ubuntu', path: "local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/cd-learn-chef-cookbooks", features: :stdin) %>
 
-Next, clone the `learn_chef_httpd` cookbook from GitHub.
+Next, clone the `<%= cookbook %>` cookbook from GitHub.
 
-<% command_snippet(page: current_page, path: 'get-the-learn_chef_httpd-cookbook-vagrant/git-clone-learn_chef_httpd-vagrant', features: [:stdin, :stderr]) %>
+<% command_snippet(page: current_page, path: "get-the-#{cookbook}-cookbook-#{environment}/git-clone-#{cookbook}-#{environment}", features: [:stdin, :stderr]) %>
 
 Now `cd` there.
 
-<% command_snippet(page: current_page, path: 'get-the-learn_chef_httpd-cookbook-vagrant/cd-cookbooks-learn_chef_httpd-vagrant', features: :stdin) %>
+<% command_snippet(page: current_page, path: "get-the-#{cookbook}-cookbook-#{environment}/cd-cookbooks-#{cookbook}-#{environment}", features: :stdin) %>
 
-The contents of <% fp '~/learn-chef/cookbooks/learn_chef_httpd' %> is the same as what you built in the previous tutorials. You can examine this directory to familiarize yourself with its contents.
+The contents of <% fp "~/learn-chef/cookbooks/#{cookbook}" %> is the same as what you built in the previous tutorials. You can examine this directory to familiarize yourself with its contents.
 
 [COMMENT] Remember that [Chef Supermarket](https://supermarket.chef.io/) is also a place for the community to share cookbooks. You'll learn more about community cookbooks in later tutorials.
 
@@ -73,7 +75,7 @@ When you use the `chef generate cookbook` command to create a cookbook, Chef cre
 
 Here's what your <% fp '.kitchen.yml' %> file looks like.
 
-<% code_snippet(page: current_page, path: 'understand-kitchen-yml-learn_chef_httpd-vagrant/kitchen-yml-learn_chef_httpd-vagrant') %>
+<% code_snippet(page: current_page, path: "understand-kitchen-yml-#{cookbook}-#{environment}/kitchen-yml-#{cookbook}-#{environment}") %>
 
 [COMMENT] On Linux and Mac OS, <% fp '.kitchen.yml' %> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
@@ -85,7 +87,7 @@ Here's how the <% fp '.kitchen.yml' %> file breaks down.
 * **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and other Chef server features.
 * **platforms** specifies the target operating systems. We're targeting just one &ndash; CentOS 7.2.
 * **verifier** specifies which application to use when running automated tests.  You'll learn more about automated testing in a future tutorial.
-* **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `learn_chef_httpd` cookbook's default recipe.
+* **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Our run-list contains one recipe &ndash; our `<%= cookbook %>` cookbook's default recipe.
 
 Recall that when Test Kitchen runs, it downloads the base virtual machine image, called a _box_, if the image does not already exist locally. Test Kitchen can [infer the location](https://github.com/test-kitchen/kitchen-vagrant#-default-configuration) for a set number of common configurations. For these common configurations, Test Kitchen downloads the [Bento](http://chef.github.io/bento/) box from [HashiCorp Atlas](https://atlas.hashicorp.com/bento/). Bento is a Chef project that provides Vagrant boxes for many common platforms. In this example, `centos-7.2` is the same as specifying `bento/centos-7.2`.
 
@@ -103,15 +105,15 @@ Now you'll provision a virtual machine to serve as your test environment. This i
 
 We often call the set of virtual environments that's created by Test Kitchen simply a _kitchen_.
 
-From the <% fp '~/learn-chef/cookbooks/learn_chef_httpd' %> directory, run  run `kitchen list` to see what's in the kitchen.
+From the <% fp "~/learn-chef/cookbooks/#{cookbook}" %> directory, run  run `kitchen list` to see what's in the kitchen.
 
-<% command_snippet(page: current_page, path: 'create-learn_chef_httpd-vagrant/kitchen-list-learn_chef_httpd-vagrant-1') %>
+<% command_snippet(page: current_page, path: "create-#{cookbook}-#{environment}/kitchen-list-#{cookbook}-#{environment}-1") %>
 
 Our kitchen includes just one instance &ndash; a CentOS 7.2 virtual machine that's configured to run the `default` suite. The `Last Action` column shows that the virtual machine is not yet created.
 
 Create the instance now by running `kitchen create`.
 
-<% command_snippet(page: current_page, path: 'create-learn_chef_httpd-vagrant/kitchen-create-learn_chef_httpd-vagrant-1') %>
+<% command_snippet(page: current_page, path: "create-#{cookbook}-#{environment}/kitchen-create-#{cookbook}-#{environment}-1") %>
 
 [WINDOWS] [Due to an issue with newer versions of Vagrant](https://github.com/mitchellh/vagrant/issues/6852), if you're using a Windows workstation and the command fails with a blank error message, [you may need to install the Microsoft Visual C++ 2010 SP1 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=8328). Then try the command again.
 
@@ -119,7 +121,7 @@ This command will take longer the first time you run it because Vagrant needs to
 
 Now run `kitchen list` again.
 
-<% command_snippet(page: current_page, path: 'create-learn_chef_httpd-vagrant/kitchen-list-learn_chef_httpd-vagrant-2') %>
+<% command_snippet(page: current_page, path: "create-#{cookbook}-#{environment}/kitchen-list-#{cookbook}-#{environment}-2") %>
 
 The `Last Action` column now shows that the virtual machine has been created.
 
@@ -127,29 +129,29 @@ The `Last Action` column now shows that the virtual machine has been created.
 
 [START_BOX]
 
-## 4. Apply the <%= cookbook_name_escaped %> cookbook to your Test Kitchen instance
+## 4. Apply the <%= cookbook_escaped %> cookbook to your Test Kitchen instance
 
 Now run `kitchen converge` to apply the cookbook to the CentOS virtual machine.
 
 <img src="/assets/images/misc/local_dev_workflow2.png" style="box-shadow: none;" alt=""/>
 
-<% command_snippet(page: current_page, path: 'apply-learn_chef_httpd-vagrant/kitchen-converge-learn_chef_httpd-vagrant-1') %>
+<% command_snippet(page: current_page, path: "apply-#{cookbook}-#{environment}/kitchen-converge-#{cookbook}-#{environment}-1") %>
 
 [TIP] We use the term _converge_ to describe the process of bringing a system closer to its desired state. When you see the word converge, think _test and repair_.
 
 Test Kitchen runs `chef-client` on the instance. When the `chef-client` run completes successfully, Test Kitchen exits with exit code `0`. Run the following to check the exit code.
 
-<% command_snippet(page: current_page, path: 'apply-learn_chef_httpd-vagrant/echo-money-learn_chef_httpd-vagrant-1') %>
+<% command_snippet(page: current_page, path: "apply-#{cookbook}-#{environment}/echo-money-#{cookbook}-#{environment}-1") %>
 
 If you receive a result other than `0`, fix the errors that were reported. Then run `kitchen converge` to apply the changes and again check the exit code.
 
 Run `kitchen list` to see the latest status.
 
-<% command_snippet(page: current_page, path: 'apply-learn_chef_httpd-vagrant/kitchen-list-learn_chef_httpd-vagrant-3') %>
+<% command_snippet(page: current_page, path: "apply-#{cookbook}-#{environment}/kitchen-list-#{cookbook}-#{environment}-3") %>
 
 `kitchen converge` takes longer the first time you run it on a new instance because Test Kitchen needs to install the Chef tools. Run `kitchen converge` a second time to see how much faster it is.
 
-<% command_snippet(page: current_page, path: 'apply-learn_chef_httpd-vagrant/kitchen-converge-learn_chef_httpd-vagrant-2') %>
+<% command_snippet(page: current_page, path: "apply-#{cookbook}-#{environment}/kitchen-converge-#{cookbook}-#{environment}-2") %>
 
 This run was faster not only because the instance already had the Chef tools installed, but also because it was already in the desired state, so Chef had no work to do.
 
@@ -165,7 +167,7 @@ The next step in the Test Kitchen workflow is to verify the configuration.
 
 In practice, you typically write automated tests that verify whether your instance is configured as you expect. Having automated tests enables you quickly verify your configuration works as add features to your cookbook. In fact, many Chef users take a _test-driven_ approach, where you write your tests first before you write any Chef code.
 
-You'll learn more about automated testing in a future tutorial. For now, let's verify the configuration manually. Recall that the `learn_chef_httpd` cookbook configures Apache and sets home page to display "hello world". An easy way to verify this is to  log into your test instance and run `curl localhost`.
+You'll learn more about automated testing in a future tutorial. For now, let's verify the configuration manually. Recall that the `<%= cookbook %>` cookbook configures Apache and sets home page to display "hello world". An easy way to verify this is to  log into your test instance and run `curl localhost`.
 
 The [kitchen login](https://docs.chef.io/ctl_kitchen.html#kitchen-login) command is the most common way to access your test instance. This command creates an SSH connection into your instance and enables you to explore your test instance and verify its configuration.
 
@@ -173,7 +175,7 @@ Because you only want to run `curl localhost`, you can run [kitchen exec](https:
 
 Run the following command to verify the contents of your web server's home page.
 
-<% command_snippet(page: current_page, path: 'verify-learn_chef_httpd-vagrant/kitchen-exec-learn_chef_httpd-vagrant-1') %>
+<% command_snippet(page: current_page, path: "verify-#{cookbook}-#{environment}/kitchen-exec-#{cookbook}-#{environment}-1") %>
 
 You see that the web page contains "hello world" as expected.
 
@@ -189,11 +191,11 @@ We're all done with our virtual machine, so now run the `kitchen destroy` comman
 
 <img src="/assets/images/misc/local_dev_workflow5.png" style="box-shadow: none;" alt=""/>
 
-<% command_snippet(page: current_page, path: 'delete-learn_chef_httpd-vagrant/kitchen-destroy-learn_chef_httpd-vagrant-1') %>
+<% command_snippet(page: current_page, path: "delete-#{cookbook}-#{environment}/kitchen-destroy-#{cookbook}-#{environment}-1") %>
 
 Run `kitchen list` and you'll see that the `Last Action` column shows that the virtual machine no longer exists.
 
-<% command_snippet(page: current_page, path: 'delete-learn_chef_httpd-vagrant/kitchen-list-learn_chef_httpd-vagrant-4') %>
+<% command_snippet(page: current_page, path: "delete-#{cookbook}-#{environment}/kitchen-list-#{cookbook}-#{environment}-4") %>
 
 [END_BOX]
 
