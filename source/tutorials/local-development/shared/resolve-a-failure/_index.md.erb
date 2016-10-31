@@ -1,3 +1,11 @@
+<%
+  metadata = current_page.parent.parent.data
+  cookbook = metadata.cookbook
+  cookbook_escaped = cookbook.gsub('_', '\_')
+  environment = metadata.environment
+%>
+<% key_point "Test Kitchen can help you detect and remedy failures before your change reaches production." %>
+
 In the _Manage a node_ tutorial, you applied a configuration change that [failed on your node](/tutorials/manage-a-node/rhel/hosted/resolve-a-failure). Imagine your node represents a piece of your production infrastructure. A failure in production can cause both an interruption to your team as well as reduced access to services for your users.
 
 In this part, you'll repeat the exercise where you apply a change that, although might appear correct, will actually fail on your test instance. You'll then remedy the failure and verify that `chef-client` succeeds.
@@ -12,11 +20,11 @@ Let's make the same change to the web server cookbook that we did [previously](/
 
 Recall that your default recipe looks like this.
 
-<% code_snippet(page: current_page, path: 'set-web-content-owner/initial-default-recipe-learn_chef_httpd-vagrant') %>
+<% code_snippet(page: current_page, path: "set-web-content-owner/initial-default-recipe-#{cookbook}-#{environment}") %>
 
 Modify your default recipe to looks like this. Note the use of the `template` resource's `mode`, `owner`, and `group` properties.
 
-<% code_snippet(page: current_page, path: 'set-web-content-owner/add-web-user-err-learn_chef_httpd-vagrant') %>
+<% code_snippet(page: current_page, path: "set-web-content-owner/add-web-user-err-#{cookbook}-#{environment}") %>
 
 [END_BOX]
 
@@ -26,12 +34,11 @@ Modify your default recipe to looks like this. Note the use of the `template` re
 
 Now see what happens when you run `kitchen converge`. Because you destroyed your test instance in the previous part, Test Kitchen creates a new instance for you.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-converge-learn_chef_httpd-vagrant-3', features: [:stdin, :stdout, :stderr]) %>
+<% command_snippet(page: current_page, path: "set-web-content-owner/kitchen-converge-#{cookbook}-#{environment}-3", features: [:stdin, :stdout, :stderr]) %>
 
 Here you see the same failure that you saw [previously](/tutorials/manage-a-node/rhel/hosted/resolve-a-failure#step2) when you ran this code on your node.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
 Chef::Exceptions::UserIDNotFound
 --------------------------------
 cannot determine user id for 'web_admin', does the user exist on this system?
@@ -39,7 +46,7 @@ cannot determine user id for 'web_admin', does the user exist on this system?
 
 You also see that Test Kitchen returns with a non-zero exit code.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-converge-learn_chef_httpd-vagrant-3', features: :exitstatus) %>
+<% command_snippet(page: current_page, path: "set-web-content-owner/kitchen-converge-#{cookbook}-#{environment}-3", features: :exitstatus) %>
 
 [END_BOX]
 
@@ -51,19 +58,19 @@ Now you'll resolve the failure just as you did [previously](/tutorials/manage-a-
 
 Modify your default recipe by using the [group](https://docs.chef.io/resource_group.html) and [user](https://docs.chef.io/resource_user.html) resources to define the `web_admin` group and user.
 
-<% code_snippet(page: current_page, path: 'set-web-content-owner/add-web-user-fix-learn_chef_httpd-vagrant') %>
+<% code_snippet(page: current_page, path: "set-web-content-owner/add-web-user-fix-#{cookbook}-#{environment}") %>
 
 Now run `kitchen converge` to apply the configuration.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-converge-learn_chef_httpd-vagrant-4') %>
+<% command_snippet(page: current_page, path: "set-web-content-owner/kitchen-converge-#{cookbook}-#{environment}-4") %>
 
 As before, run `kitchen exec` to verify the contents of your web server's home page.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-exec-learn_chef_httpd-vagrant-2') %>
+<% command_snippet(page: current_page, path: "set-web-content-owner/kitchen-exec-#{cookbook}-#{environment}-2") %>
 
 Also verify that the `web_admin` user is the owner of the home page and that the home page has the expected file permissions.
 
-<% command_snippet(page: current_page, path: 'set-web-content-owner/kitchen-exec-learn_chef_httpd-vagrant-3') %>
+<% command_snippet(page: current_page, path: "set-web-content-owner/kitchen-exec-#{cookbook}-#{environment}-3") %>
 
 Success! With local development, you can make changes, experiment, and verify that your configuration does what you expect using local test instances. You now have increased confidence that your change will work in production.
 
