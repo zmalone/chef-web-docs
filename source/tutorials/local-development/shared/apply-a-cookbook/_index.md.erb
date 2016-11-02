@@ -2,7 +2,13 @@
   metadata = current_page.parent.parent.data
   cookbook = metadata.cookbook
   cookbook_escaped = cookbook.gsub('_', '\_')
-  environment = metadata.environment
+  environment = current_page.parent.data.environment
+  environment_name = case environment
+  when 'ec2'
+    'EC2'
+  when 'azure'
+    'Azure'
+  end
   platform = case current_page.parent.parent.data.platform_id
   when 'rhel'
     {
@@ -12,7 +18,8 @@
       article: 'a',
       box: 'centos-7.2',
       webserver: 'Apache',
-      verify_command: 'curl localhost'
+      verify_command: 'curl localhost',
+      transport: 'an SSH'
     }
   when 'ubuntu'
     {
@@ -22,7 +29,8 @@
       article: 'an',
       box: 'ubuntu-14.04',
       webserver: 'Apache',
-      verify_command: 'curl localhost'
+      verify_command: 'curl localhost',
+      transport: 'an SSH'
     }
   when 'windows'
       {
@@ -32,7 +40,8 @@
         article: 'a',
         box: 'windows-2012r2',
         webserver: 'IIS',
-        verify_command: 'Invoke-WebRequest localhost'
+        verify_command: 'Invoke-WebRequest localhost',
+        transport: 'a WinRM'
       }
   end
   def windows?
@@ -114,17 +123,46 @@ The contents of <% fp "~/learn-chef/cookbooks/#{cookbook}" %> is the same as wha
 
 When you use the `chef generate cookbook` command to create a cookbook, Chef creates a file named <% fp '.kitchen.yml' %> in the root directory of your cookbook. <% fp '.kitchen.yml' %> defines what's needed to run Test Kitchen, including which virtualization provider to use, how to run Chef, and what platforms to run your code on.
 
+<% if environment == 'vagrant' %>
 Here's what your <% fp '.kitchen.yml' %> file looks like.
+<% else %>
+Here's what the initial <% fp '.kitchen.yml' %> file looks like.
+<% end %>
 
 <% code_snippet(page: current_page, path: "understand-kitchen-yml-#{cookbook}-#{environment}/kitchen-yml-#{cookbook}-#{environment}") %>
 
 [COMMENT] On Linux and Mac OS, <% fp '.kitchen.yml' %> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
-Test Kitchen can manage more than one instance at a time to enable you to test your cookbooks on multiple platforms. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only <%= platform[:name] %>, the `platforms` sections contains only `<%= platform[:box] %>`. <% if windows? %>(This is the name you provided for your box in the [previous part](/tutorials/local-development/windows/virtualbox/get-set-up#step3).)<% end %>
+<% if environment != 'vagrant' %>
+We provide this configuration for the [Vagrant and VirtualBox version](/tutorials/local-development/<%= platform[:id] %>/virtualbox/) of this tutorial. To configure Test Kitchen to create <%= platform[:name] %> instances on <%= environment_name %>, start by modifying <% fp '.kitchen.yml' %> like this.
+
+<% code_snippet(page: current_page, path: "update-kitchen-yml-#{cookbook}-#{environment}/kitchen-yml-#{cookbook}-#{environment}-2") %>
+
+<% if environment == 'ec2' %>
+The values shown here are examples. Replace the following with the values you gathered in the previous part.
+
+| Value                | Description |
+|---------------------:|-------------|
+| `aws_ssh_key_id`     | The name of your EC2 key pair |
+| `region`             | Your AWS region |
+| `availability_zone`  | Your AWS availability zone |
+| `subnet_id`          | Your subnet ID |
+| `image_id`           | Your AMI ID |
+| `security_group_ids` | Your security group ID |
+| `ssh_key`            | The full path to the private part of your EC2 key pair file |
+
+This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html), which is the default. While an `m1.small` or larger instance type can provide better performance, you can use the `t2.micro` instance type if your AWS account provides [free-tier](http://aws.amazon.com/free/) access.
+<% elsif environment == 'azure' %>
+AZURE
+<% end %>
+
+<% end %>
+
+Test Kitchen can manage more than one instance at a time to enable you to test your cookbooks on multiple platforms. The default configuration creates both an Ubuntu and a CentOS virtual machine. Since we want only <%= platform[:name] %>, the `platforms` sections contains only `<%= platform[:box] %>`. <% if windows? && environment == 'vagrant' %>(This is the name you provided for your box in the [previous part](/tutorials/local-development/windows/virtualbox/get-set-up#step3).)<% end %>
 
 Here's how the <% fp '.kitchen.yml' %> file breaks down.
 
-* **driver** specifies the software that manages the machine. We're using Vagrant ([complete list](https://docs.chef.io/config_yml_kitchen.html#drivers)). The Vagrant driver works with VirtualBox by default.
+* **driver** specifies the software that manages the machine. We're using <%= environment_name %> ([complete list](https://docs.chef.io/config_yml_kitchen.html#drivers)). <% if environment == 'vagrant' %> The Vagrant driver works with VirtualBox by default.<% end %>
 * **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and other Chef server features.
 <% if windows? %>
 * **transport** specifies how to execute commands remotely on the test instance. WinRM is the default transport on Windows; SSH is the default on all other operating systems.
@@ -161,9 +199,15 @@ Create the instance now by running `kitchen create`.
 
 <% command_snippet(page: current_page, path: "create-#{cookbook}-#{environment}/kitchen-create-#{cookbook}-#{environment}-1") %>
 
+[COMMENT] If you need to destroy your instance before you complete this tutorial, run `kitchen destroy`. You can later run `kitchen create` to pick back up where you left off.
+
+<% if environment == 'vagrant' %>
+
 [WINDOWS] [Due to an issue with newer versions of Vagrant](https://github.com/mitchellh/vagrant/issues/6852), if you're using a Windows workstation and the command fails with a blank error message, [you may need to install the Microsoft Visual C++ 2010 SP1 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=8328). Then try the command again.
 
 This command will take longer the first time you run it because Vagrant needs to download the base image, or box. After the base box is downloaded, `kitchen create` will complete much more quickly.
+
+<% end %>
 
 Now run `kitchen list` again.
 
@@ -215,7 +259,7 @@ In practice, you typically write automated tests that verify whether your instan
 
 You'll learn more about automated testing in a future tutorial. For now, let's verify the configuration manually. Recall that the `<%= cookbook %>` cookbook configures <%= platform[:webserver] %> and sets the home page to display "hello world". An easy way to verify this is to log into your test instance and run ``<%= platform[:verify_command] %>``.
 
-The [kitchen login](https://docs.chef.io/ctl_kitchen.html#kitchen-login) command is the most common way to access your test instance. This command creates an SSH connection into your instance and enables you to explore your test instance and verify its configuration.
+The [kitchen login](https://docs.chef.io/ctl_kitchen.html#kitchen-login) command is the most common way to access your test instance. This command creates <%= platform[:transport] %> connection into your instance and enables you to explore your test instance and verify its configuration.
 
 Because you only want to run `<%= platform[:verify_command] %>`, you can run [kitchen exec](https://docs.chef.io/ctl_kitchen.html#kitchen-exec) to run a single command.
 
@@ -225,7 +269,11 @@ Run the following command to verify the contents of your web server's home page.
 
 You see that the web page contains "hello world" as expected.
 
+<% if environment == 'vagrant' %>
+
 [COMMENT] When you use the Vagrant driver, you can also assign a static IP address to your instance. This enables you to verify the configuration externally, such as from your workstation's web browser. You'll do so in the next tutorial.
+
+<% end %>
 
 [END_BOX]
 
