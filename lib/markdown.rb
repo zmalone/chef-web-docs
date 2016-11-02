@@ -122,7 +122,7 @@ module ZurbFoundation
       escaped = flat.gsub(/\W/, "")
       s = ''
       # if the title looks like a step, create an additional anchor, e.g. #step2
-      m = /\A(?<step>[\d\.]+)\./.match(flat)
+      m = /\A(?<step>\d(?:\.\d)*)\./.match(flat)
       step = m.nil? ? nil : "step#{m['step']}"
       s += "<a name=\"#{step}\" href=\"##{step}\"></a>" unless step.nil?
       # create a second anchor for the long form and link it to the step anchor if it exists; otherwise, link to the long form
