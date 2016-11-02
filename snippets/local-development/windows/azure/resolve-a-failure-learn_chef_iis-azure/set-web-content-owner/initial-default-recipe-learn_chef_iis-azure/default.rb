@@ -13,12 +13,6 @@ service 'w3svc' do
   action [:enable, :start]
 end
 
-directory 'c:\inetpub\wwwroot' do
-  rights :read, 'IIS_IUSRS'
-  recursive true
-  action :create
-end
-
 template 'c:\inetpub\wwwroot\Default.htm' do
   source 'Default.htm.erb'
 end

@@ -1,23 +1,22 @@
 ---
 driver:
-  name: ec2
-  aws_ssh_key_id: learn-chef
-  region: us-east-1
-  availability_zone: b
-  subnet_id: subnet-3f22bd15
-  instance_type: m1.small
-  image_id: ami-3f0c4628
-  security_group_ids: sg-48984132
-  retryable_tries: 120
+  name: vagrant
 
 provisioner:
   name: chef_zero
 
+verifier:
+  name: inspec
+
 transport:
-  ssh_key: /root/.ssh/learn-chef.pem
+  name: winrm
+  elevated: true
 
 platforms:
   - name: windows-2012r2
+    driver:
+      customize:
+        memory: 2048
 
 suites:
   - name: default

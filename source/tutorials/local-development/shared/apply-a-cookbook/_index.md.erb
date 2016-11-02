@@ -119,7 +119,11 @@ The contents of <% fp "~/learn-chef/cookbooks/#{cookbook}" %> is the same as wha
 
 [START_BOX]
 
+<% if environment == 'vagrant' %>
 ## 2. Examine the Test Kitchen configuration file
+<% else %>
+## 2. Create the Test Kitchen configuration file
+<% end %>
 
 When you use the `chef generate cookbook` command to create a cookbook, Chef creates a file named <% fp '.kitchen.yml' %> in the root directory of your cookbook. <% fp '.kitchen.yml' %> defines what's needed to run Test Kitchen, including which virtualization provider to use, how to run Chef, and what platforms to run your code on.
 
@@ -129,7 +133,7 @@ Here's what your <% fp '.kitchen.yml' %> file looks like.
 Here's what the initial <% fp '.kitchen.yml' %> file looks like.
 <% end %>
 
-<% code_snippet(page: current_page, path: "understand-kitchen-yml-#{cookbook}-#{environment}/kitchen-yml-#{cookbook}-#{environment}") %>
+<% code_snippet(path: "local-development/#{platform[:id]}/vagrant/apply-the-cookbook-#{cookbook}-vagrant/understand-kitchen-yml-#{cookbook}-vagrant/kitchen-yml-#{cookbook}-vagrant") %>
 
 [COMMENT] On Linux and Mac OS, <% fp '.kitchen.yml' %> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
@@ -139,7 +143,7 @@ We provide this configuration for the [Vagrant and VirtualBox version](/tutorial
 <% code_snippet(page: current_page, path: "update-kitchen-yml-#{cookbook}-#{environment}/kitchen-yml-#{cookbook}-#{environment}-2") %>
 
 <% if environment == 'ec2' %>
-The values shown here are examples. Replace the following with the values you gathered in the previous part.
+Next, replace the following with the values you gathered in the previous part.
 
 | Value                | Description |
 |---------------------:|-------------|
@@ -151,9 +155,14 @@ The values shown here are examples. Replace the following with the values you ga
 | `security_group_ids` | Your security group ID |
 | `ssh_key`            | The full path to the private part of your EC2 key pair file |
 
-This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html), which is the default. While an `m1.small` or larger instance type can provide better performance, you can use the `t2.micro` instance type if your AWS account provides [free-tier](http://aws.amazon.com/free/) access.
+This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html), which is the default. While an `m1.small` or larger instance type can provide better performance, you can use the `t2.micro` instance type if your AWS account provides [free-tier](http://aws.amazon.com/free/) access. In practice, you would choose an image size that fits your requirements.
 <% elsif environment == 'azure' %>
-AZURE
+Next, replace these values:
+
+* `subscription_id` with your subscription ID. You can find yours on the first line of your <% fp '~/.azure/credentials' %> file.
+* `location` with the Azure [region](https://azure.microsoft.com/en-us/regions/) where you'll run your test instances.
+
+This example uses the **Standard_D2** [image size](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/), which we recommend for this tutorial. In practice, you would choose an image size that fits your requirements.
 <% end %>
 
 <% end %>
