@@ -9,7 +9,7 @@ In this tutorial, you'll have the opportunity to practice what you've learned in
 
 * In [Learn the Chef basics](/learn-the-basics/ubuntu), you learned how Chef works by running `chef-client` in local mode to configure an Ubuntu server directly.
 * In [Manage a node](/tutorials/manage-a-node/ubuntu/), you learned how to set up your Chef server and bootstrap and manage a server, also called a _node_, remotely from your workstation.
-* In [Develop your infrastructure code locally](/local-development/ubuntu/), you learned how _local development_ with Test Kitchen helps shorten the development process. With Test Kitchen, you apply your cookbook to a temporary instance that resembles production before you apply your work to a bootstrapped node.
+* In [Develop locally](/tutorials/local-development/ubuntu/), you learned how _local development_ with Test Kitchen helps shorten the development process. With Test Kitchen, you apply your cookbook to a temporary instance that resembles production before you apply your work to a bootstrapped node.
 
 Now you'll build a basic but complete web application on Ubuntu called Customers that uses a web server, a database, and scripting. Such a configuration is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP. You'll write a cookbook that's named `awesome_customers_ubuntu`.
 
