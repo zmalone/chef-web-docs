@@ -289,6 +289,97 @@ You see that the web page contains "hello world" as expected.
 
 <% end %>
 
+<% if windows? %>
+
+### Connecting to your Windows Server instance over Remote Desktop
+
+Here, you ran `kitchen exec` to verify your configuration over WinRM. Although not required, you can also connect over Remote Desktop. Remote Desktop gives you full access to your Windows Server instance through its graphical interface. The way you connect to your instance depends on which driver you're using.
+
+<% if environment == 'ec2' %>
+
+When you use the EC2 driver, Test Kitchen creates a YAML (.yml) configuration file that lists details about the instance in the cookbook's <code class="file-path">.kitchen</code> directory.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_iis
+$ ls .kitchen
+default-windows-2012r2.yml logs
+```
+
+Get the password for the Windows account that Test Kitchen used to run `chef-client`.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_iis
+$ more .kitchen/default-windows-2012r2.yml
+---
+username: administrator
+server_id: i-0936dac5d5d8fea4b
+hostname: ec2-54-227-135-98.compute-1.amazonaws.com
+password: 42zjFQqqqMY
+last_action: create
+```
+
+Run `kitchen login` to create a Remote Desktop connection to your instance. If prompted, enter the password that you retrieved in the previous step.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_iis
+$ kitchen login
+```
+
+Your instance is now accessible from Remote Desktop.
+
+![](misc/rdp-example.png)
+
+<% elsif environment == 'hyper-v' %>
+
+When you use the Hyper-V driver, login to your instance, `default-windows-2012r2`, through Hyper-V Manager. Login as `Administrator` and use the same password that you set when you created the base virtual machine.
+
+<% elsif environment == 'vagrant' %>
+
+When you use the Vagrant driver, a VirtualBox window appears when you create the instance. Login through that window as either `Administrator` or `vagrant` &ndash; the password for both accounts is `vagrant`.
+
+<% elsif environment == 'azure' %>
+
+When you use the Azure driver, Test Kitchen creates a YAML (.yml) configuration file that lists details about the instance in the cookbook's <code class="file-path">.kitchen</code> directory.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_iis
+$ ls .kitchen
+default-windows-2012r2.yml logs
+```
+
+Get the password for the Windows account that Test Kitchen used to run `chef-client`.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_iis
+$ more .kitchen/default-windows-2012r2.yml
+---
+uuid: 20da7278d44afd63
+server_id: vm20da7278d44afd63
+azure_resource_group_name: kitchen-default-windows-2012r2-20161107T141603
+subscription_id: 12345678-YOUR-GUID-HERE-123456789abc
+username: azure
+password: P2ssw0rd
+vm_name: vm
+azure_management_url: https://management.azure.com
+hostname: 40.76.207.173
+last_action: create
+```
+
+Run `kitchen login` to create a Remote Desktop connection to your instance. If prompted, enter the password that you retrieved in the previous step.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_iis
+$ kitchen login
+```
+
+Your instance is now accessible from Remote Desktop.
+
+![](misc/rdp-example.png)
+
+<% end %>
+
+<% end %>
+
 [END_BOX]
 
 [START_BOX]
