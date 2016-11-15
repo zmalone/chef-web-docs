@@ -3,5 +3,5 @@ log_level                 :info
 log_location              STDOUT
 node_name                 "admin"
 client_key                "#{current_dir}/admin.pem"
-chef_server_url           "https://ec2-54-165-246-22.compute-1.amazonaws.com/organizations/4thcoffee"
+chef_server_url           "https://ec2-52-207-220-89.compute-1.amazonaws.com/organizations/4thcoffee"
 cookbook_path             ["#{current_dir}/../cookbooks"]
