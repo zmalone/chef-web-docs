@@ -1,6 +1,6 @@
 This tutorial was last tested using this configuration:
 
-* Chef Automate  on AWS OpsWorks
+* Chef Automate 12.11.0 on AWS OpsWorks managed Chef
   * **Region:** us-east-1
   * **Instance type:** t2.medium
 <br /><br />
