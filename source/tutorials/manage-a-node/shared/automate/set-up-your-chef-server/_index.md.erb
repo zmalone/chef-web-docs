@@ -265,40 +265,13 @@ $ sudo /tmp/install-chef-automate.sh "CHEF_SERVER_FQDN"
 If you're not running Chef Automate on Ubuntu, you can modify the setup script or manually perform the steps. Here's a summary of what you need to do.
 
 1. [Install the Chef Automate package](https://docs.chef.io/install_chef_automate.html#chef-automate-server-installation-and-configuration) and run the initial setup.
-
 1. [Create a user](https://docs.chef.io/ctl_delivery_server.html#create-user).
 
 [END_BOX]
 
 [START_BOX]
 
-## 7. Download the SSL certificate from Chef Automate
-
-Later in this tutorial, you'll bring up a node and configure it to send data to Chef Automate. You'll need to copy the SSL certificate from Chef Automate to your node. To prepare for this process, download the SSL certificate from Chef Automate to your workstation now.
-
-Run the `scp` command to download the certificate. If you're running from a Windows workstation, replace <% fp '/tmp' %> with another location on your system, such as <% fp 'C:\Temp' %>
-
-Replace the values of <% ph 'PRIVATE_KEY' %>, <% ph 'USER' %>, and <% ph 'CHEF_AUTOMATE_FQDN' %> with your values.
-
-```bash
-$ scp -i PRIVATE_KEY -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null USER@CHEF_AUTOMATE_FQDN:/var/opt/delivery/nginx/ca/CHEF_AUTOMATE_FQDN.crt /tmp/CHEF_AUTOMATE_FQDN.crt
-```
-
-Here's an example for a Chef Automate system running on AWS.
-
-<% command_snippet(page: current_page, path:  'copy-server-certificate/download-automate-certificate-to-workstation', features: [:stdin, :stderr]) %>
-
-Remember, if you're using password authentication, you can omit the `-i` argument and enter your password when prompted.
-
-```bash
-$ scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null USER@CHEF_AUTOMATE_FQDN:/var/opt/delivery/nginx/ca/CHEF_AUTOMATE_FQDN.crt /tmp/CHEF_AUTOMATE_FQDN.crt
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 8. Configure Chef server to send data to Chef Automate
+## 7. Configure Chef server to send data to Chef Automate
 
 Recall that event data enables you to see events in the Chef Automate dashboard.
 
@@ -324,7 +297,7 @@ $ sudo chef-server-ctl reconfigure
 
 [START_BOX]
 
-## 9. Set up your workstation
+## 8. Set up your workstation
 
 <%= partial '../../shared/set-up-your-chef-server/knife_and_rsa_key' %>
 
@@ -385,7 +358,7 @@ After you set up your workstation, fetch and validate the SSL certificate from y
 
 [START_BOX]
 
-## 10. Log in to the Chef Automate dashboard
+## 9. Log in to the Chef Automate dashboard
 
 Chef Automate provides a web interface where you can monitor and visualize the status of your nodes. Let's take a look.
 
