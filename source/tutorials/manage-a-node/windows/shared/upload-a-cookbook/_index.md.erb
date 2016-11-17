@@ -15,11 +15,21 @@ In [Learn the Chef basics](/tutorials/learn-the-basics/windows/), you wrote a co
 
 Normally, you write cookbooks on your workstation. In _Learn the Chef basics_, you wrote the `learn_chef_iis` cookbook directly on your test server. Instead of having you type in the cookbook again, let's get a copy from GitHub.
 
-First, you need a place to store your cookbooks locally on your workstation. Recall that your `knife` configuration file looks similar to this.
+First, you need a place to store your cookbooks locally on your workstation. Your `knife` configuration file looks similar to this.
 
-<% code_snippet(page: current_page.previous_page, path: 'generate-knife-config/knife-rb') %>
+<% if current_page.parent.data.environment == 'virtualbox' %>
+<% code_snippet(page: current_page.previous_page, path: "generate-knife-config/knife-rb-#{current_page.parent.data.platform_id}") %>
+<% else %>
+<% code_snippet(path: "manage-a-node/rhel/#{current_page.parent.data.environment}/set-up-your-chef-server/generate-knife-config/knife-rb") %>
+<% end %>
 
-`cookbook_path` is defined as <% fp '"#{current_dir}/../cookbooks"' %>. The path breaks down like this:
+<% if current_page.parent.data.environment == 'opsworks' %>
+
+Your `knife` configuration file, like many files in Chef, is built on the Ruby programming language. `base_dir` specifies the configuration file's parent directory, for example, <% fp '~/learn-chef' %>. `cookbook_path` joins `base_dir` with the <% fp 'cookbooks' %> directory, for example, <% fp '~/learn-chef/cookbooks' %>. `cookbook_path` tells `knife` where to look for cookbooks.
+
+<% else %>
+
+`cookbook_path` tells `knife` where to look for cookbooks, and is defined as <% fp '"#{current_dir}/../cookbooks"' %>. The path breaks down like this:
 
 | Partial path              | Meaning                                        | Full path                         |
 |---------------------------|------------------------------------------------|-----------------------------------|
@@ -29,6 +39,13 @@ First, you need a place to store your cookbooks locally on your workstation. Rec
 
 [COMMENT] Your `knife` configuration file, like many files in Chef, is built on the Ruby programming language. The `#{current_dir}` syntax, for example, is how you insert variables into strings. The [Chef documentation](https://docs.chef.io/ruby.html#ruby-basics) provides a quick overview of the common Ruby patterns you'll use when you write Chef code.
 
+<% end %>
+
+<% if current_page.data.environment == 'opsworks' %>
+Start by moving to the <code class="file-path">~/learn-chef/cookbooks</code> directory.
+
+<% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/opsworks/upload-a-cookbook/create-cookbooks-directory/cd-cookbooks', features: :stdin) %>
+<% else %>
 Start by creating the <code class="file-path">~/learn-chef/cookbooks</code> directory.
 
 <% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/hosted/upload-a-cookbook/create-cookbooks-directory/mkdir-cookbooks', features: :stdin) %>
@@ -36,6 +53,7 @@ Start by creating the <code class="file-path">~/learn-chef/cookbooks</code> dire
 Now `cd` there.
 
 <% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/hosted/upload-a-cookbook/create-cookbooks-directory/cd-cookbooks', features: :stdin) %>
+<% end %>
 
 Next, clone the `learn_chef_iis` cookbook from GitHub.
 
@@ -61,7 +79,7 @@ The output shows that the cookbook was successfully uploaded, but you can run th
 
 <% command_snippet(page: current_page, path: 'upload-0-1-0/knife-cookbook-list-learn_chef_iis') %>
 
-<% if ['aws-automate', 'opsworks'].include?(current_page.parent.data.environment) %>
+<% if current_page.parent.data.environment == 'aws-automate' %>
 
 Recall that when you set up your Chef server, you [configured Chef server to send server object data](https://docs.chef.io/setup_visibility_chef_automate.html#configure-chef-server-to-send-server-object-data) to Chef Automate.
 
@@ -72,6 +90,14 @@ data_collector["token"] = "93a49a4f2482c64126f7b6015e6b0f30284287ee4054ff8807fb6
 ```
 
 This enables Chef server to send events to Chef Automate, such as when you upload a cookbook to Chef server.
+
+<% elsif current_page.parent.data.environment == 'opsworks' %>
+
+AWS OpsWorks managed Chef comes [preconfigured to send server event data](https://docs.chef.io/setup_visibility_chef_automate.html#configure-chef-server-to-send-server-object-data), such as when you upload a cookbook to Chef server, to Chef Automate.
+
+<% end %>
+
+<% if ['aws-automate', 'opsworks'].include?(current_page.parent.data.environment) %>
 
 Return to the Chef Automate dashboard and refresh the page. Although you might expect to see the **Cookbooks Uploaded** field show 1, you see that it still shows 0.
 

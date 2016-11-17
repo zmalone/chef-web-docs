@@ -23,7 +23,13 @@ First, you need a place to store your cookbooks locally on your workstation. Rec
 <% code_snippet(page: current_page.previous_page, path: 'generate-knife-config/knife-rb') %>
 <% end %>
 
-`cookbook_path` is defined as <% fp '"#{current_dir}/../cookbooks"' %>. The path breaks down like this:
+<% if current_page.parent.data.environment == 'opsworks' %>
+
+Your `knife` configuration file, like many files in Chef, is built on the Ruby programming language. `base_dir` specifies the configuration file's parent directory, for example, <% fp '~/learn-chef' %>. `cookbook_path` joins `base_dir` with the <% fp 'cookbooks' %> directory, for example, <% fp '~/learn-chef/cookbooks' %>. `cookbook_path` tells `knife` where to look for cookbooks.
+
+<% else %>
+
+`cookbook_path` tells `knife` where to look for cookbooks, and is defined as <% fp '"#{current_dir}/../cookbooks"' %>. The path breaks down like this:
 
 | Partial path              | Meaning                                        | Full path                         |
 |---------------------------|------------------------------------------------|-----------------------------------|
@@ -32,6 +38,8 @@ First, you need a place to store your cookbooks locally on your workstation. Rec
 | <% fp 'cookbooks' %>      | Traverse to the <% fp 'cookbooks' %> directory | <% fp '~/learn-chef/cookbooks' %> |
 
 [COMMENT] Your `knife` configuration file, like many files in Chef, is built on the Ruby programming language. The `#{current_dir}` syntax, for example, is how you insert variables into strings. The [Chef documentation](https://docs.chef.io/ruby.html#ruby-basics) provides a quick overview of the common Ruby patterns you'll use when you write Chef code.
+
+<% end %>
 
 <% if current_page.data.environment == 'opsworks' %>
 Start by moving to the <code class="file-path">~/learn-chef/cookbooks</code> directory.
