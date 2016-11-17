@@ -61,7 +61,7 @@ No mapping between account names and security IDs was done.
 
 As you may have already realized, the updated configuration attempts to assign read permissions to the `IIS_USRS` group, instead of the `IIS_IUSRS` group (note the missing `I`).
 
-<% if current_page.parent.data.environment == 'aws-automate' %>
+<% if ['aws-automate', 'opsworks'].include?(current_page.parent.data.environment) %>
 
 You can verify the failure from the **Nodes** tab in the Chef Automate dashboard.
 
@@ -121,7 +121,7 @@ Verify the configuration by running `curl`<% if current_page.parent.data.environ
 
 <% command_snippet(page: current_page, path: 'set-web-content-owner/curl-node1-windows-3', features: [:stdin, :stdout]) %>
 
-<% if current_page.parent.data.environment == 'aws-automate' %>
+<% if ['aws-automate', 'opsworks'].include?(current_page.parent.data.environment) %>
 
 From the **Nodes** tab in the Chef Automate dashboard, you'll also see that the `chef-client` run succeeded and that your node's status returned to successful.
 
@@ -201,7 +201,7 @@ Don't forget to tear down any cloud instances or local virtual machines that you
 
 ## Conclusion
 
-In this tutorial, you brought up a <% if current_page.data.environment == 'aws-automate' %>Chef Automate server, a <% end %>Chef server, bootstrapped a node, and applied a basic web server configuration. You also practiced updating your cookbook, uploading it to the Chef server, and seeing the changes appear on your node. As a bonus, you resolved an error in your configuration.
+In this tutorial, you brought up a <% if ['aws-automate', 'opsworks'].include?(current_page.data.environment) %>Chef Automate server, a <% end %>Chef server, bootstrapped a node, and applied a basic web server configuration. You also practiced updating your cookbook, uploading it to the Chef server, and seeing the changes appear on your node. As a bonus, you resolved an error in your configuration.
 
 To update your cookbook you used a _template_. A [template](https://docs.chef.io/templates.html) enables you to write a single, general recipe that's customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node.
 
