@@ -5,8 +5,8 @@ log_location             STDOUT
 node_name                'pivotal'
 client_key               File.join(base_dir, '.chef', 'private.pem')
 syntax_check_cache_path  File.join(base_dir, '.chef', 'syntax_check_cache')
-cookbook_path [File.join(base_dir, 'cookbooks')]
+cookbook_path            [File.join(base_dir, 'cookbooks')]
 
-chef_server_url          'https://test-vmxqowfex04cm6xd.gamma.opsworks-cm.io/organizations/default'
+chef_server_url          'https://test-xcdbs22xaaf3cmpz.gamma.opsworks-cm.io/organizations/default'
 ssl_ca_file              File.join(base_dir, '.chef', 'ca_certs', 'opsworks-cm-ca-2016-root.pem')
 trusted_certs_dir        File.join(base_dir, '.chef', 'ca_certs')
