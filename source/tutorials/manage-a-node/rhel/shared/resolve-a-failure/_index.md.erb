@@ -4,8 +4,6 @@ In this part, you'll make a second modification to your `learn_chef_httpd` cookb
 
 You'll practice the process of updating your cookbook, bumping its version metadata, and applying your update to your node. You'll also gain insight into how to resolve failures when something goes wrong.
 
-This is the final part of this tutorial, so you'll also learn how to optionally [clean up your environment](#howtocleanupyourenvironment) by removing your cookbook and node from the Chef server.
-
 [COMMENT] Just remember that this exercise is for learning purposes. You typically don't test configuration changes on a bootstrapped node. The recommended workflow involves first [verifying your changes locally on test instances](/tutorials/local-development/rhel/) and then [submitting your change to an automated pipeline](/automate/), such as Chef Automate. You'll learn more about Chef's test-driven, team-based workflow in future tutorials.
 
 [START_BOX]
@@ -141,82 +139,8 @@ Even when you develop your code locally, errors do occur in production. In this 
 
 [END_BOX]
 
-[START_BOX]
+<% next_page(current_page) do %>
 
-## How to clean up your environment
-
-You can continue to experiment with your Chef server and your node. When you're done, you can perform these optional steps if you want to clean up your Chef server or you want to repeat the tutorial from the beginning.
-
-[WARN] In practice, use caution when using the `--yes` argument. The `--yes` argument suppresses any prompts for confirmation before performing a destructive operation.
-
-### Delete the node from the Chef server
-
-As you experiment, it's a good idea to delete information about your node from the Chef server when you no longer need it. That way, your Chef server contains only relevant information. In practice, it's up to you whether to delete node information when you retire a production system from service.
-
-From your workstation, run these commands to delete the data about your node from the Chef server.
-
-<% command_snippet(page: current_page, path: 'cleaning-up/knife-node-delete-node1-centos') %>
-
-<% command_snippet(page: current_page, path: 'cleaning-up/knife-client-delete-node1-centos') %>
-
-Chef makes a distinction between the nodes that are being managed and the clients that are authorized to make API calls to the Chef server. Therefore, you need to run [knife node delete](https://docs.chef.io/knife_node.html#delete) to remove the node's metadata from the Chef server and [knife client delete](https://docs.chef.io/knife_client.html#delete) to delete the entry (including the public part of the RSA key pair) from the Chef server's API client list.
-
-### Delete your cookbook from the Chef server
-
-Here's how to delete the `learn_chef_httpd` cookbook from the Chef server.
-
-<% command_snippet(page: current_page, path: 'cleaning-up/knife-cookbook-delete-learn_chef_httpd', features: [:stdin, :stderr]) %>
-
-If you omit the `--all` argument, you'll be prompted to select which version to delete. In practice, you might delete version '0.3.0' of the `learn_chef_httpd` cookbook because you know it contains a configuration policy that will always fail.
-
-### Delete the RSA private key from your node
-
-During the bootstrap process, an RSA private key is generated on your node to enable your node to make API calls to the Chef server. The default location of this key is <code class="file-path">/etc/chef/client.pem</code> on Linux systems.
-
-If you plan to bootstrap your node a second time, for example, to practice the process, you'll need to log in to your node and delete the RSA private key file, like this.
-
-```bash
-$ sudo rm /etc/chef/client.pem
-```
-
-<% if current_page.parent.data.environment == 'virtualbox' %>
-
-### Tear down your Vagrant and VirtualBox environment
-
-Remember to [tear down your virtual machines](/tutorials/manage-a-node/rhel/virtualbox/set-up-your-chef-server#destroyingyourenvironment) when you're done.
-
-<% else %>
-
-### Tear down your instance
-
-Deleting a node from your Chef server removes any data about that node from the server &ndash; it doesn't automatically tear down the instance.
-
-Don't forget to tear down any cloud instances or local virtual machines that you used to complete the tutorial.
+Next, you'll use the `chef-client` cookbook from Chef Supermarket to set up your node to run `chef-client` periodically.
 
 <% end %>
-
-[END_BOX]
-
-[START_BOX]
-
-## Conclusion
-
-In this tutorial, you brought up a <% if ['aws-automate', 'opsworks'].include?(current_page.data.environment) %>Chef Automate server, a <% end %>Chef server, bootstrapped a node, and applied a basic web server configuration. You also practiced updating your cookbook, uploading it to the Chef server, and seeing the changes appear on your node. As a bonus, you resolved an error in your configuration.
-
-To update your cookbook you used a _template_. A [template](https://docs.chef.io/templates.html) enables you to write a single, general recipe that's customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node.
-
-You also ran `knife ssh` to update your node. [knife ssh](https://docs.chef.io/knife_ssh.html) invokes the command you specify over an SSH connection on a node &ndash; in our case `sudo chef-client`. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
-
-That's it for this tutorial. When you're done experimenting, be sure to [clean up your environment](#howtocleanupyourenvironment).
-
-Be sure to check out these videos, which go deeper into what happens during the bootstrap process and when `chef-client` runs.
-
-* [What happens during knife bootstrap](/skills/beyond-essentials-1)
-* [What happens during a chef-client run](/skills/beyond-essentials-2)
-* [What is the security model used by chef-client](/skills/beyond-essentials-3)
-
-In the next tutorial, [Develop locally](/tutorials/local-development/rhel/), you'll learn how _local development_ with Test Kitchen can help you iterate faster and correct mistakes earlier in the development process. With local development, you verify your cookbooks on local test instances that resemble production before you apply your work to a bootstrapped node.
-
-[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
-
-[END_BOX]
