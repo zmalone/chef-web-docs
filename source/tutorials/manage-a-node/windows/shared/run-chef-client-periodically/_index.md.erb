@@ -1,8 +1,4 @@
-In the previous part, you used `knife` to update your node's configuration. Many Chef users start out by using `knife` to update their servers' configuration on demand. You can then move to a continuous delivery system, such as Chef Automate, to release changes more often and with greater safety.
-
-[COMMENT] See the [Get started with Chef Automate](/automate/) tutorial to learn more about using Chef Automate's pipline and workflow capabilities.
-
-A continuous delivery system might run `chef-client` on your nodes when an explicit change is made to your configuration policy, for example, when a change is committed to your version control system.
+In the previous part, you used `knife` to update your node's configuration. Many Chef users start out by using `knife` to update their servers' configuration on demand. You can then move to a continuous delivery system, such as Chef Automate, to release changes more often and with greater safety. A continuous delivery system might run `chef-client` on your nodes when an explicit change is made to your configuration policy, for example, when a change is committed to your version control system.
 
 In addition to running `chef-client` when your configuration policy changes, you may also want to run `chef-client` periodically. One reason is to help ensure that your servers are free from _configuration drift_.
 
@@ -13,6 +9,8 @@ In this part, you'll use the `chef-client` cookbook to set up your node to run `
 * use a _role_ to define your node's attributes and its run-list.
 
 This is the final part of this tutorial, so you'll also learn how to optionally [clean up your environment](#howtocleanupyourenvironment) by removing your cookbook and node from the Chef server.
+
+[COMMENT] See the [Get started with Chef Automate](/automate/) tutorial to learn more about using Chef Automate's pipline and workflow capabilities.
 
 [START_BOX]
 
@@ -26,7 +24,7 @@ You can of course manually set `chef-client` to run on a regular interval. Anoth
 
 On Linux, the `chef-client` cookbook sets up `chef-client` to run as a service. On Windows, this cookbook sets up `chef-client` to run as a scheduled task. One benefit to using the `chef-client` cookbook is that it works on multiple platforms.
 
-There are serveral ways to obtain cookbooks from Chef Supermarket. One way is to use the [knife supermarket](https://docs.chef.io/plugin_knife_supermarket.html) command. However, the `chef-client` cookbook has _dependencies_ on other cookbooks (you'll learn more about cookbook dependencies in a later tutorial), and `knife supermarket` does not resolve these dependencies for you.
+There are several ways to obtain cookbooks from Chef Supermarket. One way is to use the [knife supermarket](https://docs.chef.io/plugin_knife_supermarket.html) command. However, the `chef-client` cookbook has _dependencies_ on other cookbooks (you'll learn more about cookbook dependencies in a later tutorial), and `knife supermarket` does not resolve these dependencies for you.
 
 [Berkshelf](http://berkshelf.com) is a tool that helps you resolve cookbook dependencies. Berkshelf can retrieve the cookbooks that your cookbook depends on and can upload your cookbooks to your Chef server. Berkshelf comes with the Chef DK.
 
@@ -74,7 +72,7 @@ Now that the `chef-client` cookbook is on your Chef server, you need to update y
 How often `chef-client` is run is controlled by two node attributes ([source code](https://github.com/chef-cookbooks/chef-client/blob/master/attributes/default.rb)):
 
 * `node['chef_client']['interval']` &ndash; _interval_ specifies the number of seconds between `chef-client` runs. The default value is 1,800 (30 minutes).
-* `node['chef_client']['splay']` &ndash; _splay_ specifies a maximum random number of seconds that is added to the interval. Splay helps balance the load on the Chef server by ensuring that many `chef-client` runs are not occuring at the same interval. The default value is 300 (5 minutes).
+* `node['chef_client']['splay']` &ndash; _splay_ specifies a maximum random number of seconds that is added to the interval. Splay helps balance the load on the Chef server by ensuring that many `chef-client` runs are not occurring at the same interval. The default value is 300 (5 minutes).
 
 By default, `chef-client` will run every 30&mdash;35 minutes on your node. In practice, the values you choose depend on your requirements. For learning purposes, you'll specify an interval of 5 minutes (300 seconds) and a splay of 1 minute (60 seconds), causing your node to check in every 5&mdash;6 minutes.
 
