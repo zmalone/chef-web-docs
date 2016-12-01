@@ -1,0 +1,276 @@
+10.0.2.5 Starting Chef Client, version 12.16.42
+10.0.2.5 resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_apache2::default"]
+10.0.2.5 Synchronizing Cookbooks:
+10.0.2.5   - chef-client (7.0.0)
+10.0.2.5   - cron (3.0.0)
+10.0.2.5   - logrotate (2.1.0)
+10.0.2.5   - compat_resource (12.16.2)
+10.0.2.5   - ohai (4.2.2)
+10.0.2.5   - learn_chef_apache2 (0.3.1)
+10.0.2.5   - windows (2.1.1)
+10.0.2.5 Installing Cookbook Gems:
+10.0.2.5 Compiling Cookbooks...
+10.0.2.5 Converging 15 resources
+10.0.2.5 Recipe: chef-client::init_service
+10.0.2.5   * directory[/var/run/chef] action create
+10.0.2.5     - create new directory /var/run/chef
+10.0.2.5     - change owner from '' to 'root'
+10.0.2.5     - change group from '' to 'root'
+10.0.2.5   * directory[/var/cache/chef] action create
+10.0.2.5     - create new directory /var/cache/chef
+10.0.2.5     - change owner from '' to 'root'
+10.0.2.5     - change group from '' to 'root'
+10.0.2.5   * directory[/var/lib/chef] action create
+10.0.2.5     - create new directory /var/lib/chef
+10.0.2.5     - change owner from '' to 'root'
+10.0.2.5     - change group from '' to 'root'
+10.0.2.5   * directory[/var/log/chef] action create
+10.0.2.5     - create new directory /var/log/chef
+10.0.2.5     - change mode from '' to '0755'
+10.0.2.5     - change owner from '' to 'root'
+10.0.2.5     - change group from '' to 'root'
+10.0.2.5   * directory[/etc/chef] action create (up to date)
+10.0.2.5   * template[/etc/init.d/chef-client] action create
+10.0.2.5     - create new file /etc/init.d/chef-client
+10.0.2.5     - update content in file /etc/init.d/chef-client from none to c4f9fe
+10.0.2.5     --- /etc/init.d/chef-client	2016-11-30 06:44:10.686762900 +0000
+10.0.2.5     +++ /etc/init.d/.chef-chef-client20161130-5348-l4bqh8	2016-11-30 06:44:10.686762900 +0000
+10.0.2.5     @@ -1 +1,207 @@
+10.0.2.5     +#! /bin/sh
+10.0.2.5     +### BEGIN INIT INFO
+10.0.2.5     +# Provides:           chef-client
+10.0.2.5     +# Required-Start:     $remote_fs $network
+10.0.2.5     +# Required-Stop:      $remote_fs $network
+10.0.2.5     +# Default-Start:      2 3 4 5
+10.0.2.5     +# Default-Stop:       0 1 6
+10.0.2.5     +# Short-Description:  Start a chef-client.
+10.0.2.5     +### END INIT INFO
+10.0.2.5     +#
+10.0.2.5     +# Copyright (c) 2009-2010 Chef Software, Inc, <legal@chef.io>
+10.0.2.5     +#
+10.0.2.5     +# chef-client         Startup script for chef-client.
+10.0.2.5     +# chkconfig: - 99 02
+10.0.2.5     +# description: starts up chef-client in daemon mode.
+10.0.2.5     +
+10.0.2.5     +PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+10.0.2.5     +DAEMON=/usr/bin/chef-client
+10.0.2.5     +NAME=chef-client
+10.0.2.5     +DESC=chef-client
+10.0.2.5     +PIDFILE=/var/run/chef/client.pid
+10.0.2.5     +
+10.0.2.5     +test -x $DAEMON || exit 1
+10.0.2.5     +
+10.0.2.5     +. /lib/lsb/init-functions
+10.0.2.5     +
+10.0.2.5     +[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+10.0.2.5     +
+10.0.2.5     +if [ ! -d /var/run/chef ]; then
+10.0.2.5     +  mkdir /var/run/chef
+10.0.2.5     +fi
+10.0.2.5     +
+10.0.2.5     +DAEMON_OPTS="-d -P $PIDFILE -c $CONFIG -i $INTERVAL -s $SPLAY "
+10.0.2.5     +
+10.0.2.5     +running_pid() {
+10.0.2.5     +  pid=$1
+10.0.2.5     +  name=$2
+10.0.2.5     +  [ -z "$pid" ] && return 1
+10.0.2.5     +  [ ! -d /proc/$pid ] &&  return 1
+10.0.2.5     +  cmd=`cat /proc/$pid/cmdline | tr '\000' '\n' | awk 'NR==2'`
+10.0.2.5     +  [ "$cmd" != "$name" ] &&  return 1
+10.0.2.5     +  return 0
+10.0.2.5     +}
+10.0.2.5     +
+10.0.2.5     +running() {
+10.0.2.5     +  [ ! -f "$PIDFILE" ] && return 1
+10.0.2.5     +  pid=`cat $PIDFILE`
+10.0.2.5     +  running_pid $pid $DAEMON || return 1
+10.0.2.5     +  return 0
+10.0.2.5     +}
+10.0.2.5     +
+10.0.2.5     +start_server() {
+10.0.2.5     +  if [ -z "$DAEMONUSER" ] ; then
+10.0.2.5     +    start_daemon -p $PIDFILE $DAEMON $DAEMON_OPTS
+10.0.2.5     +  errcode=$?
+10.0.2.5     +  else
+10.0.2.5     +    start-stop-daemon --start --quiet --pidfile $PIDFILE \
+10.0.2.5     +      --chuid $DAEMONUSER \
+10.0.2.5     +      --exec $DAEMON -- $DAEMON_OPTS
+10.0.2.5     +    errcode=$?
+10.0.2.5     +  fi
+10.0.2.5     +  return $errcode
+10.0.2.5     +}
+10.0.2.5     +
+10.0.2.5     +stop_server() {
+10.0.2.5     +   if [ -z "$DAEMONUSER" ] ; then
+10.0.2.5     +     killproc -p $PIDFILE $DAEMON
+10.0.2.5     +     errcode=$?
+10.0.2.5     +   else
+10.0.2.5     +     start-stop-daemon --stop --quiet --pidfile $PIDFILE \
+10.0.2.5     +       --user $DAEMONUSER \
+10.0.2.5     +       --exec $DAEMON
+10.0.2.5     +     errcode=$?
+10.0.2.5     +   fi
+10.0.2.5     +   return $errcode
+10.0.2.5     +}
+10.0.2.5     +
+10.0.2.5     +reload_server() {
+10.0.2.5     +  if [ -z "$DAEMONUSER" ] ; then
+10.0.2.5     +     killproc -p $PIDFILE $DAEMON -HUP
+10.0.2.5     +     errcode=$?
+10.0.2.5     +   else
+10.0.2.5     +     start-stop-daemon --stop --signal HUP --quiet --pidfile $PIDFILE \
+10.0.2.5     +       --user $DAEMONUSER \
+10.0.2.5     +       --exec $DAEMON
+10.0.2.5     +     errcode=$?
+10.0.2.5     +   fi
+10.0.2.5     +   return $errcode
+10.0.2.5     +}
+10.0.2.5     +
+10.0.2.5     +run_server() {
+10.0.2.5     +  if [ -z "$DAEMONUSER" ] ; then
+10.0.2.5     +     killproc -p $PIDFILE $DAEMON -USR1
+10.0.2.5     +     errcode=$?
+10.0.2.5     +   else
+10.0.2.5     +     start-stop-daemon --stop --signal USR1 --quiet --pidfile $PIDFILE \
+10.0.2.5     +       --user $DAEMONUSER \
+10.0.2.5     +       --exec $DAEMON
+10.0.2.5     +     errcode=$?
+10.0.2.5     +   fi
+10.0.2.5     +   return $errcode
+10.0.2.5     +}
+10.0.2.5     +
+10.0.2.5     +force_stop() {
+10.0.2.5     +  [ ! -e "$PIDFILE" ] && return
+10.0.2.5     +  if running ; then
+10.0.2.5     +    /bin/kill -15 $pid
+10.0.2.5     +    sleep "$DIETIME"s
+10.0.2.5     +    if running ; then
+10.0.2.5     +      /bin/kill -9 $pid
+10.0.2.5     +      sleep "$DIETIME"s
+10.0.2.5     +      if running ; then
+10.0.2.5     +        echo "Cannot kill $NAME (pid=$pid)!"
+10.0.2.5     +        exit 1
+10.0.2.5     +      fi
+10.0.2.5     +    fi
+10.0.2.5     +  fi
+10.0.2.5     +  rm -f $PIDFILE
+10.0.2.5     +}
+10.0.2.5     +
+10.0.2.5     +case "$1" in
+10.0.2.5     +  start)
+10.0.2.5     +    log_daemon_msg "Starting $DESC " "$NAME"
+10.0.2.5     +    if running ;  then
+10.0.2.5     +        log_progress_msg "apparently already running"
+10.0.2.5     +        log_end_msg 0
+10.0.2.5     +        exit 0
+10.0.2.5     +    fi
+10.0.2.5     +    if start_server ; then
+10.0.2.5     +        [ -n "$STARTTIME" ] && sleep $STARTTIME # Wait some time
+10.0.2.5     +        if  running ;  then
+10.0.2.5     +            log_end_msg 0
+10.0.2.5     +        else
+10.0.2.5     +            log_end_msg 1
+10.0.2.5     +        fi
+10.0.2.5     +    else
+10.0.2.5     +        log_end_msg 1
+10.0.2.5     +    fi
+10.0.2.5     +    ;;
+10.0.2.5     +  stop)
+10.0.2.5     +    log_daemon_msg "Stopping $DESC" "$NAME"
+10.0.2.5     +    if running ; then
+10.0.2.5     +      errcode=0
+10.0.2.5     +      stop_server || errcode=$?
+10.0.2.5     +      log_end_msg $errcode
+10.0.2.5     +    else
+10.0.2.5     +      log_progress_msg "apparently not running"
+10.0.2.5     +      log_end_msg 0
+10.0.2.5     +      exit 0
+10.0.2.5     +    fi
+10.0.2.5     +    ;;
+10.0.2.5     +  force-stop)
+10.0.2.5     +    $0 stop
+10.0.2.5     +    if running; then
+10.0.2.5     +      log_daemon_msg "Stopping (force) $DESC" "$NAME"
+10.0.2.5     +      errcode=0
+10.0.2.5     +      force_stop || errcode=$?
+10.0.2.5     +      log_end_msg $errcode
+10.0.2.5     +    fi
+10.0.2.5     +    ;;
+10.0.2.5     +  restart|force-reload)
+10.0.2.5     +    log_daemon_msg "Restarting $DESC" "$NAME"
+10.0.2.5     +    errcode=0
+10.0.2.5     +    stop_server || errcode=$?
+10.0.2.5     +    [ -n "$DIETIME" ] && sleep $DIETIME
+10.0.2.5     +    start_server || errcode=$?
+10.0.2.5     +    [ -n "$STARTTIME" ] && sleep $STARTTIME
+10.0.2.5     +    running || errcode=$?
+10.0.2.5     +    log_end_msg $errcode
+10.0.2.5     +    ;;
+10.0.2.5     +  status)
+10.0.2.5     +    log_daemon_msg "Checking status of $DESC" "$NAME"
+10.0.2.5     +    if running ;  then
+10.0.2.5     +      log_progress_msg "running"
+10.0.2.5     +      log_end_msg 0
+10.0.2.5     +    else
+10.0.2.5     +      log_progress_msg "apparently not running"
+10.0.2.5     +      log_end_msg 1
+10.0.2.5     +      exit 3
+10.0.2.5     +    fi
+10.0.2.5     +    ;;
+10.0.2.5     +  reload)
+10.0.2.5     +    if running; then
+10.0.2.5     +      log_daemon_msg "Reloading $DESC" "$NAME"
+10.0.2.5     +      errcode=0
+10.0.2.5     +      reload_server || errcode=$?
+10.0.2.5     +      log_end_msg $errcode
+10.0.2.5     +    fi
+10.0.2.5     +    ;;
+10.0.2.5     +  run)
+10.0.2.5     +    if running; then
+10.0.2.5     +      log_daemon_msg "Triggering run of $DESC" "$NAME"
+10.0.2.5     +      errcode=0
+10.0.2.5     +      run_server || errcode=$?
+10.0.2.5     +      log_end_msg $errcode
+10.0.2.5     +    fi
+10.0.2.5     +    ;;
+10.0.2.5     +  *)
+10.0.2.5     +    N=/etc/init.d/$NAME
+10.0.2.5     +    echo "Usage: $N {start|stop|force-stop|restart|force-reload|status|run}" >&2
+10.0.2.5     +    exit 1
+10.0.2.5     +    ;;
+10.0.2.5     +esac
+10.0.2.5     +
+10.0.2.5     +exit 0
+10.0.2.5     +
+10.0.2.5     - change mode from '' to '0755'
+10.0.2.5   * template[/etc/default/chef-client] action create
+10.0.2.5     - create new file /etc/default/chef-client
+10.0.2.5     - update content in file /etc/default/chef-client from none to d443f5
+10.0.2.5     --- /etc/default/chef-client	2016-11-30 06:44:10.710762900 +0000
+10.0.2.5     +++ /etc/default/.chef-chef-client20161130-5348-135bqeg	2016-11-30 06:44:10.710762900 +0000
+10.0.2.5     @@ -1 +1,4 @@
+10.0.2.5     +CONFIG=/etc/chef/client.rb
+10.0.2.5     +INTERVAL=300
+10.0.2.5     +SPLAY=60
+10.0.2.5     - change mode from '' to '0644'
+10.0.2.5   * service[chef-client] action enable
+10.0.2.5     - enable service service[chef-client]
+10.0.2.5   * service[chef-client] action start
+10.0.2.5     - start service service[chef-client]
+10.0.2.5 Recipe: chef-client::delete_validation
+10.0.2.5   * file[/etc/chef/validation.pem] action delete (up to date)
+10.0.2.5 Recipe: learn_chef_apache2::default
+10.0.2.5   * apt_update[Update the apt cache daily] action periodic (up to date)
+10.0.2.5   * apt_package[apache2] action install (up to date)
+10.0.2.5   * service[apache2] action enable (up to date)
+10.0.2.5   * service[apache2] action start (up to date)
+10.0.2.5   * group[web_admin] action create (up to date)
+10.0.2.5   * linux_user[web_admin] action create (up to date)
+10.0.2.5   * template[/var/www/html/index.html] action create (up to date)
+10.0.2.5 Recipe: chef-client::init_service
+10.0.2.5   * service[chef-client] action restart
+10.0.2.5     - restart service service[chef-client]
+10.0.2.5 
+10.0.2.5 Running handlers:
+10.0.2.5 Running handlers complete
+10.0.2.5 Chef Client finished, 9/18 resources updated in 05 seconds

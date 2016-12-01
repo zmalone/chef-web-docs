@@ -1,0 +1,99 @@
+192.168.145.131 Starting Chef Client, version 12.16.42
+192.168.145.131 resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_httpd::default"]
+192.168.145.131 Synchronizing Cookbooks:
+192.168.145.131   - cron (3.0.0)
+192.168.145.131   - logrotate (2.1.0)
+192.168.145.131   - compat_resource (12.16.2)
+192.168.145.131   - windows (2.1.1)
+192.168.145.131   - learn_chef_httpd (0.3.1)
+192.168.145.131   - ohai (4.2.2)
+192.168.145.131   - chef-client (7.0.0)
+192.168.145.131 Installing Cookbook Gems:
+192.168.145.131 Compiling Cookbooks...
+192.168.145.131 Converging 14 resources
+192.168.145.131 Recipe: chef-client::systemd_service
+192.168.145.131   * directory[/var/run/chef] action create
+192.168.145.131     - create new directory /var/run/chef
+192.168.145.131     - change owner from '' to 'root'
+192.168.145.131     - change group from '' to 'root'
+192.168.145.131     - restore selinux security context
+192.168.145.131   * directory[/var/cache/chef] action create
+192.168.145.131     - create new directory /var/cache/chef
+192.168.145.131     - change owner from '' to 'root'
+192.168.145.131     - change group from '' to 'root'
+192.168.145.131     - restore selinux security context
+192.168.145.131   * directory[/var/lib/chef] action create
+192.168.145.131     - create new directory /var/lib/chef
+192.168.145.131     - change owner from '' to 'root'
+192.168.145.131     - change group from '' to 'root'
+192.168.145.131     - restore selinux security context
+192.168.145.131   * directory[/var/log/chef] action create
+192.168.145.131     - create new directory /var/log/chef
+192.168.145.131     - change mode from '' to '0755'
+192.168.145.131     - change owner from '' to 'root'
+192.168.145.131     - change group from '' to 'root'
+192.168.145.131     - restore selinux security context
+192.168.145.131   * directory[/etc/chef] action create (up to date)
+192.168.145.131   * template[/etc/systemd/system/chef-client.service] action create
+192.168.145.131     - create new file /etc/systemd/system/chef-client.service
+192.168.145.131     - update content in file /etc/systemd/system/chef-client.service from none to 62ed56
+192.168.145.131     --- /etc/systemd/system/chef-client.service	2016-11-30 02:07:13.839632996 +0000
+192.168.145.131     +++ /etc/systemd/system/.chef-chef-client20161130-13791-gi55ek.service	2016-11-30 02:07:13.839632996 +0000
+192.168.145.131     @@ -1 +1,14 @@
+192.168.145.131     +[Unit]
+192.168.145.131     +Description=Chef Client daemon
+192.168.145.131     +After=network.target auditd.service
+192.168.145.131     +
+192.168.145.131     +[Service]
+192.168.145.131     +EnvironmentFile=/etc/sysconfig/chef-client
+192.168.145.131     +ExecStart=/usr/bin/chef-client -c $CONFIG -i $INTERVAL -s $SPLAY $OPTIONS
+192.168.145.131     +ExecReload=/bin/kill -HUP $MAINPID
+192.168.145.131     +SuccessExitStatus=3
+192.168.145.131     +Restart=on-failure
+192.168.145.131     +
+192.168.145.131     +[Install]
+192.168.145.131     +WantedBy=multi-user.target
+192.168.145.131     - change mode from '' to '0644'
+192.168.145.131     - restore selinux security context
+192.168.145.131   * template[/etc/sysconfig/chef-client] action create
+192.168.145.131     - create new file /etc/sysconfig/chef-client
+192.168.145.131     - update content in file /etc/sysconfig/chef-client from none to 6a32a6
+192.168.145.131     --- /etc/sysconfig/chef-client	2016-11-30 02:07:13.868638796 +0000
+192.168.145.131     +++ /etc/sysconfig/.chef-chef-client20161130-13791-pnv9al	2016-11-30 02:07:13.867638596 +0000
+192.168.145.131     @@ -1 +1,15 @@
+192.168.145.131     +# Configuration file for the chef-client service
+192.168.145.131     +
+192.168.145.131     +CONFIG=/etc/chef/client.rb
+192.168.145.131     +PIDFILE=/var/run/chef/client.pid
+192.168.145.131     +#LOCKFILE=/var/lock/subsys/chef-client
+192.168.145.131     +# Sleep interval between runs.
+192.168.145.131     +# This value is in seconds.
+192.168.145.131     +INTERVAL=300
+192.168.145.131     +# Maximum amount of random delay before starting a run. Prevents every client
+192.168.145.131     +# from contacting the server at the exact same time.
+192.168.145.131     +# This value is in seconds.
+192.168.145.131     +SPLAY=60
+192.168.145.131     +# Any additional chef-client options.
+192.168.145.131     +OPTIONS=""
+192.168.145.131     - change mode from '' to '0644'
+192.168.145.131     - restore selinux security context
+192.168.145.131   * service[chef-client] action enable
+192.168.145.131     - enable service service[chef-client]
+192.168.145.131   * service[chef-client] action start
+192.168.145.131     - start service service[chef-client]
+192.168.145.131 Recipe: chef-client::delete_validation
+192.168.145.131   * file[/etc/chef/validation.pem] action delete (up to date)
+192.168.145.131 Recipe: learn_chef_httpd::default
+192.168.145.131   * yum_package[httpd] action install (up to date)
+192.168.145.131   * service[httpd] action enable (up to date)
+192.168.145.131   * service[httpd] action start (up to date)
+192.168.145.131   * group[web_admin] action create (up to date)
+192.168.145.131   * linux_user[web_admin] action create (up to date)
+192.168.145.131   * template[/var/www/html/index.html] action create (up to date)
+192.168.145.131 Recipe: chef-client::systemd_service
+192.168.145.131   * service[chef-client] action restart
+192.168.145.131     - restart service service[chef-client]
+192.168.145.131 
+192.168.145.131 Running handlers:
+192.168.145.131 Running handlers complete
+192.168.145.131 Chef Client finished, 9/17 resources updated in 14 seconds

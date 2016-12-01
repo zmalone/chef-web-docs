@@ -1,285 +1,218 @@
 
-Waiting for remote response before bootstrap.54.165.122.228 . 
-54.165.122.228 Response received.
-54.165.122.228 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4585-1479316451.bat" chunk 1 
-54.165.122.228 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4585-1479316451.bat" chunk 2 
-54.165.122.228 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4585-1479316451.bat" chunk 3 
-54.165.122.228 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4585-1479316451.bat" chunk 4 
-54.165.122.228 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4585-1479316451.bat" chunk 5 
-54.165.122.228 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4585-1479316451.bat" chunk 6 
-54.165.122.228 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4585-1479316451.bat" chunk 7 
-54.165.122.228 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4585-1479316451.bat" chunk 8 
-54.165.122.228 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-4585-1479316451.bat" chunk 9 
-54.165.122.228 Checking for existing directory "C:\chef"...
-54.165.122.228 Existing directory not found, creating.
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>(
-54.165.122.228 echo.url = WScript.Arguments.Named("url")  
-54.165.122.228  echo.path = WScript.Arguments.Named("path")  
-54.165.122.228  echo.proxy = null  
-54.165.122.228  echo.'* Vaguely attempt to handle file:// scheme urls by url unescaping and switching all  
-54.165.122.228  echo.'* / into .  Also assume that file:/// is a local absolute path and that file://<foo>  
-54.165.122.228  echo.'* is possibly a network file path.  
-54.165.122.228  echo.If InStr(url, "file://") = 1 Then  
-54.165.122.228  echo.url = Unescape(url)  
-54.165.122.228  echo.If InStr(url, "file:///") = 1 Then  
-54.165.122.228  echo.sourcePath = Mid(url, Len("file:///") + 1)  
-54.165.122.228  echo.Else 
-54.165.122.228  echo.sourcePath = Mid(url, Len("file:") + 1)  
-54.165.122.228  echo.End If  
-54.165.122.228  echo.sourcePath = Replace(sourcePath, "/", "\")  
-54.165.122.228  echo. 
-54.165.122.228  echo.Set objFSO = CreateObject("Scripting.FileSystemObject")  
-54.165.122.228  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
-54.165.122.228  echo.objFSO.CopyFile sourcePath, path, true  
-54.165.122.228  echo.Set objFSO = Nothing  
-54.165.122.228  echo. 
-54.165.122.228  echo.Else 
-54.165.122.228  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP")  
-54.165.122.228  echo.Set wshShell = CreateObject( "WScript.Shell" )  
-54.165.122.228  echo.Set objUserVariables = wshShell.Environment("USER")  
-54.165.122.228  echo. 
-54.165.122.228  echo.rem http proxy is optional  
-54.165.122.228  echo.rem attempt to read from HTTP_PROXY env var first  
-54.165.122.228  echo.On Error Resume Next  
-54.165.122.228  echo. 
-54.165.122.228  echo.If NOT (objUserVariables("HTTP_PROXY") = "") Then  
-54.165.122.228  echo.proxy = objUserVariables("HTTP_PROXY")  
-54.165.122.228  echo. 
-54.165.122.228  echo.rem fall back to named arg  
-54.165.122.228  echo.ElseIf NOT (WScript.Arguments.Named("proxy") = "") Then  
-54.165.122.228  echo.proxy = WScript.Arguments.Named("proxy")  
-54.165.122.228  echo.End If  
-54.165.122.228  echo. 
-54.165.122.228  echo.If NOT isNull(proxy) Then  
-54.165.122.228  echo.rem setProxy method is only available on ServerXMLHTTP 6.0+  
-54.165.122.228  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")  
-54.165.122.228  echo.objXMLHTTP.setProxy 2, proxy  
-54.165.122.228  echo.End If  
-54.165.122.228  echo. 
-54.165.122.228  echo.On Error Goto 0  
-54.165.122.228  echo. 
-54.165.122.228  echo.objXMLHTTP.open "GET", url, false  
-54.165.122.228  echo.objXMLHTTP.send() 
-54.165.122.228  echo.If objXMLHTTP.Status = 200 Then  
-54.165.122.228  echo.Set objADOStream = CreateObject("ADODB.Stream")  
-54.165.122.228  echo.objADOStream.Open 
-54.165.122.228  echo.objADOStream.Type = 1  
-54.165.122.228  echo.objADOStream.Write objXMLHTTP.ResponseBody  
-54.165.122.228  echo.objADOStream.Position = 0  
-54.165.122.228  echo.Set objFSO = Createobject("Scripting.FileSystemObject")  
-54.165.122.228  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
-54.165.122.228  echo.Set objFSO = Nothing  
-54.165.122.228  echo.objADOStream.SaveToFile path  
-54.165.122.228  echo.objADOStream.Close 
-54.165.122.228  echo.Set objADOStream = Nothing  
-54.165.122.228  echo.End If  
-54.165.122.228  echo.Set objXMLHTTP = Nothing  
-54.165.122.228  echo.End If 
-54.165.122.228 ) 1>C:\chef\wget.vbs 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>(
-54.165.122.228 echo.param( 
-54.165.122.228  echo.   [String] $remoteUrl,  
-54.165.122.228  echo.   [String] $localPath  
-54.165.122.228  echo.) 
-54.165.122.228  echo. 
-54.165.122.228  echo.$ProxyUrl = $env:http_proxy;  
-54.165.122.228  echo.$webClient = new-object System.Net.WebClient;  
-54.165.122.228  echo. 
-54.165.122.228  echo.if ($ProxyUrl -ne '') {  
-54.165.122.228  echo.  $WebProxy = New-Object System.Net.WebProxy($ProxyUrl,$true)  
-54.165.122.228  echo.  $WebClient.Proxy = $WebProxy  
-54.165.122.228  echo.} 
-54.165.122.228  echo. 
-54.165.122.228  echo.$webClient.DownloadFile($remoteUrl, $localPath); 
-54.165.122.228 ) 1>C:\chef\wget.ps1 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>(
-54.165.122.228  
-54.165.122.228   
-54.165.122.228  
-54.165.122.228 ) 
-54.165.122.228 Detected Windows Version 6.2 Build 9200
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>goto Version6.2 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>goto architecture_select 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>IF "AMD64" == "x86" IF not defined PROCESSOR_ARCHITEW6432 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>goto install 
-54.165.122.228 Checking for existing downloaded package at "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi"
-54.165.122.228 No existing downloaded packages to delete.
-54.165.122.228 Attempting to download client package using PowerShell if available...
-54.165.122.228 powershell.exe -ExecutionPolicy Unrestricted -InputFormat None -NoProfile -NonInteractive -File  C:\chef\wget.ps1 "https://www.chef.io/chef/download?p=windows&pv=2012&m=x86_64&DownloadContext=PowerShell&v=12" "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi"
-54.165.122.228 Download via PowerShell succeeded.
-54.165.122.228 Installing downloaded client package...
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>msiexec /qn /log "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-msi2702.log" /i "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi" 
-54.165.122.228 Successfully installed Chef Client package.
-54.165.122.228 Installation completed successfully
-54.165.122.228 Writing validation key...
-54.165.122.228 Validation key written.
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>mkdir C:\chef\trusted_certs 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>(
-54.165.122.228 echo.-----BEGIN CERTIFICATE-----  
-54.165.122.228  echo.MIIGBDCCA+ygAwIBAgIJAPhQyBGIpxUKMA0GCSqGSIb3DQEBCwUAMIGOMQswCQYD 
-54.165.122.228  echo.VQQGEwJVUzETMBEGA1UECAwKV2FzaGluZ3RvbjEQMA4GA1UEBwwHU2VhdHRsZTEi 
-54.165.122.228  echo.MCAGA1UECgwZQW1hem9uIFdlYiBTZXJ2aWNlcywgSW5jLjEVMBMGA1UECwwMQVdT 
-54.165.122.228  echo.IE9wc1dvcmtzMR0wGwYDVQQDDBRBV1MgT3BzV29ya3MgUm9vdCBDQTAeFw0xNjEx 
-54.165.122.228  echo.MDMxMTQyNTJaFw0yMTEyMjIxMTQyNTJaMIGOMQswCQYDVQQGEwJVUzETMBEGA1UE 
-54.165.122.228  echo.CAwKV2FzaGluZ3RvbjEQMA4GA1UEBwwHU2VhdHRsZTEiMCAGA1UECgwZQW1hem9u 
-54.165.122.228  echo.IFdlYiBTZXJ2aWNlcywgSW5jLjEVMBMGA1UECwwMQVdTIE9wc1dvcmtzMR0wGwYD 
-54.165.122.228  echo.VQQDDBRBV1MgT3BzV29ya3MgUm9vdCBDQTCCAiIwDQYJKoZIhvcNAQEBBQADggIP 
-54.165.122.228  echo.ADCCAgoCggIBAJwleItQXSXUtpSQfOefROwdlFQX9kiPWpOKYKnJRTVfOqdDi4ug 
-54.165.122.228  echo.9NOwNuP2zoz1jxawZRyNvs17GmLjmdzBnoW+x/DG+WswFGyAifn81jZ92FldtdNo 
-54.165.122.228  echo.hp4buBv0ydunLlyjTzGoRdcrawIENEtcgGWkOaqMP1iQvUJXQiQgzxQx0O7JPBvS 
-54.165.122.228  echo.Wkq5VmEthY+7H6OnpxsqBbRln2t9JE2oUjnZWpPEXXegwmZKx4wZG3HyeMXrj7aG 
-54.165.122.228  echo.vWmN9QcDFGu0gZFSF9IfWvd37H6hXMpHe0O+0PuWQXWOJhCXDV41155mWHq8U8Nh 
-54.165.122.228  echo.mu0ySmb/8dYBoDNEVd+9fHI8FlvcoVML1zmv6sBw25mulspsbby2vhZZ6DELEhbK 
-54.165.122.228  echo.9QWTxNotTPlT8Uq4O53RSkuxPeyD5oOuO+L+96jd4Dt1Ev8YXAwhQhTf/+nLczIZ 
-54.165.122.228  echo.M30SIrF2jorXEA5xrfzvvr9CEN1O7v9+E2xnrIZHATyujiDtJmVjSkWGSsar4i/8 
-54.165.122.228  echo.0djD8S9TdgRrozW2gVX6lZqURrS/51BYp0V0Gyuq7nh+IBW/SA6Fe9PlbJqoUUui 
-54.165.122.228  echo.noANjlSXDRF29LVB7qVOM4fF0Emj4/jTFSdRUreYz930tjIbAlEaz9+V0L2BNoIp 
-54.165.122.228  echo.3PvCT/RXgBVJBCkb0LL26cl9ztnqcTMEJU9iNe+oTeWzwywI8djguidfAgMBAAGj 
-54.165.122.228  echo.YzBhMB0GA1UdDgQWBBRxex0hBvpbsMeqNc1YrikJhYhnZzAfBgNVHSMEGDAWgBRx 
-54.165.122.228  echo.ex0hBvpbsMeqNc1YrikJhYhnZzAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQE 
-54.165.122.228  echo.AwIBhjANBgkqhkiG9w0BAQsFAAOCAgEAAzCDOwGyrs67r1pSY7TQsvdXx3MKPPA5 
-54.165.122.228  echo.d060OidEmPGJpO5yrWODoQFwueTFLfxaR+ovSGqvtJjlBCDUa5gBy9MEjnCge/UY 
-54.165.122.228  echo.TK4WDJaJrMiXQW0k8rQpHTKgPgL8LkBwfZU7Sk1P5DaE3vHTAwOgjdlH5Y3jWmTS 
-54.165.122.228  echo.G2+RlRG3hlvPRDzfTbd0mMkQyiBAj86Tk3pOiQf4ctJ+TIw8pJMJkY4I7KiPZkMR 
-54.165.122.228  echo.4XcoQ56ayiSmMnmxOfulKEkkyrfzS+HUy2AXkbMR5GHppGGkc0PyEzHNXk+XyKGn 
-54.165.122.228  echo.OsmOt0WYciHLhew1rEuMZZJALgk4kBQHXFr1VqnqyuVakOubP9bJ0wnhmMDzD5sM 
-54.165.122.228  echo.1rdAyVQwoYBcYVsq0F+Qs0kgvPketYShPNNKPrEHwXGaeeC/PS+NmY88vf/VMdvJ 
-54.165.122.228  echo.5PzTLUBLRtY5E6xD8ar/Lz4Wf8t8s1RWE6NyArPS83dFEslFCbO9y3ivlH6xhlv9 
-54.165.122.228  echo.aYzCHvg8nazYRTfKKkCvXx1GM/OFi538ffSlGyHpaKaFKqb7R/s/Drv7taNVReuX 
-54.165.122.228  echo.UAI92eaSyk+irYykTOeQslzDnQ7Z5m+TjjqQyu1hfD74Zh4XYYLOKcMTmzth99zZ 
-54.165.122.228  echo.f9bshoGA8hbF/lOYZ6wT+K+iy+QO+rF5MFsojtnfm4sloWRymPuLEPSMuUgljLNf 
-54.165.122.228  echo.R2CExeYjWik=  
-54.165.122.228  echo.-----END CERTIFICATE----- 
-54.165.122.228 ) 1>C:\chef/trusted_certs/AWS_OpsWorks_Root_CA.crt 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>(
-54.165.122.228 echo.-----BEGIN CERTIFICATE-----  
-54.165.122.228  echo.MIIGADCCA+igAwIBAgICEAgwDQYJKoZIhvcNAQELBQAwgY4xCzAJBgNVBAYTAlVT 
-54.165.122.228  echo.MRMwEQYDVQQIDApXYXNoaW5ndG9uMRAwDgYDVQQHDAdTZWF0dGxlMSIwIAYDVQQK 
-54.165.122.228  echo.DBlBbWF6b24gV2ViIFNlcnZpY2VzLCBJbmMuMRUwEwYDVQQLDAxBV1MgT3BzV29y 
-54.165.122.228  echo.a3MxHTAbBgNVBAMMFEFXUyBPcHNXb3JrcyBSb290IENBMB4XDTE2MTEwMzExNDYz 
-54.165.122.228  echo.MVoXDTE4MTEwMzExNDYzMVowgY4xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApXYXNo 
-54.165.122.228  echo.aW5ndG9uMSIwIAYDVQQKDBlBbWF6b24gV2ViIFNlcnZpY2VzLCBJbmMuMRUwEwYD 
-54.165.122.228  echo.VQQLDAxBV1MgT3BzV29ya3MxLzAtBgNVBAMMJkFXUyBPcHNXb3JrcyBJbnRlcm1l 
-54.165.122.228  echo.ZGlhdGUgQ0EgZm9yIEdBTU1BMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKC 
-54.165.122.228  echo.AgEAtrHzPc3/4QNla7GRDlVzWJ+QZqIXqVehftor3vE4mj6BONrKhqJjC2atoSNu 
-54.165.122.228  echo.4TMPu7KCBSi+s09nfL+ZelZel+4m5X5IEVFCUthNs+AL/HQ/f9hZXGQPj2JOpBsq 
-54.165.122.228  echo.mn7zlD7MUiFprW77i/FubuY8y8mhMfyioAE9Zzfg5fmtj/1h3QJ60gyiCVql1X4y 
-54.165.122.228  echo.713yotPSj8EKnI17wzNgxI/2vw1URrBDHVNImdYPwGTM7EHZ5lT5f4pgWOtuLSjM 
-54.165.122.228  echo.GhZwKx3fFqCP8Y54vfL6U6LryrjwBv9dd+svUvxWVOXYIuYJ8Zt7u87Lzh3uQi7G 
-54.165.122.228  echo.VOoxSfUcaw/E/05VfiH4e3Kx8XQX3AQrs6FQnT4j80wtFLCIu8ZPkhtynL+ncP3y 
-54.165.122.228  echo.Ye9G3eAxUb89vHA4lVITACblNta4rpmUiUsHT81CiFLOYBkw+TCfxh5FWvTRXudB 
-54.165.122.228  echo.4Ls2KQ7Y+/yakVhuWZDR56qEcqSo46OdnzJbFRylKbA8XXbVjQsepgud6e0+Wry+ 
-54.165.122.228  echo.SNMa/vkmkGAbz5SS4vjXZpLAV+BBNz6kQdGwgqJUkMdpsGWFnauqIoMo0DuGZhY5 
-54.165.122.228  echo.BN57qFjyTV6WbXjqsDpJoo+13oNLMv9g3Xeevj0xqqkMfFphRVzM5+Lj6fxdtYih 
-54.165.122.228  echo.UOsY9f4tZuPF4JgmMS0bkhD2KXASDQlp8YOwiHqkeDdWIQ8CAwEAAaNmMGQwHQYD
-54.165.122.228  
-54.165.122.228  echo.VR0OBBYEFEtqMIy78AjG8CrGFZaMXdcpN2mjMB8GA1UdIwQYMBaAFHF7HSEG+luw 
-54.165.122.228  echo.x6o1zViuKQmFiGdnMBIGA1UdEwEB/wQIMAYBAf8CAQAwDgYDVR0PAQH/BAQDAgGG 
-54.165.122.228  echo.MA0GCSqGSIb3DQEBCwUAA4ICAQB4koR1luE//GLtbbTI5ecllrmQ48/7ifGly1Cw 
-54.165.122.228  echo.MNXZk5Vj6BmXLZ1lUgkyENl9VI9Rq/hD8IEPIpL2YjC15Qt6vgRT0SxJkVMHgqIN 
-54.165.122.228  echo.pFnxOpaknT/n6uas5MftaKrrwIaDMH9nRVegiYlh2oSb4OJ2tghLoUx8AGE9Gf1H 
-54.165.122.228  echo.dK8+GWddntjfvV1qvS88q4SsurS5nKMOlNac9SfoyF/pjMFEjRenPRE8vaZxtLUP 
-54.165.122.228  echo.C5d1azW9jiGBG+pilSipl+A3EuDbr0hF1fH9kIKutUq1HisHlvXT396//Vi2jd+Q 
-54.165.122.228  echo.jFYPKFc79E5tJnH/NF3V69fmY6RptFQFTxw7uftShD6uoDpvFEJLTCCAPxcjLmpg 
-54.165.122.228  echo.gYrtfk1p3M0MLpGiQT5uivIR+T/El5Db0hEYq/4yVrRj42fJwCK2GYlRF2toZbIR 
-54.165.122.228  echo.sf1iHYeN6KCJyhs12CKfExWC4LzyZ2I4O3iCmBiFXRJEcvg7VheXv2lRgOW0r200 
-54.165.122.228  echo.9ZjgMBU5q9IldOnCci2UIQJQ1UvRPGtnfswn1jz2zMcMWhSgqjvUX/is8sk1J+d6 
-54.165.122.228  echo.AccGOjHG6o4pwXwQ0MR5pnclQ5uuW965iv3jfEK0Q3aMCXdOz/RjHEux2WVDyJ+A 
-54.165.122.228  echo.RWjz821S4q96HxkAhGOrqIR8Nqck+0l8NEZ34Faf9HrZC6kVjG84gsiZ+yAumX6E 
-54.165.122.228  echo.MD5TTA==  
-54.165.122.228  echo.-----END CERTIFICATE----- 
-54.165.122.228 ) 1>C:\chef/trusted_certs/AWS_OpsWorks_Intermediate_CA_for_GAMMA.crt 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>(
-54.165.122.228 echo.-----BEGIN CERTIFICATE-----  
-54.165.122.228  echo.MIIEjTCCAnWgAwIBAgIQzTbgjf3BRfG7qAu7OXptlTANBgkqhkiG9w0BAQsFADCB 
-54.165.122.228  echo.jjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCldhc2hpbmd0b24xIjAgBgNVBAoMGUFt 
-54.165.122.228  echo.YXpvbiBXZWIgU2VydmljZXMsIEluYy4xFTATBgNVBAsMDEFXUyBPcHNXb3JrczEv 
-54.165.122.228  echo.MC0GA1UEAwwmQVdTIE9wc1dvcmtzIEludGVybWVkaWF0ZSBDQSBmb3IgR0FNTUEw 
-54.165.122.228  echo.HhcNMTYxMTE1MTQzOTQ4WhcNMTgxMTE2MTQzOTQ4WjAgMR4wHAYDVQQDDBV0ZXN0 
-54.165.122.228  echo.LWsyaWk2anp5d3JjNzQ5N2UwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB 
-54.165.122.228  echo.AQCmj3j/pJV2aSSgObNZE14k/Iiap0WwSfleUWTvUIczAGpflOkZPW6a/pAHFGmv 
-54.165.122.228  echo.74Fdwxn5/xbMTiMvs21v/A2Ja33cpioec/5IquUPzSYZbGzZU8Dw8o4ul7mqRz9A 
-54.165.122.228  echo.GRkrdty4yXtElAtHvXygNY2rwQJ+JKapBZ4BAR/9yJ315RuWO+KmecqnFEIOao26 
-54.165.122.228  echo.9+Cgr8WjMxgF2DtAaykNvJYsHcLOpACHAvylmvf7C6CuUGQ50Tlc0MOwyFWxIS8a 
-54.165.122.228  echo.eJrv78VPHT6ZowX4yx/fNh3CmkB0B5/eva0oPMEGoibzjtKEQC3Y5fHJwsGFsf32 
-54.165.122.228  echo.ocMJn25Yi850hU+t/A6FqwH3AgMBAAGjVDBSMDUGA1UdEQQuMCyCKnRlc3QtazJp 
-54.165.122.228  echo.aTZqenl3cmM3NDk3ZS5nYW1tYS5vcHN3b3Jrcy1jbS5pbzAJBgNVHRMEAjAAMA4G 
-54.165.122.228  echo.A1UdDwEB/wQEAwIEkDANBgkqhkiG9w0BAQsFAAOCAgEAkMxgBaQU3matuyuLISfm 
-54.165.122.228  echo.hxWtol544uKxHMTYOAqn8+SwCIdjdUnFpmzmOyiI1hPH2SkD7Jscf+xm9JHD3XUE 
-54.165.122.228  echo.x6P8ogLbSlpcdQ6coRNxzpaaFgYAmJHNzucl3RXus/MBQQ8Nj8ZOJwNhGut0EtWi 
-54.165.122.228  echo.Mc6rTxHslCfgVplA95DwruyP0x/Cy5L2YYtpw/ghXnbVq0hNSVA/e6QdC40Onbuo 
-54.165.122.228  echo.S7udEE1gIvm5zWFd0SRLFY1Q/Jp5yxuzTOSGKQWOjVORpn1/jlT0od55d//4f1Ir 
-54.165.122.228  echo.dEj8X11vbayRtG0SW6R9Ql3dRvLPuztuDrpo9RpoiCobIlcelEEYUIrTj5fsXtxX 
-54.165.122.228  echo.Y2rEACn7bMdcOGUjuBf8VhB8JLiJBNihIFw89CmOwUWlu+bJU0nUr3+q37Y4nPWE 
-54.165.122.228  echo.rFl6PiZuUgE+vLPDFHlMAq6kwifH32EAHnQK6d+3PQWWSYyjnbx+kcy1FL6cuPl6 
-54.165.122.228  echo.qVyHrSEvxeSZx6CBt8hzVUPy1hAN3QxnFAKH3ZMx0WXCmSrb5sI1IM/uaLQb1qog 
-54.165.122.228  echo.zbRhqn87EFGgUbxZapIloCsMfGpfow9jF9w9JqEopHi0vSMqPUcPtzLgvdMk8Pw9 
-54.165.122.228  echo.7mSmT3m8NlpnfgkzEOy0XtlPoUnzcgvF9R3tB/fgh3eMOp7tDjCsyOMuGa3da3Q/ 
-54.165.122.228  echo.tbGvwY2rKalx3GaTw7t/mXg=  
-54.165.122.228  echo.-----END CERTIFICATE----- 
-54.165.122.228 ) 1>C:\chef/trusted_certs/test-k2ii6jzywrc7497e.crt 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>(
-54.165.122.228 echo.log_level        :info  
-54.165.122.228  echo.log_location     STDOUT  
-54.165.122.228  echo. 
-54.165.122.228  echo.chef_server_url  "https://test-k2ii6jzywrc7497e.gamma.opsworks-cm.io/organizations/default"  
-54.165.122.228  echo.validation_client_name "chef-validator"  
-54.165.122.228  echo. 
-54.165.122.228  echo.file_cache_path   "c:/chef/cache"  
-54.165.122.228  echo.file_backup_path  "c:/chef/backup"  
-54.165.122.228  echo.cache_options     ({:path => "c:/chef/cache/checksums", :skip_expires => true})  
-54.165.122.228  echo. 
-54.165.122.228  echo.node_name "node1-windows"  
-54.165.122.228  echo.trusted_certs_dir "c:/chef/trusted_certs" 
-54.165.122.228 ) 1>C:\chef\client.rb 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>(echo.{"run_list":["recipe[learn_chef_iis]"]}) 1>C:\chef\first-boot.json 
-54.165.122.228 Starting chef to bootstrap the node...
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>SET "PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Amazon\cfn-bootstrap\;C:\ruby\bin;C:\opscode\chef\bin;C:\opscode\chef\embedded\bin" 
-54.165.122.228 
-54.165.122.228 C:\Users\Administrator>chef-client -c c:/chef/client.rb -j c:/chef/first-boot.json 
-54.165.122.228 [2016-11-16T17:16:35+00:00] INFO: *** Chef 12.16.42 ***
-54.165.122.228 [2016-11-16T17:16:35+00:00] INFO: Platform: x64-mingw32
-54.165.122.228 [2016-11-16T17:16:35+00:00] INFO: Chef-client pid: 936
-54.165.122.228 [2016-11-16T17:17:05+00:00] INFO: Setting the run_list to ["recipe[learn_chef_iis]"] from CLI options
-54.165.122.228 [2016-11-16T17:17:05+00:00] INFO: Run List is [recipe[learn_chef_iis]]
-54.165.122.228 [2016-11-16T17:17:05+00:00] INFO: Run List expands to [learn_chef_iis]
-54.165.122.228 [2016-11-16T17:17:05+00:00] INFO: Starting Chef Run for node1-windows
-54.165.122.228 [2016-11-16T17:17:05+00:00] INFO: Running start handlers
-54.165.122.228 [2016-11-16T17:17:05+00:00] INFO: Start handlers complete.
-54.165.122.228 [2016-11-16T17:17:05+00:00] INFO: HTTP Request Returned 404 Not Found: 
-54.165.122.228 [2016-11-16T17:17:05+00:00] INFO: Loading cookbooks [learn_chef_iis@0.1.0]
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Storing updated cookbooks/learn_chef_iis/templates/Default.htm.erb in the cache.
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Storing updated cookbooks/learn_chef_iis/Berksfile in the cache.
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.gitignore in the cache.
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Storing updated cookbooks/learn_chef_iis/recipes/default.rb in the cache.
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Storing updated cookbooks/learn_chef_iis/chefignore in the cache.
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.kitchen.yml in the cache.
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Storing updated cookbooks/learn_chef_iis/README.md in the cache.
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Storing updated cookbooks/learn_chef_iis/LICENSE in the cache.
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Storing updated cookbooks/learn_chef_iis/metadata.rb in the cache.
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Processing powershell_script[Install IIS] action run (learn_chef_iis::default line 6)
-54.165.122.228 [2016-11-16T17:17:06+00:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
-54.165.122.228 [2016-11-16T17:22:29+00:00] INFO: powershell_script[Install IIS] ran successfully
-54.165.122.228 [2016-11-16T17:22:29+00:00] INFO: Processing windows_service[w3svc] action enable (learn_chef_iis::default line 12)
-54.165.122.228 [2016-11-16T17:22:29+00:00] INFO: Processing windows_service[w3svc] action start (learn_chef_iis::default line 12)
-54.165.122.228 [2016-11-16T17:22:29+00:00] INFO: Processing template[c:\inetpub\wwwroot\Default.htm] action create (learn_chef_iis::default line 16)
-54.165.122.228 [2016-11-16T17:22:29+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] created file c:\inetpub\wwwroot\Default.htm
-54.165.122.228 [2016-11-16T17:22:29+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
-54.165.122.228 [2016-11-16T17:22:30+00:00] INFO: Chef Run complete in 324.350838 seconds
-54.165.122.228 [2016-11-16T17:22:30+00:00] INFO: Running report handlers
-54.165.122.228 [2016-11-16T17:22:30+00:00] INFO: Report handlers complete
+Waiting for remote response before bootstrap.54.165.28.221 . 
+54.165.28.221 Response received.
+54.165.28.221 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-6439-1480560171.bat" chunk 1 
+54.165.28.221 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-6439-1480560171.bat" chunk 2 
+54.165.28.221 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-6439-1480560171.bat" chunk 3 
+54.165.28.221 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-6439-1480560171.bat" chunk 4 
+54.165.28.221 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-6439-1480560171.bat" chunk 5 
+54.165.28.221 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-6439-1480560171.bat" chunk 6 
+54.165.28.221 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-6439-1480560171.bat" chunk 7 
+54.165.28.221 Rendering "C:\Users\ADMINI~1\AppData\Local\Temp\bootstrap-6439-1480560171.bat" chunk 8 
+54.165.28.221 Checking for existing directory "C:\chef"...
+54.165.28.221 Existing directory not found, creating.
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>(
+54.165.28.221 echo.url = WScript.Arguments.Named("url")  
+54.165.28.221  echo.path = WScript.Arguments.Named("path")  
+54.165.28.221  echo.proxy = null  
+54.165.28.221  echo.'* Vaguely attempt to handle file:// scheme urls by url unescaping and switching all  
+54.165.28.221  echo.'* / into .  Also assume that file:/// is a local absolute path and that file://<foo>  
+54.165.28.221  echo.'* is possibly a network file path.  
+54.165.28.221  echo.If InStr(url, "file://") = 1 Then  
+54.165.28.221  echo.url = Unescape(url)  
+54.165.28.221  echo.If InStr(url, "file:///") = 1 Then  
+54.165.28.221  echo.sourcePath = Mid(url, Len("file:///") + 1)  
+54.165.28.221  echo.Else 
+54.165.28.221  echo.sourcePath = Mid(url, Len("file:") + 1)  
+54.165.28.221  echo.End If  
+54.165.28.221  echo.sourcePath = Replace(sourcePath, "/", "\")  
+54.165.28.221  echo. 
+54.165.28.221  echo.Set objFSO = CreateObject("Scripting.FileSystemObject")  
+54.165.28.221  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
+54.165.28.221  echo.objFSO.CopyFile sourcePath, path, true  
+54.165.28.221  echo.Set objFSO = Nothing  
+54.165.28.221  echo. 
+54.165.28.221  echo.Else 
+54.165.28.221  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP")  
+54.165.28.221  echo.Set wshShell = CreateObject( "WScript.Shell" )  
+54.165.28.221  echo.Set objUserVariables = wshShell.Environment("USER")  
+54.165.28.221  echo. 
+54.165.28.221  echo.rem http proxy is optional  
+54.165.28.221  echo.rem attempt to read from HTTP_PROXY env var first  
+54.165.28.221  echo.On Error Resume Next  
+54.165.28.221  echo. 
+54.165.28.221  echo.If NOT (objUserVariables("HTTP_PROXY") = "") Then  
+54.165.28.221  echo.proxy = objUserVariables("HTTP_PROXY")  
+54.165.28.221  echo. 
+54.165.28.221  echo.rem fall back to named arg  
+54.165.28.221  echo.ElseIf NOT (WScript.Arguments.Named("proxy") = "") Then  
+54.165.28.221  echo.proxy = WScript.Arguments.Named("proxy")  
+54.165.28.221  echo.End If  
+54.165.28.221  echo. 
+54.165.28.221  echo.If NOT isNull(proxy) Then  
+54.165.28.221  echo.rem setProxy method is only available on ServerXMLHTTP 6.0+  
+54.165.28.221  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")  
+54.165.28.221  echo.objXMLHTTP.setProxy 2, proxy  
+54.165.28.221  echo.End If  
+54.165.28.221  echo. 
+54.165.28.221  echo.On Error Goto 0  
+54.165.28.221  echo. 
+54.165.28.221  echo.objXMLHTTP.open "GET", url, false  
+54.165.28.221  echo.objXMLHTTP.send() 
+54.165.28.221  echo.If objXMLHTTP.Status = 200 Then  
+54.165.28.221  echo.Set objADOStream = CreateObject("ADODB.Stream")  
+54.165.28.221  echo.objADOStream.Open 
+54.165.28.221  echo.objADOStream.Type = 1  
+54.165.28.221  echo.objADOStream.Write objXMLHTTP.ResponseBody  
+54.165.28.221  echo.objADOStream.Position = 0  
+54.165.28.221  echo.Set objFSO = Createobject("Scripting.FileSystemObject")  
+54.165.28.221  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
+54.165.28.221  echo.Set objFSO = Nothing  
+54.165.28.221  echo.objADOStream.SaveToFile path  
+54.165.28.221  echo.objADOStream.Close 
+54.165.28.221  echo.Set objADOStream = Nothing  
+54.165.28.221  echo.End If  
+54.165.28.221  echo.Set objXMLHTTP = Nothing  
+54.165.28.221  echo.End If 
+54.165.28.221 ) 1>C:\chef\wget.vbs 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>(
+54.165.28.221 echo.param(
+54.165.28.221  
+54.165.28.221  echo.   [String] $remoteUrl,  
+54.165.28.221  echo.   [String] $localPath  
+54.165.28.221  echo.) 
+54.165.28.221  echo. 
+54.165.28.221  echo.$ProxyUrl = $env:http_proxy;  
+54.165.28.221  echo.$webClient = new-object System.Net.WebClient;  
+54.165.28.221  echo. 
+54.165.28.221  echo.if ($ProxyUrl -ne '') {  
+54.165.28.221  echo.  $WebProxy = New-Object System.Net.WebProxy($ProxyUrl,$true)  
+54.165.28.221  echo.  $WebClient.Proxy = $WebProxy  
+54.165.28.221  echo.} 
+54.165.28.221  echo. 
+54.165.28.221  echo.$webClient.DownloadFile($remoteUrl, $localPath); 
+54.165.28.221 ) 1>C:\chef\wget.ps1 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>(
+54.165.28.221  
+54.165.28.221   
+54.165.28.221  
+54.165.28.221 ) 
+54.165.28.221 Detected Windows Version 6.3 Build 9600
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>goto Version6.3 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>goto Version6.2 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>goto architecture_select 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>IF "AMD64" == "x86" IF not defined PROCESSOR_ARCHITEW6432 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>goto install 
+54.165.28.221 Checking for existing downloaded package at "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi"
+54.165.28.221 No existing downloaded packages to delete.
+54.165.28.221 Attempting to download client package using PowerShell if available...
+54.165.28.221 powershell.exe -ExecutionPolicy Unrestricted -InputFormat None -NoProfile -NonInteractive -File  C:\chef\wget.ps1 "https://www.chef.io/chef/download?p=windows&pv=2012&m=x86_64&DownloadContext=PowerShell&v=12" "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi"
+54.165.28.221 Download via PowerShell succeeded.
+54.165.28.221 Installing downloaded client package...
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>msiexec /qn /log "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-msi940.log" /i "C:\Users\ADMINI~1\AppData\Local\Temp\chef-client-latest.msi" 
+54.165.28.221 Successfully installed Chef Client package.
+54.165.28.221 Installation completed successfully
+54.165.28.221 Writing validation key...
+54.165.28.221 Validation key written.
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>mkdir C:\chef\trusted_certs 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>(
+54.165.28.221 echo.-----BEGIN CERTIFICATE-----  
+54.165.28.221  echo.MIIGBDCCA+ygAwIBAgIJAPhQyBGIpxUKMA0GCSqGSIb3DQEBCwUAMIGOMQswCQYD 
+54.165.28.221  echo.VQQGEwJVUzETMBEGA1UECAwKV2FzaGluZ3RvbjEQMA4GA1UEBwwHU2VhdHRsZTEi 
+54.165.28.221  echo.MCAGA1UECgwZQW1hem9uIFdlYiBTZXJ2aWNlcywgSW5jLjEVMBMGA1UECwwMQVdT 
+54.165.28.221  echo.IE9wc1dvcmtzMR0wGwYDVQQDDBRBV1MgT3BzV29ya3MgUm9vdCBDQTAeFw0xNjEx 
+54.165.28.221  echo.MDMxMTQyNTJaFw0yMTEyMjIxMTQyNTJaMIGOMQswCQYDVQQGEwJVUzETMBEGA1UE 
+54.165.28.221  echo.CAwKV2FzaGluZ3RvbjEQMA4GA1UEBwwHU2VhdHRsZTEiMCAGA1UECgwZQW1hem9u 
+54.165.28.221  echo.IFdlYiBTZXJ2aWNlcywgSW5jLjEVMBMGA1UECwwMQVdTIE9wc1dvcmtzMR0wGwYD 
+54.165.28.221  echo.VQQDDBRBV1MgT3BzV29ya3MgUm9vdCBDQTCCAiIwDQYJKoZIhvcNAQEBBQADggIP 
+54.165.28.221  echo.ADCCAgoCggIBAJwleItQXSXUtpSQfOefROwdlFQX9kiPWpOKYKnJRTVfOqdDi4ug 
+54.165.28.221  echo.9NOwNuP2zoz1jxawZRyNvs17GmLjmdzBnoW+x/DG+WswFGyAifn81jZ92FldtdNo 
+54.165.28.221  echo.hp4buBv0ydunLlyjTzGoRdcrawIENEtcgGWkOaqMP1iQvUJXQiQgzxQx0O7JPBvS 
+54.165.28.221  echo.Wkq5VmEthY+7H6OnpxsqBbRln2t9JE2oUjnZWpPEXXegwmZKx4wZG3HyeMXrj7aG 
+54.165.28.221  echo.vWmN9QcDFGu0gZFSF9IfWvd37H6hXMpHe0O+0PuWQXWOJhCXDV41155mWHq8U8Nh 
+54.165.28.221  echo.mu0ySmb/8dYBoDNEVd+9fHI8FlvcoVML1zmv6sBw25mulspsbby2vhZZ6DELEhbK 
+54.165.28.221  echo.9QWTxNotTPlT8Uq4O53RSkuxPeyD5oOuO+L+96jd4Dt1Ev8YXAwhQhTf/+nLczIZ 
+54.165.28.221  echo.M30SIrF2jorXEA5xrfzvvr9CEN1O7v9+E2xnrIZHATyujiDtJmVjSkWGSsar4i/8 
+54.165.28.221  echo.0djD8S9TdgRrozW2gVX6lZqURrS/51BYp0V0Gyuq7nh+IBW/SA6Fe9PlbJqoUUui 
+54.165.28.221  echo.noANjlSXDRF29LVB7qVOM4fF0Emj4/jTFSdRUreYz930tjIbAlEaz9+V0L2BNoIp 
+54.165.28.221  echo.3PvCT/RXgBVJBCkb0LL26cl9ztnqcTMEJU9iNe+oTeWzwywI8djguidfAgMBAAGj 
+54.165.28.221  echo.YzBhMB0GA1UdDgQWBBRxex0hBvpbsMeqNc1YrikJhYhnZzAfBgNVHSMEGDAWgBRx 
+54.165.28.221  echo.ex0hBvpbsMeqNc1YrikJhYhnZzAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQE 
+54.165.28.221  echo.AwIBhjANBgkqhkiG9w0BAQsFAAOCAgEAAzCDOwGyrs67r1pSY7TQsvdXx3MKPPA5 
+54.165.28.221  echo.d060OidEmPGJpO5yrWODoQFwueTFLfxaR+ovSGqvtJjlBCDUa5gBy9MEjnCge/UY 
+54.165.28.221  echo.TK4WDJaJrMiXQW0k8rQpHTKgPgL8LkBwfZU7Sk1P5DaE3vHTAwOgjdlH5Y3jWmTS 
+54.165.28.221  echo.G2+RlRG3hlvPRDzfTbd0mMkQyiBAj86Tk3pOiQf4ctJ+TIw8pJMJkY4I7KiPZkMR 
+54.165.28.221  echo.4XcoQ56ayiSmMnmxOfulKEkkyrfzS+HUy2AXkbMR5GHppGGkc0PyEzHNXk+XyKGn 
+54.165.28.221  echo.OsmOt0WYciHLhew1rEuMZZJALgk4kBQHXFr1VqnqyuVakOubP9bJ0wnhmMDzD5sM 
+54.165.28.221  echo.1rdAyVQwoYBcYVsq0F+Qs0kgvPketYShPNNKPrEHwXGaeeC/PS+NmY88vf/VMdvJ 
+54.165.28.221  echo.5PzTLUBLRtY5E6xD8ar/Lz4Wf8t8s1RWE6NyArPS83dFEslFCbO9y3ivlH6xhlv9 
+54.165.28.221  echo.aYzCHvg8nazYRTfKKkCvXx1GM/OFi538ffSlGyHpaKaFKqb7R/s/Drv7taNVReuX 
+54.165.28.221  echo.UAI92eaSyk+irYykTOeQslzDnQ7Z5m+TjjqQyu1hfD74Zh4XYYLOKcMTmzth99zZ 
+54.165.28.221  echo.f9bshoGA8hbF/lOYZ6wT+K+iy+QO+rF5MFsojtnfm4sloWRymPuLEPSMuUgljLNf 
+54.165.28.221  echo.R2CExeYjWik=  
+54.165.28.221  echo.-----END CERTIFICATE----- 
+54.165.28.221 ) 1>C:\chef/trusted_certs/opsworks-cm-ca-2016-root.pem 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>(
+54.165.28.221 echo.log_level        :info  
+54.165.28.221  echo.log_location     STDOUT  
+54.165.28.221  echo. 
+54.165.28.221  echo.chef_server_url  "https://test-xcdbs22xaaf3cmpz.gamma.opsworks-cm.io/organizations/default"  
+54.165.28.221  echo.validation_client_name "chef-validator"  
+54.165.28.221  echo. 
+54.165.28.221  echo.file_cache_path   "c:/chef/cache"  
+54.165.28.221  echo.file_backup_path  "c:/chef/backup"  
+54.165.28.221  echo.cache_options     ({:path => "c:/chef/cache/checksums", :skip_expires => true})  
+54.165.28.221  echo. 
+54.165.28.221  echo.node_name "node1-windows"  
+54.165.28.221  echo.trusted_certs_dir "c:/chef/trusted_certs" 
+54.165.28.221 ) 1>C:\chef\client.rb 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>(echo.{"run_list":["recipe[learn_chef_iis]"]}) 1>C:\chef\first-boot.json 
+54.165.28.221 Starting chef to bootstrap the node...
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>SET "PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Amazon\cfn-bootstrap\;C:\ruby\bin;C:\opscode\chef\bin;C:\opscode\chef\embedded\bin" 
+54.165.28.221 
+54.165.28.221 C:\Users\Administrator>chef-client -c c:/chef/client.rb -j c:/chef/first-boot.json 
+54.165.28.221 [2016-12-01T02:45:32+00:00] INFO: *** Chef 12.16.42 ***
+54.165.28.221 [2016-12-01T02:45:32+00:00] INFO: Platform: x64-mingw32
+54.165.28.221 [2016-12-01T02:45:32+00:00] INFO: Chef-client pid: 2204
+54.165.28.221 [2016-12-01T02:46:02+00:00] INFO: Setting the run_list to ["recipe[learn_chef_iis]"] from CLI options
+54.165.28.221 [2016-12-01T02:46:02+00:00] INFO: Run List is [recipe[learn_chef_iis]]
+54.165.28.221 [2016-12-01T02:46:02+00:00] INFO: Run List expands to [learn_chef_iis]
+54.165.28.221 [2016-12-01T02:46:02+00:00] INFO: Starting Chef Run for node1-windows
+54.165.28.221 [2016-12-01T02:46:02+00:00] INFO: Running start handlers
+54.165.28.221 [2016-12-01T02:46:02+00:00] INFO: Start handlers complete.
+54.165.28.221 [2016-12-01T02:46:02+00:00] INFO: HTTP Request Returned 404 Not Found: 
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Loading cookbooks [learn_chef_iis@0.1.0]
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Storing updated cookbooks/learn_chef_iis/recipes/default.rb in the cache.
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Storing updated cookbooks/learn_chef_iis/Berksfile in the cache.
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Storing updated cookbooks/learn_chef_iis/chefignore in the cache.
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.gitignore in the cache.
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Storing updated cookbooks/learn_chef_iis/templates/Default.htm.erb in the cache.
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Storing updated cookbooks/learn_chef_iis/LICENSE in the cache.
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Storing updated cookbooks/learn_chef_iis/.kitchen.yml in the cache.
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Storing updated cookbooks/learn_chef_iis/metadata.rb in the cache.
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Storing updated cookbooks/learn_chef_iis/README.md in the cache.
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Processing powershell_script[Install IIS] action run (learn_chef_iis::default line 6)
+54.165.28.221 [2016-12-01T02:46:03+00:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
+54.165.28.221 [2016-12-01T02:47:39+00:00] INFO: powershell_script[Install IIS] ran successfully
+54.165.28.221 [2016-12-01T02:47:39+00:00] INFO: Processing windows_service[w3svc] action enable (learn_chef_iis::default line 12)
+54.165.28.221 [2016-12-01T02:47:39+00:00] INFO: Processing windows_service[w3svc] action start (learn_chef_iis::default line 12)
+54.165.28.221 [2016-12-01T02:47:39+00:00] INFO: Processing template[c:\inetpub\wwwroot\Default.htm] action create (learn_chef_iis::default line 16)
+54.165.28.221 [2016-12-01T02:47:39+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] created file c:\inetpub\wwwroot\Default.htm
+54.165.28.221 [2016-12-01T02:47:39+00:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
+54.165.28.221 [2016-12-01T02:47:40+00:00] INFO: Chef Run complete in 97.341419 seconds
+54.165.28.221 [2016-12-01T02:47:40+00:00] INFO: Running report handlers
+54.165.28.221 [2016-12-01T02:47:40+00:00] INFO: Report handlers complete

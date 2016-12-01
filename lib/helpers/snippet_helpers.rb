@@ -63,7 +63,7 @@ module SnippetHelpers
 
   def commentize_path(path, language)
     case language
-    when 'conf', 'ruby', 'ini', 'yaml', 'powershell', 'bash', 'ps', 'shell'
+    when 'conf', 'ruby', 'ini', 'yaml', 'powershell', 'bash', 'ps', 'shell', 'json'
       '# ' + path
     when 'html'
       "<!-- #{path} -->"

@@ -12,10 +12,10 @@ if [ ! $(which delivery-ctl) ]
       then
         mkdir ~/downloads
     fi
-    wget -P ~/downloads https://packages.chef.io/stable/ubuntu/14.04/delivery_0.5.432-1_amd64.deb
+    wget -P ~/downloads https://packages.chef.io/stable/ubuntu/14.04/delivery_0.6.7-1_amd64.deb
 
     # Install the package
-    sudo dpkg -i ~/downloads/delivery_0.5.432-1_amd64.deb
+    sudo dpkg -i ~/downloads/delivery_0.6.7-1_amd64.deb
 
     # Run setup
     sudo delivery-ctl setup --license /tmp/automate.license --key /tmp/delivery.pem --server-url https://$chef_server_fqdn/organizations/4thcoffee --fqdn $(hostname) --enterprise chordata --configure --no-build-node

@@ -53,6 +53,7 @@ module Middleman
                    "ini" => CodeFormatter.new,
                    "sql" => CodeFormatter.new,
                    "plaintext" => CodeFormatter.new,
+                   "json" => CodeFormatter.new,
                    "yaml" => CodeFormatter.new,
                    "php" => CodeFormatter.new({:token_offset => 2, :strip_offset => 0}),
                    "powershell" => CodeFormatter.new,

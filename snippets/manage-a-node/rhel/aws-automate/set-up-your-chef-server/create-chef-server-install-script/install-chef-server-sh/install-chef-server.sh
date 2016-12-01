@@ -19,10 +19,10 @@ if [ ! $(which chef-server-ctl) ]
       then
         mkdir ~/downloads
     fi
-    wget -P ~/downloads https://packages.chef.io/stable/ubuntu/14.04/chef-server-core_12.11.0-1_amd64.deb
+    wget -P ~/downloads https://packages.chef.io/stable/ubuntu/14.04/chef-server-core_12.11.1-1_amd64.deb
 
     # Install the package
-    dpkg -i ~/downloads/chef-server-core_12.11.0-1_amd64.deb
+    dpkg -i ~/downloads/chef-server-core_12.11.1-1_amd64.deb
 
     # Configure and restart services
     chef-server-ctl reconfigure

@@ -62,11 +62,17 @@ Now you're ready to upload your cookbook to the Chef server. Run the `knife cook
 
 ## 4. Run the cookbook on your node
 
-<% if current_page.parent.data.environment == 'virtualbox' %>
-
 Now that your updated cookbook is on the Chef server, you can run `chef-client` on your node. The `chef-client` command pulls from Chef server the latest cookbooks from the node's run-list and applies the run-list to the node.
 
-To run `chef-client` on your node remotely from your workstation, you'll use the [knife ssh](https://docs.chef.io/knife_ssh.html) command. `knife ssh` takes the command to run on the node as an argument. Here, we'll run `sudo chef-client`.
+To run `chef-client` on your node remotely from your workstation, you could use the `ssh` utility to create an SSH connection to your node and then run `chef-client`. Another way is to use the [knife ssh](https://docs.chef.io/knife_ssh.html) command. A benefit to using the `knife ssh` command is that it enables you to run `chef-client` (or any other command) on multiple nodes at the same time.
+
+<% if current_page.parent.data.environment != 'virtualbox' %>
+
+Recall that the Chef server stores information about your nodes. This information is indexed and is searchable from tools such as `knife`. When you run `knife ssh`, you can either specify your node's IP address or a [search query](https://docs.chef.io/chef_search.html) that specifies which nodes to connect to. Because the search [query syntax](https://docs.chef.io/knife_search.html#query-syntax) supports multiple search patterns and can contain multiple search criteria, you can use `knife ssh` to run `chef-client` on multiple nodes at the same time.
+
+<% end %>
+
+<% if current_page.parent.data.environment == 'virtualbox' %>
 
 As with `knife bootstrap`, the options you provide to `knife ssh` depend on how you would normally connect to your node over SSH. [The other versions of this tutorial](/tutorials/manage-a-node/ubuntu/) describe the process more generally. But because your Ubuntu node is managed by Vagrant and VirtualBox, you connect to it by providing its SSH forwarded port.
 
@@ -75,10 +81,6 @@ Run the following command to run `chef-client` on your node.
 <% command_snippet(page: current_page, path: 'add-template-code-to-your-html/knife-ccr-node1-ubuntu-1') %>
 
 <% else %>
-
-Now that your updated cookbook is on the Chef server, you can run `chef-client` on your node. The `chef-client` command pulls from Chef server the latest cookbooks from the node's run-list and applies the run-list to the node.
-
-To run `chef-client` on your node remotely from your workstation, you'll use the [knife ssh](https://docs.chef.io/knife_ssh.html) command. `knife ssh` takes the command to run on the node as an argument. Here, we'll run `sudo chef-client`.
 
 As with `knife bootstrap`, the options you provide to `knife ssh` depend on how you would normally connect to your node over SSH.
 
@@ -90,11 +92,13 @@ Choose the option that matches how you normally connect to your node over SSH.
 
 ### Update your node using key-based authentication
 
-Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+Replace <code class="placeholder">USER</code> with your username and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+
+Also replace <code class="placeholder">node1-ubuntu</code> with your node's name if you used a different name to bootstrap your node.
 
 ```bash
 # ~/learn-chef
-$ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --identity-file IDENTITY_FILE
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user USER --identity-file IDENTITY_FILE --attribute ipaddress
 ```
 
 Here's an example.
@@ -103,13 +107,19 @@ Here's an example.
 
 Here you see that the "hello world" message is replaced with one that includes the node's FQDN.
 
+The `'name:node1-ubuntu'` part is the search query. It returns all nodes that have the name "node1-ubuntu". In practice, you would have only one node with a given name. Recall that a search query supports multiple patterns. If you were to specify `'name:node1-*'`, which uses a wildcard pattern, `knife ssh` would run `sudo chef-client` on all nodes whose name begins with "node1-".
+
+The `--attribute` part tells `knife` which node attribute to use when opening an SSH connection. The default is to use the node's FQDN. For learning purposes, here we specify `ipaddress` to use the node's IP address because your node may not have a resolvable FQDN. In practice, you might omit this argument if your node does have a resolvable FQDN.
+
+[Here are some common built-in node attributes](https://docs.chef.io/attributes.html#automatic-ohai)
+
 ### Update your node using password authentication
 
-Replace <code class="placeholder">ADDRESS</code>, <code class="placeholder">USER</code>, and <code class="placeholder">PASSWORD</code> with your values.
+Replace <code class="placeholder">USER</code> and <code class="placeholder">PASSWORD</code> with your values.
 
 ```bash
 # ~/learn-chef
-$ knife ssh ADDRESS 'sudo chef-client' --manual-list --ssh-user USER --ssh-password 'PASSWORD'
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user USER --ssh-password 'PASSWORD' --attribute ipaddress
 ```
 
 The output will resemble the output shown for key-based authentication above.
@@ -120,8 +130,10 @@ Replace <code class="placeholder">PORT</code> with your SSH forwarded port, for 
 
 ```bash
 # ~/learn-chef
-$ knife ssh localhost --ssh-port PORT 'sudo chef-client' --manual-list --ssh-user vagrant --identity-file IDENTITY_FILE
+$ knife ssh localhost --ssh-port PORT 'sudo chef-client' --ssh-user vagrant --identity-file IDENTITY_FILE --manual-list
 ```
+
+For learning purposes, this version connects directly to localhost using the SSH forwarded port instead of using a search query. To use a search query with a local virtual machine running on Vagrant and VirtualBox, for example, requires a more [complex network configuration](https://github.com/mitchellh/vagrant/issues/2793).
 
 The output will resemble the output shown for key-based authentication above.
 
@@ -166,6 +178,8 @@ The home page now displays "hello from localhost" instead of "hello world".
 <% end %>
 
 <% if ['aws-automate', 'opsworks'].include?(current_page.parent.data.environment) %>
+
+<hr />
 
 From the **Nodes** tab in the Chef Automate dashboard, you'll also see that the `chef-client` run succeeded.
 

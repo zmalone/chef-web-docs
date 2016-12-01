@@ -1,0 +1,99 @@
+localhost Starting Chef Client, version 12.16.42
+localhost resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_httpd::default"]
+localhost Synchronizing Cookbooks:
+localhost   - chef-client (7.0.0)
+localhost   - cron (3.0.0)
+localhost   - logrotate (2.1.0)
+localhost   - compat_resource (12.16.2)
+localhost   - windows (2.1.1)
+localhost   - ohai (4.2.2)
+localhost   - learn_chef_httpd (0.3.1)
+localhost Installing Cookbook Gems:
+localhost Compiling Cookbooks...
+localhost Converging 14 resources
+localhost Recipe: chef-client::systemd_service
+localhost   * directory[/var/run/chef] action create
+localhost     - create new directory /var/run/chef
+localhost     - change owner from '' to 'root'
+localhost     - change group from '' to 'root'
+localhost     - restore selinux security context
+localhost   * directory[/var/cache/chef] action create
+localhost     - create new directory /var/cache/chef
+localhost     - change owner from '' to 'root'
+localhost     - change group from '' to 'root'
+localhost     - restore selinux security context
+localhost   * directory[/var/lib/chef] action create
+localhost     - create new directory /var/lib/chef
+localhost     - change owner from '' to 'root'
+localhost     - change group from '' to 'root'
+localhost     - restore selinux security context
+localhost   * directory[/var/log/chef] action create
+localhost     - create new directory /var/log/chef
+localhost     - change mode from '' to '0755'
+localhost     - change owner from '' to 'root'
+localhost     - change group from '' to 'root'
+localhost     - restore selinux security context
+localhost   * directory[/etc/chef] action create (up to date)
+localhost   * template[/etc/systemd/system/chef-client.service] action create
+localhost     - create new file /etc/systemd/system/chef-client.service
+localhost     - update content in file /etc/systemd/system/chef-client.service from none to 62ed56
+localhost     --- /etc/systemd/system/chef-client.service	2016-11-29 23:29:24.691404500 +0000
+localhost     +++ /etc/systemd/system/.chef-chef-client20161129-13223-qyr6xi.service	2016-11-29 23:29:24.691404500 +0000
+localhost     @@ -1 +1,14 @@
+localhost     +[Unit]
+localhost     +Description=Chef Client daemon
+localhost     +After=network.target auditd.service
+localhost     +
+localhost     +[Service]
+localhost     +EnvironmentFile=/etc/sysconfig/chef-client
+localhost     +ExecStart=/usr/bin/chef-client -c $CONFIG -i $INTERVAL -s $SPLAY $OPTIONS
+localhost     +ExecReload=/bin/kill -HUP $MAINPID
+localhost     +SuccessExitStatus=3
+localhost     +Restart=on-failure
+localhost     +
+localhost     +[Install]
+localhost     +WantedBy=multi-user.target
+localhost     - change mode from '' to '0644'
+localhost     - restore selinux security context
+localhost   * template[/etc/sysconfig/chef-client] action create
+localhost     - create new file /etc/sysconfig/chef-client
+localhost     - update content in file /etc/sysconfig/chef-client from none to 144582
+localhost     --- /etc/sysconfig/chef-client	2016-11-29 23:29:24.729404500 +0000
+localhost     +++ /etc/sysconfig/.chef-chef-client20161129-13223-c766q9	2016-11-29 23:29:24.729404500 +0000
+localhost     @@ -1 +1,15 @@
+localhost     +# Configuration file for the chef-client service
+localhost     +
+localhost     +CONFIG=/etc/chef/client.rb
+localhost     +PIDFILE=/var/run/chef/client.pid
+localhost     +#LOCKFILE=/var/lock/subsys/chef-client
+localhost     +# Sleep interval between runs.
+localhost     +# This value is in seconds.
+localhost     +INTERVAL=60
+localhost     +# Maximum amount of random delay before starting a run. Prevents every client
+localhost     +# from contacting the server at the exact same time.
+localhost     +# This value is in seconds.
+localhost     +SPLAY=60
+localhost     +# Any additional chef-client options.
+localhost     +OPTIONS=""
+localhost     - change mode from '' to '0644'
+localhost     - restore selinux security context
+localhost   * service[chef-client] action enable
+localhost     - enable service service[chef-client]
+localhost   * service[chef-client] action start
+localhost     - start service service[chef-client]
+localhost Recipe: chef-client::delete_validation
+localhost   * file[/etc/chef/validation.pem] action delete (up to date)
+localhost Recipe: learn_chef_httpd::default
+localhost   * yum_package[httpd] action install (up to date)
+localhost   * service[httpd] action enable (up to date)
+localhost   * service[httpd] action start (up to date)
+localhost   * group[web_admin] action create (up to date)
+localhost   * linux_user[web_admin] action create (up to date)
+localhost   * template[/var/www/html/index.html] action create (up to date)
+localhost Recipe: chef-client::systemd_service
+localhost   * service[chef-client] action restart
+localhost     - restart service service[chef-client]
+localhost 
+localhost Running handlers:
+localhost Running handlers complete
+localhost Chef Client finished, 9/17 resources updated in 10 seconds
