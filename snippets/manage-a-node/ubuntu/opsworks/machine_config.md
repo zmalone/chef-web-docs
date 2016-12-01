@@ -1,6 +1,6 @@
 This tutorial was last tested using this configuration:
 
-* Chef Automate 12.11.0 on AWS OpsWorks managed Chef
+* Chef Automate 12.11.1 on AWS OpsWorks for Chef Automate
   * **Region:** us-east-1
   * **Instance type:** t2.medium
 <br /><br />
@@ -14,4 +14,4 @@ This tutorial was last tested using this configuration:
   * **Region:** us-east-1
   * **AMI ID:** ami-2d39803a
   * **Instance type:** t2.micro
-  * **Software:** Chef Development Kit 0.19.6
+  * **Software:** Chef Development Kit 1.0.3

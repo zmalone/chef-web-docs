@@ -1,0 +1,276 @@
+192.168.145.131 Starting Chef Client, version 12.16.42
+192.168.145.131 resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_apache2::default"]
+192.168.145.131 Synchronizing Cookbooks:
+192.168.145.131   - chef-client (7.0.0)
+192.168.145.131   - cron (3.0.0)
+192.168.145.131   - logrotate (2.1.0)
+192.168.145.131   - compat_resource (12.16.2)
+192.168.145.131   - learn_chef_apache2 (0.3.1)
+192.168.145.131   - windows (2.1.1)
+192.168.145.131   - ohai (4.2.2)
+192.168.145.131 Installing Cookbook Gems:
+192.168.145.131 Compiling Cookbooks...
+192.168.145.131 Converging 15 resources
+192.168.145.131 Recipe: chef-client::init_service
+192.168.145.131   * directory[/var/run/chef] action create
+192.168.145.131     - create new directory /var/run/chef
+192.168.145.131     - change owner from '' to 'root'
+192.168.145.131     - change group from '' to 'root'
+192.168.145.131   * directory[/var/cache/chef] action create
+192.168.145.131     - create new directory /var/cache/chef
+192.168.145.131     - change owner from '' to 'root'
+192.168.145.131     - change group from '' to 'root'
+192.168.145.131   * directory[/var/lib/chef] action create
+192.168.145.131     - create new directory /var/lib/chef
+192.168.145.131     - change owner from '' to 'root'
+192.168.145.131     - change group from '' to 'root'
+192.168.145.131   * directory[/var/log/chef] action create
+192.168.145.131     - create new directory /var/log/chef
+192.168.145.131     - change mode from '' to '0755'
+192.168.145.131     - change owner from '' to 'root'
+192.168.145.131     - change group from '' to 'root'
+192.168.145.131   * directory[/etc/chef] action create (up to date)
+192.168.145.131   * template[/etc/init.d/chef-client] action create
+192.168.145.131     - create new file /etc/init.d/chef-client
+192.168.145.131     - update content in file /etc/init.d/chef-client from none to c4f9fe
+192.168.145.131     --- /etc/init.d/chef-client	2016-11-30 02:42:02.690251920 +0000
+192.168.145.131     +++ /etc/init.d/.chef-chef-client20161130-4540-11endmb	2016-11-30 02:42:02.690251920 +0000
+192.168.145.131     @@ -1 +1,207 @@
+192.168.145.131     +#! /bin/sh
+192.168.145.131     +### BEGIN INIT INFO
+192.168.145.131     +# Provides:           chef-client
+192.168.145.131     +# Required-Start:     $remote_fs $network
+192.168.145.131     +# Required-Stop:      $remote_fs $network
+192.168.145.131     +# Default-Start:      2 3 4 5
+192.168.145.131     +# Default-Stop:       0 1 6
+192.168.145.131     +# Short-Description:  Start a chef-client.
+192.168.145.131     +### END INIT INFO
+192.168.145.131     +#
+192.168.145.131     +# Copyright (c) 2009-2010 Chef Software, Inc, <legal@chef.io>
+192.168.145.131     +#
+192.168.145.131     +# chef-client         Startup script for chef-client.
+192.168.145.131     +# chkconfig: - 99 02
+192.168.145.131     +# description: starts up chef-client in daemon mode.
+192.168.145.131     +
+192.168.145.131     +PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+192.168.145.131     +DAEMON=/usr/bin/chef-client
+192.168.145.131     +NAME=chef-client
+192.168.145.131     +DESC=chef-client
+192.168.145.131     +PIDFILE=/var/run/chef/client.pid
+192.168.145.131     +
+192.168.145.131     +test -x $DAEMON || exit 1
+192.168.145.131     +
+192.168.145.131     +. /lib/lsb/init-functions
+192.168.145.131     +
+192.168.145.131     +[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+192.168.145.131     +
+192.168.145.131     +if [ ! -d /var/run/chef ]; then
+192.168.145.131     +  mkdir /var/run/chef
+192.168.145.131     +fi
+192.168.145.131     +
+192.168.145.131     +DAEMON_OPTS="-d -P $PIDFILE -c $CONFIG -i $INTERVAL -s $SPLAY "
+192.168.145.131     +
+192.168.145.131     +running_pid() {
+192.168.145.131     +  pid=$1
+192.168.145.131     +  name=$2
+192.168.145.131     +  [ -z "$pid" ] && return 1
+192.168.145.131     +  [ ! -d /proc/$pid ] &&  return 1
+192.168.145.131     +  cmd=`cat /proc/$pid/cmdline | tr '\000' '\n' | awk 'NR==2'`
+192.168.145.131     +  [ "$cmd" != "$name" ] &&  return 1
+192.168.145.131     +  return 0
+192.168.145.131     +}
+192.168.145.131     +
+192.168.145.131     +running() {
+192.168.145.131     +  [ ! -f "$PIDFILE" ] && return 1
+192.168.145.131     +  pid=`cat $PIDFILE`
+192.168.145.131     +  running_pid $pid $DAEMON || return 1
+192.168.145.131     +  return 0
+192.168.145.131     +}
+192.168.145.131     +
+192.168.145.131     +start_server() {
+192.168.145.131     +  if [ -z "$DAEMONUSER" ] ; then
+192.168.145.131     +    start_daemon -p $PIDFILE $DAEMON $DAEMON_OPTS
+192.168.145.131     +  errcode=$?
+192.168.145.131     +  else
+192.168.145.131     +    start-stop-daemon --start --quiet --pidfile $PIDFILE \
+192.168.145.131     +      --chuid $DAEMONUSER \
+192.168.145.131     +      --exec $DAEMON -- $DAEMON_OPTS
+192.168.145.131     +    errcode=$?
+192.168.145.131     +  fi
+192.168.145.131     +  return $errcode
+192.168.145.131     +}
+192.168.145.131     +
+192.168.145.131     +stop_server() {
+192.168.145.131     +   if [ -z "$DAEMONUSER" ] ; then
+192.168.145.131     +     killproc -p $PIDFILE $DAEMON
+192.168.145.131     +     errcode=$?
+192.168.145.131     +   else
+192.168.145.131     +     start-stop-daemon --stop --quiet --pidfile $PIDFILE \
+192.168.145.131     +       --user $DAEMONUSER \
+192.168.145.131     +       --exec $DAEMON
+192.168.145.131     +     errcode=$?
+192.168.145.131     +   fi
+192.168.145.131     +   return $errcode
+192.168.145.131     +}
+192.168.145.131     +
+192.168.145.131     +reload_server() {
+192.168.145.131     +  if [ -z "$DAEMONUSER" ] ; then
+192.168.145.131     +     killproc -p $PIDFILE $DAEMON -HUP
+192.168.145.131     +     errcode=$?
+192.168.145.131     +   else
+192.168.145.131     +     start-stop-daemon --stop --signal HUP --quiet --pidfile $PIDFILE \
+192.168.145.131     +       --user $DAEMONUSER \
+192.168.145.131     +       --exec $DAEMON
+192.168.145.131     +     errcode=$?
+192.168.145.131     +   fi
+192.168.145.131     +   return $errcode
+192.168.145.131     +}
+192.168.145.131     +
+192.168.145.131     +run_server() {
+192.168.145.131     +  if [ -z "$DAEMONUSER" ] ; then
+192.168.145.131     +     killproc -p $PIDFILE $DAEMON -USR1
+192.168.145.131     +     errcode=$?
+192.168.145.131     +   else
+192.168.145.131     +     start-stop-daemon --stop --signal USR1 --quiet --pidfile $PIDFILE \
+192.168.145.131     +       --user $DAEMONUSER \
+192.168.145.131     +       --exec $DAEMON
+192.168.145.131     +     errcode=$?
+192.168.145.131     +   fi
+192.168.145.131     +   return $errcode
+192.168.145.131     +}
+192.168.145.131     +
+192.168.145.131     +force_stop() {
+192.168.145.131     +  [ ! -e "$PIDFILE" ] && return
+192.168.145.131     +  if running ; then
+192.168.145.131     +    /bin/kill -15 $pid
+192.168.145.131     +    sleep "$DIETIME"s
+192.168.145.131     +    if running ; then
+192.168.145.131     +      /bin/kill -9 $pid
+192.168.145.131     +      sleep "$DIETIME"s
+192.168.145.131     +      if running ; then
+192.168.145.131     +        echo "Cannot kill $NAME (pid=$pid)!"
+192.168.145.131     +        exit 1
+192.168.145.131     +      fi
+192.168.145.131     +    fi
+192.168.145.131     +  fi
+192.168.145.131     +  rm -f $PIDFILE
+192.168.145.131     +}
+192.168.145.131     +
+192.168.145.131     +case "$1" in
+192.168.145.131     +  start)
+192.168.145.131     +    log_daemon_msg "Starting $DESC " "$NAME"
+192.168.145.131     +    if running ;  then
+192.168.145.131     +        log_progress_msg "apparently already running"
+192.168.145.131     +        log_end_msg 0
+192.168.145.131     +        exit 0
+192.168.145.131     +    fi
+192.168.145.131     +    if start_server ; then
+192.168.145.131     +        [ -n "$STARTTIME" ] && sleep $STARTTIME # Wait some time
+192.168.145.131     +        if  running ;  then
+192.168.145.131     +            log_end_msg 0
+192.168.145.131     +        else
+192.168.145.131     +            log_end_msg 1
+192.168.145.131     +        fi
+192.168.145.131     +    else
+192.168.145.131     +        log_end_msg 1
+192.168.145.131     +    fi
+192.168.145.131     +    ;;
+192.168.145.131     +  stop)
+192.168.145.131     +    log_daemon_msg "Stopping $DESC" "$NAME"
+192.168.145.131     +    if running ; then
+192.168.145.131     +      errcode=0
+192.168.145.131     +      stop_server || errcode=$?
+192.168.145.131     +      log_end_msg $errcode
+192.168.145.131     +    else
+192.168.145.131     +      log_progress_msg "apparently not running"
+192.168.145.131     +      log_end_msg 0
+192.168.145.131     +      exit 0
+192.168.145.131     +    fi
+192.168.145.131     +    ;;
+192.168.145.131     +  force-stop)
+192.168.145.131     +    $0 stop
+192.168.145.131     +    if running; then
+192.168.145.131     +      log_daemon_msg "Stopping (force) $DESC" "$NAME"
+192.168.145.131     +      errcode=0
+192.168.145.131     +      force_stop || errcode=$?
+192.168.145.131     +      log_end_msg $errcode
+192.168.145.131     +    fi
+192.168.145.131     +    ;;
+192.168.145.131     +  restart|force-reload)
+192.168.145.131     +    log_daemon_msg "Restarting $DESC" "$NAME"
+192.168.145.131     +    errcode=0
+192.168.145.131     +    stop_server || errcode=$?
+192.168.145.131     +    [ -n "$DIETIME" ] && sleep $DIETIME
+192.168.145.131     +    start_server || errcode=$?
+192.168.145.131     +    [ -n "$STARTTIME" ] && sleep $STARTTIME
+192.168.145.131     +    running || errcode=$?
+192.168.145.131     +    log_end_msg $errcode
+192.168.145.131     +    ;;
+192.168.145.131     +  status)
+192.168.145.131     +    log_daemon_msg "Checking status of $DESC" "$NAME"
+192.168.145.131     +    if running ;  then
+192.168.145.131     +      log_progress_msg "running"
+192.168.145.131     +      log_end_msg 0
+192.168.145.131     +    else
+192.168.145.131     +      log_progress_msg "apparently not running"
+192.168.145.131     +      log_end_msg 1
+192.168.145.131     +      exit 3
+192.168.145.131     +    fi
+192.168.145.131     +    ;;
+192.168.145.131     +  reload)
+192.168.145.131     +    if running; then
+192.168.145.131     +      log_daemon_msg "Reloading $DESC" "$NAME"
+192.168.145.131     +      errcode=0
+192.168.145.131     +      reload_server || errcode=$?
+192.168.145.131     +      log_end_msg $errcode
+192.168.145.131     +    fi
+192.168.145.131     +    ;;
+192.168.145.131     +  run)
+192.168.145.131     +    if running; then
+192.168.145.131     +      log_daemon_msg "Triggering run of $DESC" "$NAME"
+192.168.145.131     +      errcode=0
+192.168.145.131     +      run_server || errcode=$?
+192.168.145.131     +      log_end_msg $errcode
+192.168.145.131     +    fi
+192.168.145.131     +    ;;
+192.168.145.131     +  *)
+192.168.145.131     +    N=/etc/init.d/$NAME
+192.168.145.131     +    echo "Usage: $N {start|stop|force-stop|restart|force-reload|status|run}" >&2
+192.168.145.131     +    exit 1
+192.168.145.131     +    ;;
+192.168.145.131     +esac
+192.168.145.131     +
+192.168.145.131     +exit 0
+192.168.145.131     +
+192.168.145.131     - change mode from '' to '0755'
+192.168.145.131   * template[/etc/default/chef-client] action create
+192.168.145.131     - create new file /etc/default/chef-client
+192.168.145.131     - update content in file /etc/default/chef-client from none to d443f5
+192.168.145.131     --- /etc/default/chef-client	2016-11-30 02:42:02.710241921 +0000
+192.168.145.131     +++ /etc/default/.chef-chef-client20161130-4540-11n8631	2016-11-30 02:42:02.710241921 +0000
+192.168.145.131     @@ -1 +1,4 @@
+192.168.145.131     +CONFIG=/etc/chef/client.rb
+192.168.145.131     +INTERVAL=300
+192.168.145.131     +SPLAY=60
+192.168.145.131     - change mode from '' to '0644'
+192.168.145.131   * service[chef-client] action enable
+192.168.145.131     - enable service service[chef-client]
+192.168.145.131   * service[chef-client] action start
+192.168.145.131     - start service service[chef-client]
+192.168.145.131 Recipe: chef-client::delete_validation
+192.168.145.131   * file[/etc/chef/validation.pem] action delete (up to date)
+192.168.145.131 Recipe: learn_chef_apache2::default
+192.168.145.131   * apt_update[Update the apt cache daily] action periodic (up to date)
+192.168.145.131   * apt_package[apache2] action install (up to date)
+192.168.145.131   * service[apache2] action enable (up to date)
+192.168.145.131   * service[apache2] action start (up to date)
+192.168.145.131   * group[web_admin] action create (up to date)
+192.168.145.131   * linux_user[web_admin] action create (up to date)
+192.168.145.131   * template[/var/www/html/index.html] action create (up to date)
+192.168.145.131 Recipe: chef-client::init_service
+192.168.145.131   * service[chef-client] action restart
+192.168.145.131     - restart service service[chef-client]
+192.168.145.131 
+192.168.145.131 Running handlers:
+192.168.145.131 Running handlers complete
+192.168.145.131 Chef Client finished, 9/18 resources updated in 08 seconds

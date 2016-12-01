@@ -1,175 +1,177 @@
 
-Waiting for remote response before bootstrap.192.168.145.139 . 
-192.168.145.139 Response received.
-192.168.145.139 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-10705-1475263585.bat" chunk 1 
-192.168.145.139 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-10705-1475263585.bat" chunk 2 
-192.168.145.139 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-10705-1475263585.bat" chunk 3 
-192.168.145.139 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-10705-1475263585.bat" chunk 4 
-192.168.145.139 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-10705-1475263585.bat" chunk 5 
-192.168.145.139 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-10705-1475263585.bat" chunk 6 
-192.168.145.139 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-10705-1475263585.bat" chunk 7 
-192.168.145.139 Checking for existing directory "C:\chef"...
-192.168.145.139 Existing directory not found, creating.
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>(
-192.168.145.139 echo.url = WScript.Arguments.Named("url")  
-192.168.145.139  echo.path = WScript.Arguments.Named("path")  
-192.168.145.139  echo.proxy = null  
-192.168.145.139  echo.'* Vaguely attempt to handle file:// scheme urls by url unescaping and switching all  
-192.168.145.139  echo.'* / into .  Also assume that file:/// is a local absolute path and that file://<foo>  
-192.168.145.139  echo.'* is possibly a network file path.  
-192.168.145.139  echo.If InStr(url, "file://") = 1 Then  
-192.168.145.139  echo.url = Unescape(url)  
-192.168.145.139  echo.If InStr(url, "file:///") = 1 Then  
-192.168.145.139  echo.sourcePath = Mid(url, Len("file:///") + 1)  
-192.168.145.139  echo.Else 
-192.168.145.139  echo.sourcePath = Mid(url, Len("file:") + 1)  
-192.168.145.139  echo.End If  
-192.168.145.139  echo.sourcePath = Replace(sourcePath, "/", "\")  
-192.168.145.139  echo. 
-192.168.145.139  echo.Set objFSO = CreateObject("Scripting.FileSystemObject")  
-192.168.145.139  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
-192.168.145.139  echo.objFSO.CopyFile sourcePath, path, true  
-192.168.145.139  echo.Set objFSO = Nothing  
-192.168.145.139  echo. 
-192.168.145.139  echo.Else 
-192.168.145.139  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP")  
-192.168.145.139  echo.Set wshShell = CreateObject( "WScript.Shell" )  
-192.168.145.139  echo.Set objUserVariables = wshShell.Environment("USER")  
-192.168.145.139  echo. 
-192.168.145.139  echo.rem http proxy is optional  
-192.168.145.139  echo.rem attempt to read from HTTP_PROXY env var first  
-192.168.145.139  echo.On Error Resume Next  
-192.168.145.139  echo. 
-192.168.145.139  echo.If NOT (objUserVariables("HTTP_PROXY") = "") Then  
-192.168.145.139  echo.proxy = objUserVariables("HTTP_PROXY")  
-192.168.145.139  echo. 
-192.168.145.139  echo.rem fall back to named arg  
-192.168.145.139  echo.ElseIf NOT (WScript.Arguments.Named("proxy") = "") Then  
-192.168.145.139  echo.proxy = WScript.Arguments.Named("proxy")  
-192.168.145.139  echo.End If  
-192.168.145.139  echo. 
-192.168.145.139  echo.If NOT isNull(proxy) Then  
-192.168.145.139  echo.rem setProxy method is only available on ServerXMLHTTP 6.0+  
-192.168.145.139  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")  
-192.168.145.139  echo.objXMLHTTP.setProxy 2, proxy  
-192.168.145.139  echo.End If  
-192.168.145.139  echo. 
-192.168.145.139  echo.On Error Goto 0  
-192.168.145.139  echo. 
-192.168.145.139  echo.objXMLHTTP.open "GET", url, false  
-192.168.145.139  echo.objXMLHTTP.send() 
-192.168.145.139  echo.If objXMLHTTP.Status = 200 Then  
-192.168.145.139  echo.Set objADOStream = CreateObject("ADODB.Stream")  
-192.168.145.139  echo.objADOStream.Open 
-192.168.145.139  echo.objADOStream.Type = 1  
-192.168.145.139  echo.objADOStream.Write objXMLHTTP.ResponseBody  
-192.168.145.139  echo.objADOStream.Position = 0  
-192.168.145.139  echo.Set objFSO = Createobject("Scripting.FileSystemObject")  
-192.168.145.139  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
-192.168.145.139  echo.Set objFSO = Nothing  
-192.168.145.139  echo.objADOStream.SaveToFile path  
-192.168.145.139  echo.objADOStream.Close 
-192.168.145.139  echo.Set objADOStream = Nothing  
-192.168.145.139  echo.End If  
-192.168.145.139  echo.Set objXMLHTTP = Nothing  
-192.168.145.139  echo.End If 
-192.168.145.139 ) 1>C:\chef\wget.vbs 
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>(
-192.168.145.139 echo.param( 
-192.168.145.139  echo.   [String] $remoteUrl,  
-192.168.145.139  echo.   [String] $localPath  
-192.168.145.139  echo.) 
-192.168.145.139  echo. 
-192.168.145.139  echo.$ProxyUrl = $env:http_proxy;  
-192.168.145.139  echo.$webClient = new-object System.Net.WebClient;  
-192.168.145.139  echo. 
-192.168.145.139  echo.if ($ProxyUrl -ne '') {  
-192.168.145.139  echo.  $WebProxy = New-Object System.Net.WebProxy($ProxyUrl,$true)  
-192.168.145.139  echo.  $WebClient.Proxy = $WebProxy  
-192.168.145.139  echo.} 
-192.168.145.139  echo. 
-192.168.145.139  echo.$webClient.DownloadFile($remoteUrl, $localPath); 
-192.168.145.139 ) 1>C:\chef\wget.ps1 
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>(
-192.168.145.139  
-192.168.145.139   
-192.168.145.139  
-192.168.145.139 ) 
-192.168.145.139 Detected Windows Version 6.3 Build 9600
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>goto Version6.3 
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>goto Version6.2 
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>goto architecture_select 
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>IF "AMD64" == "x86" IF not defined PROCESSOR_ARCHITEW6432 
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>goto install 
-192.168.145.139 Checking for existing downloaded package at "C:\Users\vagrant\AppData\Local\Temp\chef-client-latest.msi"
-192.168.145.139 No existing downloaded packages to delete.
-192.168.145.139 Attempting to download client package using PowerShell if available...
-192.168.145.139 powershell.exe -ExecutionPolicy Unrestricted -InputFormat None -NoProfile -NonInteractive -File  C:\chef\wget.ps1 "https://www.chef.io/chef/download?p=windows&pv=2012&m=x86_64&DownloadContext=PowerShell&v=12" "C:\Users\vagrant\AppData\Local\Temp\chef-client-latest.msi"
-192.168.145.139 Download via PowerShell succeeded.
-192.168.145.139 Installing downloaded client package...
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>msiexec /qn /log "C:\Users\vagrant\AppData\Local\Temp\chef-client-msi6023.log" /i "C:\Users\vagrant\AppData\Local\Temp\chef-client-latest.msi" 
-192.168.145.139 Successfully installed Chef Client package.
-192.168.145.139 Installation completed successfully
-192.168.145.139 Writing validation key...
-192.168.145.139 Validation key written.
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>(
-192.168.145.139 echo.log_level        :info  
-192.168.145.139  echo.log_location     STDOUT  
-192.168.145.139  echo. 
-192.168.145.139  echo.chef_server_url  "https://api.chef.io/organizations/learn-chef-2"  
-192.168.145.139  echo.validation_client_name "chef-validator"  
-192.168.145.139  echo. 
-192.168.145.139  echo.file_cache_path   "c:/chef/cache"  
-192.168.145.139  echo.file_backup_path  "c:/chef/backup"  
-192.168.145.139  echo.cache_options     ({:path => "c:/chef/cache/checksums", :skip_expires => true})  
-192.168.145.139  echo. 
-192.168.145.139  echo.node_name "node1-windows" 
-192.168.145.139 ) 1>C:\chef\client.rb 
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>(echo.{"run_list":["recipe[learn_chef_iis]"]}) 1>C:\chef\first-boot.json 
-192.168.145.139 Starting chef to bootstrap the node...
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>SET "PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\ruby\bin;C:\opscode\chef\bin;C:\opscode\chef\embedded\bin" 
-192.168.145.139 
-192.168.145.139 C:\Users\vagrant>chef-client -c c:/chef/client.rb -j c:/chef/first-boot.json 
-192.168.145.139 [2016-09-30T12:27:23-07:00] INFO: *** Chef 12.14.89 ***
-192.168.145.139 [2016-09-30T12:27:23-07:00] INFO: Platform: x64-mingw32
-192.168.145.139 [2016-09-30T12:27:23-07:00] INFO: Chef-client pid: 1004
-192.168.145.139 [2016-09-30T12:27:28-07:00] INFO: Setting the run_list to ["recipe[learn_chef_iis]"] from CLI options
-192.168.145.139 [2016-09-30T12:27:28-07:00] INFO: Run List is [recipe[learn_chef_iis]]
-192.168.145.139 [2016-09-30T12:27:28-07:00] INFO: Run List expands to [learn_chef_iis]
-192.168.145.139 [2016-09-30T12:27:28-07:00] INFO: Starting Chef Run for node1-windows
-192.168.145.139 [2016-09-30T12:27:28-07:00] INFO: Running start handlers
-192.168.145.139 [2016-09-30T12:27:28-07:00] INFO: Start handlers complete.
-192.168.145.139 [2016-09-30T12:27:29-07:00] INFO: Loading cookbooks [learn_chef_iis@0.1.0]
-192.168.145.139 [2016-09-30T12:27:29-07:00] INFO: Storing updated cookbooks/learn_chef_iis/README.md in the cache.
-192.168.145.139 [2016-09-30T12:27:29-07:00] INFO: Storing updated cookbooks/learn_chef_iis/Berksfile in the cache.
-192.168.145.139 [2016-09-30T12:27:29-07:00] INFO: Storing updated cookbooks/learn_chef_iis/templates/Default.htm.erb in the cache.
-192.168.145.139 [2016-09-30T12:27:29-07:00] INFO: Storing updated cookbooks/learn_chef_iis/recipes/default.rb in the cache.
-192.168.145.139 [2016-09-30T12:27:29-07:00] INFO: Storing updated cookbooks/learn_chef_iis/.kitchen.yml in the cache.
-192.168.145.139 [2016-09-30T12:27:29-07:00] INFO: Storing updated cookbooks/learn_chef_iis/chefignore in the cache.
-192.168.145.139 [2016-09-30T12:27:30-07:00] INFO: Storing updated cookbooks/learn_chef_iis/LICENSE in the cache.
-192.168.145.139 [2016-09-30T12:27:30-07:00] INFO: Storing updated cookbooks/learn_chef_iis/.gitignore in the cache.
-192.168.145.139 [2016-09-30T12:27:30-07:00] INFO: Storing updated cookbooks/learn_chef_iis/metadata.rb in the cache.
-192.168.145.139 [2016-09-30T12:27:30-07:00] INFO: Processing powershell_script[Install IIS] action run (learn_chef_iis::default line 6)
-192.168.145.139 [2016-09-30T12:27:30-07:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
-192.168.145.139 [2016-09-30T12:27:53-07:00] INFO: powershell_script[Install IIS] ran successfully
-192.168.145.139 [2016-09-30T12:27:53-07:00] INFO: Processing windows_service[w3svc] action enable (learn_chef_iis::default line 12)
-192.168.145.139 [2016-09-30T12:27:53-07:00] INFO: Processing windows_service[w3svc] action start (learn_chef_iis::default line 12)
-192.168.145.139 [2016-09-30T12:27:53-07:00] INFO: Processing template[c:\inetpub\wwwroot\Default.htm] action create (learn_chef_iis::default line 16)
-192.168.145.139 [2016-09-30T12:27:53-07:00] INFO: template[c:\inetpub\wwwroot\Default.htm] created file c:\inetpub\wwwroot\Default.htm
-192.168.145.139 [2016-09-30T12:27:53-07:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
-192.168.145.139 [2016-09-30T12:27:54-07:00] INFO: Chef Run complete in 25.340339 seconds
-192.168.145.139 [2016-09-30T12:27:54-07:00] INFO: Running report handlers
-192.168.145.139 [2016-09-30T12:27:54-07:00] INFO: Report handlers complete
-192.168.145.139 [2016-09-30T12:27:54-07:00] INFO: Sending resource update report (run-id: 5ee565ea-1259-4242-a010-385dbdcbe307)
+Waiting for remote response before bootstrap.192.168.145.134 . 
+192.168.145.134 Response received.
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-4830-1480475976.bat" chunk 1 
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-4830-1480475976.bat" chunk 2 
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-4830-1480475976.bat" chunk 3 
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-4830-1480475976.bat" chunk 4 
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-4830-1480475976.bat" chunk 5 
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-4830-1480475976.bat" chunk 6 
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-4830-1480475976.bat" chunk 7 
+192.168.145.134 Checking for existing directory "C:\chef"...
+192.168.145.134 Existing directory not found, creating.
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>(
+192.168.145.134 echo.url = WScript.Arguments.Named("url")  
+192.168.145.134  echo.path = WScript.Arguments.Named("path")  
+192.168.145.134  echo.proxy = null  
+192.168.145.134  echo.'* Vaguely attempt to handle file:// scheme urls by url unescaping and switching all  
+192.168.145.134  echo.'* / into .  Also assume that file:/// is a local absolute path and that file://<foo>  
+192.168.145.134  echo.'* is possibly a network file path.  
+192.168.145.134  echo.If InStr(url, "file://") = 1 Then  
+192.168.145.134  echo.url = Unescape(url)  
+192.168.145.134  echo.If InStr(url, "file:///") = 1 Then  
+192.168.145.134  echo.sourcePath = Mid(url, Len("file:///") + 1)  
+192.168.145.134  echo.Else 
+192.168.145.134  echo.sourcePath = Mid(url, Len("file:") + 1)  
+192.168.145.134  echo.End If  
+192.168.145.134  echo.sourcePath = Replace(sourcePath, "/", "\")  
+192.168.145.134  echo. 
+192.168.145.134  echo.Set objFSO = CreateObject("Scripting.FileSystemObject")  
+192.168.145.134  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
+192.168.145.134  echo.objFSO.CopyFile sourcePath, path, true  
+192.168.145.134  echo.Set objFSO = Nothing  
+192.168.145.134  echo. 
+192.168.145.134  echo.Else 
+192.168.145.134  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP")  
+192.168.145.134  echo.Set wshShell = CreateObject( "WScript.Shell" )  
+192.168.145.134  echo.Set objUserVariables = wshShell.Environment("USER")  
+192.168.145.134  echo. 
+192.168.145.134  echo.rem http proxy is optional  
+192.168.145.134  echo.rem attempt to read from HTTP_PROXY env var first  
+192.168.145.134  echo.On Error Resume Next  
+192.168.145.134  echo. 
+192.168.145.134  echo.If NOT (objUserVariables("HTTP_PROXY") = "") Then  
+192.168.145.134  echo.proxy = objUserVariables("HTTP_PROXY")  
+192.168.145.134  echo. 
+192.168.145.134  echo.rem fall back to named arg  
+192.168.145.134  echo.ElseIf NOT (WScript.Arguments.Named("proxy") = "") Then  
+192.168.145.134  echo.proxy = WScript.Arguments.Named("proxy")  
+192.168.145.134  echo.End If  
+192.168.145.134  echo. 
+192.168.145.134  echo.If NOT isNull(proxy) Then  
+192.168.145.134  echo.rem setProxy method is only available on ServerXMLHTTP 6.0+  
+192.168.145.134  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")  
+192.168.145.134  echo.objXMLHTTP.setProxy 2, proxy  
+192.168.145.134  echo.End If  
+192.168.145.134  echo. 
+192.168.145.134  echo.On Error Goto 0  
+192.168.145.134  echo. 
+192.168.145.134  echo.objXMLHTTP.open "GET", url, false  
+192.168.145.134  echo.objXMLHTTP.send() 
+192.168.145.134  echo.If objXMLHTTP.Status = 200 Then  
+192.168.145.134  echo.Set objADOStream = CreateObject("ADODB.Stream")  
+192.168.145.134  echo.objADOStream.Open 
+192.168.145.134  echo.objADOStream.Type = 1  
+192.168.145.134  echo.objADOStream.Write objXMLHTTP.ResponseBody  
+192.168.145.134  echo.objADOStream.Position = 0  
+192.168.145.134  echo.Set objFSO = Createobject("Scripting.FileSystemObject")  
+192.168.145.134  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path  
+192.168.145.134  echo.Set objFSO = Nothing  
+192.168.145.134  echo.objADOStream.SaveToFile path  
+192.168.145.134  echo.objADOStream.Close 
+192.168.145.134  echo.Set objADOStream = Nothing  
+192.168.145.134  echo.End If  
+192.168.145.134  echo.Set objXMLHTTP = Nothing  
+192.168.145.134  echo.End If 
+192.168.145.134 ) 1>C:\chef\wget.vbs 
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>(
+192.168.145.134 echo.param( 
+192.168.145.134  echo.   [String] $remoteUrl,  
+192.168.145.134  echo.   [String] $localPath  
+192.168.145.134  echo.) 
+192.168.145.134  echo. 
+192.168.145.134  echo.$ProxyUrl = $env:http_proxy;  
+192.168.145.134  echo.$webClient = new-object System.Net.WebClient;  
+192.168.145.134  echo. 
+192.168.145.134  echo.if ($ProxyUrl -ne '') {  
+192.168.145.134  echo.  $WebProxy = New-Object System.Net.WebProxy($ProxyUrl,$true)  
+192.168.145.134  echo.  $WebClient.Proxy = $WebProxy  
+192.168.145.134  echo.} 
+192.168.145.134  echo. 
+192.168.145.134  echo.$webClient.DownloadFile($remoteUrl, $localPath); 
+192.168.145.134 ) 1>C:\chef\wget.ps1 
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>(
+192.168.145.134  
+192.168.145.134   
+192.168.145.134  
+192.168.145.134 ) 
+192.168.145.134 Detected Windows Version 6.3 Build 9600
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>goto Version6.3 
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>goto Version6.2 
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>goto architecture_select 
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>IF "AMD64" == "x86" IF not defined PROCESSOR_ARCHITEW6432 
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>goto install 
+192.168.145.134 Checking for existing downloaded package at "C:\Users\vagrant\AppData\Local\Temp\chef-client-latest.msi"
+192.168.145.134 No existing downloaded packages to delete.
+192.168.145.134 Attempting to download client package using PowerShell if available...
+192.168.145.134 powershell.exe -ExecutionPolicy Unrestricted -InputFormat None -NoProfile -NonInteractive -File  C:\chef\wget.ps1 "https://www.chef.io/chef/download?p=windows&pv=2012&m=x86_64&DownloadContext=PowerShell&v=12" "C:\Users\vagrant\AppData\Local\Temp\chef-client-latest.msi"
+192.168.145.134 Download via PowerShell succeeded.
+192.168.145.134 Installing downloaded client package...
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>msiexec /qn /log "C:\Users\vagrant\AppData\Local\Temp\chef-client-msi20906.log" /i "C:\Users\vagrant\AppData\Local\Temp\chef-client-latest.msi" 
+192.168.145.134 Successfully installed Chef Client package.
+192.168.145.134 Installation completed successfully
+192.168.145.134 Writing validation key...
+192.168.145.134 Validation key written.
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>(
+192.168.145.134 echo.log_level        :info  
+192.168.145.134  echo.log_location     STDOUT  
+192.168.145.134  echo. 
+192.168.145.134  echo.chef_server_url  "https://api.chef.io/organizations/learn-chef-2"  
+192.168.145.134  echo.validation_client_name "chef-validator"  
+192.168.145.134  echo. 
+192.168.145.134  echo.file_cache_path   "c:/chef/cache"  
+192.168.145.134  echo.file_backup_path  "c:/chef/backup"  
+192.168.145.134  echo.cache_options     ({:path => "c:/chef/cache/checksums", :skip_expires => true})  
+192.168.145.134  echo. 
+192.168.145.134  echo.node_name "node1-windows" 
+192.168.145.134 ) 1>C:\chef\client.rb 
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>(echo.{"run_list":["recipe[learn_chef_iis]"]}) 1>C:\chef\first-boot.json 
+192.168.145.134 Starting chef to bootstrap the node...
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>SET "PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\ruby\bin;C:\opscode\chef\bin;C:\opscode\chef\embedded\bin" 
+192.168.145.134 
+192.168.145.134 C:\Users\vagrant>chef-client -c c:/chef/client.rb -j c:/chef/first-boot.json 
+192.168.145.134 [2016-11-29T19:20:35-08:00] INFO: *** Chef 12.16.42 ***
+192.168.145.134 [2016-11-29T19:20:35-08:00] INFO: Platform: x64-mingw32
+192.168.145.134 [2016-11-29T19:20:35-08:00] INFO: Chef-client pid: 3316
+192.168.145.134 [2016-11-29T19:20:45-08:00] INFO: Setting the run_list to ["recipe[learn_chef_iis]"] from CLI options
+192.168.145.134 [2016-11-29T19:20:45-08:00] INFO: Run List is [recipe[learn_chef_iis]]
+192.168.145.134 [2016-11-29T19:20:45-08:00] INFO: Run List expands to [learn_chef_iis]
+192.168.145.134 [2016-11-29T19:20:45-08:00] INFO: Starting Chef Run for node1-windows
+192.168.145.134 [2016-11-29T19:20:45-08:00] INFO: Running start handlers
+192.168.145.134 [2016-11-29T19:20:45-08:00] INFO: Start handlers complete.
+192.168.145.134 [2016-11-29T19:20:46-08:00] INFO: HTTP Request Returned 404 Not Found: 
+192.168.145.134 [2016-11-29T19:20:46-08:00] INFO: Error while reporting run start to Data Collector. URL: https://api.chef.io/organizations/learn-chef-2/data-collector Exception: 404 -- 404 "Not Found"  (This is normal if you do not have Chef Automate)
+192.168.145.134 [2016-11-29T19:20:47-08:00] INFO: Loading cookbooks [learn_chef_iis@0.1.0]
+192.168.145.134 [2016-11-29T19:20:47-08:00] INFO: Storing updated cookbooks/learn_chef_iis/Berksfile in the cache.
+192.168.145.134 [2016-11-29T19:20:47-08:00] INFO: Storing updated cookbooks/learn_chef_iis/.kitchen.yml in the cache.
+192.168.145.134 [2016-11-29T19:20:47-08:00] INFO: Storing updated cookbooks/learn_chef_iis/metadata.rb in the cache.
+192.168.145.134 [2016-11-29T19:20:47-08:00] INFO: Storing updated cookbooks/learn_chef_iis/.gitignore in the cache.
+192.168.145.134 [2016-11-29T19:20:47-08:00] INFO: Storing updated cookbooks/learn_chef_iis/README.md in the cache.
+192.168.145.134 [2016-11-29T19:20:48-08:00] INFO: Storing updated cookbooks/learn_chef_iis/LICENSE in the cache.
+192.168.145.134 [2016-11-29T19:20:48-08:00] INFO: Storing updated cookbooks/learn_chef_iis/chefignore in the cache.
+192.168.145.134 [2016-11-29T19:20:48-08:00] INFO: Storing updated cookbooks/learn_chef_iis/recipes/default.rb in the cache.
+192.168.145.134 [2016-11-29T19:20:48-08:00] INFO: Storing updated cookbooks/learn_chef_iis/templates/Default.htm.erb in the cache.
+192.168.145.134 [2016-11-29T19:20:48-08:00] INFO: Processing powershell_script[Install IIS] action run (learn_chef_iis::default line 6)
+192.168.145.134 [2016-11-29T19:20:48-08:00] INFO: Processing powershell_script[Guard resource] action run (dynamically defined)
+192.168.145.134 [2016-11-29T19:21:27-08:00] INFO: powershell_script[Install IIS] ran successfully
+192.168.145.134 [2016-11-29T19:21:27-08:00] INFO: Processing windows_service[w3svc] action enable (learn_chef_iis::default line 12)
+192.168.145.134 [2016-11-29T19:21:27-08:00] INFO: Processing windows_service[w3svc] action start (learn_chef_iis::default line 12)
+192.168.145.134 [2016-11-29T19:21:27-08:00] INFO: Processing template[c:\inetpub\wwwroot\Default.htm] action create (learn_chef_iis::default line 16)
+192.168.145.134 [2016-11-29T19:21:27-08:00] INFO: template[c:\inetpub\wwwroot\Default.htm] created file c:\inetpub\wwwroot\Default.htm
+192.168.145.134 [2016-11-29T19:21:27-08:00] INFO: template[c:\inetpub\wwwroot\Default.htm] updated file contents c:\inetpub\wwwroot\Default.htm
+192.168.145.134 [2016-11-29T19:21:28-08:00] INFO: Chef Run complete in 43.23526 seconds
+192.168.145.134 [2016-11-29T19:21:28-08:00] INFO: Running report handlers
+192.168.145.134 [2016-11-29T19:21:28-08:00] INFO: Report handlers complete
+192.168.145.134 [2016-11-29T19:21:28-08:00] INFO: Sending resource update report (run-id: e368c58a-8b5e-4430-a4b5-2dc9440f8d39)

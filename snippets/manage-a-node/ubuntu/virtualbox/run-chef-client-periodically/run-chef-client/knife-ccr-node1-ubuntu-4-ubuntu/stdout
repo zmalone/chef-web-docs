@@ -1,0 +1,276 @@
+localhost Starting Chef Client, version 12.16.42
+localhost resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_apache2::default"]
+localhost Synchronizing Cookbooks:
+localhost   - chef-client (7.0.0)
+localhost   - cron (3.0.0)
+localhost   - logrotate (2.1.0)
+localhost   - compat_resource (12.16.2)
+localhost   - windows (2.1.1)
+localhost   - learn_chef_apache2 (0.3.1)
+localhost   - ohai (4.2.2)
+localhost Installing Cookbook Gems:
+localhost Compiling Cookbooks...
+localhost Converging 15 resources
+localhost Recipe: chef-client::init_service
+localhost   * directory[/var/run/chef] action create
+localhost     - create new directory /var/run/chef
+localhost     - change owner from '' to 'root'
+localhost     - change group from '' to 'root'
+localhost   * directory[/var/cache/chef] action create
+localhost     - create new directory /var/cache/chef
+localhost     - change owner from '' to 'root'
+localhost     - change group from '' to 'root'
+localhost   * directory[/var/lib/chef] action create
+localhost     - create new directory /var/lib/chef
+localhost     - change owner from '' to 'root'
+localhost     - change group from '' to 'root'
+localhost   * directory[/var/log/chef] action create
+localhost     - create new directory /var/log/chef
+localhost     - change mode from '' to '0755'
+localhost     - change owner from '' to 'root'
+localhost     - change group from '' to 'root'
+localhost   * directory[/etc/chef] action create (up to date)
+localhost   * template[/etc/init.d/chef-client] action create
+localhost     - create new file /etc/init.d/chef-client
+localhost     - update content in file /etc/init.d/chef-client from none to c4f9fe
+localhost     --- /etc/init.d/chef-client	2016-11-29 23:54:54.791930671 +0000
+localhost     +++ /etc/init.d/.chef-chef-client20161129-4141-ws2xf4	2016-11-29 23:54:54.791930671 +0000
+localhost     @@ -1 +1,207 @@
+localhost     +#! /bin/sh
+localhost     +### BEGIN INIT INFO
+localhost     +# Provides:           chef-client
+localhost     +# Required-Start:     $remote_fs $network
+localhost     +# Required-Stop:      $remote_fs $network
+localhost     +# Default-Start:      2 3 4 5
+localhost     +# Default-Stop:       0 1 6
+localhost     +# Short-Description:  Start a chef-client.
+localhost     +### END INIT INFO
+localhost     +#
+localhost     +# Copyright (c) 2009-2010 Chef Software, Inc, <legal@chef.io>
+localhost     +#
+localhost     +# chef-client         Startup script for chef-client.
+localhost     +# chkconfig: - 99 02
+localhost     +# description: starts up chef-client in daemon mode.
+localhost     +
+localhost     +PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+localhost     +DAEMON=/usr/bin/chef-client
+localhost     +NAME=chef-client
+localhost     +DESC=chef-client
+localhost     +PIDFILE=/var/run/chef/client.pid
+localhost     +
+localhost     +test -x $DAEMON || exit 1
+localhost     +
+localhost     +. /lib/lsb/init-functions
+localhost     +
+localhost     +[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+localhost     +
+localhost     +if [ ! -d /var/run/chef ]; then
+localhost     +  mkdir /var/run/chef
+localhost     +fi
+localhost     +
+localhost     +DAEMON_OPTS="-d -P $PIDFILE -c $CONFIG -i $INTERVAL -s $SPLAY "
+localhost     +
+localhost     +running_pid() {
+localhost     +  pid=$1
+localhost     +  name=$2
+localhost     +  [ -z "$pid" ] && return 1
+localhost     +  [ ! -d /proc/$pid ] &&  return 1
+localhost     +  cmd=`cat /proc/$pid/cmdline | tr '\000' '\n' | awk 'NR==2'`
+localhost     +  [ "$cmd" != "$name" ] &&  return 1
+localhost     +  return 0
+localhost     +}
+localhost     +
+localhost     +running() {
+localhost     +  [ ! -f "$PIDFILE" ] && return 1
+localhost     +  pid=`cat $PIDFILE`
+localhost     +  running_pid $pid $DAEMON || return 1
+localhost     +  return 0
+localhost     +}
+localhost     +
+localhost     +start_server() {
+localhost     +  if [ -z "$DAEMONUSER" ] ; then
+localhost     +    start_daemon -p $PIDFILE $DAEMON $DAEMON_OPTS
+localhost     +  errcode=$?
+localhost     +  else
+localhost     +    start-stop-daemon --start --quiet --pidfile $PIDFILE \
+localhost     +      --chuid $DAEMONUSER \
+localhost     +      --exec $DAEMON -- $DAEMON_OPTS
+localhost     +    errcode=$?
+localhost     +  fi
+localhost     +  return $errcode
+localhost     +}
+localhost     +
+localhost     +stop_server() {
+localhost     +   if [ -z "$DAEMONUSER" ] ; then
+localhost     +     killproc -p $PIDFILE $DAEMON
+localhost     +     errcode=$?
+localhost     +   else
+localhost     +     start-stop-daemon --stop --quiet --pidfile $PIDFILE \
+localhost     +       --user $DAEMONUSER \
+localhost     +       --exec $DAEMON
+localhost     +     errcode=$?
+localhost     +   fi
+localhost     +   return $errcode
+localhost     +}
+localhost     +
+localhost     +reload_server() {
+localhost     +  if [ -z "$DAEMONUSER" ] ; then
+localhost     +     killproc -p $PIDFILE $DAEMON -HUP
+localhost     +     errcode=$?
+localhost     +   else
+localhost     +     start-stop-daemon --stop --signal HUP --quiet --pidfile $PIDFILE \
+localhost     +       --user $DAEMONUSER \
+localhost     +       --exec $DAEMON
+localhost     +     errcode=$?
+localhost     +   fi
+localhost     +   return $errcode
+localhost     +}
+localhost     +
+localhost     +run_server() {
+localhost     +  if [ -z "$DAEMONUSER" ] ; then
+localhost     +     killproc -p $PIDFILE $DAEMON -USR1
+localhost     +     errcode=$?
+localhost     +   else
+localhost     +     start-stop-daemon --stop --signal USR1 --quiet --pidfile $PIDFILE \
+localhost     +       --user $DAEMONUSER \
+localhost     +       --exec $DAEMON
+localhost     +     errcode=$?
+localhost     +   fi
+localhost     +   return $errcode
+localhost     +}
+localhost     +
+localhost     +force_stop() {
+localhost     +  [ ! -e "$PIDFILE" ] && return
+localhost     +  if running ; then
+localhost     +    /bin/kill -15 $pid
+localhost     +    sleep "$DIETIME"s
+localhost     +    if running ; then
+localhost     +      /bin/kill -9 $pid
+localhost     +      sleep "$DIETIME"s
+localhost     +      if running ; then
+localhost     +        echo "Cannot kill $NAME (pid=$pid)!"
+localhost     +        exit 1
+localhost     +      fi
+localhost     +    fi
+localhost     +  fi
+localhost     +  rm -f $PIDFILE
+localhost     +}
+localhost     +
+localhost     +case "$1" in
+localhost     +  start)
+localhost     +    log_daemon_msg "Starting $DESC " "$NAME"
+localhost     +    if running ;  then
+localhost     +        log_progress_msg "apparently already running"
+localhost     +        log_end_msg 0
+localhost     +        exit 0
+localhost     +    fi
+localhost     +    if start_server ; then
+localhost     +        [ -n "$STARTTIME" ] && sleep $STARTTIME # Wait some time
+localhost     +        if  running ;  then
+localhost     +            log_end_msg 0
+localhost     +        else
+localhost     +            log_end_msg 1
+localhost     +        fi
+localhost     +    else
+localhost     +        log_end_msg 1
+localhost     +    fi
+localhost     +    ;;
+localhost     +  stop)
+localhost     +    log_daemon_msg "Stopping $DESC" "$NAME"
+localhost     +    if running ; then
+localhost     +      errcode=0
+localhost     +      stop_server || errcode=$?
+localhost     +      log_end_msg $errcode
+localhost     +    else
+localhost     +      log_progress_msg "apparently not running"
+localhost     +      log_end_msg 0
+localhost     +      exit 0
+localhost     +    fi
+localhost     +    ;;
+localhost     +  force-stop)
+localhost     +    $0 stop
+localhost     +    if running; then
+localhost     +      log_daemon_msg "Stopping (force) $DESC" "$NAME"
+localhost     +      errcode=0
+localhost     +      force_stop || errcode=$?
+localhost     +      log_end_msg $errcode
+localhost     +    fi
+localhost     +    ;;
+localhost     +  restart|force-reload)
+localhost     +    log_daemon_msg "Restarting $DESC" "$NAME"
+localhost     +    errcode=0
+localhost     +    stop_server || errcode=$?
+localhost     +    [ -n "$DIETIME" ] && sleep $DIETIME
+localhost     +    start_server || errcode=$?
+localhost     +    [ -n "$STARTTIME" ] && sleep $STARTTIME
+localhost     +    running || errcode=$?
+localhost     +    log_end_msg $errcode
+localhost     +    ;;
+localhost     +  status)
+localhost     +    log_daemon_msg "Checking status of $DESC" "$NAME"
+localhost     +    if running ;  then
+localhost     +      log_progress_msg "running"
+localhost     +      log_end_msg 0
+localhost     +    else
+localhost     +      log_progress_msg "apparently not running"
+localhost     +      log_end_msg 1
+localhost     +      exit 3
+localhost     +    fi
+localhost     +    ;;
+localhost     +  reload)
+localhost     +    if running; then
+localhost     +      log_daemon_msg "Reloading $DESC" "$NAME"
+localhost     +      errcode=0
+localhost     +      reload_server || errcode=$?
+localhost     +      log_end_msg $errcode
+localhost     +    fi
+localhost     +    ;;
+localhost     +  run)
+localhost     +    if running; then
+localhost     +      log_daemon_msg "Triggering run of $DESC" "$NAME"
+localhost     +      errcode=0
+localhost     +      run_server || errcode=$?
+localhost     +      log_end_msg $errcode
+localhost     +    fi
+localhost     +    ;;
+localhost     +  *)
+localhost     +    N=/etc/init.d/$NAME
+localhost     +    echo "Usage: $N {start|stop|force-stop|restart|force-reload|status|run}" >&2
+localhost     +    exit 1
+localhost     +    ;;
+localhost     +esac
+localhost     +
+localhost     +exit 0
+localhost     +
+localhost     - change mode from '' to '0755'
+localhost   * template[/etc/default/chef-client] action create
+localhost     - create new file /etc/default/chef-client
+localhost     - update content in file /etc/default/chef-client from none to 9f0fa0
+localhost     --- /etc/default/chef-client	2016-11-29 23:54:54.819930671 +0000
+localhost     +++ /etc/default/.chef-chef-client20161129-4141-169ojra	2016-11-29 23:54:54.819930671 +0000
+localhost     @@ -1 +1,4 @@
+localhost     +CONFIG=/etc/chef/client.rb
+localhost     +INTERVAL=60
+localhost     +SPLAY=60
+localhost     - change mode from '' to '0644'
+localhost   * service[chef-client] action enable
+localhost     - enable service service[chef-client]
+localhost   * service[chef-client] action start
+localhost     - start service service[chef-client]
+localhost Recipe: chef-client::delete_validation
+localhost   * file[/etc/chef/validation.pem] action delete (up to date)
+localhost Recipe: learn_chef_apache2::default
+localhost   * apt_update[Update the apt cache daily] action periodic (up to date)
+localhost   * apt_package[apache2] action install (up to date)
+localhost   * service[apache2] action enable (up to date)
+localhost   * service[apache2] action start (up to date)
+localhost   * group[web_admin] action create (up to date)
+localhost   * linux_user[web_admin] action create (up to date)
+localhost   * template[/var/www/html/index.html] action create (up to date)
+localhost Recipe: chef-client::init_service
+localhost   * service[chef-client] action restart
+localhost     - restart service service[chef-client]
+localhost 
+localhost Running handlers:
+localhost Running handlers complete
+localhost Chef Client finished, 9/18 resources updated in 07 seconds
