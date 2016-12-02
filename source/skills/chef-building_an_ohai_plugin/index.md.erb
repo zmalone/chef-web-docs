@@ -235,6 +235,8 @@ Let's talk about the [syntax](https://docs.chef.io/ohai_custom.html#syntax) of a
 
 ### 3. Execute the ohai plugin test
 
+Execute `rspec` with the new test to validate that the plugin is defined correctly:
+
 ```bash
 # ~/learn-chef/cookbooks/apache
 $ chef exec rspec spec/ohai_plugins/apache_modules_spec.rb
@@ -258,7 +260,9 @@ The *Ohai* community cookbook does both of these things extremely well through a
 
 [START_BOX]
 
-### 1. Add the *Ohai* community cookbook as a dependency and install dependencies
+### 1. Add the ohai community cookbook as a dependency and install dependencies
+
+Append to the end of the cookbook's metadata the dependency on the 'ohai' community cookbook.
 
 ```ruby
 # ~/learn-chef/cookbooks/apache/metadata.rb
@@ -286,6 +290,8 @@ Using compat_resource (12.16.2)
 [START_BOX]
 
 ### 2. Create and write a new recipe to deploy the plugin
+
+Create a new recipe:
 
 ```bash
 # ~/learn-chef/cookbooks/apache
@@ -395,6 +401,8 @@ end
 
 ### 3. Execute this new test suite
 
+Execute `kitchen` to create, converge and verify the new test suite.
+
 ```bash
 # ~/learn-chef/cookbooks/apache
 $ chef exec kitchen verify ohai_apache_modules
@@ -425,9 +433,13 @@ Recipe: apache::ohai_httpd_modules
 
 The warning informs us that the `ohai_plugin` resource reloads Ohai during the `chef-client` run. This is inefficient. The warning gives a suggestion to modify the `client.rb` configuration file. This can be done with the **chef-client** community cookbook. This cookbook has a `chef-client::config` recipe which allows you to insert important configuration into the chef-client configuration file. That file is loaded before Ohai is executed during the chef-client run.
 
+[START_BOX]
+### Outline of Remaining Work
 1. Add the **chef-client** cookbook to your cookbook repository
 2. Add the `chef-client::config` recipe to the node's run-list
 3. Set the node attribute `node['ohai']['plugin_path']`` to "/etc/chef/ohai/plugins" in a recipe, role, or environment
+
+[END_BOX]
 
 ## Conclusion
 
