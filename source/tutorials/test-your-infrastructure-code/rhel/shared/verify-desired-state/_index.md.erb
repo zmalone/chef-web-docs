@@ -107,7 +107,7 @@ Modify <code class="file-path">.kitchen.yml</code> like this to specify CentOS 7
 
 <% code_snippet(page: current_page, path: 'run-the-first-test/kitchen-yml') %>
 
-This configuration specifies that the cookbook contains InSpec tests.
+The `verifier` part specifies that the cookbook contains InSpec tests. The `inspec_tests` part specifies that the tests exist under the cookbook's <% fp 'test/recipes' %> directory.
 
 Next, `cd` to your cookbook directory.
 
@@ -125,7 +125,9 @@ You see from the output that the test failed.
 
 ```bash
 # ~/learn-chef/cookbooks/webserver_test
-✖  System Package httpd should be installed (expected that `System Package httpd` is installed)
+System Package
+   ✖  httpd should be installed
+   expected that `System Package httpd` is installed
 ```
 
 You should expect the test to fail because you have not yet written any code to install the package. Having a failing test shows what functionality is missing and gives you a clear goal to work towards. You also now have a way to quickly get feedback on whether the changes you make bring you closer to your goal.
@@ -243,7 +245,7 @@ Now run `kitchen verify` to run your InSpec tests.
 
 <% command_snippet(page: current_page, path: 'apply-and-verify-updated-configuration/kitchen-verify-4') %>
 
-All 5 tests now pass. (The output shows 4 lines, but the second line covers 2 tests.)
+All 5 tests now pass. (We proposed 4 criteria, but the service criteria covers 2 tests.)
 
 If any test did not pass, you would go back to your recipe, fix the failure, and run your test again.
 
