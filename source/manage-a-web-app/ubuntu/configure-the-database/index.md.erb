@@ -103,7 +103,7 @@ mysql_database 'my_company' do
 end
 ```
 
-This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the hostname. We also specify the logon credentials for the root account. 
+This code configures a database named `my_company`. The `connection` attribute specifies how to connect to the database server. Because the database server exists on the local instance, we specify 127.0.0.1 (localhost) as the hostname. We also specify the logon credentials for the root account.
 
 [WARN] Remember to never hard-code passwords in your recipes. We'll replace it with our node attributes in the next step.
 
@@ -351,7 +351,7 @@ Now modify <code class="file-path">create-tables.sql</code> like this.
 -- ~/learn-chef/cookbooks/awesome_customers_ubuntu/files/default/create-tables.sql
 
 CREATE TABLE customers(
-  id CHAR (32) NOT NULL,
+  id CHAR (36) NOT NULL,
   PRIMARY KEY(id),
   first_name VARCHAR(64),
   last_name VARCHAR(64),
@@ -415,7 +415,7 @@ That's where the `execute` resource's `not_if` attribute comes in. The `not_if` 
 
 ### Refactor the database table creation
 
-Like we've done before, let's look at how we can factor out the data. 
+Like we've done before, let's look at how we can factor out the data.
 
 We can factor out most parts of your `execute` resource, such as the hostname, username, and password. We already have the node attributes to describe those, so we're ready to modify the recipe.
 
@@ -555,7 +555,7 @@ $ kitchen converge
            +++ /tmp/.chef-create-tables.sql20160425-29022-zj6f77	2016-04-25 18:45:05.950641000 +0000
            @@ -1 +1,11 @@
            +CREATE TABLE customers(
-           +  id CHAR (32) NOT NULL,
+           +  id CHAR (36) NOT NULL,
            +  PRIMARY KEY(id),
            +  first_name VARCHAR(64),
            +  last_name VARCHAR(64),
