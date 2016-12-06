@@ -1,25 +1,27 @@
 // collect sibling pages, including this page, that are not appendices.
 - @siblings = page.parent.children.sort.reject { |p| p.appendix? }
-// compute which one we are.
-- @index = @siblings.index(page) + 1
-// the JavaScript implements a bounce effect.
-// it animates past the target and then back to the target.
-- @start = [0, ((@index - 1) * 100 / @siblings.count).to_i].max.to_i
-- @target = (@index * 100 / @siblings.count).to_i
-- @extend = [100, @target + ((@target - @start) * 0.15)].min.to_i
-// percentage points per second.
-- @ppps = 500
-// we want the animation rate to be constant.
-// compute the time duration from start => extend and from extend => target.
-- @duration1 = (@extend - @start) / @ppps * 1000
-- @duration2 = (@extend - @target) / @ppps * 1000
-// compute initial opacity.
-- @min_opacity = 0.6
-- @opacity = @min_opacity + ((@start * 0.01) * (1.0 - @min_opacity))
+// Don't show the control if the tutorial contains just one page.
+- unless @siblings.count == 1
+  // compute which one we are.
+  - @index = @siblings.index(page) + 1
+  // the JavaScript implements a bounce effect.
+  // it animates past the target and then back to the target.
+  - @start = [0, ((@index - 1) * 100 / @siblings.count).to_i].max.to_i
+  - @target = (@index * 100 / @siblings.count).to_i
+  - @extend = [100, @target + ((@target - @start) * 0.15)].min.to_i
+  // percentage points per second.
+  - @ppps = 500
+  // we want the animation rate to be constant.
+  // compute the time duration from start => extend and from extend => target.
+  - @duration1 = (@extend - @start) / @ppps * 1000
+  - @duration2 = (@extend - @target) / @ppps * 1000
+  // compute initial opacity.
+  - @min_opacity = 0.6
+  - @opacity = @min_opacity + ((@start * 0.01) * (1.0 - @min_opacity))
 
-div style="margin-bottom: 10px;"
-  row
-    span.progress-label
-      = "Part #{@index} of #{@siblings.count}"
-    div.custom-progress-container.small-2
-      span.meter style="width: #{@start}%; opacity: #{@opacity}" data-start-width="#{@start}%" data-target-width="#{@target}%" data-extend-width="#{@extend}%" data-duration-1="#{@duration1}" data-duration-2="#{@duration2}" data-min-opacity="#{@min_opacity}"
+  div style="margin-bottom: 10px;"
+    row
+      span.progress-label
+        = "Part #{@index} of #{@siblings.count}"
+      div.custom-progress-container.small-2
+        span.meter style="width: #{@start}%; opacity: #{@opacity}" data-start-width="#{@start}%" data-target-width="#{@target}%" data-extend-width="#{@extend}%" data-duration-1="#{@duration1}" data-duration-2="#{@duration2}" data-min-opacity="#{@min_opacity}"
