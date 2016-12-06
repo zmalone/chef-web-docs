@@ -1,37 +1,42 @@
 ---
-title: 'Building an Ohai Plugin'
+title: 'Build an Ohai plugin'
 description: 'Creating an Ohai plugin'
 order: 1
 keywords: training, tutorials, chef
-category: 'chef-skills'
-layout: skills-topic
+type: topic
+category: other-skills
+layout: lesson
 sections: []
-icon: chef-icon.png
+logo: skills-icon.svg
+progress_bar: false
+headings: [
+  { label: 'Prerequisites', href: '#prerequisites' },
+  { label: '1. Creating the Ohai Plugin', href: '#step1' },
+  { label: '2. Testing the Ohai plugin with ChefSpec', href: '#step2' },
+  { label: '3. Deploying the Ohai Plugin', href: '#step3' },
+  { label: '4. Testing the Ohai Plugin with InSpec', href: '#step4' },
+  { label: '5. Refining Ohai plugin deployment', href: '#step5' },
+  { label: 'Outline of remaining work', href: '#outlineofremainingwork' },
+  { label: 'Additional resources', href: '#additionalresources' }
+]
 ---
+In this tutorial, you'll learn how to create, test, and deploy an Ohai plugin that will be able to execute a system command and collect data about an installed application on a node.
 
-## Introduction
-
-Ohai collects data about your system. This data can be used to make your recipes more dynamic or provide better reporting. Each piece of data is captured through various plugins that are defined and shipped with Ohai. These plugins are defined with a Domain-Specific-Language (DSL) that is written in Ruby (similar to defining a recipe or a custom resource).
+[Ohai](https://docs.chef.io/ohai.html) collects data about your system. This data can be used to make your recipes more dynamic or provide better reporting. Each piece of data is captured through various plugins that are defined and shipped with Ohai. These plugins are defined with a domain-specific language (DSL) that is written in Ruby (similar to defining a recipe or a custom resource).
 
 You can create your own Ohai plugins. These plugins can collect important data about your specialized hardware, virtualization, environment, and software. This data is collected at the start of the chef-client run and then stored as automatic attributes on the node. These node attributes can be used within your recipes or used in reporting when the node object is sent off to the Chef Server.
 
-[HEADLINE] When you finish this tutorial you will be able to create, test, and deploy an Ohai plugin that will be able to execute a system command and collect data about an installed application on a node.
-
 [COMMENT] This example is specific to Apache running on CentOS 6.7 but nearly all the practices are easily extendable to other applications and platforms.
+
+[START_BOX]
 
 ## Prerequisites
 
-[START_BOX]
-
-## 1. Understand hardware requirements
+### Understand hardware requirements
 
 To successfully complete this tutorial, you'll need a Windows, MacOS, or Linux workstation that has relatively powerful hardware. We recommend that your workstation have at least 15GB of free disk space and at least 4GB of available memory so that you can download the base image and run a few virtual machine instances.
 
-[END_BOX]
-
-[START_BOX]
-
-## 2. Set up your workstation for local development
+### Set up your workstation for local development
 
 This tutorial builds on top off knowledge gained in [Develop locally](/tutorials/local-development/rhel/) and [Manage a basic web application](/manage-a-web-app/rhel/).
 
@@ -39,11 +44,7 @@ First, you'll need to have the latest version of the Chef Development Kit on you
 
 You'll also need the virtualization software [VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/). If you don't have VirtualBox and Vagrant installed, [follow steps 1&mdash;3](/tutorials/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage) to get set up. Optionally, you can follow steps 4&mdash;7 to verify you can successfully bring up a local virtual machine.
 
-[END_BOX]
-
-[START_BOX]
-
-## 3. Build local development skills using Test Kitchen
+### Build local development skills using Test Kitchen
 
 This tutorial requires familiarity with local development using Test Kitchen.
 
@@ -53,13 +54,13 @@ The [Manage a basic web application](/manage-a-web-app/rhel/) tutorial provides 
 
 [END_BOX]
 
-## Creating the Ohai Plugin
+[START_BOX]
+
+## 1. Creating the Ohai plugin
 
 An Ohai plugin is a Ruby file that needs to exist on the node. We will create a plugin file within our application cookbook and talk more about delivering the plugin to our system in the 'Deploying the plugin' section.
 
-[START_BOX]
-
-### 1. Create an application cookbook
+### Create an application cookbook
 
 From your terminal window, begin by moving to the <% fp '~/learn-chef' %> directory.
 
@@ -68,7 +69,7 @@ From your terminal window, begin by moving to the <% fp '~/learn-chef' %> direct
 $ cd ~/learn_chef
 ```
 
-Next, run the following `chef generate cookbook cookbooks/apache` command to create a cookbook named `apache` under the <% fp '~/learn-chef/cookbooks' %> directory..
+Next, run the following `chef generate cookbook cookbooks/apache` command to create a cookbook named `apache` under the <% fp '~/learn-chef/cookbooks' %> directory.
 
 ```bash
 # ~/learn-chef
@@ -99,7 +100,7 @@ Next, `cd` to your cookbook directory.
 $ cd ~/learn-chef/cookbooks/apache
 ```
 
-Install the application and start the service in the default recipe
+Install the application and start the service in the default recipe.
 
 ```ruby
 # ~/learn-chef/cookbooks/apache/recipes/default.rb
@@ -110,20 +111,16 @@ service 'httpd' do
 end
 ```
 
-[END_BOX]
+### Create the Ohai plugin
 
-[START_BOX]
-
-### 2. Create the Ohai Plugin
-
-Run the following `chef generate file apache_modules.rb` command to create a cookbook file named `apache_modules` under the <% fp '~/learn-chef/cookbooks/apache/files/default' %> directory..
+Run `chef generate file apache_modules.rb` to create a cookbook file named `apache_modules` under the <% fp '~/learn-chef/cookbooks/apache/files/default' %> directory.
 
 ```bash
 # ~/learn-chef/cookbooks/apache
 $ chef generate file apache_modules.rb
 ```
 
-Write out the plugin in [Ohai's DSL](https://docs.chef.io/ohai_custom.html):
+Write out the plugin using [Ohai's DSL](https://docs.chef.io/ohai_custom.html):
 
 ```ruby
 # ~/learn-chef/cookbooks/apache/files/default/apache_modules.rb
@@ -140,15 +137,17 @@ end
 
 Let's talk about the [syntax](https://docs.chef.io/ohai_custom.html#syntax) of an Ohai plugin:
 
-* An Ohai plugin name is always a symbol that starts with a capital letter `:Apache`.
-* `provides` specifies where the content can be found on the node object (i.e. `node['apache']['modules']`)
-* This [collect_data](https://docs.chef.io/ohai_custom.html#collect-data) block is the **default** way we want to collect the information; platform specific `collect_data` blocks can be defined.
-* A [Mash](https://github.com/chef/chef/blob/master/lib/chef/mash.rb) is a [Hash](http://www.rubydoc.info/stdlib/core/Hash) that allows you to use String keys and Symbol keys interchangebly to retreive the same value.
+* An Ohai plugin name is always a symbol that starts with a capital letter, for example, `:Apache`.
+* `provides` specifies where the content can be found on the node object, for example, `node['apache']['modules']`.
+* This [collect_data](https://docs.chef.io/ohai_custom.html#collect-data) block is the **default** way we want to collect the information; you can also define platform-specific `collect_data` blocks.
+* A [Mash](https://github.com/chef/chef/blob/master/lib/chef/mash.rb) is a [Hash](http://www.rubydoc.info/stdlib/core/Hash) that allows you to use string keys and symbol keys interchangebly to retreive the same value.
 * [shell_out](https://github.com/chef/chef/blob/master/lib/chef/mixin/shell_out.rb) is a helper method that executes a command; returning an object that we can query the standard out (`stdout`), standard error (`stderr`), and exit status code (`exitstatus`).
 
 [END_BOX]
 
-## Testing the Ohai Plugin with ChefSpec
+[START_BOX]
+
+## 2. Testing the Ohai plugin with ChefSpec
 
 To ensure our plugin works would require us to deliver it to our target node and then execute `ohai` or `chef-client`.
 
@@ -160,10 +159,7 @@ When an Ohai plugin fails it does so silently so that it does not effect the rem
 
 Before we deploy this plugin we will test it locally. This can be done first through ChefSpec with the help of the [chefspec-ohai](https://rubygems.org/gems/chefspec-ohai) gem.
 
-
-[START_BOX]
-
-### 1. Install and require the chefspec-ohai gem
+### Install and require the chefspec-ohai gem
 
 An additional gem is needed if we want to test our Ohai plugin through ChefSpec.
 
@@ -184,11 +180,7 @@ require 'chefspec/berkshelf'
 require 'chefspec/ohai'
 ```
 
-[END_BOX]
-
-[START_BOX]
-
-### 2. Write a ohai plugin test
+### Write a ohai plugin test
 
 Create a new directory to store your Ohai plugin tests:
 
@@ -221,19 +213,15 @@ end
 
 Let's talk about the [syntax](https://docs.chef.io/ohai_custom.html#syntax) of an Ohai plugin:
 
-* `describe_ohai_plugin` is a new example group alias that allows you to easily test Ohai plugins
-* `let(:plugin_file) { ... }` defines the relative path to the cookbook file that contains the Ohai plugin
-* The first example asserts that the plugin provides the correct attribribute
-* `let(:command) { ... }` returns the test double command object which we use in the next example
+* `describe_ohai_plugin` is a new example group alias that allows you to easily test Ohai plugins.
+* `let(:plugin_file) { ... }` defines the relative path to the cookbook file that contains the Ohai plugin.
+* The first example asserts that the plugin provides the correct attribribute.
+* `let(:command) { ... }` returns the test double command object which we use in the next example.
 * `double('Fake Command',stdout: 'OUTPUT')` is an RSpec [test double](https://www.relishapp.com/rspec/rspec-mocks/v/3-5/docs/basics/test-doubles) that takes a name and a hash of parameters. These parameters are converted to methods on the double object.
 * `allow(plugin).to_receive(:shell_out).with('...')` is RSpec's way of [allowing messages](https://www.relishapp.com/rspec/rspec-mocks/v/3-5/docs/basics/allowing-messages) to override the `shell_out` command when used within the plugin; replace the results of it when given the specified command.
-* `plugin_attribute('apache/modules')` retrieves the value stored in the modules key (Similar to writing `node['apache']['modules']`)
+* `plugin_attribute('apache/modules')` retrieves the value stored in the modules key (similar to writing `node['apache']['modules']`).
 
-[END_BOX]
-
-[START_BOX]
-
-### 3. Execute the ohai plugin test
+### Execute the ohai plugin test
 
 Execute `rspec` with the new test to validate that the plugin is defined correctly:
 
@@ -249,20 +237,20 @@ Finished in 0.20469 seconds (files took 1.54 seconds to load)
 
 [END_BOX]
 
-## Deploying the Ohai Plugin
-
-We have the application cookbook with the plugin file defined as a cookbook file (`apache_modules.rb`). To deploy the plugin we need:
-
-* to copy the plugin to the correct file location
-* to ask Ohai to load the plugin we delivered
-
-The *Ohai* community cookbook does both of these things extremely well through a custom resource named `ohai_plugin`.
-
 [START_BOX]
 
-### 1. Add the ohai community cookbook as a dependency and install dependencies
+## 3. Deploying the Ohai Plugin
 
-Append to the end of the cookbook's metadata the dependency on the 'ohai' community cookbook.
+We have the application cookbook with the plugin file defined as a cookbook file (`apache_modules.rb`). To deploy the plugin we need to:
+
+* copy the plugin to the correct file location.
+* ask Ohai to load the plugin we delivered.
+
+The [ohai](https://supermarket.chef.io/cookbooks/ohai) community cookbook does both of these things extremely well through a custom resource named `ohai_plugin`.
+
+### Add the ohai community cookbook as a dependency and install dependencies
+
+Append to the end of the cookbook's metadata the dependency on the `ohai` community cookbook.
 
 ```ruby
 # ~/learn-chef/cookbooks/apache/metadata.rb
@@ -285,11 +273,7 @@ Using ohai (4.2.2)
 Using compat_resource (12.16.2)
 ```
 
-[END_BOX]
-
-[START_BOX]
-
-### 2. Create and write a new recipe to deploy the plugin
+### Create and write a new recipe to deploy the plugin
 
 Create a new recipe:
 
@@ -300,7 +284,7 @@ Recipe: code_generator::recipe
 ...
 ```
 
-This Ohai plugin requires that the application be installed so we will include the default recipe first. then we want to use the `ohai_plugin` resource and provide it the name of our Ohai plugin file.
+This Ohai plugin requires that the application be installed so we will include the default recipe first. Then we want to use the `ohai_plugin` resource and provide it the name of our Ohai plugin file.
 
 ```ruby
 # ~/learn-chef/cookbooks/apache/recipes/ohai_apache_modules.rb
@@ -313,24 +297,19 @@ include_recipe 'apache::default'
 ohai_plugin 'apache_modules'
 ```
 
-[END_BOX]
-
-[START_BOX]
-
-### 3. Add the recipe to your node's run list
+### Add the recipe to your node's run list
 
 This could be done directly to your node, including this recipe (and the cookbook as a dependency) within another recipe already on the run list, through a role or an environment.
 
 [END_BOX]
 
-
-## Testing the Ohai Plugin with InSpec
-
-Testing our plugin with ChefSpec allowed us to ensure the plugin was defined correctly. It does not verify if the command we wrote works correctly on our given platform / platform version. This is where we can use Test Kitchen.
-
 [START_BOX]
 
-### 1. Add a new Test Kitchen suite that includes our plugin in the run list
+## 4. Testing the Ohai plugin with InSpec
+
+Testing our plugin with ChefSpec allowed us to ensure the plugin was defined correctly. It does not verify if the command we wrote works correctly on our given platform and platform version. This is where we can use Test Kitchen.
+
+### Add a new Test Kitchen suite that includes our plugin in the run list
 
 To test this new recipe, create a new test suite within the Test Kitchen configuration.
 
@@ -365,14 +344,11 @@ suites:
     attributes:
 ```
 
-[END_BOX]
-
-[START_BOX]
-### 2. Create and define a test that executes the plugin
+### Create and define a test that executes the plugin
 
 The new suite we defined requires us to define a new location for our InSpec test.
 
-Create the new test directory for the 'ohai_apache_modules' test suite:
+Create the new test directory for the `ohai_apache_modules` test suite:
 
 ```bash
 # ~/learn-chef/cookbooks/apache
@@ -392,14 +368,10 @@ end
 ```
 
 * The ohai cookbook will store plugins in the specified directory within Test Kitchen.
-* The [command] resource is invoking the ohai command-line tool with the directory and specifying the plugin we want to view.
-* The standard out should displays all the modules; 'core_module' is an example of one of those modules.
+* The `command` resource is invoking the ohai command-line tool with the directory and specifying the plugin we want to view.
+* The standard out should displays all the modules; `core_module` is an example of one of those modules.
 
-[END_BOX]
-
-[START_BOX]
-
-### 3. Execute this new test suite
+### Execute this new test suite
 
 Execute `kitchen` to create, converge and verify the new test suite.
 
@@ -410,7 +382,9 @@ $ chef exec kitchen verify ohai_apache_modules
 
 [END_BOX]
 
-## Refining Ohai Plugin Deployment
+[START_BOX]
+
+## 5. Refining Ohai plugin deployment
 
 When the Test Kitchen converged our recipe a warning appeared:
 
@@ -433,20 +407,32 @@ Recipe: apache::ohai_httpd_modules
 
 The warning informs us that the `ohai_plugin` resource reloads Ohai during the `chef-client` run. This is inefficient. The warning gives a suggestion to modify the `client.rb` configuration file. This can be done with the **chef-client** community cookbook. This cookbook has a `chef-client::config` recipe which allows you to insert important configuration into the chef-client configuration file. That file is loaded before Ohai is executed during the chef-client run.
 
+[END_BOX]
+
 [START_BOX]
-### Outline of Remaining Work
-1. Add the **chef-client** cookbook to your cookbook repository
-2. Add the `chef-client::config` recipe to the node's run-list
-3. Set the node attribute `node['ohai']['plugin_path']`` to "/etc/chef/ohai/plugins" in a recipe, role, or environment
+
+## Outline of remaining work
+
+1. Add the `chef-client` cookbook to your cookbook repository.
+2. Add the `chef-client::config` recipe to the node's run-list.
+3. Set the node attribute `node['ohai']['plugin_path']` to <% fp '/etc/chef/ohai/plugins' %> in a recipe, role, or environment.
 
 [END_BOX]
 
-## Conclusion
+[START_BOX]
 
-Hopefully you see the power of creating an Ohai plugin to capture the important data about your node, have an understanding of why you should test the plugin locally with ChefSpec, and have an example cookbook that you can modify to suite your needs.
-
-## Additional Resources
+## Additional resources
 
 * Ohai's [Domain Specific Language](https://docs.chef.io/ohai_custom.html)
 * The [chefspec-ohai](https://rubygems.org/gems/chefspec-ohai) gem
 * Video: Joy of Automating - [Creating an Ohai Plugin](https://learn.chef.io/skills/joy-of-automating-episode-7/)
+
+[END_BOX]
+
+[START_BOX]
+
+## Conclusion
+
+Hopefully you see the power of creating an Ohai plugin to capture the important data about your node, have an understanding of why you should test the plugin locally with ChefSpec, and have an example cookbook that you can modify to suit your needs.
+
+[END_BOX]
