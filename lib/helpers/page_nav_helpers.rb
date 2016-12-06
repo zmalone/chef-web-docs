@@ -17,6 +17,10 @@ module PageNavHelpers
       {:category => 'chef-automate',
         :display => 'Collaborative development'.upcase,
         :topics => []
+      },
+      {:category => 'other-skills',
+        :display => 'Other skills'.upcase,
+        :topics => []
       }
     ]
     pages.each do |t|
