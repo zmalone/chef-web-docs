@@ -1,0 +1,93 @@
+---
+title: 'Getting started with automated testing'
+description: ''
+order: 3
+category: 'how-to-learn-chef'
+layout: skills-topic
+icon: tests.svg
+---
+Want to get started with automated testing right away? Check out the _Verify with InSpec_ tutorial. [InSpec](http://inspec.io) provides a human-readable language for configuration testing and compliance auditing.
+
+<%= link_to("Start the Verify with InSpec tutorial <i class='fa fa-angle-double-right'></i>", "/tutorials/inspec/", class: 'button radius cta cta') %>
+
+Otherwise, read on to learn more about getting started.
+
+-- -- --
+With Chef, you use _code_ to create cookbooks that express the desired state of your systems. You can also use code to verify that the cookbooks you write do what you expect.
+
+Here you'll find resources that can help you get started with automated testing.
+
+[START_BOX]
+
+## Automated testing begins with local development
+
+Many teams start with a manual process to deploy changes and later move to a [continuous delivery](https://en.wikipedia.org/wiki/Continuous_delivery) (CD) system, such as [Chef Automate](https://www.chef.io/automate/) to speed up the process. Either way, most Chef development begins with _local development_, which involves writing code from your workstation and verifying that code on test instances.  With local development, you can iterate faster and correct mistakes earlier in the development process. Once you've written and verified your code locally, you can move your change to the next step in the deployment process.
+
+[Test Kitchen](https://docs.chef.io/kitchen.html) enables local development by bringing up test instances, applying your cookbooks, and running automated tests to verify your changes. Test Kitchen works with virtual machines, containers, and cloud instances. Local development with Test Kitchen shortens the time it takes to bring up a machine and apply your Chef code. If you make a mistake or want to try something new, you can run your cookbook again or simply destroy the instance and create a new one.
+
+<img src="/assets/images/networks/workstation-vm.png" style="width:30%; height:auto;" alt="Your workstation, Test Kitchen, and a virtual machine" />
+
+Your deployment process might involve applying configuration changes to test infrastructure before deploying to production. Verification of your changes might involve a combination of automated and manual testing. Automated testing can help you verify that your service behaves as you expect. Manual testing can help you verify that your service meets your users' needs and requirements.
+
+[END_BOX]
+
+[START_BOX]
+
+## An example
+
+One advantage to developing locally is that it enables you to confirm that `chef-client` completes successfully in your target environment. However, you still need to verify that your instance was configured as you expect. As your project gets more complex, making a small change to one component can affect the behavior of another.
+
+For example, say you have a cookbook that configures a web application. A recipe in that cookbook configures a database server to listen on port 3306. You confirm that your configuration behaves as you expect. Later, another member of your team adds a recipe that configures the firewall and inadvertently closes access to port 3306. When you apply your configuration, your web application now displays a basic "access denied" error.
+
+How would you diagnose the error? You might start by manually verifying that the database software is installed and running and that you can run basic queries. Or you might start by looking at other aspects of your configuration, such as user, group, and file permissions. It might take some time to discover that the firewall is blocking access to the required port. After you remedy the error, you may need to repeat the verification process to ensure that other functionality continues to work like you expect.
+
+Automated testing enables you to not only verify new configuration policies, but also verify that existing functionality continues to work as you make changes.
+
+[END_BOX]
+
+[START_BOX]
+
+## Getting started
+
+Before you approach automated testing, we recommend that you work through the [Develop locally](/tutorials/local-development/rhel/) tutorial. Here you'll learn how to use Test Kitchen to apply your cookbooks to test instances that resemble your production environment.
+
+Optionally, you can also work through the [Manage a basic web application](/manage-a-web-app/rhel/) tutorial to practice your local development skills. Here you'll build a basic but complete web application that uses a web server, a database, and scripting. You'll use an iterative process to build and verify each part of the application on a local virtual machine using Test Kitchen.
+
+After you get the hang of local development using Test Kitchen, you can move on to automated testing. There are several ways to approach cookbook testing. Many Chef users take a _test-driven_ approach, where you write your tests first before you write any Chef code. With this approach, you write tests that initially fail and then write just enough code to make them pass. Other users have code they've already written and want to test or simply prefer to write their Chef code first. Both approaches are acceptable, and in the tutorials that follow, you'll use both.
+
+Rather than focusing on the [specific kinds of software testing](/skills/test-driven-development/), like unit and integration testing, many Chef users focus on these questions:
+
+* Did our cookbook place the system in the desired state?
+* Are our resources properly defined?
+* Does the code adhere to our style guide?
+
+The [Verify with InSpec](/tutorials/inspec/) tutorial helps answer the first question. Here you'll learn how to use InSpec to automatically verify a basic web server configuration. You'll follow the test-driven approach by first writing a test, watching it fail, and then writing just enough code to make it pass.
+
+The [Unit test with ChefSpec](/tutorials/chefspec/) tutorial helps answer the second question. Here you'll learn how to use ChefSpec to speed up the feedback cycle even more by simulating the execution of your resources in memory without the need to create test instances.
+
+The [Lint test with RuboCop](/tutorials/verify-style/) tutorial helps answer the third question. Here you'll learn how to use RuboCop and Foodcritic to help ensure that your code aheres to standard style guidelines and avoids common problems.
+
+[END_BOX]
+
+[START_BOX]
+
+## Additional resources
+
+Once you understand the foundations of automated testing, you can then apply what you learned to these scenarios:
+
+* [Refactor your cookbooks](/tutorials/refactor-web-app/)
+* [Build a custom resource](/tutorials/build-a-custom-resource/)
+* [Build an Ohai plugin](/tutorials/build-an-ohai-plugin/)
+
+If you're involved in compliance testing, you might be intersted in the [Scan for compliance](/tutorials/compliance-assess/) and [Remediate compliance failures](/tutorials/compliance-remediate/) tutorials. Here you'll use the [Chef compliance scanner](https://www.chef.io/solutions/compliance/) to assess your infrastructure's adherence to compliance requirements, remediate compliance failures, and to monitor your infrastructure on an ongoing basis.
+
+You can also:
+
+* [Attend a training class](https://training.chef.io/) led by a team of experienced instructors. You can attend in person or join one of our live online sessions.
+* [Check out our community site](/community) to connect with others.
+
+Chef also offers professional services that can get you started fast and help with the planning and design of your Chef installation.
+
+If you want more guidance, feel free to talk to us. Use the "Contact Us" box at the bottom of [this page](https://www.chef.io). We'd be happy to answer your questions and get you connected to the resources you need.
+
+[END_BOX]
