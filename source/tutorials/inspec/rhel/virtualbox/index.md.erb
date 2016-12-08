@@ -30,9 +30,9 @@ headings: [
 
 In this tutorial, you'll learn how to use [InSpec](http://inspec.io/) to automatically verify a basic web server configuration. You'll run InSpec from Test Kitchen on a virtual machine running on your workstation.
 
-InSpec provides a kind of _integration_ testing, where you verify that multiple components function correctly together. With InSpec, you write code that describes the desired state of the server. InSpec translates this code into SSH commands that it runs on the server.
+[COMMENT] If you're new to automated testing, consider reading [Getting started with automated testing](/skills/get-started-with-testing/) before you start this tutorial.
 
-[COMMENT] For an overview of how InSpec and other testing fits into the local development workflow, see [TBD](/tutorials/test-your-infrastructure-code/rhel/virtualbox/)
+InSpec provides a kind of [integration testing](https://en.wikipedia.org/wiki/Integration_testing), where you verify that multiple components function correctly together. With InSpec, you write code that describes the desired state of the server. InSpec translates this code into SSH commands that it runs on the server.
 
 It's common to write InSpec tests after you write your configuration code. But another way is to take a _test-driven_ approach, where you write your tests first before you write any Chef code.
 
@@ -63,9 +63,12 @@ Here's the criteria for the web server configuration:
   <% end %>
 <% end %>
 
+<p>
 You'll follow the test-driven approach by first writing a test, watching it fail, and then writing just enough code to make it pass.
 
-<br /><br />
+Let's start by making sure you're set up for local development.
+</p>
+
 <% accordion('test-configuration', 'Test configuration') do %>
 
 <% markdown do %>
@@ -76,7 +79,6 @@ You'll follow the test-driven approach by first writing a test, watching it fail
 
 <% end %>
 
-Let's start by making sure you're set up for local development.
 
 [START_BOX]
 
@@ -100,7 +102,7 @@ This tutorial requires familiarity with local development using Test Kitchen.
 
 If you're not familiar with Test Kitchen, work through [Develop locally](/tutorials/local-development/rhel/) before you start this tutorial. This tutorial teaches you the basics of how to apply cookbooks on local test instances, all on your workstation.
 
-The [Manage a basic web application](/manage-a-web-app/rhel/) tutorial provides additional hands-on practice with local development. Working through this tutorial is optional. Here, you configure a basic but complete web application using Test Kitchen. The [quickstart](/manage-a-web-app/rhel/bring-up-the-web-app-using-test-kitchen/) brings up the final configuration on a local test instance in just a few minutes. This tutorial prepares you for the [appendix](/tutorials/test-your-infrastructure-code/rhel/virtualbox/refactor-the-web-application-cookbook/) in this tutorial which walks you through a basic refactoring exercise.
+The [Manage a basic web application](/manage-a-web-app/rhel/) tutorial provides additional hands-on practice with local development. Working through this tutorial is optional. Here, you configure a basic but complete web application using Test Kitchen. The [quickstart](/manage-a-web-app/rhel/bring-up-the-web-app-using-test-kitchen/) brings up the final configuration on a local test instance in just a few minutes.
 
 [END_BOX]
 
@@ -127,7 +129,7 @@ The "test" part of the cookbook's name is simply to distinguish this cookbook fr
 Before writing any configuration code, let's write a test that verifies the first requirement:
 
 <% unstyled_list do %>
-  <% icon_list_item('bullseye') do %>
+  <% icon_list_item('arrow-right') do %>
     <b>Install the Apache package, <code>httpd</code>, on Red Hat Enterprise Linux systems.</b>
   <% end %>
   <% icon_list_item('square-o') do %>
@@ -154,8 +156,6 @@ end
 
 An InSpec test has two main components: the _subject to examine_ and the subject's _expected state_. Here, `<entity>` is the subject you want to examine, for example, a package name, service, file, or network port. The `<expectation>` part specifies the desired result or expected state, for example, that a port should be open (or perhaps _should not_ be open.)
 
-[COMMENT] If you've used [RSpec](http://rspec.info) or [Serverspec](http://serverspec.org/), InSpec code will look familiar to you. You can continue to use the Serverspec tests that you've already written and also write new Serverspec tests. One difference between InSpec and Serverspec is that InSpec does not install additional software on your target system. On Linux, it performs all tests over SSH. On Windows, it performs tests over WinRM.
-
 [COMMENT] In this tutorial, you use RSpec's "should" syntax. You can also use the [expect syntax](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/).
 
 Replace the contents of <% fp 'default_test.rb' %> with this code. This code tests whether the `httpd` package is installed.
@@ -163,6 +163,8 @@ Replace the contents of <% fp 'default_test.rb' %> with this code. This code tes
 <% code_snippet(page: current_page, path: 'write-the-first-test/default_test-1') %>
 
 This code uses InSpec's [package](http://inspec.io/docs/reference/resources/package) resource to test whether the `httpd` package is installed on the system.
+
+[COMMENT] If you've used [RSpec](http://rspec.info) or [Serverspec](http://serverspec.org/), InSpec code will look familiar to you. You can continue to use the Serverspec tests that you've already written and also write new Serverspec tests. One difference between InSpec and Serverspec is that InSpec does not install additional software on your target system. On Linux, it performs all tests over SSH. On Windows, it performs tests over WinRM.
 
 [END_BOX]
 
@@ -383,21 +385,11 @@ As with any kind of software testing, there's a time trade-off. It can take some
 
 But once you have automated testing in place and the skills to start writing tests, verifying changes becomes significantly faster. What once took days or weeks to manually verify can now take hours or even minutes. And because automated testing enables you to more quickly and easily build confidence in your changes, you'll be better able to tackle those small but important changes that you were once hesitant to commit to.
 
+### Next steps
+
 If you're new to Ruby programming or testing with InSpec or ChefSpec, the best way to get started is to adapt other examples that you see. The [InSpec documentation](http://inspec.io/docs/reference/resources/) provides the full list of available resource types, and has many good examples. Learn more about writing great tests and see practical examples at [betterspecs.org](http://betterspecs.org).
 
-### Other resources
-
-TODO: SET LINKS BELOW
-
-Although InSpec is a great way to get fast feedback on whether your cookbook behaves as you expect on a real instance, there are ways to verify your work even faster. Here are some tutorials you may be interested in next.
-
-* [A](a)
-* [B](b)
-
-You may also be intersted in (BASIC REFACTORING EXERCISE, CUSTOM RESOURCES)
-
-* [A](a)
-* [B](b)
+Although InSpec is a great way to get fast feedback on whether your cookbook behaves as you expect on a real instance, there are ways to verify your work even faster. Next, we recommend the [Unit test with ChefSpec](/tutorials/chefspec/) tutorial. Here you'll learn how to use ChefSpec to speed up the feedback cycle even more by simulating the execution of your resources in memory without the need to create test instances.
 
 Learn more about how to test and debug your Chef code in our [Joy of Automating](/skills/) video series, hosted by Franklin Webber.
 
