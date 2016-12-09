@@ -1,6 +1,6 @@
 ---
 title: 'Use ChefSpec to verify the correctness of your resources'
-short_title: 'Red Hat Enterprise Linux'
+short_title: 'Unit test with ChefSpec'
 platform: Red Hat Enterprise Linux
 platform_id: rhel
 category: local-development
@@ -13,26 +13,20 @@ snippet_workstation: ubuntu
 machine_config: snippets/test-your-infrastructure-code/rhel/virtualbox/machine_config.md
 environment: virtualbox
 headings: [
-  { label: 'Prerequisites', href: '#prerequisites' },
-  { label: '1. Create a cookbook', href: '#step1' },
-  { label: '2. Write the first test', href: '#step2' },
-  { label: '3. Run the test', href: '#step3' },
-  { label: '4. Make the test pass', href: '#step4' },
-  { label: '5. Verify the configuration', href: '#step5' },
-  { label: '6. Write the remaining tests', href: '#step6' },
-  { label: '7. Watch the tests fail', href: '#step7' },
-  { label: '8. Make the remaining tests pass', href: '#step8' },
-  { label: '9. Verify the updated configuration', href: '#step9' },
-  { label: '10. Verify on a clean instance', href: '#step10' },
+  { label: '1. Write tests for current configuration', href: '#step1' },
+  { label: '2. Define the CentOS context', href: '#step2' },
+  { label: '3. Write tests for Ubuntu', href: '#step3' },
+  { label: '4. Revise the cookbook to support Ubuntu', href: '#step4' },
+  { label: '5. Refactor the tests', href: '#step5' }
 ]
 ---
 [HEADLINE] ChefSpec simulates the execution of your resources, giving you an even faster feedback loop as you create and refine your recipes.
 
-In the previous lesson, you wrote InSpec tests that automatically verified that your basic web server cookbook configures Apache as you expect. Although automated testing is faster than manual testing, it can still take some time for the instance to come up, run `chef-client`, and run the tests.
+In the [Verify with InSpec](/tutorials/inspec/) tutorial, you learned how to use InSpec to automatically verify a basic web server configuration on a virtual machine running on your workstation. Although automated testing is faster than manual testing, it can still take some time for the instance to come up, run `chef-client`, and run the tests.
 
 You'll want to verify your work on a virtual instance before you run your cookbook in production, but as you develop your cookbook, you can use [ChefSpec](https://docs.chef.io/chefspec.html) to speed up the feedback cycle even more. ChefSpec _simulates_ the execution of your resources in memory, and does not involve the creation of a virtual instance. It's the fastest way to test your resources and is a great way to validate the correctness of your work, even before you set up a virtual instance to test on.
 
-[COMMENT] For an overview of how InSpec and other testing fits into the local development workflow, see [TBD](/tutorials/test-your-infrastructure-code/rhel/virtualbox/)
+[COMMENT] If you're new to automated testing, consider reading [Getting started with automated testing](/skills/get-started-with-testing/) before you start this tutorial.
 
 ChefSpec testing is also helpful when you use [continuous delivery](https://en.wikipedia.org/wiki/Continuous_delivery) (CD) systems such as [Chef Automate](https://www.chef.io/automate/) because ChefSpec enables you to verify your code without the need to bring up additional test systems.
 
@@ -62,9 +56,9 @@ In this lesson, you'll modify the `webserver_test` cookbook to work on both Cent
 
 Recall that your `webserver_test` cookbook's default recipe looks like this.
 
-<% code_snippet(page: current_page.previous_page, path: 'make-remaining-tests-pass/default-2-rhel') %>
+<% code_snippet(path: 'test-your-infrastructure-code/rhel/virtualbox/verify-desired-state/make-remaining-tests-pass/default-2-rhel') %>
 
-You know that this configuration works on CentOS. But on Ubuntu, both the Apache package and service name are `apache2`, not `httpd`.
+You know that this configuration works on CentOS. But on Ubuntu, both the Apache package and service names are `apache2`, not `httpd`.
 
 For this part, let's revise the requirements for the web server configuration to focus on these two criteria:
 
@@ -77,11 +71,17 @@ For this part, let's revise the requirements for the web server configuration to
   <% end %>
 <% end %>
 
+<p>
 You need to write code to ensure that your cookbook performs the correct steps in both environments. Here you'll write ChefSpec tests that verify that the code is defined correctly for both platforms &ndash; without the need to run it on a local instance.
+</p>
 
+<p>
 You'll start by writing ChefSpec tests that verify your existing CentOS web server configuration. Then you'll add additional tests for the same configuration on Ubuntu. After seeing the tests fail, you'll go back to your recipe and add just enough code to make the tests pass.
+</p>
 
+<p>
 Here's a 60-minute webcast that discusses ChefSpec in greater depth and shows working examples. You can watch the video before or after you complete this tutorial.
+</p>
 
 <script type="text/javascript" src="https://www.brighttalk.com/clients/js/embed/embed.js"></script> <object class="BrightTALKEmbed" width="705" height="660">     <param name="player" value="channel_player"/>     <param name="domain" value="https://www.brighttalk.com"/>     <param name="channelid" value="11349"/>     <param name="communicationid" value="194483"/>     <param name="autoStart" value="false"/>     <param name="theme" value=""/> </object>
 
@@ -117,7 +117,7 @@ The `describe` blocks tells ChefSpec to run the `webserver_test::default` recipe
 
 `ChefSpec::ServerRunner` specifies how to run `chef-client` in memory. It's a common option because it also simulates an in-memory Chef server, allowing you to access [data bags](https://docs.chef.io/data_bags.html) and other features.
 
-ChefSpec code resembles InSpec because both are based on the [RSpec](http://rspec.info) testing framework. RSpec [provides two ways to express tests](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/). In the previous lesson, you used what's commonly called RSpec's _should_ syntax. In this part, you'll use RSpec's _expectation_ syntax.
+ChefSpec code resembles InSpec because both are based on the [RSpec](http://rspec.info) testing framework. RSpec [provides two ways to express tests](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/). In the [Verify with InSpec](/tutorials/inspec/) tutorial, you use what's commonly called RSpec's _should_ syntax. In this part, you'll use RSpec's _expectation_ syntax.
 
 Modify your copy of <% fp 'default_spec.rb' %> like this.
 
@@ -293,6 +293,20 @@ Run ChefSpec to verify that the refactored tests continue to pass.
 
 <% next_page(current_page) do %>
 
-After you've verified that your cookbook does what you intend, it's a recommended practice to run _lint_ tools to ensure that your code meets accepted code standards and avoids common defects. In the next lesson, you'll learn how.
+In this tutorial, you created a basic web server configuration and used ChefSpec to simulate the execution of your resources in memory. Because ChefSpec does not involve the creation of a virtual instance, it's the fastest way to test your resources and is a great way to validate the correctness of your work. After you have passing ChefSpec tests, you can use another framework such as InSpec to verify that your resources together correctly build the functionality you need.
+
+### Next steps
+
+If you're new to Ruby programming or testing with ChefSpec, one of the best ways to improve your skills is to adapt other examples that you see. The [ChefSpec documentation](https://docs.chef.io/chefspec.html#examples) provides additional examples. The [ChefSpec project page](http://www.rubydoc.info/github/sethvargo/chefspec) contains many more. Learn more about writing great tests and see practical examples at [betterspecs.org](http://betterspecs.org).
+
+Although your code may behave as you expect, it's also important to ensure your code is easy to read and maintain, and avoids defects that can be difficult to fix later. Lint testing, or _linting_, is one way to help ensure that your code adheres to standard style guidelines and avoids common problems. In the [Lint test with RuboCop](/tutorials/verify-style/) tutorial, you'll use the tools RuboCop and Foodcritic to identify potential issues in variations of the web server cookbook you created here.
+
+Learn more about how to test and debug your Chef code in our [Joy of Automating](/skills/) video series, hosted by Franklin Webber.
+
+If you're involved in your company's compliance and audit process, you may be interested in the [Chef compliance scanner](/tutorials/compliance-assess/rhel/), which uses InSpec as its auditing and testing framework.
+
+You may also be interested in [Chef Automate](https://www.chef.io/automate/), which gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. Chef Automate reinforces the Chef workflow, where you begin by developing and testing your configuration from your local workstation. Then, you submit your change to Chef Automate's pipeline, where your change goes through sets of automated tests before going out into production. If you have many different teams, each delivering software in its own way, you can use Chef Automate to bring a standard, proven approach to all of your organization's deployments.
+
+[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
 
 <% end %>
