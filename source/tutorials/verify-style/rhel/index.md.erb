@@ -1,5 +1,5 @@
 ---
-title: 'Use RuboCop and Foodcritic to verify your code adheres to the style guide'
+title: 'Use RuboCop and Foodcritic to verify code style'
 short_title: 'Red Hat Enterprise Linux'
 platform: Red Hat Enterprise Linux
 platform_id: rhel
@@ -12,10 +12,15 @@ snippet_path: test-your-infrastructure-code/rhel/virtualbox/verify-your-code-adh
 snippet_workstation: ubuntu
 machine_config: snippets/test-your-infrastructure-code/rhel/virtualbox/machine_config.md
 environment: virtualbox
+headings: [
+  { label: 'Prerequisites', href: '#prerequisites' },
+  { label: '1. Use RuboCop to make your code easier to read and maintain', href: '#step1' },
+  { label: '2. Use Foodcritic to identify better usage patterns', href: '#step2' }
+]
 ---
 [HEADLINE] Lint testing can help you identify potential defects in your code early and also makes your code easier to read and maintain.
 
-So far, you've learned how to use automated testing to speed up the feedback cycle. Getting feedback early and often can help you release more quickly and with higher quality.
+In the [Verify with InSpec](/tutorials/inspec/) and [Unit test with ChefSpec](/tutorials/chefspec/) tutorials, you've learned how to use automated testing to speed up the feedback cycle. Getting feedback early and often can help you release more quickly and with higher quality.
 
 Although your code may behave as you expect, it's also important to ensure your code is easy to read and maintain, and avoids defects that can be difficult to fix later. Lint testing, or _linting_, is one way to help ensure that your code adheres to standard style guidelines and avoids common problems.
 
@@ -23,7 +28,7 @@ Lint testing is a form of [static program analysis](https://en.wikipedia.org/wik
 
 Lint testing can identify a range of issues, from code that's correct but difficult to read (such as code that uses non-uniform indentation) all the way to code that surely has an error (such as using an invalid character in a variable name).
 
-In this lesson, you'll use two popular tools that are part of the Chef DK &ndash; [RuboCop](http://batsov.com/rubocop/) and [Foodcritic](https://acrmp.github.io/foodcritic/) &ndash; to identify potential issues in variations of the `webserver_test` cookbook you created previously.
+In this tutorial, you'll use two popular tools that are part of the Chef DK &ndash; [RuboCop](http://batsov.com/rubocop/) and [Foodcritic](http://www.foodcritic.io) &ndash; to identify potential issues in variations of the `webserver_test` cookbook you created previously.
 
 <% accordion('test-configuration', 'Test configuration') do %>
 
@@ -35,6 +40,18 @@ In this lesson, you'll use two popular tools that are part of the Chef DK &ndash
 
 <% end %>
 
+
+[START_BOX]
+
+## Prerequisites
+
+This tutorial builds on the `webserver_test` cookbook that you create in the [Verify with InSpec](/tutorials/inspec/) and [Unit test with ChefSpec](/tutorials/chefspec/) tutorials. We recommend you work through those tutorials before you begin this one.
+
+If you want to get started right away with this tutorial, or no longer have the code from the previous ones, run this command from the <% fp '~/learn-chef' %> directory to create the `webserver_test` cookbook.
+
+<% command_snippet(workstation: 'ubuntu', path: 'test-your-infrastructure-code/rhel/virtualbox/verify-desired-state/create-the-web-server-cookbook/chef-generate-cookbook') %>
+
+[END_BOX]
 
 [START_BOX]
 
@@ -188,7 +205,7 @@ Let's examine a case where lint testing can help identify the use of unnecessary
 
 <% code_snippet(page: current_page, path: 'use-foodcritic/default-8-rhel') %>
 
-This code resembles the code you wrote in the previous lesson that configures Apache for both Ubuntu and CentOS.
+This code resembles the code you wrote in the previous tutorial that configures Apache for both Ubuntu and CentOS.
 
 Notice the use of double quoted strings. Although this program is valid and behaves as you would expect, its intention might not be clear to others. Because string interpolation is not required, it might appear to others that the code intends to use string interpolation but the string is missing additional information.
 
@@ -198,7 +215,7 @@ From your <% fp 'webserver_test' %> cookbook's directory, run `foodcritic ./reci
 
 Foodcritic reports [FC002](http://www.foodcritic.io/#FC002): "Avoid string interpolation where not required".
 
-Now remove the string interpolation to fix the violation. Your recipe should resemble the one you created in the previous lesson.
+Now remove the string interpolation to fix the violation. Your recipe should resemble the one you created in the previous tutorial.
 
 <% code_snippet(page: current_page, path: 'use-foodcritic/default-3-2-rhel') %>
 
@@ -239,43 +256,19 @@ Check out the [Foodcritic documention](http://www.foodcritic.io) to learn more, 
 * specify [which rules to run](http://www.foodcritic.io/#choosing-rules-to-run).
 * use rules [written by the community](http://www.foodcritic.io/#extra-rules), which you can use as a model for writing your own rules.
 
-[GITHUB] [Get the code for this lesson](https://github.com/learn-chef/webserver_test/tree/lesson3_rhel) on GitHub.
+[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/webserver_test/tree/lesson3_rhel) on GitHub.
 
 [END_BOX]
 
-[START_BOX]
+<% next_page(current_page) do %>
 
-## Exercises
+In this tutorial, you saw how to use [RuboCop](http://batsov.com/rubocop/) and [Foodcritic](http://www.foodcritic.io) to help ensure that your code adheres to standard style guidelines and avoids common problems. Running lint testing tools such as RuboCop and Foodcritic helps ensure that the code you write adheres to your team's preferred style. They can also help detect code that surely has an error, such as using an invalid character in a variable name.
 
-The two appendices that follow are optional. Even if you plan to work through them, now's a good time to test your understanding of what you've learned so far.
+Like ChefSpec, RuboCop and Foodcritic do not involve the creation of a virtual instance, and are fast ways to validate the correctness of your work. Once you have code that passes lint and unit testing, you can apply that code to virtual instances using tools such as Test Kitchen and InSpec. After you verify your work on virtual instances, you can move on running your changes to real test infrastructure or submit your change to a continuous delivery system such as Chef Automate.
 
-<%= partial "/layouts/exercises", locals: { path: '/tutorials/test-your-infrastructure-code/rhel/shared/exercises', questions: [1,2,3,4] } %>
+### Next steps
 
-[END_BOX]
-
-[START_BOX]
-
-## Conclusion
-
-This tutorial proposed these questions:
-
-* Did our cookbook place the system in the desired state?
-* Are our resources properly defined?
-* Does the code adhere to our style guide?
-
-In this tutorial, you used InSpec, ChefSpec, and the lint tools RuboCop and Foodcritic to help answer these questions. Each of these tools plays an important role in helping ensure that your cookbooks behave like you intend, are well-defined, adhere to accepted standards, and avoid common defects.
-
-An increasingly popular way to write cookbooks is to write your tests before you write your Chef code. This _test-driven_ approach helps document your requirements and goals, and the scope of your project. Once all your tests pass, you've satisfied the requirements for your project and can move it to the next phase.
-
-If you're new to Ruby programming or testing with InSpec or ChefSpec, the best way to get started is to adapt other examples that you see. The [InSpec documentation](http://inspec.io/docs/reference/resources/) provides the full list of available resource types, and has many good examples. The ChefSpec project also contains many good [example tests](https://github.com/sethvargo/chefspec/tree/master/examples). Learn more about writing great tests and see practical examples at [betterspecs.org](http://betterspecs.org).
-
-As with any kind of software testing, there's a time trade-off. It can take some time to write your initial tests and incorporate them into your workflow &ndash; arguably, it can take more time to set up your test process than it would take to test your initial configuration manually. Writing test code is also new to many people, and it can take time to ramp up your skills.
-
-But once you have automated testing in place and the skills to start writing tests, verifying changes becomes significantly faster. What once took days or weeks to manually verify can now take hours or even minutes. And because automated testing enables you to more quickly and easily build confidence in your changes, you'll be better able to tackle those small but important changes that you were once hesitant to commit to.
-
-### Other resources
-
-The two appendices that follow are provided as optional exercises. Check them out if you're interested in working through a <%= link_to 'basic refactoring exercise', current_page %> or want to learn about <%= link_to 'writing custom Chef resources', current_page %>.
+If you haven't gone through the [Verify with InSpec](/tutorials/inspec/) and [Unit test with ChefSpec](/tutorials/chefspec/) tutorials, now's a great time. You'll learn how to use InSpec to verify your configuration on virtual test instances and how to use ChefSpec to simulate the execution of your resources in memory.
 
 Learn more about how to test and debug your Chef code in our [Joy of Automating](/skills/) video series, hosted by Franklin Webber.
 
@@ -284,11 +277,5 @@ If you're involved in your company's compliance and audit process, you may be in
 You may also be interested in [Chef Automate](https://www.chef.io/automate/), which gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. Chef Automate reinforces the Chef workflow, where you begin by developing and testing your configuration from your local workstation. Then, you submit your change to Chef Automate's pipeline, where your change goes through sets of automated tests before going out into production. If you have many different teams, each delivering software in its own way, you can use Chef Automate to bring a standard, proven approach to all of your organization's deployments.
 
 [TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
-
-[END_BOX]
-
-<% next_page(current_page) do %>
-
-You can stop here for now or continue on to a refactoring exercise that involves the `awesome_customers_rhel` cookbook you wrote in the previous tutorial.
 
 <% end %>
