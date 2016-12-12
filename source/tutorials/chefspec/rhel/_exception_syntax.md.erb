@@ -1,0 +1,43 @@
+Notice that the default spec uses the `expect` method in two different ways.
+
+```ruby
+# default_spec.rb
+it 'converges successfully' do
+  expect { chef_run }.to_not raise_error
+end
+
+it 'installs httpd' do
+  expect(chef_run).to install_package 'httpd'
+end
+```
+
+The rule of thumb is to use the format of the first example, which uses a Ruby [block](http://radar.oreilly.com/2015/09/blocks-in-ruby.html), when the test checks whether an [exception](http://www.tutorialspoint.com/ruby/ruby_exceptions.htm), or error, is raised. Otherwise, use the second format, which passes the subject to test as a method argument.
+
+To understand why this is, let's look at a few examples.
+
+This example verifies that the expression `4 + 4` equals 8.
+
+```ruby
+# some_spec.rb
+expect(4 + 4).to eq 8
+```
+
+Ruby evaluates the expression `4 + 4` first, and then passes the result, `8`, to the `expect` method.
+
+When you pass an expression that raises an exception, the same thing happens.
+
+```ruby
+# some_spec.rb
+expect(raise 'error message').to raise_error('error message')
+```
+
+This test fails because Ruby raises the error _before_ calling the `expect` method. The exception is passed to the test framework, and not the `expect` method.
+
+To implement this test, you use the block format, like this:
+
+```ruby
+# some_spec.rb
+expect { raise 'error message' }.to raise_error('error message')
+```
+
+A method controls when the block it receives is evaluated. The `expect` method can _rescue_, or recover from, the exception and store the error details in a variable. The `raise_error` matcher can then compare the expected error message to the actual one.
