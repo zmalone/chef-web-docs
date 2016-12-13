@@ -62,7 +62,7 @@ module SnippetHelpers
   end
 
   def commentize_path(path, language)
-    case language
+    case language.chomp('-Win32')
     when 'conf', 'ruby', 'ini', 'yaml', 'powershell', 'bash', 'ps', 'shell', 'json'
       '# ' + path
     when 'html'
