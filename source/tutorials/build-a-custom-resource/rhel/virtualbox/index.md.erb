@@ -1,22 +1,25 @@
 ---
 title: 'Build a custom resource'
-short_title: 'Red Hat Enterprise Linux'
+short_title: 'Build a custom resource'
 platform: Red Hat Enterprise Linux
 platform_id: rhel
 category: local-development
-layout: lesson
+layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 60 minutes
 snippet_path: test-your-infrastructure-code/rhel/virtualbox/create-a-custom-resource
 snippet_workstation: ubuntu
 machine_config: snippets/test-your-infrastructure-code/rhel/virtualbox/machine_config.md
 environment: virtualbox
 headings: [
+  { label: 'Prerequisites', href: '#prerequisites' },
   { label: 'Quickstart', href: '#quickstartgetthecustom_webcookbook' },
   { label: 'Writing the custom resource', href: '#writingthecustom_web_siteresource' },
   { label: 'Testing the custom resource', href: '#testingthecustom_web_siteresource' }
 ]
 ---
-Consider the recipe you created in the [Unit test with ChefSpec](/tutorials/chefspec/) tutorial that configures Apache on CentOS and Ubuntu.
+In this tutorial, you'll walk through the creation of a [custom Chef resource](https://docs.chef.io/custom_resources.html) that configures Apache web server on multiple Linux platforms. You'll get starter code from GitHub, see the custom resource in action, and run automated tests that verify the resource's behavior.
+
+Consider the recipe from the [Unit test with ChefSpec](/tutorials/chefspec/) tutorial that configures Apache on CentOS and Ubuntu.
 
 <% code_snippet(path: "test-your-infrastructure-code/rhel/virtualbox/verify-resources-properly-defined/revise-cookbook-for-ubuntu/default-3-rhel") %>
 
@@ -68,7 +71,7 @@ end
 
 Chef includes built-in resources to manage files, packages, templates, and services, but it does not include a resource that manages web sites. However, you can create a _custom resource_ to accomplish this.
 
-In fact, you've used custom resources already. For example, in [Manage a basic web application](/manage-a-web-app/rhel/) you used the the `httpd_service`, `httpd_config`, and `httpd_module` resources from the [httpd](https://supermarket.chef.io/cookbooks/httpd) community cookbook on [Chef Supermarket](https://supermarket.chef.io). Here's an example:
+In fact, you've probably used custom resources already. For example, if you've gone through the [Manage a basic web application](/manage-a-web-app/rhel/) tutorial, you used the the `httpd_service`, `httpd_config`, and `httpd_module` resources from the [httpd](https://supermarket.chef.io/cookbooks/httpd) community cookbook on [Chef Supermarket](https://supermarket.chef.io). Here's an example:
 
 ```ruby
 # web.rb
@@ -93,7 +96,7 @@ end
 
 These resource types handle platform variations and other common details, enabling you to specify only the details that make your web site unique.
 
-The Chef documentation [describes custom resources in detail](https://docs.chef.io/custom_resources.html) and provides a good example. In this appendix, you'll download and run a similar example that also includes ChefSpec and InSpec tests.
+The Chef documentation [describes custom resources in detail](https://docs.chef.io/custom_resources.html) and provides a good example. In this tutorial, you'll download and run a similar example that also includes ChefSpec and InSpec tests.
 
 <% accordion('test-configuration', 'Test configuration') do %>
 
@@ -105,6 +108,23 @@ The Chef documentation [describes custom resources in detail](https://docs.chef.
 
 <% end %>
 
+
+[START_BOX]
+
+## Prerequisites
+
+To successfully complete this tutorial, you'll need the following:
+
+1. Your workstation set up for Chef development. [Follow these steps](/tutorials/manage-a-node/rhel/hosted/set-up-your-workstation/) to get set up.
+1. The virtualization software [VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/). [Follow steps 1&mdash;3](/tutorials/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage) to get set up. Optionally, you can follow steps 4&mdash;7 to verify you can successfully bring up a local virtual machine.
+
+You should also be familiar with Test Kitchen and some of the common Chef testing tools. Although not required, you can work through the [Develop locally](/tutorials/local-development/) tutorial to get started using Test Kitchen. These tutorials can help you get started with some of the common Chef testing tools:
+
+* [Verify with InSpec](/tutorials/inspec/)
+* [Unit test with ChefSpec](/tutorials/chefspec/)
+* [Verify code style](/tutorials/verify-style/)
+
+[END_BOX]
 
 [START_BOX]
 
@@ -172,7 +192,7 @@ Test Kitchen matches partial names, so `kitchen login centos` is shorthand for `
 
 You can browse the source code to get a sense of how the custom resource is built and how the ChefSpec and InSpec tests work. In the next part, you'll walk through some of these details.
 
-When you're done with this lesson, you can destroy your test instances like this.
+When you're done with this tutorial, you can destroy your test instances like this.
 
 <% command_snippet(page: current_page, path: 'quickstart-custom_web/kitchen-destroy-custom_web') %>
 
@@ -199,6 +219,8 @@ Although not required, a helper library can keep your custom resources more orga
 <% fp 'site.rb' %> includes the helper library like this:
 
 <% code_snippet(page: current_page, path: 'writing-the-custom_web_site-resource/site-rb-include') %>
+
+Also notice that the `custom_web_site` resource combines the built-in `package`, `service`, and `file` resources. Chef's _test and repair_ approach ensures that you can apply these resources as often as you'd like and that action is taken only when necessary. A custom resource can also contain pure Ruby code. When you use pure Ruby code, you should include logic that ensures that system resources are modified only when they do not meet the desired state.
 
 [END_BOX]
 
@@ -240,7 +262,7 @@ As your custom resource cookbook evolves, you could write additional test cookbo
 
 Try writing a custom resource for a piece of software that you manage. You can use the `custom_web` cookbook as a guide.
 
-Your implementation can help generalize common software components used throughout the industry, or it might configure a piece of proprietary software your company owns that you regularly need to manage. If you write a cookbook that others can benefit from, [consider becoming a contributor](https://supermarket.chef.io/contributors) to Chef Supermarket!
+Your implementation can help generalize common software components used throughout the industry, or it might configure a piece of proprietary software your company owns that you regularly need to manage. If you write a cookbook that others can benefit from, [consider becoming a contributor](https://docs.chef.io/community_contributions.html) to Chef Supermarket!
 
 You might maintain your custom resource cookbook on Chef Supermarket (either through the public site or a [private Chef Supermarket server that you maintain](https://docs.chef.io/supermarket.html#private-supermarket)), in a source code repository such as GitHub, or both.
 
@@ -273,6 +295,6 @@ metadata
 
 [Learn more about custom resources in this webcast](https://www.chef.io/blog/2015/11/06/custom-resources-in-chef-client-12-5/)
 
-[GITHUB] [Get the code for this lesson](https://github.com/learn-chef/custom_web) on GitHub.
+[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/custom_web) on GitHub.
 
 [END_BOX]
