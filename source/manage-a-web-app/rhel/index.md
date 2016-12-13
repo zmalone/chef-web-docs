@@ -1,5 +1,5 @@
 ---
-title: 'Manage a basic Red Hat Enterprise Linux web application'
+title: 'Develop a web app cookbook for Red Hat Enterprise Linux'
 layout: lesson-overview
 platform: Red Hat Enterprise Linux
 logo: redhat.svg

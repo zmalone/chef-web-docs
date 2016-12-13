@@ -1,5 +1,5 @@
 ---
-title: 'Manage a basic Ubuntu web application'
+title: 'Develop a web app cookbook for Ubuntu'
 layout: lesson-overview
 platform: Ubuntu
 logo: ubuntu.svg

@@ -1,5 +1,5 @@
 ---
-title: 'Manage a basic Windows Server web application'
+title: 'Develop a web app cookbook for Windows Server'
 layout: lesson-overview
 platform: Windows Server
 logo: windows.svg
