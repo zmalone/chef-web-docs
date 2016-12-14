@@ -9,7 +9,7 @@ This tutorial was last tested using this configuration:
   * **Region:** us-east-1
   * **AMI ID:** ami-2d39803a
   * **Instance type:** t2.micro
-  * **Software:** Chef client 12.16.42
+  * **Software:** Chef client 12.17.44
 <br /><br />
 * A workstation running Ubuntu 14.04 on Amazon Web Services
   * **Region:** us-east-1
