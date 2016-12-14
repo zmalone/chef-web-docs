@@ -84,6 +84,8 @@ The process will take a few minutes. Here's an overview of what's happening.
   * creates the `admin` [user](https://docs.chef.io/server_users.html) and the `4thcoffee` [organization](https://docs.chef.io/server_orgs.html).
   * copies files that you'll need later to <% fp '/vagrant/secrets' %>, which is [shared with the host machine](https://www.vagrantup.com/docs/synced-folders/).
 
+[COMMENT] If you need destroy your instances to start over, run `vagrant destroy`. You can later run `vagrant up` to bring up a new environment.
+
 [END_BOX]
 
 [START_BOX]
@@ -144,7 +146,7 @@ Verify that your <% fp '.chef' %> directory contains your `knife` configuration 
 
 <% command_snippet(page: current_page, path: "ls-dot-chef/ls-dot-chef-#{current_page.parent.data.platform_id}") %>
 
-You typically work with Chef server through its FQDN. Because your Chef server virtual machine is not backed by DNS, you need to first add an entry to your hosts file that maps your Chef server's hostname to its IP address. [This article](https://support.rackspace.com/how-to/modify-your-hosts-file/) describes how to do that on Windows, Linux, and Mac OS X. 
+You typically work with Chef server through its FQDN. Because your Chef server virtual machine is not backed by DNS, you need to first add an entry to your hosts file that maps your Chef server's hostname to its IP address. [This article](https://support.rackspace.com/how-to/modify-your-hosts-file/) describes how to do that on Windows, Linux, and Mac OS X.
 
 For example, on a Linux workstation, you would run:
 
@@ -164,18 +166,6 @@ Finally, run these commands to fetch and verify the SSL certificate from your Ch
 <% command_snippet(page: current_page, path: "validate-ssl-cert/knife-ssl-check-#{current_page.parent.data.platform_id}") %>
 
 The certificate is added to your <% fp '~/learn-chef/.chef/trusted_certs' %> directory.
-
-[END_BOX]
-
-[START_BOX]
-
-## Destroying your environment
-
-When you complete this tutorial, or if you need to start over, run [vagrant destroy](https://www.vagrantup.com/docs/cli/destroy.html) to tear down your environment. You can later run `vagrant up` to bring up a new environment.
-
-<% command_snippet(workstation: 'ubuntu', path: "manage-a-node/#{current_page.parent.data.platform_id}/virtualbox/resolve-a-failure/cleaning-up/vagrant-destroy-node1-#{os.downcase}") %>
-
-In this example, the `--force` argument does not ask for confirmation before destroying the environment.
 
 [END_BOX]
 
