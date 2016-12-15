@@ -7,9 +7,9 @@ This tutorial was last tested using this configuration:
 <br /><br />
 * A node running Windows Server 2012 R2 on Amazon Web Services
   * **Region:** us-east-1
-  * **AMI ID:** ami-ee7805f9
+  * **AMI ID:** ami-bfeddca8
   * **Instance type:** t2.medium
-  * **Software:** Chef client 12.16.42
+  * **Software:** Chef client 12.17.44
 <br /><br />
 * A workstation running Ubuntu 14.04 on Amazon Web Services
   * **Region:** us-east-1
