@@ -1,4 +1,4 @@
-In [Manage a basic Windows Server web application](/manage-a-web-app/windows), you configured your node to accept remote WinRM connections before you bootstrapped it. You'll need to follow a similar process on your base virtual machine.
+In [Develop a web app cookbook for Windows Server](/manage-a-web-app/windows), you configured your node to accept remote WinRM connections before you bootstrapped it. You'll need to follow a similar process on your base virtual machine.
 
 After the Windows Server installation completes, connect to your virtual machine as `Administrator`. Then, from a PowerShell window, run these commands.
 

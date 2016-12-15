@@ -18,8 +18,8 @@ module PageNavHelpers
         :display => 'Collaborative development'.upcase,
         :topics => []
       },
-      {:category => 'other-skills',
-        :display => 'Other skills'.upcase,
+      {:category => 'extending-chef',
+        :display => 'Extending Chef'.upcase,
         :topics => []
       }
     ]

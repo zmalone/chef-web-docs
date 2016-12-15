@@ -19,7 +19,7 @@ That's where Chef Automate comes in. Chef Automate provides real-time visibility
 
 ![](automate/automate-architecture-visibility.svg)
 
-In the [previous tutorial](/automate/install/), you brought up a preconfigured environment that runs in Amazon Web Services (AWS). In this tutorial, you'll bootstrap nodes provided by this environment to run a basic web application cookbook named `awesome_customers_delivery`, which displays fictitious customer data to the user. If you've gone through the [Manage a basic web application](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook (this tutorial is not a prerequisite).
+In the [previous tutorial](/automate/install/), you brought up a preconfigured environment that runs in Amazon Web Services (AWS). In this tutorial, you'll bootstrap nodes provided by this environment to run a basic web application cookbook named `awesome_customers_delivery`, which displays fictitious customer data to the user. If you've gone through the [Develop a web app cookbook](/manage-a-web-app/ubuntu/) tutorial, you'll be familiar with this cookbook (this tutorial is not a prerequisite).
 
 Here's what the Customers web application looks like.
 
