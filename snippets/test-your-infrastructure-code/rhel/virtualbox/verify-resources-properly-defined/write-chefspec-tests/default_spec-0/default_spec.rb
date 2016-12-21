@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: webserver_test
+# Cookbook:: webserver_test
 # Spec:: default
 #
-# Copyright (c) 2016 The Authors, All Rights Reserved.
+# Copyright:: 2016, The Authors, All Rights Reserved.
 
 require 'spec_helper'
 
