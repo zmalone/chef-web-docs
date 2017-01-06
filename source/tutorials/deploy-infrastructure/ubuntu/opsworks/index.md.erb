@@ -1,0 +1,114 @@
+---
+title: 'Deploy infrastructure changes to Ubuntu using AWS OpsWorks for Chef Automate'
+short_title: 'AWS OpsWorks for Chef Automate'
+layout: tutorials/platforms/environments/overview/layout
+platform: Ubuntu
+platform_id: ubuntu
+logo: AWSOpsWorks.svg
+order: 4
+machine_config: snippets/deploy-infrastructure/ubuntu/opsworks/machine_config.md
+environment: opsworks
+---
+Chef Automate gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
+
+![](automate/automate-architecture.svg)
+
+Chef Automate provides a workflow for managing changes as they flow through its pipeline, beginning with a local workstation, through sets of automated tests, and out into production. If you have many different teams, each delivering software in its own way, you can use Chef Automate to bring a standard, proven approach to all of your organization's deployments.
+
+With Chef Automate, you can, for example:
+
+* upload new and updated cookbooks to the Chef server that manages your infrastructure and applications.
+* publish new and updated cookbooks to a Chef Supermarket installation.
+* release source code or build artifacts (for example, a Java or PHP application) to a repository such as GitHub or Artifactory.
+* run automated tests to identify potential defects or bugs in your code.
+* detect cases where a different team's code is incompatible with yours.
+* push build artifacts to production servers in real time.
+* deploy [Habitat](https://www.habitat.sh) packages to a Habitat depot.
+
+Chef uses Chef Automate to deploy its own software. With it, we have:
+
+* increased the number of features per release by 50%.
+* reduced the number of defects per release by 70%.
+* went from 1 release every two days to 12 releases per day.
+
+We are shipping code faster, with less effort, and with higher quality. In this tutorial and the ones that follow, you'll take Chef Automate for a spin and see what sorts of benefits you can deliver for your organization.
+
+[COMMENT] Learn more about how to use the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the white paper.
+
+In this tutorial, you'll use Chef Automate's _workflow_ capabilities to deliver changes to the web application cookbook to the Chef server and to verify the cookbook's behavior in a production-like environment. Chef Automate enables multiple teams to work together on systems made up of multiple components and services, and promotes DevOps principles.
+
+Two important parts of Chef Automate are _pipelines_ and _phases_.
+
+[START_BOX]
+
+## Pipelines
+
+A _pipeline_ is a series of automated and manual quality gates that take software changes from development to delivery. Pipelines in Chef Automate have six stages: Verify, Build, Acceptance, Union, Rehearsal, and Delivered.
+
+<img src="/assets/images/delivery/delivery_partial_workflow.svg" style="width: 100%; box-shadow: none;" alt="Chef Automate's six stages" />
+
+Changes progress from one stage to another by passing a suite of automated tests. To advance past the Verify and Acceptance stages, explicit approval by a designated person is required (in addition to completion of the associated tests.)
+
+[Learn more about pipeline stages](https://docs.chef.io/workflow.html#pipeline-stages)
+
+[END_BOX]
+
+[START_BOX]
+
+## Phases
+
+The work within each stage is organized into phases.
+
+Here are the phases for each stage.
+
+<img src="/assets/images/delivery/delivery_full_workflow.svg" style="width: 100%; box-shadow: none;" />
+
+You determine what happens in each phase with a _build cookbook_. Each phase is configured with a recipe in that cookbook. Build cookbooks also control other aspects of the pipeline, such as the types of artifacts you build and where you store them.
+
+[Learn more about build cookbooks](https://docs.chef.io/delivery_build_cookbook.html)
+
+[END_BOX]
+
+[START_BOX]
+
+## What you'll learn
+
+After completing this tutorial, you should be able to:
+
+* describe each of the stages and phases that make up a Chef Automate pipeline.
+* verify the correctness of new features and submit changes to the pipeline.
+* approve code changes made by others.
+* verify new features and deliver them to your users.
+
+[COMMENT] Chef Automate relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. We'll provide all the Git commands that you'll need, but you can also [check out the documentation](https://git-scm.com/doc) to learn more.
+
+[END_BOX]
+
+[START_BOX]
+
+## Before you begin
+
+To successfully complete this tutorial, you'll need these systems:
+
+* AWS OpsWorks for Chef Automate.
+* A system running Linux, Mac OS, or Windows to act as your workstation.
+* One or more build nodes. Build nodes enable you to push changes through Chef Automate's pipeline.
+* Systems running Ubuntu 14.04 that will run build artifacts that are output from pipeline.
+
+If you're new to AWS OpsWorks for Chef Automate, we recommend that you go through the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/) tutorial. This tutorial helps you get set up with AWS OpsWorks and configure your workstation to use it.
+
+At a minimum, you'll need to [set up an AWS OpsWorks](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/) installation. However, performing the entire tutorial will orient you to several features, including Chef Automate's _visibility_ feature, which enables you to visualize the status of your nodes.
+
+You don't need to bring up build nodes or systems that will run build artifacts yet. The pages that follow explain everything you'll need to get set up. You'll begin by XXX.
+
+[END_BOX]
+
+<% accordion('test-configuration', 'Test configuration') do %>
+
+<% markdown do %>
+
+<% render_machine_config(current_page.data.machine_config) %>
+
+<% end %>
+
+<% end %>
