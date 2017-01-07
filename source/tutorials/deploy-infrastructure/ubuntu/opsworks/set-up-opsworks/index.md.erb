@@ -10,16 +10,155 @@ headings: [
   { label: '2. B', href: '#step2' },
   ]
 ---
+Reference: https://docs.chef.io/aws_opsworks_chef_automate.html
 
-##
+WE assume you have a ~/learn-chef dir with the starter kit in it (ref: manage a node)
 
-* Set up workstation to work with it
-  * `delivery token`
-  * `delivery setup`
-  * auth git
-    * ssh -T -p 8989 -l admin admin@default@test-gmlxyddyru4chp7z.us-east-1.opsworks-cm.io
+Have handy:
+* Chef Automate FQDN (example + screenshot + docs show this)
+* Chef Automate password (you got this when you ...)
+* Maybe have the user log in to web UI now.
 
+## Set up build node
 
-##
+You'll need:
 
-Install push jobs server on Chef Automate
+* Chef Automate FQDN
+* One or more systems to act as builders
+* EC2 = easy, but doesn't have to be EC2.
+
+* Open port 8989 to inbound traffic (docs, screenshot?, etc) (when to do this?)
+
+* Bring up one or more builders
+  * Platform requirements?
+  * System requirements?
+  * Network requirements?
+  * SSH into builder
+  * Set its FQDN
+
+```bash
+$ hostname
+ip-172-31-24-155
+$ echo $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) | xargs sudo hostname
+$ hostname
+ec2-52-90-116-141.compute-1.amazonaws.com
+```
+
+* Copy SSH key to Chef Automate
+
+  ```bash
+  $ scp -i ~/.ssh/tpetchel-mktg ~/.ssh/tpetchel-mktg ec2-user@:
+  test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:
+  The authenticity of host 'test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io (34.196.40.182)' can't be established.
+  ECDSA key fingerprint is SHA256:F7qKvGSEx3r12+VTCOCQSBhAPIET4i52LX/GYXNSkKQ.
+  Are you sure you want to continue connecting (yes/no)? yes
+  Warning: Permanently added 'test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io,34.196.40.182' (ECDSA) to the list of known hosts.
+  tpetchel-mktg                                                                                           100% 1679     1.6KB/s   00:00
+  ```
+
+* SSH into Chef Automate server
+
+  ```bash
+  $ ssh -i ~/.ssh/tpetchel-mktg ec2-user@test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io
+  ```
+
+* Install runner
+
+```bash
+$ sudo automate-ctl install-runner ec2-52-90-116-141.compute-1.amazonaws.com centos --ssh-identity-file tpetchel-mktg --yes
+```
+
+  * https://docs.chef.io/install_chef_automate.html#set-up-a-build-node-runner-optional
+  * https://docs.chef.io/aws_opsworks_chef_automate.html#configuring-aws-opsworks-for-chef-automate-with-runners
+
+* Verify - log into Chef Automate web UI, Workflow, Runners, Manage Runners, Test (screenshot)
+* Keep UI open for next part
+
+## Set up workstation
+
+* create id_rsa (docs + example)
+* `cat ~/.ssh/id_rsa.pub`
+* update user profile (full name, email, password, id_rsa.pub, Save &amp; Close) (screenshot)
+* Create org (Workflow, Workflow Orgs, "myorg", Save &amp; Close) (screenshot)
+* `delivery setup --server=test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io --ent=default --org=myorg --user=admin`
+* `AUTOMATE_PASSWORD=taJjpJH1IFa7jqbF delivery token`
+* (Optional, set git config)
+  * `git config --global user.name "John Smith"`
+  * `git config --global user.email jsmith@example.com`
+* auth git `ssh -T -p 8989 -l admin admin@default@test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io`
+
+## Get a cookbook
+
+* You may have this already. If not...
+
+  ```bash
+  $ cd ~/learn-chef/cookbooks
+  $ git clone https://github.com/learn-chef/learn_chef_apache2.git
+  $ cd learn_chef_apache2
+  $ NOPE berks install
+  $ NOPE SSL_CERT_FILE='../../.chef/ca_certs/opsworks-cm-ca-2016-root.pem' berks upload
+  $ NOPE knife cookbook list
+  ```
+
+* You can examine the cookbook to familiarize yourself with its contents.
+
+## Move it through the pipeline
+
+  * `delivery init`
+  * See it move through Verify and Build stages
+  * (If you have multiple buid nodes, you'll see Unit, Lint, and Syntax phases run in parallel)
+
+==START HERE==
+
+## Run on infrastructure
+
+* Install push jobs server on Chef Automate
+* Get 1-4 Ubuntu 14.04 nodes
+  * EC2 recommended
+  * Requirements: t2.micro, ports, etc.
+* Set up push jobs on each node
+
+  ```bash
+  $ cd ~/learn-chef/cookbooks
+  $ git clone https://github.com/chef-cookbooks/delivery-base
+  $ cd delivery-base
+  $ berks install
+  $ SSL_CERT_FILE='../../.chef/ca_certs/opsworks-cm-ca-2016-root.pem' berks upload
+
+* Create environments
+  * `knife environment create acceptance-default-myorg-learn_chef_apache2-master -d "The acceptance environment"`
+
+* knife bootstrap
+
+  ```bash
+  $ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment acceptance-default-myorg-learn_chef_apache2-master --yes
+  ```
+
+* `curl http://54.242.87.99`
+* `knife node show acceptance-node`
+* integrate back
+  * `git checkout master`
+  * `git pull --prune`
+* Set cookbook to publish to Chef server (config.json)
+  * `git checkout -b whatever`
+* `git status`
+* `git commit -a -m "yup"`
+* `delivery review`
+* watch it go all the way through to Delivered
+* `curl http://54.242.87.99`
+* `curl` others...
+* integrate back
+  * `git checkout master`
+  * `git pull --prune`
+
+## Add a feature
+  * with local testing
+
+## Extend the build cookbook (add smoke test)
+  * with local testing
+
+## Cleanup
+
+* Delete project
+* Delete cookbooks, node (pointer)
+* Delete environment
