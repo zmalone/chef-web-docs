@@ -1,6 +1,6 @@
 ---
-title: 'Get set up with AWS OpsWorks for Chef Automate'
-order: 2
+title: 'Set up your workstation and user profile'
+order: 1
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 30 minutes
 snippet_path: deploy-infrastructure/ubuntu/opsworks/set-up-your-chef-server
@@ -11,98 +11,130 @@ headings: [
   ]
 ---
 
+In the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/) tutorial, you set up an AWS OpsWorks for Chef Automate instance and set up your workstation to communicate with it. In this part, you'll extend this setup to be able to push configuration changes through Chef Automate's integrated pipeline.
 
+At this point, you have:
 
-
-[START_BOX]
-
-## Intro
-
-* Why Chef Automate?
-* Benefits
-* Topology
-  * Chef Automate/Chef server, runners, AURD, workstation
-* Concepts
-  * pipelines
-  * phases
-  * stages
-
-In this part, we'll refer to the following guides:
-
-* https://docs.chef.io/install_chef_automate.html
-* https://docs.chef.io/aws_opsworks_chef_automate.html
-
-You may want to review before you being.
-
-[END_BOX]
-
-[START_BOX]
-
-## Prerequisites
-
-* Do the _Manage a node_ tutorial
-* You learned XX skills
 * Sets you up with OpsWOrks and the starter kit
-  * ~/learn-chef dir with the starter kit in it (ref: manage a node)
-* Note that we assume that you'll use the `admin` user and remind the user to have his/her password ready.
+* ~/learn-chef dir with the starter kit in it (ref: manage a node)
+
+Have this information handy:
+
 * Chef Automate FQDN (example + screenshot + docs show this)
 * Chef Automate password (you got this when you ...)
 * Maybe have the user log in to web UI now.
-
-[END_BOX]
+* Your EC2 management console.
 
 [START_BOX]
 
-## Open ports on Chef Automate server
+## 1. Enable network access to Chef Automate's Git server
 
+Chef Automate uses revision control to manage your project's source code. Chef Automate integrates with revision control systems such as [GitHub](https://docs.chef.io/integrate_delivery_github.html) and [Bitbucket](https://docs.chef.io/integrate_delivery_bitbucket.html). Chef Automate also provides its own Git server, which you'll use in this tutorial.
+
+In order to access Chef Automate's Git server, you need to open port 8989 through your AWS OpsWorks for Chef Automate instance's security group.
+
+An easy way to do that is from the EC2 management console. From the **Instances** page, locate your AWS OpsWorks instance and then locate your instance's security group from the **Description** tab. Here's an example.
+
+<img src="/assets/images/automate/ec2_find_security_group.png" style="width: 50%;" />
+
+Click on your security group. Then [add a security group rule](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#adding-security-group-rule) that permits inbound access on port 8989. For learning purposes, you can permit traffic from all sources (0.0.0.0).
+
+Your security group rules will look like this.
+
+<img src="/assets/images/automate/security_group_git_server.png" style="width: 60%;" />
+
+
+If you use
 * Open port 8989 to inbound traffic (docs, screenshot?, etc) (when to do this?)
 * Also open ports 10000-10003 for push jobs
 * Oh, and 8443
 
+<img src="/assets/images/automate/security_group_push_jobs.png" style="width: 60%;" />
+
 [END_BOX]
 
 [START_BOX]
 
-## 2. Set up your workstation and your user profile
+## 2. Generate an SSH key
 
-Now that your builder is set up, the next step is to set up your workstation to be able to create a pipeline and push changes through it. These steps extend the [setup that you started](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/) in the _Manage a node_ tutorial.
+You need an SSH key to authenticate requests to Chef Automate from the command line. The private part of your key, <% fp '~/.ssh/id_rsa' %>, stays with you. You associate the public part of your key, <% fp '~/.ssh/id_rsa.pub' %>, with your Chef Automate user profile.
 
-### Set up your user profile in the web interface
+If you don't have an SSH keypair that you want to use, [generate one now](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2). Here's an example.
 
-In the in the _Manage a node_ tutorial, you logged into the Chef Automate web interface and worked with a node that you managed. Here, you'll update your user profile so that you can XXX.
+```bash
+$ ssh-keygen -t rsa
+```
 
-You need to associate your public SSH key with your Chef Automate user. This key enables you to authenticate requests to Chef Automate from the command line.
+You'll see the private and public key files in your <% fp '~/.ssh' %> directory.
 
-==Explain what the `delivery` command does.==
+```bash
+$ ls ~/.ssh/id_rsa*
+/Users/thomaspetchel/.ssh/id_rsa      /Users/thomaspetchel/.ssh/id_rsa.pub
+```
 
-By default, the `delivery` command-line utility looks for a file named <% fp '~/.ssh/id_rsa' %> when it performs authentication requests. The cooresponding public key,  <% fp '~/.ssh/id_rsa.pub' %>, is associated with your user profile.
+Print out the contents of the public part of your keypair, <% fp '~/.ssh/id_rsa.pub' %>, to the console. You'll copy it to your Chef Automate user profile in the next step.
 
-If you don't have an RSA key pair (<% fp '~/.ssh/id_rsa' %> and <% fp '~/.ssh/id_rsa.pub' %>), [generate one now](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2).
+```bash
+$ cat ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDHXRMZw0wpGjMO4kP3RC0W2OEXWDkMLNHohYTLNABsdfsXvEZKzxpu9ymLt3lS/rishkxGNlQiYZatVW1XbYeKQf5m0ulfGO/EZgTldexkqu0jh1px3/2awhF01O+6YFvmVRDVlKl3qkg9GzDQkGjrUmIKlM401hUkQzMZ6Rx8VXMkHB0X0Sr7faWIFvXHYV1LEoLh4HlMCg5Yo14iKt5eutUzqZvMbIVWu3MCMdFRjuniHH+IXdzINcj3tEGQB1VTE6FMmoxe+vMJewiKNnE0GtouE1LhKjwh9yeyi6SA/jgUYn8zmOI2PC1Kav04vKdfBcqlb7KzSq5w4yKaqnqQ5c72jJJxzxQvoOUQQMFU9pDmwzhFjBccKF+u7RIg5F4+msrwOkwjbuDYtXNgjlPUhlm+wSlQ7yq6x2BNRO75JJCuxxIouU6Z2S2eR2mESg8zHdPwEIJnluOLwgPlGgPO8xHu8cYToiAx6xvgJJ0SVh/mc2jPTtMxxqwZa/KWW/kZZhV7TSRB0lWfBbTtERgWHmAXo5ZSjpOJfQekiVDCuu14Cxl9ttZ6EGfptZTqSzHgg1AqA957UFNTuPt6y5dzglNurkISs3Mq4+pMBBk5jxaROt1zfqpLZHg/n4JQbjKUvdbroXyDZxtEtwOQNlQ5KvtyEqH5yXRohitIRgJcXQ== tpetchel@chef.io
+```
 
-Next, from the Chef Automate web interface, navigate to blah, fill in all the fields, including your password.
+[END_BOX]
 
-![](automate/wf-add-ssh-key.png)
+[START_BOX]
 
-Click **Save & Close**.
+## 2. Update your user profile
 
-### Create workflow org
+From the Chef Automate web interface, select **Admin** from the menu at the top of the page. Then select the **admin** user.
+
+Fill in the fields, including your Chef Automate password. In the text box labeled **SSH Key**, paste the contents of the SSH public key you generated in the previous step. Here's an example.
+
+<img src="/assets/images/automate/update_user_profile_1.png" style="width: 60%;" />
+
+Under the section **Roles Within the Enterprise**, ensure the **admin** option is checked. Then click **Save & Close**.
+
+<img src="/assets/images/automate/update_user_profile_2.png" style="width: 60%;" />
+
+[COMMENT] Later, you can configure your installation to work with [LDAP](https://docs.chef.io/integrate_delivery_ldap.html) or [SAML](https://docs.chef.io/integrate_chef_automate_saml.html) authentication.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create a workflow organization
+
+The next step is to create a workflow organization. A workflow organization enables you to group related projects and provide scope for authorization rules. You'll use your workflow organization in the next step when you set up the command-line tools on your workstation.
 
 * Create org (Workflow, Workflow Orgs, "myorg", Save &amp; Close) (screenshot)
 
-### Connect the Chef Automate CLI to the Chef Automate server
+[END_BOX]
 
-Next, you'll run the `delivery setup` command to configure the CLI to contact the Chef Automate server. The command creates a configuration file named <% fp '.delivery\cli.toml' %>.
+[START_BOX]
+
+## 4. Connect the Chef Automate CLI to the Chef Automate server
+
+Next, you'll run [delivery setup](https://docs.chef.io/ctl_delivery.html#delivery-setup) to configure the CLI to contact the Chef Automate server. The command creates a configuration file named <% fp '.delivery\cli.toml' %>.
 
 The placement of the `.delivery` directory in your file hierarchy is significant. Like Git, the delivery CLI searches the current directory and parent directories for its server settings. Because server settings are unique to an organization, we recommend that you create a directory for each organization you belong to and run the `delivery setup` command from that directory.
 
 From your command prompt, configure the CLI to contact the Chef Automate server at <code class="placeholder">delivery.chordata.biz</code>, replacing <code class="placeholder">USER</code> with your username.
 
 ```bash
-$ AUTOMATE_PASSWORD=taJjpJH1IFa7jqbF delivery token
+$ delivery setup --server=test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io --ent=default --org=myorg --user=admin
 ```
 
+Next, run [delivery token](https://docs.chef.io/ctl_delivery.html#delivery-token) to generate an API token. The API token enables you to authenticate requests without the need to enter your password.
+
+Replace <% ph 'YOUR_PASSWORD' %> with the password you use to log in to the Chef Automate web interface.
+
 ```bash
-$ delivery setup --server=test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io --ent=default --org=myorg --user=admin
+$ AUTOMATE_PASSWORD=YOUR_PASSWORD delivery token
+```
+
+Here's an example.
+
+```bash
+$ AUTOMATE_PASSWORD=taJjpJH1IFa7jqbF delivery token
 ```
 
 ### Set your Git identity

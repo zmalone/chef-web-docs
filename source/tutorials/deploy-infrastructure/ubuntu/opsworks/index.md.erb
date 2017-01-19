@@ -31,11 +31,11 @@ Chef uses Chef Automate to deploy its own software. With it, we have:
 * reduced the number of defects per release by 70%.
 * went from 1 release every two days to 12 releases per day.
 
-We are shipping code faster, with less effort, and with higher quality. In this tutorial and the ones that follow, you'll take Chef Automate for a spin and see what sorts of benefits you can deliver for your organization.
+We are shipping code faster, with less effort, and with higher quality.
 
 [COMMENT] Learn more about how to use the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the white paper.
 
-In this tutorial, you'll use Chef Automate's _workflow_ capabilities to deliver changes to the web application cookbook to the Chef server and to verify the cookbook's behavior in a production-like environment. Chef Automate enables multiple teams to work together on systems made up of multiple components and services, and promotes DevOps principles.
+In this tutorial, you'll use Chef Automate's _workflow_ capabilities to deliver changes to a basic web application cookbook to the Chef server and to verify the cookbook's behavior in a production-like environment. Chef Automate enables multiple teams to work together on systems made up of multiple components and services, and promotes DevOps principles.
 
 Two important parts of Chef Automate are _pipelines_ and _phases_.
 
@@ -86,20 +86,35 @@ After completing this tutorial, you should be able to:
 
 [START_BOX]
 
-## Before you begin
+## The systems you'll need for this tutorial
 
-To successfully complete this tutorial, you'll need these systems:
+The systems that make up Chef Automate reflect the types of software you want to deliver. For example, if you use Chef to manage your infrastructure, your system may include a private [Chef Supermarket](https://docs.chef.io/supermarket.html) server that exists behind your firewall.
 
-* AWS OpsWorks for Chef Automate.
-* A system running Linux, Mac OS, or Windows to act as your workstation.
-* One or more build nodes. Build nodes enable you to push changes through Chef Automate's pipeline.
-* Systems running Ubuntu 14.04 that will run build artifacts that are output from pipeline.
+The setup you'll need for this tutorial includes the minimum number of systems that are typical for many users. Here's a diagram:
 
-If you're new to AWS OpsWorks for Chef Automate, we recommend that you go through the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/) tutorial. This tutorial helps you get set up with AWS OpsWorks and configure your workstation to use it.
+<img src="/assets/images/automate/automate-scenario-architecture.svg" style="width: 100%; box-shadow: none;" alt="An example Chef Automate installation" />
 
-At a minimum, you'll need to [set up an AWS OpsWorks](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/) installation. However, performing the entire tutorial will orient you to several features, including Chef Automate's _visibility_ feature, which enables you to visualize the status of your nodes.
+The diagram shows these components:
 
-You don't need to bring up build nodes or systems that will run build artifacts yet. The pages that follow explain everything you'll need to get set up. You'll begin by XXX.
+**AWS OpsWorks for Chef Automate** &ndash; AWS OpsWorks is a managed service that runs on Amazon Web Services that includes a Chef server and Chef Automate.
+
+**Build nodes** &ndash; To use Chef Automate's workflow feature, you'll need one or more build nodes, also called _runners_. As a change moves through the Chef Automate pipeline, build nodes execute jobs scheduled by Chef Automate. Runners typically exist as their own servers. If you set up multiple runners, phases can be run in parallel.
+
+**Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Chef Automate deploys build artifacts, or the pipeline's final output, to these environments. The output of your pipeline informs how you set up your environments.
+
+For example, you might deploy a SQL Server database to a Windows Server environment. Or you might deploy web content and other media to an Amazon S3 bucket. In the this tutorial, you'll publish a cookbook that configures a basic web application on Ubuntu. Therefore, the Ubuntu runtime environment exists for each of these stages because the artifacts produced in the Build stage need to be deployed to each of them.
+
+Each environment is named for the stage in which it is used. For example, the union environment is used in the Union stage of the pipeline. These environments typically resemble your production environment, and can often be part of your production environment. Delivered is the final environment. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
+
+**Your workstation** &ndash; Workstations are typically either a laptop or desktop computer. A workstation can run Windows, Mac OS X, or Linux. From your workstation, you access Chef Automate using either the command line or the web interface. Other common tasks include creating projects, writing build cookbooks, submitting new features to the pipeline, and reviewing and approving others' changes.
+
+### Before you begin
+
+You'll bring up build nodes and infrastructure to run your cookbook later in this tutorial. Before you begin, you'll need an AWS OpsWorks for Chef Automate installation and your workstation set up to use it.
+
+The easiest way to get set up is to go through the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/) tutorial, then come back here. In the _Manage a node_ tutorial, you'll bootstrap a node and use Chef Automate's _visibility_ feature to visualize the status of your nodes.
+
+<%= link_to("Start the Manage a node tutorial <i class='fa fa-angle-double-right'></i>", "/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/", class: 'button radius cta cta') %>
 
 [END_BOX]
 
