@@ -68,10 +68,11 @@ The _Manage a node_ tutorial shows you Chef Automate's visibility feature, which
 
 To prepare you for the parts that follow, gather the following details about your AWS OpsWorks installation.
 
-* Your Chef Automate server's FQDN. You can find your server's FQDN in the AWS Management console. Here's an example for a server named **test**.
+* **Your Chef Automate server's FQDN.** You can find your server's FQDN in the AWS Management console. Here's an example for a server named **test**.
   ![](automate/opsworks_console_server_info.png)
-* Your Chef Automate username and password, for example **admin** and **taJjpJH1IFa7jbbF**. You can download a file named <% fp 'credentials.csv' %>, which contains your username and password, when you first bring up your installation. AWS OpsWorks provides the built-in **admin** user, which you'll see in this tutorial. You can [set up an additional user account](https://docs.chef.io/delivery_users_and_roles.html#add-users) if you prefer.
-* The location of the starter kit on your workstation. Open a terminal window and `cd` to this location. In the _Manage a node_ tutorial, we suggest you rename the starter kit directory to <% fp 'learn-chef' %>. If you decide not to rename this directory, just remember to replace yours in the path names shown in this tutorial.
+* **Your Chef Automate username and password**. When you first bring up your installation, you can access your sign-in credentials through the OpsWorks console or by downloading a file named <% fp 'credentials.csv' %>. Keep in mind that AWS does not store your sign-in credentials, so be sure to store them in a safe place. AWS OpsWorks provides the built-in **admin** user, which you'll see in this tutorial. You can [set up an additional user account](https://docs.chef.io/delivery_users_and_roles.html#add-users) if you prefer.
+  ![](automate/opsworks_credentials.png)
+* **The location of the starter kit on your workstation.** Open a terminal window and `cd` to this location. In the _Manage a node_ tutorial, we suggest you rename the starter kit directory to <% fp 'learn-chef' %>. If you decide not to rename this directory, just remember to replace yours in the path names shown in this tutorial.
 
 You may also want to [log in to the Chef Automate dashboard](/tutorials/manage-a-node/rhel/opsworks/set-up-opsworks#step4) now and have your browser window handy for the parts that follow.
 
@@ -84,14 +85,14 @@ You may also want to [log in to the Chef Automate dashboard](/tutorials/manage-a
 For this tutorial, you'll also need to modify your Chef Automate server's security group to enable [inbound network access](https://docs.chef.io/install_chef_automate.html#node-hostnames-and-network-access) over TCP on these ports:
 
 <dl>
-  <dt><b>8443 (push jobs)</b></dt>
-  <dd>Runners require a trusted connection to the Chef Automate server. You'll later configure your runners to retrieve the SSL certificate from this port.</dd>
+  <dt><b>8443 (Chef server)</b></dt>
+  <dd>Recall that runners runners execute jobs scheduled by Chef Automate. As a cookbook moves through the pipeline, runners use <i>push jobs</i> to initiate <code>chef-client</code> to run on infrastructure during the Acceptance, Union, Rehearsal, and Delivered stages. Runners require a trusted connection to the Chef server to initiate push jobs. You need to open port 8443 on your Chef server so that you can later retrieve the SSL certificate from this port to establish trust. You'll learn more about push jobs later in this tutorial.</dd>
 
   <dt>8989 (Chef Automate Git)</dt>
   <dd>Chef Automate uses revision control to manage your project's source code. Chef Automate integrates with revision control systems such as <a href="https://docs.chef.io/integrate_delivery_github.html">GitHub</a> and <a href="https://docs.chef.io/integrate_delivery_bitbucket.html">Bitbucket</a>. Chef Automate also provides its own Git server, which you'll use in this tutorial. Chef Automate's Git server requires inbound network access on port 8989.</dd>
 
-  <dt>10000&mdash;10003 (push jobs)</dt>
-  <dd>Later in this tutorial, you'll learn how Chef Automate uses <i>push jobs</i> to run <code>chef-client</code> on your infrastructure nodes to apply configuration changes. Ports 10000&mdash;10003 are required to run push jobs.</dd>
+  <dt>10000-10003 (push jobs)</dt>
+  <dd>Later in this tutorial, you'll learn how Chef Automate uses <i>push jobs</i> to run <code>chef-client</code> on your infrastructure nodes to apply configuration changes. Ports 10000-10003 are required to run push jobs.</dd>
 </dl>
 
 -- --
@@ -100,7 +101,7 @@ One way to enable access on these ports is from the EC2 management console. From
 
 <img src="/assets/images/automate/ec2_find_security_group.png" style="width: 50%;" />
 
-Click on your security group. Then [add security group rules](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#adding-security-group-rule) that permits inbound access on ports 8443, 8989, and 10000&mdash;10003. For learning purposes, you can permit traffic from all sources (0.0.0.0) &ndash; authentication is still required to access services. In practice, you might restrict inbound traffic to certain sources, such as those on the private network or [VPC](https://aws.amazon.com/vpc/).
+Click on your security group. Then [add security group rules](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#adding-security-group-rule) that permits inbound access on ports 8443, 8989, and 10000-10003. For learning purposes, you can permit traffic from all sources (0.0.0.0) &ndash; authentication is still required to access services. In practice, you might restrict inbound traffic to certain sources, such as those on the private network or [VPC](https://aws.amazon.com/vpc/).
 
 Your security group rules will look like this.
 

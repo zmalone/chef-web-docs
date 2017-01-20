@@ -1,0 +1,583 @@
+---
+title: 'Set up infrastructure to run your web server'
+short_title: 'Set up infrastructure'
+order: 5
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 60 minutes
+snippet_path: deploy-infrastructure/ubuntu/opsworks/set-up-your-chef-server
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Bring up a system', href: '#step1' },
+  { label: '2. Set the hostname', href: '#step2' },
+  { label: '3. Configure the runner', href: '#step3' },
+  ]
+---
+FIND A HOME--
+
+Using the `delivery-truck` cookbook requires coordination between the Chef server and the infrastructure environments (nodes). In this part, you'll prepare your nodes so that they are ready to run build artifacts (here, the `learn_chef_apache2` cookbook) during the Acceptance, Union, Rehearsal, and Delivered stages.
+
+A Chef environment provides a way for you to tag a node for a specific purpose. This tag provides additional search criteria . A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as
+
+--FIND A HOME
+
+So far, you've created a project, configured your build cookbook to publish the `learn_chef_apache2` cookbook to the Chef server, and watched the initial change move through the pipeline. The next step is to create infrastructure environments that can run your cookbook.
+
+Recall that infrastructure can receive build artifacts produced from Chef Automate's build pipeline. These environments are labeled **Acceptance**, **Union**, **Rehearsal**, and **Delivered** in this diagram.
+
+<img src="/assets/images/automate/automate-scenario-architecture.svg" style="width: 100%; box-shadow: none;" alt="An example Chef Automate installation" />
+
+In this part, you'll bring up these infrastructure environments and bootstrap each one to your Chef server. During the bootstrap process, each node will run the `learn_chef_apache2` cookbook to apply the web configuration. Because the `learn_chef_apache2` cookbook targets Ubuntu, you'll bring up Ubuntu 14.04 systems.
+
+In the _Manage a node_ tutorial, you [brought up an Ubuntu 14.04 system to manage](/tutorials/manage-a-node/ubuntu/opsworks/get-a-node-to-bootstrap/). You'll follow a similar process here with a few modifications.
+
+Setting up Chef Automate to deploy cookbooks to infrastructure nodes involves these tasks.
+
+* Bringing up infrastructure environments to configure during the Acceptance, Union, Rehearsal, and Delivered stages.
+* Setting up push jobs on your Chef Automate server.
+* Setting up push jobs on your infrastructure nodes.
+* Creating a Chef environment for each infrastructure node.
+* Bootstrapping your nodes to the Chef server.
+
+You'll also learn how to initiate _push jobs_ directly to trigger `chef-client` to run on your infrastructure nodes. Initiating push jobs manually one time helps ensure that your nodes are set up correctly and will help you understand how cookbook changes are deployed to your infrastructure.
+
+Let's start by bringing up infrastructure to run the `learn_chef_apache2` cookbook.
+
+[START_BOX]
+
+## 1. Bring up infrastructure
+
+Like your runner, each infrastructure node can be any system that's reachable by Chef Automate. Each node requires only a reachable IP address and does not need to have an associated domain name.
+
+For learning purposes, we recommend that you use EC2 instances. The number of servers you bring up is up to you. At a minimum, you can bring up one node that represents your Acceptance environment. A complete setup involves creating 4 servers &ndash; one each for the Acceptance, Union, Rehearsal, and Delivered environments.
+
+[COMMENT] Although we recommend that you bring up fresh intances for this tutorial, you can use the node that you brought up for the _Manage a node_ tutorial.
+
+Bring up the number of Ubuntu 14.04 systems you want to use now. If you're using EC2, each can be a t2.micro instance. As you did in the _Manage a node_ tutorial, ensure each system's security group provides inbound network access on ports 22, 80, and 443. We also recommend that you set the `Name` tag on each EC2 instance with a name that corresponds to each node's role. For example,
+
+| Role       | EC2 tag           |
+|------------|-------------------|
+| Acceptance | `acceptance-node` |
+| Union      | `union-node`      |
+| Rehearsal  | `rehearsal-node`  |
+| Delivered  | `delivered-node`  |
+
+[COMMENT] Chef supports multiple versions of Ubuntu. But we recommend that you use Ubuntu 14.04 to ensure the results you see match what's shown in this tutorial.
+
+[PRODNOTE] Link to tags in EC2 docs.
+
+[PRODNOTE] - (Remind the user) Point to AWS docs on how to bring up a Linux instance, both from the console and the CLI. Also point to docs on security groups (like we did when configuring the OpsWorks server.)
+
+[COMMENT] For this tutorial, you bring up infrastructure manually. Later, you might be interested in using the [knife-ec2](https://github.com/chef/knife-ec2) plugin to provision servers on EC2.
+
+While your servers come up, you can move on to the next step.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Understand the role of push jobs
+
+In the _Manage a node_ tutorial, you used `knife ssh` to [run chef-client on your node](/tutorials/manage-a-node/ubuntu/opsworks/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
+
+```bash
+# ~/learn-chef
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user ubuntu --identity-file ~/.ssh/private_key --attribute ipaddress
+```
+
+The command uses a search query to specify which node to run `chef-client` on. Here, the search query specifies the node's name, **node1-ubuntu**.
+
+There are other ways to run `chef-client` on a node. You can log in directly over SSH and run `sudo chef-client`. Or you can run `chef-client` on a regular interval as a daemon, cron job, service, or scheduled task, [as you did previously](/tutorials/manage-a-node/ubuntu/opsworks/run-chef-client-periodically).
+
+You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. A push job is a way to submit a task to a node, such as running `chef-client`. Chef push jobs client runs on a node and listens for job requests.
+
+Chef push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
+
+In the next step, you'll install push jobs server on your Chef server (remember, AWS OpsWorks for Chef Automate includes both Chef Automate and Chef server on the same system.)
+
+In the step that follows, you'll upload a copy of the `delivery-base` cookbook to your Chef server. When you bootstrap each of your infrastructure nodes, you'll include `delivery-base` in the node's run-list. The `delivery-base` cookbook performs tasks that prepare a node for use with Chef Automate, including installation of push jobs client.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Set up push jobs on your Chef Automate server
+
+Earlier, you connected to your Chef Automate server over SSH to configure your runner. From the SSH connection to your Chef Automate server, run these commands.
+
+```bash
+$ sudo -s
+$ wget https://packages.chef.io/files/stable/opscode-push-jobs-server/2.1.1/el/7/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
+$ chef-server-ctl install opscode-push-jobs-server --path /home/ec2-user/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
+$ opscode-push-jobs-server-ctl reconfigure
+$ export PATH=/opt/opscode/embedded/bin:$PATH
+$ chmod 0644 /etc/delivery/delivery.pem
+$ gem install knife-acl
+$ knife group add user delivery admins -c /etc/opscode/pivotal.rb --server-url https://localhost/organizations/default
+$ knife ssl fetch https://test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:8443
+$ automate-ctl restart
+```
+
+Earlier, you [enabled inbound network access](/tutorials/deploy-infrastructure/ubuntu/opsworks/set-up-opsworks#step3) to port 8443 through your AWS OpsWorks server's security group. You did so because runners require a trusted connection to the Chef server to initiate push jobs.
+
+To establish trust, you run the `knife ssl fetch` command from your runner. From your workstation, switch to the SSH connection to your runner (or reconnect if you've closed the connection) and run the following command, replacing <% ph 'SERVER' %> with your AWS OpsWorks server's FQDN.
+
+```bash
+$ sudo knife ssl fetch -s https://SERVER:8443 -c /var/opt/delivery/workspace/.chef/knife.rb
+```
+
+Here's an example.
+
+```bash
+$ sudo knife ssl fetch -s https://test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:8443 -c /var/opt/delivery/workspace/.chef/knife.rb
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Get the delivery-base cookbook
+
+The `delivery-truck` cookbook relies on push jobs to run `chef-client` on nodes as the pipeline runs. It therefore requires each node to include the [push-jobs](https://github.com/chef-cookbooks/push-jobs) cookbook in its run-list.
+
+The recommended way to include the `push-jobs` cookbook is to include the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook. The `delivery-base` cookbook includes the `push-jobs` cookbook and sets additional node attributes that enable nodes to work with Chef Automate.
+
+You'll bootstrap your node shortly. To prepare for the bootstrap process, you first need to upload a copy of the `delivery-base` cookbook to your Chef server.
+
+To begin, move to the <% fp 'C:\Users\Administrator\cookbooks' %> directory.
+
+```bash
+# ~/learn-chef
+$ cd ~/learn-chef/cookbooks
+```
+
+One way to set up the `push-jobs` cookbook to run on your `acceptance`, `union`, `rehearsal`, and `delivered` nodes is to clone the `delivery-base` cookbook repo from GitHub, upload it and its dependencies to the Chef server, and then add it to each of your node's run-list.
+
+
+Next, clone the `delivery-base` repo from GitHub.
+
+```bash
+# ~/learn-chef/cookbooks
+$ git clone https://github.com/chef-cookbooks/delivery-base
+```
+
+Next, move to the <% fp 'delivery-base' %> directory.
+
+```bash
+# ~/learn-chef/cookbooks
+$ cd ~/learn-chef/cookbooks/delivery-base
+```
+
+Next, run `berks install` to download the cookbooks that `delivery-base` depends on.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ berks install
+Resolving cookbook dependencies...
+Fetching 'delivery-base' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Using chef-ingredient (0.19.0)
+Using chef_handler (1.4.0)
+Using compat_resource (12.10.6)
+Using delivery-base (0.2.2) from source at .
+Using packagecloud (0.2.3)
+Using push-jobs (3.2.0)
+Using runit (1.7.8)
+Using windows (1.44.0)
+```
+
+Finally, run `berks upload` to upload `delivery-base` and its dependencies to Chef server.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ SSL_CERT_FILE='../../.chef/ca_certs/opsworks-cm-ca-2016-root.pem' berks upload
+Uploaded chef-ingredient (0.19.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded chef_handler (1.4.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Skipping compat_resource (12.10.6) (frozen)
+Uploaded delivery-base (0.2.2) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded packagecloud (0.2.3) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded push-jobs (3.2.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded runit (1.7.8) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+Uploaded windows (1.44.0) to: 'https://chef-server.chordata.biz:443/organizations/diprotodontia'
+```
+
+[PRODNOTE] TODO: `knife cookbook list`
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Understand the role of Chef environments
+
+Each of the Acceptance, Union, Rehearsal, and Delivered stages deploys build artifacts, or the pipeline's output, to some environment. For our project, this means running the `learn_chef_apache2` cookbook on the infrastructure environments for each of the Acceptance, Union, Rehearsal, and Delivered stages.
+
+Recall the `knife ssh` command we discussed earlier.
+
+```bash
+# ~/learn-chef
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user ubuntu --identity-file ~/.ssh/private_key --attribute ipaddress
+```
+
+Recall that _push jobs_ enable you to submit tasks, such as running `chef-client`, to your nodes. Push jobs use the same search mechanism as shown in the `knife ssh` example.
+
+Chef Automate uses [environments](https://docs.chef.io/environments.html) to provide additional search criteria when push jobs run. As an example, when phases in the Acceptance stage run, you want only the infrastructure node that's associated with the Acceptance stage (and not the Union, Rehearsal, or Delivered stages) to run your cookbook.
+
+A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as a way to tag a node for a specific purpose.
+
+Every pipeline phase is associated with the name of a Chef environment. For the Acceptance stage, the name comes in this form:
+
+<code class='placeholder'>\<STAGE></code>-<code class='placeholder'>\<ENTERPRISE></code>-<code class='placeholder'>\<ORGANIZATION></code>-<code class='placeholder'>\<PROJECT></code>-<code class='placeholder'>\<PIPELINE></code>
+
+For this project, the environment name during the Acceptance stage is:
+
+**acceptance-default-my-org-learn\_chef\_apache2-master**
+
+where:
+
+* **acceptance** is the stage.
+* **default** is the enterprise.
+* **my-org** is the organization.
+* **learn\_chef\_apache2** is the project.
+* **master** is the pipeline.
+
+Similar logic applies to the Union, Rehearsal, and Delivered stages. However, because the Union, Rehearsal, and Delivered stages can be shared among multiple projects, their environment names are fixed to be `union`, `rehearsal`, and `delivered`, respectively.
+
+Because the push job's search mechanism finds all nodes that are associated with the given Chef environment, you can associate multiple nodes with a given stage, for example, to run a cookbook that configures a multi-tiered application.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Create Chef environments
+
+START HERE WHEN YOU RETURN. RECONFIGURE THE RUNNER, THEN MOVE ON :)
+
+Next, create the Chef environments. Run the following [knife environment create](https://docs.chef.io/knife_environment.html#create) command to create the environment for the Acceptance stage.
+
+```bash
+# ~/learn-chef
+$ knife environment create acceptance-default-my-org-learn_chef_apache2-master -d "The acceptance environment"
+Created acceptance-default-my-org-learn_chef_apache2-master
+```
+
+Now repeat the process for the remaining stages.
+
+```bash
+# ~/learn-chef
+$ knife environment create union -d "The union environment"
+$ knife environment create rehearsal -d "The rehearsal environment"
+$ knife environment create delivered -d "The delivered environment"
+```
+
+Run `knife environment list` to verify the environments were properly created.
+
+```bash
+# ~/learn-chef
+$ knife environment list
+_default
+acceptance-mammalia-diprotodontia-learn_chef_apache2-master
+delivered
+rehearsal
+union
+```
+
+```bash
+$ knife environment create acceptance-default-myorg-learn_chef_apache2-master -d "The acceptance environment"
+```
+
+```bash
+$ knife environment create union -d "The union environment"
+$ knife environment create rehearsal -d "The rehearsal environment"
+$ knife environment create delivered -d "The delivered environment"
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Bootstrap your nodes
+
+[B] Verify the setup through the web interface
+
+```bash
+$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment acceptance-default-myorg-learn_chef_apache2-master --yes
+```
+
+```bash
+$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name union-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment union --yes
+$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name union-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment rehearsal --yes
+$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name delivered-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment delivered --yes
+```
+
+Each commmand specifies a node name that corresponds to that node's function.
+
+* `curl http://54.242.87.99` and/or web browser
+* `knife node show acceptance-node`
+* see it from Chef Automate web UI (like prev tutorial, show screenshot)
+
+How to repeat the process for URD.
+
+Verify node can do push jobs (from the runner)
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_apache2*) AND chef_environment:acceptance-default-myorg-learn_chef_apache2-master AND recipes:*push-jobs*'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Use push jobs to run chef-client a second time
+
+The bootstrap process performed an initial chef-client run on your nodes. In previous tutorials, such as Manage a node, you ran knife ssh from your workstation to trigger chef-client remotely on your node.
+
+Here's an example that uses knife ssh to run chef-client on the acceptance node. (You don't need to run this command.)
+
+```
+$ knife ssh acceptance.chordata.biz 'sudo chef-client' --manual-list
+```
+
+<This is similar to what you did in _Manage a node_.>
+
+There are other ways to run chef-client on a node. You can log in directly over SSH and run sudo chef-client. Or you can run chef-client on a regular interval as a daemon, cron job, service, or scheduled task.
+
+You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run chef-client. A push job is a way to submit a task to a node, such as running chef-client. Chef push jobs client runs on a node and listens for job requests.
+
+Chef push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
+
+To know which nodes are available to accept jobs, you run the knife node status command.
+
+```
+$ knife node status
+acceptance      available
+build-node-1    available
+build-node-2    available
+delivered       available
+rehearsal       available
+union   available
+```
+
+You see `acceptance`, `union`, `rehearsal`, and `delivered` are available to receive push jobs. `build-node-1` and `build-node-2` are build nodes that come with the preconfigured environment. You'll use these nodes to run build tasks in the next tutorial.
+
+The ability to see which nodes are available is provided by the [knife push](https://github.com/chef/knife-push) plugin, which comes preinstalled on the Windows workstation.
+
+To start a job on a node, you run the [knife job start](https://docs.chef.io/push_jobs.html#job-start) command. To specify the node to submit the job to, you either specify the node name or search criteria.
+
+To illustrate the use of search criteria, run the `knife node show acceptance` command to display information about the `acceptance` node.
+
+```ps
+# C:\Users\Administrator\cookbooks\learn_chef_apache2
+$ knife node show acceptance
+Node Name:   acceptance
+Environment: _default
+FQDN:        acceptance.chordata.biz
+IP:          52.41.231.8
+Run List:    recipe[learn_chef_apache2]
+Roles:
+Recipes:     learn_chef_apache2, learn_chef_apache2::default, learn_chef_apache2::package_cache,
+ learn_chef_apache2::firewall, firewall::default, chef-sugar::default, learn_chef_apache2::user, awesome
+_customers_delivery::web
+Platform:    ubuntu 14.04
+Tags:
+```
+
+The output shows the `learn_chef_apache2` cookbook's default recipe in the run-list. You can use this fact to run `chef-client` on each node that contains the `learn_chef_apache2` cookbook in its run-list.
+
+Run this command to use push jobs to trigger `chef-client` to run on every node that contains the `learn_chef_apache2` cookbook's default recipe in its run-list.
+
+```ps
+# C:\Users\Administrator\cookbooks\learn_chef_apache2
+$ knife job start 'chef-client' --search 'recipe:learn_chef_apache2'
+WARNING: Falling back to Push Jobs v1 mode.
+Started.  Job ID: 9a1f1e1d7e6ae8647396d92a542f2da4
+.Running (1/4 in progress) ...
+.Complete.
+command:     chef-client
+created_at:  Tue, 05 Jul 2016 20:41:28 GMT
+id:          9a1f1e1d7e6ae8647396d92a542f2da4
+nodes:
+  succeeded:
+    acceptance
+    delivered
+    rehearsal
+    union
+run_timeout: 3600
+status:      complete
+updated_at:  Tue, 05 Jul 2016 20:41:32 GMT
+```
+
+The push job ran `chef-client` on the `acceptance`, `union`, `rehearsal`, and `delivered` nodes. It did not run `chef-client` on the build nodes because those nodes do not contain the `learn_chef_apache2` cookbook in their run-lists.
+
+Refresh the dashboard and you'll see that each of your nodes reported a recent check-in.
+
+![](automate/vis-dashboard-4-nodes-recent-checkin.png)
+
+You don't need to use push jobs to use Chef Automate to monitor your infrastructure. However, push jobs and search play an important role when you use Chef Automate to deliver cookbooks. You'll see why in the next tutorial.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+WOW!
+
+<% end %>
+
+-- --
+
+## Scratch
+
+
+
+[START_BOX]
+
+## 2. Create the Chef environments
+
+The first step is to create the Chef environments. Run the following [knife environment create](https://docs.chef.io/knife_environment.html#create) command to create the environment for the Acceptance stage.
+
+```ps
+# C:\Users\Administrator
+$ knife environment create acceptance-mammalia-diprotodontia-learn_chef_apache2-master -d "The acceptance environment"
+Created acceptance-mammalia-diprotodontia-learn_chef_apache2-master
+```
+
+Now repeat the process for the remaining stages.
+
+```ps
+# C:\Users\Administrator
+$ knife environment create union -d "The union environment"
+$ knife environment create rehearsal -d "The rehearsal environment"
+$ knife environment create delivered -d "The delivered environment"
+```
+
+Run `knife environment list` to verify the environments were properly created.
+
+```ps
+# C:\Users\Administrator
+$ knife environment list
+_default
+acceptance-mammalia-diprotodontia-learn_chef_apache2-master
+delivered
+rehearsal
+union
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Associate each Chef environment with an infrastructure environment
+
+Next, run this command to connect the infrastructure environment, or node, for the Acceptance stage with its corresponding Chef environment.
+
+```ps
+# C:\Users\Administrator
+$ knife node environment_set acceptance acceptance-mammalia-diprotodontia-learn_chef_apache2-master
+acceptance:
+  chef_environment: acceptance-mammalia-diprotodontia-learn_chef_apache2-master
+```
+
+Now repeat the process for the remaining nodes.
+
+```ps
+# C:\Users\Administrator
+$ knife node environment_set union union
+$ knife node environment_set rehearsal rehearsal
+$ knife node environment_set delivered delivered
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Verify the setup through the Chef server web interface
+
+The output from the `knife node environment_set` and `knife node run_list add` commands confirm that your nodes are configured with the proper Chef environments and run-lists. Although not required, let's log in to the Chef server web interface and see what's there as an extra verification step.
+
+From Google Chrome, navigate to  [https://chef-server.chordata.biz/organizations/diprotodontia/nodes](https://chef-server.chordata.biz/organizations/diprotodontia/nodes). Or choose the **Chef Manage** bookmark from the **Demo** folder in Google Chrome.
+
+Log in as the `delivery` user. The password is `delivery!`.
+
+Click through each of the `acceptance`, `union`, `rehearsal`, and `delivered` nodes. You'll see that each is associated with the required environment and that each has `learn_chef_apache2` and `delivery-base` in its run-list.
+
+<img style="max-width:100%;" src="/assets/images/automate/chef_server_acceptance_node_details.png"/>
+
+Next, from the **Policy** tab, select **Environments** from the left. You'll see these environments.
+
+<img style="max-width:100%;" src="/assets/images/automate/chef_server_acceptance_environment.png"/>
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Run push jobs to trigger chef-client on your nodes
+
+With the Chef environments and push jobs set up, your nodes are almost ready to receive push jobs when the pipeline runs. You need to run `chef-client` with each node's updated run-list so that the search index includes all the required information.
+
+The directory you're in doesn't matter, but move back to your home directory since you're finished with the `delivery-base` cookbook.
+
+```ps
+# C:\Users\Administrator\cookbooks\delivery-base
+$ cd C:\Users\Administrator
+```
+
+Run the `knife job start` command you ran previously to run `chef-client` on your `acceptance`, `union`, `rehearsal`, and `delivered` nodes.
+
+```ps
+# C:\Users\Administrator
+$ knife job start 'chef-client' --search 'recipes:learn_chef_apache2'
+WARNING: Falling back to Push Jobs v1 mode.
+Started.  Job ID: 9a1f1e1d7e6a7c1a736274c0b02e8113
+.Running (1/4 in progress) ...
+.........Complete.
+command:     chef-client
+created_at:  Wed, 06 Jul 2016 16:34:10 GMT
+id:          9a1f1e1d7e6a7c1a736274c0b02e8113
+nodes:
+  succeeded:
+    acceptance
+    delivered
+    rehearsal
+    union
+run_timeout: 3600
+status:      complete
+updated_at:  Wed, 06 Jul 2016 16:34:21 GMT
+```
+
+Next, run this command to run `chef-client` only on your `acceptance` node. This command resembles the one that your build cookbook will use later. Doing so helps you see the process and verify that the build cookbook will be able to successfully run `chef-client` when the pipeline runs.
+
+```ps
+# C:\Users\Administrator
+$ knife job start 'chef-client' --search '(recipes:learn_chef_apache2*) AND chef_environment:acceptance-mammalia-diprotodontia-learn_chef_apache2-master AND recipes:*push-jobs*'
+WARNING: Falling back to Push Jobs v1 mode.
+Started.  Job ID: 9a1f1e1d7e6abf8c0a4042a358d3e026
+.Running (1/1 in progress) ...
+.....Complete.
+command:     chef-client
+created_at:  Wed, 06 Jul 2016 16:34:57 GMT
+id:          9a1f1e1d7e6abf8c0a4042a358d3e026
+nodes:
+  succeeded: acceptance
+run_timeout: 3600
+status:      complete
+updated_at:  Wed, 06 Jul 2016 16:35:03 GMT
+```
+
+As an optional exercise, you can run `chef-client` on your `union`, `rehearsal`, and `delivered` nodes. Here's an example for `union`.
+
+```ps
+# C:\Users\Administrator
+$ knife job start 'chef-client' --search '(recipes:learn_chef_apache2*) AND chef_environment:union AND recipes:*push-jobs*'
+WARNING: Falling back to Push Jobs v1 mode.
+Started.  Job ID: 9a1f1e1d7e6a02d989230b8816ec27b2
+.Running (1/1 in progress) ...
+....Complete.
+command:     chef-client
+created_at:  Wed, 06 Jul 2016 16:48:01 GMT
+id:          9a1f1e1d7e6a02d989230b8816ec27b2
+nodes:
+  succeeded: union
+run_timeout: 3600
+status:      complete
+updated_at:  Wed, 06 Jul 2016 16:48:07 GMT
+```
+
+[END_BOX]
