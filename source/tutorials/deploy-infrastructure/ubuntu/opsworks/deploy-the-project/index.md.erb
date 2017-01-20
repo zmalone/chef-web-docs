@@ -1,0 +1,171 @@
+---
+title: 'Deploy the project'
+order: 5
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 60 minutes
+snippet_path: deploy-infrastructure/ubuntu/opsworks/set-up-your-chef-server
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Bring up a system', href: '#step1' },
+  { label: '2. Set the hostname', href: '#step2' },
+  { label: '3. Configure the runner', href: '#step3' },
+  ]
+---
+llll
+
+[START_BOX]
+
+## Deploy the project
+
+So far, you've created project, pushed initial change to pipeline.
+
+Next steps is to create infrastructure environments that can run your artifacts.
+
+The process involves
+
+* (Describe push jobs)
+
+ref: https://docs.chef.io/aws_opsworks_chef_automate.html#adding-push-jobs-server-based-build-nodes-to-aws-opsworks-for-chef-automate
+
+## Bring up infrastructure
+
+* Get 1-4 Ubuntu 14.04 nodes
+  * EC2 recommended, like your runner
+  * Requirements: t2.micro, ports (link), etc.
+  * 22, 80, 443
+
+While your servers come up, you can move on to the next step.
+
+## Set up push jobs on your Chef Automate server
+
+From the SSH connection to your Chef Automate server, run these commands.
+
+```bash
+$ sudo -s
+$ wget https://packages.chef.io/files/stable/opscode-push-jobs-server/2.1.1/el/7/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
+$ chef-server-ctl install opscode-push-jobs-server --path /home/ec2-user/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
+$ opscode-push-jobs-server-ctl reconfigure
+$ export PATH=/opt/opscode/embedded/bin:$PATH
+$ chmod 0644 /etc/delivery/delivery.pem
+$ gem install knife-acl
+$ knife group add user delivery admins -c /etc/opscode/pivotal.rb --server-url https://localhost/organizations/default
+$ knife ssl fetch https://test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:8443
+$ automate-ctl restart
+```
+
+Runner is where build jobs are run. Runner needs to be able to communicate with Chef server to initiate push jobs. That requires the SSL certificate on 8443 (WHY???).
+
+From the SSH connection to your runner, run these commands.
+
+```bash
+$ sudo knife ssl fetch -s https://test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:8443 -c /var/opt/delivery/workspace/.chef/knife.rb
+```
+
+### Set up push jobs on each node
+
+```bash
+$ cd ~/learn-chef/cookbooks
+$ git clone https://github.com/chef-cookbooks/delivery-base
+$ cd delivery-base
+$ berks install
+$ SSL_CERT_FILE='../../.chef/ca_certs/opsworks-cm-ca-2016-root.pem' berks upload
+```
+
+### Create environemnts
+
+Explain why, borrow text.
+
+```bash
+$ knife environment create acceptance-default-myorg-learn_chef_apache2-master -d "The acceptance environment"
+```
+
+```bash
+$ knife environment create union -d "The union environment"
+$ knife environment create rehearsal -d "The rehearsal environment"
+$ knife environment create delivered -d "The delivered environment"
+```
+
+### Bootstrap your nodes
+
+```bash
+$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment acceptance-default-myorg-learn_chef_apache2-master --yes
+```
+
+```bash
+$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name union-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment union --yes
+$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name union-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment rehearsal --yes
+$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name delivered-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment delivered --yes
+```
+
+* `curl http://54.242.87.99`
+* `knife node show acceptance-node`
+* see it from Chef Automate web UI (like prev tutorial, show screenshot)
+
+How to repeat the process for URD.
+
+Verify node can do push jobs (from the runner)
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_apache2*) AND chef_environment:acceptance-default-myorg-learn_chef_apache2-master AND recipes:*push-jobs*'
+```
+
+## Set cookbook to publish to Chef server
+
+To start the process, you manually ran `knife` to upload the `learn\_chef_apache2` cookbook to your Chef server. To perform future updates automatically, as your cookbook moves through the pipeline, you need to XXX (borrow from other tutorial?)
+
+```bash
+$ git checkout -b upload_to_chef_server
+```
+
+Modify config.json like this.
+
+```ruby
+# config.json
+ "delivery-truck": {
+    "publish": {
+      "chef_server": true
+    }
+  }
+```
+
+* `git status`
+* `git commit -a -m "yup"`
+* `delivery review`
+* watch it go all the way through to Delivered
+* `curl http://54.242.87.99`
+* `curl` others...
+* integrate back
+  * `git checkout master`
+  * `git pull --prune`
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+WOW!
+
+<% end %>
+
+[START_BOX]
+
+## Add a feature
+  * with local testing
+
+[END_BOX]
+
+[START_BOX]
+
+## Extend the build cookbook (add smoke test)
+  * with local testing
+
+[END_BOX]
+
+[START_BOX]
+
+## Cleanup
+
+* Delete project
+* Delete cookbooks, node (pointer)
+* Delete environment
+
+[END_BOX]

@@ -1,63 +1,31 @@
 ---
 title: 'Set up your workstation and user profile'
-order: 1
+order: 2
 layout: tutorials/platforms/environments/overview/lesson/layout
-time_to_complete: 30 minutes
+time_to_complete: 20 minutes
 snippet_path: deploy-infrastructure/ubuntu/opsworks/set-up-your-chef-server
 snippet_workstation: ubuntu
 headings: [
-  { label: '1. A', href: '#step1' },
-  { label: '2. B', href: '#step2' },
+  { label: '1. Generate an SSH key', href: '#step1' },
+  { label: '2. Update your user profile', href: '#step2' },
+  { label: '3. Create a workflow org', href: '#step3' },
+  { label: '4. Configure the CLI tools', href: '#step4' },
+  { label: '5. Generate an API token', href: '#step5' },
+  { label: '6. Set your Git identity', href: '#step6' },
+  { label: '7. Authenticate with Git', href: '#step7' },
   ]
 ---
+In the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/) tutorial, you brought up an AWS OpsWorks for Chef Automate instance and set up your workstation to communicate with it. In this part, you'll extend this setup to be able to push configuration changes through Chef Automate's integrated pipeline.
 
-In the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/) tutorial, you set up an AWS OpsWorks for Chef Automate instance and set up your workstation to communicate with it. In this part, you'll extend this setup to be able to push configuration changes through Chef Automate's integrated pipeline.
+Because you're using Chef Automate's integrated Git server for this tutorial, you'll need to generate an SSH keypair and associate the public part of that keypair with your Chef Automate user account. Later, if you choose to integrate with [GitHub](https://docs.chef.io/integrate_delivery_github.html) or [Bitbucket](https://docs.chef.io/integrate_delivery_bitbucket.html), you would set up Chef Automate and your workstation to work with that revision control system.
 
-At this point, you have:
-
-* Sets you up with OpsWOrks and the starter kit
-* ~/learn-chef dir with the starter kit in it (ref: manage a node)
-
-Have this information handy:
-
-* Chef Automate FQDN (example + screenshot + docs show this)
-* Chef Automate password (you got this when you ...)
-* Maybe have the user log in to web UI now.
-* Your EC2 management console.
+[WINDOWS] If your workstation is running Windows, remember to run commands from a [Chef Development Kit PowerShell prompt](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks#step2.2). Doing so will ensure that utilties such as `ssh` are available.
 
 [START_BOX]
 
-## 1. Enable network access to Chef Automate's Git server
+## 1. Generate an SSH key
 
-Chef Automate uses revision control to manage your project's source code. Chef Automate integrates with revision control systems such as [GitHub](https://docs.chef.io/integrate_delivery_github.html) and [Bitbucket](https://docs.chef.io/integrate_delivery_bitbucket.html). Chef Automate also provides its own Git server, which you'll use in this tutorial.
-
-In order to access Chef Automate's Git server, you need to open port 8989 through your AWS OpsWorks for Chef Automate instance's security group.
-
-An easy way to do that is from the EC2 management console. From the **Instances** page, locate your AWS OpsWorks instance and then locate your instance's security group from the **Description** tab. Here's an example.
-
-<img src="/assets/images/automate/ec2_find_security_group.png" style="width: 50%;" />
-
-Click on your security group. Then [add a security group rule](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#adding-security-group-rule) that permits inbound access on port 8989. For learning purposes, you can permit traffic from all sources (0.0.0.0).
-
-Your security group rules will look like this.
-
-<img src="/assets/images/automate/security_group_git_server.png" style="width: 60%;" />
-
-
-If you use
-* Open port 8989 to inbound traffic (docs, screenshot?, etc) (when to do this?)
-* Also open ports 10000-10003 for push jobs
-* Oh, and 8443
-
-<img src="/assets/images/automate/security_group_push_jobs.png" style="width: 60%;" />
-
-[END_BOX]
-
-[START_BOX]
-
-## 2. Generate an SSH key
-
-You need an SSH key to authenticate requests to Chef Automate from the command line. The private part of your key, <% fp '~/.ssh/id_rsa' %>, stays with you. You associate the public part of your key, <% fp '~/.ssh/id_rsa.pub' %>, with your Chef Automate user profile.
+You need an SSH key to submit changes to Chef Automate from the command line. The private part of your key, <% fp '~/.ssh/id_rsa' %>, stays with you. You associate the public part of your key, <% fp '~/.ssh/id_rsa.pub' %>, with your Chef Automate user profile.
 
 If you don't have an SSH keypair that you want to use, [generate one now](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2). Here's an example.
 
@@ -72,7 +40,7 @@ $ ls ~/.ssh/id_rsa*
 /Users/thomaspetchel/.ssh/id_rsa      /Users/thomaspetchel/.ssh/id_rsa.pub
 ```
 
-Print out the contents of the public part of your keypair, <% fp '~/.ssh/id_rsa.pub' %>, to the console. You'll copy it to your Chef Automate user profile in the next step.
+Print out the contents of the public part of your keypair, <% fp '~/.ssh/id_rsa.pub' %>, to the console and copy it to the clipboard. You'll paste it in your Chef Automate user profile in the next step.
 
 ```bash
 $ cat ~/.ssh/id_rsa.pub
@@ -85,7 +53,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDHXRMZw0wpGjMO4kP3RC0W2OEXWDkMLNHohYTLNABs
 
 ## 2. Update your user profile
 
-From the Chef Automate web interface, select **Admin** from the menu at the top of the page. Then select the **admin** user.
+From the Chef Automate web interface, select **Admin** from the menu at the top of the page. Then select your user account, for example, **admin**.
 
 Fill in the fields, including your Chef Automate password. In the text box labeled **SSH Key**, paste the contents of the SSH public key you generated in the previous step. Here's an example.
 
@@ -105,23 +73,40 @@ Under the section **Roles Within the Enterprise**, ensure the **admin** option i
 
 The next step is to create a workflow organization. A workflow organization enables you to group related projects and provide scope for authorization rules. You'll use your workflow organization in the next step when you set up the command-line tools on your workstation.
 
-* Create org (Workflow, Workflow Orgs, "myorg", Save &amp; Close) (screenshot)
+From the Chef Automate web interface, select **Workflow**, then **Workflow Orgs**. Then specify a name for your org, for example, **my-org**. Then press **Save &amp; Close**.
+
+![](automate/automate-create-workflow-org.png)
+
+[Learn about integration with Slack](https://docs.chef.io/integrate_delivery_slack.html)
 
 [END_BOX]
 
 [START_BOX]
 
-## 4. Connect the Chef Automate CLI to the Chef Automate server
+## 4. Configure the command-line tools
 
-Next, you'll run [delivery setup](https://docs.chef.io/ctl_delivery.html#delivery-setup) to configure the CLI to contact the Chef Automate server. The command creates a configuration file named <% fp '.delivery\cli.toml' %>.
+Next, you'll run [delivery setup](https://docs.chef.io/ctl_delivery.html#delivery-setup) to configure the command-line interface (CLI) tools to communicate with the Chef Automate server. The command creates a configuration file named <% fp '.delivery\cli.toml' %>.
 
 The placement of the `.delivery` directory in your file hierarchy is significant. Like Git, the delivery CLI searches the current directory and parent directories for its server settings. Because server settings are unique to an organization, we recommend that you create a directory for each organization you belong to and run the `delivery setup` command from that directory.
 
-From your command prompt, configure the CLI to contact the Chef Automate server at <code class="placeholder">delivery.chordata.biz</code>, replacing <code class="placeholder">USER</code> with your username.
+From the <% fp '~/learn-chef' %> directory, run the following to configure the CLI to communicate with your Chef Automate server. Replace <% ph 'SERVER' %> with your Chef Automate server's FQDN, <% ph 'ORG' %> with your workflow organization name, and <% ph 'USER' %> with your username.
 
 ```bash
-$ delivery setup --server=test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io --ent=default --org=myorg --user=admin
+# ~/learn-chef
+$ delivery setup --server=SERVER --ent=default --org=ORG --user=USER
 ```
+
+Here's an example.
+
+```bash
+$ delivery setup --server=test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io --ent=default --org=my-org --user=admin
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Generate an API token
 
 Next, run [delivery token](https://docs.chef.io/ctl_delivery.html#delivery-token) to generate an API token. The API token enables you to authenticate requests without the need to enter your password.
 
@@ -131,328 +116,61 @@ Replace <% ph 'YOUR_PASSWORD' %> with the password you use to log in to the Chef
 $ AUTOMATE_PASSWORD=YOUR_PASSWORD delivery token
 ```
 
+[PRODNOTE] Show how on Windows.
+
 Here's an example.
 
 ```bash
 $ AUTOMATE_PASSWORD=taJjpJH1IFa7jqbF delivery token
 ```
 
-### Set your Git identity
+[END_BOX]
 
-Run `git config` to set your [Git identity](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup#Your-Identity). Git includes this information as metadata when you commit changes.
+[START_BOX]
 
-If you have an existing Git account, such as with GitHub, you can use the same information here (changes you make in this tutorial won't be published as public activity on your GitHub account.)
+## 6. Set your Git identity
+
+Next, run `git config` to set your [Git identity](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup#Your-Identity). Git includes this information as metadata when you commit changes. You can omit this step if you've already configured Git to work with other projects.
+
+If you have an existing Git account, such as with GitHub, you can use the same information here (changes you make in this tutorial won't be published as public activity on your GitHub account.) You can use fictitious values if you prefer.
 
 Here's an example.
 
-```ps
-# C:\Users\Administrator
+```bash
+# ~/learn-chef
 $ git config --global user.name "John Smith"
 $ git config --global user.email jsmith@example.com
 ```
 
-### Authenticate with Chef Automate's Git server
+[END_BOX]
+
+[START_BOX]
+
+## 7. Authenticate with Chef Automate's Git server
+
+Next, verify that you can access your Chef Automate's Git server over SSH on port 8989. Doing so verifies that you are properly configured to submit changes to Chef Automate. The process also adds an entry to <% fp '.ssh\known_hosts' %> so will not be later prompted to verify the authenticity of your Chef Automate server.
+
+Replace <% ph 'USER' %> with your username and <% ph 'SERVER' %> with your Chef Automate server's FQDN.
 
 ```bash
-$ ssh -T -p 8989 -l admin admin@default@test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io
+# ~/learn-chef
+$ ssh -T -p 8989 -l "USER@default" SERVER
+```
+
+Here's an example.
+
+```bash
+# ~/learn-chef
+$ ssh -T -p 8989 -l "admin@default" test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io
+Hi admin@default! You've successfully authenticated, but Chef Delivery does not provide shell access.
 ```
 
 Your workstation is now set up.
 
 [END_BOX]
 
+<% next_page(current_page) do %>
 
-[START_BOX]
+YIP!
 
-## 1. Set up a runner
-
-As a change moves through the Chef Automate pipeline, build nodes, also called _runners_, execute jobs scheduled by Chef Automate. Runners typically exist as their own servers. If you set up multiple runners, phases can be run in parallel.
-
-Here, you'll set up one runner.
-
-### Bring up a system to act as your runner
-
-Because OpsWorks for Chef Automate runs on AWS, you may find it easiest to bring up your runner as an EC2 instance. However, runners can exist on any system having an FQDN that's reachable by your Chef Automate server.
-
-Bring up a system for your runner that meets the [platform](https://docs.chef.io/install_chef_automate.html#platforms), [infrastructure](https://docs.chef.io/install_chef_automate.html#infrastructure), and [network](https://docs.chef.io/install_chef_automate.html#node-hostnames-and-network-access) requirements.
-
-The examples you see on this page use CentOS 7 running as an EC2 instance. For learning purposes, you can use a t2.small instance size. Ensure your instance permits inbound network access on port 22 (SSH) through the firewall or security group. No other port settings are required.
-
-Once your system is running, connect to it over SSH from your workstation. Here's an example:
-
-```bash
-$ ssh -i ~/.ssh/id_rsa centos@54.204.134.198
-```
-
-### Set the hostname
-
-Chef Automate communicates with a runner through its FQDN. Ensure your runner's internal hostname matches its public hostname.
-
-If your runner is an EC2 instance, run `hostname` from your SSH connection to view the current hostname. You should see the system's private hostname.
-
-```bash
-$ hostname
-ip-172-31-24-155
-```
-
-Run this command to use the EC2 metadata service to set the public hostname.
-
-```bash
-$ echo $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) | xargs sudo hostname
-```
-
-Run `hostname` again to verify the configuration.
-
-```bash
-$ hostname
-ec2-52-90-116-141.compute-1.amazonaws.com
-```
-
-Keep your SSH connection open for later.
-
-### Configure the runner
-
-Next, you need to configure software on your runner. The easiest way to do that is from your Chef Automate instance.
-
-Your Chef Automate server requires the SSH key (or password) that you use to connect to your runner. If you use key-based authentication to connect to your runner, copy the SSH key you use to connect to your runner from your workstation to your Chef Automate server. Here's an example that uses the `scp` utility.
-
-[WINDOWS] Run this command from a [Chef DK PowerShell prompt](TODO). Doing so will ensure the `scp` command is available.
-
-```bash
-$ scp -i ~/.ssh/tpetchel-mktg ~/.ssh/tpetchel-mktg ec2-user@test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:
-The authenticity of host 'test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io (34.196.40.182)' can't be established.
-ECDSA key fingerprint is SHA256:F7qKvGSEx3r12+VTCOCQSBhAPIET4i52LX/GYXNSkKQ.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added 'test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io,34.196.40.182' (ECDSA) to the list of known hosts.
-tpetchel-mktg                                                                                           100% 1679     1.6KB/s   00:00
-```
-
-Next, create an SSH connection to your Chef Automate server. Here's an example.
-
-```bash
-$ ssh -i ~/.ssh/tpetchel-mktg ec2-user@test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io
-```
-
-From your SSH connection, verify your SSH key (made it over).
-
-```bash
-# ~
-$ ls
-tpetchel-mktg
-```
-
-Next, from your SSH connection, run the [automate-ctl install-runner](https://docs.chef.io/ctl_delivery_server.html#install-runner) command to configure your runner. Replace the FQDN you see with your runner's FQDN and the SSH key filename with the key name you copied in the previous step.
-
-(TODO: Rather, use placeholders and then an example)
-
-```bash
-$ sudo automate-ctl install-runner ec2-52-90-116-141.compute-1.amazonaws.com centos --ssh-identity-file tpetchel-mktg --yes
-```
-
-(If you're using password authentication to connect to your runner, refer to the [documentation](https://docs.chef.io/install_chef_automate.html#set-up-a-build-node-runner-optional) for the required arguments.)
-
-Next, verify that your runner is configured correctly. From the Chef Automate web interface, navigate to **Workflow**, **Runners**, **Manage Runners**. Then click the **Test** button to create a test connection to your runner.
-
-SHOW SCREENSHOT HERE
-
-Keep Chef Automate web interface open for next part.
-
-As you evaluate Chef Automate, you may want to temporarily stop your instances when you're done for the day. When you restart your runner instance, EC2 assigns it a new public hostname (your OpsWorks FQDN remains fixed.) When you restart your runner instance, you need to first  [remove the existing runner](https://docs.chef.io/job_dispatch.html#remove-a-runner) and then run `automate-ctl install-runner` from your Chef Automate instance so that Chef Automate has your runner's updated FQDN.
-
-Reference:
-
-* https://docs.chef.io/install_chef_automate.html#set-up-a-build-node-runner-optional
-* https://docs.chef.io/aws_opsworks_chef_automate.html#configuring-aws-opsworks-for-chef-automate-with-runners
-
-[END_BOX]
-
-[START_BOX]
-
-## 3. Create a workflow pipeline
-
-In the _Manage a node_ tutorial, you downloaded an example cookbook named `learn_chef_apache2` from GitHub and [uploaded that cookbook](/tutorials/manage-a-node/ubuntu/opsworks/upload-a-cookbook/) to your Chef Automate server. You'll continue with that cookbook in this tutorial.
-
-### Get the learn\_chef_apache2 cookbook
-
-In case you no longer have that cookbook available, here's how to get a copy and upload it to your Chef Automate server.
-
-```bash
-$ cd ~/learn-chef/cookbooks
-$ git clone https://github.com/learn-chef/learn_chef_apache2.git
-$ cd learn_chef_apache2
-$ knife cookbook upload learn_chef_apache2
-$ knife cookbook list
-```
-
-You can examine the cookbook to familiarize yourself with its contents.
-
-### Create the pipeline
-
-```bash
-$ delivery init
-```
-
-Web UI appears
-
-See it move through Verify and Build stages
-
-(If you have multiple buid nodes, you'll see Unit, Lint, and Syntax phases run in parallel)
-
-Talk about approving it, borrow text from other tutorial.
-
-Move through rest of the pipeline - explain what happens (or doesn't yet!) during each stage.
-
-Integrate change into local `master`
-
-[END_BOX]
-
-[START_BOX]
-
-## Apply the change to test infrastructure
-
-So far, you've created project, pushed initial change to pipeline.
-
-Next steps is to create infrastructure environments that can run your artifacts.
-
-The process involves
-
-* (Describe push jobs)
-
-ref: https://docs.chef.io/aws_opsworks_chef_automate.html#adding-push-jobs-server-based-build-nodes-to-aws-opsworks-for-chef-automate
-
-## Bring up infrastructure
-
-* Get 1-4 Ubuntu 14.04 nodes
-  * EC2 recommended, like your runner
-  * Requirements: t2.micro, ports (link), etc.
-  * 22, 80, 443
-
-While your servers come up, you can move on to the next step.
-
-## Set up push jobs on your Chef Automate server
-
-From the SSH connection to your Chef Automate server, run these commands.
-
-```bash
-$ sudo -s
-$ wget https://packages.chef.io/files/stable/opscode-push-jobs-server/2.1.1/el/7/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
-$ chef-server-ctl install opscode-push-jobs-server --path /home/ec2-user/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
-$ opscode-push-jobs-server-ctl reconfigure
-$ export PATH=/opt/opscode/embedded/bin:$PATH
-$ chmod 0644 /etc/delivery/delivery.pem
-$ gem install knife-acl
-$ knife group add user delivery admins -c /etc/opscode/pivotal.rb --server-url https://localhost/organizations/default
-$ knife ssl fetch https://test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:8443
-$ automate-ctl restart
-```
-
-Runner is where build jobs are run. Runner needs to be able to communicate with Chef server to initiate push jobs. That requires the SSL certificate on 8443 (WHY???).
-
-From the SSH connection to your runner, run these commands.
-
-```bash
-$ sudo knife ssl fetch -s https://test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:8443 -c /var/opt/delivery/workspace/.chef/knife.rb
-```
-
-### Set up push jobs on each node
-
-```bash
-$ cd ~/learn-chef/cookbooks
-$ git clone https://github.com/chef-cookbooks/delivery-base
-$ cd delivery-base
-$ berks install
-$ SSL_CERT_FILE='../../.chef/ca_certs/opsworks-cm-ca-2016-root.pem' berks upload
-```
-
-### Create environemnts
-
-Explain why, borrow text.
-
-```bash
-$ knife environment create acceptance-default-myorg-learn_chef_apache2-master -d "The acceptance environment"
-```
-
-```bash
-$ knife environment create union -d "The union environment"
-$ knife environment create rehearsal -d "The rehearsal environment"
-$ knife environment create delivered -d "The delivered environment"
-```
-
-### Bootstrap your nodes
-
-```bash
-$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment acceptance-default-myorg-learn_chef_apache2-master --yes
-```
-
-```bash
-$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name union-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment union --yes
-$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name union-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment rehearsal --yes
-$ knife bootstrap 54.242.87.99 --ssh-user ubuntu --identity-file ~/.ssh/tpetchel-mktg --sudo --node-name delivered-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment delivered --yes
-```
-
-* `curl http://54.242.87.99`
-* `knife node show acceptance-node`
-* see it from Chef Automate web UI (like prev tutorial, show screenshot)
-
-How to repeat the process for URD.
-
-Verify node can do push jobs (from the runner)
-
-```bash
-$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_apache2*) AND chef_environment:acceptance-default-myorg-learn_chef_apache2-master AND recipes:*push-jobs*'
-```
-
-## Set cookbook to publish to Chef server
-
-To start the process, you manually ran `knife` to upload the `learn\_chef_apache2` cookbook to your Chef server. To perform future updates automatically, as your cookbook moves through the pipeline, you need to XXX (borrow from other tutorial?)
-
-```bash
-$ git checkout -b upload_to_chef_server
-```
-
-Modify config.json like this.
-
-```ruby
-# config.json
- "delivery-truck": {
-    "publish": {
-      "chef_server": true
-    }
-  }
-```
-
-* `git status`
-* `git commit -a -m "yup"`
-* `delivery review`
-* watch it go all the way through to Delivered
-* `curl http://54.242.87.99`
-* `curl` others...
-* integrate back
-  * `git checkout master`
-  * `git pull --prune`
-
-[END_BOX]
-
-[START_BOX]
-
-## Add a feature
-  * with local testing
-
-[END_BOX]
-
-[START_BOX]
-
-## Extend the build cookbook (add smoke test)
-  * with local testing
-
-[END_BOX]
-
-[START_BOX]
-
-## Cleanup
-
-* Delete project
-* Delete cookbooks, node (pointer)
-* Delete environment
-
-[END_BOX]
+<% end %>
