@@ -52,6 +52,7 @@ module Middleman
                    "html" => CodeFormatter.new,
                    "ini" => CodeFormatter.new,
                    "sql" => CodeFormatter.new,
+                   "toml" => CodeFormatter.new,
                    "plaintext" => CodeFormatter.new,
                    "json" => CodeFormatter.new,
                    "yaml" => CodeFormatter.new,
