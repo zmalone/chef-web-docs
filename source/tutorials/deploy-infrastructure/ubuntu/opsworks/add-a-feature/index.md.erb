@@ -11,30 +11,15 @@ headings: [
   { label: '3. Configure the runner', href: '#step3' },
   ]
 ---
-
-
-
-
-
-
-how to get the node attributes ^^ check visibility page.
-
-
-
 At this point, you've validated that your pipeline works and you've brought up infrastructure to receive build artifacts. You're ready to use Chef Automate for what it was intended &ndash; moving changes quickly and safely all the way from your workstation to production.
 
-In this part, you add a feature to the web configuration by changing the `learn_chef_apache2` cookbook. The feature adds additional sample data and also provides an interactive control that displays where your customers are on a globe. This feature uses [D3](http://d3js.org), a JavaScript library for producing interactive data visualizations.
+In this part, you add a feature to the web configuration by changing the `learn_chef_apache2` cookbook.
 
-This feature is provided for you in GitHub (your `origin` remote.) You first create a feature branch that's based off your local `master` branch. Then you integrate the completed feature branch from GitHub with your local feature branch.
+Although in practice you wouldn't typically manage web content directly in your Chef cookbooks, for learning purposes you'll modify the HTML template to display information about your server, similar to [what you did](/tutorials/manage-a-node/ubuntu/opsworks/update-your-nodes-configuration/) in the _Manage a node_ tutorial.
 
-You also use `delivery job` to verify your work and resolve test failures before you submit a change to the pipeline.
+You'll also use [delivery local](https://docs.chef.io/ctl_delivery.html#delivery-local) to verify your work from your workstation before you submit the change to the pipeline.
 
-Here's what you'll do:
-
-1. [Create the feature branch](#step1)
-1. [Integrate the remote branch with your local feature branch](#step2)
-1. [Run Chef Automate jobs to verify the change](#step3)
-1. [Submit your change to the pipeline](#step4)
+Let's start by creating a feature branch for your change.
 
 [START_BOX]
 
@@ -81,7 +66,21 @@ Next, modify the HTML template file, <% fp '~/learn-chef/cookbooks/learn_chef_ap
 </html>
 ```
 
-TODO: Talk about this.
+The updated HTML template uses node attributes to access the node's operating system, number of CPU cores, and total memory.
+
+One way to know which node attributes are available is by running [Ohai](https://docs.chef.io/ohai.html) on your node. You can also view a node's attributes from the Chef Automate web interface. For example, to view the node attributes for the Acceptance node, select the **Nodes** tab, select `acceptance-node` from the list at the bottom of the page, and then select the **Attributes** tab from the node state page.
+
+![](automate/vis-node-attributes.png)
+
+Each level of the tree corresponds to a level in the node attribute Hash. In the example illustration, to access `logical_block_size`, you would write `<%%= node['block_device']['loop0']['logical_block_size'] %>` in your recipe.
+
+[PRODNOTE] Commit now, or later before delivery review?
+
+Run the following commands to commit the change to your branch.
+
+```bash
+$ git status
+```
 
 ```bash
 $ git add templates/default/index.html.erb
@@ -188,6 +187,8 @@ Running Syntax Phase
 
 The syntax phase passes.
 
+If you've gone through the [Get started with Test Kitchen](/tutorials/local-development/) tutorial or have familiarity with Vagrant and VirtualBox, you can run the `provision`, `deploy`, `smoke`, and `cleanup` phases to test the web configuration on a temporary instance using Test Kitchen.
+
 [END_BOX]
 
 [START_BOX]
@@ -248,7 +249,7 @@ $ git commit -m "Bump cookbook version"
 
 Before you submit your changes, run `git status` to verify that there are no pending changes.
 
-```ps
+```bash
 # ~/learn-chef/cookbooks/learn_chef_apache2
 $ git status
 On branch server_info
