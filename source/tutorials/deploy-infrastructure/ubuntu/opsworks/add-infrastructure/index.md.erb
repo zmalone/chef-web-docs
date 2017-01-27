@@ -19,28 +19,6 @@ headings: [
   ]
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-FIND A HOME
-You'll do that by _bootstrapping_ each node to your Chef server and configuring each node to accept _push jobs_. The bootstrap process is similar to what you did in the [Manage a node]((/tutorials/manage-a-node/ubuntu/opsworks/get-a-node-to-bootstrap/) tutorial.
-
-<% accordion('stages-environments', 'Stages versus environments') do %>
-
-<% markdown do %>
-
-In this tutorial, we use the terms _stages_ and _environments_ quite frequently. For example, there's the Acceptance stage and there's the Acceptance environment. Both are related, but it's important to distinguish between the two.
-
-For example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this tutorial, the Acceptance environment is an Ubuntu 14.04 server that applies the `learn_chef_apache2` cookbook to configure the web configuration. The Acceptance stage deploys the web configuration by triggering `chef-client` to run on the Ubuntu server.
-
-You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this tutorial your Chef Automate project is a Chef cookbook, a project can be an application or some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
-
-<% end %>
-
-<% end %>
-
-You'll also learn how to initiate _push jobs_ directly to trigger `chef-client` to run on your infrastructure nodes. Initiating push jobs manually one time helps ensure that your nodes are set up correctly and will help you understand how cookbook changes are deployed to your infrastructure.
-
-
--- --
-
 So far, you've created a project, configured your build cookbook to publish the `learn_chef_apache2` cookbook to the Chef server, and watched the initial change move through the pipeline. The next step is to create infrastructure environments that can run your cookbook.
 
 Recall that infrastructure can receive build artifacts produced from Chef Automate's build pipeline. These environments are labeled **Acceptance**, **Union**, **Rehearsal**, and **Delivered** in this diagram.
@@ -1032,6 +1010,20 @@ At the bottom of the page, you'll see your nodes, including the Chef environment
 ![](automate/visibility-filter-results-nodes.png)
 
 As an optional exercise, you can select one of your nodes to view its run history and other details.
+
+<% accordion('stages-environments', 'Stages versus environments') do %>
+
+<% markdown do %>
+
+In this tutorial, we use the terms _stages_ and _environments_ quite frequently. For example, there's the Acceptance stage and there's the Acceptance environment. Both are related, but it's important to distinguish between the two.
+
+For example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this tutorial, the Acceptance environment is an Ubuntu 14.04 server that applies the `learn_chef_apache2` cookbook to configure the web configuration. The Acceptance stage deploys the web configuration by triggering `chef-client` to run on the Ubuntu server.
+
+You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this tutorial your Chef Automate project is a Chef cookbook, a project can be an application or some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
+
+<% end %>
+
+<% end %>
 
 [END_BOX]
 
