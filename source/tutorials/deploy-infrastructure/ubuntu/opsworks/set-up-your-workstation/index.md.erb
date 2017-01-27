@@ -21,32 +21,78 @@ In the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/
 
 Because you're using Chef Automate's integrated Git server for this tutorial, you'll need to generate an SSH keypair and associate the public part of that keypair with your Chef Automate user account. Later, if you choose to integrate with [GitHub](https://docs.chef.io/integrate_delivery_github.html) or [Bitbucket](https://docs.chef.io/integrate_delivery_bitbucket.html), you would set up Chef Automate and your workstation to work with that revision control system.
 
-[WINDOWS] If your workstation is running Windows, remember to run commands from a [Chef Development Kit PowerShell prompt](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks#step2.2). Doing so will ensure that utilties such as `ssh` are available.
+[WINDOWS] If your workstation is running Windows, remember to run commands from a [Chef Development Kit PowerShell prompt](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks#step2.2). Doing so will ensure that utilties such as `ssh`, `scp`, and `ssh-keygen` are available.
 
 [START_BOX]
 
 ## 1. Generate an SSH key
 
-You need an SSH key to submit changes to Chef Automate from the command line. The private part of your key, <% fp '~/.ssh/id_rsa' %>, stays with you. You associate the public part of your key, <% fp '~/.ssh/id_rsa.pub' %>, with your Chef Automate user profile.
+You need an SSH key to submit changes to Chef Automate from the command line. The private part of your key, <% fp '~/.ssh/id_rsa' %>, stays with you. You associate the public part of your key, <% fp '~/.ssh/id_rsa.pub' %>, with your Chef Automate user profile. The process is similar to how systems such as [GitHub](https://help.github.com/articles/connecting-to-github-with-ssh/) work.
 
-If you don't have an SSH keypair that you want to use, [generate one now](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2). Here's an example.
+If you don't have an SSH keypair that you want to use, [generate one now](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2). The syntax varies slightly between Windows and other operating systems. Here are a few examples. The email address is not significant for this tutorial, but you can replace "jsmith@example.com" with yours if you prefer.
+
+**Linux and Mac OS X**
 
 ```bash
-$ ssh-keygen -t rsa
+# ~/learn-chef
+$ ssh-keygen -t rsa -b 4096 -C "jsmith@example.com" -f $HOME/.ssh/id_rsa -N ""
+Generating public/private rsa key pair.
+Your identification has been saved in /home/ubuntu/.ssh/id_rsa.
+Your public key has been saved in /home/ubuntu/.ssh/id_rsa.pub.
+The key fingerprint is:
+a9:2a:a5:9a:63:e9:00:bc:e3:15:eb:c6:cd:00:f7:41 jsmith@example.com
+The key's randomart image is:
++--[ RSA 4096]----+
+|                 |
+|     E           |
+|    .            |
+|.. . .   .       |
+|..o.. . S        |
+|. ..+. .         |
+|.oo=+ .          |
+|++*o +           |
+|==.o.            |
++-----------------+
 ```
+
+**Windows**
+
+```ps
+# ~/learn-chef
+$ ssh-keygen -t rsa -b 4096 -C "jsmith@example.com" -f $HOME/.ssh/id_rsa -N "''"
+Generating public/private rsa key pair.
+Your identification has been saved in C:\Users\Administrator/.ssh/id_rsa.
+Your public key has been saved in C:\Users\Administrator/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:qmuWw1uXb4tr/xZDPJN7mhuM1MxQAzWPMb7NtU0Ee6A jsmith@example.com
+The key's randomart image is:
++---[RSA 4096]----+
+|          .oB o..|
+|           o O + |
+|          ..E.o +|
+|           =*+ +o|
+|        S ..=+o..|
+|       . o o+ .  |
+|   . .o o . o*   |
+|    *o ..o. +.   |
+|   o++ .o+++o.   |
++----[SHA256]-----+
+```
+
+-- --
 
 You'll see the private and public key files in your <% fp '~/.ssh' %> directory.
 
 ```bash
 $ ls ~/.ssh/id_rsa*
-/Users/thomaspetchel/.ssh/id_rsa      /Users/thomaspetchel/.ssh/id_rsa.pub
+/home/ubuntu/.ssh/id_rsa  /home/ubuntu/.ssh/id_rsa.pub
 ```
 
 Print out the contents of the public part of your keypair, <% fp '~/.ssh/id_rsa.pub' %>, to the console and copy it to the clipboard. You'll paste it in your Chef Automate user profile in the next step.
 
 ```bash
 $ cat ~/.ssh/id_rsa.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDHXRMZw0wpGjMO4kP3RC0W2OEXWDkMLNHohYTLNABsdfsXvEZKzxpu9ymLt3lS/rishkxGNlQiYZatVW1XbYeKQf5m0ulfGO/EZgTldexkqu0jh1px3/2awhF01O+6YFvmVRDVlKl3qkg9GzDQkGjrUmIKlM401hUkQzMZ6Rx8VXMkHB0X0Sr7faWIFvXHYV1LEoLh4HlMCg5Yo14iKt5eutUzqZvMbIVWu3MCMdFRjuniHH+IXdzINcj3tEGQB1VTE6FMmoxe+vMJewiKNnE0GtouE1LhKjwh9yeyi6SA/jgUYn8zmOI2PC1Kav04vKdfBcqlb7KzSq5w4yKaqnqQ5c72jJJxzxQvoOUQQMFU9pDmwzhFjBccKF+u7RIg5F4+msrwOkwjbuDYtXNgjlPUhlm+wSlQ7yq6x2BNRO75JJCuxxIouU6Z2S2eR2mESg8zHdPwEIJnluOLwgPlGgPO8xHu8cYToiAx6xvgJJ0SVh/mc2jPTtMxxqwZa/KWW/kZZhV7TSRB0lWfBbTtERgWHmAXo5ZSjpOJfQekiVDCuu14Cxl9ttZ6EGfptZTqSzHgg1AqA957UFNTuPt6y5dzglNurkISs3Mq4+pMBBk5jxaROt1zfqpLZHg/n4JQbjKUvdbroXyDZxtEtwOQNlQ5KvtyEqH5yXRohitIRgJcXQ== tpetchel@chef.io
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhmZKFTdeHBU7i6KvDimR4OnRdSTcHtL+F0mg9acJcF9etn9W0rUSfkLFKeAHQ2yQLG5P/T5oSnrqDfvol+smzmEjQxpTWTQ9ghx1M0bnuRwmPwXbe6PUXVr4D+vKL4y3k3O6uyPwXYVJp3drPDtWdZSk2b/uo3ydLPzgoKN7hv3t3db9VUjtuQlS/RUEiKGQPpNG06GIlLN3yLqM8Bi0MgDaQDYK/TQ3+8T/m3RwESQclRHuRu5sh1iMpcegeSU2G8fFsOc3IzDlujUrMjMLIlYNwhmMY1EeixKtCtGEY7fjiourOzyj36WCPPzBJi+WpaNB6HYB2EhrGkBy2b86GMX0hsnmFAjvebeVmG9+hm1TyNkF8DDS6u0a+Yo884wdxhTgzHqIl17HPf4LkQQPMfJhNIbd7OISCbPjtHpls1SUF6kFbnozzB53PEcDpBeyI7jqQKvma9Zw2gdnB6j+4E2R1aE3t4IBSfLyhAEJXDo9E82LGvVbN1oajWsdkefb/Ob8bhhReRjyjCbTchd7R7Ex0s7u9hKmfAOfgoa9hDC654X92XQD1GvJNt+PbyJBmDXe+LUihNgvDSCN+MGtWe/nj9VsLHc+aqBCm+QEcHr4ybyxNmFaCYVO/JN+95eElDAKaqPar3FjeqZQpzalVcBkJDX1u5SAjAHWTjwJVaQ== jsmith@example.com
 ```
 
 [END_BOX]
@@ -57,7 +103,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDHXRMZw0wpGjMO4kP3RC0W2OEXWDkMLNHohYTLNABs
 
 From the Chef Automate web interface, select **Admin** from the menu at the top of the page. Then select your user account, for example, **admin**.
 
-Fill in the fields, including your Chef Automate password. In the text box labeled **SSH Key**, paste the contents of the SSH public key you generated in the previous step. Here's an example.
+Fill in the fields, including your name and email address (you can use ficticious values if you prefer.) You do not need to enter your Chef Automate password. In the text box labeled **SSH Key**, paste the contents of the SSH public key you generated in the previous step. Here's an example.
 
 <img src="/assets/images/automate/update_user_profile_1.png" style="width: 60%;" />
 
@@ -79,7 +125,7 @@ From the Chef Automate web interface, select **Workflow**, then **Workflow Orgs*
 
 ![](automate/automate-create-workflow-org.png)
 
-[Learn about integration with Slack](https://docs.chef.io/integrate_delivery_slack.html)
+If you use [Slack](https://slack.com), you can later configure Chef Automate to [send Slack notifications](https://docs.chef.io/integrate_delivery_slack.html) for all projects that belong to your workflow organization.
 
 [END_BOX]
 
@@ -102,7 +148,19 @@ Here's an example.
 
 ```bash
 # ~/learn-chef
-$ delivery setup --server=test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io --ent=default --org=my-org --user=admin
+$ delivery setup --server=test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io --ent=default --org=my-org --user=admin
+Chef Delivery
+Loading configuration from /home/ubuntu
+Writing configuration to /home/ubuntu/.delivery/cli.toml
+New configuration
+-----------------
+api_protocol = "https"
+enterprise = "default"
+git_port = "8989"
+organization = "my-org"
+pipeline = "master"
+server = "test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io"
+user = "admin"
 ```
 
 [END_BOX]
@@ -113,20 +171,47 @@ $ delivery setup --server=test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io --ent=d
 
 Next, run [delivery token](https://docs.chef.io/ctl_delivery.html#delivery-token) to generate an API token. The API token enables you to authenticate requests without the need to enter your password.
 
+The syntax varies slightly between Windows and other operating systems. Here are a few examples.
 Replace <% ph 'YOUR_PASSWORD' %> with the password you use to log in to the Chef Automate web interface.
+
+**Linux and Mac OS X**
 
 ```bash
 # ~/learn-chef
 $ AUTOMATE_PASSWORD=YOUR_PASSWORD delivery token
 ```
 
-[PRODNOTE] Show how on Windows.
-
-Here's an example.
+Example:
 
 ```bash
 # ~/learn-chef
-$ AUTOMATE_PASSWORD=taJjpJH1IFa7jqbF delivery token
+$ AUTOMATE_PASSWORD=DPCFAjOTUXiwftbu delivery token
+Chef Delivery
+Loading configuration from /home/ubuntu
+Requesting Token
+token: 6xIKICMP7CA0xUQakz3lbS/VURgPiW/srvyDiNadDq4=
+saved API token to: /home/ubuntu/.delivery/api-tokens
+```
+
+**Windows**
+
+```ps
+# ~/learn-chef
+$ $env:AUTOMATE_PASSWORD='YOUR_PASSWORD'
+$ delivery token
+```
+
+Example:
+
+```ps
+# ~/learn-chef
+$ $env:AUTOMATE_PASSWORD='DPCFAjOTUXiwftbu'
+$ delivery token
+Chef Delivery
+Loading configuration from C:\Users\Administrator\learn-chef
+Requesting Token
+token: G+AALDhJ9kWfM7fOdiCNe68zFXmYOdRsPULlaZGk7QI=
+saved API token to: C:\Users\Administrator\.delivery\api-tokens
 ```
 
 [END_BOX]
@@ -143,7 +228,7 @@ Here's an example.
 
 ```bash
 # ~/learn-chef
-$ git config --global user.name "John Smith"
+$ git config --global user.name "Jane Smith"
 $ git config --global user.email jsmith@example.com
 ```
 
@@ -153,7 +238,7 @@ $ git config --global user.email jsmith@example.com
 
 ## 7. Authenticate with Chef Automate's Git server
 
-Next, verify that you can access your Chef Automate's Git server over SSH on port 8989. Doing so verifies that you are properly configured to submit changes to Chef Automate. The process also adds an entry to <% fp '.ssh\known_hosts' %> so will not be later prompted to verify the authenticity of your Chef Automate server.
+Next, verify that you can access your Chef Automate's Git server over SSH on port 8989. Doing so verifies that you are properly configured to submit changes to Chef Automate.
 
 Replace <% ph 'USER' %> with your username and <% ph 'SERVER' %> with your Chef Automate server's FQDN.
 
@@ -166,7 +251,7 @@ Here's an example.
 
 ```bash
 # ~/learn-chef
-$ ssh -T -p 8989 -l "admin@default" test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io
+$ ssh -T -p 8989 -l "admin@default" test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io
 Hi admin@default! You've successfully authenticated, but Chef Delivery does not provide shell access.
 ```
 
@@ -176,6 +261,6 @@ Your workstation is now set up.
 
 <% next_page(current_page) do %>
 
-YIP!
+Next, you'll set up a _runner_, which executes jobs scheduled by Chef Automate as a change moves through the pipeline.
 
 <% end %>

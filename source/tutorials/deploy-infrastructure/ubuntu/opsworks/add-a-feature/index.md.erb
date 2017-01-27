@@ -19,7 +19,7 @@ In this part, you add a feature to the web configuration by changing the `learn_
 
 Although in practice you wouldn't typically manage web content directly in your Chef cookbooks, for learning purposes you'll modify the HTML template to display information about your server, similar to [what you did](/tutorials/manage-a-node/ubuntu/opsworks/update-your-nodes-configuration/) in the _Manage a node_ tutorial.
 
-You'll also use [delivery local](https://docs.chef.io/ctl_delivery.html#delivery-local) to verify your work from your workstation before you submit the change to the pipeline.
+You'll also learn how to verify your work from your workstation before you submit the change to the pipeline.
 
 Let's start by creating a feature branch for your change.
 
@@ -54,19 +54,9 @@ Switched to a new branch 'server_info'
 
 ## 2. Modify the HTML template
 
-Next, modify the HTML template file, <% fp '~/learn-chef/cookbooks/learn_chef_apache2/templates/default/index.html.erb' %>, like this.
+Next, modify the HTML template file, <% fp '~/learn-chef/cookbooks/learn_chef_apache2/templates/index.html.erb' %>, like this.
 
-```html
-# ~/learn-chef/cookbooks/learn_chef_apache2/templates/default/index.html.erb
-<html>
-  <body>
-    <h1>hello from <= node['fqdn'] %></h1>
-    <p>This system is running <= node['hostnamectl']['operating_system'] %> and has
-      <= node['cpu']['cores'] %> CPU cores and
-      <= node['memory']['total'] %> total memory.
-  </body>
-</html>
-```
+<%= partial 'html-template' %>
 
 The updated HTML template uses node attributes to access the node's operating system, number of CPU cores, and total memory.
 
@@ -74,31 +64,7 @@ One way to know which node attributes are available is by running [Ohai](https:/
 
 ![](automate/vis-node-attributes.png)
 
-Each level of the tree corresponds to a level in the node attribute Hash. In the example illustration, to access `logical_block_size`, you would write `<%%= node['block_device']['loop0']['logical_block_size'] %>` in your recipe.
-
-[PRODNOTE] Commit now, or later before delivery review?
-
-Run the following commands to commit the change to your branch.
-
-```bash
-$ git status
-```
-
-```bash
-$ git add templates/default/index.html.erb
-```
-
-```bash
-$ git commit -m "Show additional server info"
-[server_info 62a6df2] Show additional server info
- 1 file changed, 2 insertions(+), 1 deletion(-)
-```
-
-```bash
-git status
-On branch server_info
-nothing to commit, working directory clean
-```
+Each level of the tree corresponds to a level in the node attribute Hash. In the example illustration, to access `logical_block_size`, you would write `node['block_device']['loop0']['logical_block_size']` in your cookbook.
 
 [END_BOX]
 
@@ -112,7 +78,7 @@ For a Chef cookbook, you might run [Test Kitchen](https://docs.chef.io/kitchen.h
 
 Another approach is to run [delivery local](https://docs.chef.io/ctl_delivery.html#delivery-local). The `delivery local` command runs a phase of Chef Automate locally, based on settings in your <% fp 'project.toml' %> file. (This file is created for you when you run the `chef generate cookbook` command.)
 
-<% fp '.delivery/project.toml' %> looks like this.
+Your <% fp '.delivery/project.toml' %> file looks like this.
 
 ```toml
 # ~/learn-chef/cookbooks/learn_chef_apache2/.delivery/project.toml
@@ -141,7 +107,7 @@ cleanup = "chef exec kitchen destroy"
 
 Each variable name &ndash; `unit`, `lint`, `syntax`, and so on &ndash; represents a pipeline phase. Each value represents the command to run that phase. For example, the `unit` phase runs [RSpec](http://rspec.info), a unit test framework for Ruby.
 
-The details of how the various test tools work is beyond the scope of this tutorial. If you're unfamilar with testing tools such as RSpec, Foodcritic, and Test Kitchen, you can later check out [Getting started with automated testing](/skills/get-started-with-testing/) to learn more using automated testing to verify your Chef code.
+The details of how the various test tools work is beyond the scope of this tutorial. If you're unfamilar with testing tools such as RSpec, Foodcritic, and Test Kitchen, you can later check out [Getting started with automated testing](/skills/get-started-with-testing/) to learn more about using automated testing to verify your Chef code.
 
 The `unit`, `lint` and `syntax` phases are part of the Verify and Build stages. The `provision`, `deploy`, and `smoke` phases are part of the Acceptance, Union, Rehearsal, and Delivered stages. The `cleanup` phase is provided as a convenient way to clean up any resources created by the previous phases.
 
@@ -195,15 +161,49 @@ If you've gone through the [Get started with Test Kitchen](/tutorials/local-deve
 
 [START_BOX]
 
-## 4. Increment your cookbook's version
+## 4. Submit your change to the pipeline
+
+Now that all tests pass, you're almost ready to submit your change to the pipeline. First, you need to commit your changes to your feature branch.
+
+First, run `git status` to see what changes are not yet staged for commit.
+
+```bash
+$ git status
+On branch server_info
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   templates/index.html.erb
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+As expected, you see the HTML template listed as a modified file. Run the following `git add` command to stage the file.
+
+```bash
+$ git add templates/index.html.erb
+```
+
+Next, run the following `git commit` command to commit the change to your branch.
+
+```bash
+$ git commit -m "Show additional server info"
+[server_info 8a01c91] Show additional server info
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+```
+
+Now run `git status` to verify that there are no further pending changes.
+
+```bash
+$ git status
+On branch server_info
+nothing to commit, working directory clean
+```
 
 When a cookbook changes, it's important to update its version to ensure that a given set of functionality is tied to a given version. You [learned about cookbook versions](/tutorials/manage-a-node/ubuntu/opsworks/update-your-nodes-configuration#step2) in the _Manage a node_ tutorial.
 
-Recall that (show MAJOR MINOR BUG BULLET LIST)
-
-According to [Semantic Versioning](http://semver.org), we should increment the MINOR version because we're adding backwards-compatible functionality.
-
-Update the `version` field from 0.2.0 to 0.3.0 in your `learn_chef_apache2` cookbook's <% fp 'metadata.rb' %> file.
+Recall that a cookbook's version is listed in its <% fp 'metadata.rb' %> file. Here's an example for the `learn_chef_apache2` cookbook.
 
 ```ruby
 # ~/learn-chef/cookbooks/learn_chef_apache2/metadata.rb
@@ -213,62 +213,29 @@ maintainer_email 'you@example.com'
 license 'all_rights'
 description 'Installs/Configures learn_chef_apache2'
 long_description 'Installs/Configures learn_chef_apache2'
-version '0.3.0'
+version '0.2.0'
 issues_url 'https://github.com/learn-chef/learn_chef_apache2/issues' if respond_to?(:issues_url)
 source_url 'https://github.com/learn-chef/learn_chef_apache2' if respond_to?(:source_url)
 ```
 
-Commit the change to the local `server_info` branch.
+You run the [delivery review](https://docs.chef.io/ctl_delivery.html#delivery-review) command to submit your change. Before you do that, you could manually update the version and commit that change to your branch. Most Chef users follow [Semantic Versioning](http://semver.org) rules.
+
+Another approach is to pass the `--auto-bump` argument to `delivery review` to automatically bump version in the metadata file, which you'll do here. The `--auto-bump` increments the `PATCH` component of the version. For example, version "0.2.0" becomes "0.2.1".
+
+Run `delivery review --auto-bump` to submit your changes to the pipeline.
 
 ```bash
 # ~/learn-chef/cookbooks/learn_chef_apache2
-$ git status
-On branch server_info
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git checkout -- <file>..." to discard changes in working directory)
-
-	modified:   metadata.rb
-
-no changes added to commit (use "git add" and/or "git commit -a")
-```
-
-```bash
-$ git add metadata.rb
-```
-
-```bash
-$ git commit -m "Bump cookbook version"
-[server_info 81baaff] Bump cookbook version
- 1 file changed, 1 insertion(+), 1 deletion(-)
-```
-
-[END_BOX]
-
-[START_BOX]
-
-## 5. Submit your change to the pipeline
-
-Before you submit your changes, run `git status` to verify that there are no pending changes.
-
-```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
-$ git status
-On branch server_info
-nothing to commit, working directory clean
-```
-
-Now run `delivery review` to submit your changes to the pipeline.
-
-```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
-$ delivery review
+$ delivery review --auto-bump
 Chef Delivery
-Loading configuration from C:\Users\Administrator\learn_chef_apache2
+Loading configuration from /home/ubuntu/learn-chef/cookbooks/learn_chef_apache2
+Project learn_chef_apache2 is a cookbook
+Validating version in metadata
+The version hasn't been updated (0.2.0)
+Bumping version to: 0.2.1
 Review for change server_info targeted for pipeline master
 Created new patchset
-https://delivery.chordata.biz/e/mammalia/#/organizations/diprotodontia/projects/learn_chef_apache2/changes/2c267
-cd4-9bc9-4272-a665-0fbee5ed350b
+https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io/e/default/#/organizations/my-org/projects/learn_chef_apache2/changes/d5e9de64-86bf-499a-89d3-d5e2dca7fe7f
 ```
 
 When the Chef Automate UI appears, trace the change's progress through the pipeline.
@@ -295,6 +262,6 @@ After your change gets merged into Chef Automate's `master` branch (this happens
 
 <% next_page(current_page) do %>
 
-WEE!
+Next, you'll implement the smoke phase to quickly validate that your web server is running and functional.
 
 <% end %>

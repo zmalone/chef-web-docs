@@ -23,24 +23,27 @@ In this part, we'll refer to these installation guides.
 
 You can review these guides to familiarize yourself with the process before you proceed. Let's start by bringing up a system to act as your runner.
 
-[WINDOWS] If your workstation is running Windows, remember to run commands from a [Chef Development Kit PowerShell prompt](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks#step2.2). Doing so will ensure that utilties such as `ssh` are available.
+[WINDOWS] If your workstation is running Windows, remember to run commands from a [Chef Development Kit PowerShell prompt](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks#step2.2). Doing so will ensure that utilties such as `ssh` and `scp` are available.
 
 [START_BOX]
 
 ## 1. Bring up a system to act as your runner
 
-Because OpsWorks for Chef Automate runs on AWS, you may find it easiest to bring up your runner as an EC2 instance. However, runners can exist on any system having an FQDN that's reachable by your Chef Automate server.
+Because OpsWorks for Chef Automate runs on AWS, you may find it easiest to bring up your runner as an EC2 instance. However, runners can exist on any system having an FQDN that's reachable by your Chef Automate server. The examples you see on this page use CentOS 7 running as an EC2 instance.
 
 Bring up a system for your runner that meets the [platform](https://docs.chef.io/install_chef_automate.html#platforms), [infrastructure](https://docs.chef.io/install_chef_automate.html#infrastructure), and [network](https://docs.chef.io/install_chef_automate.html#node-hostnames-and-network-access) requirements.
 
-[PRODNOTE] Point to AWS docs on how to bring up a Linux instance, both from the console and the CLI.
+For learning purposes, you can use a **t2.small** instance size. Ensure your instance permits inbound network access on port 22 (SSH) through the firewall or security group. No other port settings are required.
 
-The examples you see on this page use CentOS 7 running as an EC2 instance. For learning purposes, you can use a t2.small instance size. Ensure your instance permits inbound network access on port 22 (SSH) through the firewall or security group. No other port settings are required.
+Here are resources if you need a refresher on how to launch an instance.
+
+* [Launch an instance using the AWS Management Console](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance_linux)
+* [Launch an instance using the  command-line](http://docs.aws.amazon.com/cli/latest/userguide/cli-ec2-launch.html#launching-instances)
 
 Once your system is running, connect to it over SSH from your workstation. Here's an example:
 
 ```bash
-$ ssh -i ~/.ssh/id_rsa centos@54.204.134.198
+$ ssh -i ~/.ssh/private_key centos@54.204.134.198
 ```
 
 [END_BOX]
@@ -81,21 +84,21 @@ Keep the SSH connection to your runner open for later.
 
 Next, you need to configure software on your runner. The easiest way to do that is from your Chef Automate instance.
 
-Your Chef Automate server requires the SSH key (or password) that you use to connect to your runner. If you use key-based authentication to connect to your runner, copy the SSH key you use to connect to your runner from your workstation to your Chef Automate server. Here's an example that uses the `scp` utility.
+Your Chef Automate server requires the SSH key (or password) that you use to connect to your runner. If you use key-based authentication to connect to your runner, copy the SSH key you use to connect to your runner from your workstation to your Chef Automate server. Here's an example that uses the `scp` utility (note the trailing colon `:` character at the end of the command.)
 
 ```bash
-$ scp -i ~/.ssh/tpetchel-mktg ~/.ssh/tpetchel-mktg ec2-user@test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:
+$ scp -i ~/.ssh/private_key ~/.ssh/private_key ec2-user@test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:
 The authenticity of host 'test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io (34.196.40.182)' can't be established.
 ECDSA key fingerprint is SHA256:F7qKvGSEx3r12+VTCOCQSBhAPIET4i52LX/GYXNSkKQ.
 Are you sure you want to continue connecting (yes/no)? yes
 Warning: Permanently added 'test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io,34.196.40.182' (ECDSA) to the list of known hosts.
-tpetchel-mktg                                                                                           100% 1679     1.6KB/s   00:00
+private_key                                                                                           100% 1679     1.6KB/s   00:00
 ```
 
 Next, create an SSH connection to your Chef Automate server. Here's an example. Use the username `ec2-user` and replace the FQDN you see with yours.
 
 ```bash
-$ ssh -i ~/.ssh/tpetchel-mktg ec2-user@test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io
+$ ssh -i ~/.ssh/private_key ec2-user@test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io
 ```
 
 From your SSH connection, verify that the SSH key was written to the home directory.
@@ -103,14 +106,12 @@ From your SSH connection, verify that the SSH key was written to the home direct
 ```bash
 # ~
 $ ls
-tpetchel-mktg
+private_key
 ```
 
 Next, from your SSH connection, run the [automate-ctl install-runner](https://docs.chef.io/ctl_delivery_server.html#install-runner) command as follows to configure your runner.
 
 Replace <% ph 'RUNNER_FQDN' %> with your runner's FQDN, <% ph 'RUNNER_USERNAME' %> with the username you would normally connect to your runner over SSH, and <% ph 'RUNNER_SSH_KEY' %> with the SSH key name you copied in the previous step.
-
-[COMMENT] Runners are often installed on CentOS or Ubuntu. On EC2, the SSH username for CentOS instances is typically `centos` and `ubuntu` for Ubuntu instances.
 
 ```bash
 $ sudo automate-ctl install-runner RUNNER_FQDN RUNNER_USERNAME --ssh-identity-file RUNNER_SSH_KEY --yes
@@ -119,7 +120,34 @@ $ sudo automate-ctl install-runner RUNNER_FQDN RUNNER_USERNAME --ssh-identity-fi
 Here's an example.
 
 ```bash
-$ sudo automate-ctl install-runner ec2-52-90-116-141.compute-1.amazonaws.com centos --ssh-identity-file tpetchel-mktg --yes
+$ sudo automate-ctl install-runner ec2-54-210-82-97.compute-1.amazonaws.com centos --ssh-identity-file private_key --yes
+Preflight check...
+  Fetching Chef Server certificates for local use.
+  Verifying no legacy runners exist for this name.
+Connecting to ec2-54-210-82-97.compute-1.amazonaws.com and retrieving information about your node...
+  Connected to ec2-54-210-82-97.compute-1.amazonaws.com.
+  Retrieved os info. Platform: centos Version: 7.2.1511
+Downloading the latest version of the ChefDK. This make take a few minutes...
+  Package successfully downloaded to /tmp/chefdk-1.1.16-1.el7.x86_64.rpm.
+Preparing files necessary for installation...
+  Created temporary install directory.
+  Set ownership to user centos.
+  Copied ChefDK to temporary directory.
+  Copied installer software to temporary directory.
+  Copied keys to temporary directory.
+Installing the ChefDK on runner...
+  Installation via rpm completed.
+Fetching Automate certificates to runner...
+  Creating /etc/chef/trusted_certs on runner.
+  Fetched Automate certificate from test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io.
+  Fetched Automate certificate from {}.
+Registering runner to Chef Server...
+  Registered ec2-54-210-82-97.compute-1.amazonaws.com.
+Registering runner to Chef Server...
+  Installed job runner software on runner.
+  Configured runner as job runner on Automate server.
+Cleaning up...
+  All temporary files removed.
 ```
 
 (If you're using password authentication to connect to your runner, [see the documentation](https://docs.chef.io/install_chef_automate.html#set-up-a-build-node-runner-optional) for the required arguments.)
@@ -130,12 +158,14 @@ Next, verify that your runner is configured correctly. From the Chef Automate we
 
 Keep the Chef Automate web interface open for next part.
 
-As you evaluate Chef Automate, you may want to temporarily stop your instances when you're done for the day. When you restart your runner instance, EC2 assigns it a new public hostname (your OpsWorks FQDN remains fixed.) When you restart your runner instance, you need to first [remove the existing runner](https://docs.chef.io/job_dispatch.html#remove-a-runner) and then run `automate-ctl install-runner` as you just did from your Chef Automate instance so that Chef Automate has your runner's updated FQDN. In practice, you might assign a fixed DNS name to your runner or allocate your runner in a [VPC](https://aws.amazon.com/vpc/), where the hostname name remains fixed.
+### If you need a break
+
+As you evaluate Chef Automate, you may want to temporarily stop your instances when you're done for the day. When you restart your runner instance, EC2 assigns it a new public hostname (your OpsWorks FQDN remains fixed.) When you restart your runner instance, you need to first [remove the existing runner](https://docs.chef.io/job_dispatch.html#remove-a-runner) and then run `automate-ctl install-runner` as you just did from your Chef Automate instance so that Chef Automate has your runner's updated FQDN. In practice, you might assign a fixed DNS name to your runner or allocate your runner in a [VPC](https://aws.amazon.com/vpc/), where the hostname remains fixed.
 
 [END_BOX]
 
 <% next_page(current_page) do %>
 
-BIP!
+Next, you'll create a project and watch the `learn_chef_apache2` cookbook move through each stage of the Chef Automate pipeline.
 
 <% end %>

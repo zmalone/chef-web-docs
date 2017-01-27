@@ -10,6 +10,8 @@ machine_config: snippets/deploy-infrastructure/ubuntu/opsworks/machine_config.md
 environment: opsworks
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
+In this tutorial, you'll use Chef Automate to push configuration changes to a production-like environment.
+
 Chef Automate gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
 
 <img src="/assets/images/automate/automate-architecture-2017-outlines.svg" style="width: 100%; box-shadow: none;" />
@@ -36,7 +38,7 @@ We are shipping code faster, with less effort, and with higher quality.
 
 [COMMENT] Learn more about how to use the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the white paper.
 
-In this tutorial, you'll use Chef Automate's _workflow_ capabilities to deliver changes to a basic web application cookbook to the Chef server and to verify the cookbook's behavior in a production-like environment. Chef Automate enables multiple teams to work together on systems made up of multiple components and services, and promotes DevOps principles.
+In this tutorial, you'll use Chef Automate's _workflow_ capabilities to deliver changes to a basic web configuration cookbook to the Chef server and to verify the cookbook's behavior in a production-like environment. Chef Automate enables multiple teams to work together on systems made up of multiple components and services, and promotes DevOps principles.
 
 Two important parts of Chef Automate are _pipelines_ and _phases_.
 
@@ -74,33 +76,51 @@ You determine what happens in each phase with a _build cookbook_. Each phase is 
 
 ## What you'll do
 
-This tutorial comes in multiple parts. In the first part, you set up a Chef Automate user and configure the Windows workstation for that user. In the last three parts, you use Chef Automate to deliver the web application cookbook to Chef server and to verify the cookbook's behavior in a production-like environment.
+This tutorial comes in multiple parts. In the first two parts, you set up an AWS OpsWorks for Chef Automate instance and set up your workstation to work with it. In the third and fourth parts, you set up a job runner and build pipeline that publishes a basic web configuration cookbook to the Chef server. In the last three parts, you use Chef Automate to verify the cookbook's behavior in a production-like environment.
 
-### Part 1: Create the organization and add a user
+### Part 1: Get set up with AWS OpsWorks for Chef Automate
 
-Here you set up the user that will perform the last three parts of this tutorial.
+In this part, you bring up an AWS OpsWorks for Chef Automate installation and configure network settings for use with Chef Automate's workflow feature. We'll point you to the prerequisite resources if you don't yet have an AWS OpsWorks for Chef Automate installation.
+
+### Part 2: Set up your workstation and user profile
 
 User accounts enable end users to access Chef Automate through its web interface or from the command line.
 
-You log in to the Chef Automate web interface and create a user account. You also set up the virtual Windows workstation so you can access Chef Automate through that user account.
+Here you set up your workstation to be able to push configuration changes through Chef Automate's integrated pipeline. You set up your user account and command-line tools to access Chef Automate's integrated Git server.
 
-### Part 2: Create the project
+### Part 3: Add a runner
+
+Here, you set up a _runner_, which executes jobs scheduled by Chef Automate as a change moves through the Chef Automate pipeline.
+
+### Part 4: Create the project
+
+Chef Automate uses _projects_ to organize work across multiple teams.
 
 You can use Chef Automate to build and deploy almost any kind of software system. For example, you can publish changes to a Chef cookbook to Chef server, Chef Supermarket, or GitHub. Alternatively, you might deploy a service to an application server.
 
-In this tutorial, the project is the `awesome_customers_delivery` cookbook that you worked with in the previous tutorial. Recall that this cookbook configures a web application named Customers, which displays customer data to the user.
+In this tutorial, the project is the `learn_chef_apache2` cookbook that you worked with in the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/) tutorial. Recall that this cookbook manages a basic Apache HTTP Server configuration.
 
-<img style="max-width:100%;" src="/assets/images/automate/acceptance-customers-verify.png"/>
+The project's build cookbook publishes the web configuration cookbook to a Chef server.
 
-The project's build cookbook publishes the web application cookbook to a Chef server and then runs the web application cookbook on the nodes that you previously bootstrapped to the Chef server.
+### Part 5: Add infrastructure to run your web server
 
-### Part 3: Add a feature to the web application
+In this part, you bring up infrastructure environments that run the `learn_chef_apache2` cookbook during the Acceptance, Union, Rehearsal, and Delivered stages.
 
-In this part, you integrate a change to the web application cookbook that alters the way that the Customers web application displays data. You follow the change through each pipeline stage, from your workstation all the way out to your nodes. By the end of this part, your web application looks like this:
+By the end of this part, your web configuration looks like this.
 
-<img style="max-width:100%;" src="/assets/images/automate/acceptance-visualize_data.png"/>
+![](automate/browser-hello-world.png)
 
-### Part 4: Extend the build cookbook
+### Part 6: Add a feature to the web configuration
+
+In this part, you integrate a change to the web configuration cookbook to display additional info about your server. You follow the change through each pipeline stage, from your workstation all the way out to your nodes.
+
+You'll also run basic tests locally on your workstation before you submit changes to the Chef Automate pipeline.
+
+By the end of this part, your web configuration looks like this:
+
+<img style="max-width:100%;" src="/assets/images/automate/web_server_info_ubuntu.png"/>
+
+### Part 7: Extend the build cookbook
 
 In this tutorial, you learn about the `delivery-truck` cookbook, which helps perform many common tasks that are needed to deliver Chef cookbooks. However, this cookbook can't do everything.
 
@@ -122,13 +142,3 @@ After completing this tutorial, you should be able to:
 [COMMENT] Chef Automate relies on Git and uses its feature branches for handling changes before they merge, as well as Git's ability to perform merges automatically. You're going to see Git terminology throughout this tutorial. We'll provide all the Git commands that you'll need, but you can also [check out the documentation](https://git-scm.com/doc) to learn more.
 
 [END_BOX]
-
-<% accordion('test-configuration', 'Test configuration') do %>
-
-<% markdown do %>
-
-<% render_machine_config(current_page.data.machine_config) %>
-
-<% end %>
-
-<% end %>

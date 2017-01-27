@@ -38,7 +38,7 @@ For this project, for example, during the Union stage the query string would be:
 [delivery\_push_job](https://github.com/chef-cookbooks/delivery-sugar/blob/master/libraries/delivery_push_job.rb) is a Chef resource that submits a push job. It's behavior is similar to the `knife job start` command you can previously.
 
 ```ps
-# C:\Users\Administrator
+# C:/Users/Administrator
 $ knife job start 'chef-client' --search '(recipes:awesome_customers_delivery*) AND chef_environment:union AND recipes:*push-jobs*'
 ```
 
