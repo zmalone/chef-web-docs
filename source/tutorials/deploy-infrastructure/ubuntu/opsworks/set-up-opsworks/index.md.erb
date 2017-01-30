@@ -38,13 +38,13 @@ The diagram shows these components:
 
 **AWS OpsWorks for Chef Automate** &ndash; AWS OpsWorks is a managed service that runs on Amazon Web Services that includes a Chef server and Chef Automate.
 
-**Runners** &ndash; To use Chef Automate's workflow feature, you'll need one or more runners, sometimes called _build nodes_. As a change moves through the Chef Automate pipeline, runners execute jobs scheduled by Chef Automate. Runners typically exist as their own servers. If you set up multiple runners, phases can be run in parallel.
+**Runners** &ndash; To use Chef Automate's workflow feature, you'll need one or more runners, sometimes called _build nodes_. As a change moves through the Chef Automate pipeline, runners execute jobs scheduled by Chef Automate. Runners typically exist as their own servers. If you set up multiple runners, phases can run in parallel.
 
-**Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Chef Automate deploys build artifacts, or the pipeline's final output, to these environments. The output of your pipeline informs how you set up your environments.
+**Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Chef Automate deploys build artifacts, or the pipeline's final output, to these environments. The output of your pipeline informs you how you set up your environments.
 
 For example, you might deploy a SQL Server database to a Windows Server environment. Or you might deploy web content and other media to an Amazon S3 bucket. In this tutorial, you'll publish a cookbook that configures a basic web application on Ubuntu. Therefore, the Ubuntu runtime environment exists for each of these stages because the artifacts produced in the Build stage need to be deployed to each of them.
 
-Each environment is named for the stage in which it is used. For example, the union environment is used in the Union stage of the pipeline. These environments typically resemble your production environment, and can often be part of your production environment. Delivered is the final environment. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
+Each environment is named for the stage in which it is used. For example, the union environment is used in the Union stage of the pipeline. These environments typically resemble your production environment and can often be part of your production environment. Delivered is the final environment. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
 
 **Your workstation** &ndash; Workstations are typically either a laptop or desktop computer. A workstation can run Windows, Mac OS X, or Linux. From your workstation, you access Chef Automate using either the command line or the web interface. Other common tasks include creating projects, writing build cookbooks, submitting new features to the pipeline, and reviewing and approving others' changes.
 
@@ -54,7 +54,7 @@ Each environment is named for the stage in which it is used. For example, the un
 
 ## 1. Bring up an AWS OpsWorks for Chef Automate instance
 
-You'll bring up runners and infrastructure to run your cookbook later in this tutorial. Before you begin, you'll need an AWS OpsWorks for Chef Automate installation and your workstation set up to use it.
+You'll bring up runners and infrastructure to run your cookbook later in this tutorial. Before you begin, you'll need an AWS OpsWorks for Chef Automate installation and a workstation that is set up to use it.
 
 If you don't already have an AWS OpsWorks for Chef Automate installation, we recommend that you work through the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/set-up-opsworks/) tutorial first, then come back here.
 
@@ -74,7 +74,7 @@ To prepare for the parts that follow, gather the following details about your AW
   ![](automate/opsworks_console_server_info.png)
 * **Your Chef Automate username and password**. When you first bring up your installation, you can access your sign-in credentials through the OpsWorks console or by downloading a file named <% fp 'credentials.csv' %>. Keep in mind that AWS does not store your sign-in credentials, so be sure to store them in a safe place. AWS OpsWorks provides the built-in **admin** user, which you'll see in this tutorial. Although using the **admin** user is the easiest way to get started, you can [set up an additional user account](https://docs.chef.io/delivery_users_and_roles.html#add-users) if you prefer.
   ![](automate/opsworks_credentials.png)
-* **The location of the starter kit on your workstation.** Open a terminal window and `cd` to this location. In the _Manage a node_ tutorial, we suggest you rename the starter kit directory to <% fp 'learn-chef' %>. If you decide not to rename this directory, just remember to replace yours in the path names shown in this tutorial.
+* **The location of the starter kit on your workstation.** Open a terminal window and `cd` to this location. In the _Manage a node_ tutorial, we suggested you rename the starter kit directory to <% fp 'learn-chef' %>. If you decided not to rename this directory, just remember to replace the path names shown in this tutorial with your own.
 
 You may also want to [log in to the Chef Automate dashboard](/tutorials/manage-a-node/rhel/opsworks/set-up-opsworks#step4) now and have your browser window handy for the parts that follow.
 
@@ -84,11 +84,11 @@ You may also want to [log in to the Chef Automate dashboard](/tutorials/manage-a
 
 ## 3. Enable inbound network access
 
-For this tutorial, you'll also need to modify your Chef Automate server's security group to enable [inbound network access](https://docs.chef.io/install_chef_automate.html#node-hostnames-and-network-access) over TCP on these ports:
+For this tutorial, you need to modify your Chef Automate server's security group to enable [inbound network access](https://docs.chef.io/install_chef_automate.html#node-hostnames-and-network-access) over TCP on these ports:
 
 <dl>
   <dt><b>8443 (Chef server)</b></dt>
-  <dd>Recall that runners runners execute jobs scheduled by Chef Automate. As a cookbook moves through the pipeline, runners use <i>push jobs</i> to initiate <code>chef-client</code> to run on infrastructure during the Acceptance, Union, Rehearsal, and Delivered stages. Runners require a trusted connection to the Chef server to initiate push jobs. You need to open port 8443 on your Chef server so that you can later retrieve the SSL certificate from this port to establish trust. You'll learn more about push jobs later in this tutorial.</dd>
+  <dd>Recall that runners execute jobs scheduled by Chef Automate. As a cookbook moves through the pipeline, runners use <i>push jobs</i> to initiate <code>chef-client</code> to run on infrastructure during the Acceptance, Union, Rehearsal, and Delivered stages. Runners require a trusted connection to the Chef server to initiate push jobs. You need to open port 8443 on your Chef server so that you can later retrieve the SSL certificate from this port to establish trust. You'll learn more about push jobs later in this tutorial.</dd>
 
   <dt>8989 (Chef Automate Git)</dt>
   <dd>Chef Automate uses revision control to manage your project's source code. Chef Automate integrates with revision control systems such as <a href="https://docs.chef.io/integrate_delivery_github.html">GitHub</a> and <a href="https://docs.chef.io/integrate_delivery_bitbucket.html">Bitbucket</a>. Chef Automate also provides its own Git server, which you'll use in this tutorial. Chef Automate's Git server requires inbound network access on port 8989.</dd>
@@ -99,7 +99,7 @@ For this tutorial, you'll also need to modify your Chef Automate server's securi
 
 -- --
 
-One way to enable access on these ports is from the EC2 management console. From the **Instances** page, locate your AWS OpsWorks instance and then locate your instance's security group from the **Description** tab. Here's an example.
+One way to enable access on these ports is from the EC2 management console. From the **Instances** page, locate your AWS OpsWorks instance and then, on the **Description** tab, locate your instance's security group. Here's an example.
 
 <img src="/assets/images/automate/ec2_find_security_group.png" style="width: 50%;" />
 
