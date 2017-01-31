@@ -3,7 +3,7 @@ title: 'Create the project'
 order: 4
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 45 minutes
-snippet_path: deploy-infrastructure/ubuntu/opsworks/set-up-your-chef-server
+snippet_path: deploy-infrastructure/rhel/opsworks/set-up-your-chef-server
 snippet_workstation: ubuntu
 headings: [
   { label: '1. Get the cookbook', href: '#step1' },
@@ -18,13 +18,13 @@ headings: [
   ]
 meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
-In this part, you create a project and watch the `learn_chef_apache2` cookbook move through each stage of the Chef Automate pipeline.
+In this part, you create a project and watch the `learn_chef_httpd` cookbook move through each stage of the Chef Automate pipeline.
 
 Chef Automate uses _projects_ to organize work across multiple teams. You can create as many projects as you need. A common approach is to have one project for each major component of your system.
 
 Each project has its own Git repository. Chef Automate can host the Git repository for you or you can connect Chef Automate to an existing project, such as one on GitHub or Atlassian Bitbucket. In this tutorial, you get starter code from GitHub but host your project in Chef Automate's Git repository.
 
-In the _Manage a node_ tutorial, you downloaded an example cookbook named `learn_chef_apache2` from GitHub and [uploaded that cookbook](/tutorials/manage-a-node/ubuntu/opsworks/upload-a-cookbook/) to your Chef Automate server. You'll continue with that cookbook in this tutorial.
+In the _Manage a node_ tutorial, you downloaded an example cookbook named `learn_chef_httpd` from GitHub and [uploaded that cookbook](/tutorials/manage-a-node/rhel/opsworks/upload-a-cookbook/) to your Chef Automate server. You'll continue with that cookbook in this tutorial.
 
 ### The delivery-truck build cookbook
 
@@ -36,32 +36,32 @@ Recall that you can use Chef Automate to deploy almost any kind of software or i
 * Publishing your cookbook to Chef server, Chef Supermarket, GitHub, Atlassian Bitbucket, or another Git server.
 * Triggering `chef-client` to run on nodes that use your cookbook.
 
-Let's start by ensuring you have the `learn_chef_apache2` cookbook.
+Let's start by ensuring you have the `learn_chef_httpd` cookbook.
 
 [START_BOX]
 
-## 1. Get the learn\_chef_apache2 cookbook
+## 1. Get the learn\_chef_httpd cookbook
 
-What you do in this step depends on whether you have the `learn_chef_apache2` cookbook on your workstation.
+What you do in this step depends on whether you have the `learn_chef_httpd` cookbook on your workstation.
 
-* [I have the learn\_chef_apache2 cookbook](#ihavethelearn_chef_apache2cookbook)
-* [I don't have the learn\_chef_apache2 cookbook](#idon39thavethelearn_chef_apache2cookbook)
+* [I have the learn\_chef_httpd cookbook](#ihavethelearn_chef_httpdcookbook)
+* [I don't have the learn\_chef_httpd cookbook](#idon39thavethelearn_chef_httpdcookbook)
 
-### I have the learn\_chef_apache2 cookbook
+### I have the learn\_chef_httpd cookbook
 
-In _Manage a node_, you downloaded a copy of the `learn_chef_apache2` cookbook from GitHub and made modifications to it. You may have further modified the cookbook on your own. To ensure the result you see matches what's shown in this tutorial, sync back to the original `master` branch as it exists on GitHub.
+In _Manage a node_, you downloaded a copy of the `learn_chef_httpd` cookbook from GitHub and made modifications to it. You may have further modified the cookbook on your own. To ensure the result you see matches what's shown in this tutorial, sync back to the original `master` branch as it exists on GitHub.
 
-Start by moving to the <% fp '~/learn-chef/cookbooks/learn_chef_apache2' %> directory.
+Start by moving to the <% fp '~/learn-chef/cookbooks/learn_chef_httpd' %> directory.
 
 ```bash
 # ~/learn-chef
-$ cd ~/learn-chef/cookbooks/learn_chef_apache2
+$ cd ~/learn-chef/cookbooks/learn_chef_httpd
 ```
 
 Run `git status`. You see the changes you made to the default recipe and the metadata file are modfifed, but not staged for commit.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git status
 On branch master
 Your branch is up-to-date with 'origin/master'.
@@ -80,15 +80,15 @@ no changes added to commit (use "git add" and/or "git commit -a")
 Run this command to revert the `master` branch back to its original state.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git reset --hard HEAD
-HEAD is now at 466e572 Merge pull request #4 from learn-chef/ignore_fc033
+HEAD is now at 466e572 Merge pull request #1 from learn-chef/ignore_fc033
 ```
 
 Run `git status` to verify that your branch is clean.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git status
 On branch master
 Your branch is up-to-date with 'origin/master'.
@@ -96,9 +96,9 @@ Your branch is up-to-date with 'origin/master'.
 nothing to commit, working directory clean
 ```
 
-### I don't have the learn\_chef_apache2 cookbook
+### I don't have the learn\_chef_httpd cookbook
 
-In case you no longer have the `learn_chef_apache2` cookbook available, here's how to get a copy from GitHub and upload it to your Chef Automate server.
+In case you no longer have the `learn_chef_httpd` cookbook available, here's how to get a copy from GitHub and upload it to your Chef Automate server.
 
 Start by moving to the <% fp '~/learn-chef/cookbooks' %> directory.
 
@@ -110,27 +110,25 @@ $ cd ~/learn-chef/cookbooks
 Clone the repo locally.
 
 ```bash
-$ git clone https://github.com/learn-chef/learn_chef_apache2.git
-Cloning into 'learn_chef_apache2'...
-remote: Counting objects: 111, done.
-remote: Compressing objects: 100% (16/16), done.
-Receiving objects: 100% (111/111), 19.82 KiB | 0 bytes/s, done.
-Resolving deltas: 100% (28/28), done.
-
-Checking connectivity... done.
+$ git clone https://github.com/learn-chef/learn_chef_httpd.git
+Cloning into 'learn_chef_httpd'...
+remote: Counting objects: 70, done.
+remote: Compressing objects: 100% (32/32), done.
+remote: Total 70 (delta 19), reused 70 (delta 19), pack-reused 0
+Unpacking objects: 100% (70/70), done.
 ```
 
-Move to the <% fp 'learn_chef_apache2' %> directory.
+Move to the <% fp 'learn_chef_httpd' %> directory.
 
 ```bash
-$ cd learn_chef_apache2
+$ cd learn_chef_httpd
 ```
 
-Upload your copy of `learn_chef_apache2` to the Chef server.
+Upload your copy of `learn_chef_httpd` to the Chef server.
 
 ```bash
-$ knife cookbook upload learn_chef_apache2
-Uploading learn_chef_apache2 [0.2.0]
+$ knife cookbook upload learn_chef_httpd
+Uploading learn_chef_httpd [0.2.0]
 Uploaded 1 cookbook.
 ```
 
@@ -138,13 +136,13 @@ Run `knife cookbook list` to verify that the cookbook exists on the Chef server.
 
 ```bash
 $ knife cookbook list
-chef-client          7.1.0
-compat_resource      12.16.3
-cron                 3.0.0
-learn_chef_apache2   0.2.0
-logrotate            2.1.0
-ohai                 4.2.3
-windows              2.1.1
+chef-client        7.1.0
+compat_resource    12.16.3
+cron               3.0.0
+learn_chef_httpd   0.2.0
+logrotate          2.1.0
+ohai               4.2.3
+windows            2.1.1
 ```
 
 You can examine the cookbook to familiarize yourself with its contents.
@@ -164,28 +162,28 @@ There are a few ways to [create a Chef Automate project](https://docs.chef.io/de
 * creates the <% fp '.delivery' %> directory and adds to it a build cookbook and a configuration file.
 * submits the change for review.
 
-First, ensure you are in the <% fp 'learn_chef_apache2' %> directory.
+First, ensure you are in the <% fp 'learn_chef_httpd' %> directory.
 
 ```bash
 # ~/learn-chef
-$ cd ~/learn-chef/cookbooks/learn_chef_apache2
+$ cd ~/learn-chef/cookbooks/learn_chef_httpd
 ```
 
 Next, run `delivery init` from your local repository directory.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ delivery init
 Chef Delivery
-Loading configuration from /home/ubuntu/learn-chef/cookbooks/learn_chef_apache2
+Loading configuration from /home/ubuntu/learn-chef/cookbooks/learn_chef_httpd
 Creating Delivery project...
-  Skipping: Delivery project named learn_chef_apache2 already exists.
+  Delivery project named learn_chef_httpd was created.
 Creating Delivery git remote...
-  Skipping: Remote named 'delivery' already exists and is correct.
+  Remote 'delivery' added as ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd.
 Pushing initial git history...
   No git history found for pipeline master, pushing local commits from branch master.
 Creating pipeline on Delivery server...
-  Created Delivery pipeline master for project learn_chef_apache2.
+  Created Delivery pipeline master for project learn_chef_httpd.
 Generating default build cookbook...
   Skipping: build cookbook already exists at .delivery/build_cookbook.
 Creating and committing DELIVERY.md readme...
@@ -202,7 +200,7 @@ The `delivery` command uses the API token that you created when you ran `deliver
 
 A browser window appears and the first stage of the pipeline, Verify, begins running its phases.
 
-[COMMENT] The [appendix](/tutorials/deploy-infrastructure/ubuntu/opsworks/cleaning-up) explains how to delete your project if you need to start over or want to do the tutorial a second time.
+[COMMENT] The [appendix](/tutorials/deploy-infrastructure/rhel/opsworks/cleaning-up) explains how to delete your project if you need to start over or want to do the tutorial a second time.
 
 [END_BOX]
 
@@ -222,7 +220,7 @@ As each of the unit, lint, and syntax phases moves to the <img style="box-shadow
 
 Every time a phase runs, the build node first runs the build cookbook's default recipe, <% fp 'default.rb' %>, as the `root` user to ensure that the build node has everything it needs to run. This step is important because you can have multiple build nodes &ndash; a build node that runs one phase will not necessarily have run any of the prior phases.
 
-<img style="max-width:100%;" src="/assets/images/automate/wf-unit-output-log-apache2.png"/>
+<img style="max-width:100%;" src="/assets/images/automate/wf-unit-output-log-httpd.png"/>
 
 After the default recipe completes, the build node runs the recipe for the phase as the `dbuild` user.
 
@@ -245,7 +243,7 @@ Now that the Verify stage has completed, let's take a closer look at your projec
 The `delivery init` command creates the <% fp '.delivery' %> directory at the root of your project.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ tree -a .delivery
 .delivery
 ├── build_cookbook
@@ -308,7 +306,7 @@ Our project is a Chef cookbook. Here's a brief summary of what each phase accomp
 * lint &ndash; run [Foodcritic](https://docs.chef.io/foodcritic.html) and [RuboCop](https://docs.chef.io/rubocop.html).
 * syntax &ndash; run [knife cookbook test](https://docs.chef.io/knife_cookbook.html#test).
 * unit &ndash; run [ChefSpec](https://docs.chef.io/chefspec.html).
-* publish &ndash; upload `learn_chef_apache2` and the cookbooks it depends on to the Chef server.
+* publish &ndash; upload `learn_chef_httpd` and the cookbooks it depends on to the Chef server.
 * deploy &ndash; use push jobs to run `chef-client` on the node that runs the web configuraiton cookbook.
 * smoke &ndash; verify that the web server is at least minimally functional.
 
@@ -321,7 +319,7 @@ To help implement these steps, we use the `delivery-truck` cookbook. This cookbo
 Here's how `delivery-truck` is referenced in your build cookbook's metadata file.
 
 ```ruby
-# ~/learn-chef/cookbooks/learn_chef_apache2/.delivery/build_cookbook/metadata.rb
+# ~/learn-chef/cookbooks/learn_chef_httpd/.delivery/build_cookbook/metadata.rb
 name 'build_cookbook'
 maintainer 'The Authors'
 maintainer_email 'you@example.com'
@@ -334,7 +332,7 @@ depends 'delivery-truck'
 Each of your build cookbook's 11 recipes includes the implementation provided by `delivery-truck`. Here's an example for the `lint` recipe.
 
 ```ruby
-# ~/learn-chef/cookbooks/learn_chef_apache2/.delivery/build_cookbook/recipes/lint.rb
+# ~/learn-chef/cookbooks/learn_chef_httpd/.delivery/build_cookbook/recipes/lint.rb
 #
 # Cookbook Name:: build_cookbook
 # Recipe:: lint
@@ -371,7 +369,7 @@ You can modify a recipe in your build cookbook to fit your requirements. For exa
 
 <% markdown do %>
 
-For this project, the `delivery init` command detects the `learn_chef_apache2` cookbook and automatically includes `delivery-truck` for you. This makes your build cookbook what's called a _wrapper cookbook_.
+For this project, the `delivery init` command detects the `learn_chef_httpd` cookbook and automatically includes `delivery-truck` for you. This makes your build cookbook what's called a _wrapper cookbook_.
 
 You'll likely want to use `delivery-truck` in a cookbook project because `delivery-truck` handles many common tasks for you. Because your build cookbook wraps `delivery-truck`, you can extend or replace the `delivery-truck` cookbook's behavior in your build cookbook.
 
@@ -387,7 +385,7 @@ Is there a common application type or pattern you'd like to see, similar to `del
 
 A manual step is required to move to the Build stage. This is where your team decides whether the code can be merged into the `master` branch or more work is needed.
 
-We're not quite ready yet to to merge the change to `master`. First, we need to configure the build cookbook to publish the `learn_chef_apache2` cookbook to the Chef server.
+We're not quite ready yet to to merge the change to `master`. First, we need to configure the build cookbook to publish the `learn_chef_httpd` cookbook to the Chef server.
 
 [END_BOX]
 
@@ -395,12 +393,12 @@ We're not quite ready yet to to merge the change to `master`. First, we need to 
 
 ## 5. Configure the build cookbook to publish to Chef server
 
-In this step, you configure your build cookbook to publish the `learn_chef_apache2` cookbook to the Chef server during the publish phase. Then you commit that change to the `initialize-delivery-pipeline` branch and submit the change for review.
+In this step, you configure your build cookbook to publish the `learn_chef_httpd` cookbook to the Chef server during the publish phase. Then you commit that change to the `initialize-delivery-pipeline` branch and submit the change for review.
 
 Recall that the `delivery init` command creates a file named <% fp '.delivery/config.json' %> in your project directory. This configuration file controls the behavior of your build cookbook. Here's what the file looks like.
 
 ```ruby
-# ~/learn-chef/cookbooks/learn_chef_apache2/.delivery/config.json
+# ~/learn-chef/cookbooks/learn_chef_httpd/.delivery/config.json
 {
   "version": "2",
   "build_cookbook": {
@@ -420,7 +418,7 @@ These configuration settings become node attributes on your build nodes. You can
 To specify that the cookbook should be published to Chef server, modify your copy of <% fp '.delivery/config.json' %> like this.
 
 ```ruby
-# ~/learn-chef/cookbooks/learn_chef_apache2/.delivery/config.json
+# ~/learn-chef/cookbooks/learn_chef_httpd/.delivery/config.json
 {
   "version": "2",
   "build_cookbook": {
@@ -443,7 +441,7 @@ To specify that the cookbook should be published to Chef server, modify your cop
 Run `git status`. You'll see that `initialize-delivery-pipeline` is the current branch and that <% fp '.delivery/config.json' %> is not yet staged for commit.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git status
 On branch initialize-delivery-pipeline
 Changes not staged for commit:
@@ -458,16 +456,16 @@ no changes added to commit (use "git add" and/or "git commit -a")
 Now run `git add` to stage <% fp '.delivery/config.json' %> for commit.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git add .delivery/config.json
 ```
 
 Now run `git commit` to commit the change.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git commit -m "Publish to Chef server"
-[initialize-delivery-pipeline 7832e92] Publish to Chef server
+[initialize-delivery-pipeline 194ecaf] Publish to Chef server
  1 file changed, 6 insertions(+), 1 deletion(-)
 ```
 
@@ -480,13 +478,13 @@ $ git commit -m "Publish to Chef server"
 Run `delivery review` to submit your change to the `initialize-delivery-pipeline` branch for review as a new patchset.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ delivery review
 Chef Delivery
-Loading configuration from /home/ubuntu/learn-chef/cookbooks/learn_chef_apache2
+Loading configuration from /home/ubuntu/learn-chef/cookbooks/learn_chef_httpd
 Review for change initialize-delivery-pipeline targeted for pipeline master
 Created new patchset
-https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io/e/default/#/organizations/my-org/projects/learn_chef_apache2/changes/23d121a9-f4be-45f1-997f-92626c407638
+https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io/e/default/#/organizations/my-org/projects/learn_chef_httpd/changes/1ccf793c-cea9-4b61-a760-b2411ac40f4a
 ```
 
 [COMMENT] If you use GitHub, you know that pull requests let you tell others about your changes. The [delivery review](https://docs.chef.io/ctl_delivery.html#delivery-review) command is similar. It allows others to review your changes. Once approved, Chef Automate merges your changes into `master` and continues through the rest of the pipeline.
@@ -514,7 +512,7 @@ For an existing file that's been modified, you can see the diff between the curr
 
 ![](automate/wf-review-config2.png)
 
-As you might expect, you see the change you just made that configures the build cookbook to publish the `learn_chef_apache2` cookbook to the Chef server.
+As you might expect, you see the change you just made that configures the build cookbook to publish the `learn_chef_httpd` cookbook to the Chef server.
 
 Scroll down to the bottom of Patchset 2 and enter a comment.
 
@@ -562,7 +560,7 @@ After you approve the change, it moves to the Build stage.
 
 The unit, lint, and syntax phases run again on the build node. Rerunning the tests ensures that they continue to pass after the change is merged to `master`.
 
-The Build stage also runs the security and quality phases. These recipes do not have any logic, so nothing happens. Then the publish phase runs. This phase creates an artifact (in our case, a cookbook) that is a release candidate. Recall that you configured `delivery-truck` to publish the `learn_chef_apache2` cookbook to Chef server. `delivery-truck` runs the `knife cookbook upload` command to do that ([source code](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/publish.rb)).
+The Build stage also runs the security and quality phases. These recipes do not have any logic, so nothing happens. Then the publish phase runs. This phase creates an artifact (in our case, a cookbook) that is a release candidate. Recall that you configured `delivery-truck` to publish the `learn_chef_httpd` cookbook to Chef server. `delivery-truck` runs the `knife cookbook upload` command to do that ([source code](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/publish.rb)).
 
 <img src="/assets/images/automate/wf-build-stage-running2.png" style="width: 100%;" />
 
@@ -574,9 +572,9 @@ Beginning with the Acceptance stage, the pipeline switches from analyzing the pr
 
 The Acceptance stage runs the provision, deploy, smoke, and functional phases.
 
-The provision phase is where you can bring up infrastructure to run your artifact. In the next part, you'll add infrastructure nodes that run the `learn_chef_apache2` cookbook during each of the Acceptance, Union, Rehearsal, and Delivered stages. Your infrastructure nodes will be long-lived, that is, the same instances will be used each time you push a change through the pipeline. However, you can bring up temporary instances during the provision phase that you tear down when the stage finishes.
+The provision phase is where you can bring up infrastructure to run your artifact. In the next part, you'll add infrastructure nodes that run the `learn_chef_httpd` cookbook during each of the Acceptance, Union, Rehearsal, and Delivered stages. Your infrastructure nodes will be long-lived, that is, the same instances will be used each time you push a change through the pipeline. However, you can bring up temporary instances during the provision phase that you tear down when the stage finishes.
 
-The deploy phase deploys the artifact created in the Build stage. The `delivery-truck` cookbook submits a push job that runs `chef-client` to deploy the `learn_chef_apache2` cookbook to the infrastructure that's associated with the Acceptance stage. You'll set this up in the next part.
+The deploy phase deploys the artifact created in the Build stage. The `delivery-truck` cookbook submits a push job that runs `chef-client` to deploy the `learn_chef_httpd` cookbook to the infrastructure that's associated with the Acceptance stage. You'll set this up in the next part.
 
 The smoke and functional recipes do not have any logic, so nothing happens. You'll implement the smoke phase later in this tutorial.
 
@@ -588,7 +586,7 @@ Press the **Deliver** button. Pressing the **Deliver** button is a confirmation 
 
 Press the **Confirm** button from the dialog that appears.
 
-![](automate/wf-delivery-init-confirm-delivery-apache2.png)
+![](automate/wf-delivery-init-confirm-delivery-httpd.png)
 
 You'll see the process move through the Union, Rehearsal, and Delivered stages.
 
@@ -625,7 +623,7 @@ When you clicked **Approve** during the Verify stage, Chef Automate merged the `
 First, switch to the `master` branch.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
@@ -634,15 +632,15 @@ Your branch is up-to-date with 'delivery/master'.
 Now pull the latest from Chef Automate to your local repo.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git pull --prune
 From ssh://default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd
  x [deleted]         (none)     -> delivery/_for/master/initialize-delivery-pipeline
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
 Unpacking objects: 100% (1/1), done.
-   bd44589..903812f  master     -> delivery/master
-Updating bd44589..903812f
+   466e572..0408294  master     -> delivery/master
+Updating 466e572..0408294
 Fast-forward
  .delivery/config.json |  7 ++++++-
  DELIVERY.md           | 10 ++++++++++

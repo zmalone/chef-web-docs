@@ -5,22 +5,22 @@ To help distinguish between remotes pulled from other servers, Chef Automate and
 To see this, run `git remote -v` to see your remote repositories.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git remote -v
-delivery	ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_apache2 (fetch)
-delivery	ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_apache2 (push)
-origin	https://github.com/learn-chef/learn_chef_apache2.git (fetch)
-origin	https://github.com/learn-chef/learn_chef_apache2.git (push)
+delivery	ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd (fetch)
+delivery	ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd (push)
+origin	https://github.com/learn-chef/learn_chef_httpd.git (fetch)
+origin	https://github.com/learn-chef/learn_chef_httpd.git (push)
 ```
 
 You can also run `git remote show delivery` to see that `git pull` merges changes from Chef Automate's `master` branch.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_apache2
+# ~/learn-chef/cookbooks/learn_chef_httpd
 $ git remote show delivery
 * remote delivery
-  Fetch URL: ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_apache2
-  Push  URL: ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_apache2
+  Fetch URL: ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd
+  Push  URL: ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd
   HEAD branch: master
   Remote branch:
     master tracked
