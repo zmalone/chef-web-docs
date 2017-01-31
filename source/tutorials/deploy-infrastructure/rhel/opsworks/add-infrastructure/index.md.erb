@@ -98,15 +98,15 @@ $ knife ssh 'name:node1-centos' 'sudo chef-client' --ssh-user centos --identity-
 
 The command uses a search query to specify which node to run `chef-client` on. Here, the search query specifies the node's name, **node1-centos**.
 
-There are other ways to run `chef-client` on a node. You can log in directly over SSH and run `sudo chef-client`. Or you can run `chef-client` on a regular interval as a daemon, cron job, service, or scheduled task, [as you did previously](/tutorials/manage-a-node/rhel/opsworks/run-chef-client-periodically).
+There are other ways to run `chef-client` on a node. You can log in directly over SSH and run `sudo chef-client`. Or you can run `chef-client` at a regular interval as a daemon, cron job, service, or scheduled task, [as you did previously](/tutorials/manage-a-node/rhel/opsworks/run-chef-client-periodically).
 
-You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. A push job is a way to submit a task to a node, such as running `chef-client`. Chef push jobs client runs on a node and listens for job requests.
+You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. A push job is a way to submit a task to a node, such as running `chef-client`. The push jobs client runs on a node and listens for job requests.
 
-Chef push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
+The push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
 
-In the next step, you'll install push jobs server on your Chef server (remember, AWS OpsWorks for Chef Automate includes both Chef Automate and Chef server on the same system.)
+In the next step, you'll install the push jobs server on your Chef server (remember, AWS OpsWorks for Chef Automate includes both Chef Automate and Chef server on the same system).
 
-Later on this page, you'll upload a copy of the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook to your Chef server. When you bootstrap each of your infrastructure nodes, you'll include `delivery-base` in the node's run-list. The `delivery-base` cookbook performs tasks that prepare a node for use with Chef Automate, including installation of push jobs client.
+Later on this page, you'll upload a copy of the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook to your Chef server. When you bootstrap each of your infrastructure nodes, you'll include `delivery-base` in the node's run-list. The `delivery-base` cookbook performs tasks that prepare a node for use with Chef Automate, including installation of the push jobs client.
 
 [END_BOX]
 
@@ -114,7 +114,7 @@ Later on this page, you'll upload a copy of the [delivery-base](https://github.c
 
 ## 3. Set up push jobs on your Chef Automate server
 
-Here, you'll connect to your Chef Automate server over SSH and run a script to configure push jobs server.
+Here, you'll connect to your Chef Automate server over SSH and run a script to configure the push jobs server.
 
 From your workstation, switch to the SSH connection to your Chef Automate server (or reconnect if you've closed the connection) and write the following to <% fp 'install-push-jobs.sh' %> in the home directory.
 
@@ -320,7 +320,7 @@ Recall the `knife ssh` command we discussed earlier (as before, you don't need t
 $ knife ssh 'name:node1-centos' 'sudo chef-client' --ssh-user centos --identity-file ~/.ssh/private_key --attribute ipaddress
 ```
 
-Also recall that _push jobs_ enable you to submit tasks, such as running `chef-client`, to your nodes. Push jobs use the same search mechanism as shown in the `knife ssh` example.
+Also recall that push jobs enable you to submit tasks, such as running `chef-client`, to your nodes. Push jobs use the same search mechanism as shown in the `knife ssh` example.
 
 Chef Automate uses [environments](https://docs.chef.io/environments.html) to provide additional search criteria when push jobs run. As an example, when phases in the Acceptance stage run, you want only the infrastructure node that's associated with the Acceptance stage (and not the Union, Rehearsal, or Delivered stages) to run your cookbook.
 
@@ -630,7 +630,7 @@ The **Recipes** part contains the node's expanded run-list. For example, the `de
 
 In the _Manage a node_ tutorial, you used Chef Automate's visibility feature to [view your node from the dashboard](/tutorials/manage-a-node/rhel/opsworks/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
 
-From the Chef Automate web interface, select **Nodes**. From the search box at the top of the page, enter **node_name: *-node** to display only the node's whose names end with "-node", then click the search button.
+From the Chef Automate web interface, select **Nodes**. From the search box at the top of the page, enter **node_name: *-node** to display only the nodes whose names end with "-node", then click the search button.
 
 ![](automate/visibility-filter-results.png)
 
@@ -756,6 +756,6 @@ Everything checks out. You can now close your SSH connection.
 
 <% next_page(current_page) do %>
 
-Now that you have infrastructure that can run the `learn_chef_httpd` cookbook and can receive updates through push jobs, you're now ready to push a change through the pipeline and validate that change on your nodes.
+Now that you have infrastructure that can run the `learn_chef_httpd` cookbook and can receive updates through push jobs, you're ready to push a change through the pipeline and validate that change on your nodes.
 
 <% end %>
