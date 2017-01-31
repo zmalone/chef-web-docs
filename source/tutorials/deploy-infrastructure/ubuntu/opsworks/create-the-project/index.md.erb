@@ -220,11 +220,11 @@ As each of the unit, lint, and syntax phases moves to the <img style="box-shadow
 
 ![](automate/wf-unit-open-log.png)
 
-Every time a phase runs, the build node first runs the build cookbook's default recipe, <% fp 'default.rb' %>, as the `root` user to ensure that the build node has everything it needs to run. This step is important because you can have multiple build nodes &ndash; a build node that runs one phase will not necessarily have run any of the prior phases.
+Every time a phase runs, the runner first runs the build cookbook's default recipe, <% fp 'default.rb' %>, as the `root` user to ensure that it has everything it needs to run. This step is important because you can have multiple runners &ndash; a runner that runs one phase will not necessarily have run any of the prior phases.
 
 <img style="max-width:100%;" src="/assets/images/automate/wf-unit-output-log-apache2.png"/>
 
-After the default recipe completes, the build node runs the recipe for the phase as the `dbuild` user.
+After the default recipe completes, the runner runs the recipe for the phase as the `dbuild` user.
 
 <img style="max-width:100%;" src="/assets/images/automate/syntax_output_log3.png"/>
 
@@ -232,7 +232,7 @@ Watch as each phase completes and enters the <img style="box-shadow:none; margin
 
 <img style="max-width:75%;" src="/assets/images/automate/wf-initialize-delivery-pipeline-verify.png"/>
 
-Don't click the **Approve** button just yet &ndash; you'll merge the changes to the `master` branch shortly.
+Don't click the **APPROVE** button just yet &ndash; you'll merge the changes to the `master` branch shortly.
 
 Now that the Verify stage has completed, let's take a closer look at your project.
 
@@ -297,9 +297,9 @@ Your build cookbook consists of recipes. Each recipe corresponds to a phase, suc
 
 <img src="/assets/images/delivery/delivery_full_workflow.svg" style="width: 100%; box-shadow: none;" />
 
-Each phase runs on a build node. If you have multiple build nodes, phases can run in parallel, for example, unit and syntax.
+Each phase runs on a runner. If you have multiple runners, phases can run in parallel, for example, unit and syntax.
 
-The build node that's running Verify, for example, merges your changes into `master` on a temporary copy of the main repository and runs the tests against `master`.
+The runner that's running Verify, for example, merges your changes into `master` on a temporary copy of the main repository and runs the tests against `master`.
 
 How you define each phase depends on your project and its requirements. For example, if your project is a web application that contains JavaScript, you might run JSLint as part of the lint phase. Alternatively, if you don't currently run lint tests on your code, you can leave the phase empty or configure Chef Automate to skip it.
 
@@ -415,7 +415,7 @@ Recall that the `delivery init` command creates a file named <% fp '.delivery/co
 }
 ```
 
-These configuration settings become node attributes on your build nodes. You can also use this file to [control how delivery-truck behaves](https://github.com/chef-cookbooks/delivery-truck#customizing-behavior-using-deliveryconfigjson).
+These configuration settings become node attributes on your runners. You can also use this file to [control how delivery-truck behaves](https://github.com/chef-cookbooks/delivery-truck#customizing-behavior-using-deliveryconfigjson).
 
 To specify that the cookbook should be published to Chef server, modify your copy of <% fp '.delivery/config.json' %> like this.
 
@@ -520,13 +520,13 @@ Scroll down to the bottom of Patchset 2 and enter a comment.
 
 ![](automate/wf-review-add-comment2.png)
 
-Click the **Add Comment** button.
+Click the **ADD COMMENT** button.
 
-Scroll back to the top of the patchset and click **Approve**.
+Scroll back to the top of the patchset and click **APPROVE**.
 
 ![](automate/wf-review-approve2.png)
 
-Then click **Confirm**.
+Then click **CONFIRM**.
 
 ![](automate/wf-review-approve-modal2.png)
 
@@ -540,7 +540,7 @@ The **Approve** action merges the `initialize-delivery-pipeline` branch into the
 
 In this tutorial, you approve and deliver your own changes. In practice, you'll need to decide with your organization the criteria for approving and shipping changes.
 
-Even though just one person presses the **Approve** button, multiple people may be involved in the review process. At Chef, we follow the "four eyes" rule, where a total of four eyes is required to approve a code change.
+Even though just one person clicks the **APPROVE** button, multiple people may be involved in the review process. At Chef, we follow the "four eyes" rule, where a total of four eyes is required to approve a code change.
 
 After two people approve a code change in the **Review** tab and there are no unresolved issues, the change can be approved and move to the next pipeline stage. Some code reviews involve multiple iterations and approaches, others are as simple as this:
 
@@ -560,7 +560,7 @@ After you approve the change, it moves to the Build stage.
 
 <img src="/assets/images/delivery/delivery_full_workflow_build.svg" style="width: 100%; box-shadow: none;" />
 
-The unit, lint, and syntax phases run again on the build node. Rerunning the tests ensures that they continue to pass after the change is merged to `master`.
+The unit, lint, and syntax phases run again on the runner. Rerunning the tests ensures that they continue to pass after the change is merged to `master`.
 
 The Build stage also runs the security and quality phases. These recipes do not have any logic, so nothing happens. Then the publish phase runs. This phase creates an artifact (in our case, a cookbook) that is a release candidate. Recall that you configured `delivery-truck` to publish the `learn_chef_apache2` cookbook to Chef server. `delivery-truck` runs the `knife cookbook upload` command to do that ([source code](https://github.com/chef-cookbooks/delivery-truck/blob/master/recipes/publish.rb)).
 
@@ -582,11 +582,11 @@ The smoke and functional recipes do not have any logic, so nothing happens. You'
 
 Wait for the Acceptance stage to complete. In practice, you might manually verify that the change to your application or service behaves as you expect. You don't yet have infrastructure associated with the Acceptance, Union, Rehearsal, or Delivered stages, but let's move the change through to see how these stages work.
 
-Press the **Deliver** button. Pressing the **Deliver** button is a confirmation that the artifact can be released. The artifact will move through the next three pipeline stages automatically.
+Click the **DELIVER** button. Clicking the **DELIVER** button is a confirmation that the artifact can be released. The artifact will move through the next three pipeline stages automatically.
 
 ![](automate/wf-delivery-init-deliver2.png)
 
-Press the **Confirm** button from the dialog that appears.
+Click the **CONFIRM** button from the dialog that appears.
 
 ![](automate/wf-delivery-init-confirm-delivery-apache2.png)
 
@@ -620,7 +620,7 @@ Congratulations! You now have a functioning Chef Automate pipeline.
 
 ## 9. Integrate the change to your local master branch
 
-When you clicked **Approve** during the Verify stage, Chef Automate merged the `initialize-delivery-pipeline` branch into `master` on Chef Automate's Git server. Now you need to pull Chef Automate's updated `master` into your local `master` branch.
+When you clicked **APPROVE** during the Verify stage, Chef Automate merged the `initialize-delivery-pipeline` branch into `master` on Chef Automate's Git server. Now you need to pull Chef Automate's updated `master` into your local `master` branch.
 
 First, switch to the `master` branch.
 
