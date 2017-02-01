@@ -4,6 +4,7 @@ layout: lesson-overview
 platform: Get started with a Chef Automate environment
 logo: build.svg
 order: 1
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Chef Automate gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of multiple components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
 
