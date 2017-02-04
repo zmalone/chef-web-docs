@@ -28,7 +28,7 @@ head
   - if data.page.redirect
     = partial "layouts/redirect", locals: { target: data.page.redirect }
 
-body class=page_classes ng-app='chefLabClient'
+body class=page_classes ng-app='chefLabClient' ng-controller='applicationCtrl'
   header.nav-main data-topbar="" role="navigation"
     .row
       a name="top" href="#top"
@@ -42,8 +42,13 @@ body class=page_classes ng-app='chefLabClient'
         li= link_to 'Modules', '/skills/'
       .right
         ul.links
-          li= link_to 'Log in', ''
-          li= link_to 'Sign up', ''
+          li.nav-link
+            a href="#" fb-login="" ng-if="logoutStatus"  Log in
+          li.nav-link
+            a href="#" ng-click="logout()" ng-if="logoutStatus"  Sign up
+          li.nav-link
+            a href="#" ng-click="logout()" ng-if="!logoutStatus"  Log Out
+
           li
             a.icon.ic-search
           li
@@ -101,4 +106,4 @@ body class=page_classes ng-app='chefLabClient'
             li
               a href="" Contact Chef
         /      Copyright &copy; #{Time.now.year} Chef Software, Inc. All Rights Reserved.
-        /= partial 'layouts/js'
+        = partial 'layouts/js'
