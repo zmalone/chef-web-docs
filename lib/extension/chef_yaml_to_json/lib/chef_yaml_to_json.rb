@@ -9,9 +9,7 @@ class ChefYmlToJson < ::Middleman::Extension
   def initialize(app, options_hash={}, &block)
     # Call super to build options from the options_hash
     super
-    require 'json'
-    require 'yaml'
-    chef_yaml_json
+
     # Require libraries only when activated
     # require 'necessary/library'
 
@@ -19,22 +17,24 @@ class ChefYmlToJson < ::Middleman::Extension
     # puts options.my_option
   end
   def chef_yaml_json
-    input_filename = '/home/intime/chef-web-learn/data/tracks.yml'
-    output_filename = '/home/intime/chef-web-learn/source/assets/javascripts/data/track.js'
+    input_filename = app.config[:root_dir] +"/" + app.config[:data_dir] + '/tracks.yml'
+    output_filename = app.config[:root_dir] +"/source/" + app.config[:js_dir] + '/data/track.js'
 
     input_file = File.open(input_filename, 'r')
     input_yml = input_file.read
     input_file.close
 
     output_json = JSON.dump(YAML::load(input_yml))
-    output_json = "var tracks = " + output_json
+    output_json = 'var tracks = ' + output_json
     output_file = File.open(output_filename, 'w+')
     output_file.write(output_json)
     output_file.close
   end
 
   def after_configuration
-    # Do something
+    require 'json'
+    require 'yaml'
+    chef_yaml_json
   end
 
   # A Sitemap Manipulator

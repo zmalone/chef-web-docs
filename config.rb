@@ -115,6 +115,7 @@ set :css_dir, 'assets/stylesheets'
 set :js_dir, 'assets/javascripts'
 set :images_dir, 'assets/images'
 set :fonts_dir, 'assets/fonts'
+set :root_dir, File.dirname(__FILE__)
 
 # Redirects
 redirect '/additional-resources', '/fundamentals-series/'

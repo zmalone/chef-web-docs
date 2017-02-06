@@ -66,6 +66,8 @@ chefApp.constant('chefApiUrl', 'http://localhost:3000')
     })
     if(AuthService.isAuthenticated()){
         $rootScope.logoutStatus = false;
+    }else{
+        $rootScope.logoutStatus = true;
     }
 
 }])

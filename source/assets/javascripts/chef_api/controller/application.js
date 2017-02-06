@@ -3,6 +3,8 @@ chefApp.controller('applicationCtrl', function ($rootScope, $scope, socialLoginS
     $scope.end = loadTracksCount;
     $scope.tot_tracks = tracks.tracks.length;
     $scope.tracks = tracks.tracks.slice($scope.start, $scope.end);
+    $scope.modules = tracks.modules;
+
     $scope.logout = function(){
         socialLoginService.logout()
     }
@@ -18,5 +20,8 @@ chefApp.controller('applicationCtrl', function ($rootScope, $scope, socialLoginS
         $scope.end = $scope.start + loadTracksCount;
         var track = tracks.tracks.slice($scope.start, $scope.end);
         $scope.tracks = $scope.tracks.concat(track);
+        console.log($scope.modules);
     })
+
+
 });
