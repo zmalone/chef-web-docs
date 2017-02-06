@@ -4,31 +4,28 @@
 'use strict';
 
 var chefApp = angular.module('chefLabClient', ['socialLogin', 'ngCookies', 'ngResource', 'ngStorage', 'http-auth-interceptor', 'infinite-scroll'])
-chefApp.constant('chefApiUrl', 'http://localhost:3000');
-chefApp.constant('AUTH_EVENTS', {
+chefApp.constant('chefApiUrl', 'http://localhost:3000')
+.constant('loadTracksCount', 2)
+.constant('AUTH_EVENTS', {
     loginSuccess: 'auth-login-success',
     loginFailed: 'auth-login-failed',
     logoutSuccess: 'auth-logout-success',
     sessionTimeout: 'auth-session-timeout',
     notAuthenticated: 'auth-not-authenticated',
     notAuthorized: 'auth-not-authorized'
-})
-chefApp.constant('USER_ROLES', {
+}).constant('USER_ROLES', {
         all: '*',
         admin: 'admin',
         editor: 'editor',
         guest: 'guest'
-    })
-chefApp.constant('CHEF_API', {
+    }).constant('CHEF_API', {
         'clientId': '5ccJ4eGlLm6CZ5betjuPRX3dfdfRYlSsnuyXU1tbOHxH'
-    })
-chefApp.config(function(socialProvider){
+    }).config(function(socialProvider){
 
     //socialProvider.setGoogleKey("YOUR GOOGLE CLIENT ID");
     //socialProvider.setLinkedInKey("YOUR LINKEDIN CLIENT ID");
     socialProvider.setFbKey({appId: "298912207152795", apiVersion: "v2.4"});
-});
-chefApp.run(['$rootScope', 'AuthService', 'Session', '$sessionStorage', 'UserService', 'AUTH_EVENTS', function($rootScope, AuthService, Session, $sessionStorage, UserService, AUTH_EVENTS){
+}).run(['$rootScope', 'AuthService', 'Session', '$sessionStorage', 'UserService', 'AUTH_EVENTS', function($rootScope, AuthService, Session, $sessionStorage, UserService, AUTH_EVENTS){
     $rootScope.logoutStatus = true;
     $rootScope.$on('event:social-sign-in-success', function(event, userDetails){
         console.log(userDetails)

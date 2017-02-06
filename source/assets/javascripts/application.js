@@ -10,6 +10,7 @@
 //= require progress-bar
 //= require platform-tabs
 //= require nav-scroll
+//= require data/track
 //= require chef_api/lib/angularjs-social-login
 //= require chef_api/lib/angular-cookies
 //= require chef_api/lib/angular-resource

@@ -1,5 +1,8 @@
-chefApp.controller('applicationCtrl', function ($rootScope, $scope, socialLoginService, AuthService, Session) {
-    $scope.images = [1, 2, 3, 4, 5, 6, 7, 8];
+chefApp.controller('applicationCtrl', function ($rootScope, $scope, socialLoginService, loadTracksCount, Session) {
+    $scope.start =  0;
+    $scope.end = loadTracksCount;
+    $scope.tot_tracks = tracks.tracks.length;
+    $scope.tracks = tracks.tracks.slice($scope.start, $scope.end);
     $scope.logout = function(){
         socialLoginService.logout()
     }
@@ -7,18 +10,13 @@ chefApp.controller('applicationCtrl', function ($rootScope, $scope, socialLoginS
         $rootScope.currentUser = userInfo;
     };
 
-
     $scope.loadMore = function(){
         $scope.$broadcast('load_track_info');
     }
     $scope.$on('load_track_info', function(){
-        
-
-            var last = $scope.images[$scope.images.length - 1];
-            for(var i = 1; i <= 8; i++) {
-                $scope.images.push(last + i);
-            }
+        $scope.start  =  $scope.end;
+        $scope.end = $scope.start + loadTracksCount;
+        var track = tracks.tracks.slice($scope.start, $scope.end);
+        $scope.tracks = $scope.tracks.concat(track);
     })
-    
-
 });

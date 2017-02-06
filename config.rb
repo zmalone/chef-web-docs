@@ -16,6 +16,7 @@ require 'lib/helpers/inline_code_helpers'
 require 'lib/helpers/snippet_helpers'
 require 'lib/helpers/button_helpers'
 require 'lib/helpers/key_point_helpers'
+require 'lib/extension/chef_yaml_to_json/lib/chef_yaml_to_json'
 
 # In development you can use `binding.pry` anywhere to pause execution and bring
 # up a Ruby REPL
@@ -41,7 +42,7 @@ Slim::Engine.set_default_options pretty: true, disable_escape: true
 ###
 # Page options, layouts, aliases and proxies
 ###
-
+activate :chef_yml_to_json
 activate :directory_indexes
 set :trailing_slash, false
 activate :autoprefixer
@@ -99,7 +100,7 @@ else
 end
 
 # Enable Livereload
-activate :livereload unless travis?
+#activate :livereload unless travis?
 
 # Enable syntax highlighting - turn off the default wrapping
 activate :syntax, wrap: false
@@ -225,6 +226,7 @@ end
 
 before_build do
   system 'cd lib/chef-lab-client && npm install --production && npm run build' or exit($?.exitstatus)
+
 end
 
 # Write out a REVISION file that shows which revision we're running
