@@ -79,14 +79,6 @@ def bucket_name
   end
 end
 
-def fqdn
-  if stage_delivered?
-    "#{SITE_NAME}.#{DOMAIN_NAME}"
-  else
-    "#{SITE_NAME}-#{node['delivery']['change']['stage']}.#{DOMAIN_NAME}"
-  end
-end
-
 def old_learn_fqdn
   if stage_delivered?
     "#{SITE_NAME}.#{OLD_DOMAIN_NAME}"
