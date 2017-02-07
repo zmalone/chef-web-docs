@@ -3,7 +3,7 @@
 A roadmap can codify your thoughts about how best to discover what customers need and will love. To create a roadmap:
 
 1. Start with your vision
-1. Align you vision with customer feedback
+1. Align your vision with customer feedback
 1. Balance innovation with customer needs
 1. Group the results of steps 1 through 3 into themes, and associate each theme with an outcome
 1. Distill those themes into features and validate the features with your customers
