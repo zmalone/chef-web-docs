@@ -71,14 +71,6 @@ def next_stage(stage)
   end
 end
 
-def bucket_name
-  if stage_delivered?
-    node['delivery']['change']['project'].gsub(/_/, '-')
-  else
-    "#{node['delivery']['change']['project'].gsub(/_/, '-')}-#{node['delivery']['change']['stage']}"
-  end
-end
-
 def old_learn_fqdn
   if stage_delivered?
     "#{SITE_NAME}.#{OLD_DOMAIN_NAME}"
