@@ -12,4 +12,6 @@ execute 'build the site' do
   cwd node['delivery']['workspace']['repo']
 end
 
-cia_delivery_publish_artifact 'lc-rally'
+cia_delivery_publish_artifact 'lc-rally' do
+  build_path 'build'
+end
