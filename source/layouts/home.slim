@@ -1,69 +1,106 @@
 = wrap_layout :layout do
-  .home--hero
-    .row
-      .columns.medium-10.medium-push-1.large-8.large-push-2.text-center
-        h1.home--hero--heading Welcome to Learn Chef
-        p.home--hero--text
-          | Welcome to Learn Chef, home to Chef tutorials, articles, technical docs and training. If you’re looking to improve your understanding of Chef and DevOps, this is the place.
-  .home--sections
-    .home--section data-section="tutorials"
-      a.home--section--title href="/tutorials/"
-        .home--section--icon.fade-in
-          = partial 'layouts/home/tutorials_icon'
-        h2.home--section--heading Tutorials <i class="fa fa-chevron-right"></i>
-      p.home--section--description
-        | These tutorials get you started quickly. You’ll learn the basics, move on to managing a node, then a web application, and much more. Included are detailed steps for installing Chef and all the tools you need on your workstation. <a href="/tutorials/">Get Started.</a>
-    .home--section data-section="skills"
-      a.home--section--title href="/skills/"
-        .home--section--icon.fade-in
-          = partial 'layouts/home/skills_icon'
-        h2.home--section--heading Skills Library <i class="fa fa-chevron-right"></i>
-      p.home--section--description
-        | This diverse collection of articles deepens your understanding of DevOps, Chef patterns, and best practices. You can learn about becoming a DevOps practitioner or find out how to secure your Chef installation. <a href="/skills/">Get Started.</a>
-    .home--section data-section="docs"
-      a.home--section--title href="#{chef_docs_url}"
-        .home--section--icon.fade-in
-          = partial 'layouts/home/docs_icon'
-        h2.home--section--heading Docs <i class="fa fa-chevron-right"></i>
-      p.home--section--description
-        | Chef includes a complete set of reference docs. For example, if you're writing a cookbook and need to learn about a particular resource, you'll find it here. <a href="#{chef_docs_url}">Get Started.</a>
-    .home--section data-section="training"
-      a.home--section--title href="#{chef_training_url}"
-        .home--section--icon.fade-in
-          = partial 'layouts/home/training_icon'
-        h2.home--section--heading Training &amp; Certifications <i class="fa fa-chevron-right"></i>
-      p.home--section--description
-        | We offer a comprehensive training curriculum, as well as
-          certification paths for different Chef skill sets &ndash; all led led by a
-          team of experienced instructors.
-          <a href="#{chef_training_url}">Get Started.</a>
-    .home--section data-section="community"
-      a.home--section--title href="/community/"
-        .home--section--icon.fade-in
-          = partial 'layouts/home/community_icon'
-        h2.home--section--heading Community <i class="fa fa-chevron-right"></i>
-      p.home--section--description
-        | The Chef community is home to a diverse group of practitioners
-          that are dedicated to helping others become successful with Chef
-          and DevOps. From meetups to podcasts run and created by community
-          members, there are multiple ways to engage, contribute, share, and
-          learn from others.
-  .home--descriptions.tutorials-active
-    p.home--description data-section="tutorials"
-      | These tutorials get you started quickly. You’ll learn the basics, move on to managing a node, then a web application, and much more. Included are detailed steps for installing Chef and all the tools you need on your workstation. <a href="/tutorials/">Get Started.</a>
-    p.home--description data-section="skills"
-      | This diverse collection of articles deepens your understanding of DevOps, Chef patterns, and best practices. You can learn about becoming a DevOps practitioner or find out how to secure your Chef installation. <a href="/skills/">Get Started.</a>
-    p.home--description data-section="docs"
-      | Chef includes a complete set of reference docs. For example, if you're writing a cookbook and need to learn about a particular resource, you'll find it here. <a href="#{chef_docs_url}">Get Started.</a>
-    p.home--description data-section="training"
-      | We offer a comprehensive training curriculum, as well as
-        certification paths for different Chef skill sets &ndash; all led led by a
-        team of experienced instructors.
-        <a href="#{chef_training_url}">Get Started.</a>
-    p.home--description data-section="community"
-      | The Chef community is home to a diverse group of practitioners
-        that are dedicated to helping others become successful with Chef
-        and DevOps. From meetups to podcasts run and created by community
-        members, there are multiple ways to engage, contribute, share, and
-        learn from others.
+  columns.large-12.medium-12.small-12
+  .home-hero-video
+    .video-desc
+      h3
+        |Get ready to chow down.
+      p
+        |If you're hungry to learn everything there is to know about DevOps, you're in the right place. <a data-reveal-id="videoModal" href="" >watch video</a>
+      #videoModal.reveal-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+        h2#modalTitle Watch us.
+        | <iframe width="100%" height="480" src="https://www.youtube.com/embed/jlwGcgFfcnU?autoplay=0" frameborder="0" allowfullscreen></iframe>
+        a.close-reveal-modal aria-label="Close"  ×
+  /Tabs for Tracks and modules
+  .home-content
+    ul.tabs data-tab=""
+      li.tab-title.active
+        a href="#panel1"  Tracks
+      li.tab-title
+        a href="#panel2"  Modules
+    /Container for tracks and modules
+    .tabs-content
+      #panel1.content.active
+        .tracks-section
+          h3
+            | Want a set curriculum? Tracks will guide you every step of the way.
+          .row
+            div infinite-scroll-listen-for-event="load_track_info" infinite-scroll-distance="2"
+              .large-6.medium-6.small-12.columns ng-repeat=("track in tracks")
+                div class="track-card {{track.track_class}}"
+                  h2
+                    span
+                      | {{track.title}}
+                    span.time
+                      | {{track.hours}} hrs
+                  p.desc
+                    | {{track.description}}
+                    a href="#" Keep learning
+                  .row
+                    ul.track-record
+                      li.complete
+                        span
+                      li
+                        span
+                      li
+                        span
+                      li
+                        span
+                      li
+                        span
+                    ul.links
+                      li
+                        a href="" {{track.category}}
+                      li
+                        a href="" {{track.level}}
+                  .tag-img
+                    img src="{{track.image_url}}"
+            .btn-container
+              button.btn.btn-primary ng-click="loadMore()" ng-if="tot_tracks > tracks.length" Load more tracks
+      #panel2.content
+        .modules-section
+          h3
+            | Want to learn Al a Carte? Modules let you choose your own path.
+          .row
+            .large-3.medium-4.small-12.columns ng-repeat="(key, module) in modules"
+              .module-card ng-repeat="(k, module_info) in module"
+                h2
+                  span
+                    | {{ module_info.title}}
+                p
+                  span.details
+                    | {{ module_info.total_modules}} modules
+                  span.time
+                    | {{ module_info.total_hours}} hours
+                p
+                  | {{ module_info.description}}
+                ul.links
+                  li
+                    a href="" {{ module_info.category}}
+                  li
+                    a href="" {{ module_info.level}}
+    .profiles-section
+      .header
+      h3
+        | Meet colleagues who have found the recipe for success.
+      .row
+        .large-4.medium-4.small-12.columns
+          .profile-pic.profile-1
+          h4
+            | “ Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut diam mi. Sed varius aliquam”
+          p
+            |  Lorem ipsum dolor sit amet, consectetur
+
+        .large-4.medium-4.small-12.columns
+          .profile-pic.profile-2
+          h4
+            | “ Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut diam mi. Sed varius aliquam”
+          p
+            |  Lorem ipsum dolor sit amet, consectetur
+
+        .large-4.medium-4.small-12.columns
+          .profile-pic.profile-3
+          h4
+            | “ Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut diam mi. Sed varius aliquam”
+          p
+            |  Lorem ipsum dolor sit amet, consectetur
 

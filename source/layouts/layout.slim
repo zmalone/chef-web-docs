@@ -28,21 +28,31 @@ head
   - if data.page.redirect
     = partial "layouts/redirect", locals: { target: data.page.redirect }
 
-body class=page_classes ng-app='chefLabClient'
-  nav.nav-main data-topbar="" role="navigation"
+body class=page_classes ng-app='chefLabClient' ng-controller='applicationCtrl'
+  header.nav-main data-topbar="" role="navigation"
     .row
       a name="top" href="#top"
       .left
-        h1= link_to 'Learn Chef', "/"
+        = link_to chef_www_url, class: 'logo-learn-chef' do
+          = image_tag('logo-learn-chef.svg', onerror: 'logo-learn-chef.png')
       i#nav-icon.fa.fa-bars
-      = link_to chef_www_url, id: "logo" do
-        = image_tag('chef-logo-mark.svg', onerror: 'chef-logo-mark.png')
-      ul.nav-links
-        li.nav-link= link_to 'Tutorials', '/tutorials/'
-        li.nav-link= link_to 'Skills Library', '/skills/'
-        li.nav-link= link_to 'Docs', chef_docs_url
-        li.nav-link= link_to 'Training', chef_training_url
-        li.nav-link= link_to 'Community', '/community/'
+
+      ul.links
+        li= link_to 'Tracks', '/tutorials/'
+        li= link_to 'Modules', '/skills/'
+      .right
+        ul.links
+          li.nav-link
+            a href="#" fb-login="" ng-if="logoutStatus"  Log in
+          li.nav-link
+            a href="#" ng-click="logout()" ng-if="logoutStatus"  Sign up
+          li.nav-link
+            a href="#" ng-click="logout()" ng-if="!logoutStatus"  Log Out
+
+          li
+            a.icon.ic-search
+          li
+            a.icon.ic-option
 
   section
     .content
@@ -51,5 +61,49 @@ body class=page_classes ng-app='chefLabClient'
   footer#footer
     .row
       .medium-12.columns.copyright
-        Copyright &copy; #{Time.now.year} Chef Software, Inc. All Rights Reserved.
+        .medium-3.columns
+          .head
+            | DOCS
+          ul.links-footer
+            li
+              a href="" Chef Automate docs
+            li
+              a href="" Chef docs
+            li
+              a href="" InSpec docs
+            li
+              a href="" Habitat docs
+        .medium-3.columns
+          .head
+            | COMMUNITY
+          ul.links-footer
+            li
+              a href="" About the Chef Community
+            li
+              a href="" Chef Supermarket
+            li
+              a href="" Discuss Forum
+            li
+              a href="" Community Events
+        .medium-3.columns
+          .head
+            | TRAINING & CERTIFICATIONS
+          ul.links-footer
+            li
+              a href="" Training Catalog
+            li
+              a href="" Certification
+            li
+              a href="" Private Training
+        .medium-3.columns
+          .head
+            | MANAGE MY LEARN CHEF PROFILE
+          ul.links-footer
+            li
+              a href="" My Learn Chef profile
+            li
+              a href="" My Progress
+            li
+              a href="" Contact Chef
+        /      Copyright &copy; #{Time.now.year} Chef Software, Inc. All Rights Reserved.
   = partial 'layouts/js'
