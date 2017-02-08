@@ -16,23 +16,23 @@ headings: [
   { label: '6. Remediate the failure', href: '#step6' }
 ]
 ---
-Recall that in the previous tutorial you ran the **cis-ubuntu14.04lts-level1** compliance profile and that it failed the **Ensure Firewall is active** rule.
+Recall that in the previous tutorial you ran the **cis-windows2012-level1-memberserver** compliance profile and that it failed the password complexity rule.
 
 ![](compliance/scan_report_issues_firewall_ubuntu1404.png)
 
 Configuring the firewall helps ensure that your server provides access to ports from addresses that you trust. Although `iptables` may be active, CIS recommends that you enable [Uncomplicated Firewall](https://help.ubuntu.com/community/UFW), or UFW, to ease firewall configuration.
 
-In this part, you'll verify the failure of the **Ensure Firewall is active** rule on a local virtual machine and remediate it. By starting with local development with Test Kitchen, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers.
+In this part, you'll verify the failure of the password complexity rule on a local virtual machine and remediate it. By starting with local development with Test Kitchen, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers.
 
-You can configure Test Kitchen to download and run compliance profiles on your test instances. For example, you can pull compliance profiles from [Chef Supermarket](https://docs.chef.io/supermarket.html), a Git repository, or from your Chef compliance scanner. Here, you'll configure Test Kitchen to download the **cis/cis-ubuntu14.04lts-level1** profile from your Chef compliance scanner.
+You can configure Test Kitchen to download and run compliance profiles on your test instances. For example, you can pull compliance profiles from [Chef Supermarket](https://docs.chef.io/supermarket.html), a Git repository, or from your Chef compliance scanner. Here, you'll configure Test Kitchen to download the **cis/cis-windows2012-level1-memberserver** profile from your Chef compliance scanner.
 
 [START_BOX]
 
 ### 1. Understand the compliance failure
 
-Let's take a closer look at what the **Ensure Firewall is active** rule checks for.
+Let's take a closer look at what the password complexity rule checks for.
 
-From the **Compliance** menu in the Chef compliance scanner web interface, select the **CIS Windows Server  Linux 14.04 LTS Benchmark Level 1** profile. Then scroll to the **Ensure Firewall is active** rule. You'll see this:
+From the **Compliance** menu in the Chef compliance scanner web interface, select the **CIS Windows Server  Linux 14.04 LTS Benchmark Level 1** profile. Then scroll to the **Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)** rule. You'll see this:
 
 ![](compliance/ensure_firewall_is_active_rule.png)
 
@@ -164,7 +164,7 @@ As expected, 0 resources were applied because the cookbook is empty. But it's a 
 
 In the previous tutorial, you saw the firewall rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
 
-Recall that the InSpec code for the firewall rule looks like this. This rule comes from the **cis/cis-ubuntu14.04lts-level1** profile.
+Recall that the InSpec code for the firewall rule looks like this. This rule comes from the **cis/cis-windows2012-level1-memberserver** profile.
 
 ![](compliance/ensure_firewall_is_active_rule.png)
 
@@ -172,7 +172,7 @@ Also recall that your <% fp '.kitchen.yml' %> file looks like this.
 
 <% code_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-2-yml') %>
 
-The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-ubuntu14.04lts-level1** profile from the Chef compliance scanner when it runs tests. You specified your Chef compliance scanner when you ran `inspec compliance login` earlier.
+The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-windows2012-level1-memberserver** profile from the Chef compliance scanner when it runs tests. You specified your Chef compliance scanner when you ran `inspec compliance login` earlier.
 
 You're now ready to scan your test instance. Run `kitchen verify` to run the compliance profile.
 
@@ -180,11 +180,11 @@ You're now ready to scan your test instance. Run `kitchen verify` to run the com
 
 For brevity, we've omitted the sample output. When you scanned your node from the web interface, you likely noticed that many tests fail the CIS recommendations. You'll see a similar number of failures when you run the same tests against your test instance.
 
-For now, we're only interested in seeing the **Ensure Firewall is active** rule fail. We're working to make it easier to pinpoint specific failures in the output. For now, run `kitchen verify` a second time and redirect the output to a text file, like this.
+For now, we're only interested in seeing the password complexity rule fail. We're working to make it easier to pinpoint specific failures in the output. For now, run `kitchen verify` a second time and redirect the output to a text file, like this.
 
 <% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-verify-redirect-1', features: :stdin) %>
 
-You can locate the status of a test by searching for its name. Here's how to locate the status of the **Ensure Firewall is active** rule.
+You can locate the status of a test by searching for its name. Here's how to locate the status of the password complexity rule.
 
 <% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/grep-rule-1') %>
 
@@ -222,7 +222,7 @@ Now run `kitchen verify` to run the compliance profile a second time.
 
 <% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-verify-redirect-1', features: :stdin) %>
 
-Repeat the step where you search <% fp 'verify.txt' %> for the profile named "Ensure Firewall is active".
+Repeat the step where you search <% fp 'verify.txt' %> for the profile named "Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)".
 
 <% command_snippet(page: current_page, path: 'remediate-the-failure/grep-rule-2') %>
 
