@@ -1,0 +1,1131 @@
+---
+title: 'Add infrastructure to run your web server'
+short_title: 'Add infrastructure'
+order: 5
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 60 minutes
+snippet_path: deploy-infrastructure/ubuntu/opsworks/set-up-your-chef-server
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Bring up infrastructure', href: '#step1' },
+  { label: '2. Understand push jobs', href: '#step2' },
+  { label: '3. Set up push jobs', href: '#step3' },
+  { label: '4. Fetch the server certificate', href: '#step4' },
+  { label: '5. Get the delivery-base cookbook', href: '#step5' },
+  { label: '6. Understand Chef environments', href: '#step6' },
+  { label: '7. Create environments', href: '#step7' },
+  { label: '8. Bootstrap your nodes', href: '#step8' },
+  { label: '9. Run chef-client a second time', href: '#step9' },
+  ]
+---
+So far, you've created a project, configured your build cookbook to publish the `learn_chef_apache2` cookbook to the Chef server, and watched the initial change move through the pipeline. The next step is to create infrastructure environments that can run your cookbook.
+
+Recall that infrastructure can receive build artifacts produced from Chef Automate's build pipeline. These environments are labeled **acceptance**, **union**, **rehearsal**, and **delivered** in this diagram.
+
+<img src="/assets/images/automate/automate-scenario-architecture-opsworks.svg" style="width: 100%; alt="An example Chef Automate installation" />
+
+For this tutorial, your build artifact is the `learn_chef_apache2` cookbook. Because the `learn_chef_apache2` cookbook targets Ubuntu, you'll bring up Ubuntu 14.04 systems.
+
+Recall that your project uses the `delivery-truck` cookbook to perform many common tasks that are needed to deliver Chef cookbooks. Using the `delivery-truck` cookbook requires coordination between the Chef server and the infrastructure environments, or _nodes_.
+
+In this part, you'll prepare your nodes so that they are ready to run build artifacts (here, the `learn_chef_apache2` cookbook) during the Acceptance, Union, Rehearsal, and Delivered stages.
+
+Setting up Chef Automate to deploy cookbooks to infrastructure nodes involves these tasks.
+
+* Bringing up infrastructure environments to configure during the Acceptance, Union, Rehearsal, and Delivered stages.
+* Setting up push jobs on your Chef Automate server.
+* Setting up push jobs on your infrastructure nodes.
+* Creating a Chef environment for each infrastructure node.
+* Bootstrapping your nodes to the Chef server.
+
+Let's start by bringing up infrastructure to run the `learn_chef_apache2` cookbook.
+
+[START_BOX]
+
+## 1. Bring up infrastructure
+
+Like your runner, each infrastructure node can be any system that's reachable by Chef Automate. Unlike your runner, each node requires only a reachable IP address and does not need to have an associated FQDN.
+
+For learning purposes, we recommend that you use EC2 instances. The number of servers you bring up is up to you. At a minimum, you can bring up one node that represents your Acceptance environment. A complete setup involves creating 4 servers &ndash; one each for the Acceptance, Union, Rehearsal, and Delivered environments.
+
+[COMMENT] Although we recommend that you bring up fresh intances for this tutorial, you can use the node that you brought up for the _Manage a node_ tutorial. Also, although Chef [supports multiple versions of Ubuntu](https://docs.chef.io/platforms.html#chef-client-ohai-foundational-platforms), we recommend that you use Ubuntu 14.04 to ensure the results you see match what's shown in this tutorial.
+
+Bring up the number of Ubuntu 14.04 systems you want to use now. If you're using EC2, each can be a **t2.micro** instance. As you did in the _Manage a node_ tutorial, ensure each system's security group provides inbound network access on ports 22, 80, and 443.
+
+Here are resources if you need a refresher on how to launch an instance.
+
+* [Launch an instance using the AWS Management Console](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance_linux)
+* [Launch an instance using the  command-line](http://docs.aws.amazon.com/cli/latest/userguide/cli-ec2-launch.html#launching-instances)
+
+We also recommend that you set the `Name` [tag](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html) on each EC2 instance with a name that corresponds to each node's role. For example,
+
+| Role       | EC2 Name tag      |
+|------------|-------------------|
+| Acceptance | `acceptance-node` |
+| Union      | `union-node`      |
+| Rehearsal  | `rehearsal-node`  |
+| Delivered  | `delivered-node`  |
+
+Your EC2 instances will look like this.
+
+![](automate/ec2-infra-nodes.png)
+
+[COMMENT] For this tutorial, you bring up infrastructure manually. Later, you might be interested in using the [knife-ec2](https://github.com/chef/knife-ec2) plugin to provision servers on EC2.
+
+Here's an example of what a complete setup looks like from the EC2 management console. This setup includes an AWS OpsWorks for Chef Automate instance, one runner, and infrastructure nodes for the Acceptance, Union, Rehearsal, and Delivered stages.
+
+![](automate/ec2-complete-setup.png)
+
+From the **Description** tab, note the public IP address for each of your infrastructure nodes.
+
+![](automate/ec2-instance-public-ip.png)
+
+While your servers come up, you can move on to the next step.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Understand the role of push jobs
+
+In the _Manage a node_ tutorial, you used `knife ssh` to [run chef-client on your node](/tutorials/manage-a-node/ubuntu/opsworks/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
+
+```bash
+# ~/learn-chef
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user ubuntu --identity-file ~/.ssh/private_key --attribute ipaddress
+```
+
+The command uses a search query to specify which node to run `chef-client` on. Here, the search query specifies the node's name, **node1-ubuntu**.
+
+There are other ways to run `chef-client` on a node. You can log in directly over SSH and run `sudo chef-client`. Or you can run `chef-client` at a regular interval as a daemon, cron job, service, or scheduled task, [as you did previously](/tutorials/manage-a-node/ubuntu/opsworks/run-chef-client-periodically).
+
+You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. A push job is a way to submit a task to a node, such as running `chef-client`. The push jobs client runs on a node and listens for job requests.
+
+The push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
+
+In the next step, you'll install the push jobs server on your Chef server (remember, AWS OpsWorks for Chef Automate includes both Chef Automate and Chef server on the same system).
+
+Later on this page, you'll upload a copy of the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook to your Chef server. When you bootstrap each of your infrastructure nodes, you'll include `delivery-base` in the node's run-list. The `delivery-base` cookbook performs tasks that prepare a node for use with Chef Automate, including installation of the push jobs client.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Set up push jobs on your Chef Automate server
+
+Here, you'll connect to your Chef Automate server over SSH and run a script to configure the push jobs server.
+
+From your workstation, switch to the SSH connection to your Chef Automate server (or reconnect if you've closed the connection) and write the following to <% fp 'install-push-jobs.sh' %> in the home directory.
+
+```shell
+# ~/install-push-jobs.sh
+#!/bin/bash
+
+if [[ -n "$1" ]]; then
+  wget https://packages.chef.io/files/stable/opscode-push-jobs-server/2.1.1/el/7/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
+  chef-server-ctl install opscode-push-jobs-server --path /home/ec2-user/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
+  opscode-push-jobs-server-ctl reconfigure
+  export PATH=/opt/opscode/embedded/bin:$PATH
+  chmod 0644 /etc/delivery/delivery.pem
+  gem install knife-acl
+  knife group add user delivery admins -c /etc/opscode/pivotal.rb --server-url https://localhost/organizations/default
+  knife ssl fetch https://$1:8443
+  automate-ctl restart
+else
+  echo "usage: ./install-push-jobs.sh SERVER_NAME"
+  echo -e "example:\n\t./install-push-jobs.sh test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io"
+fi
+```
+
+This script installs the push jobs server package and configures Chef server to issue push jobs.
+
+Next, change the file mode to make the script executable.
+
+```bash
+# ~
+$ chmod +x install-push-jobs.sh
+```
+
+Next, run the script. Replace <% ph 'SERVER_NAME' %> with your AWS OpsWorks instance's FQDN, for example, **test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io**.
+
+```bash
+# ~
+$ sudo ./install-push-jobs.sh SERVER_NAME
+```
+
+Here's an example. Sample output is omitted for brevity.
+
+```bash
+# ~
+$ sudo ./install-push-jobs.sh test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io
+```
+
+[END_BOX]
+
+[START_BOX]
+
+### 4. Fetch Chef server's SSL certificate on your runner
+
+Earlier, you [enabled inbound network access](/tutorials/deploy-infrastructure/ubuntu/opsworks/set-up-opsworks#step3) to port 8443 through your AWS OpsWorks server's security group. You did so because runners require a trusted connection to the Chef server to initiate push jobs.
+
+To establish trust, you run the `knife ssl fetch` command from your runner. From your workstation, switch to the SSH connection to your runner (or reconnect if you've closed the connection) and run the following command, replacing <% ph 'SERVER' %> with your AWS OpsWorks server's FQDN.
+
+```bash
+$ sudo knife ssl fetch -s https://SERVER:8443 -c /var/opt/delivery/workspace/.chef/knife.rb
+```
+
+Here's an example.
+
+```bash
+$ sudo knife ssl fetch -s https://test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:8443 -c /var/opt/delivery/workspace/.chef/knife.rb
+
+WARNING: Certificates from test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io will be fetched and placed in your trusted_cert
+directory (/etc/chef/trusted_certs).
+
+Knife has no means to verify these are the correct certificates. You should
+verify the authenticity of these certificates after downloading.
+
+Adding certificate for test-t8g63tmuzohfpopb_us-east-1_opsworks-cm_io in /etc/chef/trusted_certs/test-t8g63tmuzohfpopb_us-east-1_opsworks-cm_io.crt
+```
+
+If you have more than one runner, repeat the process on each runner.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Get the delivery-base cookbook
+
+The `delivery-truck` cookbook relies on push jobs to run `chef-client` on nodes as the pipeline runs. It therefore requires each node to include the [push-jobs](https://github.com/chef-cookbooks/push-jobs) cookbook in its run-list. The `push-jobs` cookbook installs the push jobs client package and sets it up to run as a service.
+
+The recommended way to include the `push-jobs` cookbook is to use the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook. The `delivery-base` cookbook includes the `push-jobs` cookbook and sets additional node attributes that enable nodes to work with Chef Automate.
+
+You'll bootstrap your node shortly. To prepare for the bootstrap process, you first need to upload a copy of the `delivery-base` cookbook to your Chef server.
+
+To begin, from your workstation move to the <% fp '~/learn-chef/cookbooks' %> directory.
+
+```bash
+# ~/learn-chef
+$ cd ~/learn-chef/cookbooks
+```
+
+One way to set up the `push-jobs` cookbook to run on your nodes for the Acceptance, Union, Rehearsal, and Delivered stages is to clone the `delivery-base` cookbook repo from GitHub, upload it and its dependencies to the Chef server, and then add it to each of your node's run-list.
+
+Clone the `delivery-base` repo from GitHub.
+
+```bash
+# ~/learn-chef/cookbooks
+$ git clone https://github.com/chef-cookbooks/delivery-base
+Cloning into 'delivery-base'...
+remote: Counting objects: 103, done.
+remote: Total 103 (delta 0), reused 0 (delta 0), pack-reused 103
+Receiving objects: 100% (103/103), 16.25 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (27/27), done.
+Checking connectivity... done.
+```
+
+Next, move to the <% fp 'delivery-base' %> directory.
+
+```bash
+# ~/learn-chef/cookbooks
+$ cd ~/learn-chef/cookbooks/delivery-base
+```
+
+Next, run `berks install` to download the cookbooks that `delivery-base` depends on.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ berks install
+Resolving cookbook dependencies...
+Fetching 'delivery-base' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Installing chef-ingredient (0.21.2)
+Using compat_resource (12.16.3)
+Using delivery-base (0.2.2) from source at .
+Installing packagecloud (0.2.5)
+Installing push-jobs (3.3.0)
+Installing runit (3.0.5)
+Installing yum-epel (2.1.1)
+```
+
+Finally, run `berks upload` to upload `delivery-base` and its dependencies to Chef server. The syntax varies slightly between Windows and other operating systems. Here are a few examples.
+
+**Linux and Mac OS X**
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ SSL_CERT_FILE='../../.chef/ca_certs/opsworks-cm-ca-2016-root.pem' berks upload
+Uploaded chef-ingredient (0.21.2) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Skipping compat_resource (12.16.3) (frozen)
+Uploaded delivery-base (0.2.2) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Uploaded packagecloud (0.2.5) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Uploaded push-jobs (3.3.0) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Uploaded runit (3.0.5) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Uploaded yum-epel (2.1.1) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+```
+
+
+**Windows**
+
+```ps
+# ~/learn-chef/cookbooks/delivery-base
+$ $env:SSL_CERT_FILE='../../.chef/ca_certs/opsworks-cm-ca-2016-root.pem'
+$ berks upload
+Uploaded chef-ingredient (0.21.2) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Skipping compat_resource (12.16.3) (frozen)
+Uploaded delivery-base (0.2.2) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Uploaded packagecloud (0.2.5) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Uploaded push-jobs (3.3.0) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Uploaded runit (3.0.5) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+Uploaded yum-epel (2.1.1) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
+```
+
+-- --
+
+Run `knife cookbook list` to verify `delivery-base` and its dependencies were successfully uploaded to the Chef server.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ knife cookbook list
+chef-client          7.1.0
+chef-ingredient      0.21.2
+compat_resource      12.16.3
+cron                 3.0.0
+delivery-base        0.2.2
+learn_chef_apache2   0.2.0
+logrotate            2.1.0
+ohai                 4.2.3
+packagecloud         0.2.5
+push-jobs            3.3.0
+runit                3.0.5
+windows              2.1.1
+yum-epel             2.1.1
+```
+
+Move back to the <% fp '~/learn-chef' %> directory for the next part.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ cd ~/learn-chef
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Understand the role of Chef environments
+
+Each of the Acceptance, Union, Rehearsal, and Delivered stages deploys build artifacts, or the pipeline's output, to some environment. For our project, this means running the `learn_chef_apache2` cookbook on the infrastructure environments for each of the Acceptance, Union, Rehearsal, and Delivered stages.
+
+Recall the `knife ssh` command we discussed earlier (as before, you don't need to run this command):
+
+```bash
+# ~/learn-chef
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user ubuntu --identity-file ~/.ssh/private_key --attribute ipaddress
+```
+
+Also recall that push jobs enable you to submit tasks, such as running `chef-client`, to your nodes. Push jobs use the same search mechanism as shown in the `knife ssh` example.
+
+Chef Automate uses [environments](https://docs.chef.io/environments.html) to provide additional search criteria when push jobs run. As an example, when phases in the Acceptance stage run, you want only the infrastructure node that's associated with the Acceptance stage (and not the Union, Rehearsal, or Delivered stages) to run your cookbook.
+
+A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as a way to tag a node for a specific purpose.
+
+Every pipeline phase is associated with the name of a Chef environment. For the Acceptance stage, the name comes in this form:
+
+<code class='placeholder'>\<STAGE></code>-<code class='placeholder'>\<ENTERPRISE></code>-<code class='placeholder'>\<ORGANIZATION></code>-<code class='placeholder'>\<PROJECT></code>-<code class='placeholder'>\<PIPELINE></code>
+
+For this project, the environment name during the Acceptance stage is:
+
+**acceptance-default-my-org-learn\_chef\_apache2-master**
+
+where:
+
+* **acceptance** is the stage.
+* **default** is the enterprise.
+* **my-org** is the organization.
+* **learn\_chef\_apache2** is the project.
+* **master** is the pipeline.
+
+Similar logic applies to the Union, Rehearsal, and Delivered stages. However, because the Union, Rehearsal, and Delivered stages can be shared among multiple projects, their environment names are fixed to be **union**, **rehearsal**, and **delivered**, respectively.
+
+Because the push job's search mechanism finds all nodes that are associated with the given Chef environment, you can associate multiple nodes with a given stage, for example, to run a cookbook that configures a multi-tiered application.
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Create the Chef environments
+
+Next, create the Chef environments. Run the following [knife environment create](https://docs.chef.io/knife_environment.html#create) command to create the environment for the Acceptance stage.
+
+```bash
+# ~/learn-chef
+$ knife environment create acceptance-default-my-org-learn_chef_apache2-master -d "The acceptance environment"
+Created acceptance-default-my-org-learn_chef_apache2-master
+```
+
+Now repeat the process for the remaining stages.
+
+```bash
+# ~/learn-chef
+$ knife environment create union -d "The union environment"
+Created union
+$ knife environment create rehearsal -d "The rehearsal environment"
+Created rehearsal
+$ knife environment create delivered -d "The delivered environment"
+Created delivered
+```
+
+Run `knife environment list` to verify the environments were properly created.
+
+```bash
+# ~/learn-chef
+$ knife environment list
+_default
+acceptance-default-my-org-learn_chef_apache2-master
+delivered
+rehearsal
+union
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 8. Bootstrap your nodes
+
+Now that you have the required environments set up and the `delivery-base` cookbook on your Chef server, you're now ready to bootstrap your infrastructure nodes.
+
+The process is similar to the one you did in the [Manage a node](/tutorials/manage-a-node/ubuntu/opsworks/bootstrap-your-node) tutorial with two minor variations.
+
+* Each node's run-list contains two recipes &ndash; the `delivery-base` cookbook's default recipe and the `learn_chef_apache2` cookbook's default recipe.
+* Each node is associated with a Chef environment that you created in the previous step.
+
+From your workstation, start by bootstrapping the node that cooresponds to the Acceptance stage. Replace <% ph 'IP_ADDRESS' %> with your node's public IP address, and <% ph 'USERNAME' %> and <% ph 'IDENTITY_FILE' %> with the username and SSH private key file you would normally use to connect over SSH.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap IP_ADDRESS --ssh-user USERNAME --identity-file IDENTITY_FILE --sudo --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment acceptance-default-my-org-learn_chef_apache2-master --yes
+```
+
+Here's an example.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 52.205.57.125 --ssh-user ubuntu --identity-file ~/.ssh/private_key --sudo --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment acceptance-default-my-org-learn_chef_apache2-master --yes
+Creating new client for acceptance-node
+Creating new node for acceptance-node
+Connecting to 52.205.57.125
+52.205.57.125 -----> Existing Chef installation detected
+52.205.57.125 Starting the first Chef Client run...
+52.205.57.125 Starting Chef Client, version 12.17.44
+52.205.57.125 resolving cookbooks for run list: ["delivery-base", "learn_chef_apache2"]
+52.205.57.125 Synchronizing Cookbooks:
+52.205.57.125   - delivery-base (0.2.2)
+52.205.57.125   - push-jobs (3.3.0)
+52.205.57.125   - runit (3.0.3)
+52.205.57.125   - packagecloud (0.2.5)
+52.205.57.125   - yum-epel (2.1.1)
+52.205.57.125   - compat_resource (12.16.3)
+52.205.57.125   - chef-ingredient (0.21.2)
+52.205.57.125   - learn_chef_apache2 (0.2.0)
+52.205.57.125 Installing Cookbook Gems:
+52.205.57.125 Compiling Cookbooks...
+52.205.57.125 Converging 8 resources
+52.205.57.125 Recipe: push-jobs::package
+52.205.57.125   * chef_ingredient[push-jobs-client] action install
+52.205.57.125   Recipe: <Dynamically Defined Resource>
+52.205.57.125     * chef_gem[mixlib-install] action install
+52.205.57.125       - install version ~> 2.0 of package mixlib-install
+52.205.57.125     * ruby_block[stop chef run] action nothing (skipped due to action :nothing)
+52.205.57.125     * remote_file[/var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb] action create
+52.205.57.125       - create new file /var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb
+52.205.57.125       - update content in file /var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb from none to ea8e96
+52.205.57.125       (file sizes exceed 10000000 bytes, diff output suppressed)
+52.205.57.125       - change mode from '' to '0644'
+52.205.57.125     * apt_package[push-jobs-client] action install
+52.205.57.125       - install version 2.1.4-1 of package push-jobs-client
+52.205.57.125
+52.205.57.125 Recipe: push-jobs::config
+52.205.57.125   * directory[/etc/chef] action create (up to date)
+52.205.57.125   * template[/etc/chef/push-jobs-client.rb] action create
+52.205.57.125     - create new file /etc/chef/push-jobs-client.rb
+52.205.57.125     - update content in file /etc/chef/push-jobs-client.rb from none to 38d468
+52.205.57.125     --- /etc/chef/push-jobs-client.rb	2017-01-23 14:50:10.046544599 +0000
+52.205.57.125     +++ /etc/chef/.chef-push-jobs-client20170123-2176-1hv3ghs.rb	2017-01-23 14:50:10.046544599 +0000
+52.205.57.125     @@ -1 +1,21 @@
+52.205.57.125     +# Generated by Chef
+52.205.57.125     +#
+52.205.57.125     +# Local modifications will be overwritten!
+52.205.57.125     +
+52.205.57.125     +LC_ALL='en_US.UTF-8'
+52.205.57.125     +
+52.205.57.125     +# Chef server connect options
+52.205.57.125     +chef_server_url   'https://test-zk0tfdfteqvbe6ju.us-east-1.opsworks-cm.io/organizations/default'
+52.205.57.125     +node_name         'acceptance-node'
+52.205.57.125     +client_key        '/etc/chef/client.pem'
+52.205.57.125     +trusted_certs_dir '/etc/chef/trusted_certs'
+52.205.57.125     +verify_api_cert   true
+52.205.57.125     +ssl_verify_mode   :verify_peer
+52.205.57.125     +allow_unencrypted true
+52.205.57.125     +
+52.205.57.125     +# The whitelist comes from node['push_jobs']['whitelist']
+52.205.57.125     +whitelist({"chef-client"=>"chef-client"})
+52.205.57.125     +
+52.205.57.125     +# We're under runit, so don't output timestamp
+52.205.57.125     +Mixlib::Log::Formatter.show_time = false
+52.205.57.125     - change mode from '' to '0644'
+52.205.57.125     - change owner from '' to 'root'
+52.205.57.125     - change group from '' to 'root'
+52.205.57.125 Recipe: push-jobs::service
+52.205.57.125   * push_jobs_service_upstart[push-jobs] action start
+52.205.57.125     * service[chef-push-jobs-client] action nothing (skipped due to action :nothing)
+52.205.57.125     * template[/etc/init/chef-push-jobs-client.conf] action create
+52.205.57.125       - create new file /etc/init/chef-push-jobs-client.conf
+52.205.57.125       - update content in file /etc/init/chef-push-jobs-client.conf from none to 8d1c0c
+52.205.57.125       --- /etc/init/chef-push-jobs-client.conf	2017-01-23 14:50:10.062544599 +0000
+52.205.57.125       +++ /etc/init/.chef-chef-push-jobs-client20170123-2176-cq37dw.conf	2017-01-23 14:50:10.062544599 +0000
+52.205.57.125       @@ -1 +1,9 @@
+52.205.57.125       +description "Chef Push Jobs Client"
+52.205.57.125       +
+52.205.57.125       +start on runlevel [2345]
+52.205.57.125       +stop on runlevel [!2345]
+52.205.57.125       +respawn
+52.205.57.125       +respawn limit 10 5
+52.205.57.125       +
+52.205.57.125       +exec /opt/push-jobs-client/bin/pushy-client -l info -c /etc/chef/push-jobs-client.rb
+52.205.57.125     * service[chef-push-jobs-client] action restart
+52.205.57.125       - restart service service[chef-push-jobs-client]
+52.205.57.125     * service[chef-push-jobs-client] action start (up to date)
+52.205.57.125
+52.205.57.125   * push_jobs_service_upstart[push-jobs] action enable
+52.205.57.125     * service[chef-push-jobs-client] action nothing (skipped due to action :nothing)
+52.205.57.125     * template[/etc/init/chef-push-jobs-client.conf] action create (up to date)
+52.205.57.125     * service[chef-push-jobs-client] action enable (up to date)
+52.205.57.125      (up to date)
+52.205.57.125 Recipe: learn_chef_apache2::default
+52.205.57.125   * apt_update[Update the apt cache daily] action periodic
+52.205.57.125     - update new lists of packages
+52.205.57.125     * directory[/var/lib/apt/periodic] action create (up to date)
+52.205.57.125     * directory[/etc/apt/apt.conf.d] action create (up to date)
+52.205.57.125     * file[/etc/apt/apt.conf.d/15update-stamp] action create_if_missing (up to date)
+52.205.57.125     * execute[apt-get -q update] action run
+52.205.57.125       - execute apt-get -q update
+52.205.57.125
+52.205.57.125   * apt_package[apache2] action install
+52.205.57.125     - install version 2.4.7-1ubuntu4.13 of package apache2
+52.205.57.125   * service[apache2] action enable (up to date)
+52.205.57.125   * service[apache2] action start (up to date)
+52.205.57.125   * template[/var/www/html/index.html] action create
+52.205.57.125     - update content in file /var/www/html/index.html from 538f31 to ef4ffd
+52.205.57.125     --- /var/www/html/index.html	2017-01-23 14:50:20.294544599 +0000
+52.205.57.125     +++ /var/www/html/.chef-index20170123-2176-vc9zrm.html	2017-01-23 14:50:23.086544599 +0000
+52.205.57.125     @@ -1,379 +1,6 @@
+52.205.57.125     -
+52.205.57.125     -<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+52.205.57.125     -<html xmlns="http://www.w3.org/1999/xhtml">
+52.205.57.125     -  <!--
+52.205.57.125     -    Modified from the Debian original for Ubuntu
+52.205.57.125     -    Last updated: 2014-03-19
+52.205.57.125     -    See: https://launchpad.net/bugs/1288690
+52.205.57.125     -  -->
+52.205.57.125     -  <head>
+52.205.57.125     -    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+52.205.57.125     -    <title>Apache2 Ubuntu Default Page: It works</title>
+52.205.57.125     -    <style type="text/css" media="screen">
+52.205.57.125     -  * {
+52.205.57.125     -    margin: 0px 0px 0px 0px;
+52.205.57.125     -    padding: 0px 0px 0px 0px;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  body, html {
+52.205.57.125     -    padding: 3px 3px 3px 3px;
+52.205.57.125     -
+52.205.57.125     -    background-color: #D8DBE2;
+52.205.57.125     -
+52.205.57.125     -    font-family: Verdana, sans-serif;
+52.205.57.125     -    font-size: 11pt;
+52.205.57.125     -    text-align: center;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.main_page {
+52.205.57.125     -    position: relative;
+52.205.57.125     -    display: table;
+52.205.57.125     -
+52.205.57.125     -    width: 800px;
+52.205.57.125     -
+52.205.57.125     -    margin-bottom: 3px;
+52.205.57.125     -    margin-left: auto;
+52.205.57.125     -    margin-right: auto;
+52.205.57.125     -    padding: 0px 0px 0px 0px;
+52.205.57.125     -
+52.205.57.125     -    border-width: 2px;
+52.205.57.125     -    border-color: #212738;
+52.205.57.125     -    border-style: solid;
+52.205.57.125     -
+52.205.57.125     -    background-color: #FFFFFF;
+52.205.57.125     -
+52.205.57.125     -    text-align: center;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.page_header {
+52.205.57.125     -    height: 99px;
+52.205.57.125     -    width: 100%;
+52.205.57.125     -
+52.205.57.125     -    background-color: #F5F6F7;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.page_header span {
+52.205.57.125     -    margin: 15px 0px 0px 50px;
+52.205.57.125     -
+52.205.57.125     -    font-size: 180%;
+52.205.57.125     -    font-weight: bold;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.page_header img {
+52.205.57.125     -    margin: 3px 0px 0px 40px;
+52.205.57.125     -
+52.205.57.125     -    border: 0px 0px 0px;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.table_of_contents {
+52.205.57.125     -    clear: left;
+52.205.57.125     -
+52.205.57.125     -    min-width: 200px;
+52.205.57.125     -
+52.205.57.125     -    margin: 3px 3px 3px 3px;
+52.205.57.125     -
+52.205.57.125     -    background-color: #FFFFFF;
+52.205.57.125     -
+52.205.57.125     -    text-align: left;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.table_of_contents_item {
+52.205.57.125     -    clear: left;
+52.205.57.125     -
+52.205.57.125     -    width: 100%;
+52.205.57.125     -
+52.205.57.125     -    margin: 4px 0px 0px 0px;
+52.205.57.125     -
+52.205.57.125     -    background-color: #FFFFFF;
+52.205.57.125     -
+52.205.57.125     -    color: #000000;
+52.205.57.125     -    text-align: left;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.table_of_contents_item a {
+52.205.57.125     -    margin: 6px 0px 0px 6px;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.content_section {
+52.205.57.125     -    margin: 3px 3px 3px 3px;
+52.205.57.125     -
+52.205.57.125     -    background-color: #FFFFFF;
+52.205.57.125     -
+52.205.57.125     -    text-align: left;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.content_section_text {
+52.205.57.125     -    padding: 4px 8px 4px 8px;
+52.205.57.125     -
+52.205.57.125     -    color: #000000;
+52.205.57.125     -    font-size: 100%;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.content_section_text pre {
+52.205.57.125     -    margin: 8px 0px 8px 0px;
+52.205.57.125     -    padding: 8px 8px 8px 8px;
+52.205.57.125     -
+52.205.57.125     -    border-width: 1px;
+52.205.57.125     -    border-style: dotted;
+52.205.57.125     -    border-color: #000000;
+52.205.57.125     -
+52.205.57.125     -    background-color: #F5F6F7;
+52.205.57.125     -
+52.205.57.125     -    font-style: italic;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.content_section_text p {
+52.205.57.125     -    margin-bottom: 6px;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.content_section_text ul, div.content_section_text li {
+52.205.57.125     -    padding: 4px 8px 4px 16px;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.section_header {
+52.205.57.125     -    padding: 3px 6px 3px 6px;
+52.205.57.125     -
+52.205.57.125     -    background-color: #8E9CB2;
+52.205.57.125     -
+52.205.57.125     -    color: #FFFFFF;
+52.205.57.125     -    font-weight: bold;
+52.205.57.125     -    font-size: 112%;
+52.205.57.125     -    text-align: center;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.section_header_red {
+52.205.57.125     -    background-color: #CD214F;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.section_header_grey {
+52.205.57.125     -    background-color: #9F9386;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  .floating_element {
+52.205.57.125     -    position: relative;
+52.205.57.125     -    float: left;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.table_of_contents_item a,
+52.205.57.125     -  div.content_section_text a {
+52.205.57.125     -    text-decoration: none;
+52.205.57.125     -    font-weight: bold;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.table_of_contents_item a:link,
+52.205.57.125     -  div.table_of_contents_item a:visited,
+52.205.57.125     -  div.table_of_contents_item a:active {
+52.205.57.125     -    color: #000000;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.table_of_contents_item a:hover {
+52.205.57.125     -    background-color: #000000;
+52.205.57.125     -
+52.205.57.125     -    color: #FFFFFF;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.content_section_text a:link,
+52.205.57.125     -  div.content_section_text a:visited,
+52.205.57.125     -   div.content_section_text a:active {
+52.205.57.125     -    background-color: #DCDFE6;
+52.205.57.125     -
+52.205.57.125     -    color: #000000;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.content_section_text a:hover {
+52.205.57.125     -    background-color: #000000;
+52.205.57.125     -
+52.205.57.125     -    color: #DCDFE6;
+52.205.57.125     -  }
+52.205.57.125     -
+52.205.57.125     -  div.validator {
+52.205.57.125     -  }
+52.205.57.125     -    </style>
+52.205.57.125     -  </head>
+52.205.57.125     +<html>
+52.205.57.125        <body>
+52.205.57.125     -    <div class="main_page">
+52.205.57.125     -      <div class="page_header floating_element">
+52.205.57.125     -        <img src="/icons/ubuntu-logo.png" alt="Ubuntu Logo" class="floating_element"/>
+52.205.57.125     -        <span class="floating_element">
+52.205.57.125     -          Apache2 Ubuntu Default Page
+52.205.57.125     -        </span>
+52.205.57.125     -      </div>
+52.205.57.125     -<!--      <div class="table_of_contents floating_element">
+52.205.57.125     -        <div class="section_header section_header_grey">
+52.205.57.125     -          TABLE OF CONTENTS
+52.205.57.125     -        </div>
+52.205.57.125     -        <div class="table_of_contents_item floating_element">
+52.205.57.125     -          <a href="#about">About</a>
+52.205.57.125     -        </div>
+52.205.57.125     -        <div class="table_of_contents_item floating_element">
+52.205.57.125     -          <a href="#changes">Changes</a>
+52.205.57.125     -        </div>
+52.205.57.125     -        <div class="table_of_contents_item floating_element">
+52.205.57.125     -          <a href="#scope">Scope</a>
+52.205.57.125     -        </div>
+52.205.57.125     -        <div class="table_of_contents_item floating_element">
+52.205.57.125     -          <a href="#files">Config files</a>
+52.205.57.125     -        </div>
+52.205.57.125     -      </div>
+52.205.57.125     --->
+52.205.57.125     -      <div class="content_section floating_element">
+52.205.57.125     -
+52.205.57.125     -
+52.205.57.125     -        <div class="section_header section_header_red">
+52.205.57.125     -          <div id="about"></div>
+52.205.57.125     -          It works!
+52.205.57.125     -        </div>
+52.205.57.125     -        <div class="content_section_text">
+52.205.57.125     -          <p>
+52.205.57.125     -                This is the default welcome page used to test the correct
+52.205.57.125     -                operation of the Apache2 server after installation on Ubuntu systems.
+52.205.57.125     -                It is based on the equivalent page on Debian, from which the Ubuntu Apache
+52.205.57.125     -                packaging is derived.
+52.205.57.125     -                If you can read this page, it means that the Apache HTTP server installed at
+52.205.57.125     -                this site is working properly. You should <b>replace this file</b> (located at
+52.205.57.125     -                <tt>/var/www/html/index.html</tt>) before continuing to operate your HTTP server.
+52.205.57.125     -          </p>
+52.205.57.125     -
+52.205.57.125     -
+52.205.57.125     -          <p>
+52.205.57.125     -                If you are a normal user of this web site and don't know what this page is
+52.205.57.125     -                about, this probably means that the site is currently unavailable due to
+52.205.57.125     -                maintenance.
+52.205.57.125     -                If the problem persists, please contact the site's administrator.
+52.205.57.125     -          </p>
+52.205.57.125     -
+52.205.57.125     -        </div>
+52.205.57.125     -        <div class="section_header">
+52.205.57.125     -          <div id="changes"></div>
+52.205.57.125     -                Configuration Overview
+52.205.57.125     -        </div>
+52.205.57.125     -        <div class="content_section_text">
+52.205.57.125     -          <p>
+52.205.57.125     -                Ubuntu's Apache2 default configuration is different from the
+52.205.57.125     -                upstream default configuration, and split into several files optimized for
+52.205.57.125     -                interaction with Ubuntu tools. The configuration system is
+52.205.57.125     -                <b>fully documented in
+52.205.57.125     -                /usr/share/doc/apache2/README.Debian.gz</b>. Refer to this for the full
+52.205.57.125     -                documentation. Documentation for the web server itself can be
+52.205.57.125     -                found by accessing the <a href="/manual">manual</a> if the <tt>apache2-doc</tt>
+52.205.57.125     -                package was installed on this server.
+52.205.57.125     -
+52.205.57.125     -          </p>
+52.205.57.125     -          <p>
+52.205.57.125     -                The configuration layout for an Apache2 web server installation on Ubuntu systems is as follows:
+52.205.57.125     -          </p>
+52.205.57.125     -          <pre>
+52.205.57.125     -/etc/apache2/
+52.205.57.125     -|-- apache2.conf
+52.205.57.125     -|       `--  ports.conf
+52.205.57.125     -|-- mods-enabled
+52.205.57.125     -|       |-- *.load
+52.205.57.125     -|       `-- *.conf
+52.205.57.125     -|-- conf-enabled
+52.205.57.125     -|       `-- *.conf
+52.205.57.125     -|-- sites-enabled
+52.205.57.125     -|       `-- *.conf
+52.205.57.125     -          </pre>
+52.205.57.125     -          <ul>
+52.205.57.125     -                        <li>
+52.205.57.125     -                           <tt>apache2.conf</tt> is the main configuration
+52.205.57.125     -                           file. It puts the pieces together by including all remaining configuration
+52.205.57.125     -                           files when starting up the web server.
+52.205.57.125     -                        </li>
+52.205.57.125     -
+52.205.57.125     -                        <li>
+52.205.57.125     -                           <tt>ports.conf</tt> is always included from the
+52.205.57.125     -                           main configuration file. It is used to determine the listening ports for
+52.205.57.125     -                           incoming connections, and this file can be customized anytime.
+52.205.57.125     -                        </li>
+52.205.57.125     -
+52.205.57.125     -                        <li>
+52.205.57.125     -                           Configuration files in the <tt>mods-enabled/</tt>,
+52.205.57.125     -                           <tt>conf-enabled/</tt> and <tt>sites-enabled/</tt> directories contain
+52.205.57.125     -                           particular configuration snippets which manage modules, global configuration
+52.205.57.125     -                           fragments, or virtual host configurations, respectively.
+52.205.57.125     -                        </li>
+52.205.57.125     -
+52.205.57.125     -                        <li>
+52.205.57.125     -                           They are activated by symlinking available
+52.205.57.125     -                           configuration files from their respective
+52.205.57.125     -                           *-available/ counterparts. These should be managed
+52.205.57.125     -                           by using our helpers
+52.205.57.125     -                           <tt>
+52.205.57.125     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2enmod">a2enmod</a>,
+52.205.57.125     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2dismod">a2dismod</a>,
+52.205.57.125     -                           </tt>
+52.205.57.125     -                           <tt>
+52.205.57.125     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2ensite">a2ensite</a>,
+52.205.57.125     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2dissite">a2dissite</a>,
+52.205.57.125     -                            </tt>
+52.205.57.125     -                                and
+52.205.57.125     -                           <tt>
+52.205.57.125     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2enconf">a2enconf</a>,
+52.205.57.125     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2disconf">a2disconf</a>
+52.205.57.125     -                           </tt>. See their respective man pages for detailed information.
+52.205.57.125     -                        </li>
+52.205.57.125     -
+52.205.57.125     -                        <li>
+52.205.57.125     -                           The binary is called apache2. Due to the use of
+52.205.57.125     -                           environment variables, in the default configuration, apache2 needs to be
+52.205.57.125     -                           started/stopped with <tt>/etc/init.d/apache2</tt> or <tt>apache2ctl</tt>.
+52.205.57.125     -                           <b>Calling <tt>/usr/bin/apache2</tt> directly will not work</b> with the
+52.205.57.125     -                           default configuration.
+52.205.57.125     -                        </li>
+52.205.57.125     -          </ul>
+52.205.57.125     -        </div>
+52.205.57.125     -
+52.205.57.125     -        <div class="section_header">
+52.205.57.125     -            <div id="docroot"></div>
+52.205.57.125     -                Document Roots
+52.205.57.125     -        </div>
+52.205.57.125     -
+52.205.57.125     -        <div class="content_section_text">
+52.205.57.125     -            <p>
+52.205.57.125     -                By default, Ubuntu does not allow access through the web browser to
+52.205.57.125     -                <em>any</em> file apart of those located in <tt>/var/www</tt>,
+52.205.57.125     -                <a href="http://httpd.apache.org/docs/2.4/mod/mod_userdir.html">public_html</a>
+52.205.57.125     -                directories (when enabled) and <tt>/usr/share</tt> (for web
+52.205.57.125     -                applications). If your site is using a web document root
+52.205.57.125     -                located elsewhere (such as in <tt>/srv</tt>) you may need to whitelist your
+52.205.57.125     -                document root directory in <tt>/etc/apache2/apache2.conf</tt>.
+52.205.57.125     -            </p>
+52.205.57.125     -            <p>
+52.205.57.125     -                The default Ubuntu document root is <tt>/var/www/html</tt>. You
+52.205.57.125     -                can make your own virtual hosts under /var/www. This is different
+52.205.57.125     -                to previous releases which provides better security out of the box.
+52.205.57.125     -            </p>
+52.205.57.125     -        </div>
+52.205.57.125     -
+52.205.57.125     -        <div class="section_header">
+52.205.57.125     -          <div id="bugs"></div>
+52.205.57.125     -                Reporting Problems
+52.205.57.125     -        </div>
+52.205.57.125     -        <div class="content_section_text">
+52.205.57.125     -          <p>
+52.205.57.125     -                Please use the <tt>ubuntu-bug</tt> tool to report bugs in the
+52.205.57.125     -                Apache2 package with Ubuntu. However, check <a
+52.205.57.125     -                href="https://bugs.launchpad.net/ubuntu/+source/apache2">existing
+52.205.57.125     -                bug reports</a> before reporting a new bug.
+52.205.57.125     -          </p>
+52.205.57.125     -          <p>
+52.205.57.125     -                Please report bugs specific to modules (such as PHP and others)
+52.205.57.125     -                to respective packages, not to the web server itself.
+52.205.57.125     -          </p>
+52.205.57.125     -        </div>
+52.205.57.125     -
+52.205.57.125     -
+52.205.57.125     -
+52.205.57.125     -
+52.205.57.125     -      </div>
+52.205.57.125     -    </div>
+52.205.57.125     -    <div class="validator">
+52.205.57.125     -    <p>
+52.205.57.125     -      <a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>
+52.205.57.125     -    </p>
+52.205.57.125     -    </div>
+52.205.57.125     +    <h1>hello world</h1>
+52.205.57.125        </body>
+52.205.57.125      </html>
+52.205.57.125     -
+52.205.57.125 Recipe: push-jobs::service
+52.205.57.125   * push_jobs_service_upstart[push-jobs] action restart
+52.205.57.125     * service[chef-push-jobs-client] action restart
+52.205.57.125       - restart service service[chef-push-jobs-client]
+52.205.57.125
+52.205.57.125
+52.205.57.125 Running handlers:
+52.205.57.125 Running handlers complete
+52.205.57.125
+52.205.57.125 Deprecated features used!
+52.205.57.125   An attempt was made to change version from :latest to nil by calling version(nil). In Chef 12, this does a get rather than a set. In Chef 13, this will change to set the value to nil. at 1 location:
+52.205.57.125     - /var/chef/cache/cookbooks/push-jobs/recipes/package.rb:52:in `block in from_file'
+52.205.57.125    See https://docs.chef.io/deprecations_custom_resource_cleanups.html for further details.
+52.205.57.125   Cloning resource attributes for service[chef-push-jobs-client] from prior resource
+52.205.57.125 Previous service[chef-push-jobs-client]: /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:77:in `create_init'
+52.205.57.125 Current  service[chef-push-jobs-client]: /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:31:in `block in class_from_file' at 1 location:
+52.205.57.125     - /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:31:in `block in class_from_file'
+52.205.57.125    See https://docs.chef.io/deprecations_resource_cloning.html for further details.
+52.205.57.125   Cloning resource attributes for service[chef-push-jobs-client] from prior resource
+52.205.57.125 Previous service[chef-push-jobs-client]: /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:77:in `create_init'
+52.205.57.125 Current  service[chef-push-jobs-client]: /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:56:in `block in class_from_file' at 1 location:
+52.205.57.125     - /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:56:in `block in class_from_file'
+52.205.57.125    See https://docs.chef.io/deprecations_resource_cloning.html for further details.
+52.205.57.125
+52.205.57.125 Chef Client finished, 14/27 resources updated in 23 seconds
+```
+
+Run the `curl` command to verify the configuration. Here's an example.
+
+```bash
+# ~/learn-chef
+$ curl 52.205.57.125
+<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>
+```
+
+You can also verify the configuration from a web browser.
+
+![](automate/browser-hello-world.png)
+
+If you created infrastructure for the Union, Rehearsal, and Delivered environments, repeat the bootstrap process for those nodes now. Here are examples (sample output is omitted for brevity).
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 52.205.146.109 --ssh-user ubuntu --identity-file ~/.ssh/private_key --sudo --node-name union-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment union --yes
+```
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 52.23.252.131 --ssh-user ubuntu --identity-file ~/.ssh/private_key --sudo --node-name rehearsal-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment rehearsal --yes
+```
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 54.152.55.14 --ssh-user ubuntu --identity-file ~/.ssh/private_key --sudo --node-name delivered-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment delivered --yes
+```
+
+You can specify any name you want for the `--node-name` argument. Each bootstrap commmand shown here specifies a node name that corresponds to that node's function. For example, `union-node` specifies the name for the node that corresponds to the Union stage and `union` Chef environment.
+
+Repeat the process to verify the configuration on each node.
+
+-- --
+
+As optional exercises, let's run a few commands to verify that everything's set up correctly.
+
+First, run the following `knife node list` command to list the infrastructure nodes associated with your Chef server.
+
+```bash
+# ~/learn-chef
+$ knife node list | grep node
+acceptance-node
+delivered-node
+rehearsal-node
+union-node
+```
+
+You can view details about your node by running the `knife node show` command. Here's an example for the Acceptance node.
+
+
+```bash
+$ knife node show acceptance-node
+Node Name:   acceptance-node
+Environment: acceptance-default-my-org-learn_chef_apache2-master
+FQDN:        ip-172-31-29-232.ec2.internal
+IP:          52.205.57.125
+Run List:    recipe[delivery-base], recipe[learn_chef_apache2]
+Roles:
+Recipes:     delivery-base, delivery-base::default, learn_chef_apache2, learn_chef_apache2::default, push-jobs::default, push-jobs::install, push-jobs::package, push-jobs::config, push-jobs::service
+Platform:    ubuntu 14.04
+Tags:
+```
+
+The **Recipes** part contains the node's expanded run-list. For example, the `delivery-base` cookbook's default recipe includes the `push-jobs` cookbook's default recipe ([source code](https://github.com/chef-cookbooks/delivery-base/blob/master/recipes/default.rb)), which in turn includes other recipes ([source code](https://github.com/chef-cookbooks/push-jobs/blob/master/recipes/default.rb)).
+
+In the _Manage a node_ tutorial, you used Chef Automate's visibility feature to [view your node from the dashboard](/tutorials/manage-a-node/ubuntu/opsworks/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
+
+From the Chef Automate web interface, select **Nodes**. From the search box at the top of the page, enter **node_name: *-node** to display only the nodes whose names end with "-node", then click the search button.
+
+![](automate/visibility-filter-results.png)
+
+At the bottom of the page, you'll see your nodes, including the Chef environment each node is associated with.
+
+![](automate/visibility-filter-results-nodes-apache2.png)
+
+As an optional exercise, you can select one of your nodes to view its run history and other details.
+
+<% accordion('stages-environments', 'Stages versus environments') do %>
+
+<% markdown do %>
+
+In this tutorial, we use the terms _stages_ and _environments_ quite frequently. For example, there's the Acceptance stage and there's the Acceptance environment. Both are related, but it's important to distinguish between the two.
+
+For example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this tutorial, the Acceptance environment is an Ubuntu 14.04 server that applies the `learn_chef_apache2` cookbook to configure the web configuration. The Acceptance stage deploys the web configuration by triggering `chef-client` to run on the Ubuntu server.
+
+You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this tutorial your Chef Automate project is a Chef cookbook, a project can be an application or some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
+
+<% end %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 9. Use push jobs to run chef-client a second time
+
+The bootstrap process performed an initial `chef-client` run on your nodes. In previous tutorials, such as _Manage a node_, you ran `knife ssh` from your workstation to trigger `chef-client` remotely on your node.
+
+Recall that your runner performs build tasks as changes move through Chef Automate's pipeline. During the Acceptance, Union, Rehearsal, and Delivered stages, the runner uses push jobs to initiate the `chef-client` run on your infrastructure nodes.
+
+Before pushing a change through the pipeline, first verify that your runner can successfully submit push jobs to your nodes. You'll run push jobs in stages; each stage will use a search query that's more constrained. Doing so will help diagnose any issues in your setup.
+
+From your workstation, switch to the SSH connection to your runner (or reconnect if you've closed the connection).
+
+Run `knife node status` to to see which nodes are available to accept push jobs.
+
+```bash
+$ sudo knife node status --config /var/opt/delivery/workspace/etc/delivery.rb
+acceptance-node	available
+delivered-node	available
+rehearsal-node	available
+union-node	available
+```
+
+You see `acceptance-node`, `union-node`, `rehearsal-node`, and `delivered-node` are available to receive push jobs. If you set up fewer infrastructure nodes, for example, one node for the Acceptance environment only, you would see only that node listed.
+
+Next, run the following `knife job start` command to run `chef-client` on each node that contains `learn_chef_apache2` in its run-list.
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_apache2*)' --config /var/opt/delivery/workspace/etc/delivery.rb
+Started.  Job ID: d119213fb2154b130d3a829dc0cb6837
+.Running (1/4 in progress) ...
+...Complete.
+command:     chef-client
+created_at:  Mon, 23 Jan 2017 16:49:51 GMT
+env:
+id:          d119213fb2154b130d3a829dc0cb6837
+nodes:
+  succeeded:
+    acceptance-node
+    delivered-node
+    rehearsal-node
+    union-node
+run_timeout: 3600
+status:      complete
+updated_at:  Mon, 23 Jan 2017 16:49:55 GMT
+```
+
+As expected, `chef-client` ran on all four of your nodes.
+
+Next, constrain the query to include nodes that contain both the `learn_chef_apache2` and `push-jobs` cookbooks in their run-lists.
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_apache2*) AND (recipes:push-jobs*)' --config /var/opt/delivery/workspace/etc/delivery.rb
+Started.  Job ID: d119213fb215c87079b29dfc22b8b4b2
+.Running (1/4 in progress) ...
+...Complete.
+command:     chef-client
+created_at:  Mon, 23 Jan 2017 17:29:51 GMT
+env:
+id:          d119213fb215c87079b29dfc22b8b4b2
+nodes:
+  succeeded:
+    acceptance-node
+    delivered-node
+    rehearsal-node
+    union-node
+run_timeout: 3600
+status:      complete
+updated_at:  Mon, 23 Jan 2017 17:29:54 GMT
+```
+
+Again, `chef-client` ran on all four of your nodes.
+
+Finally, constrain the query to include only the node associated with the Acceptance environment.
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_apache2*) AND (recipes:push-jobs*) AND chef_environment:acceptance-default-my-org-learn_chef_apache2-master' --config /var/opt/delivery/workspace/etc/delivery.rb
+Started.  Job ID: d119213fb2154ac31d3bdc397b208d67
+.Running (1/1 in progress) ...
+...Complete.
+command:     chef-client
+created_at:  Mon, 23 Jan 2017 17:31:05 GMT
+env:
+id:          d119213fb2154ac31d3bdc397b208d67
+nodes:
+  succeeded: acceptance-node
+run_timeout: 3600
+status:      complete
+updated_at:  Mon, 23 Jan 2017 17:31:09 GMT
+```
+
+This time, `chef-client` ran only on the node named `acceptance-node`, as expected.
+
+Everything checks out. You can now close your SSH connection.
+
+[COMMENT] Unlike your runner, if you stop your EC2 instances when you're done for the day, you do not need to take any special actions when you restart your infrastructure nodes. Push jobs heartbeat messages are sent from the client (your nodes) to the Chef server. Therefore, your nodes' IP addresses and domain names do not need to be fixed.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you have infrastructure that can run the `learn_chef_apache2` cookbook and can receive updates through push jobs, you're ready to push a change through the pipeline and validate that change on your nodes.
+
+<% end %>
