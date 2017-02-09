@@ -1,4 +1,5 @@
 require 'chef/web/core/url_helpers'
+require 'slim'
 require 'lib/sitemap'
 require 'lib/compass'
 require 'lib/markdown'
@@ -16,7 +17,7 @@ require 'lib/helpers/inline_code_helpers'
 require 'lib/helpers/snippet_helpers'
 require 'lib/helpers/button_helpers'
 require 'lib/helpers/key_point_helpers'
-require 'lib/extension/chef_yaml_to_json/lib/chef_yaml_to_json'
+# require 'lib/extension/chef_yaml_to_json/lib/chef_yaml_to_json'
 
 # In development you can use `binding.pry` anywhere to pause execution and bring
 # up a Ruby REPL
@@ -37,19 +38,22 @@ compass_config do |config|
 end
 
 # Slim Configuration
-Slim::Engine.set_default_options pretty: true, disable_escape: true
+Slim::Engine.set_options pretty: true, disable_escape: true
 
 ###
 # Page options, layouts, aliases and proxies
 ###
-activate :chef_yml_to_json
+# activate :chef_yml_to_json
 activate :directory_indexes
 set :trailing_slash, false
-activate :autoprefixer
+# TODO: Re-enable autoprefixing with Middleman v4
+# activate :autoprefixer
 
 # Per-page layout changes:
 page '/robots.txt', layout: false
 page '/sitemap.xml', layout: false
+page '/tracks/*', layout: 'track'
+page '/modules/*', layout: 'module'
 
 # S3 hosting needs a page at the root
 page '/error.html', directory_index: false
@@ -78,29 +82,30 @@ helpers do
 end
 
 # CloudFront
-if deploy?
-  activate :cloudfront do |cloudfront|
-    cloudfront.access_key_id     = aws_access_key_id
-    cloudfront.secret_access_key = aws_secret_access_key
-    cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
-  end
+# TODO: Figure out how to reimplmement Cloudfront and S3 Redirects with Middleman v4
+# if deploy?
+  # activate :cloudfront do |cloudfront|
+  #   cloudfront.access_key_id     = aws_access_key_id
+  #   cloudfront.secret_access_key = aws_secret_access_key
+  #   cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
+  # end
 
   # S3 Redirects
-  activate :s3_redirect do |config|
-    config.bucket = aws_s3_bucket
-    config.aws_access_key_id = aws_access_key_id
-    config.aws_secret_access_key = aws_secret_access_key
-    config.after_build = true
-  end
-else
+  # activate :s3_redirect do |config|
+  #   config.bucket = aws_s3_bucket
+  #   config.aws_access_key_id = aws_access_key_id
+  #   config.aws_secret_access_key = aws_secret_access_key
+  #   config.after_build = true
+  # end
+# else
   # We use redirects below. The redirect method is not defined. Define it to do
   # nothing.
   def redirect(from = '', to = '')
   end
-end
+# end
 
 # Enable Livereload
-#activate :livereload unless travis?
+# activate :livereload, no_swf: true, ignore: /^(?!.*source).*$/ unless travis?
 
 # Enable syntax highlighting - turn off the default wrapping
 activate :syntax, wrap: false
@@ -111,13 +116,19 @@ require 'lib/middleman_syntax'
 set :markdown_engine, :redcarpet
 set :markdown, fenced_code_blocks: true, smartypants: false, tables: true
 
+activate :sprockets
+
 set :css_dir, 'assets/stylesheets'
 set :js_dir, 'assets/javascripts'
 set :images_dir, 'assets/images'
 set :fonts_dir, 'assets/fonts'
 set :root_dir, File.dirname(__FILE__)
 
+# Enable generation of navigation tree data based on the site structure
+activate :navtree
+
 # Redirects
+chef_docs_url = ''
 redirect '/additional-resources', '/fundamentals-series/'
 redirect '/chef-training', '/additional-resources/#cheftrainingseminars'
 redirect '/create-your-first-cookbook', '/tutorials/create-your-first-cookbook/'
@@ -222,8 +233,15 @@ configure :build do
   activate :relative_assets
 
   # Compress PNGs after build
-  activate :smusher
+  # TODO: Figure out how to re-enable smusher with Middleman v4
+  # activate :smusher
 end
+
+activate :external_pipeline,
+         name: :angular,
+         command: "cd lib/chef-lab-client && npm run build && mv dist/* ../../source/assets/javascripts/chef-lab-client",
+         source: "lib/chef-lab-client/dist",
+         latency: 5
 
 before_build do
   system 'cd lib/chef-lab-client && npm install --production && npm run build' or exit($?.exitstatus)
