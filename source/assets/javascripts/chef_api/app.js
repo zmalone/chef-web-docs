@@ -5,7 +5,8 @@
 
 var chefApp = angular.module('chefLabClient', ['socialLogin', 'ngCookies', 'ngResource', 'ngStorage', 'http-auth-interceptor', 'infinite-scroll'])
 chefApp.constant('chefApiUrl', 'http://localhost:3000')
-.constant('loadTracksCount', 2)
+.constant('loadTracksCount', 10)
+.constant('loadModulesCount', 8)
 .constant('AUTH_EVENTS', {
     loginSuccess: 'auth-login-success',
     loginFailed: 'auth-login-failed',
@@ -19,7 +20,7 @@ chefApp.constant('chefApiUrl', 'http://localhost:3000')
         editor: 'editor',
         guest: 'guest'
     }).constant('CHEF_API', {
-        'clientId': '5ccJ4eGlLm6CZ5betjuPRX3dfdfRYlSsnuyXU1tbOHxH'
+        'clientId': 'XCDVSSS123434'
     }).config(function(socialProvider){
 
     //socialProvider.setGoogleKey("YOUR GOOGLE CLIENT ID");
@@ -28,18 +29,18 @@ chefApp.constant('chefApiUrl', 'http://localhost:3000')
 }).run(['$rootScope', 'AuthService', 'Session', '$sessionStorage', 'UserService', 'AUTH_EVENTS', function($rootScope, AuthService, Session, $sessionStorage, UserService, AUTH_EVENTS){
     $rootScope.logoutStatus = true;
     $rootScope.$on('event:social-sign-in-success', function(event, userDetails){
-        console.log(userDetails)
         AuthService.chef_login(userDetails).then(function(response){
-                //Set Session
+                //Set Session To Do once verify_token end point ready move
+                // below code into verify_token success callback
                 Session.set_session('accessToken', response.access_token);
                 Session.set_session('refreshToken', response.refreshToken);
                 Session.set_session('expiresIn', response.expiresIn);
                 $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+                $rootScope.logoutStatus = false;
 
                 Session.set_session('accessToken', response.access_token);
                 Session.set_session('id', response.access_token);
                 Session.set_session('userId', response.access_token);
-                $rootScope.logoutStatus = false;    
                 //verify_token to get userInfo
                 /*UserService.verify_token().then(function(userInfo){
                     $rootScope.setUser(userInfo);
@@ -61,9 +62,16 @@ chefApp.constant('chefApiUrl', 'http://localhost:3000')
     })
 
     $rootScope.$on('event:social-sign-out-success', function(event, logoutStatus){
-        Session.destroy_session();
-        $rootScope.logoutStatus = true;
+        //To do error handling
+        AuthService.chef_logout().then(function(response){
+                $rootScope.logoutStatus = true;
+                Session.destroy_session();
+            },
+            function(err){
+
+            })
     })
+
     if(AuthService.isAuthenticated()){
         $rootScope.logoutStatus = false;
     }else{
@@ -74,7 +82,7 @@ chefApp.constant('chefApiUrl', 'http://localhost:3000')
     .run(['$rootScope', '$injector','Session','CHEF_API','AuthService','$location','authService','AUTH_EVENTS','$localStorage','$sessionStorage', function($rootScope,$injector,Session, AuthService,CHEF_API,$location,authService,AUTH_EVENTS,$sessionStorage,$localStorage) {
 
         /*$rootScope.$on('event:auth-loginRequired', function(obj,response) {
-            var CHEF_API = $injector.get('ATLAS_API');
+            var CHEF_API = $injector.get('CHEF_API');
             var Session = $injector.get('Session');
             var authService = $injector.get('authService'); // http interceptor service
             var chefAuthService = $injector.get('AuthService'); //our auth service

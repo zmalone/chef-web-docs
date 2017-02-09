@@ -23,7 +23,7 @@
         .tracks-section
           h3
             | Want a set curriculum? Tracks will guide you every step of the way.
-          .row
+          .row ng-controller='trackCtrl'
             div infinite-scroll-listen-for-event="load_track_info" infinite-scroll-distance="2"
               .large-6.medium-6.small-12.columns ng-repeat=("track in tracks")
                 div class="track-card {{track.track_class}}"
@@ -60,17 +60,20 @@
         .modules-section
           h3
             | Want to learn Al a Carte? Modules let you choose your own path.
-          .row
+          .row ng-controller='moduleCtrl'
             .large-3.medium-4.small-12.columns ng-repeat="(key, module) in modules"
               .module-card ng-repeat="(k, module_info) in module"
                 h2
                   span
                     | {{ module_info.title}}
-                p
-                  span.details
-                    | {{ module_info.total_modules}} modules
+
                   span.time
-                    | {{ module_info.total_hours}} hours
+                    | {{ module_info.total_hours}} hrs
+                .progress-bar
+                  .count
+                    | 30%
+                  .progress
+                      span.meter
                 p
                   | {{ module_info.description}}
                 ul.links
@@ -78,6 +81,8 @@
                     a href="" {{ module_info.category}}
                   li
                     a href="" {{ module_info.level}}
+            .btn-container
+              button.btn.btn-primary ng-click="loadModule()" ng-if="tot_modules > modules.length" Load more modules
     .profiles-section
       .header
       h3

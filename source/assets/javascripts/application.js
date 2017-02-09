@@ -19,6 +19,8 @@
 //= require chef_api/lib/http-auth-interceptor
 //= require chef_api/app
 //= require chef_api/controller/application
+//= require chef_api/controller/tracks
+//= require chef_api/controller/modules
 //= require chef_api/service/session
 //= require chef_api/service/auth
 //= require chef_api/service/user
