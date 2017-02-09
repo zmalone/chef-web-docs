@@ -4,6 +4,7 @@ layout: lesson-overview
 platform: Deploy a cookbook with Chef Automate
 logo: workflow-cookbook.svg
 order: 3
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 In the previous tutorials, you [brought up a preconfigured Chef Automate environment](/automate/install/) and [bootstrapped infrastructure nodes](/automate/visibility/) to run a basic web application cookbook. Along the way, you learned how to use push jobs to run `chef-client` on your nodes. You also used Chef Automate's ability to report the status of your nodes to resolve a failed `chef-client` run.
 

@@ -4,6 +4,7 @@ layout: lesson-overview
 platform: Gain visibility into your infrastructure with Chef Automate
 logo: insight.svg
 order: 2
+meta_tags: [{name: "ROBOTS", content: "NOINDEX, NOFOLLOW"}]
 ---
 Whether you're managing ten nodes or ten thousand, having real-time visibility can help you stay on top of your infrastructure. For example, say you want to know:
 

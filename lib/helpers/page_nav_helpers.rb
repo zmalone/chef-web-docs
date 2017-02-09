@@ -10,12 +10,12 @@ module PageNavHelpers
         :display => 'Develop and test locally'.upcase,
         :topics => []
       },
-      # {:category => 'manage-and-premium-features',
-      #   :display => 'Manage your own Chef server'.upcase,
-      #   :topics => []
-      # },
-      {:category => 'chef-automate',
-        :display => 'Collaborative development'.upcase,
+      {:category => 'continuous-deployment',
+        :display => 'Continuous deployment'.upcase,
+        :topics => []
+      },
+      {:category => 'integrated-compliance',
+        :display => 'Integrated compliance'.upcase,
         :topics => []
       },
       {:category => 'extending-chef',
