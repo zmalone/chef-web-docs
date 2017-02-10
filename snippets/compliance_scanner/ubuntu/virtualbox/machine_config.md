@@ -7,4 +7,4 @@ This tutorial was last tested with this configuration:
 
 * Chef server 12.9.0 on Ubuntu 14.04 running on VMware Fusion.
 
-* A Ubuntu 14.04 node on VMware Fusion, Chef client 12.14.89.
+* An Ubuntu 14.04 node on VMware Fusion, Chef client 12.14.89.
