@@ -10,7 +10,7 @@ snippet_workstation: ubuntu
 headings: [
   { label: '1. Understand the failure', href: '#step1' },
   { label: '2. Login through the CLI', href: '#step2' },
-  { label: '3. Create the admpwd cookbook', href: '#step3' },
+  { label: '3. Create the cookbook', href: '#step3' },
   { label: '4. Apply the cookbook locally', href: '#step4' },
   { label: '5. Replicate the failure locally', href: '#step5' },
   { label: '6. Remediate the failure', href: '#step6' }
@@ -20,7 +20,7 @@ Recall that in the previous tutorial you ran the **cis-windows2012r2-level1-memb
 
 ![](compliance/scan_report_issues_admpwd_windows2012.png)
 
-CIS recommends that you enforce maximum password complexity. A complex password contains a combination of uppercase characters, lowercase characters, digits, and non-alphabetic characters such as !, $, #, and %. According to CIS, passwords that contain only alphanumeric characters are extremely easy to discover using publicly available tools.
+CIS recommends that you enforce [maximum password complexity](http://winintro.com/?Category=LAPS&Policy=FullArmor.Policies.C9E1D975_EA58_48C3_958E_3BC214D89A2E%3A%3APOL_AdmPwd). A complex password contains a combination of uppercase characters, lowercase characters, digits, and non-alphabetic characters such as !, $, #, and %. According to CIS, passwords that contain only alphanumeric characters are extremely easy to discover using publicly available tools.
 
 In this part, you'll verify the failure of the password complexity rule on a local virtual machine and remediate it. By starting with local development with Test Kitchen, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers.
 
@@ -46,8 +46,6 @@ The rule examines the "HKEY\_LOCAL\_MACHINE\\SOFTWARE\\Policies\\Microsoft Servi
 
 1. The registry key has a value named "PasswordComplexity".
 1. The "PasswordComplexity" value's associated data is "4".
-
-[Learn more about password settings](http://winintro.com/?Category=LAPS&Policy=FullArmor.Policies.C9E1D975_EA58_48C3_958E_3BC214D89A2E%3A%3APOL_AdmPwd)
 
 When you scanned your Windows Server node, you saw that the rule failed.
 
@@ -117,10 +115,9 @@ As a verification step, you can run `inspec compliance profiles` to prove that y
 
 ## 3. Create the admpwd cookbook
 
-- We call it admpwd because it has everything needed to configure passwords
-- In practice, teh granularity is up to you.
-
 To remediate the failure, you'll write a Chef cookbook named `admpwd`. Recall that a cookbook provides structure to your Chef code. A cookbook contains recipes, which in turn contain resources that descibe the desired state of the system.
+
+For learning purposes, we name the cookbook `admpwd` because we're configuring the behavior of the administrator password. In practice, you would choose a name that reflects the scope of what your cookbook does.
 
 In this part, you create the `admpwd` cookbook. Although initially empty, in the next step you apply the cookbook to a Windows Server 2012 R2 instance using Test Kitchen to verify that the instance comes up and successfully runs `chef-client`.
 
@@ -128,13 +125,45 @@ To get started, first move to the <% fp('~/learn-chef') %> directory.
 
 <% command_snippet(page: current_page, path: 'create-the-admpwd-cookbook/cd-learn-chef-1', features: :stdin) %>
 
+```bash
+# ~
+$ cd ~/learn-chef
+```
+
 Ensure that you have a directory named <% fp('~/learn-chef/cookbooks') %>.
 
 <% command_snippet(page: current_page, path: 'create-the-admpwd-cookbook/mkdir-learn-chef-cookbooks', features: :stdin) %>
 
+```bash
+# ~/learn-chef
+$ mkdir cookbooks
+```
+
 Run the following `chef generate cookbook` command to create the `admpwd` cookbook.
 
 <% command_snippet(page: current_page, path: 'create-the-admpwd-cookbook/chef-generate-cookbook') %>
+
+```bash
+# ~/learn-chef
+$ chef generate cookbook cookbooks/admpwd
+Generating cookbook admpwd
+- Ensuring correct cookbook file content
+- Ensuring delivery configuration
+- Ensuring correct delivery build cookbook content
+
+Your cookbook is ready. Type `cd cookbooks/admpwd` to enter it.
+
+There are several commands you can run to get started locally developing and testing your cookbook.
+Type `delivery local --help` to see a full list.
+
+Why not start by writing a test? Tests for the default recipe are stored at:
+
+test/smoke/default/default_test.rb
+
+If you'd prefer to dive right in, the default recipe can be found at:
+
+recipes/default.rb
+```
 
 [END_BOX]
 
@@ -146,19 +175,139 @@ Now you'll verify that the empty cookbook runs successfully on a Windows Server 
 
 <% code_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-1-yml') %>
 
+```yaml
+# ~/learn-chef/cookbooks/admpwd/.kitchen.yml
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+  always_update_cookbooks: false
+
+verifier:
+  name: inspec
+
+transport:
+  name: winrm
+  elevated: true
+  username: Administrator
+  password: Pass@word1
+
+platforms:
+  - name: windows-2012R2
+    driver_config:
+      box: mwrock/Windows2012R2
+    driver:
+      gui: false
+      boot_timeout: 1200
+
+suites:
+  - name: default
+    run_list:
+      - recipe[admpwd::default]
+    verifier:
+      inspec_tests:
+        - compliance://cis/cis-windows2012r2-level1-memberserver
+    attributes:
+```
+
+[PRODNOTE] EXPLAIN THAT IT LOOKS SIMILAR TO WHAT YOU DID IN PREV TUTORIAL. windows-2012 IS THE NAME OF THE VAGRANT BOX YOU BUILT
+
 This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance. The `verifier` section tells Test Kitchen to look for InSpec tests. More on that later.
 
 Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/admpwd') %> directory.
 
 <% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/cd-learn-chef-cookbooks-admpwd-1', features: :stdin) %>
 
+```bash
+# ~/learn-chef
+$ cd ~/learn-chef/cookbooks/admpwd
+```
+
 Run `kitchen list`. You'll see that the instance is not yet created.
 
 <% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-list-1') %>
 
+```bash
+# ~/learn-chef/cookbooks/admpwd
+$ kitchen list
+Instance                      Driver   Provisioner  Verifier  Transport  Last Action    Last Error
+default-mwrock-Windows2012R2  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+```
+
 Now run `kitchen converge`. This command downloads the base Windows Server 2012 R2 box if needed, brings up an instance, installs `chef-client`, and applies the `admpwd` cookbook.
 
 <% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-converge-1') %>
+
+```bash
+# ~/learn-chef/cookbooks/admpwd
+$ kitchen converge
+-----> Starting Kitchen (v1.15.0)
+-----> Creating <default-windows-2012R2>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Importing base box 'mwrock/Windows2012R2'...
+==> default: Matching MAC address for NAT networking...
+       ==> default: Checking if box 'mwrock/Windows2012R2' is up to date...
+       ==> default: Setting the name of the VM: kitchen-admpwd-default-windows-2012R2_default_1486671079174_50879
+       ==> default: Clearing any previously set forwarded ports...
+       ==> default: Fixed port collision for 3389 => 3389. Now on port 2200.
+       ==> default: Fixed port collision for 5985 => 55985. Now on port 2201.
+       ==> default: Fixed port collision for 5986 => 55986. Now on port 2202.
+       ==> default: Fixed port collision for 22 => 2222. Now on port 2203.
+       ==> default: Clearing any previously set network interfaces...
+       ==> default: Preparing network interfaces based on configuration...
+           default: Adapter 1: nat
+       ==> default: Forwarding ports...
+           default: 3389 (guest) => 2200 (host) (adapter 1)
+           default: 5985 (guest) => 2201 (host) (adapter 1)
+           default: 5986 (guest) => 2202 (host) (adapter 1)
+           default: 22 (guest) => 2203 (host) (adapter 1)
+       ==> default: Running 'pre-boot' VM customizations...
+       ==> default: Booting VM...
+       ==> default: Waiting for machine to boot. This may take a few minutes...
+           default: WinRM address: 127.0.0.1:2201
+           default: WinRM username: vagrant
+           default: WinRM execution_time_limit: PT2H
+           default: WinRM transport: negotiate
+       ==> default: Machine booted and ready!
+       ==> default: Checking for guest additions in VM...
+       ==> default: Mounting shared folders...
+           default: /omnibus/cache => /home/vagrant/.kitchen/cache
+       ==> default: Machine not provisioned because `--no-provision` is specified.
+       [WinRM] Established
+
+       Vagrant instance <default-windows-2012R2> created.
+       Finished creating <default-windows-2012R2> (10m54.31s).
+-----> Converging <default-windows-2012R2>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 5.6.2...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Installing Chef Omnibus (install only if missing)
+       Downloading package from https://packages.chef.io/files/stable/chef/12.18.31/windows/2012r2/chef-client-12.18.31-1-x64.msi
+       Download complete.
+       Successfully verified C:\omnibus\cache\chef-client-12.18.31-1-x64.msi
+       Installing Chef Omnibus package C:\omnibus\cache\chef-client-12.18.31-1-x64.msi
+       Installation complete
+       Transferring files to <default-windows-2012R2>
+       Starting Chef Client, version 12.18.31
+       Creating a new client identity for default-windows-2012R2 using the validator key.
+       resolving cookbooks for run list: ["admpwd::default"]
+       Synchronizing Cookbooks:
+         - admpwd (0.1.0)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+       Converging 0 resources
+
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 0/0 resources updated in 38 seconds
+       Finished converging <default-windows-2012R2> (7m14.44s).
+-----> Kitchen is finished. (18m12.49s)
+```
 
 As expected, 0 resources were applied because the cookbook is empty. But it's a great first step to verifying that the instance comes up and `chef-client` runs successfully.
 
@@ -168,15 +317,52 @@ As expected, 0 resources were applied because the cookbook is empty. But it's a 
 
 ## 5. Replicate the failure on your Test Kitchen instance
 
-In the previous tutorial, you saw the firewall rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
+In the previous tutorial, you saw the password complexity rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
 
-Recall that the InSpec code for the firewall rule looks like this. This rule comes from the **cis/cis-windows2012r2-level1-memberserver** profile.
+Recall that the InSpec code for the password complexity rule looks like this. This rule comes from the **cis/cis-windows2012r2-level1-memberserver** profile.
 
-![](compliance/ensure_firewall_is_active_rule.png)
+![](compliance/password_complexity_rule.png)
 
 Also recall that your <% fp '.kitchen.yml' %> file looks like this.
 
 <% code_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-2-yml') %>
+
+```yaml
+# ~/learn-chef/cookbooks/admpwd/.kitchen.yml
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+  always_update_cookbooks: false
+
+verifier:
+  name: inspec
+
+transport:
+  name: winrm
+  elevated: true
+  username: Administrator
+  password: Pass@word1
+
+platforms:
+  - name: windows-2012R2
+    driver_config:
+      box: mwrock/Windows2012R2
+    driver:
+      gui: false
+      boot_timeout: 1200
+
+suites:
+  - name: default
+    run_list:
+      - recipe[admpwd::default]
+    verifier:
+      inspec_tests:
+        - compliance://cis/cis-windows2012r2-level1-memberserver
+    attributes:
+```
 
 The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-windows2012r2-level1-memberserver** profile from the Chef compliance scanner when it runs tests. You specified your Chef compliance scanner when you ran `inspec compliance login` earlier.
 
@@ -184,19 +370,35 @@ You're now ready to scan your test instance. Run `kitchen verify` to run the com
 
 <% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-verify', features: :stdin) %>
 
+```bash
+# ~/learn-chef/cookbooks/admpwd
+$ kitchen verify
+```
+
 For brevity, we've omitted the sample output. When you scanned your node from the web interface, you likely noticed that many tests fail the CIS recommendations. You'll see a similar number of failures when you run the same tests against your test instance.
 
 For now, we're only interested in seeing the password complexity rule fail. We're working to make it easier to pinpoint specific failures in the output. For now, run `kitchen verify` a second time and redirect the output to a text file, like this.
 
 <% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-verify-redirect-1', features: :stdin) %>
 
+```bash
+# ~/learn-chef/cookbooks/admpwd
+$ kitchen verify > verify.txt 2>&1
+```
+
 You can locate the status of a test by searching for its name. Here's how to locate the status of the password complexity rule.
 
 <% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/grep-rule-1') %>
 
+```bash
+# ~/learn-chef/cookbooks/admpwd
+$ cat verify.txt | grep 'Password Settings: Password Complexity'
+  ×  xccdf_org.cisecurity.benchmarks_rule_18.2.4_L1_Ensure_Password_Settings_Password_Complexity_is_set_to_Enabled_Large_letters__small_letters__numbers__special_characters_MS_only: (L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only) (2 failed)
+```
+
 Alternatively, you can search for the rule name from a text editor.
 
-You see that "Status: active" was expected, but `admpwd status` returned "Status: inactive". This result matches what you discovered when you ran `admpwd status` manually on your node.
+You see that "(2 failed)" tells us that this test failed the same way it did on your node.
 
 Now that you've replicated the failure on a test instance, you can write Chef code to remediate it.
 
@@ -206,21 +408,64 @@ Now that you've replicated the failure on a test instance, you can write Chef co
 
 ## 6. Remediate the failure
 
-In practice, you and your team would decide the appropriate way to fix the compliance failure. For example, you might define a complete set of firewall rules that enables port access to only the addresses you trust.
+In practice, you and your team would decide the appropriate way to fix the compliance failure. For example, you might define a complete set of password complexity rules that enables port access to only the addresses you trust.
 
-For learning purposes, let's write just enough code to make the test pass. When you enable the firewall, you also need to allow SSH access.
+For learning purposes, let's write just enough code to make the test pass. When you enable the password complexity, you also need to allow SSH access.
 
 Write your default recipe, <% fp '~/learn-chef/cookbooks/admpwd/recipes/default.rb' %>, like the following.
 
 <% code_snippet(page: current_page, path: 'remediate-the-failure/default-rb') %>
 
-This code uses the [execute](https://docs.chef.io/resource_execute.html) resource to both enable SSH access and to enable the firewall. Each resource uses a `not_if` [guard](https://docs.chef.io/resource_common.html#guards) to ensure that the command is run only when needed.
+```ruby
+# ~/learn-chef/cookbooks/admpwd/recipes/default.rb
+registry_key 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft Services\AdmPwd' do
+  values [{
+    name: 'PasswordComplexity',
+    type: :dword,
+    data: 4
+  }]
+  action :create
+  recursive true
+end
+```
 
-[COMMENT] In practice, you might use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook from Chef Supermarket, which provides a more robust set of resources to manage the firewall. The [Develop a web app cookbook tutorial shows how](/manage-a-web-app/windows/configure-the-firewall/).
+This code uses the [execute](https://docs.chef.io/resource_execute.html) resource to both enable SSH access and to enable the password complexity. Each resource uses a `not_if` [guard](https://docs.chef.io/resource_common.html#guards) to ensure that the command is run only when needed.
 
 Next, from your <% fp '~/learn-chef/cookbooks/admpwd' %> directory, run `kitchen converge` to apply the configuration.
 
 <% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-converge-2') %>
+
+```bash
+# ~/learn-chef/cookbooks/admpwd
+$ kitchen converge
+-----> Starting Kitchen (v1.15.0)
+-----> Converging <default-windows-2012R2>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 5.6.2...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Chef Omnibus installation detected (install only if missing)
+       Transferring files to <default-windows-2012R2>
+       Starting Chef Client, version 12.18.31
+       resolving cookbooks for run list: ["admpwd::default"]
+       Synchronizing Cookbooks:
+         - admpwd (0.1.0)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+       Converging 1 resources
+       Recipe: admpwd::default
+         * registry_key[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft Services\AdmPwd] action create
+           - create key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft Services\AdmPwd
+           - set value {:name=>"PasswordComplexity", :type=>:dword, :data=>4}
+
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 1/1 resources updated in 29 seconds
+       Finished converging <default-windows-2012R2> (0m40.89s).
+-----> Kitchen is finished. (0m42.88s)
+```
 
 You see from the output that `admpwd` is enabled and allows SSH access.
 
@@ -228,39 +473,62 @@ Now run `kitchen verify` to run the compliance profile a second time.
 
 <% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-verify-redirect-1', features: :stdin) %>
 
+```bash
+# ~/learn-chef/cookbooks/admpwd
+$ kitchen verify > verify.txt 2>&1
+```
+
 Repeat the step where you search <% fp 'verify.txt' %> for the profile named "Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)".
 
 <% command_snippet(page: current_page, path: 'remediate-the-failure/grep-rule-2') %>
 
-Success! The output no longer contains the failure. This gives you confidence that the firewall rule would pass after this cookbook is applied to your node.
+```bash
+# ~/learn-chef/cookbooks/admpwd
+$ cat verify.txt | grep 'Password Settings: Password Complexity'
+  ✔  xccdf_org.cisecurity.benchmarks_rule_18.2.4_L1_Ensure_Password_Settings_Password_Complexity_is_set_to_Enabled_Large_letters__small_letters__numbers__special_characters_MS_only: (L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)
+```
+
+Success! The output no longer contains the failure. This gives you confidence that the password complexity rule would pass after this cookbook is applied to your node.
 
 If the test were to fail, you would examine the failure, modify your cookbook to try something else, and then run `kitchen converge` to apply the change followed by `kitchen verify` to run your compliance scan.
 
 [COMMENT] Test Kitchen instances are meant to be disposable. If you place your test instance in an unrepairable state or want to start over, run `kitchen destroy` to destroy your instance followed by `kitchen converge` to bring up a new one. The copy of your cookbook on your workstation is unaffected.
 
-As a final verification step, you can login to your test instance and run `sudo admpwd status` to confirm that `admpwd` is enabled.
+As a final verification step, you can run the same PowerShell cmdlet you ran earlier on your node to verify that the registry key exists.
 
 ```bash
 # ~/learn-chef/cookbooks/admpwd
-$ kitchen login
-Welcome to Windows Server 2012 R2.4 LTS (GNU/Linux 4.2.0-35-generic x86_64)
+$ kitchen exec -c 'Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"'
+-----> Execute command on default-windows-2012R2.
 
- * Documentation:  https://help.ubuntu.com/
-Last login: Tue May 10 20:33:13 2016 from 10.0.2.2
-root@default-ubuntu-1404:~$ sudo admpwd status
-Status: active
 
-To                         Action      From
---                         ------      ----
-22                         ALLOW       Anywhere
-22 (v6)                    ALLOW       Anywhere (v6)
-root@default-ubuntu-1404:~$ logout
-Connection to 127.0.0.1 closed.
+       PasswordComplexity : 4
+       PSPath             : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOF
+                     TWARE\Policies\Microsoft Services\AdmPwd
+       PSParentPath       : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOF
+                     TWARE\Policies\Microsoft Services
+       PSChildName        : AdmPwd
+       PSDrive            : HKLM
+       PSProvider         : Microsoft.PowerShell.Core\Registry
 ```
+
+You see the "PasswordComplexity" value and that its associated data is "4".
 
 When you're finished, run `kitchen destroy` to tear down your test instance.
 
 <% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-destroy') %>
+
+```bash
+# ~/learn-chef/cookbooks/admpwd
+$ kitchen destroy
+-----> Starting Kitchen (v1.15.0)
+-----> Destroying <default-windows-2012R2>...
+       ==> default: Forcing shutdown of VM...
+       ==> default: Destroying VM and associated drives...
+       Vagrant instance <default-windows-2012R2> destroyed.
+       Finished destroying <default-windows-2012R2> (0m4.27s).
+-----> Kitchen is finished. (0m6.03s)
+```
 
 [END_BOX]
 
