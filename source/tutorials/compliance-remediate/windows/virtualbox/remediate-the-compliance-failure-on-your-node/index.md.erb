@@ -7,28 +7,35 @@ time_to_complete: 30 minutes
 snippet_path: compliance_scanner/windows/virtualbox/remediate-the-compliance-failure-on-your-node
 snippet_workstation: ubuntu
 headings: [
-  { label: '1. Upload the ssh cookbook', href: '#step1' },
+  { label: '1. Upload the cookbook', href: '#step1' },
   { label: '2. Bootstrap your node', href: '#step2' },
   { label: '3. Rerun the scan', href: '#step3' },
   { label: 'Exercises', href: '#exercises' },
   { label: 'Clean up your environment', href: '#howtocleanupyourenvironment' }
 ]
 ---
-In this part, you'll apply the firewall configuration to your Windows Server  node and then rerun the compliance scan to verify the fix.
+In this part, you'll apply the password complexity configuration to your Windows Server  node and then rerun the compliance scan to verify the fix.
 
-To apply the firewall configuration, you'll upload the `ufw` cookbook to your Chef server and then bootstrap your Windows Server  node.
+To apply the password complexity configuration, you'll upload the `admpwd` cookbook to your Chef server and then bootstrap your Windows Server  node.
 
 Recall that during the bootstrap process, a node installs `chef-client` and performs the initial check-in to the Chef server. When you bootstrap a node, you specify the _run-list_, which includes the recipes that you want to apply. `chef-client` fetches the latest cookbooks from the Chef server. To update your node's configuration, you upload a new version of your cookbook to the Chef server and run `chef-client` on your node.
 
 [START_BOX]
 
-## 1. Upload the ufw cookbook to your Chef server
+## 1. Upload the admpwd cookbook to your Chef server
 
-The first step is to upload the `ufw` cookbook to the Chef server. This allows the node to fetch the cookbook during the bootstrap process.
+The first step is to upload the `admpwd` cookbook to the Chef server. This allows the node to fetch the cookbook during the bootstrap process.
 
 Run this comand from your <% fp '~/learn-chef' %> directory.
 
 <% command_snippet(page: current_page, path: 'upload-the-cookbook/knife-cookbook-upload', features: [:stdin, :stderr]) %>
+
+```bash
+# ~/learn-chef
+$ knife cookbook upload admpwd
+Uploading admpwd       [0.1.0]
+Uploaded 1 cookbook.
+```
 
 [END_BOX]
 
@@ -36,13 +43,219 @@ Run this comand from your <% fp '~/learn-chef' %> directory.
 
 ## 2. Bootstrap your node
 
-Next, bootstrap your Windows Server 2012 R2 node. In the _Manage a node_ tutorial, you chose whether to bootstrap [using a password or key-based authentication](/tutorials/manage-a-node/windows/hosted/bootstrap-your-node/). Here, you'll use the second apprach with the SSH private key that you created in the previous tutorial.
+Next, bootstrap your Windows Server 2012 R2 node. [You learned about this process](/tutorials/manage-a-node/windows/hosted/bootstrap-your-node/) in the _Manage a node_ tutorial.
 
-Run this `knife bootstrap` command. Replace the IP address and the values of `--ssh-user` and `--identify-file` as needed.
+Run this `knife bootstrap` command. Replace the IP address and the values of `--winrm-user` and `--winrm-password` as needed. You can also replace the value of `--node-name` if you want to give your node a name other than "node1-windows".
 
 <% command_snippet(page: current_page, path: 'bootstrap-your-node/bootstrap-node1', features: [:stdin, :stderr, :stdout]) %>
 
-`chef-client` runs during the bootstrap process. You see from the output that `ufw` is enabled and allows SSH access.
+```bash
+# ~/learn-chef
+$ knife bootstrap windows winrm 192.168.145.134 --winrm-user vagrant --winrm-password 'vagrant' --node-name node1-windows --run-list 'recipe[admpwd]'
+Creating new client for node1-windows
+Creating new node for node1-windows
+
+Waiting for remote response before bootstrap.192.168.145.134 .
+192.168.145.134 Response received.
+Remote node responded after 0.0 minutes.
+Bootstrapping Chef on 192.168.145.134
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-26743-1486732938.bat" chunk 1
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-26743-1486732938.bat" chunk 2
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-26743-1486732938.bat" chunk 3
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-26743-1486732938.bat" chunk 4
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-26743-1486732938.bat" chunk 5
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-26743-1486732938.bat" chunk 6
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-26743-1486732938.bat" chunk 7
+192.168.145.134 Rendering "C:\Users\vagrant\AppData\Local\Temp\bootstrap-26743-1486732938.bat" chunk 8
+192.168.145.134 Checking for existing directory "C:\chef"...
+192.168.145.134 Existing directory found, skipping creation.
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>(
+192.168.145.134 echo.url = WScript.Arguments.Named("url")
+192.168.145.134  echo.path = WScript.Arguments.Named("path")
+192.168.145.134  echo.proxy = null
+192.168.145.134  echo.'* Vaguely attempt to handle file:// scheme urls by url unescaping and switching all
+192.168.145.134  echo.'* / into .  Also assume that file:/// is a local absolute path and that file://<foo>
+192.168.145.134  echo.'* is possibly a network file path.
+192.168.145.134  echo.If InStr(url, "file://") = 1 Then
+192.168.145.134  echo.url = Unescape(url)
+192.168.145.134  echo.If InStr(url, "file:///") = 1 Then
+192.168.145.134  echo.sourcePath = Mid(url, Len("file:///") + 1)
+192.168.145.134  echo.Else
+192.168.145.134  echo.sourcePath = Mid(url, Len("file:") + 1)
+192.168.145.134  echo.End If
+192.168.145.134  echo.sourcePath = Replace(sourcePath, "/", "\")
+192.168.145.134  echo.
+192.168.145.134  echo.Set objFSO = CreateObject("Scripting.FileSystemObject")
+192.168.145.134  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path
+192.168.145.134  echo.objFSO.CopyFile sourcePath, path, true
+192.168.145.134  echo.Set objFSO = Nothing
+192.168.145.134  echo.
+192.168.145.134  echo.Else
+192.168.145.134  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP")
+192.168.145.134  echo.Set wshShell = CreateObject( "WScript.Shell" )
+192.168.145.134  echo.Set objUserVariables = wshShell.Environment("USER")
+192.168.145.134  echo.
+192.168.145.134  echo.rem http proxy is optional
+192.168.145.134  echo.rem attempt to read from HTTP_PROXY env var first
+192.168.145.134  echo.On Error Resume Next
+192.168.145.134  echo.
+192.168.145.134  echo.If NOT (objUserVariables("HTTP_PROXY") = "") Then
+192.168.145.134  echo.proxy = objUserVariables("HTTP_PROXY")
+192.168.145.134  echo.
+192.168.145.134  echo.rem fall back to named arg
+192.168.145.134  echo.ElseIf NOT (WScript.Arguments.Named("proxy") = "") Then
+192.168.145.134  echo.proxy = WScript.Arguments.Named("proxy")
+192.168.145.134  echo.End If
+192.168.145.134  echo.
+192.168.145.134  echo.If NOT isNull(proxy) Then
+192.168.145.134  echo.rem setProxy method is only available on ServerXMLHTTP 6.0+
+192.168.145.134  echo.Set objXMLHTTP = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+192.168.145.134  echo.objXMLHTTP.setProxy 2, proxy
+192.168.145.134  echo.End If
+192.168.145.134  echo.
+192.168.145.134  echo.On Error Goto 0
+192.168.145.134  echo.
+192.168.145.134  echo.objXMLHTTP.open "GET", url, false
+192.168.145.134  echo.objXMLHTTP.send()
+192.168.145.134  echo.If objXMLHTTP.Status = 200 Then
+192.168.145.134  echo.Set objADOStream = CreateObject("ADODB.Stream")
+192.168.145.134  echo.objADOStream.Open
+192.168.145.134  echo.objADOStream.Type = 1
+192.168.145.134  echo.objADOStream.Write objXMLHTTP.ResponseBody
+192.168.145.134  echo.objADOStream.Position = 0
+192.168.145.134  echo.Set objFSO = Createobject("Scripting.FileSystemObject")
+192.168.145.134  echo.If objFSO.Fileexists(path) Then objFSO.DeleteFile path
+192.168.145.134  echo.Set objFSO = Nothing
+192.168.145.134  echo.objADOStream.SaveToFile path
+192.168.145.134  echo.objADOStream.Close
+192.168.145.134  echo.Set objADOStream = Nothing
+192.168.145.134  echo.End If
+192.168.145.134  echo.Set objXMLHTTP = Nothing
+192.168.145.134  echo.End If
+192.168.145.134 ) 1>C:\chef\wget.vbs
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>(
+192.168.145.134 echo.param(
+192.168.145.134  echo.   [String] $remoteUrl,
+192.168.145.134  echo.   [String] $localPath
+192.168.145.134  echo.)
+192.168.145.134  echo.
+192.168.145.134  echo.$ProxyUrl = $env:http_proxy;
+192.168.145.134  echo.$webClient = new-object System.Net.WebClient;
+192.168.145.134  echo.
+192.168.145.134  echo.if ($ProxyUrl -ne '') {
+192.168.145.134  echo.  $WebProxy = New-Object System.Net.WebProxy($ProxyUrl,$true)
+192.168.145.134  echo.  $WebClient.Proxy = $WebProxy
+192.168.145.134  echo.}
+192.168.145.134  echo.
+192.168.145.134  echo.$webClient.DownloadFile($remoteUrl, $localPath);
+192.168.145.134 ) 1>C:\chef\wget.ps1
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>(
+192.168.145.134
+192.168.145.134
+192.168.145.134
+192.168.145.134 )
+192.168.145.134 Detected Windows Version 6.3 Build 9600
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>goto Version6.3
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>goto Version6.2
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>goto architecture_select
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>IF "AMD64" == "x86" IF not defined PROCESSOR_ARCHITEW6432
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>goto install
+192.168.145.134 Checking for existing downloaded package at "C:\Users\vagrant\AppData\Local\Temp\chef-client-latest.msi"
+192.168.145.134 Found existing downloaded package, deleting.
+192.168.145.134 Attempting to download client package using PowerShell if available...
+192.168.145.134 powershell.exe -ExecutionPolicy Unrestricted -InputFormat None -NoProfile -NonInteractive -File  C:\chef\wget.ps1 "https://www.chef.io/chef/download?p=windows&pv=2012&m=x86_64&DownloadContext=PowerShell&v=12" "C:\Users\vagrant\AppData\Local\Temp\chef-client-latest.msi"
+192.168.145.134 Download via PowerShell succeeded.
+192.168.145.134 Installing downloaded client package...
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>msiexec /qn /log "C:\Users\vagrant\AppData\Local\Temp\chef-client-msi6280.log" /i "C:\Users\vagrant\AppData\Local\Temp\chef-client-latest.msi"
+192.168.145.134 Successfully installed Chef Client package.
+192.168.145.134 A subdirectory or file C:\chef\trusted_certs already exists.
+192.168.145.134 Installation completed successfully
+192.168.145.134 Writing validation key...
+192.168.145.134 Validation key written.
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>mkdir C:\chef\trusted_certs
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>(
+192.168.145.134 echo.-----BEGIN CERTIFICATE-----
+192.168.145.134  echo.MIIDxjCCAq6gAwIBAgIBADANBgkqhkiG9w0BAQsFADBPMQswCQYDVQQGEwJVUzEQ
+192.168.145.134  echo.MA4GA1UECgwHWW91Q29ycDETMBEGA1UECwwKT3BlcmF0aW9uczEZMBcGA1UEAwwQ
+192.168.145.134  echo.Y2hlZi1zZXJ2ZXIudGVzdDAeFw0xNzAyMDYxNzE4MzVaFw0yNzAyMDQxNzE4MzVa
+192.168.145.134  echo.ME8xCzAJBgNVBAYTAlVTMRAwDgYDVQQKDAdZb3VDb3JwMRMwEQYDVQQLDApPcGVy
+192.168.145.134  echo.YXRpb25zMRkwFwYDVQQDDBBjaGVmLXNlcnZlci50ZXN0MIIBIjANBgkqhkiG9w0B
+192.168.145.134  echo.AQEFAAOCAQ8AMIIBCgKCAQEAtMC6AlmpCtRMbrin1gDFuxbMcq0fYohSlUxw+UgS
+192.168.145.134  echo.7Axw2JPRBX8YHmXqTvZBabv09EOwjLgkENT5tNtfiAeK9HEKY7/qGmjGpPYn6xew
+192.168.145.134  echo./mhf+5GYGDG8NbMpslcP7vCLSvT+xaqB4akefv0JjCdZTovZIoKKaYaVl3Pi632A
+192.168.145.134  echo.Yu0RfypNXDMBu8/F+MuyQl7ag7T3D2BUV4oLTviMEGqOZgindMNxwlB9Jsk0hqkB
+192.168.145.134  echo.BaYmGoC6XjHrdip5siW6zjZJmv4ZNtO9vLnib6A1lddEabKblJUm3epCqeFuGvRw
+192.168.145.134  echo.nu+uxyzVSk3m6PGMpvxa4pzRI3WpFtSnIA1lvsFrdQ2RvwIDAQABo4GsMIGpMA8G
+192.168.145.134  echo.A1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFJUdcHXceTMzvcakNQA/ep1T+tMFMHcG
+192.168.145.134  echo.A1UdIwRwMG6AFJUdcHXceTMzvcakNQA/ep1T+tMFoVOkUTBPMQswCQYDVQQGEwJV
+192.168.145.134  echo.UzEQMA4GA1UECgwHWW91Q29ycDETMBEGA1UECwwKT3BlcmF0aW9uczEZMBcGA1UE
+192.168.145.134  echo.AwwQY2hlZi1zZXJ2ZXIudGVzdIIBADANBgkqhkiG9w0BAQsFAAOCAQEAQOuy3tg6
+192.168.145.134  echo.HJ+wuCAZJh1RwxbwFu2T9wl2wTyp9jk3yZSHTmJDGcGIFKLmilIxLPHPlQGHstyc
+192.168.145.134  echo.YK6S9u4byY5V8BInAtxzQI2hWc+imR7ePtm73laUEOH2591NNgY3qNR4Mlx+PVzQ
+192.168.145.134  echo.RugQxlxpt8XhFrzXnqr1E0OfxE5W+M3AqGrsA3BKMfufCt/2vLwhVKdBJhVgjxRZ
+192.168.145.134  echo.eiwVPYN270hXwPuPxmKnFSFlfsU+2Ci1wrkUxcnCRVHwk7RvC5Ize4hGu7vUEtsv
+192.168.145.134  echo.bN+w+2g0Cqr8efusMYR1+L73/SqrviI0JPRLedj5P/g+54oudll+YpnF2+7GYKEQ
+192.168.145.134  echo.RZ89cSQK8rhizA==
+192.168.145.134  echo.-----END CERTIFICATE-----
+192.168.145.134 ) 1>C:\chef/trusted_certs/chef-server_test.crt
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>(
+192.168.145.134 echo.chef_server_url  "https://chef-server.test/organizations/4thcoffee"
+192.168.145.134  echo.validation_client_name "chef-validator"
+192.168.145.134  echo.file_cache_path   "c:/chef/cache"
+192.168.145.134  echo.file_backup_path  "c:/chef/backup"
+192.168.145.134  echo.cache_options     ({:path => "c:/chef/cache/checksums", :skip_expires => true})
+192.168.145.134  echo.node_name "node1-windows"
+192.168.145.134  echo.log_level        :info
+192.168.145.134  echo.log_location       STDOUT
+192.168.145.134  echo.trusted_certs_dir "c:/chef/trusted_certs"
+192.168.145.134 ) 1>C:\chef\client.rb
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>(echo.{"run_list":["recipe[admpwd]"]}) 1>C:\chef\first-boot.json
+192.168.145.134 Starting chef to bootstrap the node...
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>SET "PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\opscode\chef\bin\;C:\ruby\bin;C:\opscode\chef\bin;C:\opscode\chef\embedded\bin"
+192.168.145.134
+192.168.145.134 C:\Users\vagrant>chef-client -c c:/chef/client.rb -j c:/chef/first-boot.json
+192.168.145.134 [2017-02-10T05:22:52-08:00] INFO: *** Chef 12.18.31 ***
+192.168.145.134 [2017-02-10T05:22:52-08:00] INFO: Platform: x64-mingw32
+192.168.145.134 [2017-02-10T05:22:52-08:00] INFO: Chef-client pid: 1904
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: Setting the run_list to ["recipe[admpwd]"] from CLI options
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: Run List is [recipe[admpwd]]
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: Run List expands to [admpwd]
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: Starting Chef Run for node1-windows
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: Running start handlers
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: Start handlers complete.
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: HTTP Request Returned 404 Not Found:
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: HTTP Request Returned 404 Not Found:
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: Error while reporting run start to Data Collector. URL: https://chef-server.test/organizations/4thcoffee/data-collector Exception: 404 -- 404 "Not Found"  (This is normal if you do not have Chef Automate)
+192.168.145.134 [2017-02-10T05:22:56-08:00] INFO: Loading cookbooks [admpwd@0.1.0]
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Storing updated cookbooks/admpwd/README.md in the cache.
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Storing updated cookbooks/admpwd/Berksfile.lock in the cache.
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Storing updated cookbooks/admpwd/metadata.rb in the cache.
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Storing updated cookbooks/admpwd/.kitchen.yml in the cache.
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Storing updated cookbooks/admpwd/verify.txt in the cache.
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Storing updated cookbooks/admpwd/chefignore in the cache.
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Storing updated cookbooks/admpwd/Berksfile in the cache.
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Storing updated cookbooks/admpwd/recipes/default.rb in the cache.
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Processing registry_key[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft Services\AdmPwd] action create (admpwd::default line 1)
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Chef Run complete in 0.906175 seconds
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Running report handlers
+192.168.145.134 [2017-02-10T05:22:57-08:00] INFO: Report handlers complete
+```
+
+`chef-client` runs during the bootstrap process. You see from the output that the registry key that defines the password complexity policy is created.
 
 [END_BOX]
 
@@ -50,18 +263,17 @@ Run this `knife bootstrap` command. Replace the IP address and the values of `--
 
 ## 3. Rerun the compliance scan
 
-You've applied the updated SSH configuration to your node. Now let's scan your node against the CIS Benchmarks a second time to see whether the password complexity rule pases.
+You've applied the updated password policy configuration to your node. Now let's scan your node against the CIS Benchmarks a second time to see whether the password complexity rule pases.
 
 We expect the rule to pass because we verified the configuration on a test instance and saw the expected output when `chef-client` ran on the node.
 
 From the dashboard in the web interface, select your node and click **Scan**.
 
-![](compliance/scan_button_ubuntu1404.png)
+![](compliance/scan_button_windows2012.png)
 
-Clear the checkbox for **Operating System Patch Level** and select **cis/cis-windows2012r2-level1-memberserver**.
+Select **cis/cis-windows2012r2-level1-memberserver**.
 
-![](compliance/select_profiles_ubuntu1404a.png)
-![](compliance/select_profiles_ubuntu1404b.png)
+![](compliance/select_profiles_windows2012.png)
 
 Click **Scan now** to start the scan.
 
@@ -73,7 +285,7 @@ Watch as your node is scanned. The scan may take a few minutes to complete.
 
 From the scan report, scroll to the **Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)** rule. You see that the test passes.
 
-![](compliance/firewall_ufw_compliant_ubuntu1404.png)
+![](compliance/admpwd_compliant_windows2012.png)
 
 Congratulations. You're one step closer to meeting your compliance goals.
 
@@ -91,13 +303,13 @@ Congratulations. You're one step closer to meeting your compliance goals.
 
 [Follow these steps](/tutorials/manage-a-node/windows/hosted/run-chef-client-periodically/#howtocleanupyourenvironment) from the _Manage a node_ tutorial if you want to clean up your Chef server after you complete this tutorial or you want to repeat the tutorial from the beginning.
 
-To remove the `ufw` cookbook from your Chef server, run `knife cookbook delete ufw`.
+To remove the `admpwd` cookbook from your Chef server, run `knife cookbook delete admpwd`.
 
 <% command_snippet(page: current_page, path: 'cleanup/knife-cookbook-delete', features: [:stdin, :stderr]) %>
 
 To remove the node from your Chef compliance scanner, select the node from the dashboard and click **Remove**.
 
-![](compliance/remove_node_ubuntu1404.png)
+![](compliance/remove_node_windows2012.png)
 
 [END_BOX]
 
@@ -107,9 +319,9 @@ In this tutorial, you used Chef to remediate a failure of one of the predefined 
 
 You started with local development using Test Kitchen. Developing your code on local instances helps you to experiment and iterate more quickly.
 
-After verifying that your cookbook properly remediates the compliance failure on a test instance, you uploaded your cookbook to the Chef server and applied the configuration to your node. You then repeated the compliance scan to verify that the SSH configuration satisfies the compliance rule.
+After verifying that your cookbook properly remediates the compliance failure on a test instance, you uploaded your cookbook to the Chef server and applied the configuration to your node. You then repeated the compliance scan to verify that the password configuration satisfies the compliance rule.
 
-At the [start of the previous tutorial](/tutorials/compliance-assess/rhel/), we proposed 5 stages that, together, will let you meet your compliance challenges:
+At the [start of the previous tutorial](/tutorials/compliance-assess/windows/bring-your-own-system/), we proposed 5 stages that, together, will let you meet your compliance challenges:
 
 * **Analyze**
 * **Specify**
@@ -121,7 +333,7 @@ With remediation in place, you've successfully completed 4 of these 5 stages. Th
 
 The built-in compliance profiles are a great start, but they may not cover your organization's unique requirements. We're working on a tutorial that teaches you how to write custom compliance profiles. [Follow us on Twitter](https://twitter.com/learnchef) to get the latest updates.
 
-[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/ufw) on GitHub.
+[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/admpwd) on GitHub.
 
 You can also learn more about building a high velocity, highly compliant organization at [complianceatvelocity.com](http://complianceatvelocity.com/).
 
