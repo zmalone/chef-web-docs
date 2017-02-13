@@ -1,10 +1,10 @@
 This tutorial was last tested with this configuration:
 
 * An Ubuntu 14.04 workstation on VMware Fusion.
-  * **Software:** Vagrant 1.8.4, VirtualBox 5.0
+  * **Software:** Chef Development Kit 1.2.22, Vagrant 1.9.1, VirtualBox 5.1
 
-* Chef compliance scanner 1.5.14 on Ubuntu 14.04 running on VMware Fusion.
+* Chef compliance scanner 1.7.7 on Ubuntu 14.04 running on VMware Fusion.
 
-* Chef server 12.9.0 on Ubuntu 14.04 running on VMware Fusion.
+* Chef server 12.12.0 on Ubuntu 14.04 running on VMware Fusion.
 
-* An Ubuntu 14.04 node on VMware Fusion, Chef client 12.14.89.
+* An Ubuntu 14.04 node on VMware Fusion, Chef client 12.18.31.
