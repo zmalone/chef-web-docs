@@ -1,14 +1,14 @@
------> Starting Kitchen (v1.13.0)
+-----> Starting Kitchen (v1.15.0)
 -----> Setting up <default-ubuntu-1404>...
        Finished setting up <default-ubuntu-1404> (0m0.00s).
 -----> Verifying <default-ubuntu-1404>...
-       Use `/root/learn-chef/cookbooks/ufw/test/recipes/default` for testing
+       Loaded cis-ubuntu14.04lts-level1
 
 Profile: CIS Ubuntu 14.04 LTS Server Benchmark Level 1 (cis-ubuntu14.04lts-level1)
 Version: 1.0.0
 Target:  ssh://vagrant@127.0.0.1:2222
 
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.1_Create_Separate_Partition_for_tmp: Create Separate Partition for /tmp (expected "/\n/boot\nnone\n" to match /^\/tmp$/
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.1_Create_Separate_Partition_for_tmp: Create Separate Partition for /tmp (expected "/\n/boot\nnone\n" to match /^\/tmp$/
      Diff:
      @@ -1,2 +1,4 @@
      -/^\/tmp$/
@@ -16,25 +16,55 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +/boot
      +none
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.2_Set_nodev_option_for_tmp_Partition: Set nodev option for /tmp Partition (expected "" to match /nodev/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '{print $2}' stdout should match /^\/tmp$/
+     expected "/\n/boot\nnone\n" to match /^\/tmp$/
+     Diff:
+     @@ -1,2 +1,4 @@
+     -/^\/tmp$/
+     +/
+     +/boot
+     +none
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.2_Set_nodev_option_for_tmp_Partition: Set nodev option for /tmp Partition (expected "" to match /nodev/
      Diff:
      @@ -1,2 +1,2 @@
      -/nodev/
      +""
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.3_Set_nosuid_option_for_tmp_Partition: Set nosuid option for /tmp Partition (expected "" to match /nosuid/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '($2 == "/tmp") { print $4 }' stdout should match /nodev/
+     expected "" to match /nodev/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/nodev/
+     +""
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.3_Set_nosuid_option_for_tmp_Partition: Set nosuid option for /tmp Partition (expected "" to match /nosuid/
      Diff:
      @@ -1,2 +1,2 @@
      -/nosuid/
      +""
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.4_Set_noexec_option_for_tmp_Partition: Set noexec option for /tmp Partition (expected "" to match /noexec/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '($2 == "/tmp") { print $4 }' stdout should match /nosuid/
+     expected "" to match /nosuid/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/nosuid/
+     +""
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.4_Set_noexec_option_for_tmp_Partition: Set noexec option for /tmp Partition (expected "" to match /noexec/
      Diff:
      @@ -1,2 +1,2 @@
      -/noexec/
      +""
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.5_Create_Separate_Partition_for_var: Create Separate Partition for /var (expected "/\n/boot\nnone\n" to match /^\/var$/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '($2 == "/tmp") { print $4 }' stdout should match /noexec/
+     expected "" to match /noexec/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/noexec/
+     +""
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.5_Create_Separate_Partition_for_var: Create Separate Partition for /var (expected "/\n/boot\nnone\n" to match /^\/var$/
      Diff:
      @@ -1,2 +1,4 @@
      -/^\/var$/
@@ -42,13 +72,29 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +/boot
      +none
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.6_Bind_Mount_the_vartmp_directory_to_tmp: Bind Mount the /var/tmp directory to /tmp (expected "" to match /bind/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '{print $2}' stdout should match /^\/var$/
+     expected "/\n/boot\nnone\n" to match /^\/var$/
+     Diff:
+     @@ -1,2 +1,4 @@
+     -/^\/var$/
+     +/
+     +/boot
+     +none
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.6_Bind_Mount_the_vartmp_directory_to_tmp: Bind Mount the /var/tmp directory to /tmp (expected "" to match /bind/
      Diff:
      @@ -1,2 +1,2 @@
      -/bind/
      +""
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.7_Create_Separate_Partition_for_varlog: Create Separate Partition for /var/log (expected "/\n/boot\nnone\n" to match /^\/var\/log$/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '($2 == "/var/tmp") { print $4 }' stdout should match /bind/
+     expected "" to match /bind/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/bind/
+     +""
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.7_Create_Separate_Partition_for_varlog: Create Separate Partition for /var/log (expected "/\n/boot\nnone\n" to match /^\/var\/log$/
      Diff:
      @@ -1,2 +1,4 @@
      -/^\/var\/log$/
@@ -56,7 +102,16 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +/boot
      +none
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.8_Create_Separate_Partition_for_varlogaudit: Create Separate Partition for /var/log/audit (expected "/\n/boot\nnone\n" to match /^\/var\/log\/audit$/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '{print $2}' stdout should match /^\/var\/log$/
+     expected "/\n/boot\nnone\n" to match /^\/var\/log$/
+     Diff:
+     @@ -1,2 +1,4 @@
+     -/^\/var\/log$/
+     +/
+     +/boot
+     +none
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.8_Create_Separate_Partition_for_varlogaudit: Create Separate Partition for /var/log/audit (expected "/\n/boot\nnone\n" to match /^\/var\/log\/audit$/
      Diff:
      @@ -1,2 +1,4 @@
      -/^\/var\/log\/audit$/
@@ -64,7 +119,16 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +/boot
      +none
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.9_Create_Separate_Partition_for_home: Create Separate Partition for /home (expected "/\n/boot\nnone\n" to match /^\/home$/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '{print $2}' stdout should match /^\/var\/log\/audit$/
+     expected "/\n/boot\nnone\n" to match /^\/var\/log\/audit$/
+     Diff:
+     @@ -1,2 +1,4 @@
+     -/^\/var\/log\/audit$/
+     +/
+     +/boot
+     +none
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.9_Create_Separate_Partition_for_home: Create Separate Partition for /home (expected "/\n/boot\nnone\n" to match /^\/home$/
      Diff:
      @@ -1,2 +1,4 @@
      -/^\/home$/
@@ -72,46 +136,91 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +/boot
      +none
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.10_Add_nodev_Option_to_home: Add nodev Option to /home (expected "" to match /nodev/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '{print $2}' stdout should match /^\/home$/
+     expected "/\n/boot\nnone\n" to match /^\/home$/
+     Diff:
+     @@ -1,2 +1,4 @@
+     -/^\/home$/
+     +/
+     +/boot
+     +none
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.10_Add_nodev_Option_to_home: Add nodev Option to /home (expected "" to match /nodev/
      Diff:
      @@ -1,2 +1,2 @@
      -/nodev/
      +""
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.14_Add_nodev_Option_to_runshm_Partition: Add nodev Option to /run/shm Partition (expected "" to match /nodev/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '($2 == "/home") { print $4 }' stdout should match /nodev/
+     expected "" to match /nodev/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/nodev/
+     +""
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.14_Add_nodev_Option_to_runshm_Partition: Add nodev Option to /run/shm Partition (expected "" to match /nodev/
      Diff:
      @@ -1,2 +1,2 @@
      -/nodev/
      +""
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.15_Add_nosuid_Option_to_runshm_Partition: Add nosuid Option to /run/shm Partition (expected "" to match /nosuid/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '($2 == "/run/shm") { print $4 }' stdout should match /nodev/
+     expected "" to match /nodev/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/nodev/
+     +""
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.15_Add_nosuid_Option_to_runshm_Partition: Add nosuid Option to /run/shm Partition (expected "" to match /nosuid/
      Diff:
      @@ -1,2 +1,2 @@
      -/nosuid/
      +""
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_2.16_Add_noexec_Option_to_runshm_Partition: Add noexec Option to /run/shm Partition (expected "" to match /noexec/
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '($2 == "/run/shm") { print $4 }' stdout should match /nosuid/
+     expected "" to match /nosuid/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/nosuid/
+     +""
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_2.16_Add_noexec_Option_to_runshm_Partition: Add noexec Option to /run/shm Partition (expected "" to match /noexec/
      Diff:
      @@ -1,2 +1,2 @@
      -/noexec/
      +""
      )
+     ×  Bash command egrep "^[^#]" /etc/fstab | awk '($2 == "/run/shm") { print $4 }' stdout should match /noexec/
+     expected "" to match /noexec/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/noexec/
+     +""
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_2.17_Set_Sticky_Bit_on_All_World-Writable_Directories: Set Sticky Bit on All World-Writable Directories
      ✔  Bash command df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null stdout should not match /.+/
   ✔  xccdf_org.cisecurity.benchmarks_rule_2.25_Disable_Automounting: Disable Automounting
      ✔  Bash command initctl show-config autofs | egrep "^\s*start" exit_status should not eq 0
   ✔  xccdf_org.cisecurity.benchmarks_rule_3.1_Set_UserGroup_Owner_on_bootloader_config: Set User/Group Owner on bootloader config
      ✔  Bash command stat -c "%u %g" /boot/grub/grub.cfg stdout should match /0 0/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_3.2_Set_Permissions_on_bootloader_config: Set Permissions on bootloader config (
+  ×  xccdf_org.cisecurity.benchmarks_rule_3.2_Set_Permissions_on_bootloader_config: Set Permissions on bootloader config (
      expected: "0000"
           got: "0044"
-     
+
      (compared using ==)
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_3.3_Set_Boot_Loader_Password: Set Boot Loader Password (2 failed)
-     ✖  expected "#\n# DO NOT EDIT THIS FILE\n#\n# It is automatically generated by grub-mkconfig using templates\n# f...  $prefix/custom.cfg ]; then\n  source $prefix/custom.cfg;\nfi\n### END /etc/grub.d/41_custom ###\n" to match /^set superusers=".*"$/
+     ×  0044 should eq "0000"
+
+     expected: "0000"
+          got: "0044"
+
+     (compared using ==)
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_3.3_Set_Boot_Loader_Password: Set Boot Loader Password (2 failed)
+     ×  File /boot/grub/grub.cfg content should match /^set superusers=".*"$/
+     expected "#\n# DO NOT EDIT THIS FILE\n#\n# It is automatically generated by grub-mkconfig using templates\n# f...  $prefix/custom.cfg ]; then\n  source $prefix/custom.cfg;\nfi\n### END /etc/grub.d/41_custom ###\n" to match /^set superusers=".*"$/
      Diff:
-     @@ -1,2 +1,211 @@
+     @@ -1,2 +1,236 @@
      -/^set superusers=".*"$/
      +#
      +# DO NOT EDIT THIS FILE
@@ -180,11 +289,11 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +insmod part_msdos
      +insmod lvm
      +insmod ext2
-     +set root='lvmid/gN6Fsi-Esvp-q2gz-bZpy-yJP1-Wr9a-o4dnAj/YgTznM-i9P6-1PKw-D6kw-vqXi-PQT4-3RG1SV'
+     +set root='lvmid/3M1vlL-3Xf9-9q2P-d0Dn-jxn9-lznC-Anc6Lp/igsdcr-Lf0x-hYH3-ZymN-7S4D-868j-1uSAlF'
      +if [ x$feature_platform_search_hint = xy ]; then
-     +  search --no-floppy --fs-uuid --set=root --hint='lvmid/gN6Fsi-Esvp-q2gz-bZpy-yJP1-Wr9a-o4dnAj/YgTznM-i9P6-1PKw-D6kw-vqXi-PQT4-3RG1SV'  1f774aeb-c2fa-4d3d-b253-b252610f0844
+     +  search --no-floppy --fs-uuid --set=root --hint='lvmid/3M1vlL-3Xf9-9q2P-d0Dn-jxn9-lznC-Anc6Lp/igsdcr-Lf0x-hYH3-ZymN-7S4D-868j-1uSAlF'  f6bc3dc3-29d0-4c1e-be36-728d210f3992
      +else
-     +  search --no-floppy --fs-uuid --set=root 1f774aeb-c2fa-4d3d-b253-b252610f0844
+     +  search --no-floppy --fs-uuid --set=root f6bc3dc3-29d0-4c1e-be36-728d210f3992
      +fi
      +    font="/usr/share/grub/unicode.pf2"
      +fi
@@ -244,7 +353,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +  set linux_gfx_mode=text
      +fi
      +export linux_gfx_mode
-     +menuentry 'Ubuntu' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-1f774aeb-c2fa-4d3d-b253-b252610f0844' {
+     +menuentry 'Ubuntu' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-f6bc3dc3-29d0-4c1e-be36-728d210f3992' {
      +	recordfail
      +	load_video
      +	gfxmode $linux_gfx_mode
@@ -253,15 +362,15 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +	insmod ext2
      +	set root='hd0,msdos1'
      +	if [ x$feature_platform_search_hint = xy ]; then
-     +	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +	else
-     +	  search --no-floppy --fs-uuid --set=root e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +	  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +	fi
-     +	linux	/vmlinuz-3.13.0-92-generic root=/dev/mapper/vagrant--vg-root ro  quiet
-     +	initrd	/initrd.img-3.13.0-92-generic
+     +	linux	/vmlinuz-3.13.0-103-generic root=/dev/mapper/vagrant--vg-root ro  quiet
+     +	initrd	/initrd.img-3.13.0-103-generic
      +}
-     +submenu 'Advanced options for Ubuntu' $menuentry_id_option 'gnulinux-advanced-1f774aeb-c2fa-4d3d-b253-b252610f0844' {
-     +	menuentry 'Ubuntu, with Linux 3.13.0-92-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.13.0-92-generic-advanced-1f774aeb-c2fa-4d3d-b253-b252610f0844' {
+     +submenu 'Advanced options for Ubuntu' $menuentry_id_option 'gnulinux-advanced-f6bc3dc3-29d0-4c1e-be36-728d210f3992' {
+     +	menuentry 'Ubuntu, with Linux 3.13.0-103-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.13.0-103-generic-advanced-f6bc3dc3-29d0-4c1e-be36-728d210f3992' {
      +		recordfail
      +		load_video
      +		gfxmode $linux_gfx_mode
@@ -270,16 +379,16 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +		insmod ext2
      +		set root='hd0,msdos1'
      +		if [ x$feature_platform_search_hint = xy ]; then
-     +		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +		else
-     +		  search --no-floppy --fs-uuid --set=root e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +		  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +		fi
-     +		echo	'Loading Linux 3.13.0-92-generic ...'
-     +		linux	/vmlinuz-3.13.0-92-generic root=/dev/mapper/vagrant--vg-root ro  quiet
+     +		echo	'Loading Linux 3.13.0-103-generic ...'
+     +		linux	/vmlinuz-3.13.0-103-generic root=/dev/mapper/vagrant--vg-root ro  quiet
      +		echo	'Loading initial ramdisk ...'
-     +		initrd	/initrd.img-3.13.0-92-generic
+     +		initrd	/initrd.img-3.13.0-103-generic
      +	}
-     +	menuentry 'Ubuntu, with Linux 3.13.0-92-generic (recovery mode)' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.13.0-92-generic-recovery-1f774aeb-c2fa-4d3d-b253-b252610f0844' {
+     +	menuentry 'Ubuntu, with Linux 3.13.0-103-generic (recovery mode)' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.13.0-103-generic-recovery-f6bc3dc3-29d0-4c1e-be36-728d210f3992' {
      +		recordfail
      +		load_video
      +		insmod gzio
@@ -287,14 +396,14 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +		insmod ext2
      +		set root='hd0,msdos1'
      +		if [ x$feature_platform_search_hint = xy ]; then
-     +		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +		else
-     +		  search --no-floppy --fs-uuid --set=root e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +		  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +		fi
-     +		echo	'Loading Linux 3.13.0-92-generic ...'
-     +		linux	/vmlinuz-3.13.0-92-generic root=/dev/mapper/vagrant--vg-root ro recovery nomodeset 
+     +		echo	'Loading Linux 3.13.0-103-generic ...'
+     +		linux	/vmlinuz-3.13.0-103-generic root=/dev/mapper/vagrant--vg-root ro single nomodeset
      +		echo	'Loading initial ramdisk ...'
-     +		initrd	/initrd.img-3.13.0-92-generic
+     +		initrd	/initrd.img-3.13.0-103-generic
      +	}
      +}
      +
@@ -303,6 +412,31 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +### BEGIN /etc/grub.d/20_linux_xen ###
      +
      +### END /etc/grub.d/20_linux_xen ###
+     +
+     +### BEGIN /etc/grub.d/20_memtest86+ ###
+     +menuentry 'Memory test (memtest86+)' {
+     +	insmod part_msdos
+     +	insmod ext2
+     +	set root='hd0,msdos1'
+     +	if [ x$feature_platform_search_hint = xy ]; then
+     +	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
+     +	else
+     +	  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
+     +	fi
+     +	knetbsd	/memtest86+.elf
+     +}
+     +menuentry 'Memory test (memtest86+, serial console 115200)' {
+     +	insmod part_msdos
+     +	insmod ext2
+     +	set root='hd0,msdos1'
+     +	if [ x$feature_platform_search_hint = xy ]; then
+     +	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
+     +	else
+     +	  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
+     +	fi
+     +	linux16	/memtest86+.bin console=ttyS0,115200n8
+     +}
+     +### END /etc/grub.d/20_memtest86+ ###
      +
      +### BEGIN /etc/grub.d/30_os-prober ###
      +### END /etc/grub.d/30_os-prober ###
@@ -324,9 +458,10 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +fi
      +### END /etc/grub.d/41_custom ###
      
-     ✖  expected "#\n# DO NOT EDIT THIS FILE\n#\n# It is automatically generated by grub-mkconfig using templates\n# f...  $prefix/custom.cfg ]; then\n  source $prefix/custom.cfg;\nfi\n### END /etc/grub.d/41_custom ###\n" to match /^password/
+     ×  File /boot/grub/grub.cfg content should match /^password/
+     expected "#\n# DO NOT EDIT THIS FILE\n#\n# It is automatically generated by grub-mkconfig using templates\n# f...  $prefix/custom.cfg ]; then\n  source $prefix/custom.cfg;\nfi\n### END /etc/grub.d/41_custom ###\n" to match /^password/
      Diff:
-     @@ -1,2 +1,211 @@
+     @@ -1,2 +1,236 @@
      -/^password/
      +#
      +# DO NOT EDIT THIS FILE
@@ -395,11 +530,11 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +insmod part_msdos
      +insmod lvm
      +insmod ext2
-     +set root='lvmid/gN6Fsi-Esvp-q2gz-bZpy-yJP1-Wr9a-o4dnAj/YgTznM-i9P6-1PKw-D6kw-vqXi-PQT4-3RG1SV'
+     +set root='lvmid/3M1vlL-3Xf9-9q2P-d0Dn-jxn9-lznC-Anc6Lp/igsdcr-Lf0x-hYH3-ZymN-7S4D-868j-1uSAlF'
      +if [ x$feature_platform_search_hint = xy ]; then
-     +  search --no-floppy --fs-uuid --set=root --hint='lvmid/gN6Fsi-Esvp-q2gz-bZpy-yJP1-Wr9a-o4dnAj/YgTznM-i9P6-1PKw-D6kw-vqXi-PQT4-3RG1SV'  1f774aeb-c2fa-4d3d-b253-b252610f0844
+     +  search --no-floppy --fs-uuid --set=root --hint='lvmid/3M1vlL-3Xf9-9q2P-d0Dn-jxn9-lznC-Anc6Lp/igsdcr-Lf0x-hYH3-ZymN-7S4D-868j-1uSAlF'  f6bc3dc3-29d0-4c1e-be36-728d210f3992
      +else
-     +  search --no-floppy --fs-uuid --set=root 1f774aeb-c2fa-4d3d-b253-b252610f0844
+     +  search --no-floppy --fs-uuid --set=root f6bc3dc3-29d0-4c1e-be36-728d210f3992
      +fi
      +    font="/usr/share/grub/unicode.pf2"
      +fi
@@ -459,7 +594,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +  set linux_gfx_mode=text
      +fi
      +export linux_gfx_mode
-     +menuentry 'Ubuntu' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-1f774aeb-c2fa-4d3d-b253-b252610f0844' {
+     +menuentry 'Ubuntu' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-f6bc3dc3-29d0-4c1e-be36-728d210f3992' {
      +	recordfail
      +	load_video
      +	gfxmode $linux_gfx_mode
@@ -468,15 +603,15 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +	insmod ext2
      +	set root='hd0,msdos1'
      +	if [ x$feature_platform_search_hint = xy ]; then
-     +	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +	else
-     +	  search --no-floppy --fs-uuid --set=root e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +	  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +	fi
-     +	linux	/vmlinuz-3.13.0-92-generic root=/dev/mapper/vagrant--vg-root ro  quiet
-     +	initrd	/initrd.img-3.13.0-92-generic
+     +	linux	/vmlinuz-3.13.0-103-generic root=/dev/mapper/vagrant--vg-root ro  quiet
+     +	initrd	/initrd.img-3.13.0-103-generic
      +}
-     +submenu 'Advanced options for Ubuntu' $menuentry_id_option 'gnulinux-advanced-1f774aeb-c2fa-4d3d-b253-b252610f0844' {
-     +	menuentry 'Ubuntu, with Linux 3.13.0-92-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.13.0-92-generic-advanced-1f774aeb-c2fa-4d3d-b253-b252610f0844' {
+     +submenu 'Advanced options for Ubuntu' $menuentry_id_option 'gnulinux-advanced-f6bc3dc3-29d0-4c1e-be36-728d210f3992' {
+     +	menuentry 'Ubuntu, with Linux 3.13.0-103-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.13.0-103-generic-advanced-f6bc3dc3-29d0-4c1e-be36-728d210f3992' {
      +		recordfail
      +		load_video
      +		gfxmode $linux_gfx_mode
@@ -485,16 +620,16 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +		insmod ext2
      +		set root='hd0,msdos1'
      +		if [ x$feature_platform_search_hint = xy ]; then
-     +		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +		else
-     +		  search --no-floppy --fs-uuid --set=root e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +		  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +		fi
-     +		echo	'Loading Linux 3.13.0-92-generic ...'
-     +		linux	/vmlinuz-3.13.0-92-generic root=/dev/mapper/vagrant--vg-root ro  quiet
+     +		echo	'Loading Linux 3.13.0-103-generic ...'
+     +		linux	/vmlinuz-3.13.0-103-generic root=/dev/mapper/vagrant--vg-root ro  quiet
      +		echo	'Loading initial ramdisk ...'
-     +		initrd	/initrd.img-3.13.0-92-generic
+     +		initrd	/initrd.img-3.13.0-103-generic
      +	}
-     +	menuentry 'Ubuntu, with Linux 3.13.0-92-generic (recovery mode)' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.13.0-92-generic-recovery-1f774aeb-c2fa-4d3d-b253-b252610f0844' {
+     +	menuentry 'Ubuntu, with Linux 3.13.0-103-generic (recovery mode)' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.13.0-103-generic-recovery-f6bc3dc3-29d0-4c1e-be36-728d210f3992' {
      +		recordfail
      +		load_video
      +		insmod gzio
@@ -502,14 +637,14 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +		insmod ext2
      +		set root='hd0,msdos1'
      +		if [ x$feature_platform_search_hint = xy ]; then
-     +		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +		  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +		else
-     +		  search --no-floppy --fs-uuid --set=root e03897b6-a00e-4544-92c3-0aec0671d5f5
+     +		  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
      +		fi
-     +		echo	'Loading Linux 3.13.0-92-generic ...'
-     +		linux	/vmlinuz-3.13.0-92-generic root=/dev/mapper/vagrant--vg-root ro recovery nomodeset 
+     +		echo	'Loading Linux 3.13.0-103-generic ...'
+     +		linux	/vmlinuz-3.13.0-103-generic root=/dev/mapper/vagrant--vg-root ro single nomodeset
      +		echo	'Loading initial ramdisk ...'
-     +		initrd	/initrd.img-3.13.0-92-generic
+     +		initrd	/initrd.img-3.13.0-103-generic
      +	}
      +}
      +
@@ -518,6 +653,31 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +### BEGIN /etc/grub.d/20_linux_xen ###
      +
      +### END /etc/grub.d/20_linux_xen ###
+     +
+     +### BEGIN /etc/grub.d/20_memtest86+ ###
+     +menuentry 'Memory test (memtest86+)' {
+     +	insmod part_msdos
+     +	insmod ext2
+     +	set root='hd0,msdos1'
+     +	if [ x$feature_platform_search_hint = xy ]; then
+     +	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
+     +	else
+     +	  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
+     +	fi
+     +	knetbsd	/memtest86+.elf
+     +}
+     +menuentry 'Memory test (memtest86+, serial console 115200)' {
+     +	insmod part_msdos
+     +	insmod ext2
+     +	set root='hd0,msdos1'
+     +	if [ x$feature_platform_search_hint = xy ]; then
+     +	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  28c90811-b18e-4c4a-bba3-af5e05ac75f2
+     +	else
+     +	  search --no-floppy --fs-uuid --set=root 28c90811-b18e-4c4a-bba3-af5e05ac75f2
+     +	fi
+     +	linux16	/memtest86+.bin console=ttyS0,115200n8
+     +}
+     +### END /etc/grub.d/20_memtest86+ ###
      +
      +### BEGIN /etc/grub.d/30_os-prober ###
      +### END /etc/grub.d/30_os-prober ###
@@ -539,14 +699,22 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +fi
      +### END /etc/grub.d/41_custom ###
      
-  ✖  xccdf_org.cisecurity.benchmarks_rule_3.4_Require_Authentication_for_Single-User_Mode: Require Authentication for Single-User Mode (expected "root:!:17014:0:99999:7:::\n" not to match /.+/
+  ×  xccdf_org.cisecurity.benchmarks_rule_3.4_Require_Authentication_for_Single-User_Mode: Require Authentication for Single-User Mode (expected "root:!:17137:0:99999:7:::\n" not to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
-     +root:!:17014:0:99999:7:::
+     +root:!:17137:0:99999:7:::
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_4.1_Restrict_Core_Dumps: Restrict Core Dumps (1 failed)
-     ✖  expected "# /etc/security/limits.conf\n#\n#Each line describes a limit for a user in the form:\n#\n#<domain>  ...       -       chroot          /ftp\n\#@student        -       maxlogins       4\n\n# End of file\n" to match /^*\s+hard\s+core\s+0/
+     ×  Bash command grep "^root:[*\!]:" /etc/shadow stdout should not match /.+/
+     expected "root:!:17137:0:99999:7:::\n" not to match /.+/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/.+/
+     +root:!:17137:0:99999:7:::
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_4.1_Restrict_Core_Dumps: Restrict Core Dumps (3 failed)
+     ×  File /etc/security/limits.conf content should match /^*\s+hard\s+core\s+0/
+     expected "# /etc/security/limits.conf\n#\n#Each line describes a limit for a user in the form:\n#\n#<domain>  ...       -       chroot          /ftp\n\#@student        -       maxlogins       4\n\n# End of file\n" to match /^*\s+hard\s+core\s+0/
      Diff:
      @@ -1,2 +1,57 @@
      -/^*\s+hard\s+core\s+0/
@@ -607,8 +775,20 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +
      +# End of file
      
-     ✔  0 should eq "0"
-     ✔  Bash command initctl show-config apport | egrep "^\s*start" exit_status should not eq 0
+     ×  2 should eq "0"
+
+     expected: "0"
+          got: "2"
+
+     (compared using ==)
+     
+     ×  Bash command initctl show-config apport | egrep "^\s*start" exit_status should not eq 0
+
+     expected: value != 0
+          got: 0
+
+     (compared using ==)
+     
      ✔  Bash command initctl show-config whoopsie | egrep "^\s*start" exit_status should not eq 0
   ✔  xccdf_org.cisecurity.benchmarks_rule_4.2_Enable_XDNX_Support_on_32-bit_x86_Systems: Enable XD/NX Support on 32-bit x86 Systems
      ✔  Bash command dmesg | grep NX stdout should match /NX \(Execute Disable\) protection: active/
@@ -656,20 +836,24 @@ Target:  ssh://vagrant@127.0.0.1:2222
   ✔  xccdf_org.cisecurity.benchmarks_rule_6.4_Ensure_DHCP_Server_is_not_enabled: Ensure DHCP Server is not enabled
      ✔  Bash command initctl show-config isc-dhcp-server | egrep "^\s*start" exit_status should not eq 0
      ✔  Bash command initctl show-config isc-dhcp-server6 | egrep "^\s*start" exit_status should not eq 0
-  ✖  xccdf_org.cisecurity.benchmarks_rule_6.5_Configure_Network_Time_Protocol_NTP: Configure Network Time Protocol (NTP) (3 failed)
-     ✖  expected nil to match /^\s*restrict\s+-4\s+default(?=[^#]*\s+kod)(?=[^#]*\s+nomodify)(?=[^#]*\s+notrap)(?=[^#]*\s+nopeer)(?=[^#]*\s+noquery)(\s+kod|\s+nomodify|\s+notrap|\s+nopeer|\s+noquery)*\s*(?:#.*)?$/
-     ✖  expected nil to match /^\s*restrict\s+-6\s+default(?=[^#]*\s+kod)(?=[^#]*\s+nomodify)(?=[^#]*\s+notrap)(?=[^#]*\s+nopeer)(?=[^#]*\s+noquery)(\s+kod|\s+nomodify|\s+notrap|\s+nopeer|\s+noquery)*\s*(?:#.*)?$/
-     ✖  expected nil to match /^\s*server/
+  ×  xccdf_org.cisecurity.benchmarks_rule_6.5_Configure_Network_Time_Protocol_NTP: Configure Network Time Protocol (NTP) (3 failed)
+     ×  File /etc/ntp.conf content should match /^\s*restrict\s+-4\s+default(?=[^#]*\s+kod)(?=[^#]*\s+nomodify)(?=[^#]*\s+notrap)(?=[^#]*\s+nopeer)(?=[^#]*\s+noquery)(\s+kod|\s+nomodify|\s+notrap|\s+nopeer|\s+noquery)*\s*(?:#.*)?$/
+     expected nil to match /^\s*restrict\s+-4\s+default(?=[^#]*\s+kod)(?=[^#]*\s+nomodify)(?=[^#]*\s+notrap)(?=[^#]*\s+nopeer)(?=[^#]*\s+noquery)(\s+kod|\s+nomodify|\s+notrap|\s+nopeer|\s+noquery)*\s*(?:#.*)?$/
+     ×  File /etc/ntp.conf content should match /^\s*restrict\s+-6\s+default(?=[^#]*\s+kod)(?=[^#]*\s+nomodify)(?=[^#]*\s+notrap)(?=[^#]*\s+nopeer)(?=[^#]*\s+noquery)(\s+kod|\s+nomodify|\s+notrap|\s+nopeer|\s+noquery)*\s*(?:#.*)?$/
+     expected nil to match /^\s*restrict\s+-6\s+default(?=[^#]*\s+kod)(?=[^#]*\s+nomodify)(?=[^#]*\s+notrap)(?=[^#]*\s+nopeer)(?=[^#]*\s+noquery)(\s+kod|\s+nomodify|\s+notrap|\s+nopeer|\s+noquery)*\s*(?:#.*)?$/
+     ×  File /etc/ntp.conf content should match /^\s*server/
+     expected nil to match /^\s*server/
   ✔  xccdf_org.cisecurity.benchmarks_rule_6.6_Ensure_LDAP_is_not_enabled: Ensure LDAP is not enabled
      ✔  Bash command dpkg -s slapd | egrep "^Status:\ install" exit_status should not eq 0
-  ✖  xccdf_org.cisecurity.benchmarks_rule_6.7_Ensure_NFS_and_RPC_are_not_enabled: Ensure NFS and RPC are not enabled (1 failed)
-     ✖  
+  ⊚  xccdf_org.cisecurity.benchmarks_rule_6.7_Ensure_NFS_and_RPC_are_not_enabled: Ensure NFS and RPC are not enabled (1 failed)
+     ✔  Bash command ls /etc/rc*.d/S*nfs-kernel-server exit_status should not eq 0
+     ×  Bash command initctl show-config rpcbind-boot | egrep "^\s*start" exit_status should not eq 0
+
      expected: value != 0
           got: 0
-     
+
      (compared using ==)
      
-     ✔  Bash command ls /etc/rc*.d/S*nfs-kernel-server exit_status should not eq 0
   ✔  xccdf_org.cisecurity.benchmarks_rule_6.8_Ensure_DNS_Server_is_not_enabled: Ensure DNS Server is not enabled
      ✔  Bash command ls /etc/rc*.d/S*bind9 exit_status should not eq 0
   ✔  xccdf_org.cisecurity.benchmarks_rule_6.9_Ensure_FTP_Server_is_not_enabled: Ensure FTP Server is not enabled
@@ -688,72 +872,88 @@ Target:  ssh://vagrant@127.0.0.1:2222
      ✔  Bash command netstat -an | grep LIST | awk '($4 != "127.0.0.1:25" && $4 != "::1:25") { print $4 }' | grep ":25$" stdout should not match /.+/
   ✔  xccdf_org.cisecurity.benchmarks_rule_6.16_Ensure_rsync_service_is_not_enabled: Ensure rsync service is not enabled
      ✔  File /etc/default/rsync content should match /^RSYNC_ENABLE=false/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_6.17_Ensure_Biosdevname_is_not_enabled: Ensure Biosdevname is not enabled (
+  ×  xccdf_org.cisecurity.benchmarks_rule_6.17_Ensure_Biosdevname_is_not_enabled: Ensure Biosdevname is not enabled (
      expected: value != 0
           got: 0
-     
+
      (compared using ==)
      )
+     ×  Bash command dpkg -s biosdevname | egrep "^Status:\ install" exit_status should not eq 0
+
+     expected: value != 0
+          got: 0
+
+     (compared using ==)
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_7.1.1_Disable_IP_Forwarding: Disable IP Forwarding
      ✔  0 should eq "0"
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.1.2_Disable_Send_Packet_Redirects: Disable Send Packet Redirects (2 failed)
-     ✖  
+  ×  xccdf_org.cisecurity.benchmarks_rule_7.1.2_Disable_Send_Packet_Redirects: Disable Send Packet Redirects (2 failed)
+     ×  1 should eq "0"
+
      expected: "0"
           got: "1"
-     
+
      (compared using ==)
      
-     ✖  
+     ×  1 should eq "0"
+
      expected: "0"
           got: "1"
-     
+
      (compared using ==)
      
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.2.1_Disable_Source_Routed_Packet_Acceptance: Disable Source Routed Packet Acceptance (1 failed)
-     ✖  
-     expected: "0"
-          got: "1"
-     
-     (compared using ==)
-     
+  ×  xccdf_org.cisecurity.benchmarks_rule_7.2.1_Disable_Source_Routed_Packet_Acceptance: Disable Source Routed Packet Acceptance (1 failed)
      ✔  0 should eq "0"
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.2.2_Disable_ICMP_Redirect_Acceptance: Disable ICMP Redirect Acceptance (2 failed)
-     ✖  
+     ×  1 should eq "0"
+
      expected: "0"
           got: "1"
-     
+
      (compared using ==)
      
-     ✖  
+  ×  xccdf_org.cisecurity.benchmarks_rule_7.2.2_Disable_ICMP_Redirect_Acceptance: Disable ICMP Redirect Acceptance (2 failed)
+     ×  1 should eq "0"
+
      expected: "0"
           got: "1"
-     
+
      (compared using ==)
      
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.2.3_Disable_Secure_ICMP_Redirect_Acceptance: Disable Secure ICMP Redirect Acceptance (2 failed)
-     ✖  
+     ×  1 should eq "0"
+
      expected: "0"
           got: "1"
-     
+
      (compared using ==)
      
-     ✖  expected "1" to match /0/
+  ×  xccdf_org.cisecurity.benchmarks_rule_7.2.3_Disable_Secure_ICMP_Redirect_Acceptance: Disable Secure ICMP Redirect Acceptance (2 failed)
+     ×  1 should eq "0"
+
+     expected: "0"
+          got: "1"
+
+     (compared using ==)
+     
+     ×  1 should match /0/
+     expected "1" to match /0/
      Diff:
      @@ -1,2 +1,2 @@
      -/0/
      +"1"
      
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.2.4_Log_Suspicious_Packets: Log Suspicious Packets (2 failed)
-     ✖  
+  ×  xccdf_org.cisecurity.benchmarks_rule_7.2.4_Log_Suspicious_Packets: Log Suspicious Packets (2 failed)
+     ×  0 should eq "1"
+
      expected: "1"
           got: "0"
-     
+
      (compared using ==)
      
-     ✖  
+     ×  0 should eq "1"
+
      expected: "1"
           got: "0"
-     
+
      (compared using ==)
      
   ✔  xccdf_org.cisecurity.benchmarks_rule_7.2.5_Enable_Ignore_Broadcast_Requests: Enable Ignore Broadcast Requests
@@ -765,90 +965,114 @@ Target:  ssh://vagrant@127.0.0.1:2222
      ✔  1 should eq "1"
   ✔  xccdf_org.cisecurity.benchmarks_rule_7.2.8_Enable_TCP_SYN_Cookies: Enable TCP SYN Cookies
      ✔  1 should eq "1"
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.3.1_Disable_IPv6_Router_Advertisements: Disable IPv6 Router Advertisements (2 failed)
-     ✖  
+  ⊚  xccdf_org.cisecurity.benchmarks_rule_7.3.1_Disable_IPv6_Router_Advertisements: Disable IPv6 Router Advertisements (2 failed)
+     ×  1 should eq "0"
+
      expected: "0"
           got: "1"
-     
+
      (compared using ==)
      
-     ✖  
+     ×  1 should eq "0"
+
      expected: "0"
           got: "1"
-     
+
      (compared using ==)
      
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.3.2_Disable_IPv6_Redirect_Acceptance: Disable IPv6 Redirect Acceptance (2 failed)
-     ✖  
+  ⊚  xccdf_org.cisecurity.benchmarks_rule_7.3.2_Disable_IPv6_Redirect_Acceptance: Disable IPv6 Redirect Acceptance (2 failed)
+     ×  1 should eq "0"
+
      expected: "0"
           got: "1"
-     
+
      (compared using ==)
      
-     ✖  
+     ×  1 should eq "0"
+
      expected: "0"
           got: "1"
-     
+
      (compared using ==)
      
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.3.3_Disable_IPv6: Disable IPv6 (expected "    inet6 ::1/128 scope host \n    inet6 fe80::a00:27ff:fe8a:74ba/64 scope link \n" not to match /.+/
+  ⊚  xccdf_org.cisecurity.benchmarks_rule_7.3.3_Disable_IPv6: Disable IPv6 (expected "    inet6 ::1/128 scope host \n    inet6 fe80::a00:27ff:feb2:2a44/64 scope link \n" not to match /.+/
      Diff:
      @@ -1,2 +1,3 @@
      -/.+/
-     +    inet6 ::1/128 scope host 
-     +    inet6 fe80::a00:27ff:fe8a:74ba/64 scope link 
+     +    inet6 ::1/128 scope host
+     +    inet6 fe80::a00:27ff:feb2:2a44/64 scope link
      )
+     ×  Bash command ip addr | grep inet6 stdout should not match /.+/
+     expected "    inet6 ::1/128 scope host \n    inet6 fe80::a00:27ff:feb2:2a44/64 scope link \n" not to match /.+/
+     Diff:
+     @@ -1,2 +1,3 @@
+     -/.+/
+     +    inet6 ::1/128 scope host
+     +    inet6 fe80::a00:27ff:feb2:2a44/64 scope link
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_7.4.1_Install_TCP_Wrappers: Install TCP Wrappers
      ✔  Bash command dpkg -s tcpd | egrep "^Status:\ install" exit_status should eq 0
   ✔  xccdf_org.cisecurity.benchmarks_rule_7.4.3_Verify_Permissions_on_etchosts.allow: Verify Permissions on /etc/hosts.allow
      ✔  0000 should eq "0000"
   ✔  xccdf_org.cisecurity.benchmarks_rule_7.4.5_Verify_Permissions_on_etchosts.deny: Verify Permissions on /etc/hosts.deny
      ✔  0000 should eq "0000"
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.5.1_Disable_DCCP: Disable DCCP (1 failed)
-     ✖  expected "insmod /lib/modules/3.13.0-92-generic/kernel/net/dccp/dccp.ko \n" to match /^install \/bin\/true/
+  ⊚  xccdf_org.cisecurity.benchmarks_rule_7.5.1_Disable_DCCP: Disable DCCP (1 failed)
+     ×  Bash command modprobe -n -v dccp stdout should match /^install \/bin\/true/
+     expected "insmod /lib/modules/3.13.0-103-generic/kernel/net/dccp/dccp.ko \n" to match /^install \/bin\/true/
      Diff:
      @@ -1,2 +1,2 @@
      -/^install \/bin\/true/
-     +insmod /lib/modules/3.13.0-92-generic/kernel/net/dccp/dccp.ko 
+     +insmod /lib/modules/3.13.0-103-generic/kernel/net/dccp/dccp.ko
      
      ✔  Bash command lsmod | egrep "^dccp\s" exit_status should not eq 0
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.5.2_Disable_SCTP: Disable SCTP (1 failed)
-     ✖  expected "insmod /lib/modules/3.13.0-92-generic/kernel/lib/libcrc32c.ko \ninsmod /lib/modules/3.13.0-92-generic/kernel/net/sctp/sctp.ko \n" to match /^install \/bin\/true/
+  ⊚  xccdf_org.cisecurity.benchmarks_rule_7.5.2_Disable_SCTP: Disable SCTP (1 failed)
+     ×  Bash command modprobe -n -v sctp stdout should match /^install \/bin\/true/
+     expected "insmod /lib/modules/3.13.0-103-generic/kernel/lib/libcrc32c.ko \ninsmod /lib/modules/3.13.0-103-generic/kernel/net/sctp/sctp.ko \n" to match /^install \/bin\/true/
      Diff:
      @@ -1,2 +1,3 @@
      -/^install \/bin\/true/
-     +insmod /lib/modules/3.13.0-92-generic/kernel/lib/libcrc32c.ko 
-     +insmod /lib/modules/3.13.0-92-generic/kernel/net/sctp/sctp.ko 
+     +insmod /lib/modules/3.13.0-103-generic/kernel/lib/libcrc32c.ko
+     +insmod /lib/modules/3.13.0-103-generic/kernel/net/sctp/sctp.ko
      
      ✔  Bash command lsmod | egrep "^sctp\s" exit_status should not eq 0
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.5.3_Disable_RDS: Disable RDS (1 failed)
-     ✖  expected "insmod /lib/modules/3.13.0-92-generic/kernel/net/rds/rds.ko \n" to match /^install \/bin\/true/
+  ⊚  xccdf_org.cisecurity.benchmarks_rule_7.5.3_Disable_RDS: Disable RDS (1 failed)
+     ×  Bash command modprobe -n -v rds stdout should match /^install \/bin\/true/
+     expected "insmod /lib/modules/3.13.0-103-generic/kernel/net/rds/rds.ko \n" to match /^install \/bin\/true/
      Diff:
      @@ -1,2 +1,2 @@
      -/^install \/bin\/true/
-     +insmod /lib/modules/3.13.0-92-generic/kernel/net/rds/rds.ko 
+     +insmod /lib/modules/3.13.0-103-generic/kernel/net/rds/rds.ko
      
      ✔  Bash command lsmod | egrep "^rds\s" exit_status should not eq 0
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.5.4_Disable_TIPC: Disable TIPC (1 failed)
-     ✖  expected "insmod /lib/modules/3.13.0-92-generic/kernel/net/tipc/tipc.ko \n" to match /^install \/bin\/true/
+  ⊚  xccdf_org.cisecurity.benchmarks_rule_7.5.4_Disable_TIPC: Disable TIPC (1 failed)
+     ×  Bash command modprobe -n -v tipc stdout should match /^install \/bin\/true/
+     expected "insmod /lib/modules/3.13.0-103-generic/kernel/net/tipc/tipc.ko \n" to match /^install \/bin\/true/
      Diff:
      @@ -1,2 +1,2 @@
      -/^install \/bin\/true/
-     +insmod /lib/modules/3.13.0-92-generic/kernel/net/tipc/tipc.ko 
+     +insmod /lib/modules/3.13.0-103-generic/kernel/net/tipc/tipc.ko
      
      ✔  Bash command lsmod | egrep "^tipc\s" exit_status should not eq 0
-  ✖  xccdf_org.cisecurity.benchmarks_rule_7.7_Ensure_Firewall_is_active: Ensure Firewall is active (expected "Status: inactive\n" to match /^Status: active$/
+  ×  xccdf_org.cisecurity.benchmarks_rule_7.7_Ensure_Firewall_is_active: Ensure Firewall is active (expected "Status: inactive\n" to match /^Status: active$/
      Diff:
      @@ -1,2 +1,2 @@
      -/^Status: active$/
      +Status: inactive
      )
+     ×  Bash command ufw status stdout should match /^Status: active$/
+     expected "Status: inactive\n" to match /^Status: active$/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/^Status: active$/
+     +Status: inactive
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_8.2.1_Install_the_rsyslog_package: Install the rsyslog package
      ✔  Bash command dpkg -s rsyslog | egrep "^Status:\ install" exit_status should eq 0
   ✔  xccdf_org.cisecurity.benchmarks_rule_8.2.2_Ensure_the_rsyslog_Service_is_activated: Ensure the rsyslog Service is activated
      ✔  Bash command initctl show-config rsyslog | egrep "^\s*start" exit_status should eq 0
-  ✖  xccdf_org.cisecurity.benchmarks_rule_8.2.4_Create_and_Set_Permissions_on_rsyslog_Log_Files: Create and Set Permissions on rsyslog Log Files (1 failed)
-     ✖  expected "/var/log/auth.log\n/var/log/syslog\n/var/log/kern.log\n" not to match /.+/
+  ×  xccdf_org.cisecurity.benchmarks_rule_8.2.4_Create_and_Set_Permissions_on_rsyslog_Log_Files: Create and Set Permissions on rsyslog Log Files (1 failed)
+     ×  Bash command find `awk '/^ *[^#$]/ { print $2 }' /etc/rsyslog.conf /etc/rsyslog.d/* | egrep -o "/.*"` ! -user root stdout should not match /.+/
+     expected "/var/log/auth.log\n/var/log/syslog\n/var/log/kern.log\n" not to match /.+/
      Diff:
      @@ -1,2 +1,4 @@
      -/.+/
@@ -858,7 +1082,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      
      ✔  Bash command find `awk '/^ *[^#$]/ { print $2 }' /etc/rsyslog.conf /etc/rsyslog.d/* | egrep -o "/.*"` -perm /o+rwx stdout should not match /.+/
      ✔  Bash command find `awk '/^ *[^#$]/ { print $2 }' /etc/rsyslog.conf /etc/rsyslog.d/* | egrep -o "/.*"` -perm /g+wx stdout should not match /.+/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_8.2.5_Configure_rsyslog_to_Send_Logs_to_a_Remote_Log_Host: Configure rsyslog to Send Logs to a Remote Log Host (expected "#  /etc/rsyslog.conf\tConfiguration file for rsyslog.\n#\n#\t\t\tFor more information see\n#\t\t\t/u...og\n\n#\n# Include all config files in /etc/rsyslog.d/\n#\n$IncludeConfig /etc/rsyslog.d/*.conf\n\n" to match /^\*\.\*\s+@/
+  ×  xccdf_org.cisecurity.benchmarks_rule_8.2.5_Configure_rsyslog_to_Send_Logs_to_a_Remote_Log_Host: Configure rsyslog to Send Logs to a Remote Log Host (expected "#  /etc/rsyslog.conf\tConfiguration file for rsyslog.\n#\n#\t\t\tFor more information see\n#\t\t\t/u...og\n\n#\n# Include all config files in /etc/rsyslog.d/\n#\n$IncludeConfig /etc/rsyslog.d/*.conf\n\n" to match /^\*\.\*\s+@/
      Diff:
      @@ -1,2 +1,61 @@
      -/^\*\.\*\s+@/
@@ -923,121 +1147,209 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +#
      +$IncludeConfig /etc/rsyslog.d/*.conf
      )
+     ×  File /etc/rsyslog.conf content should match /^\*\.\*\s+@/
+     expected "#  /etc/rsyslog.conf\tConfiguration file for rsyslog.\n#\n#\t\t\tFor more information see\n#\t\t\t/u...og\n\n#\n# Include all config files in /etc/rsyslog.d/\n#\n$IncludeConfig /etc/rsyslog.d/*.conf\n\n" to match /^\*\.\*\s+@/
+     Diff:
+     @@ -1,2 +1,61 @@
+     -/^\*\.\*\s+@/
+     +#  /etc/rsyslog.conf	Configuration file for rsyslog.
+     +#
+     +#			For more information see
+     +#			/usr/share/doc/rsyslog-doc/html/rsyslog_conf.html
+     +#
+     +#  Default logging rules can be found in /etc/rsyslog.d/50-default.conf
+     +
+     +
+     +#################
+     +#### MODULES ####
+     +#################
+     +
+     +$ModLoad imuxsock # provides support for local system logging
+     +$ModLoad imklog   # provides kernel logging support
+     +#$ModLoad immark  # provides --MARK-- message capability
+     +
+     +# provides UDP syslog reception
+     +#$ModLoad imudp
+     +#$UDPServerRun 514
+     +
+     +# provides TCP syslog reception
+     +#$ModLoad imtcp
+     +#$InputTCPServerRun 514
+     +
+     +# Enable non-kernel facility klog messages
+     +$KLogPermitNonKernelFacility on
+     +
+     +###########################
+     +#### GLOBAL DIRECTIVES ####
+     +###########################
+     +
+     +#
+     +# Use traditional timestamp format.
+     +# To enable high precision timestamps, comment out the following line.
+     +#
+     +$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+     +
+     +# Filter duplicated messages
+     +$RepeatedMsgReduction on
+     +
+     +#
+     +# Set the default permissions for all log files.
+     +#
+     +$FileOwner syslog
+     +$FileGroup adm
+     +$FileCreateMode 0640
+     +$DirCreateMode 0755
+     +$Umask 0022
+     +$PrivDropToUser syslog
+     +$PrivDropToGroup syslog
+     +
+     +#
+     +# Where to place spool and state files
+     +#
+     +$WorkDirectory /var/spool/rsyslog
+     +
+     +#
+     +# Include all config files in /etc/rsyslog.d/
+     +#
+     +$IncludeConfig /etc/rsyslog.d/*.conf
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_9.1.1_Enable_cron_Daemon: Enable cron Daemon
      ✔  Bash command initctl show-config cron | egrep "^\s*start" exit_status should eq 0
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.1.2_Set_UserGroup_Owner_and_Permission_on_etccrontab: Set User/Group Owner and Permission on /etc/crontab (1 failed)
-     ✖  
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.1.2_Set_UserGroup_Owner_and_Permission_on_etccrontab: Set User/Group Owner and Permission on /etc/crontab (1 failed)
+     ✔  Bash command stat -c "%u %g" /etc/crontab stdout should match /0 0/
+     ×  0044 should eq "0000"
+
      expected: "0000"
           got: "0044"
-     
+
      (compared using ==)
      
-     ✔  Bash command stat -c "%u %g" /etc/crontab stdout should match /0 0/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.1.3_Set_UserGroup_Owner_and_Permission_on_etccron.hourly: Set User/Group Owner and Permission on /etc/cron.hourly (1 failed)
-     ✖  
-     expected: "0000"
-          got: "0055"
-     
-     (compared using ==)
-     
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.1.3_Set_UserGroup_Owner_and_Permission_on_etccron.hourly: Set User/Group Owner and Permission on /etc/cron.hourly (1 failed)
      ✔  Bash command stat -c "%u %g" /etc/cron.hourly stdout should match /0 0/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.1.4_Set_UserGroup_Owner_and_Permission_on_etccron.daily: Set User/Group Owner and Permission on /etc/cron.daily (1 failed)
-     ✖  
+     ×  0055 should eq "0000"
+
      expected: "0000"
           got: "0055"
-     
+
      (compared using ==)
      
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.1.4_Set_UserGroup_Owner_and_Permission_on_etccron.daily: Set User/Group Owner and Permission on /etc/cron.daily (1 failed)
      ✔  Bash command stat -c "%u %g" /etc/cron.daily stdout should match /0 0/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.1.5_Set_UserGroup_Owner_and_Permission_on_etccron.weekly: Set User/Group Owner and Permission on /etc/cron.weekly (1 failed)
-     ✖  
+     ×  0055 should eq "0000"
+
      expected: "0000"
           got: "0055"
-     
+
      (compared using ==)
      
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.1.5_Set_UserGroup_Owner_and_Permission_on_etccron.weekly: Set User/Group Owner and Permission on /etc/cron.weekly (1 failed)
      ✔  Bash command stat -c "%u %g" /etc/cron.weekly stdout should match /0 0/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.1.6_Set_UserGroup_Owner_and_Permission_on_etccron.monthly: Set User/Group Owner and Permission on /etc/cron.monthly (1 failed)
-     ✖  
+     ×  0055 should eq "0000"
+
      expected: "0000"
           got: "0055"
-     
+
      (compared using ==)
      
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.1.6_Set_UserGroup_Owner_and_Permission_on_etccron.monthly: Set User/Group Owner and Permission on /etc/cron.monthly (1 failed)
      ✔  Bash command stat -c "%u %g" /etc/cron.monthly stdout should match /0 0/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.1.7_Set_UserGroup_Owner_and_Permission_on_etccron.d: Set User/Group Owner and Permission on /etc/cron.d (1 failed)
-     ✖  
+     ×  0055 should eq "0000"
+
      expected: "0000"
           got: "0055"
-     
+
      (compared using ==)
      
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.1.7_Set_UserGroup_Owner_and_Permission_on_etccron.d: Set User/Group Owner and Permission on /etc/cron.d (1 failed)
      ✔  Bash command stat -c "%u %g" /etc/cron.d stdout should match /0 0/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.1.8_Restrict_atcron_to_Authorized_Users: Restrict at/cron to Authorized Users (4 failed)
-     ✖  expected "" to match /0 0/
-     Diff:
-     @@ -1,2 +1,2 @@
-     -/0 0/
-     +""
-     
-     ✖  
+     ×  0055 should eq "0000"
+
      expected: "0000"
-          got: nil
-     
+          got: "0055"
+
      (compared using ==)
      
-     ✖  expected "" to match /0 0/
-     Diff:
-     @@ -1,2 +1,2 @@
-     -/0 0/
-     +""
-     
-     ✖  
-     expected: "0000"
-          got: nil
-     
-     (compared using ==)
-     
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.1.8_Restrict_atcron_to_Authorized_Users: Restrict at/cron to Authorized Users (5 failed)
      ✔  Bash command stat /etc/cron.deny exit_status should not eq 0
-     ✔  Bash command stat /etc/at.deny exit_status should not eq 0
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.2.1_Set_Password_Creation_Requirement_Parameters_Using_pam_cracklib: Set Password Creation Requirement Parameters Using pam_cracklib (6 failed)
-     ✖  expected "" to match /.+/
+     ×  Bash command stat -c "%u %g" /etc/cron.allow stdout should match /0 0/
+     expected "" to match /0 0/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/0 0/
+     +""
+     
+     ×  should eq "0000"
+
+     expected: "0000"
+          got: nil
+
+     (compared using ==)
+     
+     ×  Bash command stat /etc/at.deny exit_status should not eq 0
+
+     expected: value != 0
+          got: 0
+
+     (compared using ==)
+     
+     ×  Bash command stat -c "%u %g" /etc/at.allow stdout should match /0 0/
+     expected "" to match /0 0/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/0 0/
+     +""
+     
+     ×  should eq "0000"
+
+     expected: "0000"
+          got: nil
+
+     (compared using ==)
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.2.1_Set_Password_Creation_Requirement_Parameters_Using_pam_cracklib: Set Password Creation Requirement Parameters Using pam_cracklib (6 failed)
+     ×  Bash command egrep -v "^[[:space:]]*#" /etc/pam.d/common-password | egrep "pam_cracklib.so" | sed -e 's/#.*//' | tr -s '\t ' '\n' | awk -F = '/^retry/ { if ($2 <= 3) print $2 }' stdout should match /.+/
+     expected "" to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
      +""
      
-     ✖  expected "" to match /.+/
+     ×  Bash command egrep -v "^[[:space:]]*#" /etc/pam.d/common-password | egrep "pam_cracklib.so" | sed -e 's/#.*//' | tr -s '\t ' '\n' | awk -F = '/^minlen/ { if ($2 >= 14) print $2 }' stdout should match /.+/
+     expected "" to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
      +""
      
-     ✖  expected "" to match /.+/
+     ×  Bash command egrep -v "^[[:space:]]*#" /etc/pam.d/common-password | egrep "pam_cracklib.so" | sed -e 's/#.*//' | tr -s '\t ' '\n' | awk -F = '/^dcredit/ { if ($2 <= -1) print $2 }' stdout should match /.+/
+     expected "" to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
      +""
      
-     ✖  expected "" to match /.+/
+     ×  Bash command egrep -v "^[[:space:]]*#" /etc/pam.d/common-password | egrep "pam_cracklib.so" | sed -e 's/#.*//' | tr -s '\t ' '\n' | awk -F = '/^ucredit/ { if ($2 <= -1) print $2 }' stdout should match /.+/
+     expected "" to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
      +""
      
-     ✖  expected "" to match /.+/
+     ×  Bash command egrep -v "^[[:space:]]*#" /etc/pam.d/common-password | egrep "pam_cracklib.so" | sed -e 's/#.*//' | tr -s '\t ' '\n' | awk -F = '/^lcredit/ { if ($2 <= -1) print $2 }' stdout should match /.+/
+     expected "" to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
      +""
      
-     ✖  expected "" to match /.+/
+     ×  Bash command egrep -v "^[[:space:]]*#" /etc/pam.d/common-password | egrep "pam_cracklib.so" | sed -e 's/#.*//' | tr -s '\t ' '\n' | awk -F = '/^ocredit/ { if ($2 <= -1) print $2 }' stdout should match /.+/
+     expected "" to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
      +""
      
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.2.2_Set_Lockout_for_Failed_Password_Attempts: Set Lockout for Failed Password Attempts (expected "#\n# The PAM configuration file for the Shadow `login' service\n#\n\n# Enforce a minimal delay in ca...is present, \"required\" would be sufficient (When SELinux\n# is disabled, this returns success.)\n" to match /^auth\s+required\s+pam_tally2.so\s+onerr=fail\s+audit\s+silent\s+deny=5\s+unlock_time=900$/
+  ⊚  xccdf_org.cisecurity.benchmarks_rule_9.2.2_Set_Lockout_for_Failed_Password_Attempts: Set Lockout for Failed Password Attempts (expected "#\n# The PAM configuration file for the Shadow `login' service\n#\n\n# Enforce a minimal delay in ca...is present, \"required\" would be sufficient (When SELinux\n# is disabled, this returns success.)\n" to match /^auth\s+required\s+pam_tally2.so\s+onerr=fail\s+audit\s+silent\s+deny=5\s+unlock_time=900$/
      Diff:
      @@ -1,2 +1,111 @@
      -/^auth\s+required\s+pam_tally2.so\s+onerr=fail\s+audit\s+silent\s+deny=5\s+unlock_time=900$/
@@ -1078,8 +1390,8 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# (Replaces the `NOLOGINS_FILE' option from login.defs)
      +auth       requisite  pam_nologin.so
      +
-     +# SELinux needs to be the first session rule. This ensures that any 
-     +# lingering context has been cleared. Without out this it is possible 
+     +# SELinux needs to be the first session rule. This ensures that any
+     +# lingering context has been cleared. Without out this it is possible
      +# that a module could execute code in the wrong domain.
      +# When the module is present, "required" would be sufficient (When SELinux
      +# is disabled, this returns success.)
@@ -1088,7 +1400,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# This module parses environment configuration file(s)
      +# and also allows you to use an extended config
      +# file /etc/security/pam_env.conf.
-     +# 
+     +#
      +# parsing /etc/environment needs "readenv=1"
      +session       required   pam_env.so readenv=1
      +# locale variables are also kept into /etc/default/locale in etch
@@ -1131,11 +1443,11 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +session    optional   pam_motd.so
      +
      +# Prints the status of the user's mailbox upon succesful login
-     +# (Replaces the `MAIL_CHECK_ENAB' option from login.defs). 
+     +# (Replaces the `MAIL_CHECK_ENAB' option from login.defs).
      +#
      +# This also defines the MAIL environment variable
      +# However, userdel also needs MAIL_DIR and MAIL_FILE variables
-     +# in /etc/login.defs to make sure that removing a user 
+     +# in /etc/login.defs to make sure that removing a user
      +# also removes the user's mail spool file.
      +# See comments in /etc/login.defs
      +session    optional   pam_mail.so standard
@@ -1152,7 +1464,123 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# When the module is present, "required" would be sufficient (When SELinux
      +# is disabled, this returns success.)
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.2.3_Limit_Password_Reuse: Limit Password Reuse (expected "#\n# /etc/pam.d/common-password - password-related modules common to all services\n#\n# This file is...and here are more per-package modules (the \"Additional\" block)\n# end of pam-auth-update config\n" to match /^[^#]*remember/
+     ×  File /etc/pam.d/login content should match /^auth\s+required\s+pam_tally2.so\s+onerr=fail\s+audit\s+silent\s+deny=5\s+unlock_time=900$/
+     expected "#\n# The PAM configuration file for the Shadow `login' service\n#\n\n# Enforce a minimal delay in ca...is present, \"required\" would be sufficient (When SELinux\n# is disabled, this returns success.)\n" to match /^auth\s+required\s+pam_tally2.so\s+onerr=fail\s+audit\s+silent\s+deny=5\s+unlock_time=900$/
+     Diff:
+     @@ -1,2 +1,111 @@
+     -/^auth\s+required\s+pam_tally2.so\s+onerr=fail\s+audit\s+silent\s+deny=5\s+unlock_time=900$/
+     +#
+     +# The PAM configuration file for the Shadow `login' service
+     +#
+     +
+     +# Enforce a minimal delay in case of failure (in microseconds).
+     +# (Replaces the `FAIL_DELAY' setting from login.defs)
+     +# Note that other modules may require another minimal delay. (for example,
+     +# to disable any delay, you should add the nodelay option to pam_unix)
+     +auth       optional   pam_faildelay.so  delay=3000000
+     +
+     +# Outputs an issue file prior to each login prompt (Replaces the
+     +# ISSUE_FILE option from login.defs). Uncomment for use
+     +# auth       required   pam_issue.so issue=/etc/issue
+     +
+     +# Disallows root logins except on tty's listed in /etc/securetty
+     +# (Replaces the `CONSOLE' setting from login.defs)
+     +#
+     +# With the default control of this module:
+     +#   [success=ok new_authtok_reqd=ok ignore=ignore user_unknown=bad default=die]
+     +# root will not be prompted for a password on insecure lines.
+     +# if an invalid username is entered, a password is prompted (but login
+     +# will eventually be rejected)
+     +#
+     +# You can change it to a "requisite" module if you think root may mis-type
+     +# her login and should not be prompted for a password in that case. But
+     +# this will leave the system as vulnerable to user enumeration attacks.
+     +#
+     +# You can change it to a "required" module if you think it permits to
+     +# guess valid user names of your system (invalid user names are considered
+     +# as possibly being root on insecure lines), but root passwords may be
+     +# communicated over insecure lines.
+     +auth [success=ok new_authtok_reqd=ok ignore=ignore user_unknown=bad default=die] pam_securetty.so
+     +
+     +# Disallows other than root logins when /etc/nologin exists
+     +# (Replaces the `NOLOGINS_FILE' option from login.defs)
+     +auth       requisite  pam_nologin.so
+     +
+     +# SELinux needs to be the first session rule. This ensures that any
+     +# lingering context has been cleared. Without out this it is possible
+     +# that a module could execute code in the wrong domain.
+     +# When the module is present, "required" would be sufficient (When SELinux
+     +# is disabled, this returns success.)
+     +session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so close
+     +
+     +# This module parses environment configuration file(s)
+     +# and also allows you to use an extended config
+     +# file /etc/security/pam_env.conf.
+     +#
+     +# parsing /etc/environment needs "readenv=1"
+     +session       required   pam_env.so readenv=1
+     +# locale variables are also kept into /etc/default/locale in etch
+     +# reading this file *in addition to /etc/environment* does not hurt
+     +session       required   pam_env.so readenv=1 envfile=/etc/default/locale
+     +
+     +# Standard Un*x authentication.
+     +@include common-auth
+     +
+     +# This allows certain extra groups to be granted to a user
+     +# based on things like time of day, tty, service, and user.
+     +# Please edit /etc/security/group.conf to fit your needs
+     +# (Replaces the `CONSOLE_GROUPS' option in login.defs)
+     +auth       optional   pam_group.so
+     +
+     +# Uncomment and edit /etc/security/time.conf if you need to set
+     +# time restrainst on logins.
+     +# (Replaces the `PORTTIME_CHECKS_ENAB' option from login.defs
+     +# as well as /etc/porttime)
+     +# account    requisite  pam_time.so
+     +
+     +# Uncomment and edit /etc/security/access.conf if you need to
+     +# set access limits.
+     +# (Replaces /etc/login.access file)
+     +# account  required       pam_access.so
+     +
+     +# Sets up user limits according to /etc/security/limits.conf
+     +# (Replaces the use of /etc/limits in old login)
+     +session    required   pam_limits.so
+     +
+     +# Prints the last login info upon succesful login
+     +# (Replaces the `LASTLOG_ENAB' option from login.defs)
+     +session    optional   pam_lastlog.so
+     +
+     +# Prints the message of the day upon succesful login.
+     +# (Replaces the `MOTD_FILE' option in login.defs)
+     +# This includes a dynamically generated part from /run/motd.dynamic
+     +# and a static (admin-editable) part from /etc/motd.
+     +session    optional   pam_motd.so  motd=/run/motd.dynamic noupdate
+     +session    optional   pam_motd.so
+     +
+     +# Prints the status of the user's mailbox upon succesful login
+     +# (Replaces the `MAIL_CHECK_ENAB' option from login.defs).
+     +#
+     +# This also defines the MAIL environment variable
+     +# However, userdel also needs MAIL_DIR and MAIL_FILE variables
+     +# in /etc/login.defs to make sure that removing a user
+     +# also removes the user's mail spool file.
+     +# See comments in /etc/login.defs
+     +session    optional   pam_mail.so standard
+     +
+     +# Standard Un*x account and session
+     +@include common-account
+     +@include common-session
+     +@include common-password
+     +
+     +# SELinux needs to intervene at login time to ensure that the process
+     +# starts in the proper default security context. Only sessions which are
+     +# intended to run in the user's context should be run after this.
+     +session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so open
+     +# When the module is present, "required" would be sufficient (When SELinux
+     +# is disabled, this returns success.)
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.2.3_Limit_Password_Reuse: Limit Password Reuse (expected "#\n# /etc/pam.d/common-password - password-related modules common to all services\n#\n# This file is...and here are more per-package modules (the \"Additional\" block)\n# end of pam-auth-update config\n" to match /^[^#]*remember/
      Diff:
      @@ -1,2 +1,34 @@
      -/^[^#]*remember/
@@ -1190,66 +1618,149 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# and here are more per-package modules (the "Additional" block)
      +# end of pam-auth-update config
      )
+     ×  File /etc/pam.d/common-password content should match /^[^#]*remember/
+     expected "#\n# /etc/pam.d/common-password - password-related modules common to all services\n#\n# This file is...and here are more per-package modules (the \"Additional\" block)\n# end of pam-auth-update config\n" to match /^[^#]*remember/
+     Diff:
+     @@ -1,2 +1,34 @@
+     -/^[^#]*remember/
+     +#
+     +# /etc/pam.d/common-password - password-related modules common to all services
+     +#
+     +# This file is included from other service-specific PAM config files,
+     +# and should contain a list of modules that define the services to be
+     +# used to change user passwords.  The default is pam_unix.
+     +
+     +# Explanation of pam_unix options:
+     +#
+     +# The "sha512" option enables salted SHA512 passwords.  Without this option,
+     +# the default is Unix crypt.  Prior releases used the option "md5".
+     +#
+     +# The "obscure" option replaces the old `OBSCURE_CHECKS_ENAB' option in
+     +# login.defs.
+     +#
+     +# See the pam_unix manpage for other options.
+     +
+     +# As of pam 1.0.1-6, this file is managed by pam-auth-update by default.
+     +# To take advantage of this, it is recommended that you configure any
+     +# local modules either before or after the default block, and use
+     +# pam-auth-update to manage selection of other modules.  See
+     +# pam-auth-update(8) for details.
+     +
+     +# here are the per-package modules (the "Primary" block)
+     +password	[success=1 default=ignore]	pam_unix.so obscure sha512
+     +# here's the fallback if no module succeeds
+     +password	requisite			pam_deny.so
+     +# prime the stack with a positive return value if there isn't one already;
+     +# this avoids us returning an error just because nothing sets a success code
+     +# since the modules above will each just jump around
+     +password	required			pam_permit.so
+     +# and here are more per-package modules (the "Additional" block)
+     +# end of pam-auth-update config
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_9.3.1_Set_SSH_Protocol_to_2: Set SSH Protocol to 2
      ✔  2 should eq "2"
   ✔  xccdf_org.cisecurity.benchmarks_rule_9.3.2_Set_LogLevel_to_INFO: Set LogLevel to INFO
      ✔  INFO should eq "INFO"
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.3.3_Set_Permissions_on_etcsshsshd_config: Set Permissions on /etc/ssh/sshd_config (expected "644 0 0\n" to match /.00 0 0/
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.3.3_Set_Permissions_on_etcsshsshd_config: Set Permissions on /etc/ssh/sshd_config (expected "644 0 0\n" to match /.00 0 0/
      Diff:
      @@ -1,2 +1,2 @@
      -/.00 0 0/
      +644 0 0
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.3.4_Disable_SSH_X11_Forwarding: Disable SSH X11 Forwarding (
+     ×  Bash command stat -L -c "%a %u %g" /etc/ssh/sshd_config stdout should match /.00 0 0/
+     expected "644 0 0\n" to match /.00 0 0/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/.00 0 0/
+     +644 0 0
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.3.4_Disable_SSH_X11_Forwarding: Disable SSH X11 Forwarding (
      expected: "no"
           got: "yes"
-     
+
      (compared using ==)
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.3.5_Set_SSH_MaxAuthTries_to_4_or_Less: Set SSH MaxAuthTries to 4 or Less (
+     ×  yes should eq "no"
+
+     expected: "no"
+          got: "yes"
+
+     (compared using ==)
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.3.5_Set_SSH_MaxAuthTries_to_4_or_Less: Set SSH MaxAuthTries to 4 or Less (
      expected it to be <= 4
-          got: 
-     
+          got:
+
      (compared using `cmp` matcher)
      )
+     ×  should cmp <= 4
+
+     expected it to be <= 4
+          got:
+
+     (compared using `cmp` matcher)
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_9.3.6_Set_SSH_IgnoreRhosts_to_Yes: Set SSH IgnoreRhosts to Yes
      ✔  yes should eq "yes"
   ✔  xccdf_org.cisecurity.benchmarks_rule_9.3.7_Set_SSH_HostbasedAuthentication_to_No: Set SSH HostbasedAuthentication to No
      ✔  no should eq "no"
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.3.8_Disable_SSH_Root_Login: Disable SSH Root Login (
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.3.8_Disable_SSH_Root_Login: Disable SSH Root Login (
      expected: "no"
           got: "without-password"
-     
+
      (compared using ==)
      )
+     ×  without-password should eq "no"
+
+     expected: "no"
+          got: "without-password"
+
+     (compared using ==)
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_9.3.9_Set_SSH_PermitEmptyPasswords_to_No: Set SSH PermitEmptyPasswords to No
      ✔  no should eq "no"
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.3.10_Do_Not_Allow_Users_to_Set_Environment_Options: Do Not Allow Users to Set Environment Options (
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.3.10_Do_Not_Allow_Users_to_Set_Environment_Options: Do Not Allow Users to Set Environment Options (
      expected: "no"
           got: nil
-     
+
      (compared using ==)
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.3.11_Use_Only_Approved_Cipher_in_Counter_Mode: Use Only Approved Cipher in Counter Mode (
+     ×  should eq "no"
+
+     expected: "no"
+          got: nil
+
+     (compared using ==)
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.3.11_Use_Only_Approved_Cipher_in_Counter_Mode: Use Only Approved Cipher in Counter Mode (
      expected: "aes128-ctr,aes192-ctr,aes256-ctr"
           got: nil
-     
+
      (compared using ==)
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.3.12_Set_Idle_Timeout_Interval_for_User_Login: Set Idle Timeout Interval for User Login (2 failed)
-     ✖  
+     ×  should eq "aes128-ctr,aes192-ctr,aes256-ctr"
+
+     expected: "aes128-ctr,aes192-ctr,aes256-ctr"
+          got: nil
+
+     (compared using ==)
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.3.12_Set_Idle_Timeout_Interval_for_User_Login: Set Idle Timeout Interval for User Login (2 failed)
+     ×  should eq "300"
+
      expected: "300"
           got: nil
-     
+
      (compared using ==)
      
-     ✖  
+     ×  should eq "0"
+
      expected: "0"
           got: nil
-     
+
      (compared using ==)
      
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.3.13_Limit_Access_via_SSH: Limit Access via SSH (expected "# Package generated configuration file\n# See the sshd_config(5) manpage for details\n\n# What ports...n\n# and ChallengeResponseAuthentication to 'no'.\nUsePAM yes\nUseDNS no\nGSSAPIAuthentication no\n" to match /^\s*(AllowUsers|AllowGroups|DenyUsers|DenyGroups)\s+.*/
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.3.13_Limit_Access_via_SSH: Limit Access via SSH (expected "# Package generated configuration file\n# See the sshd_config(5) manpage for details\n\n# What ports...n\n# and ChallengeResponseAuthentication to 'no'.\nUsePAM yes\nUseDNS no\nGSSAPIAuthentication no\n" to match /^\s*(AllowUsers|AllowGroups|DenyUsers|DenyGroups)\s+.*/
      Diff:
      @@ -1,2 +1,91 @@
      -/^\s*(AllowUsers|AllowGroups|DenyUsers|DenyGroups)\s+.*/
@@ -1344,8 +1855,106 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +UseDNS no
      +GSSAPIAuthentication no
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.3.14_Set_SSH_Banner: Set SSH Banner (expected nil to match /issue(\.net)?/)
-  ✖  xccdf_org.cisecurity.benchmarks_rule_9.5_Restrict_Access_to_the_su_Command: Restrict Access to the su Command (expected "#\n# The PAM configuration file for the Shadow `su' service\n#\n\n# This allows root to su without p... /etc/shadow entries.\n@include common-auth\n@include common-account\n@include common-session\n\n\n" to match /^\s*auth\s+required\s+pam_wheel.so\s+use_uid/
+     ×  File /etc/ssh/sshd_config content should match /^\s*(AllowUsers|AllowGroups|DenyUsers|DenyGroups)\s+.*/
+     expected "# Package generated configuration file\n# See the sshd_config(5) manpage for details\n\n# What ports...n\n# and ChallengeResponseAuthentication to 'no'.\nUsePAM yes\nUseDNS no\nGSSAPIAuthentication no\n" to match /^\s*(AllowUsers|AllowGroups|DenyUsers|DenyGroups)\s+.*/
+     Diff:
+     @@ -1,2 +1,91 @@
+     -/^\s*(AllowUsers|AllowGroups|DenyUsers|DenyGroups)\s+.*/
+     +# Package generated configuration file
+     +# See the sshd_config(5) manpage for details
+     +
+     +# What ports, IPs and protocols we listen for
+     +Port 22
+     +# Use these options to restrict which interfaces/protocols sshd will bind to
+     +#ListenAddress ::
+     +#ListenAddress 0.0.0.0
+     +Protocol 2
+     +# HostKeys for protocol version 2
+     +HostKey /etc/ssh/ssh_host_rsa_key
+     +HostKey /etc/ssh/ssh_host_dsa_key
+     +HostKey /etc/ssh/ssh_host_ecdsa_key
+     +HostKey /etc/ssh/ssh_host_ed25519_key
+     +#Privilege Separation is turned on for security
+     +UsePrivilegeSeparation yes
+     +
+     +# Lifetime and size of ephemeral version 1 server key
+     +KeyRegenerationInterval 3600
+     +ServerKeyBits 1024
+     +
+     +# Logging
+     +SyslogFacility AUTH
+     +LogLevel INFO
+     +
+     +# Authentication:
+     +LoginGraceTime 120
+     +PermitRootLogin without-password
+     +StrictModes yes
+     +
+     +RSAAuthentication yes
+     +PubkeyAuthentication yes
+     +#AuthorizedKeysFile	%h/.ssh/authorized_keys
+     +
+     +# Don't read the user's ~/.rhosts and ~/.shosts files
+     +IgnoreRhosts yes
+     +# For this to work you will also need host keys in /etc/ssh_known_hosts
+     +RhostsRSAAuthentication no
+     +# similar for protocol version 2
+     +HostbasedAuthentication no
+     +# Uncomment if you don't trust ~/.ssh/known_hosts for RhostsRSAAuthentication
+     +#IgnoreUserKnownHosts yes
+     +
+     +# To enable empty passwords, change to yes (NOT RECOMMENDED)
+     +PermitEmptyPasswords no
+     +
+     +# Change to yes to enable challenge-response passwords (beware issues with
+     +# some PAM modules and threads)
+     +ChallengeResponseAuthentication no
+     +
+     +# Change to no to disable tunnelled clear text passwords
+     +#PasswordAuthentication yes
+     +
+     +# Kerberos options
+     +#KerberosAuthentication no
+     +#KerberosGetAFSToken no
+     +#KerberosOrLocalPasswd yes
+     +#KerberosTicketCleanup yes
+     +
+     +# GSSAPI options
+     +#GSSAPIAuthentication no
+     +#GSSAPICleanupCredentials yes
+     +
+     +X11Forwarding yes
+     +X11DisplayOffset 10
+     +PrintMotd no
+     +PrintLastLog yes
+     +TCPKeepAlive yes
+     +#UseLogin no
+     +
+     +#MaxStartups 10:30:60
+     +#Banner /etc/issue.net
+     +
+     +# Allow client to pass locale environment variables
+     +AcceptEnv LANG LC_*
+     +
+     +Subsystem sftp /usr/lib/openssh/sftp-server
+     +
+     +# Set this to 'yes' to enable PAM authentication, account processing,
+     +# and session processing. If this is enabled, PAM authentication will
+     +# be allowed through the ChallengeResponseAuthentication and
+     +# PasswordAuthentication.  Depending on your PAM configuration,
+     +# PAM authentication via ChallengeResponseAuthentication may bypass
+     +# the setting of "PermitRootLogin without-password".
+     +# If you just want the PAM account and session checks to run without
+     +# PAM authentication, then enable this but set PasswordAuthentication
+     +# and ChallengeResponseAuthentication to 'no'.
+     +UsePAM yes
+     +UseDNS no
+     +GSSAPIAuthentication no
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.3.14_Set_SSH_Banner: Set SSH Banner (expected nil to match /issue(\.net)?/)
+     ×  should match /issue(\.net)?/
+     expected nil to match /issue(\.net)?/
+  ×  xccdf_org.cisecurity.benchmarks_rule_9.5_Restrict_Access_to_the_su_Command: Restrict Access to the su Command (expected "#\n# The PAM configuration file for the Shadow `su' service\n#\n\n# This allows root to su without p... /etc/shadow entries.\n@include common-auth\n@include common-account\n@include common-session\n\n\n" to match /^\s*auth\s+required\s+pam_wheel.so\s+use_uid/
      Diff:
      @@ -1,2 +1,61 @@
      -/^\s*auth\s+required\s+pam_wheel.so\s+use_uid/
@@ -1382,7 +1991,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# This module parses environment configuration file(s)
      +# and also allows you to use an extended config
      +# file /etc/security/pam_env.conf.
-     +# 
+     +#
      +# parsing /etc/environment needs "readenv=1"
      +session       required   pam_env.so readenv=1
      +# locale variables are also kept into /etc/default/locale in etch
@@ -1391,7 +2000,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +
      +# Defines the MAIL environment variable
      +# However, userdel also needs MAIL_DIR and MAIL_FILE variables
-     +# in /etc/login.defs to make sure that removing a user 
+     +# in /etc/login.defs to make sure that removing a user
      +# also removes the user's mail spool file.
      +# See comments in /etc/login.defs
      +#
@@ -1410,7 +2019,73 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +@include common-account
      +@include common-session
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_10.1.1_Set_Password_Expiration_Days: Set Password Expiration Days (expected "#\n# /etc/login.defs - Configuration control definitions for the login package.\n#\n# Three items mu...###################\n\n# CLOSE_SESSIONS\n# LOGIN_STRING\n# NO_PASSWORD_CONSOLE\n# QMAIL_DIR\n\n\n\n" to match /^\s*PASS_MAX_DAYS\s+90/
+     ×  File /etc/pam.d/su content should match /^\s*auth\s+required\s+pam_wheel.so\s+use_uid/
+     expected "#\n# The PAM configuration file for the Shadow `su' service\n#\n\n# This allows root to su without p... /etc/shadow entries.\n@include common-auth\n@include common-account\n@include common-session\n\n\n" to match /^\s*auth\s+required\s+pam_wheel.so\s+use_uid/
+     Diff:
+     @@ -1,2 +1,61 @@
+     -/^\s*auth\s+required\s+pam_wheel.so\s+use_uid/
+     +#
+     +# The PAM configuration file for the Shadow `su' service
+     +#
+     +
+     +# This allows root to su without passwords (normal operation)
+     +auth       sufficient pam_rootok.so
+     +
+     +# Uncomment this to force users to be a member of group root
+     +# before they can use `su'. You can also add "group=foo"
+     +# to the end of this line if you want to use a group other
+     +# than the default "root" (but this may have side effect of
+     +# denying "root" user, unless she's a member of "foo" or explicitly
+     +# permitted earlier by e.g. "sufficient pam_rootok.so").
+     +# (Replaces the `SU_WHEEL_ONLY' option from login.defs)
+     +# auth       required   pam_wheel.so
+     +
+     +# Uncomment this if you want wheel members to be able to
+     +# su without a password.
+     +# auth       sufficient pam_wheel.so trust
+     +
+     +# Uncomment this if you want members of a specific group to not
+     +# be allowed to use su at all.
+     +# auth       required   pam_wheel.so deny group=nosu
+     +
+     +# Uncomment and edit /etc/security/time.conf if you need to set
+     +# time restrainst on su usage.
+     +# (Replaces the `PORTTIME_CHECKS_ENAB' option from login.defs
+     +# as well as /etc/porttime)
+     +# account    requisite  pam_time.so
+     +
+     +# This module parses environment configuration file(s)
+     +# and also allows you to use an extended config
+     +# file /etc/security/pam_env.conf.
+     +#
+     +# parsing /etc/environment needs "readenv=1"
+     +session       required   pam_env.so readenv=1
+     +# locale variables are also kept into /etc/default/locale in etch
+     +# reading this file *in addition to /etc/environment* does not hurt
+     +session       required   pam_env.so readenv=1 envfile=/etc/default/locale
+     +
+     +# Defines the MAIL environment variable
+     +# However, userdel also needs MAIL_DIR and MAIL_FILE variables
+     +# in /etc/login.defs to make sure that removing a user
+     +# also removes the user's mail spool file.
+     +# See comments in /etc/login.defs
+     +#
+     +# "nopen" stands to avoid reporting new mail when su'ing to another user
+     +session    optional   pam_mail.so nopen
+     +
+     +# Sets up user limits, please uncomment and read /etc/security/limits.conf
+     +# to enable this functionality.
+     +# (Replaces the use of /etc/limits in old login)
+     +# session    required   pam_limits.so
+     +
+     +# The standard Unix authentication modules, used with
+     +# NIS (man nsswitch) as well as normal /etc/passwd and
+     +# /etc/shadow entries.
+     +@include common-auth
+     +@include common-account
+     +@include common-session
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_10.1.1_Set_Password_Expiration_Days: Set Password Expiration Days (expected "#\n# /etc/login.defs - Configuration control definitions for the login package.\n#\n# Three items mu...###################\n\n# CLOSE_SESSIONS\n# LOGIN_STRING\n# NO_PASSWORD_CONSOLE\n# QMAIL_DIR\n\n\n\n" to match /^\s*PASS_MAX_DAYS\s+90/
      Diff:
      @@ -1,2 +1,339 @@
      -/^\s*PASS_MAX_DAYS\s+90/
@@ -1460,7 +2135,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +#
      +# Enable display of unknown usernames when login failures are recorded.
      +#
-     +# WARNING: Unknown usernames may become world readable. 
+     +# WARNING: Unknown usernames may become world readable.
      +# See #290803 and #298773 for details about how this could become a security
      +# concern
      +LOG_UNKFAIL_ENAB	no
@@ -1533,7 +2208,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# However, the default and recommended value for TTYPERM is still 0600
      +# to not allow anyone to write to anyone else console or terminal
      +
-     +# Users can still allow other people to write them by issuing 
+     +# Users can still allow other people to write them by issuing
      +# the "mesg y" command.
      +
      +TTYGROUP	tty
@@ -1547,7 +2222,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +#	UMASK		Default "umask" value.
      +#
      +# The ERASECHAR and KILLCHAR are used only on System V machines.
-     +# 
+     +#
      +# UMASK is the default umask value for pam_umask and is used by
      +# useradd and newusers to set the mode of the new home directories.
      +# 022 is the "historical" value in Debian for UMASK
@@ -1613,7 +2288,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# any combination of letters "frwh" (full name, room number, work
      +# phone, home phone).  If not defined, no changes are allowed.
      +# For backward compatibility, "yes" = "rwh" and "no" = "frwh".
-     +# 
+     +#
      +CHFN_RESTRICT		rwh
      +
      +#
@@ -1753,7 +2428,351 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# NO_PASSWORD_CONSOLE
      +# QMAIL_DIR
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_10.1.2_Set_Password_Change_Minimum_Number_of_Days: Set Password Change Minimum Number of Days (expected "#\n# /etc/login.defs - Configuration control definitions for the login package.\n#\n# Three items mu...###################\n\n# CLOSE_SESSIONS\n# LOGIN_STRING\n# NO_PASSWORD_CONSOLE\n# QMAIL_DIR\n\n\n\n" to match /^\s*PASS_MIN_DAYS\s+([7-9]|[1-9][0-9]*)/
+     ×  File /etc/login.defs content should match /^\s*PASS_MAX_DAYS\s+90/
+     expected "#\n# /etc/login.defs - Configuration control definitions for the login package.\n#\n# Three items mu...###################\n\n# CLOSE_SESSIONS\n# LOGIN_STRING\n# NO_PASSWORD_CONSOLE\n# QMAIL_DIR\n\n\n\n" to match /^\s*PASS_MAX_DAYS\s+90/
+     Diff:
+     @@ -1,2 +1,339 @@
+     -/^\s*PASS_MAX_DAYS\s+90/
+     +#
+     +# /etc/login.defs - Configuration control definitions for the login package.
+     +#
+     +# Three items must be defined:  MAIL_DIR, ENV_SUPATH, and ENV_PATH.
+     +# If unspecified, some arbitrary (and possibly incorrect) value will
+     +# be assumed.  All other items are optional - if not specified then
+     +# the described action or option will be inhibited.
+     +#
+     +# Comment lines (lines beginning with "#") and blank lines are ignored.
+     +#
+     +# Modified for Linux.  --marekm
+     +
+     +# REQUIRED for useradd/userdel/usermod
+     +#   Directory where mailboxes reside, _or_ name of file, relative to the
+     +#   home directory.  If you _do_ define MAIL_DIR and MAIL_FILE,
+     +#   MAIL_DIR takes precedence.
+     +#
+     +#   Essentially:
+     +#      - MAIL_DIR defines the location of users mail spool files
+     +#        (for mbox use) by appending the username to MAIL_DIR as defined
+     +#        below.
+     +#      - MAIL_FILE defines the location of the users mail spool files as the
+     +#        fully-qualified filename obtained by prepending the user home
+     +#        directory before $MAIL_FILE
+     +#
+     +# NOTE: This is no more used for setting up users MAIL environment variable
+     +#       which is, starting from shadow 4.0.12-1 in Debian, entirely the
+     +#       job of the pam_mail PAM modules
+     +#       See default PAM configuration files provided for
+     +#       login, su, etc.
+     +#
+     +# This is a temporary situation: setting these variables will soon
+     +# move to /etc/default/useradd and the variables will then be
+     +# no more supported
+     +MAIL_DIR        /var/mail
+     +#MAIL_FILE      .mail
+     +
+     +#
+     +# Enable logging and display of /var/log/faillog login failure info.
+     +# This option conflicts with the pam_tally PAM module.
+     +#
+     +FAILLOG_ENAB		yes
+     +
+     +#
+     +# Enable display of unknown usernames when login failures are recorded.
+     +#
+     +# WARNING: Unknown usernames may become world readable.
+     +# See #290803 and #298773 for details about how this could become a security
+     +# concern
+     +LOG_UNKFAIL_ENAB	no
+     +
+     +#
+     +# Enable logging of successful logins
+     +#
+     +LOG_OK_LOGINS		no
+     +
+     +#
+     +# Enable "syslog" logging of su activity - in addition to sulog file logging.
+     +# SYSLOG_SG_ENAB does the same for newgrp and sg.
+     +#
+     +SYSLOG_SU_ENAB		yes
+     +SYSLOG_SG_ENAB		yes
+     +
+     +#
+     +# If defined, all su activity is logged to this file.
+     +#
+     +#SULOG_FILE	/var/log/sulog
+     +
+     +#
+     +# If defined, file which maps tty line to TERM environment parameter.
+     +# Each line of the file is in a format something like "vt100  tty01".
+     +#
+     +#TTYTYPE_FILE	/etc/ttytype
+     +
+     +#
+     +# If defined, login failures will be logged here in a utmp format
+     +# last, when invoked as lastb, will read /var/log/btmp, so...
+     +#
+     +FTMP_FILE	/var/log/btmp
+     +
+     +#
+     +# If defined, the command name to display when running "su -".  For
+     +# example, if this is defined as "su" then a "ps" will display the
+     +# command is "-su".  If not defined, then "ps" would display the
+     +# name of the shell actually being run, e.g. something like "-sh".
+     +#
+     +SU_NAME		su
+     +
+     +#
+     +# If defined, file which inhibits all the usual chatter during the login
+     +# sequence.  If a full pathname, then hushed mode will be enabled if the
+     +# user's name or shell are found in the file.  If not a full pathname, then
+     +# hushed mode will be enabled if the file exists in the user's home directory.
+     +#
+     +HUSHLOGIN_FILE	.hushlogin
+     +#HUSHLOGIN_FILE	/etc/hushlogins
+     +
+     +#
+     +# *REQUIRED*  The default PATH settings, for superuser and normal users.
+     +#
+     +# (they are minimal, add the rest in the shell startup files)
+     +ENV_SUPATH	PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+     +ENV_PATH	PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+     +
+     +#
+     +# Terminal permissions
+     +#
+     +#	TTYGROUP	Login tty will be assigned this group ownership.
+     +#	TTYPERM		Login tty will be set to this permission.
+     +#
+     +# If you have a "write" program which is "setgid" to a special group
+     +# which owns the terminals, define TTYGROUP to the group number and
+     +# TTYPERM to 0620.  Otherwise leave TTYGROUP commented out and assign
+     +# TTYPERM to either 622 or 600.
+     +#
+     +# In Debian /usr/bin/bsd-write or similar programs are setgid tty
+     +# However, the default and recommended value for TTYPERM is still 0600
+     +# to not allow anyone to write to anyone else console or terminal
+     +
+     +# Users can still allow other people to write them by issuing
+     +# the "mesg y" command.
+     +
+     +TTYGROUP	tty
+     +TTYPERM		0600
+     +
+     +#
+     +# Login configuration initializations:
+     +#
+     +#	ERASECHAR	Terminal ERASE character ('\010' = backspace).
+     +#	KILLCHAR	Terminal KILL character ('\025' = CTRL/U).
+     +#	UMASK		Default "umask" value.
+     +#
+     +# The ERASECHAR and KILLCHAR are used only on System V machines.
+     +#
+     +# UMASK is the default umask value for pam_umask and is used by
+     +# useradd and newusers to set the mode of the new home directories.
+     +# 022 is the "historical" value in Debian for UMASK
+     +# 027, or even 077, could be considered better for privacy
+     +# There is no One True Answer here : each sysadmin must make up his/her
+     +# mind.
+     +#
+     +# If USERGROUPS_ENAB is set to "yes", that will modify this UMASK default value
+     +# for private user groups, i. e. the uid is the same as gid, and username is
+     +# the same as the primary group name: for these, the user permissions will be
+     +# used as group permissions, e. g. 022 will become 002.
+     +#
+     +# Prefix these values with "0" to get octal, "0x" to get hexadecimal.
+     +#
+     +ERASECHAR	0177
+     +KILLCHAR	025
+     +UMASK		022
+     +
+     +#
+     +# Password aging controls:
+     +#
+     +#	PASS_MAX_DAYS	Maximum number of days a password may be used.
+     +#	PASS_MIN_DAYS	Minimum number of days allowed between password changes.
+     +#	PASS_WARN_AGE	Number of days warning given before a password expires.
+     +#
+     +PASS_MAX_DAYS	99999
+     +PASS_MIN_DAYS	0
+     +PASS_WARN_AGE	7
+     +
+     +#
+     +# Min/max values for automatic uid selection in useradd
+     +#
+     +UID_MIN			 1000
+     +UID_MAX			60000
+     +# System accounts
+     +#SYS_UID_MIN		  100
+     +#SYS_UID_MAX		  999
+     +
+     +#
+     +# Min/max values for automatic gid selection in groupadd
+     +#
+     +GID_MIN			 1000
+     +GID_MAX			60000
+     +# System accounts
+     +#SYS_GID_MIN		  100
+     +#SYS_GID_MAX		  999
+     +
+     +#
+     +# Max number of login retries if password is bad. This will most likely be
+     +# overriden by PAM, since the default pam_unix module has it's own built
+     +# in of 3 retries. However, this is a safe fallback in case you are using
+     +# an authentication module that does not enforce PAM_MAXTRIES.
+     +#
+     +LOGIN_RETRIES		5
+     +
+     +#
+     +# Max time in seconds for login
+     +#
+     +LOGIN_TIMEOUT		60
+     +
+     +#
+     +# Which fields may be changed by regular users using chfn - use
+     +# any combination of letters "frwh" (full name, room number, work
+     +# phone, home phone).  If not defined, no changes are allowed.
+     +# For backward compatibility, "yes" = "rwh" and "no" = "frwh".
+     +#
+     +CHFN_RESTRICT		rwh
+     +
+     +#
+     +# Should login be allowed if we can't cd to the home directory?
+     +# Default in no.
+     +#
+     +DEFAULT_HOME	yes
+     +
+     +#
+     +# If defined, this command is run when removing a user.
+     +# It should remove any at/cron/print jobs etc. owned by
+     +# the user to be removed (passed as the first argument).
+     +#
+     +#USERDEL_CMD	/usr/sbin/userdel_local
+     +
+     +#
+     +# Enable setting of the umask group bits to be the same as owner bits
+     +# (examples: 022 -> 002, 077 -> 007) for non-root users, if the uid is
+     +# the same as gid, and username is the same as the primary group name.
+     +#
+     +# If set to yes, userdel will remove the user´s group if it contains no
+     +# more members, and useradd will create by default a group with the name
+     +# of the user.
+     +#
+     +USERGROUPS_ENAB yes
+     +
+     +#
+     +# Instead of the real user shell, the program specified by this parameter
+     +# will be launched, although its visible name (argv[0]) will be the shell's.
+     +# The program may do whatever it wants (logging, additional authentification,
+     +# banner, ...) before running the actual shell.
+     +#
+     +# FAKE_SHELL /bin/fakeshell
+     +
+     +#
+     +# If defined, either full pathname of a file containing device names or
+     +# a ":" delimited list of device names.  Root logins will be allowed only
+     +# upon these devices.
+     +#
+     +# This variable is used by login and su.
+     +#
+     +#CONSOLE	/etc/consoles
+     +#CONSOLE	console:tty01:tty02:tty03:tty04
+     +
+     +#
+     +# List of groups to add to the user's supplementary group set
+     +# when logging in on the console (as determined by the CONSOLE
+     +# setting).  Default is none.
+     +#
+     +# Use with caution - it is possible for users to gain permanent
+     +# access to these groups, even when not logged in on the console.
+     +# How to do it is left as an exercise for the reader...
+     +#
+     +# This variable is used by login and su.
+     +#
+     +#CONSOLE_GROUPS		floppy:audio:cdrom
+     +
+     +#
+     +# If set to "yes", new passwords will be encrypted using the MD5-based
+     +# algorithm compatible with the one used by recent releases of FreeBSD.
+     +# It supports passwords of unlimited length and longer salt strings.
+     +# Set to "no" if you need to copy encrypted passwords to other systems
+     +# which don't understand the new algorithm.  Default is "no".
+     +#
+     +# This variable is deprecated. You should use ENCRYPT_METHOD.
+     +#
+     +#MD5_CRYPT_ENAB	no
+     +
+     +#
+     +# If set to MD5 , MD5-based algorithm will be used for encrypting password
+     +# If set to SHA256, SHA256-based algorithm will be used for encrypting password
+     +# If set to SHA512, SHA512-based algorithm will be used for encrypting password
+     +# If set to DES, DES-based algorithm will be used for encrypting password (default)
+     +# Overrides the MD5_CRYPT_ENAB option
+     +#
+     +# Note: It is recommended to use a value consistent with
+     +# the PAM modules configuration.
+     +#
+     +ENCRYPT_METHOD SHA512
+     +
+     +#
+     +# Only used if ENCRYPT_METHOD is set to SHA256 or SHA512.
+     +#
+     +# Define the number of SHA rounds.
+     +# With a lot of rounds, it is more difficult to brute forcing the password.
+     +# But note also that it more CPU resources will be needed to authenticate
+     +# users.
+     +#
+     +# If not specified, the libc will choose the default number of rounds (5000).
+     +# The values must be inside the 1000-999999999 range.
+     +# If only one of the MIN or MAX values is set, then this value will be used.
+     +# If MIN > MAX, the highest value will be used.
+     +#
+     +# SHA_CRYPT_MIN_ROUNDS 5000
+     +# SHA_CRYPT_MAX_ROUNDS 5000
+     +
+     +################# OBSOLETED BY PAM ##############
+     +#						#
+     +# These options are now handled by PAM. Please	#
+     +# edit the appropriate file in /etc/pam.d/ to	#
+     +# enable the equivelants of them.
+     +#
+     +###############
+     +
+     +#MOTD_FILE
+     +#DIALUPS_CHECK_ENAB
+     +#LASTLOG_ENAB
+     +#MAIL_CHECK_ENAB
+     +#OBSCURE_CHECKS_ENAB
+     +#PORTTIME_CHECKS_ENAB
+     +#SU_WHEEL_ONLY
+     +#CRACKLIB_DICTPATH
+     +#PASS_CHANGE_TRIES
+     +#PASS_ALWAYS_WARN
+     +#ENVIRON_FILE
+     +#NOLOGINS_FILE
+     +#ISSUE_FILE
+     +#PASS_MIN_LEN
+     +#PASS_MAX_LEN
+     +#ULIMIT
+     +#ENV_HZ
+     +#CHFN_AUTH
+     +#CHSH_AUTH
+     +#FAIL_DELAY
+     +
+     +################# OBSOLETED #######################
+     +#						  #
+     +# These options are no more handled by shadow.    #
+     +#                                                 #
+     +# Shadow utilities will display a warning if they #
+     +# still appear.                                   #
+     +#                                                 #
+     +###################################################
+     +
+     +# CLOSE_SESSIONS
+     +# LOGIN_STRING
+     +# NO_PASSWORD_CONSOLE
+     +# QMAIL_DIR
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_10.1.2_Set_Password_Change_Minimum_Number_of_Days: Set Password Change Minimum Number of Days (expected "#\n# /etc/login.defs - Configuration control definitions for the login package.\n#\n# Three items mu...###################\n\n# CLOSE_SESSIONS\n# LOGIN_STRING\n# NO_PASSWORD_CONSOLE\n# QMAIL_DIR\n\n\n\n" to match /^\s*PASS_MIN_DAYS\s+([7-9]|[1-9][0-9]*)/
      Diff:
      @@ -1,2 +1,339 @@
      -/^\s*PASS_MIN_DAYS\s+([7-9]|[1-9][0-9]*)/
@@ -1803,7 +2822,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +#
      +# Enable display of unknown usernames when login failures are recorded.
      +#
-     +# WARNING: Unknown usernames may become world readable. 
+     +# WARNING: Unknown usernames may become world readable.
      +# See #290803 and #298773 for details about how this could become a security
      +# concern
      +LOG_UNKFAIL_ENAB	no
@@ -1876,7 +2895,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# However, the default and recommended value for TTYPERM is still 0600
      +# to not allow anyone to write to anyone else console or terminal
      +
-     +# Users can still allow other people to write them by issuing 
+     +# Users can still allow other people to write them by issuing
      +# the "mesg y" command.
      +
      +TTYGROUP	tty
@@ -1890,7 +2909,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +#	UMASK		Default "umask" value.
      +#
      +# The ERASECHAR and KILLCHAR are used only on System V machines.
-     +# 
+     +#
      +# UMASK is the default umask value for pam_umask and is used by
      +# useradd and newusers to set the mode of the new home directories.
      +# 022 is the "historical" value in Debian for UMASK
@@ -1956,7 +2975,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# any combination of letters "frwh" (full name, room number, work
      +# phone, home phone).  If not defined, no changes are allowed.
      +# For backward compatibility, "yes" = "rwh" and "no" = "frwh".
-     +# 
+     +#
      +CHFN_RESTRICT		rwh
      +
      +#
@@ -2096,17 +3115,368 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# NO_PASSWORD_CONSOLE
      +# QMAIL_DIR
      )
+     ×  File /etc/login.defs content should match /^\s*PASS_MIN_DAYS\s+([7-9]|[1-9][0-9]*)/
+     expected "#\n# /etc/login.defs - Configuration control definitions for the login package.\n#\n# Three items mu...###################\n\n# CLOSE_SESSIONS\n# LOGIN_STRING\n# NO_PASSWORD_CONSOLE\n# QMAIL_DIR\n\n\n\n" to match /^\s*PASS_MIN_DAYS\s+([7-9]|[1-9][0-9]*)/
+     Diff:
+     @@ -1,2 +1,339 @@
+     -/^\s*PASS_MIN_DAYS\s+([7-9]|[1-9][0-9]*)/
+     +#
+     +# /etc/login.defs - Configuration control definitions for the login package.
+     +#
+     +# Three items must be defined:  MAIL_DIR, ENV_SUPATH, and ENV_PATH.
+     +# If unspecified, some arbitrary (and possibly incorrect) value will
+     +# be assumed.  All other items are optional - if not specified then
+     +# the described action or option will be inhibited.
+     +#
+     +# Comment lines (lines beginning with "#") and blank lines are ignored.
+     +#
+     +# Modified for Linux.  --marekm
+     +
+     +# REQUIRED for useradd/userdel/usermod
+     +#   Directory where mailboxes reside, _or_ name of file, relative to the
+     +#   home directory.  If you _do_ define MAIL_DIR and MAIL_FILE,
+     +#   MAIL_DIR takes precedence.
+     +#
+     +#   Essentially:
+     +#      - MAIL_DIR defines the location of users mail spool files
+     +#        (for mbox use) by appending the username to MAIL_DIR as defined
+     +#        below.
+     +#      - MAIL_FILE defines the location of the users mail spool files as the
+     +#        fully-qualified filename obtained by prepending the user home
+     +#        directory before $MAIL_FILE
+     +#
+     +# NOTE: This is no more used for setting up users MAIL environment variable
+     +#       which is, starting from shadow 4.0.12-1 in Debian, entirely the
+     +#       job of the pam_mail PAM modules
+     +#       See default PAM configuration files provided for
+     +#       login, su, etc.
+     +#
+     +# This is a temporary situation: setting these variables will soon
+     +# move to /etc/default/useradd and the variables will then be
+     +# no more supported
+     +MAIL_DIR        /var/mail
+     +#MAIL_FILE      .mail
+     +
+     +#
+     +# Enable logging and display of /var/log/faillog login failure info.
+     +# This option conflicts with the pam_tally PAM module.
+     +#
+     +FAILLOG_ENAB		yes
+     +
+     +#
+     +# Enable display of unknown usernames when login failures are recorded.
+     +#
+     +# WARNING: Unknown usernames may become world readable.
+     +# See #290803 and #298773 for details about how this could become a security
+     +# concern
+     +LOG_UNKFAIL_ENAB	no
+     +
+     +#
+     +# Enable logging of successful logins
+     +#
+     +LOG_OK_LOGINS		no
+     +
+     +#
+     +# Enable "syslog" logging of su activity - in addition to sulog file logging.
+     +# SYSLOG_SG_ENAB does the same for newgrp and sg.
+     +#
+     +SYSLOG_SU_ENAB		yes
+     +SYSLOG_SG_ENAB		yes
+     +
+     +#
+     +# If defined, all su activity is logged to this file.
+     +#
+     +#SULOG_FILE	/var/log/sulog
+     +
+     +#
+     +# If defined, file which maps tty line to TERM environment parameter.
+     +# Each line of the file is in a format something like "vt100  tty01".
+     +#
+     +#TTYTYPE_FILE	/etc/ttytype
+     +
+     +#
+     +# If defined, login failures will be logged here in a utmp format
+     +# last, when invoked as lastb, will read /var/log/btmp, so...
+     +#
+     +FTMP_FILE	/var/log/btmp
+     +
+     +#
+     +# If defined, the command name to display when running "su -".  For
+     +# example, if this is defined as "su" then a "ps" will display the
+     +# command is "-su".  If not defined, then "ps" would display the
+     +# name of the shell actually being run, e.g. something like "-sh".
+     +#
+     +SU_NAME		su
+     +
+     +#
+     +# If defined, file which inhibits all the usual chatter during the login
+     +# sequence.  If a full pathname, then hushed mode will be enabled if the
+     +# user's name or shell are found in the file.  If not a full pathname, then
+     +# hushed mode will be enabled if the file exists in the user's home directory.
+     +#
+     +HUSHLOGIN_FILE	.hushlogin
+     +#HUSHLOGIN_FILE	/etc/hushlogins
+     +
+     +#
+     +# *REQUIRED*  The default PATH settings, for superuser and normal users.
+     +#
+     +# (they are minimal, add the rest in the shell startup files)
+     +ENV_SUPATH	PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+     +ENV_PATH	PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+     +
+     +#
+     +# Terminal permissions
+     +#
+     +#	TTYGROUP	Login tty will be assigned this group ownership.
+     +#	TTYPERM		Login tty will be set to this permission.
+     +#
+     +# If you have a "write" program which is "setgid" to a special group
+     +# which owns the terminals, define TTYGROUP to the group number and
+     +# TTYPERM to 0620.  Otherwise leave TTYGROUP commented out and assign
+     +# TTYPERM to either 622 or 600.
+     +#
+     +# In Debian /usr/bin/bsd-write or similar programs are setgid tty
+     +# However, the default and recommended value for TTYPERM is still 0600
+     +# to not allow anyone to write to anyone else console or terminal
+     +
+     +# Users can still allow other people to write them by issuing
+     +# the "mesg y" command.
+     +
+     +TTYGROUP	tty
+     +TTYPERM		0600
+     +
+     +#
+     +# Login configuration initializations:
+     +#
+     +#	ERASECHAR	Terminal ERASE character ('\010' = backspace).
+     +#	KILLCHAR	Terminal KILL character ('\025' = CTRL/U).
+     +#	UMASK		Default "umask" value.
+     +#
+     +# The ERASECHAR and KILLCHAR are used only on System V machines.
+     +#
+     +# UMASK is the default umask value for pam_umask and is used by
+     +# useradd and newusers to set the mode of the new home directories.
+     +# 022 is the "historical" value in Debian for UMASK
+     +# 027, or even 077, could be considered better for privacy
+     +# There is no One True Answer here : each sysadmin must make up his/her
+     +# mind.
+     +#
+     +# If USERGROUPS_ENAB is set to "yes", that will modify this UMASK default value
+     +# for private user groups, i. e. the uid is the same as gid, and username is
+     +# the same as the primary group name: for these, the user permissions will be
+     +# used as group permissions, e. g. 022 will become 002.
+     +#
+     +# Prefix these values with "0" to get octal, "0x" to get hexadecimal.
+     +#
+     +ERASECHAR	0177
+     +KILLCHAR	025
+     +UMASK		022
+     +
+     +#
+     +# Password aging controls:
+     +#
+     +#	PASS_MAX_DAYS	Maximum number of days a password may be used.
+     +#	PASS_MIN_DAYS	Minimum number of days allowed between password changes.
+     +#	PASS_WARN_AGE	Number of days warning given before a password expires.
+     +#
+     +PASS_MAX_DAYS	99999
+     +PASS_MIN_DAYS	0
+     +PASS_WARN_AGE	7
+     +
+     +#
+     +# Min/max values for automatic uid selection in useradd
+     +#
+     +UID_MIN			 1000
+     +UID_MAX			60000
+     +# System accounts
+     +#SYS_UID_MIN		  100
+     +#SYS_UID_MAX		  999
+     +
+     +#
+     +# Min/max values for automatic gid selection in groupadd
+     +#
+     +GID_MIN			 1000
+     +GID_MAX			60000
+     +# System accounts
+     +#SYS_GID_MIN		  100
+     +#SYS_GID_MAX		  999
+     +
+     +#
+     +# Max number of login retries if password is bad. This will most likely be
+     +# overriden by PAM, since the default pam_unix module has it's own built
+     +# in of 3 retries. However, this is a safe fallback in case you are using
+     +# an authentication module that does not enforce PAM_MAXTRIES.
+     +#
+     +LOGIN_RETRIES		5
+     +
+     +#
+     +# Max time in seconds for login
+     +#
+     +LOGIN_TIMEOUT		60
+     +
+     +#
+     +# Which fields may be changed by regular users using chfn - use
+     +# any combination of letters "frwh" (full name, room number, work
+     +# phone, home phone).  If not defined, no changes are allowed.
+     +# For backward compatibility, "yes" = "rwh" and "no" = "frwh".
+     +#
+     +CHFN_RESTRICT		rwh
+     +
+     +#
+     +# Should login be allowed if we can't cd to the home directory?
+     +# Default in no.
+     +#
+     +DEFAULT_HOME	yes
+     +
+     +#
+     +# If defined, this command is run when removing a user.
+     +# It should remove any at/cron/print jobs etc. owned by
+     +# the user to be removed (passed as the first argument).
+     +#
+     +#USERDEL_CMD	/usr/sbin/userdel_local
+     +
+     +#
+     +# Enable setting of the umask group bits to be the same as owner bits
+     +# (examples: 022 -> 002, 077 -> 007) for non-root users, if the uid is
+     +# the same as gid, and username is the same as the primary group name.
+     +#
+     +# If set to yes, userdel will remove the user´s group if it contains no
+     +# more members, and useradd will create by default a group with the name
+     +# of the user.
+     +#
+     +USERGROUPS_ENAB yes
+     +
+     +#
+     +# Instead of the real user shell, the program specified by this parameter
+     +# will be launched, although its visible name (argv[0]) will be the shell's.
+     +# The program may do whatever it wants (logging, additional authentification,
+     +# banner, ...) before running the actual shell.
+     +#
+     +# FAKE_SHELL /bin/fakeshell
+     +
+     +#
+     +# If defined, either full pathname of a file containing device names or
+     +# a ":" delimited list of device names.  Root logins will be allowed only
+     +# upon these devices.
+     +#
+     +# This variable is used by login and su.
+     +#
+     +#CONSOLE	/etc/consoles
+     +#CONSOLE	console:tty01:tty02:tty03:tty04
+     +
+     +#
+     +# List of groups to add to the user's supplementary group set
+     +# when logging in on the console (as determined by the CONSOLE
+     +# setting).  Default is none.
+     +#
+     +# Use with caution - it is possible for users to gain permanent
+     +# access to these groups, even when not logged in on the console.
+     +# How to do it is left as an exercise for the reader...
+     +#
+     +# This variable is used by login and su.
+     +#
+     +#CONSOLE_GROUPS		floppy:audio:cdrom
+     +
+     +#
+     +# If set to "yes", new passwords will be encrypted using the MD5-based
+     +# algorithm compatible with the one used by recent releases of FreeBSD.
+     +# It supports passwords of unlimited length and longer salt strings.
+     +# Set to "no" if you need to copy encrypted passwords to other systems
+     +# which don't understand the new algorithm.  Default is "no".
+     +#
+     +# This variable is deprecated. You should use ENCRYPT_METHOD.
+     +#
+     +#MD5_CRYPT_ENAB	no
+     +
+     +#
+     +# If set to MD5 , MD5-based algorithm will be used for encrypting password
+     +# If set to SHA256, SHA256-based algorithm will be used for encrypting password
+     +# If set to SHA512, SHA512-based algorithm will be used for encrypting password
+     +# If set to DES, DES-based algorithm will be used for encrypting password (default)
+     +# Overrides the MD5_CRYPT_ENAB option
+     +#
+     +# Note: It is recommended to use a value consistent with
+     +# the PAM modules configuration.
+     +#
+     +ENCRYPT_METHOD SHA512
+     +
+     +#
+     +# Only used if ENCRYPT_METHOD is set to SHA256 or SHA512.
+     +#
+     +# Define the number of SHA rounds.
+     +# With a lot of rounds, it is more difficult to brute forcing the password.
+     +# But note also that it more CPU resources will be needed to authenticate
+     +# users.
+     +#
+     +# If not specified, the libc will choose the default number of rounds (5000).
+     +# The values must be inside the 1000-999999999 range.
+     +# If only one of the MIN or MAX values is set, then this value will be used.
+     +# If MIN > MAX, the highest value will be used.
+     +#
+     +# SHA_CRYPT_MIN_ROUNDS 5000
+     +# SHA_CRYPT_MAX_ROUNDS 5000
+     +
+     +################# OBSOLETED BY PAM ##############
+     +#						#
+     +# These options are now handled by PAM. Please	#
+     +# edit the appropriate file in /etc/pam.d/ to	#
+     +# enable the equivelants of them.
+     +#
+     +###############
+     +
+     +#MOTD_FILE
+     +#DIALUPS_CHECK_ENAB
+     +#LASTLOG_ENAB
+     +#MAIL_CHECK_ENAB
+     +#OBSCURE_CHECKS_ENAB
+     +#PORTTIME_CHECKS_ENAB
+     +#SU_WHEEL_ONLY
+     +#CRACKLIB_DICTPATH
+     +#PASS_CHANGE_TRIES
+     +#PASS_ALWAYS_WARN
+     +#ENVIRON_FILE
+     +#NOLOGINS_FILE
+     +#ISSUE_FILE
+     +#PASS_MIN_LEN
+     +#PASS_MAX_LEN
+     +#ULIMIT
+     +#ENV_HZ
+     +#CHFN_AUTH
+     +#CHSH_AUTH
+     +#FAIL_DELAY
+     +
+     +################# OBSOLETED #######################
+     +#						  #
+     +# These options are no more handled by shadow.    #
+     +#                                                 #
+     +# Shadow utilities will display a warning if they #
+     +# still appear.                                   #
+     +#                                                 #
+     +###################################################
+     +
+     +# CLOSE_SESSIONS
+     +# LOGIN_STRING
+     +# NO_PASSWORD_CONSOLE
+     +# QMAIL_DIR
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_10.1.3_Set_Password_Expiring_Warning_Days: Set Password Expiring Warning Days
      ✔  File /etc/login.defs content should match /^\s*PASS_WARN_AGE\s+([7-9]|[1-9][0-9]+)/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_10.2_Disable_System_Accounts: Disable System Accounts (expected "libuuid:x:100:101::/var/lib/libuuid:\n" not to match /.+/
+  ×  xccdf_org.cisecurity.benchmarks_rule_10.2_Disable_System_Accounts: Disable System Accounts (expected "libuuid:x:100:101::/var/lib/libuuid:\n" not to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
      +libuuid:x:100:101::/var/lib/libuuid:
      )
+     ×  Bash command egrep -v "^\+" /etc/passwd | awk -F: '($1!="root" && $1!="sync" && $1!="shutdown" && $1!="halt" && $3<500 && $7!="/usr/sbin/nologin" && $7!="/bin/false") {print}' stdout should not match /.+/
+     expected "libuuid:x:100:101::/var/lib/libuuid:\n" not to match /.+/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/.+/
+     +libuuid:x:100:101::/var/lib/libuuid:
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_10.3_Set_Default_Group_for_root_Account: Set Default Group for root Account
      ✔  Bash command grep "^root:" /etc/passwd | cut -f4 -d: stdout should match /^0$/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_10.4_Set_Default_umask_for_Users: Set Default umask for Users (expected "#\n# /etc/login.defs - Configuration control definitions for the login package.\n#\n# Three items mu...###################\n\n# CLOSE_SESSIONS\n# LOGIN_STRING\n# NO_PASSWORD_CONSOLE\n# QMAIL_DIR\n\n\n\n" to match /^UMASK\s+077$/
+  ×  xccdf_org.cisecurity.benchmarks_rule_10.4_Set_Default_umask_for_Users: Set Default umask for Users (expected "#\n# /etc/login.defs - Configuration control definitions for the login package.\n#\n# Three items mu...###################\n\n# CLOSE_SESSIONS\n# LOGIN_STRING\n# NO_PASSWORD_CONSOLE\n# QMAIL_DIR\n\n\n\n" to match /^UMASK\s+077$/
      Diff:
      @@ -1,2 +1,339 @@
      -/^UMASK\s+077$/
@@ -2156,7 +3526,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +#
      +# Enable display of unknown usernames when login failures are recorded.
      +#
-     +# WARNING: Unknown usernames may become world readable. 
+     +# WARNING: Unknown usernames may become world readable.
      +# See #290803 and #298773 for details about how this could become a security
      +# concern
      +LOG_UNKFAIL_ENAB	no
@@ -2229,7 +3599,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# However, the default and recommended value for TTYPERM is still 0600
      +# to not allow anyone to write to anyone else console or terminal
      +
-     +# Users can still allow other people to write them by issuing 
+     +# Users can still allow other people to write them by issuing
      +# the "mesg y" command.
      +
      +TTYGROUP	tty
@@ -2243,7 +3613,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +#	UMASK		Default "umask" value.
      +#
      +# The ERASECHAR and KILLCHAR are used only on System V machines.
-     +# 
+     +#
      +# UMASK is the default umask value for pam_umask and is used by
      +# useradd and newusers to set the mode of the new home directories.
      +# 022 is the "historical" value in Debian for UMASK
@@ -2309,7 +3679,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# any combination of letters "frwh" (full name, room number, work
      +# phone, home phone).  If not defined, no changes are allowed.
      +# For backward compatibility, "yes" = "rwh" and "no" = "frwh".
-     +# 
+     +#
      +CHFN_RESTRICT		rwh
      +
      +#
@@ -2449,17 +3819,369 @@ Target:  ssh://vagrant@127.0.0.1:2222
      +# NO_PASSWORD_CONSOLE
      +# QMAIL_DIR
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_10.5_Lock_Inactive_User_Accounts: Lock Inactive User Accounts (expected "INACTIVE=-1\n" to match /^INACTIVE=35$/
+     ×  File /etc/login.defs content should match /^UMASK\s+077$/
+     expected "#\n# /etc/login.defs - Configuration control definitions for the login package.\n#\n# Three items mu...###################\n\n# CLOSE_SESSIONS\n# LOGIN_STRING\n# NO_PASSWORD_CONSOLE\n# QMAIL_DIR\n\n\n\n" to match /^UMASK\s+077$/
+     Diff:
+     @@ -1,2 +1,339 @@
+     -/^UMASK\s+077$/
+     +#
+     +# /etc/login.defs - Configuration control definitions for the login package.
+     +#
+     +# Three items must be defined:  MAIL_DIR, ENV_SUPATH, and ENV_PATH.
+     +# If unspecified, some arbitrary (and possibly incorrect) value will
+     +# be assumed.  All other items are optional - if not specified then
+     +# the described action or option will be inhibited.
+     +#
+     +# Comment lines (lines beginning with "#") and blank lines are ignored.
+     +#
+     +# Modified for Linux.  --marekm
+     +
+     +# REQUIRED for useradd/userdel/usermod
+     +#   Directory where mailboxes reside, _or_ name of file, relative to the
+     +#   home directory.  If you _do_ define MAIL_DIR and MAIL_FILE,
+     +#   MAIL_DIR takes precedence.
+     +#
+     +#   Essentially:
+     +#      - MAIL_DIR defines the location of users mail spool files
+     +#        (for mbox use) by appending the username to MAIL_DIR as defined
+     +#        below.
+     +#      - MAIL_FILE defines the location of the users mail spool files as the
+     +#        fully-qualified filename obtained by prepending the user home
+     +#        directory before $MAIL_FILE
+     +#
+     +# NOTE: This is no more used for setting up users MAIL environment variable
+     +#       which is, starting from shadow 4.0.12-1 in Debian, entirely the
+     +#       job of the pam_mail PAM modules
+     +#       See default PAM configuration files provided for
+     +#       login, su, etc.
+     +#
+     +# This is a temporary situation: setting these variables will soon
+     +# move to /etc/default/useradd and the variables will then be
+     +# no more supported
+     +MAIL_DIR        /var/mail
+     +#MAIL_FILE      .mail
+     +
+     +#
+     +# Enable logging and display of /var/log/faillog login failure info.
+     +# This option conflicts with the pam_tally PAM module.
+     +#
+     +FAILLOG_ENAB		yes
+     +
+     +#
+     +# Enable display of unknown usernames when login failures are recorded.
+     +#
+     +# WARNING: Unknown usernames may become world readable.
+     +# See #290803 and #298773 for details about how this could become a security
+     +# concern
+     +LOG_UNKFAIL_ENAB	no
+     +
+     +#
+     +# Enable logging of successful logins
+     +#
+     +LOG_OK_LOGINS		no
+     +
+     +#
+     +# Enable "syslog" logging of su activity - in addition to sulog file logging.
+     +# SYSLOG_SG_ENAB does the same for newgrp and sg.
+     +#
+     +SYSLOG_SU_ENAB		yes
+     +SYSLOG_SG_ENAB		yes
+     +
+     +#
+     +# If defined, all su activity is logged to this file.
+     +#
+     +#SULOG_FILE	/var/log/sulog
+     +
+     +#
+     +# If defined, file which maps tty line to TERM environment parameter.
+     +# Each line of the file is in a format something like "vt100  tty01".
+     +#
+     +#TTYTYPE_FILE	/etc/ttytype
+     +
+     +#
+     +# If defined, login failures will be logged here in a utmp format
+     +# last, when invoked as lastb, will read /var/log/btmp, so...
+     +#
+     +FTMP_FILE	/var/log/btmp
+     +
+     +#
+     +# If defined, the command name to display when running "su -".  For
+     +# example, if this is defined as "su" then a "ps" will display the
+     +# command is "-su".  If not defined, then "ps" would display the
+     +# name of the shell actually being run, e.g. something like "-sh".
+     +#
+     +SU_NAME		su
+     +
+     +#
+     +# If defined, file which inhibits all the usual chatter during the login
+     +# sequence.  If a full pathname, then hushed mode will be enabled if the
+     +# user's name or shell are found in the file.  If not a full pathname, then
+     +# hushed mode will be enabled if the file exists in the user's home directory.
+     +#
+     +HUSHLOGIN_FILE	.hushlogin
+     +#HUSHLOGIN_FILE	/etc/hushlogins
+     +
+     +#
+     +# *REQUIRED*  The default PATH settings, for superuser and normal users.
+     +#
+     +# (they are minimal, add the rest in the shell startup files)
+     +ENV_SUPATH	PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+     +ENV_PATH	PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+     +
+     +#
+     +# Terminal permissions
+     +#
+     +#	TTYGROUP	Login tty will be assigned this group ownership.
+     +#	TTYPERM		Login tty will be set to this permission.
+     +#
+     +# If you have a "write" program which is "setgid" to a special group
+     +# which owns the terminals, define TTYGROUP to the group number and
+     +# TTYPERM to 0620.  Otherwise leave TTYGROUP commented out and assign
+     +# TTYPERM to either 622 or 600.
+     +#
+     +# In Debian /usr/bin/bsd-write or similar programs are setgid tty
+     +# However, the default and recommended value for TTYPERM is still 0600
+     +# to not allow anyone to write to anyone else console or terminal
+     +
+     +# Users can still allow other people to write them by issuing
+     +# the "mesg y" command.
+     +
+     +TTYGROUP	tty
+     +TTYPERM		0600
+     +
+     +#
+     +# Login configuration initializations:
+     +#
+     +#	ERASECHAR	Terminal ERASE character ('\010' = backspace).
+     +#	KILLCHAR	Terminal KILL character ('\025' = CTRL/U).
+     +#	UMASK		Default "umask" value.
+     +#
+     +# The ERASECHAR and KILLCHAR are used only on System V machines.
+     +#
+     +# UMASK is the default umask value for pam_umask and is used by
+     +# useradd and newusers to set the mode of the new home directories.
+     +# 022 is the "historical" value in Debian for UMASK
+     +# 027, or even 077, could be considered better for privacy
+     +# There is no One True Answer here : each sysadmin must make up his/her
+     +# mind.
+     +#
+     +# If USERGROUPS_ENAB is set to "yes", that will modify this UMASK default value
+     +# for private user groups, i. e. the uid is the same as gid, and username is
+     +# the same as the primary group name: for these, the user permissions will be
+     +# used as group permissions, e. g. 022 will become 002.
+     +#
+     +# Prefix these values with "0" to get octal, "0x" to get hexadecimal.
+     +#
+     +ERASECHAR	0177
+     +KILLCHAR	025
+     +UMASK		022
+     +
+     +#
+     +# Password aging controls:
+     +#
+     +#	PASS_MAX_DAYS	Maximum number of days a password may be used.
+     +#	PASS_MIN_DAYS	Minimum number of days allowed between password changes.
+     +#	PASS_WARN_AGE	Number of days warning given before a password expires.
+     +#
+     +PASS_MAX_DAYS	99999
+     +PASS_MIN_DAYS	0
+     +PASS_WARN_AGE	7
+     +
+     +#
+     +# Min/max values for automatic uid selection in useradd
+     +#
+     +UID_MIN			 1000
+     +UID_MAX			60000
+     +# System accounts
+     +#SYS_UID_MIN		  100
+     +#SYS_UID_MAX		  999
+     +
+     +#
+     +# Min/max values for automatic gid selection in groupadd
+     +#
+     +GID_MIN			 1000
+     +GID_MAX			60000
+     +# System accounts
+     +#SYS_GID_MIN		  100
+     +#SYS_GID_MAX		  999
+     +
+     +#
+     +# Max number of login retries if password is bad. This will most likely be
+     +# overriden by PAM, since the default pam_unix module has it's own built
+     +# in of 3 retries. However, this is a safe fallback in case you are using
+     +# an authentication module that does not enforce PAM_MAXTRIES.
+     +#
+     +LOGIN_RETRIES		5
+     +
+     +#
+     +# Max time in seconds for login
+     +#
+     +LOGIN_TIMEOUT		60
+     +
+     +#
+     +# Which fields may be changed by regular users using chfn - use
+     +# any combination of letters "frwh" (full name, room number, work
+     +# phone, home phone).  If not defined, no changes are allowed.
+     +# For backward compatibility, "yes" = "rwh" and "no" = "frwh".
+     +#
+     +CHFN_RESTRICT		rwh
+     +
+     +#
+     +# Should login be allowed if we can't cd to the home directory?
+     +# Default in no.
+     +#
+     +DEFAULT_HOME	yes
+     +
+     +#
+     +# If defined, this command is run when removing a user.
+     +# It should remove any at/cron/print jobs etc. owned by
+     +# the user to be removed (passed as the first argument).
+     +#
+     +#USERDEL_CMD	/usr/sbin/userdel_local
+     +
+     +#
+     +# Enable setting of the umask group bits to be the same as owner bits
+     +# (examples: 022 -> 002, 077 -> 007) for non-root users, if the uid is
+     +# the same as gid, and username is the same as the primary group name.
+     +#
+     +# If set to yes, userdel will remove the user´s group if it contains no
+     +# more members, and useradd will create by default a group with the name
+     +# of the user.
+     +#
+     +USERGROUPS_ENAB yes
+     +
+     +#
+     +# Instead of the real user shell, the program specified by this parameter
+     +# will be launched, although its visible name (argv[0]) will be the shell's.
+     +# The program may do whatever it wants (logging, additional authentification,
+     +# banner, ...) before running the actual shell.
+     +#
+     +# FAKE_SHELL /bin/fakeshell
+     +
+     +#
+     +# If defined, either full pathname of a file containing device names or
+     +# a ":" delimited list of device names.  Root logins will be allowed only
+     +# upon these devices.
+     +#
+     +# This variable is used by login and su.
+     +#
+     +#CONSOLE	/etc/consoles
+     +#CONSOLE	console:tty01:tty02:tty03:tty04
+     +
+     +#
+     +# List of groups to add to the user's supplementary group set
+     +# when logging in on the console (as determined by the CONSOLE
+     +# setting).  Default is none.
+     +#
+     +# Use with caution - it is possible for users to gain permanent
+     +# access to these groups, even when not logged in on the console.
+     +# How to do it is left as an exercise for the reader...
+     +#
+     +# This variable is used by login and su.
+     +#
+     +#CONSOLE_GROUPS		floppy:audio:cdrom
+     +
+     +#
+     +# If set to "yes", new passwords will be encrypted using the MD5-based
+     +# algorithm compatible with the one used by recent releases of FreeBSD.
+     +# It supports passwords of unlimited length and longer salt strings.
+     +# Set to "no" if you need to copy encrypted passwords to other systems
+     +# which don't understand the new algorithm.  Default is "no".
+     +#
+     +# This variable is deprecated. You should use ENCRYPT_METHOD.
+     +#
+     +#MD5_CRYPT_ENAB	no
+     +
+     +#
+     +# If set to MD5 , MD5-based algorithm will be used for encrypting password
+     +# If set to SHA256, SHA256-based algorithm will be used for encrypting password
+     +# If set to SHA512, SHA512-based algorithm will be used for encrypting password
+     +# If set to DES, DES-based algorithm will be used for encrypting password (default)
+     +# Overrides the MD5_CRYPT_ENAB option
+     +#
+     +# Note: It is recommended to use a value consistent with
+     +# the PAM modules configuration.
+     +#
+     +ENCRYPT_METHOD SHA512
+     +
+     +#
+     +# Only used if ENCRYPT_METHOD is set to SHA256 or SHA512.
+     +#
+     +# Define the number of SHA rounds.
+     +# With a lot of rounds, it is more difficult to brute forcing the password.
+     +# But note also that it more CPU resources will be needed to authenticate
+     +# users.
+     +#
+     +# If not specified, the libc will choose the default number of rounds (5000).
+     +# The values must be inside the 1000-999999999 range.
+     +# If only one of the MIN or MAX values is set, then this value will be used.
+     +# If MIN > MAX, the highest value will be used.
+     +#
+     +# SHA_CRYPT_MIN_ROUNDS 5000
+     +# SHA_CRYPT_MAX_ROUNDS 5000
+     +
+     +################# OBSOLETED BY PAM ##############
+     +#						#
+     +# These options are now handled by PAM. Please	#
+     +# edit the appropriate file in /etc/pam.d/ to	#
+     +# enable the equivelants of them.
+     +#
+     +###############
+     +
+     +#MOTD_FILE
+     +#DIALUPS_CHECK_ENAB
+     +#LASTLOG_ENAB
+     +#MAIL_CHECK_ENAB
+     +#OBSCURE_CHECKS_ENAB
+     +#PORTTIME_CHECKS_ENAB
+     +#SU_WHEEL_ONLY
+     +#CRACKLIB_DICTPATH
+     +#PASS_CHANGE_TRIES
+     +#PASS_ALWAYS_WARN
+     +#ENVIRON_FILE
+     +#NOLOGINS_FILE
+     +#ISSUE_FILE
+     +#PASS_MIN_LEN
+     +#PASS_MAX_LEN
+     +#ULIMIT
+     +#ENV_HZ
+     +#CHFN_AUTH
+     +#CHSH_AUTH
+     +#FAIL_DELAY
+     +
+     +################# OBSOLETED #######################
+     +#						  #
+     +# These options are no more handled by shadow.    #
+     +#                                                 #
+     +# Shadow utilities will display a warning if they #
+     +# still appear.                                   #
+     +#                                                 #
+     +###################################################
+     +
+     +# CLOSE_SESSIONS
+     +# LOGIN_STRING
+     +# NO_PASSWORD_CONSOLE
+     +# QMAIL_DIR
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_10.5_Lock_Inactive_User_Accounts: Lock Inactive User Accounts (expected "INACTIVE=-1\n" to match /^INACTIVE=35$/
      Diff:
      @@ -1,2 +1,2 @@
      -/^INACTIVE=35$/
      +INACTIVE=-1
      )
-  ✖  xccdf_org.cisecurity.benchmarks_rule_11.1_Set_Warning_Banner_for_Standard_Login_Services: Set Warning Banner for Standard Login Services (1 failed)
-     ✖  
+     ×  Bash command useradd -D | grep INACTIVE stdout should match /^INACTIVE=35$/
+     expected "INACTIVE=-1\n" to match /^INACTIVE=35$/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/^INACTIVE=35$/
+     +INACTIVE=-1
+     
+  ×  xccdf_org.cisecurity.benchmarks_rule_11.1_Set_Warning_Banner_for_Standard_Login_Services: Set Warning Banner for Standard Login Services (1 failed)
+     ×  should eq "0000"
+
      expected: "0000"
           got: nil
-     
+
      (compared using ==)
      
      ✔  0000 should eq "0000"
@@ -2502,12 +4224,19 @@ Target:  ssh://vagrant@127.0.0.1:2222
      ✔  Bash command echo $PATH stdout should not match /(^|:):/
      ✔  Bash command echo $PATH stdout should not match /:$/
      ✔  Bash command echo $PATH stdout should not match /(^|:|\/)\.+($|:|\/)/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_13.7_Check_Permissions_on_User_Home_Directories: Check Permissions on User Home Directories (expected "/var/run/vboxadd\n" not to match /.+/
+  ×  xccdf_org.cisecurity.benchmarks_rule_13.7_Check_Permissions_on_User_Home_Directories: Check Permissions on User Home Directories (expected "/var/run/vboxadd\n" not to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
      +/var/run/vboxadd
      )
+     ×  Bash command for i in $(awk -F: '($7 != "/usr/sbin/nologin" && $3 >= 500) {print $6}' /etc/passwd | sort -u); do echo $i $(stat -L --format=%a $i) | grep -v ' .[0145][0145]$';done stdout should not match /.+/
+     expected "/var/run/vboxadd\n" not to match /.+/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/.+/
+     +/var/run/vboxadd
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_13.8_Check_User_Dot_File_Permissions: Check User Dot File Permissions
      ✔  Bash command find `cat /etc/passwd | egrep -v "root|sync|halt|shutdown" | awk -F: '($7 != "/usr/sbin/nologin" && $7) {print $6}' | sort | uniq | grep -v "^/$"` -name ".*" -perm /go+w -follow stdout should not match /.+/
   ✔  xccdf_org.cisecurity.benchmarks_rule_13.9_Check_Permissions_on_User_.netrc_Files: Check Permissions on User .netrc Files
@@ -2516,12 +4245,19 @@ Target:  ssh://vagrant@127.0.0.1:2222
      ✔  Bash command cut -f6 -d: /etc/passwd | sort -u | while read DIR; do ls $DIR/.rhosts 2>/dev/null; done stdout should not match /.+/
   ✔  xccdf_org.cisecurity.benchmarks_rule_13.11_Check_Groups_in_etcpasswd: Check Groups in /etc/passwd
      ✔  Bash command for i in $(cut -s -d: -f4 /etc/passwd | sort -u ); do grep -q -P "^.*?:[^:]*:$i:" /etc/group; if [ $? -ne 0 ]; then echo "Group $i is referenced by /etc/passwd but does not exist in /etc/group"; fi; done stdout should not match /.+/
-  ✖  xccdf_org.cisecurity.benchmarks_rule_13.12_Check_That_Users_Are_Assigned_Valid_Home_Directories: Check That Users Are Assigned Valid Home Directories (expected "The home directory (/var/run/vboxadd) of user vboxadd does not exist.\n" not to match /.+/
+  ×  xccdf_org.cisecurity.benchmarks_rule_13.12_Check_That_Users_Are_Assigned_Valid_Home_Directories: Check That Users Are Assigned Valid Home Directories (expected "The home directory (/var/run/vboxadd) of user vboxadd does not exist.\n" not to match /.+/
      Diff:
      @@ -1,2 +1,2 @@
      -/.+/
      +The home directory (/var/run/vboxadd) of user vboxadd does not exist.
      )
+     ×  Bash command  cat /etc/passwd | awk -F: '{ print $1 " " $3 " " $6 }' | while read user uid dir; do if [ $uid -ge 500 -a ! -d "$dir" -a $user != "nfsnobody" -a $user != "nobody" ]; then echo "The home directory ($dir) of user $user does not exist."; fi; done stdout should not match /.+/
+     expected "The home directory (/var/run/vboxadd) of user vboxadd does not exist.\n" not to match /.+/
+     Diff:
+     @@ -1,2 +1,2 @@
+     -/.+/
+     +The home directory (/var/run/vboxadd) of user vboxadd does not exist.
+     
   ✔  xccdf_org.cisecurity.benchmarks_rule_13.13_Check_User_Home_Directory_Ownership: Check User Home Directory Ownership
      ✔  Bash command cat /etc/passwd | awk -F: '{ print $1 " " $3 " " $6 }' | while read user uid dir; do if [ $uid -ge 500 -a -d "$dir" -a $user != "nfsnobody" -a $user != "nobody" ]; then owner=$(stat -L -c "%U" "$dir"); if [ "$owner" != "$user" ]; then echo "The home directory ($dir) of user $user is owned by $owner."; fi; fi; done; stdout should not match /.+/
   ✔  xccdf_org.cisecurity.benchmarks_rule_13.14_Check_for_Duplicate_UIDs: Check for Duplicate UIDs
@@ -2540,5 +4276,5 @@ Target:  ssh://vagrant@127.0.0.1:2222
      ✔  File /etc/group content should not match /^shadow:x:15:.+$/
      ✔  Bash command awk -F: '($4 == "42") { print }' /etc/passwd stdout should not match /.+/
 
-
-Summary: 114 successful, 81 failures, 0 skipped
+Profile Summary: 79 successful, 63 failures, 0 skipped
+Test Summary: 111 successful, 84 failures, 0 skipped

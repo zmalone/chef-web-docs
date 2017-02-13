@@ -16,6 +16,4 @@ In the Specify stage, you translate your requirements into a formal language. Th
 
 In the Test stage, you run the automated tests to see how closely your servers adhere to compliance. In this tutorial, you ran a compliance scan and noted which tests passed and which tests failed.
 
-Knowing the state of your servers is a great first step towards meeting your compliance goals. In the next tutorial, [Remediate compliance failures​](/tutorials/compliance-remediate/ubuntu/), you'll build upon this tutorial by implementing the Remediate stage, using the **Ensure Firewall is active** rule as an example. You'll start by learning how to replicate and remediate the failure on a local virtual machine. Then you'll learn how to apply the remedation to your Ubuntu 14.04 node and verify that the rule passes.
-
-You can also learn more about building a high velocity, highly compliant organization at [complianceatvelocity.com](http://complianceatvelocity.com/).
+Knowing the state of your servers is a great first step towards meeting your compliance goals. In the next tutorial, [Remediate compliance failures​](/tutorials/compliance-remediate/ubuntu/), you'll build upon this tutorial by implementing the Remediate stage, using the **Ensure Firewall is active** rule as an example. You'll start by learning how to replicate and remediate the failure on a local virtual machine. Then you'll learn how to apply the remediation to your Ubuntu 14.04 node and verify that the rule passes.
