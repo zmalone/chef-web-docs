@@ -78,7 +78,7 @@ Now that you better understand why the rule failed, you can begin to write Chef 
 
 ## 2. Login to the Chef compliance scanner through the InSpec CLI
 
-Later in this part, you'll scan a test instance against the CIS profile through Test Kitchen. Test Kitchen uses the [kitchen-inspec](http://inspec.io/docs/reference/plugin_kitchen_inspec.html/) plugin to run InSpec tests. `kitchen-inspec` comes with the Chef DK.
+Later in this part, you'll scan a test instance against the CIS Benchmarks profile through Test Kitchen. Test Kitchen uses the [kitchen-inspec](http://inspec.io/docs/reference/plugin_kitchen_inspec.html/) plugin to run InSpec tests. `kitchen-inspec` comes with the Chef DK.
 
 To download compliance profiles from your Chef compliance scanner, `kitchen-inspec` requires login credentials.
 
@@ -105,7 +105,7 @@ Here's an example:
 
 [COMMENT] The `--insecure` flag bypasses SSL verification because the Chef compliance scanner comes with a self-signed certificate. In a production environment, you can [configure an SSL certificate](https://docs.chef.io/install_compliance.html#configure-ssl) that's rooted by a trusted certificate authority (CA) and omit the `--insecure` flag.
 
-As a verification step, you can run `inspec compliance profiles` to prove that you've successfully authenticated.
+As a verification step, you can run `inspec compliance profiles` to prove that you've successfully authenticated. This command lists all available compliance profiles from your Chef compliance scanner.
 
 <% command_snippet(page: current_page, path: 'login-to-compliance-scanner/inspec-compliance-profiles') %>
 
@@ -143,9 +143,9 @@ Now you'll verify that the empty cookbook runs successfully on a Windows Server 
 
 <% code_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-1-yml') %>
 
-[PRODNOTE] EXPLAIN THAT IT LOOKS SIMILAR TO WHAT YOU DID IN PREV TUTORIAL. windows-2012 IS THE NAME OF THE VAGRANT BOX YOU BUILT
+This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance. It resembles the configuration you used in the [Get started with Test Kitchen](/tutorials/local-development/windows/virtualbox/apply-a-cookbook#step2) tutorial. `windows-2012r2` is the name you provided for your base Windows Server 2012 R2 Vagrant box that you built from the Packer template.
 
-This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance. The `verifier` section tells Test Kitchen to look for InSpec tests. More on that later.
+The `verifier` section tells Test Kitchen to look for InSpec tests. More on that later.
 
 Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/admpwd') %> directory.
 
@@ -179,9 +179,9 @@ Also recall that your <% fp '.kitchen.yml' %> file looks like this.
 
 The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-windows2012r2-level1-memberserver** profile from the Chef compliance scanner when it runs tests. You specified your Chef compliance scanner when you ran `inspec compliance login` earlier.
 
-You're now ready to scan your test instance. Normally, you might run `kitchen verify` to run the compliance profile. However, will produce a lot of output.
+You're now ready to scan your test instance. Normally, you might run `kitchen verify` to run the compliance profile. However, the CIS Benchmarks profile contains many rules, and `kitchen verify` outputs the compliance status for each rule.
 
-For now, we're only interested in seeing the password complexity rule fail. We're working to make it easier to pinpoint specific failures in the output. For now, run `kitchen verify` a second time and redirect the output to a text file, like this.
+To make it easier to pinpoint just the status of the password complexity rule, run `kitchen verify` and redirect the output to a text file, like this.
 
 <% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-verify-redirect-1', features: :stdin) %>
 
@@ -191,7 +191,7 @@ You can locate the status of a test by searching for its name. Here's how to loc
 
 Alternatively, you can search for the rule name from a text editor.
 
-You see that "(2 failed)" tells us that this test failed the same way it did on your node.
+The "(2 failed)" part tells us that both parts of the test failed, the same way it did on your node.
 
 Now that you've replicated the failure on a test instance, you can write Chef code to remediate it.
 
@@ -201,21 +201,21 @@ Now that you've replicated the failure on a test instance, you can write Chef co
 
 ## 6. Remediate the failure
 
-In practice, you and your team would decide the appropriate way to fix the compliance failure. For example, you might define a complete set of password complexity rules that enables port access to only the addresses you trust.
+In practice, you and your team would decide the appropriate way to fix the compliance failure. For example, you might define a complete set of rules for your organization that satisfies each of CIS's recommended password complexity settings.
 
-For learning purposes, let's write just enough code to make the test pass. When you enable the password complexity, you also need to allow SSH access.
+For learning purposes, let's write just enough code to make the test pass. To do so, you need to create the "HKEY\_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft Services\\AdmPwd" registry key, add a value named "PasswordComplexity", and set that value's associated data to "4" (a `DWORD` value).
 
 Write your default recipe, <% fp '~/learn-chef/cookbooks/admpwd/recipes/default.rb' %>, like the following.
 
 <% code_snippet(page: current_page, path: 'remediate-the-failure/default-rb') %>
 
-This code uses the [execute](https://docs.chef.io/resource_execute.html) resource to both enable SSH access and to enable the password complexity. Each resource uses a `not_if` [guard](https://docs.chef.io/resource_common.html#guards) to ensure that the command is run only when needed.
+This code uses the [registry_key](https://docs.chef.io/resource_registry_key.html) resource to create the registry key ensure that it has the "PasswordComplexity" value. If the value and its associated data already exist, Chef does nothing.
 
 Next, from your <% fp '~/learn-chef/cookbooks/admpwd' %> directory, run `kitchen converge` to apply the configuration.
 
 <% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-converge-2') %>
 
-You see from the output that `admpwd` is enabled and allows SSH access.
+You see from the output that the required data is added to the registry.
 
 Now run `kitchen verify` to run the compliance profile a second time.
 
