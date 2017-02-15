@@ -1,5 +1,6 @@
 require 'chef/web/core/url_helpers'
 require 'slim'
+require 'lib/gulp'
 require 'lib/sitemap'
 require 'lib/compass'
 require 'lib/markdown'
@@ -237,23 +238,21 @@ configure :build do
   # activate :smusher
 end
 
-activate :external_pipeline,
-         name: :angular,
-         command: "cd lib/chef-lab-client && npm run build && mv dist/* ../../source/assets/javascripts/chef-lab-client",
-         source: "lib/chef-lab-client/dist",
-         latency: 5
-
 before_build do
-  system 'cd lib/chef-lab-client && npm install --production && npm run build' or exit($?.exitstatus)
+  if File.exist?(REV_MANIFEST_PATH)
+    REV_MANIFEST.merge!(JSON.parse(File.read(REV_MANIFEST_PATH)))
+  end
 
+  # TODO: Move this to the Gulp production task, as Webpack has already run at this point here
+  system 'cd lib/chef-lab-client && npm install --production' or exit($?.exitstatus)
 end
 
 # Write out a REVISION file that shows which revision we're running
-after_build do
-  open("#{root_path.join('build', 'REVISION')}", 'w').write(
-    ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
-  )
-end
+# after_build do
+#   open("#{root_path.join('build', 'REVISION')}", 'w').write(
+#     ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
+#   )
+# end
 
 # Enable localization (i18n)
 activate :i18n

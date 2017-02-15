@@ -18,6 +18,14 @@ import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
 import 'zone.js/dist/zone';
 
+if (process.env.ENV === 'production') {
+  // Production
+} else {
+  // Development and test
+  Error['stackTraceLimit'] = Infinity;
+  require('zone.js/dist/long-stack-trace-zone');
+}
+
 // If you need to support the browsers/features below, uncomment the import
 // and run `npm install import-name-here';
 // Learn more in https://angular.io/docs/ts/latest/guide/browser-support.html

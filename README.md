@@ -30,6 +30,12 @@ Installation
         $ sudo apt-get install npm
         $ sudo ln -s /usr/bin/nodejs /usr/bin/node
 
+1. Install node packages in the root folder AND in the Angular folder, lib/chef-lab-client:
+
+        $ npm install
+        $ cd lib/chef-lab-client
+        $ npm install
+
 Start up
 --------
 

@@ -1,8 +1,3 @@
-//= require chef-lab-client/inline.bundle
-//= require chef-lab-client/polyfills.bundle
-//= require chef-lab-client/styles.bundle
-//= require chef-lab-client/vendor.bundle
-//= require chef-lab-client/main.bundle
 //= require munchkin
 //= require os-tabs
 //= require platform-window
