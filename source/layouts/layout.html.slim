@@ -1,5 +1,5 @@
 doctype html
-html.no-js lang="en"
+html lang="en"
   head
     title= [current_page.title, 'Learn Chef'].compact.join(' | ')
     link rel='icon' type='image/x-icon' href='/favicon.ico'
@@ -27,12 +27,12 @@ html.no-js lang="en"
   body class=page_classes
     app-root
     noscript#app-content
-      header.nav-main data-topbar="" role="navigation"
-        .row
+      .contain-to-grid.fixed
+        nav.nav-main.top-bar data-options=("sticky_on: large") data-topbar="" role="navigation"
           a name="top" href="#top"
           .left
             = link_to chef_www_url, class: 'logo-learn-chef' do
-              = image_tag('logo-learn-chef.svg', onerror: 'logo-learn-chef.png')
+              = image_tag('learn-chef-rally-logo.svg', onerror: 'learn-chef-rally-logo.png')
           i#nav-icon.fa.fa-bars
 
           ul.links
@@ -41,24 +41,53 @@ html.no-js lang="en"
           .right
             ul.links
               li.nav-link
-                a href="#" fb-login="" ng-if="logoutStatus"  Log in
+                //a href="#" fb-login="" ng-if="logoutStatus" Log in
+                a href="#" data-reveal-id="loginModal" Log in
               li.nav-link
-                a href="#" ng-click="logout()" ng-if="logoutStatus"  Sign up
+                //a href="#" ng-click="logout()" ng-if="logoutStatus"  Sign up
+                a href="#" data-reveal-id="SignupModal" Sign up
               li.nav-link
                 a href="#" ng-click="logout()" ng-if="!logoutStatus"  Log Out
-
-              li
-                a.icon.ic-search
               li
                 a.icon.ic-option
 
+      //Modal for login and Sign up
+      #loginModal.reveal-modal.small.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+        .modal-title
+          = image_tag('login/learn-chef-login.png')
+        .modal-body
+          p.lead Login to your account
+          a href=""
+            = image_tag('login/chef-supermarket.png')
+          p.social
+            a.ic-google href=""
+            a.fa.fa-github href=""
+            a.ic-twitter href=""
+            a.ic-linkedin href=""
+          a.close-reveal-modal aria-label="Close"
+            i.icon.ic-close
+      //Modal for login and Sign up
+      #SignupModal.reveal-modal.small.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+        .modal-title
+          = image_tag('login/learn-chef-login.png')
+        .modal-body
+          p.lead Join the rally using
+          a href=""
+            = image_tag('login/chef-supermarket.png')
+          p.social
+            a.ic-google href=""
+            a.fa.fa-github href=""
+            a.ic-twitter href=""
+            a.ic-linkedin href=""
+            a.close-reveal-modal aria-label="Close"
+              i.icon.ic-close
       section
         .content
           = yield
 
       footer#footer
         .row
-          .medium-12.columns.copyright
+          .medium-12.columns
             .medium-3.columns
               .head
                 | DOCS
@@ -101,7 +130,24 @@ html.no-js lang="en"
                   a href="" My Learn Chef profile
                 li
                   a href="" My Progress
+                li.separator
+                  a href="https://www.chef.io/contact-us/" target="_blank" Contact Chef
                 li
-                  a href="" Contact Chef
-            /      Copyright &copy; #{Time.now.year} Chef Software, Inc. All Rights Reserved.
+                  a href="" Privacy Policy
+              .head
+                | Subscribe to updates
+              button.btn.btn-primary Keep me updated
+          .medium-12.columns
+            .medium-4.columns
+              a.logo-footer href=""
+            .medium-4.columns.copyright
+              | &copy; #{Time.now.year} Chef Software, Inc.  All Rights Reserved.
+            .medium-4.columns
+              ul.social-icon
+                li
+                  a.ic-fb href="https://www.facebook.com/getchefdotcom" target="_blank"
+                li
+                  a.ic-twitter href="https://twitter.com/chef" target="_blank"
+                li
+                  a.ic-linkedin href="https://www.linkedin.com/groups/3751378/profile" target="_blank"
   = partial 'layouts/js'
