@@ -68,7 +68,7 @@ To upgrade to the latest version of Chef Automate, do the following:
 
    .. code-block:: bash
 
-      rpm -Uvh $PATH_TO_AUTOMATE_SERVER_PACKAGE
+      rpm -Uvh --nopostun $PATH_TO_AUTOMATE_SERVER_PACKAGE
 
 #. If you are upgrading from a previous version of Chef Automate, then run ``sudo automate-ctl reconfigure`` to complete the upgrade process. If you are upgrading from a ``delivery-cluster`` setup, then skip to the section below.
 
