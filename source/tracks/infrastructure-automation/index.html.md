@@ -1,13 +1,14 @@
 ---
-title: 'Infrastructure Automation'
-description: "Find out how to turn infrastructure into code. Learn what Chef does during a run and how to use resources, recipes, and cookbooks to configure a system. Then, apply what you've learned to an actual machine."
-order: 1
+title: Infrastructure Automation
+track_id: 1
+image_url: /assets/images/homepage/infrastructure-automation.png
+description: 'Start your #AwesomeAdmin journey by learning the basics of customizing Salesforce.'
+hours: 8
 level: Beginner
-layout: track
+track_class: card-green
+category: Admin
 modules:
-    - getting-started
-    - learn-the-basics
-    - manage-a-node
-    - develop-locally
+- 1
+- 2
 ---
 Infrastructure Automation content goes here

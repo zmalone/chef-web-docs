@@ -42,8 +42,8 @@ set :trailing_slash, false
 # Per-page layout changes:
 page '/robots.txt', layout: false
 page '/sitemap.xml', layout: false
-page '/tracks/*', layout: 'track'
-page '/modules/*', layout: 'module'
+page '/tracks/**/*', layout: 'track'
+page '/modules/**/*', layout: 'module'
 
 # S3 hosting needs a page at the root
 page '/error.html', directory_index: false

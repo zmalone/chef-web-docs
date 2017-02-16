@@ -1,8 +1,14 @@
 ---
-title: 'Local Development and Testing'
-description: "Find errors in your cookbooks quickly by testing them on your local machine. Learn how to set up a virtual environment, develop code, and use a variety of tools to make sure everything's working."
-order: 2
+title: Local Development and Testing
+track_id: 2
+image_url: /assets/images/homepage/hotdog.png
+description: 'Start your #AwesomeAdmin journey by learning the basics of customizing Salesforce.'
+hours: 8
 level: Beginner
-layout: track
+track_class: card-yellow
+category: Admin
+modules:
+- 1
+- 2
 ---
 Local Development and Testing content goes here

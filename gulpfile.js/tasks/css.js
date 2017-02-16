@@ -17,7 +17,7 @@ var paths = {
 }
 
 var cssTask = function () {
-  return gulp.src(paths.src)
+  return gulp.src(path.join(paths.src, 'application.scss'))
     .pipe(gulpif(!global.production, sourcemaps.init()))
     .pipe(sass(config.tasks.css.sass))
     .on('error', handleErrors)
