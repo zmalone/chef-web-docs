@@ -1,29 +1,27 @@
 #!/bin/bash
 
-chef_server_fqdn=$1
+apt-get update
+apt-get -y install curl
 
-sudo apt-get update
+# Ensure the time is up to date
+apt-get -y install ntp
+service ntp stop
+ntpdate -s time.nist.gov
+service ntp start
 
 # Install Chef Automate
-if [ ! $(which delivery-ctl) ]
+if [ ! $(which automate-ctl) ]
   then
     # Download the package
     if [ ! -d ~/downloads ]
       then
         mkdir ~/downloads
     fi
-    wget -P ~/downloads https://packages.chef.io/stable/ubuntu/14.04/delivery_0.6.7-1_amd64.deb
+    wget -P ~/downloads https://packages.chef.io/files/stable/delivery/0.6.136/ubuntu/14.04/delivery_0.6.136-1_amd64.deb
 
     # Install the package
-    sudo dpkg -i ~/downloads/delivery_0.6.7-1_amd64.deb
+    dpkg -i ~/downloads/delivery_0.6.136-1_amd64.deb
 
-    # Run setup
-    sudo delivery-ctl setup --license /tmp/automate.license --key /tmp/delivery.pem --server-url https://$chef_server_fqdn/organizations/4thcoffee --fqdn $(hostname) --enterprise chordata --configure --no-build-node
-
-    # Wait for all services to come online
-    until (curl --insecure -D - https://localhost/api/_status) | grep "200 OK"; do sleep 15s; done
-    while (curl --insecure https://localhost/api/_status) | grep "fail"; do sleep 15s; done
-
-    # Create an initial user
-    sudo delivery-ctl create-user chordata delivery --password P4ssw0rd! --roles "admin"
+    # Run preflight check
+    automate-ctl preflight-check
 fi
