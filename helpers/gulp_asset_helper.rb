@@ -12,7 +12,7 @@ module GulpAssetHelper
 
     root = GULP_CONFIG['root']['dest'].gsub(/(.*).tmp/, '/')
     asset_path = type ? File.join(GULP_CONFIG['tasks'][type.to_s]['dest'].to_s, path.to_s) : path.to_s
-    asset_path = rev_manifest[asset_path] if rev_manifest
+    asset_path = rev_manifest[asset_path] if rev_manifest && rev_manifest[asset_path]
     asset_path = File.join(root, asset_path) if asset_path
     File.absolute_path(asset_path, '/') if asset_path
   end

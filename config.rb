@@ -2,7 +2,6 @@ require 'chef/web/core/url_helpers'
 require 'slim'
 require 'lib/gulp'
 require 'lib/sitemap'
-require 'lib/compass'
 require 'lib/markdown'
 require 'lib/helpers/deploy_helpers'
 require 'lib/helpers/feature_helpers'
@@ -26,16 +25,6 @@ begin
   require 'pry'
 rescue LoadError
   logger.debug 'Pry is missing and will not be loaded.'
-end
-
-###
-# Compass
-###
-
-# Change Compass configuration
-compass_config do |config|
-  # config.output_style = :compact
-  config.line_comments = false
 end
 
 # Slim Configuration
@@ -116,8 +105,6 @@ require 'lib/middleman_syntax'
 # Parse code blocks
 set :markdown_engine, :redcarpet
 set :markdown, fenced_code_blocks: true, smartypants: false, tables: true
-
-activate :sprockets
 
 set :css_dir, 'assets/stylesheets'
 set :js_dir, 'assets/javascripts'
@@ -221,8 +208,6 @@ redirect '/compliance-remediate', '/tutorials/compliance-remediate/'
 
 # Build-specific configuration
 configure :build do
-  # For example, change the Compass output style for deployment
-  activate :minify_css
 
   # Minify Javascript on build
   activate :minify_javascript

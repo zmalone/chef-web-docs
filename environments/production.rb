@@ -9,11 +9,14 @@ activate :external_pipeline,
 # Ignore the CSS file Middleman normally generates
 # Middleman expects `site.css.scss` → `site.css`
 # We strip the `.css` to prevent Gulp generating `site.css.css`
-ignore 'stylesheets/site'
+ignore 'assets/stylesheets/application'
 
-# Ignore static files
-ignore 'icons/*'
-ignore 'static/*'
+# For quick test builds, we can disable most of the content
+# ignore 'automate/**/*'
+# ignore 'local-development/**/*'
+# ignore 'manage-a-web-app/**/*'
+# ignore 'skills/**/*'
+# ignore 'tutorials/**/*'
 
 # Check to see if file revving is enabled
 rev_manifest = REV_MANIFEST if defined?(REV_MANIFEST)

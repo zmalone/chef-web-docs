@@ -10,10 +10,10 @@ var commonConfig = require('./webpack.common.js')
 var jsDest = path.resolve(config.root.dest, config.tasks.js.dest)
 var publicPath = path.join(config.tasks.js.dest, '/')
 
-const ENV = process.env.NODE_ENV = process.env.ENV = 'production'
-
 module.exports = webpackMerge(commonConfig, {
   devtool: 'source-map',
+
+  entry: config.tasks.js.entries,
 
   output: {
     path: jsDest,
@@ -32,7 +32,7 @@ module.exports = webpackMerge(commonConfig, {
     new ExtractTextPlugin('[name].[hash].css'),
     new webpack.DefinePlugin({
       'process.env': {
-        'ENV': JSON.stringify(ENV)
+        'ENV': JSON.stringify('production')
       }
     }),
     new webpack.LoaderOptionsPlugin({

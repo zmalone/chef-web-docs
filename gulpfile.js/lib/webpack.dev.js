@@ -10,13 +10,16 @@ var jsDest = path.resolve(config.root.dest, config.tasks.js.dest)
 var publicPath = path.join(config.tasks.js.dest, '/')
 
 // Extend common config with webpack-hot-middleware entries
+var entries = {};
 for (var key in config.tasks.js.entries) {
   var entry = config.tasks.js.entries[key]
-  commonConfig.entry[key] = ['webpack-hot-middleware/client?&reload=true'].concat(entry)
+  entries[key] = ['webpack-hot-middleware/client?&reload=true'].concat(entry)
 }
 
 module.exports = webpackMerge(commonConfig, {
   devtool: 'cheap-module-eval-source-map',
+
+  entry: entries,
 
   output: {
     path: path.normalize(jsDest),

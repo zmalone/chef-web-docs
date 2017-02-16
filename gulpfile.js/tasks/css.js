@@ -12,7 +12,7 @@ var path         = require('path')
 var cssnano      = require('gulp-cssnano')
 
 var paths = {
-  src: path.join(config.root.src, config.tasks.css.src, '/**/*.{' + config.tasks.css.extensions + '}'),
+  src: path.join(config.root.src, config.tasks.css.src),
   dest: path.join(config.root.dest, config.tasks.css.dest)
 }
 
