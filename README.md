@@ -45,6 +45,10 @@ A server process needs to be running in order to use Middleman.
 
         $ bin/middleman server
 
+1. The site should now be available locally on port 4567 (Middleman default) and 3000, but only the later uses BrowserSync for live reloading during development.
+
+        $ http://localhost:3000
+
 If Middleman stops responding, kill (Ctrl-C) the server and restart it.
 
 Building the tutorials and skills library
