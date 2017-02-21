@@ -1,0 +1,107 @@
+= wrap_layout :layout do
+  .columns.large-12.medium-12.small-12
+  .home-hero-video
+    .video-desc
+      h3
+        |Get ready to chow down.
+      p
+        |If you're hungry to learn everything there is to know about DevOps, you're in the right place. <a data-reveal-id="videoModal" href="" >watch video</a>
+      #videoModal.reveal-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+        h2#modalTitle Watch us.
+        | <iframe width="100%" height="480" src="https://www.youtube.com/embed/jlwGcgFfcnU?autoplay=0" frameborder="0" allowfullscreen></iframe>
+        a.close-reveal-modal aria-label="Close"  ×
+  /Tabs for Tracks and modules
+  .home-content
+    ul.tabs data-tab=""
+      li.tab-title.active
+        a href="#panel1"  Tracks
+      li.tab-title
+        a href="#panel2"  Modules
+    /Container for tracks and modules
+    .tabs-content
+      #panel1.content.active
+        .tracks-section
+          h3
+            | Want a set curriculum? Tracks will guide you every step of the way.
+          .row
+            - data.tree['tracks'].each do |item|
+              - filepath = item.last.values.first.sub(/\.[\w]+$/, '')
+              - item = sitemap.find_resource_by_path(filepath).data
+              .large-6.medium-6.small-12.columns
+                .track-card class="#{item.track_class}"
+                  h2
+                    span
+                      = item.title
+                    span.time
+                      = item.hours
+                      |  hrs
+                  p.desc
+                    = item.description
+                    = filepath
+                    = link_to "Keep learning", filepath
+                  .row
+                    app-stamps
+                    ul.links
+                      li
+                        a href="" Chef
+                      li
+                        a href="" Beginner
+                  .tag-img
+                    img src="#{item.image_url}"
+            .btn-container
+              button.btn.btn-primary Load more tracks
+      #panel2.content
+        .modules-section
+          h3
+            | Want to learn Al a Carte? Modules let you choose your own path.
+          .row
+            - data.tree['modules'].each do |item|
+              - filepath = item.last.values.first.sub(/\.[\w]+$/, '')
+              - item = sitemap.find_resource_by_path(filepath).data
+              .large-3.medium-4.small-12.columns
+                .module-card
+                  .header
+                    span
+                      = item.title
+                    span.time
+                      | 8 hrs
+                  .progress-bar
+                    .count
+                      | 30%
+                    .progress
+                      span.meter
+                  p
+                    = item.description
+                  ul.links
+                    li
+                      a href="" Chef
+                    li
+                      a href="" Beginner
+            .btn-container
+              button.btn.btn-primary Load more modules
+    .profiles-section
+      .header
+      h3
+        | Meet colleagues who have found the recipe for success.
+      .row
+        .large-4.medium-4.small-12.columns
+          .profile-pic.profile-1
+          h4
+            | “ Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut diam mi. Sed varius aliquam”
+          p
+            |  Lorem ipsum dolor sit amet, consectetur
+
+        .large-4.medium-4.small-12.columns
+          .profile-pic.profile-2
+          h4
+            | “ Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut diam mi. Sed varius aliquam”
+          p
+            |  Lorem ipsum dolor sit amet, consectetur
+
+        .large-4.medium-4.small-12.columns
+          .profile-pic.profile-3
+          h4
+            | “ Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut diam mi. Sed varius aliquam”
+          p
+            |  Lorem ipsum dolor sit amet, consectetur
+

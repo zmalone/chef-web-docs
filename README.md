@@ -30,6 +30,12 @@ Installation
         $ sudo apt-get install npm
         $ sudo ln -s /usr/bin/nodejs /usr/bin/node
 
+1. Install node packages in the root folder AND in the Angular folder, lib/chef-lab-client:
+
+        $ npm install
+        $ cd lib/chef-lab-client
+        $ npm install
+
 Start up
 --------
 
@@ -38,6 +44,10 @@ A server process needs to be running in order to use Middleman.
 1. Start the Middleman server in a new terminal window, using chef-web-learn as the working directory.
 
         $ bin/middleman server
+
+1. The site should now be available locally on port 4567 (Middleman default) and 3000, but only the later uses BrowserSync for live reloading during development.
+
+        $ http://localhost:3000
 
 If Middleman stops responding, kill (Ctrl-C) the server and restart it.
 
