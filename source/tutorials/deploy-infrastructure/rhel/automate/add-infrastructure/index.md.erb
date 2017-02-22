@@ -4,25 +4,24 @@ short_title: 'Add infrastructure'
 order: 5
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 60 minutes
-snippet_path: deploy-infrastructure/rhel/opsworks/set-up-your-chef-server
+snippet_path: deploy-infrastructure/rhel/automate/set-up-your-chef-server
 snippet_workstation: ubuntu
 headings: [
   { label: '1. Bring up infrastructure', href: '#step1' },
   { label: '2. Understand push jobs', href: '#step2' },
   { label: '3. Set up push jobs', href: '#step3' },
-  { label: '4. Fetch the server certificate', href: '#step4' },
-  { label: '5. Get the delivery-base cookbook', href: '#step5' },
-  { label: '6. Understand Chef environments', href: '#step6' },
-  { label: '7. Create environments', href: '#step7' },
-  { label: '8. Bootstrap your nodes', href: '#step8' },
-  { label: '9. Run chef-client a second time', href: '#step9' },
+  { label: '4. Get the delivery-base cookbook', href: '#step4' },
+  { label: '5. Understand Chef environments', href: '#step5' },
+  { label: '6. Create environments', href: '#step6' },
+  { label: '7. Bootstrap your nodes', href: '#step7' },
+  { label: '8. Run chef-client a second time', href: '#step8' },
   ]
 ---
 So far, you've created a project, configured your build cookbook to publish the `learn_chef_httpd` cookbook to the Chef server, and watched the initial change move through the pipeline. The next step is to create infrastructure environments that can run your cookbook.
 
 Recall that infrastructure can receive build artifacts produced from Chef Automate's build pipeline. These environments are labeled **acceptance**, **union**, **rehearsal**, and **delivered** in this diagram.
 
-<img src="/assets/images/automate/automate-scenario-architecture-opsworks.svg" style="width: 100%; alt="An example Chef Automate installation" />
+<img src="/assets/images/automate/automate-scenario-architecture.svg" style="width: 100%; alt="An example Chef Automate installation" />
 
 For this tutorial, your build artifact is the `learn_chef_httpd` cookbook. Because the `learn_chef_httpd` cookbook targets Red Hat Enterprise Linux, you'll bring up Red Hat Enterprise Linux (or CentOS) systems.
 
@@ -46,39 +45,13 @@ Let's start by bringing up infrastructure to run the `learn_chef_httpd` cookbook
 
 Like your runner, each infrastructure node can be any system that's reachable by Chef Automate. Unlike your runner, each node requires only a reachable IP address and does not need to have an associated FQDN.
 
-For learning purposes, we recommend that you use EC2 instances. The number of servers you bring up is up to you. At a minimum, you can bring up one node that represents your Acceptance environment. A complete setup involves creating 4 servers &ndash; one each for the Acceptance, Union, Rehearsal, and Delivered environments.
+For learning purposes, you may find it easiest to bring up infrastructure in the same environment as your Chef Automate installation. The number of servers you bring up is up to you. At a minimum, you can bring up one node that represents your Acceptance environment. A complete setup involves creating 4 servers &ndash; one each for the Acceptance, Union, Rehearsal, and Delivered environments.
 
 [COMMENT] Although we recommend that you bring up fresh intances for this tutorial, you can use the node that you brought up for the _Manage a node_ tutorial. Also, although Chef [supports multiple versions of Red Hat Enterprise Linux](https://docs.chef.io/platforms.html#chef-client-ohai-foundational-platforms), we recommend that you use Red Hat Enterprise Linux 7 or CentOS 7 to ensure the results you see match what's shown in this tutorial.
 
-Bring up the number of Red Hat Enterprise Linux 7 or CentOS 7 systems you want to use now. If you're using EC2, each can be a **t2.micro** instance. As you did in the _Manage a node_ tutorial, ensure each system's security group provides inbound network access on ports 22, 80, and 443.
+Bring up the number of Red Hat Enterprise Linux 7 or CentOS 7 systems you want to use now. If you're using cloud instances, you can use the smallest instance size that's available, for instance, an Amazon EC2 **t2.micro** instance. As you did in the _Manage a node_ tutorial, ensure each system's firewall or security group provides inbound network access on ports 22, 80, and 443.
 
-Here are resources if you need a refresher on how to launch an instance.
-
-* [Launch an instance using the AWS Management Console](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance_linux)
-* [Launch an instance using the  command-line](http://docs.aws.amazon.com/cli/latest/userguide/cli-ec2-launch.html#launching-instances)
-
-We also recommend that you set the `Name` [tag](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html) on each EC2 instance with a name that corresponds to each node's role. For example,
-
-| Role       | EC2 Name tag      |
-|------------|-------------------|
-| Acceptance | `acceptance-node` |
-| Union      | `union-node`      |
-| Rehearsal  | `rehearsal-node`  |
-| Delivered  | `delivered-node`  |
-
-Your EC2 instances will look like this.
-
-![](automate/ec2-infra-nodes.png)
-
-[COMMENT] For this tutorial, you bring up infrastructure manually. Later, you might be interested in using the [knife-ec2](https://github.com/chef/knife-ec2) plugin to provision servers on EC2.
-
-Here's an example of what a complete setup looks like from the EC2 management console. This setup includes an AWS OpsWorks for Chef Automate instance, one runner, and infrastructure nodes for the Acceptance, Union, Rehearsal, and Delivered stages.
-
-![](automate/ec2-complete-setup.png)
-
-From the **Description** tab, note the public IP address for each of your infrastructure nodes.
-
-![](automate/ec2-instance-public-ip.png)
+Note the public IP address for each of your infrastructure nodes.
 
 While your servers come up, you can move on to the next step.
 
@@ -88,7 +61,7 @@ While your servers come up, you can move on to the next step.
 
 ## 2. Understand the role of push jobs
 
-In the _Manage a node_ tutorial, you used `knife ssh` to [run chef-client on your node](/tutorials/manage-a-node/rhel/opsworks/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
+In the _Manage a node_ tutorial, you used `knife ssh` to [run chef-client on your node](/tutorials/manage-a-node/rhel/automate/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
 
 ```bash
 # ~/learn-chef
@@ -97,104 +70,51 @@ $ knife ssh 'name:node1-centos' 'sudo chef-client' --ssh-user centos --identity-
 
 The command uses a search query to specify which node to run `chef-client` on. Here, the search query specifies the node's name, **node1-centos**.
 
-There are other ways to run `chef-client` on a node. You can log in directly over SSH and run `sudo chef-client`. Or you can run `chef-client` at a regular interval as a daemon, cron job, service, or scheduled task, [as you did previously](/tutorials/manage-a-node/rhel/opsworks/run-chef-client-periodically).
+There are other ways to run `chef-client` on a node. You can log in directly over SSH and run `sudo chef-client`. Or you can run `chef-client` at a regular interval as a daemon, cron job, service, or scheduled task, [as you did previously](/tutorials/manage-a-node/rhel/automate/run-chef-client-periodically).
 
 You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. A push job is a way to submit a task to a node, such as running `chef-client`. The push jobs client runs on a node and listens for job requests.
 
 The push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
 
-In the next step, you'll install the push jobs server on your Chef server (remember, AWS OpsWorks for Chef Automate includes both Chef Automate and Chef server on the same system).
-
-Later on this page, you'll upload a copy of the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook to your Chef server. When you bootstrap each of your infrastructure nodes, you'll include `delivery-base` in the node's run-list. The `delivery-base` cookbook performs tasks that prepare a node for use with Chef Automate, including installation of the push jobs client.
+In the next step, you'll install the push jobs server on your Chef server. Later on this page, you'll upload a copy of the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook to your Chef server. When you bootstrap each of your infrastructure nodes, you'll include `delivery-base` in the node's run-list. The `delivery-base` cookbook performs tasks that prepare a node for use with Chef Automate, including installation of the push jobs client.
 
 [END_BOX]
 
 [START_BOX]
 
-## 3. Set up push jobs on your Chef Automate server
+## 3. Set up push jobs on your Chef server
 
-Here, you'll connect to your Chef Automate server over SSH and run a script to configure the push jobs server.
+Here, you'll connect to your Chef server over SSH and [install the push jobs server](https://docs.chef.io/install_chef_automate.html#id3).
 
-From your workstation, switch to the SSH connection to your Chef Automate server (or reconnect if you've closed the connection) and write the following to <% fp 'install-push-jobs.sh' %> in the home directory.
+From your workstation, create an SSH connection to your Chef server.
 
-```shell
-# ~/install-push-jobs.sh
-#!/bin/bash
-
-if [[ -n "$1" ]]; then
-  wget https://packages.chef.io/files/stable/opscode-push-jobs-server/2.1.1/el/7/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
-  chef-server-ctl install opscode-push-jobs-server --path /home/ec2-user/opscode-push-jobs-server-2.1.1-1.el7.x86_64.rpm
-  opscode-push-jobs-server-ctl reconfigure
-  export PATH=/opt/opscode/embedded/bin:$PATH
-  chmod 0644 /etc/delivery/delivery.pem
-  gem install knife-acl
-  knife group add user delivery admins -c /etc/opscode/pivotal.rb --server-url https://localhost/organizations/default
-  knife ssl fetch https://$1:8443
-  automate-ctl restart
-else
-  echo "usage: ./install-push-jobs.sh SERVER_NAME"
-  echo -e "example:\n\t./install-push-jobs.sh test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io"
-fi
-```
-
-This script installs the push jobs server package and configures Chef server to issue push jobs.
-
-Next, change the file mode to make the script executable.
+Next, [download the push jobs server package](https://downloads.chef.io/push-jobs-server/2.1.1). Here's an example for Ubuntu 14.04.
 
 ```bash
-# ~
-$ chmod +x install-push-jobs.sh
+$ wget https://packages.chef.io/files/stable/opscode-push-jobs-server/2.1.1/ubuntu/14.04/opscode-push-jobs-server_2.1.1-1_amd64.deb
 ```
 
-Next, run the script. Replace <% ph 'SERVER_NAME' %> with your AWS OpsWorks instance's FQDN, for example, **test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io**.
+Next, run [chef-server-ctl install](https://docs.chef.io/ctl_chef_server.html#install) to install the package. Here's an example.
 
 ```bash
-# ~
-$ sudo ./install-push-jobs.sh SERVER_NAME
+$ sudo chef-server-ctl install opscode-push-jobs-server --path /home/ubuntu/opscode-push-jobs-server_2.1.1-1_amd64.deb
 ```
 
-Here's an example. Sample output is omitted for brevity.
+Finally, apply the updated configuration.
 
 ```bash
-# ~
-$ sudo ./install-push-jobs.sh test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io
+$ sudo chef-server-ctl reconfigure
+```
+
+```bash
+$ sudo opscode-push-jobs-server-ctl reconfigure
 ```
 
 [END_BOX]
 
 [START_BOX]
 
-### 4. Fetch Chef server's SSL certificate on your runner
-
-Earlier, you [enabled inbound network access](/tutorials/deploy-infrastructure/rhel/opsworks/set-up-opsworks#step3) to port 8443 through your AWS OpsWorks server's security group. You did so because runners require a trusted connection to the Chef server to initiate push jobs.
-
-To establish trust, you run the `knife ssl fetch` command from your runner. From your workstation, switch to the SSH connection to your runner (or reconnect if you've closed the connection) and run the following command, replacing <% ph 'SERVER' %> with your AWS OpsWorks server's FQDN.
-
-```bash
-$ sudo knife ssl fetch -s https://SERVER:8443 -c /var/opt/delivery/workspace/.chef/knife.rb
-```
-
-Here's an example.
-
-```bash
-$ sudo knife ssl fetch -s https://test-bwjnavoadsiq2jkd.us-east-1.opsworks-cm.io:8443 -c /var/opt/delivery/workspace/.chef/knife.rb
-
-WARNING: Certificates from test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io will be fetched and placed in your trusted_cert
-directory (/etc/chef/trusted_certs).
-
-Knife has no means to verify these are the correct certificates. You should
-verify the authenticity of these certificates after downloading.
-
-Adding certificate for test-t8g63tmuzohfpopb_us-east-1_opsworks-cm_io in /etc/chef/trusted_certs/test-t8g63tmuzohfpopb_us-east-1_opsworks-cm_io.crt
-```
-
-If you have more than one runner, repeat the process on each runner.
-
-[END_BOX]
-
-[START_BOX]
-
-## 5. Get the delivery-base cookbook
+## 4. Get the delivery-base cookbook
 
 The `delivery-truck` cookbook relies on push jobs to run `chef-client` on nodes as the pipeline runs. It therefore requires each node to include the [push-jobs](https://github.com/chef-cookbooks/push-jobs) cookbook in its run-list. The `push-jobs` cookbook installs the push jobs client package and sets it up to run as a service.
 
@@ -248,28 +168,10 @@ Installing runit (3.0.5)
 Installing yum-epel (2.1.1)
 ```
 
-Finally, run `berks upload` to upload `delivery-base` and its dependencies to Chef server. The syntax varies slightly between Windows and other operating systems. Here are a few examples.
-
-**Linux and Mac OS X**
+Finally, run `berks upload` to upload `delivery-base` and its dependencies to Chef server.
 
 ```bash
 # ~/learn-chef/cookbooks/delivery-base
-$ SSL_CERT_FILE='../../.chef/ca_certs/opsworks-cm-ca-2016-root.pem' berks upload
-Uploaded chef-ingredient (0.21.2) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
-Skipping compat_resource (12.16.3) (frozen)
-Uploaded delivery-base (0.2.2) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
-Uploaded packagecloud (0.2.5) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
-Uploaded push-jobs (3.3.0) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
-Uploaded runit (3.0.5) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
-Uploaded yum-epel (2.1.1) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
-```
-
-
-**Windows**
-
-```ps
-# ~/learn-chef/cookbooks/delivery-base
-$ $env:SSL_CERT_FILE='../../.chef/ca_certs/opsworks-cm-ca-2016-root.pem'
 $ berks upload
 Uploaded chef-ingredient (0.21.2) to: 'https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:443/organizations/default'
 Skipping compat_resource (12.16.3) (frozen)
@@ -287,13 +189,18 @@ Run `knife cookbook list` to verify `delivery-base` and its dependencies were su
 ```bash
 # ~/learn-chef/cookbooks/delivery-base
 $ knife cookbook list
-chef-ingredient    0.21.2
+chef-client        7.1.0
+chef-ingredient    1.0.0
 compat_resource    12.16.3
-delivery-base      0.2.2
-learn_chef_httpd   0.2.0
+cron               3.0.0
+delivery-base      0.2.3
+learn_chef_httpd   0.1.0
+logrotate          2.1.0
+ohai               4.2.3
 packagecloud       0.2.5
-push-jobs          3.3.0
+push-jobs          4.0.0
 runit              3.0.5
+windows            2.1.1
 yum-epel           2.1.1
 ```
 
@@ -308,7 +215,7 @@ $ cd ~/learn-chef
 
 [START_BOX]
 
-## 6. Understand the role of Chef environments
+## 5. Understand the role of Chef environments
 
 Each of the Acceptance, Union, Rehearsal, and Delivered stages deploys build artifacts, or the pipeline's output, to some environment. For our project, this means running the `learn_chef_httpd` cookbook on the infrastructure environments for each of the Acceptance, Union, Rehearsal, and Delivered stages.
 
@@ -349,7 +256,7 @@ Because the push job's search mechanism finds all nodes that are associated with
 
 [START_BOX]
 
-## 7. Create the Chef environments
+## 6. Create the Chef environments
 
 Next, create the Chef environments. Run the following [knife environment create](https://docs.chef.io/knife_environment.html#create) command to create the environment for the Acceptance stage.
 
@@ -387,11 +294,11 @@ union
 
 [START_BOX]
 
-## 8. Bootstrap your nodes
+## 7. Bootstrap your nodes
 
 Now that you have the required environments set up and the `delivery-base` cookbook on your Chef server, you're ready to bootstrap your infrastructure nodes.
 
-The process is similar to the one you did in the [Manage a node](/tutorials/manage-a-node/rhel/opsworks/bootstrap-your-node) tutorial with two minor variations.
+The process is similar to the one you did in the [Manage a node](/tutorials/manage-a-node/rhel/automate/bootstrap-your-node) tutorial with two minor variations.
 
 * Each node's run-list contains two recipes &ndash; the `delivery-base` cookbook's default recipe and the `learn_chef_httpd` cookbook's default recipe.
 * Each node is associated with a Chef environment that you created in the previous step.
@@ -627,7 +534,7 @@ Tags:
 
 The **Recipes** part contains the node's expanded run-list. For example, the `delivery-base` cookbook's default recipe includes the `push-jobs` cookbook's default recipe ([source code](https://github.com/chef-cookbooks/delivery-base/blob/master/recipes/default.rb)), which in turn includes other recipes ([source code](https://github.com/chef-cookbooks/push-jobs/blob/master/recipes/default.rb)).
 
-In the _Manage a node_ tutorial, you used Chef Automate's visibility feature to [view your node from the dashboard](/tutorials/manage-a-node/rhel/opsworks/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
+In the _Manage a node_ tutorial, you used Chef Automate's visibility feature to [view your node from the dashboard](/tutorials/manage-a-node/rhel/automate/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
 
 From the Chef Automate web interface, select **Nodes**. From the search box at the top of the page, enter **node_name: *-node** to display only the nodes whose names end with "-node", then click the search button.
 
@@ -657,7 +564,7 @@ You can set up a distinct runtime environment for each of the Acceptance, Union,
 
 [START_BOX]
 
-## 9. Use push jobs to run chef-client a second time
+## 8. Use push jobs to run chef-client a second time
 
 The bootstrap process performed an initial `chef-client` run on your nodes. In previous tutorials, such as _Manage a node_, you ran `knife ssh` from your workstation to trigger `chef-client` remotely on your node.
 
@@ -665,9 +572,9 @@ Recall that your runner performs build tasks as changes move through Chef Automa
 
 Before pushing a change through the pipeline, first verify that your runner can successfully submit push jobs to your nodes. You'll run push jobs in stages; each stage will use a search query that's more constrained. Doing so will help diagnose any issues in your setup.
 
-From your workstation, switch to the SSH connection to your runner (or reconnect if you've closed the connection).
+From your workstation, create an SSH connection to your runner.
 
-Run `knife node status` to to see which nodes are available to accept push jobs.
+Then run `knife node status` to to see which nodes are available to accept push jobs.
 
 ```bash
 $ sudo knife node status --config /var/opt/delivery/workspace/etc/delivery.rb
@@ -683,22 +590,22 @@ Next, run the following `knife job start` command to run `chef-client` on each n
 
 ```bash
 $ sudo knife job start 'chef-client' --search '(recipes:learn_chef_httpd*)' --config /var/opt/delivery/workspace/etc/delivery.rb
-Started.  Job ID: c3d2560a38edd525a858f5ada7c6716d
+Started.  Job ID: b71bd578992b22e088b1d9d83d0d8cf8
 .Running (1/4 in progress) ...
-.....Complete.
+....Complete.
 command:     chef-client
-created_at:  Mon, 30 Jan 2017 20:47:26 GMT
+created_at:  Wed, 22 Feb 2017 15:14:48 GMT
 env:
-id:          c3d2560a38edd525a858f5ada7c6716d
+id:          b71bd578992b22e088b1d9d83d0d8cf8
 nodes:
   succeeded:
+    acceptance-node
     delivered-node
     rehearsal-node
     union-node
-    acceptance-node
 run_timeout: 3600
 status:      complete
-updated_at:  Mon, 30 Jan 2017 20:47:32 GMT
+updated_at:  Wed, 22 Feb 2017 15:14:53 GMT
 ```
 
 As expected, `chef-client` ran on all four of your nodes.
@@ -707,22 +614,22 @@ Next, constrain the query to include nodes that contain both the `learn_chef_htt
 
 ```bash
 $ sudo knife job start 'chef-client' --search '(recipes:learn_chef_httpd*) AND (recipes:push-jobs*)' --config /var/opt/delivery/workspace/etc/delivery.rb
-Started.  Job ID: c3d2560a38ede8f8ec23f18cca3ebb7f
+Started.  Job ID: b71bd578992b734a894184627439a6bc
 .Running (1/4 in progress) ...
-.....Complete.
+....Complete.
 command:     chef-client
-created_at:  Mon, 30 Jan 2017 20:48:01 GMT
+created_at:  Wed, 22 Feb 2017 15:15:28 GMT
 env:
-id:          c3d2560a38ede8f8ec23f18cca3ebb7f
+id:          b71bd578992b734a894184627439a6bc
 nodes:
   succeeded:
-    rehearsal-node
     acceptance-node
     delivered-node
+    rehearsal-node
     union-node
 run_timeout: 3600
 status:      complete
-updated_at:  Mon, 30 Jan 2017 20:48:07 GMT
+updated_at:  Wed, 22 Feb 2017 15:15:33 GMT
 ```
 
 Again, `chef-client` ran on all four of your nodes.
@@ -731,25 +638,23 @@ Finally, constrain the query to include only the node associated with the Accept
 
 ```bash
 $ sudo knife job start 'chef-client' --search '(recipes:learn_chef_httpd*) AND (recipes:push-jobs*) AND chef_environment:acceptance-default-my-org-learn_chef_httpd-master' --config /var/opt/delivery/workspace/etc/delivery.rb
-Started.  Job ID: c3d2560a38edfd9984ccc50cbbb71cf2
+Started.  Job ID: b71bd578992bde5a6a58bb3c1964b915
 .Running (1/1 in progress) ...
-.....Complete.
+....Complete.
 command:     chef-client
-created_at:  Mon, 30 Jan 2017 20:48:34 GMT
+created_at:  Wed, 22 Feb 2017 15:15:50 GMT
 env:
-id:          c3d2560a38edfd9984ccc50cbbb71cf2
+id:          b71bd578992bde5a6a58bb3c1964b915
 nodes:
   succeeded: acceptance-node
 run_timeout: 3600
 status:      complete
-updated_at:  Mon, 30 Jan 2017 20:48:39 GMT
+updated_at:  Wed, 22 Feb 2017 15:15:55 GMT
 ```
 
 This time, `chef-client` ran only on the node named `acceptance-node`, as expected.
 
 Everything checks out. You can now close your SSH connection.
-
-[COMMENT] Unlike your runner, if you stop your EC2 instances when you're done for the day, you do not need to take any special actions when you restart your infrastructure nodes. Push jobs heartbeat messages are sent from the client (your nodes) to the Chef server. Therefore, your nodes' IP addresses and domain names do not need to be fixed.
 
 [END_BOX]
 
