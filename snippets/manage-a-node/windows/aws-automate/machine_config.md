@@ -14,7 +14,7 @@ This tutorial was last tested using this configuration:
   * **Region:** us-east-1
   * **AMI ID:** ami-abf616bd
   * **Instance type:** t2.medium
-  * **Software:** Chef client 12.18.31
+  * **Software:** Chef client 12.19.33
 <br /><br />
 * A workstation running Ubuntu 14.04 on Amazon Web Services
   * **Region:** us-east-1
