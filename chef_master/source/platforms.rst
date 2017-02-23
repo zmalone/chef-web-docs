@@ -54,7 +54,7 @@ The following table lists the Foundational platforms for the chef-client and oha
      - ``12.04``, ``14.04``, ``16.04``
    * - Microsoft Windows
      - ``x86``, ``x86_64``
-     - ``2008r2``, ``2012``, ``2012r2``, ``7``, ``8``, ``8.1``, ``10``
+     - ``2008r2``, ``2012``, ``2012r2``, ``2016``,``7``, ``8``, ``8.1``, ``10``
    * - Cisco NX-OS
      - ``x86_64``
      - ``7``
@@ -175,7 +175,7 @@ The following table lists the Foundational platforms for the Chef DK:
      - ``12.04``, ``14.04``, ``16.04``
    * - Microsoft Windows
      -
-     - ``7``, ``8``, ``8.1``, ``10``, ``2008 R2``, ``2012``, ``2012 R2``
+     - ``7``, ``8``, ``8.1``, ``10``, ``2008 R2``, ``2012``, ``2012 R2``, ``2016``
 
 Other Platforms
 -----------------------------------------------------
@@ -296,6 +296,6 @@ The following table lists the Foundational platforms for the Chef push jobs:
      - ``12.04``, ``14.04``
    * - Microsoft Windows
      - ``x86``, ``x86_64``
-     - ``2008r2``, ``2012``, ``2012r2``, ``7``, ``8``, ``8.1``, ``10``
+     - ``2008r2``, ``2012``, ``2012r2``, ``2016``,``7``, ``8``, ``8.1``, ``10``
 
 .. end_tag
