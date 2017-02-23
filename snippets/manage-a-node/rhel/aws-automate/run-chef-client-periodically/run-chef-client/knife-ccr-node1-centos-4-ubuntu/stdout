@@ -1,99 +1,99 @@
-172.31.48.243 Starting Chef Client, version 12.18.31
-172.31.48.243 resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_httpd::default"]
-172.31.48.243 Synchronizing Cookbooks:
-172.31.48.243   - chef-client (7.1.0)
-172.31.48.243   - cron (3.0.0)
-172.31.48.243   - logrotate (2.1.0)
-172.31.48.243   - compat_resource (12.16.3)
-172.31.48.243   - windows (2.1.1)
-172.31.48.243   - learn_chef_httpd (0.3.1)
-172.31.48.243   - ohai (4.2.3)
-172.31.48.243 Installing Cookbook Gems:
-172.31.48.243 Compiling Cookbooks...
-172.31.48.243 Converging 14 resources
-172.31.48.243 Recipe: chef-client::systemd_service
-172.31.48.243   * directory[/var/run/chef] action create
-172.31.48.243     - create new directory /var/run/chef
-172.31.48.243     - change owner from '' to 'root'
-172.31.48.243     - change group from '' to 'root'
-172.31.48.243     - restore selinux security context
-172.31.48.243   * directory[/var/cache/chef] action create
-172.31.48.243     - create new directory /var/cache/chef
-172.31.48.243     - change owner from '' to 'root'
-172.31.48.243     - change group from '' to 'root'
-172.31.48.243     - restore selinux security context
-172.31.48.243   * directory[/var/lib/chef] action create
-172.31.48.243     - create new directory /var/lib/chef
-172.31.48.243     - change owner from '' to 'root'
-172.31.48.243     - change group from '' to 'root'
-172.31.48.243     - restore selinux security context
-172.31.48.243   * directory[/var/log/chef] action create
-172.31.48.243     - create new directory /var/log/chef
-172.31.48.243     - change mode from '' to '0755'
-172.31.48.243     - change owner from '' to 'root'
-172.31.48.243     - change group from '' to 'root'
-172.31.48.243     - restore selinux security context
-172.31.48.243   * directory[/etc/chef] action create (up to date)
-172.31.48.243   * template[/etc/systemd/system/chef-client.service] action create
-172.31.48.243     - create new file /etc/systemd/system/chef-client.service
-172.31.48.243     - update content in file /etc/systemd/system/chef-client.service from none to 62ed56
-172.31.48.243     --- /etc/systemd/system/chef-client.service	2017-02-16 14:30:49.522874024 +0000
-172.31.48.243     +++ /etc/systemd/system/.chef-chef-client20170216-10634-lij8zp.service	2017-02-16 14:30:49.521874036 +0000
-172.31.48.243     @@ -1 +1,14 @@
-172.31.48.243     +[Unit]
-172.31.48.243     +Description=Chef Client daemon
-172.31.48.243     +After=network.target auditd.service
-172.31.48.243     +
-172.31.48.243     +[Service]
-172.31.48.243     +EnvironmentFile=/etc/sysconfig/chef-client
-172.31.48.243     +ExecStart=/usr/bin/chef-client -c $CONFIG -i $INTERVAL -s $SPLAY $OPTIONS
-172.31.48.243     +ExecReload=/bin/kill -HUP $MAINPID
-172.31.48.243     +SuccessExitStatus=3
-172.31.48.243     +Restart=on-failure
-172.31.48.243     +
-172.31.48.243     +[Install]
-172.31.48.243     +WantedBy=multi-user.target
-172.31.48.243     - change mode from '' to '0644'
-172.31.48.243     - restore selinux security context
-172.31.48.243   * template[/etc/sysconfig/chef-client] action create
-172.31.48.243     - create new file /etc/sysconfig/chef-client
-172.31.48.243     - update content in file /etc/sysconfig/chef-client from none to 6a32a6
-172.31.48.243     --- /etc/sysconfig/chef-client	2017-02-16 14:30:49.544873751 +0000
-172.31.48.243     +++ /etc/sysconfig/.chef-chef-client20170216-10634-1jdji2t	2017-02-16 14:30:49.544873751 +0000
-172.31.48.243     @@ -1 +1,15 @@
-172.31.48.243     +# Configuration file for the chef-client service
-172.31.48.243     +
-172.31.48.243     +CONFIG=/etc/chef/client.rb
-172.31.48.243     +PIDFILE=/var/run/chef/client.pid
-172.31.48.243     +#LOCKFILE=/var/lock/subsys/chef-client
-172.31.48.243     +# Sleep interval between runs.
-172.31.48.243     +# This value is in seconds.
-172.31.48.243     +INTERVAL=300
-172.31.48.243     +# Maximum amount of random delay before starting a run. Prevents every client
-172.31.48.243     +# from contacting the server at the exact same time.
-172.31.48.243     +# This value is in seconds.
-172.31.48.243     +SPLAY=60
-172.31.48.243     +# Any additional chef-client options.
-172.31.48.243     +OPTIONS=""
-172.31.48.243     - change mode from '' to '0644'
-172.31.48.243     - restore selinux security context
-172.31.48.243   * service[chef-client] action enable
-172.31.48.243     - enable service service[chef-client]
-172.31.48.243   * service[chef-client] action start
-172.31.48.243     - start service service[chef-client]
-172.31.48.243 Recipe: chef-client::delete_validation
-172.31.48.243   * file[/etc/chef/validation.pem] action delete (up to date)
-172.31.48.243 Recipe: learn_chef_httpd::default
-172.31.48.243   * yum_package[httpd] action install (up to date)
-172.31.48.243   * service[httpd] action enable (up to date)
-172.31.48.243   * service[httpd] action start (up to date)
-172.31.48.243   * group[web_admin] action create (up to date)
-172.31.48.243   * linux_user[web_admin] action create (up to date)
-172.31.48.243   * template[/var/www/html/index.html] action create (up to date)
-172.31.48.243 Recipe: chef-client::systemd_service
-172.31.48.243   * service[chef-client] action restart
-172.31.48.243     - restart service service[chef-client]
-172.31.48.243 
-172.31.48.243 Running handlers:
-172.31.48.243 Running handlers complete
-172.31.48.243 Chef Client finished, 9/17 resources updated in 05 seconds
+172.31.58.213 Starting Chef Client, version 12.18.31
+172.31.58.213 resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_httpd::default"]
+172.31.58.213 Synchronizing Cookbooks:
+172.31.58.213   - chef-client (7.1.0)
+172.31.58.213   - cron (3.0.0)
+172.31.58.213   - logrotate (2.1.0)
+172.31.58.213   - compat_resource (12.16.3)
+172.31.58.213   - windows (2.1.1)
+172.31.58.213   - learn_chef_httpd (0.3.1)
+172.31.58.213   - ohai (4.2.3)
+172.31.58.213 Installing Cookbook Gems:
+172.31.58.213 Compiling Cookbooks...
+172.31.58.213 Converging 14 resources
+172.31.58.213 Recipe: chef-client::systemd_service
+172.31.58.213   * directory[/var/run/chef] action create
+172.31.58.213     - create new directory /var/run/chef
+172.31.58.213     - change owner from '' to 'root'
+172.31.58.213     - change group from '' to 'root'
+172.31.58.213     - restore selinux security context
+172.31.58.213   * directory[/var/cache/chef] action create
+172.31.58.213     - create new directory /var/cache/chef
+172.31.58.213     - change owner from '' to 'root'
+172.31.58.213     - change group from '' to 'root'
+172.31.58.213     - restore selinux security context
+172.31.58.213   * directory[/var/lib/chef] action create
+172.31.58.213     - create new directory /var/lib/chef
+172.31.58.213     - change owner from '' to 'root'
+172.31.58.213     - change group from '' to 'root'
+172.31.58.213     - restore selinux security context
+172.31.58.213   * directory[/var/log/chef] action create
+172.31.58.213     - create new directory /var/log/chef
+172.31.58.213     - change mode from '' to '0755'
+172.31.58.213     - change owner from '' to 'root'
+172.31.58.213     - change group from '' to 'root'
+172.31.58.213     - restore selinux security context
+172.31.58.213   * directory[/etc/chef] action create (up to date)
+172.31.58.213   * template[/etc/systemd/system/chef-client.service] action create
+172.31.58.213     - create new file /etc/systemd/system/chef-client.service
+172.31.58.213     - update content in file /etc/systemd/system/chef-client.service from none to 62ed56
+172.31.58.213     --- /etc/systemd/system/chef-client.service	2017-02-22 18:02:51.178840756 +0000
+172.31.58.213     +++ /etc/systemd/system/.chef-chef-client20170222-10646-1gu3uyx.service	2017-02-22 18:02:51.177840744 +0000
+172.31.58.213     @@ -1 +1,14 @@
+172.31.58.213     +[Unit]
+172.31.58.213     +Description=Chef Client daemon
+172.31.58.213     +After=network.target auditd.service
+172.31.58.213     +
+172.31.58.213     +[Service]
+172.31.58.213     +EnvironmentFile=/etc/sysconfig/chef-client
+172.31.58.213     +ExecStart=/usr/bin/chef-client -c $CONFIG -i $INTERVAL -s $SPLAY $OPTIONS
+172.31.58.213     +ExecReload=/bin/kill -HUP $MAINPID
+172.31.58.213     +SuccessExitStatus=3
+172.31.58.213     +Restart=on-failure
+172.31.58.213     +
+172.31.58.213     +[Install]
+172.31.58.213     +WantedBy=multi-user.target
+172.31.58.213     - change mode from '' to '0644'
+172.31.58.213     - restore selinux security context
+172.31.58.213   * template[/etc/sysconfig/chef-client] action create
+172.31.58.213     - create new file /etc/sysconfig/chef-client
+172.31.58.213     - update content in file /etc/sysconfig/chef-client from none to 6a32a6
+172.31.58.213     --- /etc/sysconfig/chef-client	2017-02-22 18:02:51.199841017 +0000
+172.31.58.213     +++ /etc/sysconfig/.chef-chef-client20170222-10646-gro5n8	2017-02-22 18:02:51.199841017 +0000
+172.31.58.213     @@ -1 +1,15 @@
+172.31.58.213     +# Configuration file for the chef-client service
+172.31.58.213     +
+172.31.58.213     +CONFIG=/etc/chef/client.rb
+172.31.58.213     +PIDFILE=/var/run/chef/client.pid
+172.31.58.213     +#LOCKFILE=/var/lock/subsys/chef-client
+172.31.58.213     +# Sleep interval between runs.
+172.31.58.213     +# This value is in seconds.
+172.31.58.213     +INTERVAL=300
+172.31.58.213     +# Maximum amount of random delay before starting a run. Prevents every client
+172.31.58.213     +# from contacting the server at the exact same time.
+172.31.58.213     +# This value is in seconds.
+172.31.58.213     +SPLAY=60
+172.31.58.213     +# Any additional chef-client options.
+172.31.58.213     +OPTIONS=""
+172.31.58.213     - change mode from '' to '0644'
+172.31.58.213     - restore selinux security context
+172.31.58.213   * service[chef-client] action enable
+172.31.58.213     - enable service service[chef-client]
+172.31.58.213   * service[chef-client] action start
+172.31.58.213     - start service service[chef-client]
+172.31.58.213 Recipe: chef-client::delete_validation
+172.31.58.213   * file[/etc/chef/validation.pem] action delete (up to date)
+172.31.58.213 Recipe: learn_chef_httpd::default
+172.31.58.213   * yum_package[httpd] action install (up to date)
+172.31.58.213   * service[httpd] action enable (up to date)
+172.31.58.213   * service[httpd] action start (up to date)
+172.31.58.213   * group[web_admin] action create (up to date)
+172.31.58.213   * linux_user[web_admin] action create (up to date)
+172.31.58.213   * template[/var/www/html/index.html] action create (up to date)
+172.31.58.213 Recipe: chef-client::systemd_service
+172.31.58.213   * service[chef-client] action restart
+172.31.58.213     - restart service service[chef-client]
+172.31.58.213 
+172.31.58.213 Running handlers:
+172.31.58.213 Running handlers complete
+172.31.58.213 Chef Client finished, 9/17 resources updated in 05 seconds
