@@ -4,7 +4,7 @@ short_title: 'Add a feature'
 order: 6
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 25 minutes
-snippet_path: deploy-infrastructure/rhel/automate/set-up-your-chef-server
+snippet_path: deploy-infrastructure/ubuntu/automate/set-up-your-chef-server
 snippet_workstation: ubuntu
 headings: [
   { label: '1. Create the branch', href: '#step1' },
@@ -15,9 +15,9 @@ headings: [
 ---
 At this point, you've validated that your pipeline works and you've brought up infrastructure to receive build artifacts. You're ready to use Chef Automate for what it was intended &ndash; moving changes quickly and safely all the way from your workstation to production.
 
-In this part, you add a feature to the web configuration by changing the `learn_chef_httpd` cookbook.
+In this part, you add a feature to the web configuration by changing the `learn_chef_apache2` cookbook.
 
-Although in practice you wouldn't typically manage web content directly in your Chef cookbooks, for learning purposes you'll modify the HTML template to display information about your server, similar to [what you did](/tutorials/manage-a-node/rhel/automate/update-your-nodes-configuration/) in the _Manage a node_ tutorial.
+Although in practice you wouldn't typically manage web content directly in your Chef cookbooks, for learning purposes you'll modify the HTML template to display information about your server, similar to [what you did](/tutorials/manage-a-node/ubuntu/automate/update-your-nodes-configuration/) in the _Manage a node_ tutorial.
 
 You'll also learn how to verify your work from your workstation before you submit the change to the pipeline.
 
@@ -30,16 +30,16 @@ Let's start by creating a feature branch for your change.
 You're already likely on the `master` branch. If you're not, you can run the following commands to switch to `master` and synchronize with the remote Git repo.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git checkout master
 Already on 'master'
 Your branch is up-to-date with 'delivery/master'.
 ```
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git pull delivery master --prune
-From ssh://default@ec2-54-85-148-63.compute-1.amazonaws.com:8989/default/my-org/learn_chef_httpd
+From ssh://default@ec2-54-85-148-63.compute-1.amazonaws.com:8989/default/my-org/learn_chef_apache2
  * branch            master     -> FETCH_HEAD
 Already up-to-date.
 ```
@@ -47,7 +47,7 @@ Already up-to-date.
 Next, create a feature branch named `server_info`.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git checkout -b server_info
 Switched to a new branch 'server_info'
 ```
@@ -58,7 +58,7 @@ Switched to a new branch 'server_info'
 
 ## 2. Modify the HTML template
 
-Next, modify the HTML template file, <% fp '~/learn-chef/cookbooks/learn_chef_httpd/templates/index.html.erb' %>, like this.
+Next, modify the HTML template file, <% fp '~/learn-chef/cookbooks/learn_chef_apache2/templates/index.html.erb' %>, like this.
 
 <%= partial 'html-template' %>
 
@@ -85,7 +85,7 @@ Another approach is to run [delivery local](https://docs.chef.io/ctl_delivery.ht
 Your <% fp '.delivery/project.toml' %> file looks like this.
 
 ```toml
-# ~/learn-chef/cookbooks/learn_chef_httpd/.delivery/project.toml
+# ~/learn-chef/cookbooks/learn_chef_apache2/.delivery/project.toml
 # Delivery Prototype for Local Phases Execution
 #
 # The purpose of this file is to prototype a new way to execute
@@ -115,12 +115,12 @@ The details of how the various test tools work is beyond the scope of this tutor
 
 The `unit`, `lint` and `syntax` phases are part of the Verify and Build stages. The `provision`, `deploy`, and `smoke` phases are part of the Acceptance, Union, Rehearsal, and Delivered stages. The `cleanup` phase is provided as a convenient way to clean up any resources created by the previous phases.
 
-Let's start by running the `unit` phase locally. The `learn_chef_httpd` cookbook's <% fp 'spec' %> directory contains just the default unit test. RSpec examines your source code without actually running it. The default test verifies that the resources in the cookbook's default recipe are properly defined and would converge without error.
+Let's start by running the `unit` phase locally. The `learn_chef_apache2` cookbook's <% fp 'spec' %> directory contains just the default unit test. RSpec examines your source code without actually running it. The default test verifies that the resources in the cookbook's default recipe are properly defined and would converge without error.
 
-From the <% fp '~/learn-chef/cookbooks/learn_chef_httpd' %> directory, run `delivery local unit` to run the unit phase.
+From the <% fp '~/learn-chef/cookbooks/learn_chef_apache2' %> directory, run `delivery local unit` to run the unit phase.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ delivery local unit
 Chef Delivery
 Running Unit Phase
@@ -135,7 +135,7 @@ You'll see no errors reported.
 Next, run `delivery local lint` to run lint testing.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ delivery local lint
 Chef Delivery
 Running Lint Phase
@@ -150,7 +150,7 @@ The lint phase also passes.
 Finally, run `delivery local syntax` to perform syntax checks.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ delivery local syntax
 Chef Delivery
 Running Syntax Phase
@@ -206,21 +206,21 @@ On branch server_info
 nothing to commit, working directory clean
 ```
 
-When a cookbook changes, it's important to update its version to ensure that a given set of functionality is tied to a given version. You [learned about cookbook versions](/tutorials/manage-a-node/rhel/automate/update-your-nodes-configuration#step2) in the _Manage a node_ tutorial.
+When a cookbook changes, it's important to update its version to ensure that a given set of functionality is tied to a given version. You [learned about cookbook versions](/tutorials/manage-a-node/ubuntu/automate/update-your-nodes-configuration#step2) in the _Manage a node_ tutorial.
 
-Recall that a cookbook's version is listed in its <% fp 'metadata.rb' %> file. Here's an example for the `learn_chef_httpd` cookbook.
+Recall that a cookbook's version is listed in its <% fp 'metadata.rb' %> file. Here's an example for the `learn_chef_apache2` cookbook.
 
 ```ruby
-# ~/learn-chef/cookbooks/learn_chef_httpd/metadata.rb
-name 'learn_chef_httpd'
+# ~/learn-chef/cookbooks/learn_chef_apache2/metadata.rb
+name 'learn_chef_apache2'
 maintainer 'The Authors'
 maintainer_email 'you@example.com'
 license 'all_rights'
-description 'Installs/Configures learn_chef_httpd'
-long_description 'Installs/Configures learn_chef_httpd'
+description 'Installs/Configures learn_chef_apache2'
+long_description 'Installs/Configures learn_chef_apache2'
 version '0.1.0'
-issues_url 'https://github.com/learn-chef/learn_chef_httpd/issues' if respond_to?(:issues_url)
-source_url 'https://github.com/learn-chef/learn_chef_httpd' if respond_to?(:source_url)
+issues_url 'https://github.com/learn-chef/learn_chef_apache2/issues' if respond_to?(:issues_url)
+source_url 'https://github.com/learn-chef/learn_chef_apache2' if respond_to?(:source_url)
 ```
 
 You run the [delivery review](https://docs.chef.io/ctl_delivery.html#delivery-review) command to submit your change. Before you do that, you could manually update the version and commit that change to your branch. Most Chef users follow [Semantic Versioning](http://semver.org) rules.
@@ -230,16 +230,16 @@ Another approach is to pass the `--auto-bump` argument to `delivery review` to a
 Run `delivery review --auto-bump` to submit your changes to the pipeline.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ delivery review --auto-bump
 Chef Delivery
-Project learn_chef_httpd is a cookbook
+Project learn_chef_apache2 is a cookbook
 Validating version in metadata
 The version hasn't been updated (0.1.0)
 Bumping version to: 0.1.1
 Review for change server_info targeted for pipeline master
 Created new patchset
-https://ec2-54-85-148-63.compute-1.amazonaws.com/e/default/#/organizations/my-org/projects/learn_chef_httpd/changes/3556e49f-8180-4cb0-abb2-314c6a731684
+https://ec2-54-85-148-63.compute-1.amazonaws.com/e/default/#/organizations/my-org/projects/learn_chef_apache2/changes/e96f2cbd-7ab2-4018-8689-5e6e7a400a8e
 ```
 
 When the Chef Automate UI appears, trace the change's progress through the pipeline.
@@ -250,7 +250,7 @@ When the Chef Automate UI appears, trace the change's progress through the pipel
 1. Watch the change progress through the Build and Acceptance stages.
 1. After the Acceptance stage completes, navigate to the web server for your Acceptance environment in a second browser window. You'll see that the updated version of the web configuration shows additional server info.
 
-<img style="max-width:100%;" src="/assets/images/automate/web_server_info_rhel.png"/>
+<img style="max-width:100%;" src="/assets/images/automate/web_server_info_ubuntu.png"/>
 
 After you verify the change in Acceptance, click the **DELIVER** button. Watch the change progress through the Union, Rehearsal, and Delivered stages.
 
