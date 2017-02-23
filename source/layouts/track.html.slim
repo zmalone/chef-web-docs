@@ -1,3 +1,21 @@
 = wrap_layout :layout do
   .row
-    = yield
+    h1
+      = current_page.data.title
+    div
+      = yield
+    - current_page.data.modules.each_with_index do |module_id, index|
+      - page = find_page_by_id('modules', module_id)
+      - if page
+        div
+          h2
+            = index + 1
+            | &nbsp;
+            = page.data.title
+          div
+            = page.data.description
+          div
+            = page.data.level
+          user-progress-bar module="#{module_id}"
+          a.button.user-start-btn href="#{page.url}" module="#{module_id}"
+            | Start

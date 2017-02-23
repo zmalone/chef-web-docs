@@ -8,7 +8,7 @@ level: Beginner
 track_class: card-green
 category: Admin
 modules:
-- 1
-- 2
+- develop-locally
+- getting-started
 ---
 Infrastructure Automation content goes here
