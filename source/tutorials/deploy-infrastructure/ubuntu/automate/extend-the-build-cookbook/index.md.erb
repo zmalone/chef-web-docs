@@ -3,7 +3,7 @@ title: 'Extend the build cookbook'
 order: 7
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 30 minutes
-snippet_path: deploy-infrastructure/rhel/automate/set-up-your-chef-server
+snippet_path: deploy-infrastructure/ubuntu/automate/set-up-your-chef-server
 snippet_workstation: ubuntu
 headings: [
   { label: '1. Create a branch', href: '#step1' },
@@ -29,19 +29,19 @@ In this part, you implement the smoke phase to run cURL and verify that the web 
 First, checkout the `master` branch and pull down the latest changes from Chef Automate's Git server.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
 ```
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git pull delivery master --prune
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
 Unpacking objects: 100% (1/1), done.
-From ssh://default@ec2-54-85-148-63.compute-1.amazonaws.com:8989/default/my-org/learn_chef_httpd
+From ssh://default@ec2-54-85-148-63.compute-1.amazonaws.com:8989/default/my-org/learn_chef_apache2
  * branch            master     -> FETCH_HEAD
  * [new branch]      master     -> delivery/master
 Updating 6013461..c4243c6
@@ -54,7 +54,7 @@ Fast-forward
 Next, create a new branch named `smoke`.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git checkout -b smoke
 Switched to a new branch 'smoke'
 ```
@@ -67,10 +67,10 @@ Switched to a new branch 'smoke'
 
 Smoke tests are meant to be fast so that you quickly discover if the application or service is not working. For the web configuration, we'll simply run cURL to verify that the server responds with a 200 (OK) HTTP status code.
 
-Write your `smoke` recipe, <br><%fp '~/learn-chef/cookbooks/learn_chef_httpd/.delivery/build_cookbook/recipes/smoke.rb' %>,  like this.
+Write your `smoke` recipe, <br><%fp '~/learn-chef/cookbooks/learn_chef_apache2/.delivery/build_cookbook/recipes/smoke.rb' %>,  like this.
 
 ```ruby
-# ~/learn-chef/cookbooks/learn_chef_httpd/.delivery/build_cookbook/recipes/smoke.rb
+# ~/learn-chef/cookbooks/learn_chef_apache2/.delivery/build_cookbook/recipes/smoke.rb
 include_recipe 'delivery-truck::smoke'
 
 # Create a search query that matches the current environment.
@@ -105,7 +105,7 @@ Because automated testing using Test Kitchen is outside the scope of this tutori
 First, run `git status` to see what changes have not yet been staged.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git status
 On branch smoke
 Changes not staged for commit:
@@ -120,14 +120,14 @@ no changes added to commit (use "git add" and/or "git commit -a")
 Next, add <% fp 'smoke.rb' %> for staging.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git add .delivery/build_cookbook/recipes/smoke.rb
 ```
 
 Now commit the change.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git commit -m "Add smoke test"
 [smoke 51fdf29] Add smoke test
  1 file changed, 15 insertions(+), 6 deletions(-)
@@ -138,16 +138,16 @@ Finally, run `delivery review --auto-bump` to submit your changes to the pipelin
 
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ delivery review --auto-bump
 Chef Delivery
-Project learn_chef_httpd is a cookbook
+Project learn_chef_apache2 is a cookbook
 Validating version in metadata
 The version hasn't been updated (0.1.1)
 Bumping version to: 0.1.2
 Review for change smoke targeted for pipeline master
 Created new patchset
-https://ec2-54-85-148-63.compute-1.amazonaws.com/e/default/#/organizations/my-org/projects/learn_chef_httpd/changes/c353e6fb-62be-4e2b-8007-54651b41e209
+https://ec2-54-85-148-63.compute-1.amazonaws.com/e/default/#/organizations/my-org/projects/learn_chef_apache2/changes/4ddfbaee-ced4-4012-b8bf-cf99c6770d76
 ```
 
 Trace the change's progress through the pipeline to the Acceptance stage.
@@ -174,16 +174,16 @@ As your project evolves, you can implement additional phases such as quality, se
 Remember to integrate the latest changes into your local `master` branch before creating a new feature branch.
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git checkout master
 Switched to branch 'master'
 Your branch is up-to-date with 'delivery/master'.
 ```
 
 ```bash
-# ~/learn-chef/cookbooks/learn_chef_httpd
+# ~/learn-chef/cookbooks/learn_chef_apache2
 $ git pull delivery master --prune
-From ssh://default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd
+From ssh://default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_apache2
  x [deleted]         (none)     -> delivery/_for/master/smoke
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
@@ -242,7 +242,7 @@ In this tutorial you created a build cookbook that deploys a Chef cookbook. You 
 
 Along the way, you learned about Chef Automate's pipeline stages and phases. You configured them to run automated tests and to publish your changes. As a bonus, you got to practice your Git skills.
 
-Now's a great time to experiment further with your Chef Automate installation and practice the skills you just learned. Because Chef Automate is all about collaboration, a great next step is to [add a second user](https://docs.chef.io/delivery_users_and_roles.html) to your organization and have that user [set up a workstation to use it](/tutorials/deploy-infrastructure/rhel/automate/set-up-your-workstation/). Then add a new feature to the web configuration and watch it move down the pipeline. Even a small change such as adding CSS or a new unit test is enough to practice the workflow.
+Now's a great time to experiment further with your Chef Automate installation and practice the skills you just learned. Because Chef Automate is all about collaboration, a great next step is to [add a second user](https://docs.chef.io/delivery_users_and_roles.html) to your organization and have that user [set up a workstation to use it](/tutorials/deploy-infrastructure/ubuntu/automate/set-up-your-workstation/). Then add a new feature to the web configuration and watch it move down the pipeline. Even a small change such as adding CSS or a new unit test is enough to practice the workflow.
 
 Submit a change and use your established review process to approve and deliver new features. If you pair up with a coworker, you can perform the tasks that most closely map to your job roles.
 
