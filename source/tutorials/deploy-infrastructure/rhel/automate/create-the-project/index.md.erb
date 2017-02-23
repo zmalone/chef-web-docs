@@ -174,11 +174,8 @@ Next, run `delivery init` from your local repository directory.
 # ~/learn-chef/cookbooks/learn_chef_httpd
 $ delivery init
 Chef Delivery
-Loading configuration from /home/ubuntu/learn-chef/cookbooks/learn_chef_httpd
 Creating Delivery project...
   Delivery project named learn_chef_httpd was created.
-Creating Delivery git remote...
-  Remote 'delivery' added as ssh://admin@default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd.
 Pushing initial git history...
   No git history found for pipeline master, pushing local commits from branch master.
 Creating pipeline on Delivery server...
@@ -209,7 +206,7 @@ A browser window appears and the first stage of the pipeline, Verify, begins run
 
 When you run `delivery init`, two things happen. The first stage of the pipeline, Verify, begins and the Chef Automate web interface appears. With it, you can trace the progress of the cookbook as it moves through each stage and its associated phases.
 
-<img style="max-width:75%;" src="/assets/images/automate/wf-initialize-delivery-pipeline-verify.png"/>
+<img style="max-width:75%;" src="/assets/images/automate/wf-initialize-delivery-pipeline-verify-initial.png"/>
 
 It's a good idea to watch each pipeline phase run at least once to gain a better understanding of what happens during the process.
 
@@ -480,10 +477,9 @@ Run `delivery review` to submit your change to the `initialize-delivery-pipeline
 # ~/learn-chef/cookbooks/learn_chef_httpd
 $ delivery review
 Chef Delivery
-Loading configuration from /home/ubuntu/learn-chef/cookbooks/learn_chef_httpd
 Review for change initialize-delivery-pipeline targeted for pipeline master
 Created new patchset
-https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io/e/default/#/organizations/my-org/projects/learn_chef_httpd/changes/1ccf793c-cea9-4b61-a760-b2411ac40f4a
+https://ec2-54-85-148-63.compute-1.amazonaws.com/e/default/#/organizations/my-org/projects/learn_chef_httpd/changes/ca0d7d37-93ab-4b08-8bd4-ad0b60d82eb6
 ```
 
 [COMMENT] If you use GitHub, you know that pull requests let you tell others about your changes. The [delivery review](https://docs.chef.io/ctl_delivery.html#delivery-review) command is similar. It allows others to review your changes. Once approved, Chef Automate merges your changes into `master` and continues through the rest of the pipeline.
@@ -632,19 +628,16 @@ Now pull the latest from Chef Automate to your local repo.
 
 ```bash
 # ~/learn-chef/cookbooks/learn_chef_httpd
-$ git pull --prune
-From ssh://default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd
+$ git pull delivery master --prune
+From ssh://default@ec2-54-85-148-63.compute-1.amazonaws.com:8989/default/my-org/learn_chef_httpd
  x [deleted]         (none)     -> delivery/_for/master/initialize-delivery-pipeline
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 0 (delta 0)
 Unpacking objects: 100% (1/1), done.
-   466e572..0408294  master     -> delivery/master
-Updating 466e572..0408294
-Fast-forward
- .delivery/config.json |  7 ++++++-
- DELIVERY.md           | 10 ++++++++++
- 2 files changed, 16 insertions(+), 1 deletion(-)
- create mode 100644 DELIVERY.md
+ * [new branch]      master     -> delivery/master
+There are no candidates for merging among the refs that you just fetched.
+Generally this means that you provided a wildcard refspec which had no
+matches on the remote end.
 ```
 
 The [--prune](https://git-scm.com/docs/git-prune) option removes references to any remote-tracking branches that no longer exist on the remote server. `delivery/_for/master/initialize-delivery-pipeline` is an intermediate branch that Chef Automate creates as part of the integration process.
