@@ -1,6 +1,6 @@
 ---
 title: 'Manage a node'
-description: 'Learn how to manage a node here.'
+description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras pharetra, erat sed consectetur ultrices, metus diam mollis est, facilisis mollis magna risus eget velit.'
 order: 3
 level: Beginner
 ---
