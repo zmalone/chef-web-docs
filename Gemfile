@@ -7,7 +7,8 @@ gem 'middleman-minify-html','~> 3.4.1'
 gem 'builder',              '~> 3.2.3'
 gem 'redcarpet',            '~> 3.4.0'
 gem 'rb-fsevent',           '~> 0.9.8'
-gem 'slim',                 '~> 3.0.7'
+# TODO: Install Slim > 3.0.7 when it is available (adds Angular syntax support, see Slim README)
+gem 'slim', :git => 'https://github.com/slim-template/slim.git', :branch => 'master'
 gem 'chef-web-core', git: 'git@github.com:opscode/chef-web-core'
 gem 'aws-sdk', '~> 2.7.4'
 

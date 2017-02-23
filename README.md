@@ -43,7 +43,9 @@ A server process needs to be running in order to use Middleman.
 
 1. Start the Middleman server in a new terminal window, using chef-web-learn as the working directory.
 
-        $ bin/middleman server
+        $ npm start
+        OR
+        $ bundle exec middleman server
 
 1. The site should now be available locally on port 3001 using BrowserSync for live reloading during
     development, although the HTML will also be available on port 4567 via Middleman. 
