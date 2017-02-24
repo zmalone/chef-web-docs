@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
-import {Angular2TokenService} from 'angular2-token';
+import { Component, OnInit } from '@angular/core';
+import { Angular2TokenService } from 'angular2-token';
+import { UserProfileService } from './services/user-profile.service';
 
 const CHEF_API_HOST = 'http://localhost:3000/'
 
@@ -7,8 +8,8 @@ const CHEF_API_HOST = 'http://localhost:3000/'
   selector: 'app-root',
   template: (window as any).mainTemplate || '<div>No template found for app-root!</div>'
 })
-export class AppComponent {
-  constructor(private _tokenService: Angular2TokenService) {
+export class AppComponent implements OnInit {
+  constructor(private _tokenService: Angular2TokenService, private userProfileService:UserProfileService) {
     this._tokenService.init({
       apiBase: CHEF_API_HOST,
       oAuthBase: CHEF_API_HOST,
@@ -17,6 +18,10 @@ export class AppComponent {
         google: 'auth/google_oauth2'
       }
     });
+  }
+
+  ngOnInit() {
+    this.userProfileService.load(1)
   }
 
   public isAuthenticated = function(){

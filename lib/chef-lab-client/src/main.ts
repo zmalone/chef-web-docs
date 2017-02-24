@@ -7,4 +7,13 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule);
+try {
+  platformBrowserDynamic().bootstrapModule(AppModule).catch(function (e) {
+    console.error(e)
+  })
+} catch (e) {
+  console.log('Bootstrap error', e)
+  // Fallback to static HTML page without Angular enhancements
+  const appRoot = window.document.getElementsByTagName('app-root')
+  appRoot[0].innerHTML = (window as any).mainTemplate
+}
