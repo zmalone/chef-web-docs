@@ -4,15 +4,19 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { UserProfileService } from './services/user-profile.service'
-import { AppComponent } from './app.component';
-import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component';
-import { StampsComponent } from './components/stamps/stamps.component';
+import { UserStartBtnDirective } from './directives/user-start-btn.directive'
+import { AppComponent } from './app.component'
+import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
+import { UserModuleProgressComponent } from './components/user-module-progress/user-module-progress.component'
+import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
 
 @NgModule({
   declarations: [
+    UserStartBtnDirective,
     AppComponent,
     UserProgressBarComponent,
-    StampsComponent
+    UserModuleProgressComponent,
+    UserTrackProgressComponent
   ],
   imports: [
     BrowserModule,

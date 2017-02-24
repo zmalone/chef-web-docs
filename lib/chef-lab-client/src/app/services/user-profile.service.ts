@@ -8,22 +8,23 @@ export class UserProfileService {
   // constructor(private http: Http) {}
 
   public load(userId) {
-    // TODO: Cache the profile after it has loaded once
-    console.log('Loading user profile: ' + userId, Date.now())
     // TODO: Implement API, remove simulated async mock data, and refactor as needed
     // this.http.get('/user/' + userId).subscribe(res => this.activeUserProfile.next(res))
-    setTimeout(() => {
+    setInterval(() => {
       this.activeUserProfile.next({
         modules: {
           'develop-locally': {
-            progress: 42
+              progress: 100
           },
           'getting-started': {
-            progress: 88
+            progress: Math.floor(Math.random() * 100)
+          },
+          'learn-basics': {
+            progress: Math.floor(Math.random() * 100)
           }
         }
       })
-    }, 1000);
+    }, 3000);
     return this.activeUserProfile;
   }
 }
