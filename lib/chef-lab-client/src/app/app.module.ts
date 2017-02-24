@@ -4,8 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { ToastModule } from 'ng2-toastr';
 import { ErrorHandlerService } from './services/error-handler.service';
-//import { Ng2UiAuthModule } from 'ng2-ui-auth';
-//import { MyAuthConfig } from '../config';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { StampsComponent } from './components/stamps/stamps.component';

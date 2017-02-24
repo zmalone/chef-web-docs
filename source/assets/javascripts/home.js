@@ -37,3 +37,4 @@ $('.cls-modal').click(function(){
     $('#SignupModal').foundation('reveal','close')
     $('#loginModal').foundation('reveal','close')
 })
+
