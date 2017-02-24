@@ -11,8 +11,7 @@ module.exports = {
     extensions: ['.ts', '.js'],
     modules: [
       jsSrc,
-      path.join(__dirname, '..', '..', 'node_modules'),
-      path.join(jsSrc, '..', 'node_modules')
+      path.join(config.root.src, 'node_modules')
     ]
   },
 
@@ -23,7 +22,7 @@ module.exports = {
         loaders: [{
           loader: 'awesome-typescript-loader',
           options: {
-            configFileName: path.join(jsSrc, 'tsconfig.json')
+            configFileName: path.join(config.root.src, 'tsconfig.json')
           }
         } , 'angular2-template-loader']
       },
@@ -56,7 +55,7 @@ module.exports = {
       name: 'vendor',
       chunks: ['main'],
       minChunks: function(module) {
-        return module.resource && module.resource.startsWith(path.join(jsSrc, '..', 'node_modules'))
+        return module.resource && module.resource.includes('node_modules')
       }
     })
   ]
