@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { StampsComponent } from './stamps.component';
+import { UserModuleProgressComponent } from './user-module-progress.component';
 
-describe('StampsComponent', () => {
-  let component: StampsComponent;
-  let fixture: ComponentFixture<StampsComponent>;
+describe('UserModuleProgressComponent', () => {
+  let component: UserModuleProgressComponent;
+  let fixture: ComponentFixture<UserModuleProgressComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StampsComponent ]
+      declarations: [ UserModuleProgressComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StampsComponent);
+    fixture = TestBed.createComponent(UserModuleProgressComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

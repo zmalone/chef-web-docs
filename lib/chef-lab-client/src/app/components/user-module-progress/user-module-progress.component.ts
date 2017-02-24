@@ -2,10 +2,10 @@ import { Component, OnInit, Input } from '@angular/core';
 import { UserProfileService } from '../../services/user-profile.service';
 
 @Component({
-  selector: 'user-progress-bar',
-  templateUrl: './user-progress-bar.component.html'
+  selector: 'user-module-progress',
+  templateUrl: './user-module-progress.component.html'
 })
-export class UserProgressBarComponent implements OnInit {
+export class UserModuleProgressComponent implements OnInit {
   public progress:number
 
   @Input()
