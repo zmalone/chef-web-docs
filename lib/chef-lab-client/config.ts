@@ -7,7 +7,7 @@ import {IHttpInterceptor} from 'angular2-http-interceptor';
 
 export const GITHUB_CLIENT_ID = '1d62a4020e18ecc7445a';
 export const GOOGLE_CLIENT_ID = '10853652301-hflh57t29bvb6glnlc21uqibit8cp2eu.apps.googleusercontent.com';
-export const CHEF_API_CONFIG = {url:'http://localhost:3000/', clientId:''};
+export const CHEF_API_CONFIG = { url: process.env.API_ENDPOINT, clientId: '' };
 
 export class MyAuthConfig extends CustomConfig {
     defaultHeaders = {'Content-Type': 'application/json'};
