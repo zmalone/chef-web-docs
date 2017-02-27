@@ -26,18 +26,18 @@
           .row
             - data.tree['tracks'].each do |item|
               - filepath = item.last.values.first.sub(/\.[\w]+$/, '')
-              - item = sitemap.find_resource_by_path(filepath).data
+              - item = sitemap.find_resource_by_path(filepath)
               .large-6.medium-6.small-12.columns
-                .track-card class="#{item.track_class}"
+                .track-card class="#{item.data.track_class}"
                   h2
                     span
-                      = item.title
+                      = item.data.title
                     span.time
-                      = item.hours
+                      = item.data.hours
                       |  hrs
                   p.desc
-                    = item.description
-                  = link_to "Keep learning", filepath
+                    = item.data.description
+                  = link_to "Keep learning", item
                   .row
                     user-track-progress
                     ul.links
@@ -46,7 +46,7 @@
                       li
                         a href="" Beginner
                   .tag-img
-                    img src="#{item.image_url}"
+                    img src="#{item.data.image_url}"
             .btn-container
               button.btn.btn-primary Load more tracks
       #panel2.content
@@ -56,12 +56,12 @@
           .row
             - data.tree['modules'].each do |item|
               - filepath = item.last.values.first.sub(/\.[\w]+$/, '')
-              - item = sitemap.find_resource_by_path(filepath).data
+              - item = sitemap.find_resource_by_path(filepath)
               .large-3.medium-4.small-12.columns
                 .module-card
                   .header
                     span
-                      = item.title
+                      = item.data.title
                     span.time
                       | 8 hrs
                   .progress-bar
@@ -70,7 +70,7 @@
                     .progress
                       span.meter
                   p
-                    = item.description
+                    = item.data.description
                   ul.links
                     li
                       a href="" Chef
