@@ -17,6 +17,8 @@ import { UserModuleProgressComponent } from './components/user-module-progress/u
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
 import { Ng2UiAuthModule } from 'ng2-ui-auth'
 import { MyAuthConfig } from '../config'
+import {DisplayNamePipe} from './pipe/display_name.pipe';
+import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
 
 const routerConfig: Routes = []
 
@@ -30,7 +32,9 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     UserStartBtnDirective,
     UserProgressBarComponent,
     UserModuleProgressComponent,
-    UserTrackProgressComponent
+    UserTrackProgressComponent,
+    DisplayNamePipe,
+    LoginTwitterDirective
   ],
   imports: [
     routes,
