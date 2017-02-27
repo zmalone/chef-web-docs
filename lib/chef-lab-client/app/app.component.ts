@@ -15,7 +15,8 @@ export class AppComponent implements OnInit {
       oAuthBase: CHEF_API_HOST,
       oAuthPaths: {
         github: '/auth/github',
-        google: '/auth/google_oauth2'
+        google: '/auth/google_oauth2',
+        twitter: '/auth/twitter'
       }
     });
   }
