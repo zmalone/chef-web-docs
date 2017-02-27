@@ -3,6 +3,7 @@ if (!config.tasks.js) return
 var path = require('path');
 var webpack = require('webpack');
 var jsSrc = path.resolve(config.root.src, config.tasks.js.src)
+require('dotenv').config()
 
 module.exports = {
   context: jsSrc,
@@ -57,6 +58,11 @@ module.exports = {
       minChunks: function(module) {
         return module.resource && module.resource.includes('node_modules')
       }
-    })
+    }),
+
+    new webpack.EnvironmentPlugin([
+      'NODE_ENV',
+      'API_ENDPOINT'
+    ])
   ]
 };
