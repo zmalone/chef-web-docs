@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Angular2TokenService } from 'angular2-token';
 import { UserProfileService } from './services/user-profile.service';
 
-const CHEF_API_HOST = 'http://localhost:3000/'
+const CHEF_API_HOST = 'http://localhost:3000'
 
 @Component({
   selector: 'app-root',
@@ -14,8 +14,8 @@ export class AppComponent implements OnInit {
       apiBase: CHEF_API_HOST,
       oAuthBase: CHEF_API_HOST,
       oAuthPaths: {
-        github: 'auth/github',
-        google: 'auth/google_oauth2'
+        github: '/auth/github',
+        google: '/auth/google_oauth2'
       }
     });
   }
@@ -32,5 +32,9 @@ export class AppComponent implements OnInit {
     return this._tokenService.signOut()
   }
 
-
+  public getUserInfo  = function() {
+    if (this._tokenService.currentUserData) {
+      return this._tokenService.currentUserData
+    }
+  }
 }
