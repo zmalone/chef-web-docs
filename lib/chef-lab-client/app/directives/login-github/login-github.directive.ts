@@ -9,10 +9,11 @@ export class LoginGithubDirective {
   constructor(private _tokenService?: Angular2TokenService) {
 
   }
+
   @HostListener('click')
   clicked() {
     this._tokenService.signInOAuth('github').subscribe(
-      res =>      {
+      () => {
         this._tokenService.validateToken().subscribe(
           res =>      console.log(res),
           error =>    console.log(error)
