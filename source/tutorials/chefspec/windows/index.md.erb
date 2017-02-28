@@ -130,6 +130,8 @@ spec
 2 directories, 2 files
 ```
 
+Here's what the default spec looks like.
+
 ```ruby
 # ~/learn-chef/cookbooks/web_content/spec/unit/recipes/default_spec.rb
 #
@@ -181,7 +183,7 @@ Remember that ChefSpec simulates your Chef code in memory. So although ChefSpec 
 
 Now let's run your tests. In the [Verify with InSpec](/tutorials/inspec/) tutorial, you ran your InSpec tests through Test Kitchen. To run ChefSpec tests, you run a program called [rspec](https://relishapp.com/rspec/rspec-core/docs/command-line).
 
-From your <% fp '~/learn-chef/cookbooks/web_content' %> directory, run `rspec` to verify that the empty cookbook would run without error.
+From your <% fp '~/learn-chef/cookbooks/web_content' %> directory, run `rspec` like this to verify that the empty cookbook would run without error.
 
 ```bash
 #  ~/learn-chef/cookbooks/web_content
@@ -208,7 +210,7 @@ Because ChefSpec simulates your recipes, but does not run them, it needs a way t
 
 Fauxhai provides node attributes for [Windows Server 2012 R2](https://github.com/customink/fauxhai/blob/master/lib/fauxhai/platforms/windows/2012R2.json). Although these values might not exactly match your configuration, think of them as test data that you can use to verify the correctness of your resources.
 
-[COMMENT] You can [override](https://github.com/customink/fauxhai#overriding) node attributes in your test code. You can also use [real server data](https://github.com/customink/fauxhai#fetching) or [provide your own attributes file](https://github.com/customink/fauxhai#fixturing).
+[COMMENT] You can [override](https://github.com/customink/fauxhai#overriding) node attributes in your test code, as you'll do shortly. You can also use [real server data](https://github.com/customink/fauxhai#fetching) or [provide your own attributes file](https://github.com/customink/fauxhai#fixturing).
 
 Tests are grouped in a `context` block. A `context` block groups related tests for a given platform. When you create a `ServerRunner` object, you provide the platform and its version. ChefSpec uses these values to construct [automatic node attributes](https://docs.chef.io/ohai.html#automatic-attributes), for example `node['platform']` and `node['platform_version']`.
 
@@ -251,9 +253,9 @@ Finished in 0.30837 seconds (files took 2.86 seconds to load)
 
 ## 5. Configure the web content directory
 
-Next, let's fill in the `web_content` cookbook's default recipe to configure the web content directory. On a system running Internet Information Services (IIS), it's common to place content in the <% fp 'c:\inetpub\wwwroot' %> directory.
+Next, let's fill in the `web_content` cookbook's default recipe to configure the web content directory. On a system running Internet Information Services (IIS), it's common to place web content in the <% fp 'c:\inetpub\wwwroot' %> directory.
 
-Add the following to your default recipe, <% fp '~/learn-chef/cookbooks/web_content/recipes/default.rb' %>. The [directory](https://docs.chef.io/resource_directory.html) ensures that the <% fp 'c:\inetpub\wwwroot' %> directory exists and that the `IIS_USRS` group has read access. The `recursive` property ensures that any parent directories are also created.
+Add the following to your default recipe, <% fp '~/learn-chef/cookbooks/web_content/recipes/default.rb' %>. The [directory](https://docs.chef.io/resource_directory.html) resource ensures that the <% fp 'c:\inetpub\wwwroot' %> directory exists and that the `IIS_USRS` group has read access. The `recursive` property ensures that any parent directories are also created.
 
 ```ruby
 # ~/learn-chef/cookbooks/web_content/recipes/default.rb
@@ -264,7 +266,7 @@ directory 'c:\inetpub\wwwroot' do
 end
 ```
 
-For this tutorial, we're only concerned with the configuration of the <% fp 'c:\inetpub\wwwroot' %> directory. A more complete solution might copy web content files from a build server or some other location to your web server. You might have a second cookbook that configures IIS or other web server software.
+[COMMENT] For this tutorial, we're only concerned with the configuration of the <% fp 'c:\inetpub\wwwroot' %> directory. A more complete solution might copy web content files from a build server or some other location to your web server. You might have a second cookbook that configures IIS or other web server software.
 
 Next, run `rspec` to verify the recipe would run without error.
 
@@ -276,8 +278,6 @@ $ chef exec rspec --color spec/unit/recipes/default_spec.rb
 Finished in 0.307 seconds (files took 2.1 seconds to load)
 1 example, 0 failures
 ```
-
-You've successfully verified that `chef-client` would run without error.
 
 [END_BOX]
 
@@ -326,6 +326,7 @@ The `create_directory` part is known as a _matcher_. The [ChefSpec documentation
 <%= partial 'exception_syntax' %>
 
 <% end %>
+&nbsp;
 
 Run `rspec` to run your new test.
 
@@ -340,7 +341,7 @@ Finished in 0.42578 seconds (files took 2.03 seconds to load)
 
 You see from the output that both tests pass.
 
-[COMMENT] Remember, ChefSpec only simulates the execution of your resources; it doesn't run the code on a real instance. Unlike the InSpec tests, we can't verify things like whether port 80 would be open or whether `curl localhost` would succeed because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.
+[COMMENT] Remember, ChefSpec only simulates the execution of your resources; it doesn't run the code on a real instance. Unlike InSpec tests, we can't verify things like whether port 80 would be open or whether `curl localhost` would succeed because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.
 
 [END_BOX]
 
@@ -443,7 +444,7 @@ You see from the output that the tests continue to pass.
 
 ## 8. Resolve a test failure
 
-Let's say that another team is using the `web_content` cookbook to configure a legacy Windows Server system. They require [the IIS_WPG group](https://www.iis.net/learn/get-started/planning-for-security/understanding-built-in-user-and-group-accounts-in-iis), and not `IIS_IUSRS`, to have read access to the content directory.
+Let's say that another team is using the `web_content` cookbook to configure a legacy Windows Server system. They require the [IIS_WPG](https://www.iis.net/learn/get-started/planning-for-security/understanding-built-in-user-and-group-accounts-in-iis) group, and not `IIS_IUSRS`, to have read access to the content directory.
 
 To illustrate this change, modify your default recipe like this (`IIS_IUSRS` becomes `IIS_WPG`).
 
@@ -494,16 +495,16 @@ The output shows an error. The test expects the `IIS_IUSRS` group to have read a
 
 In practice, this error might be discovered during the development phase or by a continuous delivery system, such as [Chef Automate](https://www.chef.io/automate/). (The [Deploy infrastructure changes](/tutorials/deploy-infrastructure/) tutorial walks you through an example of using Chef Automate's workflow feature to safely move changes from development to production, including running any associated tests.)
 
-After discovering the error, you and your team would make a decision on how to resolve it. You decide that, like the content directory, the group name must be flexible.
+After discovering the error, you and your team would make a decision on how to resolve it. You decide that, like the content directory, the group name must be configurable.
 
 To resolve the error, you can create a node attribute that holds the group name, similar to what you did for the web content directory.
 
-Modify your default attributes file like this.
+Modify your default attributes file to define the `node['web_content']['group']` node attribute, like this.
 
 ```ruby
 # ~/learn-chef/cookbooks/web_content/attributes/default.rb
 default['web_content']['document_root'] = 'c:\inetpub\wwwroot'
-default['web_content']['username'] = 'IIS_IUSRS'
+default['web_content']['group'] = 'IIS_IUSRS'
 ```
 
 Next, modify your default recipe to use the node attribute you just created, like this.
@@ -511,7 +512,7 @@ Next, modify your default recipe to use the node attribute you just created, lik
 ```ruby
 # ~/learn-chef/cookbooks/web_content/recipes/default.rb
 directory node['web_content']['document_root'] do
-  rights :read, node['web_content']['username']
+  rights :read, node['web_content']['group']
   recursive true
   action :create
 end
@@ -528,7 +529,7 @@ describe 'web_content::default' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new(platform: 'windows', version: '2012R2') do |node|
         node.override['web_content']['document_root'] = 'c:\inetpub\wwwroot'
-        node.override['web_content']['username'] = 'IIS_IUSRS'
+        node.override['web_content']['group'] = 'IIS_IUSRS'
       end
       runner.converge(described_recipe)
     end
@@ -578,7 +579,7 @@ describe 'web_content::default' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new(platform: 'windows', version: '2012R2') do |node|
         node.override['web_content']['document_root'] = 'c:\inetpub\wwwroot'
-        node.override['web_content']['username'] = 'IIS_IUSRS'
+        node.override['web_content']['group'] = 'IIS_IUSRS'
       end
       runner.converge(described_recipe)
     end
@@ -598,7 +599,7 @@ describe 'web_content::default' do
 end
 ```
 
-Your `web_content` cookbook . The intent of your ChefSpec tests aren't to verify that the <% fp 'c:\inetpub\wwwroot' %> directory would be created or that the `IIS_IUSRS` group would have read access. Rather, the intent is to verify that given a set of inputs (node attributes), `chef-client` would produce the expected outputs (resources).
+Based on your team's requirements, the `web_content` cookbook is configurable. Therefore, the intent of your ChefSpec tests aren't to verify that the <% fp 'c:\inetpub\wwwroot' %> directory specifically would be created or that the `IIS_IUSRS` group would have read access. Rather, the intent is to verify that the correct directory would be configured with the correct group name based on the environment. Put more generally, the intent is to verify that a given set of inputs (node attributes) produces the expected outputs (resources) when `chef-client` runs.
 
 To illustrate this, modify your default spec to use <% fp 'c:\fake_path' %> for the content directory and `fake_group` for the group name. You need to update both the node attributes and the `create_directory` matcher that uses them.
 
@@ -611,7 +612,7 @@ describe 'web_content::default' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new(platform: 'windows', version: '2012R2') do |node|
         node.override['web_content']['document_root'] = 'c:\fake_path'
-        node.override['web_content']['username'] = 'fake_group'
+        node.override['web_content']['group'] = 'fake_group'
       end
       runner.converge(described_recipe)
     end
@@ -642,7 +643,9 @@ Finished in 0.47645 seconds (files took 3.02 seconds to load)
 2 examples, 0 failures
 ```
 
-Great work! Although it is basic, you now have a web content cookbook that you can build upon. As you add features, you can write additional tests that verify their behavior. Running `rspec` regularly also helps ensure that existing functionality continues to work as you expect.
+When you commit your changes to revision control, you can keep the "fake" path and group names to highlight the parts that are configurable.
+
+Great work! Although it is basic, you now have a web content cookbook that includes tests, which you can build upon. As you add features, you can write additional tests that verify their behavior. Running `rspec` regularly also helps ensure that existing functionality continues to work as you expect.
 
 Although unit testing with ChefSpec may seem redundant at first, it's a great way to verify the correctness of your resources. This is especially true when the behavior of your resources depend on the environment or other variable input.
 
