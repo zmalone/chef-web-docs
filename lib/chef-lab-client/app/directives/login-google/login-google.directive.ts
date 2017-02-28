@@ -11,7 +11,12 @@ export class LoginGoogleDirective {
   @HostListener('click')
   clicked() {
     this._tokenService.signInOAuth('google').subscribe(
-      res =>      console.log(res),
+      res =>      {
+        this._tokenService.validateToken().subscribe(
+          res =>      console.log(res),
+          error =>    console.log(error)
+        );
+      },
       error =>    console.log(error)
     );
   }
