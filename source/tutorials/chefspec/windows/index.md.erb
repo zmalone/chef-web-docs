@@ -13,11 +13,15 @@ snippet_workstation: ubuntu
 machine_config: snippets/test-your-infrastructure-code/rhel/virtualbox/machine_config.md
 environment: virtualbox
 headings: [
-  { label: '1. Write tests for current configuration', href: '#step1' },
-  { label: '2. Define the CentOS context', href: '#step2' },
-  { label: '3. Write tests for Ubuntu', href: '#step3' },
-  { label: '4. Revise the cookbook to support Ubuntu', href: '#step4' },
-  { label: '5. Refactor the tests', href: '#step5' }
+  { label: '1. Create the cookook', href: '#step1' },
+  { label: '2. Examine at the default test', href: '#step2' },
+  { label: '3. Run ChefSpec', href: '#step3' },
+  { label: '4. Specify the platform', href: '#step4' },
+  { label: '5. Configure the directory', href: '#step5' },
+  { label: '6. Test the configuration', href: '#step6' },
+  { label: '7. Make the recipe more flexible', href: '#step7' },
+  { label: '8. Resolve a test failure', href: '#step8' },
+  { label: '9. Refactor your tests', href: '#step9' }
 ]
 ---
 [HEADLINE] ChefSpec simulates the execution of your resources, giving you an even faster feedback loop as you create and refine your recipes.
@@ -41,7 +45,7 @@ directory 'C:\Temp' do
 end
 ```
 
-You don't need to write a unit test here because this `directory` resource can do only one thing &ndash; create the <% fp 'C:\Temp' %> directory if it does not exist. However, say your `directory` resource reads from a node attribute to determine which directory to create.
+You don't necessarily need to write a unit test here because this `directory` resource can do only one thing &ndash; create the <% fp 'C:\Temp' %> directory if it does not exist. However, say your `directory` resource reads from a node attribute to determine which directory to create.
 
 ```ruby
 # default.rb
@@ -106,7 +110,11 @@ Finally, move to the cookbook's directory, <% fp 'web_content' %>, for the next 
 $ cd ~/learn-chef/cookbooks/web_content
 ```
 
-## 2. Look at the default test
+[END_BOX]
+
+[START_BOX]
+
+## 2. Examine at the default test
 
 For ChefSpec, tests go in your cookbook's <% fp 'spec' %> directory. The `chef generate cookbook` command creates this directory for you.
 
@@ -154,6 +162,10 @@ The `describe` blocks tells ChefSpec to run the `web_content::default` recipe in
 
 ChefSpec code resembles InSpec because both are based on the [RSpec](http://rspec.info) testing framework. RSpec [provides two ways to express tests](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/). In the [Verify with InSpec](/tutorials/inspec/) tutorial, you use what's commonly called RSpec's _should_ syntax. In this part, you'll use RSpec's _expectation_ syntax.
 
+[END_BOX]
+
+[START_BOX]
+
 ## 3. Run ChefSpec against the empty cookbook
 
 The default spec comes with one test. The test verifies whether `chef-client` would finish without error.
@@ -183,6 +195,10 @@ Finished in 18.08 seconds (files took 3 seconds to load)
 The [chef exec](https://docs.chef.io/ctl_chef.html#chef-exec) part ensures that `rpsec` is run using Chef's domain-specific language. The `--color` part is optional, but can help you visually distinguish passing from failing tests.
 
 [COMMENT] If you had multiple ChefSpec files, you would use `chef exec rspec --color spec/unit/recipes/*.rb` or `chef exec rspec --color` to run them all.
+
+[END_BOX]
+
+[START_BOX]
 
 ## 4. Specify the platform and platform version
 
@@ -229,6 +245,10 @@ Finished in 0.30837 seconds (files took 2.86 seconds to load)
 1 example, 0 failures
 ```
 
+[END_BOX]
+
+[START_BOX]
+
 ## 5. Configure the web content directory
 
 Next, let's fill in the `web_content` cookbook's default recipe to configure the web content directory. On a system running Internet Information Services (IIS), it's common to place content in the <% fp 'c:\inetpub\wwwroot' %> directory.
@@ -258,6 +278,10 @@ Finished in 0.307 seconds (files took 2.1 seconds to load)
 ```
 
 You've successfully verified that `chef-client` would run without error.
+
+[END_BOX]
+
+[START_BOX]
 
 ## 6. Test the directory configuration
 
@@ -317,6 +341,10 @@ Finished in 0.42578 seconds (files took 2.03 seconds to load)
 You see from the output that both tests pass.
 
 [COMMENT] Remember, ChefSpec only simulates the execution of your resources; it doesn't run the code on a real instance. Unlike the InSpec tests, we can't verify things like whether port 80 would be open or whether `curl localhost` would succeed because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.
+
+[END_BOX]
+
+[START_BOX]
 
 ## 7. Use a node attribute to make your recipe more flexible
 
@@ -408,6 +436,10 @@ Finished in 0.46295 seconds (files took 2.75 seconds to load)
 ```
 
 You see from the output that the tests continue to pass.
+
+[END_BOX]
+
+[START_BOX]
 
 ## 8. Resolve a test failure
 
@@ -528,6 +560,10 @@ Finished in 0.44301 seconds (files took 2.03 seconds to load)
 ```
 
 Default node attributes provide sensible default values that can be used in many configurations. In practice, you might use a [wrapper cookbook](https://blog.chef.io/2013/12/03/doing-wrapper-cookbooks-right/) or [role](https://docs.chef.io/roles.html) to override these values.
+
+[END_BOX]
+
+[START_BOX]
 
 ## 9. Refactor your tests to be more general
 
