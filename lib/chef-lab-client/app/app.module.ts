@@ -15,8 +15,6 @@ import { UserProfileService } from './services/user-profile.service'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
 import { UserModuleProgressComponent } from './components/user-module-progress/user-module-progress.component'
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
-import { Ng2UiAuthModule } from 'ng2-ui-auth'
-import { MyAuthConfig } from '../config'
 import {DisplayNamePipe} from './pipe/display_name.pipe';
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
 
