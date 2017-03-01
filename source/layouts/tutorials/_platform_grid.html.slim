@@ -1,9 +1,12 @@
-- categories.each do |category|
-  <hr />
-  div.row
-    div.large-5.columns
-      ul style="list-style-type: none;"
-        - category[:platforms].each do |platform|
-          li == platform_button(platform[:path], platform[:logo], platform[:label], platform[:logo_width] || -1, platform[:enabled] != false)
-    div.large-7.columns
-      span == category[:description]
+.row
+  - categories.each do |category|
+    - category[:platforms].each do |platform|
+      .large-4.medium-4.small-12.columns
+        .server-card
+          h5
+            = platform_logo(platform[:logo], platform[:logo_width] || -1)
+            span
+              = platform[:label]
+          p
+            = category[:description]
+          a.button.btn-primary href=platform[:path] Choose

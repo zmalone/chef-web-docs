@@ -7,7 +7,7 @@ import { UserProfileService } from './services/user-profile.service';
   template: (window as any).mainTemplate || '<div>No template found for app-root!</div>'
 })
 export class AppComponent implements OnInit {
-  constructor(private _tokenService: Angular2TokenService, private userProfileService:UserProfileService) {
+  constructor(private _tokenService: Angular2TokenService, private userProfileService: UserProfileService) {
     this._tokenService.init({
       apiBase: process.env.API_ENDPOINT,
       oAuthBase: process.env.API_ENDPOINT,
