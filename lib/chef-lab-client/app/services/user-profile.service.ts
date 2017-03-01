@@ -1,9 +1,9 @@
-import { Injectable } from "@angular/core";
-import { ReplaySubject } from "rxjs"
+import { Injectable } from '@angular/core';
+import { ReplaySubject } from 'rxjs'
 
 @Injectable()
 export class UserProfileService {
-  public activeUserProfile:ReplaySubject<any> = new ReplaySubject(1)
+  public activeUserProfile: ReplaySubject<any> = new ReplaySubject(1)
 
   // constructor(private http: Http) {}
 

@@ -1,23 +1,23 @@
 import { Directive, OnInit, ElementRef, HostListener, Host, Input } from '@angular/core';
-import { UserProfileService } from '../services/user-profile.service';
+import { UserProfileService } from '../../services/user-profile.service';
 
 @Directive({
   selector: '.user-start-btn'
 })
 export class UserStartBtnDirective implements OnInit {
   @Input()
-  href: string = ''
+  href: string
 
   @Input()
-  module: string = ''
+  module: string
 
-  constructor(private userProfileService?:UserProfileService, private el?: ElementRef) {
+  constructor(private userProfileService?: UserProfileService, private el?: ElementRef) {
     this.el = el
   }
 
   ngOnInit() {
     this.userProfileService.activeUserProfile.subscribe((active) => {
-      const progress:number = (active && active.modules[this.module]) ? active.modules[this.module].progress : 0
+      const progress: number = (active && active.modules[this.module]) ? active.modules[this.module].progress : 0
       if (progress === 100) {
         this.el.nativeElement.innerHTML = 'Revisit'
       } else if (progress > 0) {

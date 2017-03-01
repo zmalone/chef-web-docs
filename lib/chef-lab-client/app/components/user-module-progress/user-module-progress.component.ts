@@ -6,12 +6,12 @@ import { UserProfileService } from '../../services/user-profile.service';
   templateUrl: './user-module-progress.component.html'
 })
 export class UserModuleProgressComponent implements OnInit {
-  public progress:number
+  public progress: number
 
   @Input()
-  module: string = ''
+  module: string
 
-  constructor(private userProfileService:UserProfileService) {}
+  constructor(private userProfileService: UserProfileService) {}
 
   ngOnInit() {
     this.userProfileService.activeUserProfile.subscribe((active) => {

@@ -5,8 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DisplayNamePipe implements PipeTransform {
   transform(userInfo: any): string {
-    let name:any
-    if(userInfo) {
+    let name: any
+    if (userInfo) {
       if (userInfo.nickname) {
         name = userInfo.nickname
       } else if (userInfo.name) {
