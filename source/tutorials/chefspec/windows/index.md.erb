@@ -8,10 +8,10 @@ logo: tests.svg
 order: 3
 layout: lesson
 time_to_complete: 60 minutes
-snippet_path: test-your-infrastructure-code/rhel/virtualbox/verify-resources-properly-defined
+snippet_path: chefspec/windows/local/chefspec
 snippet_workstation: ubuntu
-machine_config: snippets/test-your-infrastructure-code/rhel/virtualbox/machine_config.md
-environment: virtualbox
+machine_config: snippets/chefspec/windows/local/machine_config.md
+environment: local
 headings: [
   { label: '1. Create the cookook', href: '#step1' },
   { label: '2. Examine at the default test', href: '#step2' },
@@ -88,27 +88,11 @@ $ cd ~/learn-chef
 
 Next, run the following [chef generate cookbook](https://docs.chef.io/ctl_chef.html#chef-generate-cookbook) command to create the `web_content` cookbook.
 
-```bash
-# ~/learn-chef
-$ chef generate cookbook cookbooks/web_content
-Generating cookbook web_content
-- Ensuring correct cookbook file content
-- Committing cookbook files to git
-- Ensuring delivery configuration
-- Ensuring correct delivery build cookbook content
-- Adding delivery configuration to feature branch
-- Adding build cookbook to feature branch
-- Merging delivery content feature branch to master
-
-Your cookbook is ready. To setup the pipeline, type `cd cookbooks/web_content`, then run `delivery init`
-```
+<% command_snippet(page: current_page, path: 'create-the-cookook/chef-generate-cookbook') %>
 
 Finally, move to the cookbook's directory, <% fp 'web_content' %>, for the next part.
 
-```bash
-# ~/learn-chef
-$ cd ~/learn-chef/cookbooks/web_content
-```
+<% command_snippet(page: current_page, path: 'create-the-cookook/cd-web_content-1', features: :stdin) %>
 
 [END_BOX]
 
@@ -118,43 +102,11 @@ $ cd ~/learn-chef/cookbooks/web_content
 
 For ChefSpec, tests go in your cookbook's <% fp 'spec' %> directory. The `chef generate cookbook` command creates this directory for you.
 
-```bash
-# ~/learn-chef/cookbooks/web_content
-$ tree spec
-spec
-├── spec_helper.rb
-└── unit
-    └── recipes
-        └── default_spec.rb
-
-2 directories, 2 files
-```
+<% command_snippet(page: current_page, path: 'examine-the-test/tree-spec') %>
 
 Here's what the default spec looks like.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/spec/unit/recipes/default_spec.rb
-#
-# Cookbook:: web_content
-# Spec:: default
-#
-# Copyright:: 2017, The Authors, All Rights Reserved.
-
-require 'spec_helper'
-
-describe 'web_content::default' do
-  context 'When all attributes are default, on an unspecified platform' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-  end
-end
-```
+<% code_snippet(page: current_page, path: 'examine-the-test/default_spec-2') %>
 
 You typically define one test, or spec, file for each recipe. So <% fp 'default_spec.rb' %> maps to the default recipe, <% fp 'default.rb' %>. If you had a second recipe, say <% fp 'firewall.rb' %>, then you would have a spec named <% fp 'firewall_spec.rb' %>.
 
@@ -185,16 +137,9 @@ Now let's run your tests. In the [Verify with InSpec](/tutorials/inspec/) tutori
 
 From your <% fp '~/learn-chef/cookbooks/web_content' %> directory, run `rspec` like this to verify that the empty cookbook would run without error.
 
-```bash
-#  ~/learn-chef/cookbooks/web_content
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-.
+<% command_snippet(page: current_page, path: 'run-chefspec/run-rspec-3') %>
 
-Finished in 18.08 seconds (files took 3 seconds to load)
-1 example, 0 failures
-```
-
-The [chef exec](https://docs.chef.io/ctl_chef.html#chef-exec) part ensures that `rpsec` is run using Chef's domain-specific language. The `--color` part is optional, but can help you visually distinguish passing from failing tests.
+The [chef exec](https://docs.chef.io/ctl_chef.html#chef-exec) part ensures that `rspec` is run using Chef's domain-specific language. The `--color` part is optional, but can help you visually distinguish passing from failing tests.
 
 [COMMENT] If you had multiple ChefSpec files, you would use `chef exec rspec --color spec/unit/recipes/*.rb` or `chef exec rspec --color` to run them all.
 
@@ -216,36 +161,13 @@ Tests are grouped in a `context` block. A `context` block groups related tests f
 
 Modify your copy of <% fp 'default_spec.rb' %> like this.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/spec/unit/recipes/default_spec.rb
-require 'spec_helper'
-
-describe 'web_content::default' do
-  context 'On Windows 2012 R2' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'windows', version: '2012R2')
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-  end
-end
-```
+<% code_snippet(page: current_page, path: 'specify-the-platform/default_spec_4') %>
 
 If you wanted to write tests for another platform, for example, Windows Server 2008 R2, you would define a second `context` block. The [Linux version of this tutorial](/tutorials/chefspec/rhel/) shows how to write a single set of tests that can be shared among platforms.
 
 Run `rspec` a second time to verify that the test continues to pass.
 
-```bash
-#  ~/learn-chef/cookbooks/web_content
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-.
-
-Finished in 0.30837 seconds (files took 2.86 seconds to load)
-1 example, 0 failures
-```
+<% command_snippet(page: current_page, path: 'specify-the-platform/run-rspec-4') %>
 
 [END_BOX]
 
@@ -257,27 +179,13 @@ Next, let's fill in the `web_content` cookbook's default recipe to configure the
 
 Add the following to your default recipe, <% fp '~/learn-chef/cookbooks/web_content/recipes/default.rb' %>. The [directory](https://docs.chef.io/resource_directory.html) resource ensures that the <% fp 'c:\inetpub\wwwroot' %> directory exists and that the `IIS_USRS` group has read access. The `recursive` property ensures that any parent directories are also created.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/recipes/default.rb
-directory 'c:\inetpub\wwwroot' do
-  rights :read, 'IIS_IUSRS'
-  recursive true
-  action :create
-end
-```
+<% code_snippet(page: current_page, path: 'configure-the-directory/default_5') %>
 
 [COMMENT] For this tutorial, we're only concerned with the configuration of the <% fp 'c:\inetpub\wwwroot' %> directory. A more complete solution might copy web content files from a build server or some other location to your web server. You might have a second cookbook that configures IIS or other web server software.
 
 Next, run `rspec` to verify the recipe would run without error.
 
-```bash
-#  ~/learn-chef/cookbooks/web_content
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-.
-
-Finished in 0.307 seconds (files took 2.1 seconds to load)
-1 example, 0 failures
-```
+<% command_snippet(page: current_page, path: 'configure-the-directory/run-rspec-5') %>
 
 [END_BOX]
 
@@ -289,31 +197,7 @@ Next, you'll write a test that verifies the `directory` resource you just wrote.
 
 Modify your default spec to look like this.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/spec/unit/recipes/default_spec.rb
-require 'spec_helper'
-
-describe 'web_content::default' do
-  context 'On Windows 2012 R2' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'windows', version: '2012R2')
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-
-    it 'creates a directory with windows rights' do
-      expect(chef_run).to create_directory('c:\inetpub\wwwroot')
-        .with(
-          rights: [{ permissions: :read, principals: 'IIS_IUSRS' }],
-          recursive: true
-        )
-    end
-  end
-end
-```
+<% code_snippet(page: current_page, path: 'test-the-configuration/default_spec_6') %>
 
 Like InSpec, ChefSpec tests resemble natural language.
 
@@ -330,14 +214,7 @@ The `create_directory` part is known as a _matcher_. The [ChefSpec documentation
 
 Run `rspec` to run your new test.
 
-```bash
-#  ~/learn-chef/cookbooks/web_content
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-..
-
-Finished in 0.42578 seconds (files took 2.03 seconds to load)
-2 examples, 0 failures
-```
+<% command_snippet(page: current_page, path: 'test-the-configuration/run-rspec-6') %>
 
 You see from the output that both tests pass.
 
@@ -353,88 +230,29 @@ Let's say that multiple teams will use the `web_content` cookbook. Because some 
 
 First, move to the <% fp '~/learn-chef' %> directory.
 
-```bash
-# ~/learn-chef/cookbooks/web_content
-$ cd ~/learn-chef
-```
+<% command_snippet(page: current_page, path: 'make-the-recipe-more-flexible/cd-learn-chef-7', features: :stdin) %>
 
 Next, run this [chef generate attribute](https://docs.chef.io/ctl_chef.html#chef-generate-attribute) command to create a default [attributes file](https://docs.chef.io/attributes.html#use-attribute-files).
 
-```bash
-# ~/learn-chef
-$ chef generate attribute cookbooks/web_content default
-Recipe: code_generator::attribute
-  * directory[cookbooks/web_content/attributes] action create
-    - create new directory cookbooks/web_content/attributes
-  * template[cookbooks/web_content/attributes/default.rb] action create
-    - create new file cookbooks/web_content/attributes/default.rb
-    - update content in file cookbooks/web_content/attributes/default.rb from none to e3b0c4
-    (diff output suppressed by config)
-```
+<% command_snippet(page: current_page, path: 'make-the-recipe-more-flexible/chef-generate-attribute') %>
 
 Add the following attribute to the default attributes file, <% fp '~/learn-chef/cookbooks/web_content/attributes/default.rb' %>.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/attributes/default.rb
-default['web_content']['document_root'] = 'c:\inetpub\wwwroot'
-```
+<% code_snippet(page: current_page, path: 'make-the-recipe-more-flexible/default_attributes_7') %>
 
 Next, modfiy your default recipe to use the node attribute you just created.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/recipes/default.rb
-directory node['web_content']['document_root'] do
-  rights :read, 'IIS_IUSRS'
-  recursive true
-  action :create
-end
-```
+<% code_snippet(page: current_page, path: 'make-the-recipe-more-flexible/default_7') %>
 
 It's a common practice to verify that the node attributes you define are used as you expect in your ChefSpec tests. Modify the `let` block in your default spec to explicitly set the `node['web_content']['document_root']` node attribute, like this.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/spec/unit/recipes/default_spec.rb
-require 'spec_helper'
-
-describe 'web_content::default' do
-  context 'On Windows 2012 R2' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'windows', version: '2012R2') do |node|
-        node.override['web_content']['document_root'] = 'c:\inetpub\wwwroot'
-      end
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-
-    it 'creates a directory with windows rights' do
-      expect(chef_run).to create_directory('c:\inetpub\wwwroot')
-        .with(
-          rights: [{ permissions: :read, principals: 'IIS_IUSRS' }],
-          recursive: true
-        )
-    end
-  end
-end
-```
+<% code_snippet(page: current_page, path: 'make-the-recipe-more-flexible/default_spec_7') %>
 
 Move to the <% fp 'web_content' %> directory and then run the tests.
 
-```bash
-# ~/learn-chef
-$ cd ~/learn-chef/cookbooks/web_content
-```
+<% command_snippet(page: current_page, path: 'make-the-recipe-more-flexible/cd-web_content-7', features: :stdin) %>
 
-```bash
-#  ~/learn-chef/cookbooks/web_content
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-..
-
-Finished in 0.46295 seconds (files took 2.75 seconds to load)
-2 examples, 0 failures
-```
+<% command_snippet(page: current_page, path: 'make-the-recipe-more-flexible/run-rspec-7') %>
 
 You see from the output that the tests continue to pass.
 
@@ -448,117 +266,35 @@ Let's say that another team is using the `web_content` cookbook to configure a l
 
 To illustrate this change, modify your default recipe like this (`IIS_IUSRS` becomes `IIS_WPG`).
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/recipes/default.rb
-directory 'c:\inetpub\wwwroot' do
-  rights :read, 'IIS_WPG'
-  recursive true
-  action :create
-end
-```
+<% code_snippet(page: current_page, path: 'resolve-a-failure/default_8a') %>
 
 Run `rspec` to test the change.
 
-```bash
-#  ~/learn-chef/cookbooks/web_content
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-.F
-
-Failures:
-
-  1) web_content::default On Windows 2012 R2 creates a directory with windows rights
-     Failure/Error:
-       expect(chef_run).to create_directory('c:\inetpub\wwwroot')
-         .with(
-           rights: [{ permissions: :read, principals: 'IIS_IUSRS' }],
-           recursive: true
-         )
-
-       expected "directory[c:\inetpub\wwwroot]" to have parameters:
-
-         rights [{:permissions=>:read, :principals=>"IIS_IUSRS"}], was [{:permissions=>:read, :principals=>"IIS_WPG"}]
-       Diff:
-       @@ -1,2 +1,2 @@
-       -[{:permissions=>:read, :principals=>"IIS_IUSRS"}]
-       +[{:permissions=>:read, :principals=>"IIS_WPG"}]
-     # ./spec/unit/recipes/default_spec.rb:21:in `block (3 levels) in <top (required)>'
-
-Finished in 0.47839 seconds (files took 3.07 seconds to load)
-2 examples, 1 failure
-
-Failed examples:
-
-rspec ./spec/unit/recipes/default_spec.rb:20 # web_content::default On Windows 2012 R2 creates a directory with windows rights
-```
+<% command_snippet(page: current_page, path: 'resolve-a-failure/run-rspec-8a') %>
 
 The output shows an error. The test expects the `IIS_IUSRS` group to have read access, but the default recipe now specifies `IIS_WPG`.
 
 In practice, this error might be discovered during the development phase or by a continuous delivery system, such as [Chef Automate](https://www.chef.io/automate/). (The [Deploy infrastructure changes](/tutorials/deploy-infrastructure/) tutorial walks you through an example of using Chef Automate's workflow feature to safely move changes from development to production, including running any associated tests.)
 
-After discovering the error, you and your team would make a decision on how to resolve it. You decide that, like the content directory, the group name must be configurable.
+After discovering the error, you and your team would decide how to resolve it. You decide that, like the content directory, the group name must be configurable.
 
 To resolve the error, you can create a node attribute that holds the group name, similar to what you did for the web content directory.
 
 Modify your default attributes file to define the `node['web_content']['group']` node attribute, like this.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/attributes/default.rb
-default['web_content']['document_root'] = 'c:\inetpub\wwwroot'
-default['web_content']['group'] = 'IIS_IUSRS'
-```
+<% code_snippet(page: current_page, path: 'resolve-a-failure/default_attributes_8') %>
 
 Next, modify your default recipe to use the node attribute you just created, like this.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/recipes/default.rb
-directory node['web_content']['document_root'] do
-  rights :read, node['web_content']['group']
-  recursive true
-  action :create
-end
-```
+<% code_snippet(page: current_page, path: 'resolve-a-failure/default_8b') %>
 
 Next, set the same node attribute in the default spec.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/spec/unit/recipes/default_spec.rb
-require 'spec_helper'
-
-describe 'web_content::default' do
-  context 'On Windows 2012 R2' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'windows', version: '2012R2') do |node|
-        node.override['web_content']['document_root'] = 'c:\inetpub\wwwroot'
-        node.override['web_content']['group'] = 'IIS_IUSRS'
-      end
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-
-    it 'creates a directory with windows rights' do
-      expect(chef_run).to create_directory('c:\inetpub\wwwroot')
-        .with(
-          rights: [{ permissions: :read, principals: 'IIS_IUSRS' }],
-          recursive: true
-        )
-    end
-  end
-end
-```
+<% code_snippet(page: current_page, path: 'resolve-a-failure/default_spec_8') %>
 
 Finally, run `rspec` to verify the changes.
 
-```bash
-#  ~/learn-chef/cookbooks/web_content
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-..
-
-Finished in 0.44301 seconds (files took 2.03 seconds to load)
-2 examples, 0 failures
-```
+<% command_snippet(page: current_page, path: 'resolve-a-failure/run-rspec-8b') %>
 
 Default node attributes provide sensible default values that can be used in many configurations. In practice, you might use a [wrapper cookbook](https://blog.chef.io/2013/12/03/doing-wrapper-cookbooks-right/) or [role](https://docs.chef.io/roles.html) to override these values.
 
@@ -570,78 +306,17 @@ Default node attributes provide sensible default values that can be used in many
 
 Recall that your default spec looks like this.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/spec/unit/recipes/default_spec.rb
-require 'spec_helper'
+<% code_snippet(page: current_page, path: 'refactor-your-tests/default_spec-9a') %>
 
-describe 'web_content::default' do
-  context 'On Windows 2012 R2' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'windows', version: '2012R2') do |node|
-        node.override['web_content']['document_root'] = 'c:\inetpub\wwwroot'
-        node.override['web_content']['group'] = 'IIS_IUSRS'
-      end
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-
-    it 'creates a directory with windows rights' do
-      expect(chef_run).to create_directory('c:\inetpub\wwwroot')
-        .with(
-          rights: [{ permissions: :read, principals: 'IIS_IUSRS' }],
-          recursive: true
-        )
-    end
-  end
-end
-```
-
-Based on your team's requirements, the `web_content` cookbook is configurable. Therefore, the intent of your ChefSpec tests aren't to verify that the <% fp 'c:\inetpub\wwwroot' %> directory specifically would be created or that the `IIS_IUSRS` group would have read access. Rather, the intent is to verify that the correct directory would be configured with the correct group name based on the environment. Put more generally, the intent is to verify that a given set of inputs (node attributes) produces the expected outputs (resources) when `chef-client` runs.
+Based on your team's requirements, the `web_content` cookbook is configurable. Therefore, the intent of your ChefSpec tests aren't to verify that the <% fp 'c:\inetpub\wwwroot' %> directory specifically would be created or that the `IIS_IUSRS` group would have read access. Rather, the intent is to verify that the correct directory would be configured with the correct group name based on the environment. Put more generally, the intent is to verify that a given set of inputs (in this case, node attributes) produces the expected outputs (resources) when `chef-client` runs.
 
 To illustrate this, modify your default spec to use <% fp 'c:\fake_path' %> for the content directory and `fake_group` for the group name. You need to update both the node attributes and the `create_directory` matcher that uses them.
 
-```ruby
-# ~/learn-chef/cookbooks/web_content/spec/unit/recipes/default_spec.rb
-require 'spec_helper'
-
-describe 'web_content::default' do
-  context 'On Windows 2012 R2' do
-    let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'windows', version: '2012R2') do |node|
-        node.override['web_content']['document_root'] = 'c:\fake_path'
-        node.override['web_content']['group'] = 'fake_group'
-      end
-      runner.converge(described_recipe)
-    end
-
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
-    end
-
-    it 'creates a directory with windows rights' do
-      expect(chef_run).to create_directory('c:\fake_path')
-        .with(
-          rights: [{ permissions: :read, principals: 'fake_group' }],
-          recursive: true
-        )
-    end
-  end
-end
-```
+<% code_snippet(page: current_page, path: 'refactor-your-tests/default_spec_9b') %>
 
 Run `rspec` to verify the changes.
 
-```bash
-#  ~/learn-chef/cookbooks/web_content
-$ chef exec rspec --color spec/unit/recipes/default_spec.rb
-..
-
-Finished in 0.47645 seconds (files took 3.02 seconds to load)
-2 examples, 0 failures
-```
+<% command_snippet(page: current_page, path: 'refactor-your-tests/run-rspec-9') %>
 
 When you commit your changes to revision control, you can keep the "fake" path and group names to highlight the parts that are configurable.
 
