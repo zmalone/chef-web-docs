@@ -17,6 +17,7 @@ import { UserModuleProgressComponent } from './components/user-module-progress/u
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
 import {DisplayNamePipe} from './pipe/display_name.pipe';
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
+import { LoginLinkedInDirective } from './directives/login-linkedin/login-linkedin.directive'
 
 const routerConfig: Routes = []
 
@@ -32,7 +33,8 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     UserModuleProgressComponent,
     UserTrackProgressComponent,
     DisplayNamePipe,
-    LoginTwitterDirective
+    LoginTwitterDirective,
+    LoginLinkedInDirective
   ],
   imports: [
     routes,
