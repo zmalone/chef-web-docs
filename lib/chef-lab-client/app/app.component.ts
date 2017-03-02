@@ -15,7 +15,8 @@ export class AppComponent implements OnInit {
         github: '/auth/github',
         google: '/auth/google_oauth2',
         twitter: '/auth/twitter',
-        linkedin: '/auth/linkedin'
+        linkedin: '/auth/linkedin',
+        chef: '/auth/chef_oauth2',
       }
     });
   }
