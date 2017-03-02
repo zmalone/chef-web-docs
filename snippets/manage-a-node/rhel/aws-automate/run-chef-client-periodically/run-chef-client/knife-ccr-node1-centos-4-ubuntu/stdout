@@ -1,99 +1,354 @@
-172.31.58.213 Starting Chef Client, version 12.18.31
-172.31.58.213 resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_httpd::default"]
-172.31.58.213 Synchronizing Cookbooks:
-172.31.58.213   - chef-client (7.1.0)
-172.31.58.213   - cron (3.0.0)
-172.31.58.213   - logrotate (2.1.0)
-172.31.58.213   - compat_resource (12.16.3)
-172.31.58.213   - windows (2.1.1)
-172.31.58.213   - learn_chef_httpd (0.3.1)
-172.31.58.213   - ohai (4.2.3)
-172.31.58.213 Installing Cookbook Gems:
-172.31.58.213 Compiling Cookbooks...
-172.31.58.213 Converging 14 resources
-172.31.58.213 Recipe: chef-client::systemd_service
-172.31.58.213   * directory[/var/run/chef] action create
-172.31.58.213     - create new directory /var/run/chef
-172.31.58.213     - change owner from '' to 'root'
-172.31.58.213     - change group from '' to 'root'
-172.31.58.213     - restore selinux security context
-172.31.58.213   * directory[/var/cache/chef] action create
-172.31.58.213     - create new directory /var/cache/chef
-172.31.58.213     - change owner from '' to 'root'
-172.31.58.213     - change group from '' to 'root'
-172.31.58.213     - restore selinux security context
-172.31.58.213   * directory[/var/lib/chef] action create
-172.31.58.213     - create new directory /var/lib/chef
-172.31.58.213     - change owner from '' to 'root'
-172.31.58.213     - change group from '' to 'root'
-172.31.58.213     - restore selinux security context
-172.31.58.213   * directory[/var/log/chef] action create
-172.31.58.213     - create new directory /var/log/chef
-172.31.58.213     - change mode from '' to '0755'
-172.31.58.213     - change owner from '' to 'root'
-172.31.58.213     - change group from '' to 'root'
-172.31.58.213     - restore selinux security context
-172.31.58.213   * directory[/etc/chef] action create (up to date)
-172.31.58.213   * template[/etc/systemd/system/chef-client.service] action create
-172.31.58.213     - create new file /etc/systemd/system/chef-client.service
-172.31.58.213     - update content in file /etc/systemd/system/chef-client.service from none to 62ed56
-172.31.58.213     --- /etc/systemd/system/chef-client.service	2017-02-22 18:02:51.178840756 +0000
-172.31.58.213     +++ /etc/systemd/system/.chef-chef-client20170222-10646-1gu3uyx.service	2017-02-22 18:02:51.177840744 +0000
-172.31.58.213     @@ -1 +1,14 @@
-172.31.58.213     +[Unit]
-172.31.58.213     +Description=Chef Client daemon
-172.31.58.213     +After=network.target auditd.service
-172.31.58.213     +
-172.31.58.213     +[Service]
-172.31.58.213     +EnvironmentFile=/etc/sysconfig/chef-client
-172.31.58.213     +ExecStart=/usr/bin/chef-client -c $CONFIG -i $INTERVAL -s $SPLAY $OPTIONS
-172.31.58.213     +ExecReload=/bin/kill -HUP $MAINPID
-172.31.58.213     +SuccessExitStatus=3
-172.31.58.213     +Restart=on-failure
-172.31.58.213     +
-172.31.58.213     +[Install]
-172.31.58.213     +WantedBy=multi-user.target
-172.31.58.213     - change mode from '' to '0644'
-172.31.58.213     - restore selinux security context
-172.31.58.213   * template[/etc/sysconfig/chef-client] action create
-172.31.58.213     - create new file /etc/sysconfig/chef-client
-172.31.58.213     - update content in file /etc/sysconfig/chef-client from none to 6a32a6
-172.31.58.213     --- /etc/sysconfig/chef-client	2017-02-22 18:02:51.199841017 +0000
-172.31.58.213     +++ /etc/sysconfig/.chef-chef-client20170222-10646-gro5n8	2017-02-22 18:02:51.199841017 +0000
-172.31.58.213     @@ -1 +1,15 @@
-172.31.58.213     +# Configuration file for the chef-client service
-172.31.58.213     +
-172.31.58.213     +CONFIG=/etc/chef/client.rb
-172.31.58.213     +PIDFILE=/var/run/chef/client.pid
-172.31.58.213     +#LOCKFILE=/var/lock/subsys/chef-client
-172.31.58.213     +# Sleep interval between runs.
-172.31.58.213     +# This value is in seconds.
-172.31.58.213     +INTERVAL=300
-172.31.58.213     +# Maximum amount of random delay before starting a run. Prevents every client
-172.31.58.213     +# from contacting the server at the exact same time.
-172.31.58.213     +# This value is in seconds.
-172.31.58.213     +SPLAY=60
-172.31.58.213     +# Any additional chef-client options.
-172.31.58.213     +OPTIONS=""
-172.31.58.213     - change mode from '' to '0644'
-172.31.58.213     - restore selinux security context
-172.31.58.213   * service[chef-client] action enable
-172.31.58.213     - enable service service[chef-client]
-172.31.58.213   * service[chef-client] action start
-172.31.58.213     - start service service[chef-client]
-172.31.58.213 Recipe: chef-client::delete_validation
-172.31.58.213   * file[/etc/chef/validation.pem] action delete (up to date)
-172.31.58.213 Recipe: learn_chef_httpd::default
-172.31.58.213   * yum_package[httpd] action install (up to date)
-172.31.58.213   * service[httpd] action enable (up to date)
-172.31.58.213   * service[httpd] action start (up to date)
-172.31.58.213   * group[web_admin] action create (up to date)
-172.31.58.213   * linux_user[web_admin] action create (up to date)
-172.31.58.213   * template[/var/www/html/index.html] action create (up to date)
-172.31.58.213 Recipe: chef-client::systemd_service
-172.31.58.213   * service[chef-client] action restart
-172.31.58.213     - restart service service[chef-client]
-172.31.58.213 
-172.31.58.213 Running handlers:
-172.31.58.213 Running handlers complete
-172.31.58.213 Chef Client finished, 9/17 resources updated in 05 seconds
+172.31.60.142 [2017-03-01T17:44:24+00:00] INFO: Forking chef instance to converge...
+172.31.60.142 Starting Chef Client, version 12.19.36
+172.31.60.142 [2017-03-01T17:44:24+00:00] INFO: *** Chef 12.19.36 ***
+172.31.60.142 [2017-03-01T17:44:24+00:00] INFO: Platform: x86_64-linux
+172.31.60.142 [2017-03-01T17:44:24+00:00] INFO: Chef-client pid: 10593
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Run List is [role[web]]
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Run List expands to [chef-client::default, chef-client::delete_validation, learn_chef_httpd::default]
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Starting Chef Run for node1-centos
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Running start handlers
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Start handlers complete.
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: HTTP Request Returned 404 Not Found: 
+172.31.60.142 resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_httpd::default"]
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Loading cookbooks [chef-client@7.2.0, cron@3.0.0, logrotate@2.1.0, compat_resource@12.16.3, windows@2.1.1, ohai@5.0.0, learn_chef_httpd@0.3.1]
+172.31.60.142 Synchronizing Cookbooks:
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Storing updated cookbooks/chef-client/recipes/launchd_service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Storing updated cookbooks/chef-client/recipes/task.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Storing updated cookbooks/chef-client/recipes/runit_service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:25+00:00] INFO: Storing updated cookbooks/chef-client/recipes/default.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/windows_service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/_unit_test_cloning_resource.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/resources/scheduled_task.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/cron.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/src_service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/systemd_service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/attributes/default.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/upstart_service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/libraries/matchers.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/smf_service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/libraries/helpers.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/config.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/bsd_service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/delete_validation.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/solaris/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/recipes/init_service.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/windows/client.service.rb.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/arch/chef/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/solaris/manifest-5.11.xml.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/suse/sysconfig/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/suse/init.d/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/solaris/manifest.xml.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/redhat/sysconfig/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/redhat/init.d/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/fedora/sysconfig/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/debian/init/chef-client.conf.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/debian/default/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/debian/init.d/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/systemd/chef-client.service.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/sv-chef-client-log-run.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/sv-chef-client-run.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/client.rb.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/freebsd/chef-client.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/MAINTAINERS.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/README.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/freebsd/chef.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/metadata.json in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/.foodcritic in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/CONTRIBUTING.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/CHANGELOG.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/resources/d.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/providers/d.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/recipes/default.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/libraries/matchers.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/definitions/manage.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/attributes/default.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/templates/default/crontab.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/templates/default/cron_manage.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/templates/default/cron.d.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/MAINTAINERS.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/README.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/CHANGELOG.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/CONTRIBUTING.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/.foodcritic in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/cron/metadata.json in the cache.
+172.31.60.142   - cron (3.0.0)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/recipes/default.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/resources/app.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/recipes/global.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/libraries/logrotate_config.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/libraries/matchers.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/templates/default/logrotate.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/attributes/default.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/com.chef.chef-client.plist.erb in the cache.
+172.31.60.142   - chef-client (7.2.0)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/templates/default/logrotate-global.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/Makefile in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/.rubocop.yml in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/.kitchen.yml in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/.gitignore in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/LICENSE in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/README.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/CHANGELOG.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/Gemfile.lock in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/Berksfile in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/CONTRIBUTING.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/metadata.json in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/Berksfile.lock in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/.travis.yml in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/logrotate/Gemfile in the cache.
+172.31.60.142   - logrotate (2.1.0)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/libraries/autoload.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/params_validate.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/properties.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/mixin/properties.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/notifying_block.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/powershell_out.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/lazy_module_include.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/apt_repository.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/yum_repository.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/action_class.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/apt_update.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/delayed_evaluator.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/property.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/systemd_unit.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource_builder.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/constants.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/support/yum_repo.erb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/apt_repository.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/yum_repository.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/core.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/declare_resource.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/systemd_unit.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/platform_introspection.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/recipe.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/universal.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/resource/lwrp_base.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/property.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/recipe.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/recipe_hook.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/log.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/mixin/params_validate.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/apt_update.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/node.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource/lwrp_base.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_collection.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/property.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_builder.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/run_context.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_collection/resource_set.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_collection/resource_list.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/provider.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/recipe.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/runner.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/exceptions.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/resource.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_upstream_version.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/compat_resource.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/MAINTAINERS.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/README.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/CONTRIBUTING.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/CHANGELOG.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/metadata.json in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/zipfile.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/printer_port.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/noop.rb in the cache.
+172.31.60.142   - compat_resource (12.16.3)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/pagefile.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/shortcut.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/task.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/auto_run.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/certificate_binding.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/path.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/certificate.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/http_acl.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/feature.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/printer.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/resources/font.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/zipfile.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/feature_dism.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/printer_port.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/shortcut.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/pagefile.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/task.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/auto_run.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/certificate_binding.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/path.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/feature_servermanagercmd.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/certificate.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/printer.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/http_acl.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/feature_powershell.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/providers/font.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/recipes/default.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/windows_package.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/version_helper.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/powershell_helper.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/windows_helper.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/windows_privileged.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/registry_helper.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/feature_base.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/powershell_out.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/version.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/wmi_helper.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/libraries/matchers.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/attributes/default.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/MAINTAINERS.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/README.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/.foodcritic in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/CHANGELOG.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/CONTRIBUTING.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/metadata.json in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/resources/hint.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/resources/plugin.rb in the cache.
+172.31.60.142   - learn_chef_httpd (0.3.1)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/recipes/default.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/libraries/matchers.rb in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/README.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/MAINTAINERS.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/CHANGELOG.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/.foodcritic in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/CONTRIBUTING.md in the cache.
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/ohai/metadata.json in the cache.
+172.31.60.142   - ohai (5.0.0)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: Storing updated cookbooks/windows/files/default/dism_features.rb in the cache.
+172.31.60.142   - windows (2.1.1)
+172.31.60.142 Installing Cookbook Gems:
+172.31.60.142 Compiling Cookbooks...
+172.31.60.142 Converging 14 resources
+172.31.60.142 Recipe: chef-client::systemd_service
+172.31.60.142   * directory[/var/run/chef] action create[2017-03-01T17:44:26+00:00] INFO: Processing directory[/var/run/chef] action create (chef-client::systemd_service line 52)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: directory[/var/run/chef] created directory /var/run/chef
+172.31.60.142 
+172.31.60.142     - create new directory /var/run/chef[2017-03-01T17:44:26+00:00] INFO: directory[/var/run/chef] owner changed to 0
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: directory[/var/run/chef] group changed to 0
+172.31.60.142 
+172.31.60.142     - change owner from '' to 'root'
+172.31.60.142     - change group from '' to 'root'
+172.31.60.142     - restore selinux security context
+172.31.60.142   * directory[/var/cache/chef] action create[2017-03-01T17:44:26+00:00] INFO: Processing directory[/var/cache/chef] action create (chef-client::systemd_service line 52)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: directory[/var/cache/chef] created directory /var/cache/chef
+172.31.60.142 
+172.31.60.142     - create new directory /var/cache/chef[2017-03-01T17:44:26+00:00] INFO: directory[/var/cache/chef] owner changed to 0
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: directory[/var/cache/chef] group changed to 0
+172.31.60.142 
+172.31.60.142     - change owner from '' to 'root'
+172.31.60.142     - change group from '' to 'root'
+172.31.60.142     - restore selinux security context
+172.31.60.142   * directory[/var/lib/chef] action create[2017-03-01T17:44:26+00:00] INFO: Processing directory[/var/lib/chef] action create (chef-client::systemd_service line 52)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: directory[/var/lib/chef] created directory /var/lib/chef
+172.31.60.142 
+172.31.60.142     - create new directory /var/lib/chef[2017-03-01T17:44:26+00:00] INFO: directory[/var/lib/chef] owner changed to 0
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: directory[/var/lib/chef] group changed to 0
+172.31.60.142 
+172.31.60.142     - change owner from '' to 'root'
+172.31.60.142     - change group from '' to 'root'
+172.31.60.142     - restore selinux security context
+172.31.60.142   * directory[/var/log/chef] action create[2017-03-01T17:44:26+00:00] INFO: Processing directory[/var/log/chef] action create (chef-client::systemd_service line 52)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: directory[/var/log/chef] created directory /var/log/chef
+172.31.60.142 
+172.31.60.142     - create new directory /var/log/chef[2017-03-01T17:44:26+00:00] INFO: directory[/var/log/chef] owner changed to 0
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: directory[/var/log/chef] group changed to 0
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: directory[/var/log/chef] mode changed to 755
+172.31.60.142 
+172.31.60.142     - change mode from '' to '0755'
+172.31.60.142     - change owner from '' to 'root'
+172.31.60.142     - change group from '' to 'root'
+172.31.60.142     - restore selinux security context
+172.31.60.142   * directory[/etc/chef] action create[2017-03-01T17:44:26+00:00] INFO: Processing directory[/etc/chef] action create (chef-client::systemd_service line 52)
+172.31.60.142  (up to date)
+172.31.60.142   * template[/etc/systemd/system/chef-client.service] action create[2017-03-01T17:44:26+00:00] INFO: Processing template[/etc/systemd/system/chef-client.service] action create (chef-client::systemd_service line 18)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: template[/etc/systemd/system/chef-client.service] created file /etc/systemd/system/chef-client.service
+172.31.60.142 
+172.31.60.142     - create new file /etc/systemd/system/chef-client.service[2017-03-01T17:44:26+00:00] INFO: template[/etc/systemd/system/chef-client.service] updated file contents /etc/systemd/system/chef-client.service
+172.31.60.142 
+172.31.60.142     - update content in file /etc/systemd/system/chef-client.service from none to 62ed56
+172.31.60.142     --- /etc/systemd/system/chef-client.service	2017-03-01 17:44:26.823111496 +0000
+172.31.60.142     +++ /etc/systemd/system/.chef-chef-client20170301-10593-1nhf3rs.service	2017-03-01 17:44:26.823111496 +0000
+172.31.60.142     @@ -1 +1,14 @@
+172.31.60.142     +[Unit]
+172.31.60.142     +Description=Chef Client daemon
+172.31.60.142     +After=network.target auditd.service
+172.31.60.142     +
+172.31.60.142     +[Service]
+172.31.60.142     +EnvironmentFile=/etc/sysconfig/chef-client
+172.31.60.142     +ExecStart=/usr/bin/chef-client -c $CONFIG -i $INTERVAL -s $SPLAY $OPTIONS
+172.31.60.142     +ExecReload=/bin/kill -HUP $MAINPID
+172.31.60.142     +SuccessExitStatus=3
+172.31.60.142     +Restart=on-failure
+172.31.60.142     +
+172.31.60.142     +[Install]
+172.31.60.142     +WantedBy=multi-user.target[2017-03-01T17:44:26+00:00] INFO: template[/etc/systemd/system/chef-client.service] mode changed to 644
+172.31.60.142 
+172.31.60.142     - change mode from '' to '0644'
+172.31.60.142     - restore selinux security context
+172.31.60.142   * template[/etc/sysconfig/chef-client] action create[2017-03-01T17:44:26+00:00] INFO: Processing template[/etc/sysconfig/chef-client] action create (chef-client::systemd_service line 25)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: template[/etc/sysconfig/chef-client] created file /etc/sysconfig/chef-client
+172.31.60.142 
+172.31.60.142     - create new file /etc/sysconfig/chef-client[2017-03-01T17:44:26+00:00] INFO: template[/etc/sysconfig/chef-client] updated file contents /etc/sysconfig/chef-client
+172.31.60.142 
+172.31.60.142     - update content in file /etc/sysconfig/chef-client from none to 6a32a6
+172.31.60.142     --- /etc/sysconfig/chef-client	2017-03-01 17:44:26.846111518 +0000
+172.31.60.142     +++ /etc/sysconfig/.chef-chef-client20170301-10593-1wm149h	2017-03-01 17:44:26.846111518 +0000
+172.31.60.142     @@ -1 +1,15 @@
+172.31.60.142     +# Configuration file for the chef-client service
+172.31.60.142     +
+172.31.60.142     +CONFIG=/etc/chef/client.rb
+172.31.60.142     +PIDFILE=/var/run/chef/client.pid
+172.31.60.142     +#LOCKFILE=/var/lock/subsys/chef-client
+172.31.60.142     +# Sleep interval between runs.
+172.31.60.142     +# This value is in seconds.
+172.31.60.142     +INTERVAL=300
+172.31.60.142     +# Maximum amount of random delay before starting a run. Prevents every client
+172.31.60.142     +# from contacting the server at the exact same time.
+172.31.60.142     +# This value is in seconds.
+172.31.60.142     +SPLAY=60
+172.31.60.142     +# Any additional chef-client options.
+172.31.60.142     +OPTIONS=""[2017-03-01T17:44:26+00:00] INFO: template[/etc/sysconfig/chef-client] mode changed to 644
+172.31.60.142 
+172.31.60.142     - change mode from '' to '0644'
+172.31.60.142     - restore selinux security context
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: template[/etc/sysconfig/chef-client] not queuing delayed action restart on service[chef-client] (delayed), as it's already been queued
+172.31.60.142   * service[chef-client] action enable[2017-03-01T17:44:26+00:00] INFO: Processing service[chef-client] action enable (chef-client::systemd_service line 31)
+172.31.60.142 [2017-03-01T17:44:26+00:00] INFO: service[chef-client] enabled
+172.31.60.142 
+172.31.60.142     - enable service service[chef-client]
+172.31.60.142   * service[chef-client] action start[2017-03-01T17:44:26+00:00] INFO: Processing service[chef-client] action start (chef-client::systemd_service line 31)
+172.31.60.142 [2017-03-01T17:44:27+00:00] INFO: service[chef-client] started
+172.31.60.142 
+172.31.60.142     - start service service[chef-client]
+172.31.60.142 Recipe: chef-client::delete_validation
+172.31.60.142   * file[/etc/chef/validation.pem] action delete[2017-03-01T17:44:27+00:00] INFO: Processing file[/etc/chef/validation.pem] action delete (chef-client::delete_validation line 35)
+172.31.60.142  (up to date)
+172.31.60.142 Recipe: learn_chef_httpd::default
+172.31.60.142   * yum_package[httpd] action install[2017-03-01T17:44:27+00:00] INFO: Processing yum_package[httpd] action install (learn_chef_httpd::default line 6)
+172.31.60.142  (up to date)
+172.31.60.142   * service[httpd] action enable[2017-03-01T17:44:29+00:00] INFO: Processing service[httpd] action enable (learn_chef_httpd::default line 8)
+172.31.60.142  (up to date)
+172.31.60.142   * service[httpd] action start[2017-03-01T17:44:29+00:00] INFO: Processing service[httpd] action start (learn_chef_httpd::default line 8)
+172.31.60.142  (up to date)
+172.31.60.142   * group[web_admin] action create[2017-03-01T17:44:29+00:00] INFO: Processing group[web_admin] action create (learn_chef_httpd::default line 12)
+172.31.60.142  (up to date)
+172.31.60.142   * linux_user[web_admin] action create[2017-03-01T17:44:29+00:00] INFO: Processing linux_user[web_admin] action create (learn_chef_httpd::default line 14)
+172.31.60.142  (up to date)
+172.31.60.142   * template[/var/www/html/index.html] action create[2017-03-01T17:44:29+00:00] INFO: Processing template[/var/www/html/index.html] action create (learn_chef_httpd::default line 20)
+172.31.60.142  (up to date)
+172.31.60.142 [2017-03-01T17:44:29+00:00] INFO: template[/etc/systemd/system/chef-client.service] sending restart action to service[chef-client] (delayed)
+172.31.60.142 Recipe: chef-client::systemd_service
+172.31.60.142   * service[chef-client] action restart[2017-03-01T17:44:29+00:00] INFO: Processing service[chef-client] action restart (chef-client::systemd_service line 31)
+172.31.60.142 [2017-03-01T17:44:29+00:00] INFO: service[chef-client] restarted
+172.31.60.142 
+172.31.60.142     - restart service service[chef-client]
+172.31.60.142 [2017-03-01T17:44:29+00:00] INFO: Chef Run complete in 4.24241453 seconds
+172.31.60.142 
+172.31.60.142 Running handlers:
+172.31.60.142 [2017-03-01T17:44:30+00:00] INFO: Running report handlers
+172.31.60.142 Running handlers complete
+172.31.60.142 [2017-03-01T17:44:30+00:00] INFO: Report handlers complete
+172.31.60.142 Chef Client finished, 9/17 resources updated in 05 seconds
