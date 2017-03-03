@@ -30,32 +30,51 @@ Installation
         $ sudo apt-get install npm
         $ sudo ln -s /usr/bin/nodejs /usr/bin/node
 
-Start up
---------
+1. Install node packages:
+
+        $ npm install
+
+Start up in development mode
+----------------------------
 
 A server process needs to be running in order to use Middleman.
 
 1. Start the Middleman server in a new terminal window, using chef-web-learn as the working directory.
 
-        $ bin/middleman server
+        $ npm start
+        OR
+        $ bundle exec middleman server
 
-If Middleman stops responding, kill (Ctrl-C) the server and restart it.
+1. The site should now be available locally on port 3001 using BrowserSync for live reloading during
+    development, although the HTML will also be available on port 4567 via Middleman. 
 
-Building the tutorials and skills library
------------------------------------------
+        $ http://localhost:3001
 
-1. To build the site (and optimize images, compress javascript, etc), run the following command:
+If you make changes to a content file, stylesheet, or JavaScript file, and save it, the Middleman
+    server will be updated in real time with the change. This allows you to preview changes that
+    make you make locally.
 
-        $ bundle exec middleman build --clean
+If Middleman stops responding, kill (Ctrl-C) the server and restart it. If you make a configuration
+    change, including changes to Middleman helpers, you will need to kill the development server and
+    restart it.
+
+Create a build
+--------------
+
+1. To build the site (and optimize images, compress javascript, etc), set the appropriate
+    environment variables and run the build command, e.g.:
+
+        $ NODE_ENV=production API_ENDPOINT=http://API_ENDPOINT_DOMAIN npm run build
+        OR
+        $ NODE_ENV=production API_ENDPOINT=http://API_ENDPOINT_DOMAIN bundle exec middleman build --clean
 
 1. If you see errors, fix them. The exit code should be 0.
 
         $ echo $?
         $ 0
 
-1. To see the site, open the root html on your local machine by navigating to http://localhost:4567 in your web browser.
-
-1. If you make changes to a .md file and save it, the Middleman server will be updated in real time with the change. This allows you to preview changes that make you make locally.
+You can test the build by running a local development server (such as 
+https://www.npmjs.com/package/http-server) to serve the `build` folder.
 
 Publishing
 ----------

@@ -127,7 +127,7 @@ module ZurbFoundation
       s += "<a name=\"#{step}\" href=\"##{step}\"></a>" unless step.nil?
       # create a second anchor for the long form and link it to the step anchor if it exists; otherwise, link to the long form
       s += "<h#{size}>#{old}"
-      s += "<span class=\"section-links\"><a class=\"section-link\" name=\"#{escaped}\" href=\"##{step || escaped}\"><i class=\"fa fa-paragraph\"></i></a><a class=\"section-link\" name=\"#top\" href=\"#top\"><i class=\"fa fa-long-arrow-up\"></span></i></a>" unless old.match /fa\-paragraph/
+      s += "<span class=\"section-links\"><a class=\"section-link\" name=\"#{escaped}\" href=\"##{step || escaped}\"><i class=\"fa fa-paragraph\"></i></a><a class=\"section-link\" name=\"#top\" href=\"#top\"><i class=\"fa fa-long-arrow-up\"></i></a></span>" unless old.match /fa\-paragraph/
       s += "</h#{size}>"
       s
     end

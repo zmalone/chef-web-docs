@@ -1,6 +1,7 @@
 require 'chef/web/core/url_helpers'
+require 'slim'
+require 'lib/gulp'
 require 'lib/sitemap'
-require 'lib/compass'
 require 'lib/markdown'
 require 'lib/helpers/deploy_helpers'
 require 'lib/helpers/feature_helpers'
@@ -16,6 +17,7 @@ require 'lib/helpers/inline_code_helpers'
 require 'lib/helpers/snippet_helpers'
 require 'lib/helpers/button_helpers'
 require 'lib/helpers/key_point_helpers'
+# require 'lib/extension/chef_yaml_to_json/lib/chef_yaml_to_json'
 
 # In development you can use `binding.pry` anywhere to pause execution and bring
 # up a Ruby REPL
@@ -25,30 +27,23 @@ rescue LoadError
   logger.debug 'Pry is missing and will not be loaded.'
 end
 
-###
-# Compass
-###
-
-# Change Compass configuration
-compass_config do |config|
-  # config.output_style = :compact
-  config.line_comments = false
-end
-
 # Slim Configuration
-Slim::Engine.set_default_options pretty: true, disable_escape: true
+Slim::Engine.set_options pretty: true, disable_escape: true
 
 ###
 # Page options, layouts, aliases and proxies
 ###
-
+# activate :chef_yml_to_json
 activate :directory_indexes
 set :trailing_slash, false
-activate :autoprefixer
+# TODO: Re-enable autoprefixing with Middleman v4
+# activate :autoprefixer
 
 # Per-page layout changes:
 page '/robots.txt', layout: false
 page '/sitemap.xml', layout: false
+page '/tracks/**/*', layout: 'track'
+page '/modules/**/*', layout: 'module'
 
 # S3 hosting needs a page at the root
 page '/error.html', directory_index: false
@@ -77,29 +72,30 @@ helpers do
 end
 
 # CloudFront
-if deploy?
-  activate :cloudfront do |cloudfront|
-    cloudfront.access_key_id     = aws_access_key_id
-    cloudfront.secret_access_key = aws_secret_access_key
-    cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
-  end
+# TODO: Figure out how to reimplmement Cloudfront and S3 Redirects with Middleman v4
+# if deploy?
+  # activate :cloudfront do |cloudfront|
+  #   cloudfront.access_key_id     = aws_access_key_id
+  #   cloudfront.secret_access_key = aws_secret_access_key
+  #   cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
+  # end
 
   # S3 Redirects
-  activate :s3_redirect do |config|
-    config.bucket = aws_s3_bucket
-    config.aws_access_key_id = aws_access_key_id
-    config.aws_secret_access_key = aws_secret_access_key
-    config.after_build = true
-  end
-else
+  # activate :s3_redirect do |config|
+  #   config.bucket = aws_s3_bucket
+  #   config.aws_access_key_id = aws_access_key_id
+  #   config.aws_secret_access_key = aws_secret_access_key
+  #   config.after_build = true
+  # end
+# else
   # We use redirects below. The redirect method is not defined. Define it to do
   # nothing.
   def redirect(from = '', to = '')
   end
-end
+# end
 
 # Enable Livereload
-activate :livereload unless travis?
+# activate :livereload, no_swf: true, ignore: /^(?!.*source).*$/ unless travis?
 
 # Enable syntax highlighting - turn off the default wrapping
 activate :syntax, wrap: false
@@ -114,8 +110,13 @@ set :css_dir, 'assets/stylesheets'
 set :js_dir, 'assets/javascripts'
 set :images_dir, 'assets/images'
 set :fonts_dir, 'assets/fonts'
+set :root_dir, File.dirname(__FILE__)
+
+# Enable generation of navigation tree data based on the site structure
+activate :navtree
 
 # Redirects
+chef_docs_url = ''
 redirect '/additional-resources', '/fundamentals-series/'
 redirect '/chef-training', '/additional-resources/#cheftrainingseminars'
 redirect '/create-your-first-cookbook', '/tutorials/create-your-first-cookbook/'
@@ -207,8 +208,6 @@ redirect '/compliance-remediate', '/tutorials/compliance-remediate/'
 
 # Build-specific configuration
 configure :build do
-  # For example, change the Compass output style for deployment
-  activate :minify_css
 
   # Minify Javascript on build
   activate :minify_javascript
@@ -220,19 +219,25 @@ configure :build do
   activate :relative_assets
 
   # Compress PNGs after build
-  activate :smusher
+  # TODO: Figure out how to re-enable smusher with Middleman v4
+  # activate :smusher
 end
 
 before_build do
-  system 'cd lib/chef-lab-client && npm install --production && npm run build' or exit($?.exitstatus)
+  if File.exist?(REV_MANIFEST_PATH)
+    REV_MANIFEST.merge!(JSON.parse(File.read(REV_MANIFEST_PATH)))
+  end
+
+  # TODO: Move this to the Gulp production task, as Webpack has already run at this point here
+  system 'cd lib/chef-lab-client && npm install --production' or exit($?.exitstatus)
 end
 
 # Write out a REVISION file that shows which revision we're running
-after_build do
-  open("#{root_path.join('build', 'REVISION')}", 'w').write(
-    ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
-  )
-end
+# after_build do
+#   open("#{root_path.join('build', 'REVISION')}", 'w').write(
+#     ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
+#   )
+# end
 
 # Enable localization (i18n)
 activate :i18n
