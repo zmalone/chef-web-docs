@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Angular2TokenService } from 'angular2-token';
-import { UserProfileService } from './services/user-profile.service';
+import { Component, OnInit } from '@angular/core'
+import { Angular2TokenService } from 'angular2-token'
+import { UserProfileService } from './services/user-profile.service'
 
 @Component({
   selector: 'app-root',
-  template: (window as any).mainTemplate || '<div>No template found for app-root!</div>'
+  template: (window as any).mainTemplate || '<div>No template found for app-root!</div>',
 })
 export class AppComponent implements OnInit {
   constructor(private _tokenService: Angular2TokenService, private userProfileService: UserProfileService) {
@@ -17,8 +17,8 @@ export class AppComponent implements OnInit {
         twitter: '/auth/twitter',
         linkedin: '/auth/linkedin',
         chef: '/auth/chef_oauth2',
-      }
-    });
+      },
+    })
   }
 
   ngOnInit() {

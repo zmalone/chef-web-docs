@@ -1,9 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { UserProfileService } from '../../services/user-profile.service';
+import { Component, OnInit, Input } from '@angular/core'
+import { UserProfileService } from '../../services/user-profile.service'
 
 @Component({
   selector: 'user-module-progress',
-  templateUrl: './user-module-progress.component.html'
+  templateUrl: './user-module-progress.component.html',
 })
 export class UserModuleProgressComponent implements OnInit {
   public progress: number

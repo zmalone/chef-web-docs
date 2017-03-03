@@ -1,8 +1,8 @@
-import { Directive, OnInit, ElementRef, HostListener, Host, Input } from '@angular/core';
-import { UserProfileService } from '../../services/user-profile.service';
+import { Directive, OnInit, ElementRef, HostListener, Host, Input } from '@angular/core'
+import { UserProfileService } from '../../services/user-profile.service'
 
 @Directive({
-  selector: '.user-start-btn'
+  selector: '.user-start-btn',
 })
 export class UserStartBtnDirective implements OnInit {
   @Input()
@@ -30,7 +30,7 @@ export class UserStartBtnDirective implements OnInit {
 
   @HostListener('click', ['$event'])
   clicked(e) {
-    e.preventDefault();
+    e.preventDefault()
     // TODO: Preventing the default and then going to the default makes no sense!
     // But here's how we can alter the destination if needed.
     window.location.href = this.href

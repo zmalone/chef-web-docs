@@ -1,14 +1,14 @@
-import { ChefLabClientPage } from './app.po';
+import { ChefLabClientPage } from './app.po'
 
 describe('chef-lab-client App', function() {
-  let page: ChefLabClientPage;
+  let page: ChefLabClientPage
 
   beforeEach(() => {
-    page = new ChefLabClientPage();
-  });
+    page = new ChefLabClientPage()
+  })
 
   it('should display message saying app works', () => {
-    page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
-  });
-});
+    page.navigateTo()
+    expect(page.getParagraphText()).toEqual('app works!')
+  })
+})

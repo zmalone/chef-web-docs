@@ -15,7 +15,7 @@ import { UserProfileService } from './services/user-profile.service'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
 import { UserModuleProgressComponent } from './components/user-module-progress/user-module-progress.component'
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
-import { DisplayNamePipe } from './pipe/display_name.pipe';
+import { DisplayNamePipe } from './pipe/display_name.pipe'
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
 import { LoginLinkedInDirective } from './directives/login-linkedin/login-linkedin.directive'
 import { LoginChefDirective } from './directives/login-chef/login-chef.directive'
@@ -36,7 +36,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     DisplayNamePipe,
     LoginTwitterDirective,
     LoginLinkedInDirective,
-    LoginChefDirective
+    LoginChefDirective,
   ],
   imports: [
     routes,
@@ -45,15 +45,15 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     HttpModule,
     RouterModule,
     ToastModule.forRoot(),
-    A2tUiModule
+    A2tUiModule,
   ],
   providers: [
     ErrorHandlerService,
     Angular2TokenService,
-    UserProfileService
+    UserProfileService,
   ],
   bootstrap: [
-    AppComponent
-  ]
+    AppComponent,
+  ],
 })
 export class AppModule { }
