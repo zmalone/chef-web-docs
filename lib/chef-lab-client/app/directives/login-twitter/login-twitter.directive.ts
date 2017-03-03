@@ -1,8 +1,8 @@
-import { Directive, OnInit, HostListener, Host } from '@angular/core';
-import { Angular2TokenService } from 'angular2-token';
+import { Directive, OnInit, HostListener, Host } from '@angular/core'
+import { Angular2TokenService } from 'angular2-token'
 
 @Directive({
-  selector: '.login-twitter'
+  selector: '.login-twitter',
 })
 export class LoginTwitterDirective {
 
@@ -16,10 +16,10 @@ export class LoginTwitterDirective {
       () =>      {
         this._tokenService.validateToken().subscribe(
           res =>      console.log(res),
-          error =>    console.log(error)
-        );
+          error =>    console.log(error),
+        )
       },
-      error =>    console.log(error)
-    );
+      error =>    console.log(error),
+    )
   }
 }
