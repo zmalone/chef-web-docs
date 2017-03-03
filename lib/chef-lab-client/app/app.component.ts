@@ -14,7 +14,8 @@ export class AppComponent implements OnInit {
       oAuthPaths: {
         github: '/auth/github',
         google: '/auth/google_oauth2',
-        twitter: '/auth/twitter'
+        twitter: '/auth/twitter',
+        linkedin: '/auth/linkedin'
       }
     });
   }
