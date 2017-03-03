@@ -30,4 +30,18 @@ module PageHelper
     logger.warn "WARN: Unable to find page '#{id}' in '#{folder}'" if page.blank?
     page
   end
+
+  def find_next_page(page)
+    if page.parent && page.parent.data.layout == "lesson-options"
+      return page.parent.parent.children.select {|s| s.data.order == page.parent.data.order + 1}.first
+    elsif page.children && page.children.first
+      return page.children.first
+    else
+      next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
+      if next_page != nil && next_page.appendix?
+        next_page = nil
+      end
+      next_page
+    end
+  end
 end
