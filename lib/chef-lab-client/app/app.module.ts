@@ -11,6 +11,7 @@ import { AppComponent } from './app.component'
 import { LoginGithubDirective } from './directives/login-github/login-github.directive'
 import { LoginGoogleDirective } from './directives/login-google/login-google.directive'
 import { UserStartBtnDirective } from './directives/user-start-btn/user-start-btn.directive'
+import { ModuleNextBtnDirective } from './directives/module-next-btn/module-next-btn.directive'
 import { UserProfileService } from './services/user-profile.service'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
 import { UserModuleProgressComponent } from './components/user-module-progress/user-module-progress.component'
@@ -19,6 +20,7 @@ import { DisplayNamePipe } from './pipe/display_name.pipe'
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
 import { LoginLinkedInDirective } from './directives/login-linkedin/login-linkedin.directive'
 import { LoginChefDirective } from './directives/login-chef/login-chef.directive'
+import { ProgressService } from './services/progress.service'
 
 const routerConfig: Routes = []
 
@@ -30,6 +32,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     LoginGithubDirective,
     LoginGoogleDirective,
     UserStartBtnDirective,
+    ModuleNextBtnDirective,
     UserProgressBarComponent,
     UserModuleProgressComponent,
     UserTrackProgressComponent,
@@ -51,6 +54,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     ErrorHandlerService,
     Angular2TokenService,
     UserProfileService,
+    ProgressService,
   ],
   bootstrap: [
     AppComponent,

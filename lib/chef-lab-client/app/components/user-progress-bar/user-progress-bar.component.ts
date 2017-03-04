@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core'
-import { UserProfileService } from '../../services/user-profile.service'
+import { ProgressService } from '../../services/progress.service'
 
 @Component({
   selector: 'user-progress-bar',
@@ -11,11 +11,19 @@ export class UserProgressBarComponent implements OnInit {
   @Input()
   module: string
 
-  constructor(private userProfileService: UserProfileService) {}
+  constructor(
+    private progressService: ProgressService,
+  ) {}
 
   ngOnInit() {
-    this.userProfileService.activeUserProfile.subscribe((active) => {
-      this.progress = (active && active.modules[this.module]) ? active.modules[this.module].progress : 0
+    this.progressService.activeUserProgress.subscribe((data) => {
+      const moduleData = (data && data.modules) ? data.modules : {}
+      // TODO: Get the actual total number of steps in the module
+      const totalNum = 10
+      const numCompleted = Object.keys(moduleData).filter(key => {
+        return (key.startsWith(this.module + '/') && moduleData[key].completed_at)
+      }).length
+      this.progress = Math.round(100 * (numCompleted / totalNum))
     })
   }
 }
