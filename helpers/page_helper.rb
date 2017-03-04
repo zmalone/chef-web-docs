@@ -44,4 +44,18 @@ module PageHelper
       next_page
     end
   end
+
+  def find_root_module(page)
+    root = find_root(page)
+    match = root.url.match(/^\/?(modules|tracks)\/(.+)$/)
+    match[2]
+  end
+
+  def find_root(page)
+    root = page
+    while root.parent
+      root = root.parent
+    end
+    root
+  end
 end
