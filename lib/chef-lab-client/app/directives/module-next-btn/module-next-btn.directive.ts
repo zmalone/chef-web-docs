@@ -14,7 +14,8 @@ export class ModuleNextBtnDirective {
   @HostListener('click', ['$event'])
   clicked(e) {
     e.preventDefault()
-    this.progressService.complete((window as any).currentPageUrl)
+    const win = (window as any)
+    this.progressService.complete(win.currentSection, win.currentPageId)
       .subscribe(
         () => {},
         err => {

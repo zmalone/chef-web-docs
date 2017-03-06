@@ -36,7 +36,7 @@ module PageHelper
       return page.parent.parent.children.select {|s| s.data.order == page.parent.data.order + 1}.first
     elsif page.children && page.children.first
       return page.children.first
-    else
+    elsif page.parent && page.parent.children
       next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
       if next_page != nil && next_page.appendix?
         next_page = nil
@@ -45,10 +45,33 @@ module PageHelper
     end
   end
 
+  def get_page_section(page)
+    match = page.url.match(/^\/?(modules|tracks)\/(.+)$/)
+    match[1]
+  end
+
+  def get_page_id(page)
+    if (page.data.id)
+      return page.data.id
+    end
+
+    match = page.url.match(/^\/?(modules|tracks)\/(.+)$/)
+    path = match[2]
+    root = find_root(page)
+    if root.url != page.url
+      if page.parent
+        parts = path.split('/')
+        thisId = parts.last
+        parentId = get_page_id(page.parent)
+        return "#{parentId}/#{thisId}"
+      end
+    end
+    path
+  end
+
   def find_root_module(page)
     root = find_root(page)
-    match = root.url.match(/^\/?(modules|tracks)\/(.+)$/)
-    match[2]
+    get_page_id(root)
   end
 
   def find_root(page)

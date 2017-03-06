@@ -34,7 +34,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.userProfileService.load(1)
-    this.progressService.start((window as any).currentPageUrl)
+    const win = (window as any)
+    this.progressService.start(win.currentSection, win.currentPageId)
   }
 
   public isAuthenticated = function(){

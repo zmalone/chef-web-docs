@@ -10,25 +10,25 @@ export class ProgressService {
     private http: Http,
   ) {}
 
-  public start(pageUrl: string) {
-    return this.updateDateStamp(pageUrl, 'started_at')
+  public start(section: string, pageId: string) {
+    return this.updateDateStamp(section, pageId, 'started_at')
   }
 
-  public complete(pageUrl: string) {
-    return this.updateDateStamp(pageUrl, 'completed_at')
+  public complete(section: string, pageId: string) {
+    return this.updateDateStamp(section, pageId, 'completed_at')
   }
 
-  private updateDateStamp(pageUrl: string, field: string) {
-    const { type, pageId } = this.parseUrl(pageUrl)
+  private updateDateStamp(section: string, pageId: string, field: string) {
+    if (!section) return
     const dataLocal = this.getProgress()
 
     // Build full and partial data objects
-    dataLocal[type] = dataLocal[type] || {}
-    dataLocal[type][pageId] = dataLocal[type][pageId] || {}
+    dataLocal[section] = dataLocal[section] || {}
+    dataLocal[section][pageId] = dataLocal[section][pageId] || {}
     const dataChange = {}
-    dataChange[type] = {}
-    dataChange[type][pageId] = {}
-    dataLocal[type][pageId][field] = dataChange[type][pageId][field] = new Date().toISOString()
+    dataChange[section] = {}
+    dataChange[section][pageId] = {}
+    dataLocal[section][pageId][field] = dataChange[section][pageId][field] = new Date().toISOString()
 
     // Update local storage with the full data object
     localStorage.setItem('userProgressInfo', JSON.stringify(dataLocal))
@@ -50,17 +50,9 @@ export class ProgressService {
     return httpObservable
   }
 
-  private parseUrl(pageUrl: string) {
-    const match = pageUrl.match(/^\/?(modules|tracks)\/(.+)$/) || []
-    return {
-      type: match[1] || '',
-      pageId: match[2] || '',
-    }
-  }
-
-  private getProgress(type?: string) {
+  private getProgress(section?: string) {
     const existing = localStorage.getItem('userProgressInfo')
     const data = (existing) ? JSON.parse(existing) : {}
-    return (type) ? data[data] : data
+    return (section) ? data[data] : data
   }
 }
