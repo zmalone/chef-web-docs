@@ -35,6 +35,7 @@ include_recipe 'route53::default'
 include_recipe 'fastly::default'
 
 # We need the toolchain from node to deal with the javascripts... pull in node.
+node.default['nodejs']['install_method'] = 'source'
 include_recipe 'nodejs::default'
 include_recipe 'nodejs::npm'
 
