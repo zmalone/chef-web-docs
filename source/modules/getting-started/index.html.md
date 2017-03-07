@@ -1,7 +1,7 @@
 ---
 id: getting-started
 title: 'Getting Started'
-description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras pharetra, erat sed consectetur ultrices, metus diam mollis est, facilisis mollis magna risus eget velit.'
+description: "Learn about the many resources we offer to learn about Chef and a few suggested roadmaps."
 order: 1
 level: Beginner
 ---
