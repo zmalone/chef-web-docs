@@ -1,19 +1,16 @@
 source 'https://rubygems.org'
 
-gem 'middleman',            '~> 3.3.3'
-gem 'middleman-syntax',     '~> 2.0.0'
-gem 'middleman-cloudfront'
-gem 'middleman-s3_redirect'
-gem 'middleman-smusher',    '~> 3.0.0'
-gem 'middleman-livereload'
-gem 'middleman-autoprefixer', '~> 2.7.0'
-gem 'builder',              '~> 3.2.0'
-gem 'redcarpet',            '~> 2.2.2'
-gem 'rb-fsevent',           '~> 0.9'
-gem 'slim',                 '~> 1.3.8'
-gem 'foundation-rails', require: false
+gem 'middleman',            '~> 4.2.1'
+gem 'middleman-syntax',     '~> 3.0.0'
+gem 'middleman-navtree',    '~> 0.1.11'
+gem 'middleman-minify-html','~> 3.4.1'
+gem 'builder',              '~> 3.2.3'
+gem 'redcarpet',            '~> 3.4.0'
+gem 'rb-fsevent',           '~> 0.9.8'
+# TODO: Install Slim > 3.0.7 when it is available (adds Angular syntax support, see Slim README)
+gem 'slim', :git => 'https://github.com/slim-template/slim.git', :branch => 'master'
 gem 'chef-web-core', git: 'git@github.com:opscode/chef-web-core'
-gem 'aws-sdk', '~> 2.0'
+gem 'aws-sdk', '~> 2.7.4'
 
 group :development, :test do
   gem 'pry'

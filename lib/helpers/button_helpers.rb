@@ -1,4 +1,9 @@
 module ButtonHelpers
+  def platform_logo(logo, logo_width)
+    logo_width = 25 if logo_width == -1
+    image_tag(logo, style:"display:inline; margin-top: 0px; margin-bottom: 10px; margin-right: 25px; box-shadow:none;", width: logo_width)
+  end
+
   def platform_button(href, logo, text, logo_width, enabled)
     logo_width = 25 if logo_width == -1
     if enabled

@@ -1,0 +1,167 @@
+doctype html
+html lang="en"
+  head
+    title= [current_page.title, 'Learn Chef'].compact.join(' | ')
+    link rel='icon' type='image/x-icon' href='/favicon.ico'
+    = canonical_link_tag current_page.url
+    meta charset='utf-8'
+    meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'
+    meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'
+    - @meta_tags = current_page.data.meta_tags || []
+    - @meta_tags.each do |meta_tag|
+      meta name=meta_tag.name content=meta_tag.content
+
+    - if current_page.data.description
+      meta name='description' content=current_page.data.description
+    - if current_page.data.keywords
+      meta name='keywords' content=current_page.data.keywords
+    = stylesheet_link_tag gulp_css_path('application.css')
+    = yield_content :head
+    = partial 'layouts/google_analytics'
+    = partial 'layouts/demandbase'
+    = partial 'layouts/segment'
+    = javascript_include_tag '//cdn.optimizely.com/js/128576591.js'
+    - if current_page.data.redirect
+      = partial "layouts/redirect", locals: {target: current_page.data.redirect}
+
+  body class=page_classes
+    app-root
+    noscript#app-content
+      .contain-to-grid.fixed
+        nav.nav-main.top-bar data-options=("sticky_on: large") data-topbar="" role="navigation"
+          a name="top" href="#top"
+          .left
+            = link_to chef_www_url, class: 'logo-learn-chef' do
+              = image_tag('learn-chef-rally-logo.svg', onerror: 'learn-chef-rally-logo.png')
+          i#nav-icon.fa.fa-bars
+          ul.links
+            li= link_to 'Tracks', '/tracks/'
+            li= link_to 'Modules', '/modules/'
+          .right
+            ul.links
+              li.nav-link template="ngIf !isAuthenticated()"
+                a href="#" data-reveal-id="loginModal" Log in
+              li.nav-link template="ngIf !isAuthenticated()"
+                a href="#" data-reveal-id="SignupModal" Sign up
+              li.nav-link template="ngIf isAuthenticated()"
+                a href="#" {{getUserInfo() | display_name}}
+              li
+                a.icon.ic-option data-dropdown="dropOptions" aria-controls="dropOptions" aria-expanded="false" data-options="align:left"
+                ul#dropOptions.f-dropdown.nav-dropdown aria-hidden="true" data-dropdown-content="" tabindex="-1"
+                  li
+                    a href="#"
+                      i.icon-sprite.ic-profile
+                      span Profile
+                  li
+                    a href="#"
+                      i.icon-sprite.ic-progress
+                      span Progress
+                  li template="ngIf isAuthenticated()"
+                    a href="#"
+                      i.icon-sprite.ic-log-out
+                      span on-click="logout()" Log Out
+                  li
+                    a href="#"
+                      i.icon-sprite.ic-about-chef
+                      span About Chef
+
+      //Modal for login and Sign up
+      #loginModal.reveal-modal.small.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+        .modal-title
+          = image_tag('login/learn-chef-login.png')
+        .modal-body
+          p.lead Login to your account
+          a.login-chef.cls-modal
+            = image_tag('login/chef-supermarket.png')
+          p.social
+            a.ic-google.login-google.cls-modal
+            a.fa.fa-github.login-github.cls-modal
+            a.ic-twitter.login-twitter.cls-modal
+            a.ic-linkedin.login-linkedin.cls-modal
+          a.close-reveal-modal aria-label="Close"
+            i.icon.ic-close
+      //Modal for login and Sign up
+      #SignupModal.reveal-modal.small.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+        .modal-title
+          = image_tag('login/learn-chef-login.png')
+        .modal-body
+          p.lead Join the rally using
+          a.login-chef.cls-modal
+            = image_tag('login/chef-supermarket.png')
+          p.social
+            a.ic-google.login-google.cls-modal
+            a.fa.fa-github.login-github.cls-modal
+            a.ic-twitter.login-twitter.cls-modal
+            a.ic-linkedin.login-linkedin.cls-modal
+            a.close-reveal-modal aria-label="Close"
+              i.icon.ic-close
+      section
+        .content
+          = yield
+
+      footer#footer
+        .row
+          .medium-12.columns
+            .medium-3.columns
+              .head
+                | DOCS
+              ul.links-footer
+                li
+                  a href="" Chef Automate docs
+                li
+                  a href="" Chef docs
+                li
+                  a href="" InSpec docs
+                li
+                  a href="" Habitat docs
+            .medium-3.columns
+              .head
+                | COMMUNITY
+              ul.links-footer
+                li
+                  a href="" About the Chef Community
+                li
+                  a href="" Chef Supermarket
+                li
+                  a href="" Discuss Forum
+                li
+                  a href="" Community Events
+            .medium-3.columns
+              .head
+                | TRAINING & CERTIFICATIONS
+              ul.links-footer
+                li
+                  a href="" Training Catalog
+                li
+                  a href="" Certification
+                li
+                  a href="" Private Training
+            .medium-3.columns
+              .head
+                | MANAGE MY LEARN CHEF PROFILE
+              ul.links-footer
+                li
+                  a href="" My Learn Chef profile
+                li
+                  a href="" My Progress
+                li.separator
+                  a href="https://www.chef.io/contact-us/" target="_blank" Contact Chef
+                li
+                  a href="" Privacy Policy
+              .head
+                | Subscribe to updates
+              button.btn.btn-primary Keep me updated
+          .medium-12.columns
+            .medium-4.columns
+              a.logo-footer href=""
+            .medium-4.columns.copyright
+              | &copy; #{Time.now.year} Chef Software, Inc.  All Rights Reserved.
+            .medium-4.columns
+              ul.social-icon
+                li
+                  a.ic-fb href="https://www.facebook.com/getchefdotcom" target="_blank"
+                li
+                  a.ic-twitter href="https://twitter.com/chef" target="_blank"
+                li
+                  a.ic-linkedin href="https://www.linkedin.com/groups/3751378/profile" target="_blank"
+  = partial 'layouts/js'
