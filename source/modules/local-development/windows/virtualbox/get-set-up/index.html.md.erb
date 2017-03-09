@@ -1,0 +1,238 @@
+---
+title: 'Set up your workstation'
+order: 1
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: Up to 5 hours
+snippet_path: local-development/windows/vagrant
+snippet_workstation: ubuntu
+headings: [
+  { label: 'Before you begin', href: '#beforeyoubegin' },
+  { label: '1. Set up your workstation', href: '#step1' },
+  { label: '2. Install VirtualBox and Vagrant', href: '#step2' },
+  { label: '3. Build a Vagrant box', href: '#step3' },
+  { label: '4. Install the vagrant-winrm plugin', href: '#step4' }
+]
+---
+Here you'll make sure that your workstation is set up for Chef development and also install the virtualization software.
+
+The setup process involves downloading the evaluation version of Windows Server 2012 R2 as an ISO image and running a [Packer](https://packer.io/) template to convert the ISO image to a format that Vagrant and VirtualBox can use. The Packer template can take several hours to finish. However, you don't need to be present while it runs.
+
+This tutorial uses Test Kitchen along with [VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) to manage test instances. This combination is popular with Chef users because it uses free software and is easy to set up.
+
+<img src="/assets/images/misc/kitchen-vagrant-virtualbox.png" style="width: 100%; box-shadow: none;"/>
+
+**VirtualBox** is a [hypervisor](https://en.wikipedia.org/wiki/Hypervisor) that manages your virtual machine instances. Think of it as the software that hosts your VM instances.
+
+**Vagrant** makes it easier to work with hypervisors such as VirtualBox. Vagrant uses a configuration file, called a [Vagrantfile](https://www.vagrantup.com/docs/vagrantfile/), to describe aspects of the virtual machine such as available memory, host name, and network settings.
+
+Vagrant also provides access to base virtual machine images, called _boxes_. [HashiCorp's Atlas](https://www.hashicorp.com/atlas.html) is a place where you can access prebuilt boxes or upload new boxes for others to use. [Bento](http://chef.github.io/bento/) is a Chef project that provides ready-to-use Vagrant boxes for many common platforms. However, due to the way Windows Server is licensed, you'll need to build your own base box.
+
+**Test Kitchen** enables you to specify details about your virtual machine, including its operating system, available memory, host name, and network settings, and how to run Chef &ndash; including which recipes and which tests to run. Test Kitchen builds the <% fp 'Vagrantfile' %> for you and is the interface you use to create, destroy, and run Chef on your instances. Test Kitchen also downloads the Vagrant box for you as needed (when the box is available from a remote source, such as Atlas).
+
+[TIP] This page explains the manual steps to help you understand exactly what software you need to install and how to install it. Alternatively, you can also run the [ChefDK_Bootstrap](https://github.com/Nordstrom/chefdk_bootstrap) script to set up your Windows or Mac workstation for Chef development. The script installs [commonly used development tools](https://github.com/Nordstrom/chefdk_bootstrap#what-does-it-do) such as the Atom text editor, Git, VirtualBox, and Vagrant.
+
+[START_BOX]
+
+## Before you begin
+
+Your workstation &ndash; the system from which you develop your cookbooks &ndash; can be a physical machine or a virtual machine that supports nested virtualization.
+
+Ensure that your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS. If you're using a virtual machine as your workstation through a program such as VMware Fusion, [ensure that nested virtualization is enabled](https://communities.vmware.com/docs/DOC-8970) on the workstation VM.
+
+Also ensure that your workstation meets the [system requirements](https://www.virtualbox.org/wiki/End-user_documentation) for running VirtualBox. We recommend your system have at least 50 GB of free disk space available and at least 8 GB of memory.
+
+VirtualBox does not run in virtualized workstation environments such as Amazon EC2 or a VirtualBox host instance. You can [try a different option](/tutorials/local-development/windows) if you're unable to run VirtualBox.
+
+[END_BOX]
+
+[START_BOX]
+
+## 1. Set up your workstation for Chef development
+
+Although this tutorial doesn't involve the Chef server or bootstrapping a node, we recommend that you complete [Manage a Windows Server node](/tutorials/manage-a-node/windows/) before starting this tutorial.
+
+If you prefer to learn about local development now, before learning how to bootstrap a node, [perform these steps](/tutorials/manage-a-node/windows/hosted/set-up-your-workstation/) to set up your workstation. Then come back to this page.
+
+At this point, your workstation should:
+
+* have the latest version of the Chef Development Kit.
+* have a programmer's text editor that you're comfortable working with.
+* have the <% fp '~/learn-chef' %> directory for you to work in.
+* have Git and an RDP client.
+
+Having Git is important because you'll use it to download starter code to work with.
+
+Having an RDP client is important because you can use it to log in to your Windows Server instance to verify your work.
+
+If your workstation is running Windows, remember to open the Chef Development Kit desktop shortcut. The desktop shortcut brings up a PowerShell session that's configured to work with Chef.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Install VirtualBox and Vagrant
+
+If you already use VirtualBox and Vagrant or have gone through the Learn Chef tutorials that use them, then you're already set up.
+
+If you're new to VirtualBox and Vagrant, the [Learn the Chef basics](/tutorials/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage/) tutorial can help you get set up. You can follow the steps that have you bring up a CentOS instance to verify the installation. However, you don't need to connect to or install the Chef DK on your CentOS instance.
+
+[WINDOWS] Remember, on Windows you'll likely need to disable Hyper-V in order to run VirtualBox. [Here are a few ways to disable and enable Hyper-V](http://rizwanansari.net/run-hyper-v-and-virtualbox-on-the-same-machine/).
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Build a Windows Server 2012 R2 Vagrant box
+
+When Vagrant creates a virtual machine instance, it loads an image, or _box_, which captures a snapshot of the operating system in a preconfigured state.
+
+For some operating systems, Test Kitchen can automatically download a Vagrant box for you. It's also common to build your own box if you need it to contain certain software or security updates. Because of the way Windows Server 2012 R2 is licensed, we can't provide you with a preconfigured box. [Packer](https://packer.io/) is a popular way to automate the creation of Vagrant boxes.
+
+Here, you'll perform these steps to use the evaluation version (an ISO image) of Windows Server 2012 R2 to build your own box.
+
+1. Install Packer on your workstation.
+1. Get the **packer-templates** project from GitHub.
+1. Run the Packer template to generate a Vagrant box.
+1. Register the box with your local Vagrant catalog.
+
+Read [this blog post](http://www.hurryupandwait.io/blog/creating-windows-base-images-for-virtualbox-and-hyper-v-using-packer-boxstarter-and-vagrant) for more information about the process.
+
+#### 3.1 Install Packer on your workstation
+
+First, [install Packer](https://www.packer.io/downloads.html).
+
+Packer is distributed through a .zip file. After you extract the .zip file, add the path to `packer` to your `PATH` environment variable or use the full path to in the steps that follow.
+
+#### 3.2 Get the packer-templates project from GitHub
+
+Now download the latest [packer-templates](https://github.com/mwrock/packer-templates) project from GitHub. This template downloads the evaluation version of Windows Server 2012 R2 as an ISO image, installs all Windows updates, and reduces the size of the image as much as possible.
+
+If you use Git, clone the repository to where you do your development work. Alternatively, you can clone the repository to the <% fp '~/learn-chef' %> directory.
+
+```bash
+# ~/learn-chef
+$ git clone https://github.com/mwrock/packer-templates.git
+Cloning into 'packer-templates'...
+remote: Counting objects: 186, done.
+remote: Total 186 (delta 0), reused 0 (delta 0), pack-reused 186
+Receiving objects: 100% (186/186), 33.37 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (87/87), done.
+Checking connectivity... done.
+```
+
+If you don't use Git, you can [download a .zip file](https://github.com/mwrock/packer-templates) that contains the latest version from GitHub.
+
+![Download the .zip file from GitHub](misc/github_download_zip.png)
+
+#### 3.3 Run the Packer template to generate a Vagrant box
+
+Now run Packer to apply the template. This process can take several hours because it downloads the ISO image and  applies the latest Windows updates.
+
+```bash
+# ~/learn-chef/packer-templates
+$ packer build -force -only virtualbox-iso vbox-2012r2.json
+virtualbox-iso output will be in this color.
+
+==> virtualbox-iso: Downloading or copying ISO
+    virtualbox-iso: Downloading or copying: http://care.dlservice.microsoft.com/dl/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO
+    virtualbox-iso: Download progress: 0%
+    virtualbox-iso: Download progress: 1%
+    virtualbox-iso: Download progress: 2%
+[...]
+    virtualbox-iso: Download progress: 100%
+==> virtualbox-iso: Deleting previous output directory...
+==> virtualbox-iso: Creating floppy disk...
+    virtualbox-iso: Copying: answer_files/2012_r2/Autounattend.xml
+    virtualbox-iso: Copying: scripts/postunattend.xml
+    virtualbox-iso: Copying: scripts/boxstarter.ps1
+    virtualbox-iso: Copying: scripts/package.ps1
+==> virtualbox-iso: Creating virtual machine...
+==> virtualbox-iso: Creating hard drive...
+==> virtualbox-iso: Attaching floppy disk...
+==> virtualbox-iso: Creating forwarded port mapping for SSH (host port 3165)
+==> virtualbox-iso: Executing custom VBoxManage commands...
+    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1443702410 --natpf1 guest_winrm,tcp,,55985,,5985
+    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1443702410 --memory 2048
+    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1443702410 --vram 36
+    virtualbox-iso: Executing: modifyvm packer-virtualbox-iso-1443702410 --cpus 2
+==> virtualbox-iso: Starting the virtual machine...
+==> virtualbox-iso: Waiting 10s for boot...
+==> virtualbox-iso: Typing the boot command...
+==> virtualbox-iso: Waiting for WinRM to become available...
+==> virtualbox-iso: Connected to WinRM!
+==> virtualbox-iso: Uploading VirtualBox version info (5.0.4)
+==> virtualbox-iso: Gracefully halting virtual machine...
+    virtualbox-iso: Removing floppy drive...
+==> virtualbox-iso: Preparing to export machine...
+    virtualbox-iso: Deleting forwarded port mapping for SSH (host port 3165)
+==> virtualbox-iso: Exporting virtual machine...
+    virtualbox-iso: Executing: export packer-virtualbox-iso-1443702410 --output output-virtualbox-iso/packer-virtualbox-iso-1443702410.ovf
+==> virtualbox-iso: Unregistering and deleting virtual machine...
+==> virtualbox-iso: Running post-processor: vagrant
+==> virtualbox-iso (vagrant): Creating Vagrant box for 'virtualbox' provider
+    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/packer-virtualbox-iso-1443702410-disk1.vmdk
+    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/packer-virtualbox-iso-1443702410.ovf
+    virtualbox-iso (vagrant): Renaming the OVF to box.ovf...
+    virtualbox-iso (vagrant): Using custom Vagrantfile: vagrantfile-windows.template
+    virtualbox-iso (vagrant): Compressing: Vagrantfile
+    virtualbox-iso (vagrant): Compressing: box.ovf
+    virtualbox-iso (vagrant): Compressing: metadata.json
+    virtualbox-iso (vagrant): Compressing: packer-virtualbox-iso-1443702410-disk1.vmdk
+Build 'virtualbox-iso' finished.
+
+==> Builds finished. The artifacts of successful builds are:
+--> virtualbox-iso: VM files in directory: output-virtualbox-iso
+--> virtualbox-iso: 'virtualbox' provider box: windows2012r2min-virtualbox.box
+```
+
+#### 3.4 Register the box with your local Vagrant catalog
+
+After the Packer process finishes, confirm that <% fp 'windows2012r2min-virtualbox.box' %> exists in your <% fp 'packer-templates' %> directory.
+
+```bash
+# ~/learn-chef/packer-templates
+$ ls windows2012r2min-virtualbox.box
+windows2012r2min-virtualbox.box
+```
+
+Now run this command to add the box to your local Vagrant catalog.
+
+```bash
+# ~/learn-chef/packer-templates
+$ vagrant box add windows-2012r2 windows2012r2min-virtualbox.box
+==> box: Adding box 'windows-2012r2' (v0) for provider:
+    box: Downloading: file:///Users/user/Development/mwrock/packer-templates/windows2012r2min-virtualbox.box
+==> box: Successfully added box 'windows-2012r2' (v0) for 'virtualbox'!
+```
+
+[WINDOWS] [Due to an issue with newer versions of Vagrant](https://github.com/mitchellh/vagrant/issues/6852), if you're using a Windows workstation and the command fails with a blank error message, [you may need to install the Microsoft Visual C++ 2010 SP1 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=8328). Then try the command again.
+
+Now confirm that the box is successfully registered.
+
+```bash
+# ~/learn-chef/packer-templates
+$ vagrant box list
+windows-2012r2       (virtualbox, 0)
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Install the vagrant-winrm plugin
+
+Test Kitchen uses the [vagrant-winrm](https://github.com/criteo/vagrant-winrm) Vagrant plugin to enable the host machine to connect to Windows instances over the WinRM protocol.
+
+Install the plugin like this.
+
+<% command_snippet(workstation: 'ubuntu', path: 'local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/install-vagrant-winrm') %>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you're all set up, let's get a hang for how Test Kitchen works by applying the web server cookbook you wrote in the previous tutorial on a local test instance.
+
+<% end %>

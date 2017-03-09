@@ -1,0 +1,353 @@
+---
+title: 'Use ChefSpec to verify the correctness of your Windows Server resources'
+short_title: 'Windows Server'
+platform: Windows Server
+platform_id: windows
+category: local-development
+logo: tests.svg
+order: 3
+layout: lesson
+time_to_complete: 60 minutes
+snippet_path: chefspec/windows/local/chefspec
+snippet_workstation: ubuntu
+machine_config: snippets/chefspec/windows/local/machine_config.md
+environment: local
+headings: [
+  { label: '1. Create the cookook', href: '#step1' },
+  { label: '2. Examine the default test', href: '#step2' },
+  { label: '3. Run ChefSpec', href: '#step3' },
+  { label: '4. Specify the platform', href: '#step4' },
+  { label: '5. Configure the directory', href: '#step5' },
+  { label: '6. Test the configuration', href: '#step6' },
+  { label: '7. Make the recipe more flexible', href: '#step7' },
+  { label: '8. Resolve a test failure', href: '#step8' },
+  { label: '9. Refactor your tests', href: '#step9' }
+]
+---
+[HEADLINE] ChefSpec simulates the execution of your resources, giving you an even faster feedback loop as you create and refine your recipes.
+
+In the [Verify with InSpec](/tutorials/inspec/) tutorial, you learned how to use InSpec to automatically verify a basic web server configuration on a virtual machine running on your workstation. Although automated testing is faster than manual testing, it can still take some time for the instance to come up, run `chef-client`, and run the tests.
+
+You'll want to verify your work on a virtual instance before you run your cookbook in production, but as you develop your cookbook, you can use [ChefSpec](https://docs.chef.io/chefspec.html) to speed up the feedback cycle even more. ChefSpec _simulates_ the execution of your resources in memory, and does not involve the creation of a virtual instance. It's the fastest way to test your resources and is a great way to validate the correctness of your work, even before you set up a virtual instance to test on.
+
+[COMMENT] If you're new to automated testing, consider reading [Getting started with automated testing](/skills/get-started-with-testing/) before you start this tutorial.
+
+ChefSpec testing is also helpful when you use [continuous delivery](https://en.wikipedia.org/wiki/Continuous_delivery) (CD) systems such as [Chef Automate](https://www.chef.io/automate/) because ChefSpec enables you to verify your code without the need to bring up additional test systems.
+
+ChefSpec provides a kind of _unit_ testing, where you verify that a single component, such as a Chef resource, functions correctly. Unlike integration testing, unit testing does not focus on how multiple components work together.
+
+ChefSpec testing is most useful when a component's behavior varies based on the environment or other variable input. For example, say you define this `directory` resource to ensure that the <% fp 'C:\Temp' %> directory exists.
+
+```ruby
+# default.rb
+directory 'C:\Temp' do
+  action :create
+end
+```
+
+You don't necessarily need to write a unit test here because this `directory` resource can do only one thing &ndash; create the <% fp 'C:\Temp' %> directory if it does not exist. However, say your `directory` resource reads from a node attribute to determine which directory to create.
+
+```ruby
+# default.rb
+directory node['temp_path'] do
+  action :create
+end
+```
+
+In this case, you might want to validate that when the `node['temp_path']` attribute is set, that the appropriate directory would be created.
+
+In this tutorial, you'll create a basic cookbook that manages web content. You'll write ChefSpec tests that verify that your web content directory would be created with the required properties &ndash; without the need to run your cookbook on a test instance.
+
+<p>
+Here's a 60-minute webcast that discusses ChefSpec in greater depth and shows working examples. You can watch the video before or after you complete this tutorial.
+</p>
+
+<script type="text/javascript" src="https://www.brighttalk.com/clients/js/embed/embed.js"></script> <object class="BrightTALKEmbed" width="705" height="660">     <param name="player" value="channel_player"/>     <param name="domain" value="https://www.brighttalk.com"/>     <param name="channelid" value="11349"/>     <param name="communicationid" value="194483"/>     <param name="autoStart" value="false"/>     <param name="theme" value=""/> </object>
+
+<br />
+<% accordion('test-configuration', 'Test configuration') do %>
+
+<% markdown do %>
+
+<% render_machine_config(current_page.data.machine_config) %>
+
+<% end %>
+
+<% end %>
+
+
+[START_BOX]
+
+## 1. Create the web_content cookook
+
+Let's create a cookbook named `web_content`. Start by moving to the <% fp '~/learn-chef' %> directory.
+
+```bash
+$ cd ~/learn-chef
+```
+
+Next, run the following [chef generate cookbook](https://docs.chef.io/ctl_chef.html#chef-generate-cookbook) command to create the `web_content` cookbook.
+
+<% command_snippet(page: current_page, path: 'create-the-cookook/chef-generate-cookbook') %>
+
+Finally, move to the cookbook's directory, <% fp 'web_content' %>, for the next part.
+
+<% command_snippet(page: current_page, path: 'create-the-cookook/cd-web_content-1', features: :stdin) %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Examine the default test
+
+For ChefSpec, tests go in your cookbook's <% fp 'spec' %> directory. The `chef generate cookbook` command creates this directory for you.
+
+<% command_snippet(page: current_page, path: 'examine-the-test/tree-spec') %>
+
+Here's what the default spec looks like.
+
+<% code_snippet(page: current_page, path: 'examine-the-test/default_spec-2') %>
+
+You typically define one test, or spec, file for each recipe. So <% fp 'default_spec.rb' %> maps to the default recipe, <% fp 'default.rb' %>. If you had a second recipe, say <% fp 'firewall.rb' %>, then you would have a spec named <% fp 'firewall_spec.rb' %>.
+
+The `describe` block tells ChefSpec to run the `web_content::default` recipe in memory. The `let` block simulates the `chef-client` run. It also defines the `chef_run` variable, which is used in each test to validate the result.
+
+`ChefSpec::ServerRunner` specifies how to run `chef-client` in memory. It's a common option because it also simulates an in-memory Chef server, allowing you to access [data bags](https://docs.chef.io/data_bags.html) and other features.
+
+ChefSpec code resembles InSpec because both are based on the [RSpec](http://rspec.info) testing framework. RSpec [provides two ways to express tests](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/). In the [Verify with InSpec](/tutorials/inspec/) tutorial, you use what's commonly called RSpec's _should_ syntax. In this part, you'll use RSpec's _expectation_ syntax.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Run ChefSpec against the empty cookbook
+
+The default spec comes with one test. The test verifies whether `chef-client` would finish without error.
+
+```ruby
+# ~/learn-chef/cookbooks/web_content/spec/unit/recipes/default_spec.rb
+it 'converges successfully' do
+  expect { chef_run }.to_not raise_error
+end
+```
+
+Remember that ChefSpec simulates your Chef code in memory. So although ChefSpec cannot tell you whether your system will behave as you expect, knowing that `chef-client` completes without error is a good first step.
+
+Now let's run your tests. In the [Verify with InSpec](/tutorials/inspec/) tutorial, you ran your InSpec tests through Test Kitchen. To run ChefSpec tests, you run a program called [rspec](https://relishapp.com/rspec/rspec-core/docs/command-line).
+
+From your <% fp '~/learn-chef/cookbooks/web_content' %> directory, run `rspec` like this to verify that the empty cookbook would run without error.
+
+<% command_snippet(page: current_page, path: 'run-chefspec/run-rspec-3') %>
+
+The [chef exec](https://docs.chef.io/ctl_chef.html#chef-exec) part ensures that `rspec` is run using Chef's domain-specific language. The `--color` part is optional, but can help you visually distinguish passing from failing tests.
+
+[COMMENT] If you had multiple ChefSpec files, you would use `chef exec rspec --color spec/unit/recipes/*.rb` or `chef exec rspec --color` to run them all.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Specify the platform and platform version
+
+Recall Chef server holds information about your nodes, called _node attributes_, and that your node can access these attributes when `chef-client` runs.
+
+Because ChefSpec simulates your recipes, but does not run them, it needs a way to also simulate access to node attributes. [Ohai](https://docs.chef.io/ohai.html) is the tool that normally detects node attributes and provides them to `chef-client` at the start of every run. To simulate the process, ChefSpec uses [fauxhai](https://github.com/customink/fauxhai). Fauxhai provides _mock_, or test, data for [common platforms](https://github.com/customink/fauxhai/tree/master/lib/fauxhai/platforms).
+
+Fauxhai provides node attributes for [Windows Server 2012 R2](https://github.com/customink/fauxhai/blob/master/lib/fauxhai/platforms/windows/2012R2.json). Although these values might not exactly match your configuration, think of them as test data that you can use to verify the correctness of your resources.
+
+[COMMENT] You can [override](https://github.com/customink/fauxhai#overriding) node attributes in your test code, as you'll do shortly. You can also use [real server data](https://github.com/customink/fauxhai#fetching) or [provide your own attributes file](https://github.com/customink/fauxhai#fixturing).
+
+Tests are grouped in a `context` block. A `context` block groups related tests for a given platform. When you create a `ServerRunner` object, you provide the platform and its version. ChefSpec uses these values to construct [automatic node attributes](https://docs.chef.io/ohai.html#automatic-attributes), for example `node['platform']` and `node['platform_version']`.
+
+Modify your copy of <% fp 'default_spec.rb' %> like this.
+
+<% code_snippet(page: current_page, path: 'specify-the-platform/default_spec_4') %>
+
+If you wanted to write tests for another platform, for example, Windows Server 2008 R2, you would define a second `context` block. The [Linux version of this tutorial](/tutorials/chefspec/rhel/) shows how to write a single set of tests that can be shared among platforms.
+
+Run `rspec` a second time to verify that the test continues to pass.
+
+<% command_snippet(page: current_page, path: 'specify-the-platform/run-rspec-4') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Configure the web content directory
+
+Next, let's fill in the `web_content` cookbook's default recipe to configure the web content directory. On a system running Internet Information Services (IIS), it's common to place web content in the <% fp 'c:\inetpub\wwwroot' %> directory.
+
+Add the following to your default recipe, <% fp '~/learn-chef/cookbooks/web_content/recipes/default.rb' %>. The [directory](https://docs.chef.io/resource_directory.html) resource ensures that the <% fp 'c:\inetpub\wwwroot' %> directory exists and that the `IIS_USRS` group has read access. The `recursive` property ensures that any parent directories are also created.
+
+<% code_snippet(page: current_page, path: 'configure-the-directory/default_5') %>
+
+[COMMENT] For this tutorial, we're only concerned with the configuration of the <% fp 'c:\inetpub\wwwroot' %> directory. A more complete solution might copy web content files from a build server or some other location to your web server. You might have a second cookbook that configures IIS or other web server software.
+
+Next, run `rspec` to verify the recipe would run without error.
+
+<% command_snippet(page: current_page, path: 'configure-the-directory/run-rspec-5') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Test the directory configuration
+
+Next, you'll write a test that verifies the `directory` resource you just wrote. You'll verify that the <% fp 'c:\inetpub\wwwroot' %> directory would be created, the `IIS_IUSRS` group has read access to that directory, and that any parent directories would also be created.
+
+Modify your default spec to look like this.
+
+<% code_snippet(page: current_page, path: 'test-the-configuration/default_spec_6') %>
+
+Like InSpec, ChefSpec tests resemble natural language.
+
+The `create_directory` part is known as a _matcher_. The [ChefSpec documentation](http://www.rubydoc.info/github/sethvargo/chefspec) lists the matchers that are available for your tests. For example, [DirectoryMatchers](http://www.rubydoc.info/github/sethvargo/chefspec/ChefSpec/API/DirectoryMatchers) describes the `create_directory` and `delete_directory` matchers.
+
+[COMMENT] A great way to learn how to write good tests is by example. The ChefSpec project contains [example tests](https://github.com/sethvargo/chefspec/tree/master/examples) for many common Chef resource types.
+
+<% accordion('more-about-expect', 'A closer look at the expect method') do %>
+
+<%= partial 'exception_syntax' %>
+
+<% end %>
+&nbsp;
+
+Run `rspec` to run your new test.
+
+<% command_snippet(page: current_page, path: 'test-the-configuration/run-rspec-6') %>
+
+You see from the output that both tests pass.
+
+[COMMENT] Remember, ChefSpec only simulates the execution of your resources; it doesn't run the code on a real instance. Unlike InSpec tests, we can't verify things like whether port 80 would be open or whether `curl localhost` would succeed because ChefSpec does not have that information. ChefSpec tests only what's expressed directly in your code.
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Use a node attribute to make your recipe more flexible
+
+Let's say that multiple teams will use the `web_content` cookbook. Because some teams need to configure their content in a directory other than <% fp 'c:\inetpub\wwwroot' %>, let's use a node attribute to make the cookbook more flexible and reusable.
+
+First, move to the <% fp '~/learn-chef' %> directory.
+
+<% command_snippet(page: current_page, path: 'make-the-recipe-more-flexible/cd-learn-chef-7', features: :stdin) %>
+
+Next, run this [chef generate attribute](https://docs.chef.io/ctl_chef.html#chef-generate-attribute) command to create a default [attributes file](https://docs.chef.io/attributes.html#use-attribute-files).
+
+<% command_snippet(page: current_page, path: 'make-the-recipe-more-flexible/chef-generate-attribute') %>
+
+Add the following attribute to the default attributes file, <% fp '~/learn-chef/cookbooks/web_content/attributes/default.rb' %>.
+
+<% code_snippet(page: current_page, path: 'make-the-recipe-more-flexible/default_attributes_7') %>
+
+Next, modfiy your default recipe to use the node attribute you just created.
+
+<% code_snippet(page: current_page, path: 'make-the-recipe-more-flexible/default_7') %>
+
+It's a common practice to verify that the node attributes you define are used as you expect in your ChefSpec tests. Modify the `let` block in your default spec to explicitly set the `node['web_content']['document_root']` node attribute, like this.
+
+<% code_snippet(page: current_page, path: 'make-the-recipe-more-flexible/default_spec_7') %>
+
+Move to the <% fp 'web_content' %> directory and then run the tests.
+
+<% command_snippet(page: current_page, path: 'make-the-recipe-more-flexible/cd-web_content-7', features: :stdin) %>
+
+<% command_snippet(page: current_page, path: 'make-the-recipe-more-flexible/run-rspec-7') %>
+
+You see from the output that the tests continue to pass.
+
+[END_BOX]
+
+[START_BOX]
+
+## 8. Resolve a test failure
+
+Let's say that another team is using the `web_content` cookbook to configure a legacy Windows Server system. They require the [IIS_WPG](https://www.iis.net/learn/get-started/planning-for-security/understanding-built-in-user-and-group-accounts-in-iis) group, and not `IIS_IUSRS`, to have read access to the content directory.
+
+To illustrate this change, modify your default recipe like this (`IIS_IUSRS` becomes `IIS_WPG`).
+
+<% code_snippet(page: current_page, path: 'resolve-a-failure/default_8a') %>
+
+Run `rspec` to test the change.
+
+<% command_snippet(page: current_page, path: 'resolve-a-failure/run-rspec-8a') %>
+
+The output shows an error. The test expects the `IIS_IUSRS` group to have read access, but the default recipe now specifies `IIS_WPG`.
+
+In practice, this error might be discovered during the development phase or by a continuous delivery system, such as [Chef Automate](https://www.chef.io/automate/). (The [Deploy infrastructure changes](/tutorials/deploy-infrastructure/) tutorial walks you through an example of using Chef Automate's workflow feature to safely move changes from development to production, including running any associated tests.)
+
+After discovering the error, you and your team would decide how to resolve it. You decide that, like the content directory, the group name must be configurable.
+
+To resolve the error, you can create a node attribute that holds the group name, similar to what you did for the web content directory.
+
+Modify your default attributes file to define the `node['web_content']['group']` node attribute, like this.
+
+<% code_snippet(page: current_page, path: 'resolve-a-failure/default_attributes_8') %>
+
+Next, modify your default recipe to use the node attribute you just created, like this.
+
+<% code_snippet(page: current_page, path: 'resolve-a-failure/default_8b') %>
+
+Next, set the same node attribute in the default spec.
+
+<% code_snippet(page: current_page, path: 'resolve-a-failure/default_spec_8') %>
+
+Finally, run `rspec` to verify the changes.
+
+<% command_snippet(page: current_page, path: 'resolve-a-failure/run-rspec-8b') %>
+
+Default node attributes provide sensible default values that can be used in many configurations. In practice, you might use a [wrapper cookbook](https://blog.chef.io/2013/12/03/doing-wrapper-cookbooks-right/) or [role](https://docs.chef.io/roles.html) to override these values.
+
+[END_BOX]
+
+[START_BOX]
+
+## 9. Refactor your tests to be more general
+
+Recall that your default spec looks like this.
+
+<% code_snippet(page: current_page, path: 'refactor-your-tests/default_spec-9a') %>
+
+Based on your team's requirements, the `web_content` cookbook is configurable. Therefore, the intent of your ChefSpec tests aren't to verify that the <% fp 'c:\inetpub\wwwroot' %> directory specifically would be created or that the `IIS_IUSRS` group would have read access. Rather, the intent is to verify that the correct directory would be configured with the correct group name based on the environment. Put more generally, the intent is to verify that a given set of inputs (in this case, node attributes) produces the expected outputs (resources) when `chef-client` runs.
+
+To illustrate this, modify your default spec to use <% fp 'c:\fake_path' %> for the content directory and `fake_group` for the group name. You need to update both the node attributes and the `create_directory` matcher that uses them.
+
+<% code_snippet(page: current_page, path: 'refactor-your-tests/default_spec_9b') %>
+
+Run `rspec` to verify the changes.
+
+<% command_snippet(page: current_page, path: 'refactor-your-tests/run-rspec-9') %>
+
+When you commit your changes to revision control, you can keep the "fake" path and group names to highlight the parts that are configurable.
+
+Great work! Although it is basic, you now have a web content cookbook that includes tests, which you can build upon. As you add features, you can write additional tests that verify their behavior. Running `rspec` regularly also helps ensure that existing functionality continues to work as you expect.
+
+Although unit testing with ChefSpec may seem redundant at first, it's a great way to verify the correctness of your resources. This is especially true when the behavior of your resources depends on the environment or other variable input.
+
+In the examples shown, each run takes just a few seconds to complete. This process is much faster than applying the configuration on real Windows Server instances, and is a great way to quickly validate that the resources are properly defined.
+
+[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/web_content) on GitHub.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+In this tutorial, you created a basic web content configuration and used ChefSpec to simulate the execution of your resources in memory. Because ChefSpec does not involve the creation of a virtual instance, it's the fastest way to test your resources and is a great way to validate the correctness of your work. After you have passing ChefSpec tests, you can use another framework such as InSpec to verify that your resources work together to correctly build the functionality you need.
+
+### Next steps
+
+If you're new to Ruby programming or testing with ChefSpec, one of the best ways to improve your skills is to adapt other examples that you see. The [ChefSpec documentation](https://docs.chef.io/chefspec.html#examples) provides additional examples. The [ChefSpec project page](http://www.rubydoc.info/github/sethvargo/chefspec) contains many more. Learn more about writing great tests and see practical examples at [betterspecs.org](http://betterspecs.org).
+
+Although your code may behave as you expect, it's also important to ensure your code is easy to read and maintain, and avoids defects that can be difficult to fix later. Lint testing, or _linting_, is one way to help ensure that your code adheres to standard style guidelines and avoids common problems. In the [Verify code style](/tutorials/verify-style/) tutorial, you'll use the tools RuboCop and Foodcritic to identify potential issues in variations of the web server cookbook you created here.
+
+Learn more about how to test and debug your Chef code in our [Joy of Automating](/skills/) video series, hosted by Franklin Webber.
+
+You may be interested in reading the [Linux version of this tutorial](/tutorials/chefspec/rhel/), which illustrates other ways you can use ChefSpec that were not covered here.
+
+If you're involved in your company's compliance and audit process, you may be interested in the [Chef compliance scanner](/tutorials/compliance-assess/rhel/), which uses InSpec as its auditing and testing framework.
+
+You may also be interested in [Chef Automate](https://www.chef.io/automate/), which gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. Chef Automate reinforces the Chef workflow, where you begin by developing and testing your configuration from your local workstation. Then, you submit your change to Chef Automate's pipeline, where your change goes through sets of automated tests before going out into production. If you have many different teams, each delivering software in its own way, you can use Chef Automate to bring a standard, proven approach to all of your organization's deployments.
+
+[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
+
+<% end %>
