@@ -227,9 +227,6 @@ before_build do
   if File.exist?(REV_MANIFEST_PATH)
     REV_MANIFEST.merge!(JSON.parse(File.read(REV_MANIFEST_PATH)))
   end
-
-  # TODO: Move this to the Gulp production task, as Webpack has already run at this point here
-  system 'cd lib/chef-lab-client && npm install --production' or exit($?.exitstatus)
 end
 
 # Write out a REVISION file that shows which revision we're running

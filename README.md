@@ -8,6 +8,8 @@ Learn Chef tutorials and skills library are written in markdown and use the Midd
 Installation
 ------------
 
+1. Ensure you have Node 6+, NPM 3+, and Ruby 2.3.1. See the section below for Ubuntu instructions.
+
 1. Clone this repository.
 
         $ git clone git@github.com:chef/chef-web-learn.git
@@ -75,6 +77,31 @@ Create a build
 
 You can test the build by running a local development server (such as 
 https://www.npmjs.com/package/http-server) to serve the `build` folder.
+
+Installing current versions of Node and Ruby on Ubuntu
+------------------------------------------------------
+
+The Node and Ruby packages for Ubuntu are outdated. Here is one method of updating them:
+
+   ##### Install Node / NPM:
+        $ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+        $ sudo apt-get install -y nodejs
+
+   ##### Install Ruby and dependencies:
+        $ sudo apt-get update
+        $ sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+        $ sudo apt-get install libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
+        $ gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+        $ curl -sSL https://get.rvm.io | bash -s stable
+        $ source ~/.rvm/scripts/rvm
+        $ rvm install 2.3.1
+        $ rvm use 2.3.1 --default
+        $ gem install bundler
+        $ bundle install
+
+   ##### Increase the number of inotify watches (if you see an error in dev mode):
+        $ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p 
+
 
 Publishing
 ----------

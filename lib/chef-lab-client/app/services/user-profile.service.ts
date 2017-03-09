@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'
 import { ReplaySubject } from 'rxjs'
 
 @Injectable()
@@ -14,17 +14,17 @@ export class UserProfileService {
       this.activeUserProfile.next({
         modules: {
           'develop-locally': {
-              progress: 100
+              progress: 100,
           },
           'getting-started': {
-            progress: Math.floor(Math.random() * 100)
+            progress: Math.floor(Math.random() * 100),
           },
           'learn-basics': {
-            progress: Math.floor(Math.random() * 100)
-          }
-        }
+            progress: Math.floor(Math.random() * 100),
+          },
+        },
       })
-    }, 3000);
-    return this.activeUserProfile;
+    }, 3000)
+    return this.activeUserProfile
   }
 }
