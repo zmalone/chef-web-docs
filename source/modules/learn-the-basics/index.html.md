@@ -1,7 +1,7 @@
 ---
 id: learn-basics
 title: 'Learn the Basics'
-description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras pharetra, erat sed consectetur ultrices, metus diam mollis est, facilisis mollis magna risus eget velit.'
+description: "Learn about Chef's test and repair approach. You'll use resources, recipes, and cookbooks to configure a system."
 order: 2
 level: Beginner
 ---

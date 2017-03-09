@@ -1,28 +1,28 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
+import { DebugElement } from '@angular/core'
 
-import { UserModuleProgressComponent } from './user-module-progress.component';
+import { UserModuleProgressComponent } from './user-module-progress.component'
 
 describe('UserModuleProgressComponent', () => {
-  let component: UserModuleProgressComponent;
-  let fixture: ComponentFixture<UserModuleProgressComponent>;
+  let component: UserModuleProgressComponent
+  let fixture: ComponentFixture<UserModuleProgressComponent>
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserModuleProgressComponent ]
+      declarations: [ UserModuleProgressComponent ],
     })
-      .compileComponents();
-  }));
+      .compileComponents()
+  }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UserModuleProgressComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    fixture = TestBed.createComponent(UserModuleProgressComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  })
 
   it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    expect(component).toBeTruthy()
+  })
+})

@@ -3,7 +3,7 @@
     .row
       h1.head
         = current_page.data.title
-      user-module-progress module=""
+      user-progress-bar module="#{find_root_module(current_page)}"
   .row
     .breadcrumbs
       a aria-controls="drop1" aria-expanded="false" data-dropdown="drop1"
@@ -40,6 +40,7 @@
     .row
       = yield
   div
-    - next_page = find_next_page(current_page)
-    - if next_page
-      a.button.btn-primary.module-next-btn href="#{next_page.url}" Next
+    - if !current_page.data.hide_next
+      - next_page = find_next_page(current_page)
+      - if next_page
+        a.button.btn-primary.module-next-btn href="#{next_page.url}" Next

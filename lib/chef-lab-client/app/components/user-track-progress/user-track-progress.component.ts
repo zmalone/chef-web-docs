@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'
 
 @Component({
   selector: 'user-track-progress',
-  templateUrl: './user-track-progress.component.html'
+  templateUrl: './user-track-progress.component.html',
 })
 export class UserTrackProgressComponent implements OnInit {
 

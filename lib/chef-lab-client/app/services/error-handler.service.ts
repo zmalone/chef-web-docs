@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { ToastsManager } from 'ng2-toastr';
-import { Response } from '@angular/http';
+import { Injectable } from '@angular/core'
+import { ToastsManager } from 'ng2-toastr'
+import { Response } from '@angular/http'
 
 @Injectable()
 export class ErrorHandlerService {
@@ -11,18 +11,18 @@ export class ErrorHandlerService {
     if (typeof err === 'string') {
       this.toastr.error(err)
     } else if (err instanceof Response) {
-      const res: Response = err;
+      const res: Response = err
       if (res.text() && res.text() !== res.statusText) {
-        this.toastr.error(res.text(), res.statusText);
+        this.toastr.error(res.text(), res.statusText)
       } else {
-        this.toastr.error(res.statusText);
+        this.toastr.error(res.statusText)
       }
     } else if (err && err.message) {
-      this.toastr.error(err.message);
+      this.toastr.error(err.message)
     } else if (err) {
-      this.toastr.error(err.toString());
+      this.toastr.error(err.toString())
     } else {
-      this.toastr.error('An unknown error has occurred');
+      this.toastr.error('An unknown error has occurred')
     }
   }
 }
