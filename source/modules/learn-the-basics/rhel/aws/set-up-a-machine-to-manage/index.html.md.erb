@@ -1,0 +1,175 @@
+---
+title: 'Set up an AWS instance to manage'
+order: 1
+description: "Set up your Chef environment."
+keywords: TODO
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 20 minutes
+snippet_path: learn-the-basics/rhel/aws/set-up-a-machine-to-manage
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Access your AWS account', href: '#step1' },
+  { label: '2. Launch a CentOS 7 instance', href: '#step2' },
+  { label: "3. If you're running Windows &ndash; verify your SSH client", href: '#step3' },
+  { label: '4. Connect to your CentOS instance', href: '#step4' },
+  { label: '5. Install the Chef DK on your CentOS instance', href: '#step5' },
+  { label: '6. Prepare a text editor on your CentOS instance', href: '#step6' },
+  { label: 'Cleaning up', href: '#cleaningup' }
+  ]
+---
+<%= partial '../../shared/get-set-up/intro' %>
+
+In this part, you'll create a CentOS or Red Hat Enterprise Linux instance on [Amazon Elastic Compute Cloud](https://aws.amazon.com/ec2/) (Amazon EC2). You'll also learn how to [clean up](#cleaningup) your instance when you're done with this tutorial.
+
+[COMMENT] For the Learn Chef tutorials, we recommend you use CentOS to build Chef skills around managing your Red Hat Enterprise Linux servers. CentOS is a free computing platform that's functionally compatible with Red Hat Enterprise Linux.
+
+<% accordion('test-configuration', 'Test configuration', true) do %>
+
+<% markdown do %>
+
+The sample output you see might differ depending on the Amazon Machine Images (AMI) that you choose. The version of the Chef Development Kit that you use can also affect the output that you see. We recommend that you install the components as directed in the tutorial, using the specific versions that have been tested.
+
+For technical support with AWS, [visit the discussion forums](https://forums.aws.amazon.com/index.jspa). We're also happy to help as best we can.
+
+<% render_machine_config('snippets/learn-the-basics/rhel/aws/machine_config.md') %>
+
+<% end %>
+
+<% end %>
+
+[START_BOX]
+
+## 1. Access your AWS account
+
+Log in to your AWS account. If you don't have an account, AWS's [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s) gives you 750 hours per month of usage on the t2.micro tier.
+
+If you are unable to use AWS, you can [try a different option](/tutorials/learn-the-basics/rhel/) for this tutorial.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Launch a CentOS 7 instance
+
+Next, bring up a CentOS instance on Amazon EC2.
+
+If you're new to AWS, their [Launch a Linux Virtual Machine](https://aws.amazon.com/getting-started/launch-a-virtual-machine/) tutorial walks you through the creation of your first Linux virtual machine.
+
+When you're ready to continue with this tutorial, launch a CentOS 7 or Red Hat Enterprise Linux 7.2 instance from the AWS console or from the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B00IOYDTV6/). Select t2.micro to take advantage of the free usage tier.
+
+When you [create your security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html), ensure that ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) are open for inbound network traffic.
+
+[COMMENT] Technically, port 443 is not required for this tutorial. But setting up that port now prepares you for the next tutorial, where you'll configure your server to be managed remotely.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. If you're running Windows &ndash; verify your SSH client
+
+In this tutorial, you'll connect to your Linux instance over SSH. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you need to install one.
+
+The easiest way to set up an SSH client is to install the Chef Development Kit (Chef DK) on your workstation. Chef DK version 0.15 and later comes with [Git for Windows](https://git-scm.com/download/win), which includes an SSH client.
+
+Installing the Chef DK now also prepares you for the next tutorial, where you'll use Chef to manage a server remotely from your workstation.
+
+There are two ways to install the Chef DK on Windows.
+
+1. [Download and run the installer](https://downloads.chef.io/chef-dk/) from the Chef downloads page.
+2. Run the installer from PowerShell.
+
+<% command_snippet(path: 'learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage/install-the-chef-dk/install-chefdk', workstation: 'windows') %>
+
+After you install the Chef DK, verify that Git and an SSH client are set up properly.
+
+First, open the **Chef Development Kit** shortcut from the desktop or **Start** menu. Open the shortcut as **Adminstrator**.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+Next, run these commands.
+
+<% command_snippet(path: 'learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage/verify-your-ssh-client/git--version', workstation: 'windows') %>
+
+<% command_snippet(path: 'learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage/verify-your-ssh-client/ssh-no-args', workstation: 'windows', features: [:stderr, :stdin]) %>
+
+Keep your **Chef Development Kit** window open for the next part.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Connect to your CentOS instance
+
+Next, connect to your instance.
+
+The AWS documention explains how to connect [using a web browser](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-connect-to-instance-linux) or [over SSH](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html).
+
+Here's an example of how to connect over SSH using key-based authentication.
+
+```bash
+$ ssh -i /path/to/private/key centos@52.87.191.240
+Last login: Tue Aug  9 17:34:35 2016 from 94.221.242.18
+[centos@ip-172-33-4-55 ~]$
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Install the Chef DK on your CentOS instance
+
+Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your instance. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
+
+From your SSH connection, run this from the command line to install the Chef DK.
+
+<% command_snippet(path: 'learn-the-basics/rhel/aws/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'centos', features: [:stdin, :stderr, :stdout]) %>
+
+The `-c` and `-v` arguments specify the Chef DK version this tutorial was last tested with.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Prepare a text editor on your CentOS instance
+
+Because Chef uses code to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
+
+From your SSH connection, install a text editor now. Because you're accessing your server from an SSH connection, choose a command-line text editor such as `emacs`, `nano`, or `vim`.
+
+If you're new to using command-line text editors on CentOS, here are some resources to help get you started.
+
+<% accordion('emacs-gs', 'Emacs') do %>
+
+<%= partial 'layouts/partials/emacs_gs_rhel' %>
+
+<% end %>
+
+<% accordion('nano-gs', 'Nano') do %>
+
+<%= partial 'layouts/partials/nano_gs_rhel' %>
+
+<% end %>
+
+<% accordion('vim-gs', 'Vim') do %>
+
+<%= partial 'layouts/partials/vim_gs_rhel' %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## Cleaning up
+
+After you complete the tutorial, be sure to [destroy your instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-clean-up-your-instance).
+
+Or, you can leave your server running if you want to use it to complete the next tutorial. You can temporarily [stop and later resume](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Stop_Start.html) your instance to reduce cost.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you have your instance set up with the Chef DK and a text editor, let's use Chef to configure a file, a kind of _resource_, on it.
+
+<% end %>

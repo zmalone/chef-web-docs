@@ -1,0 +1,148 @@
+The Chef compliance scanner runs on Red Hat Enterprise Linux, CentOS, and Ubuntu. You can install the Chef compliance scanner on your own hardware, a cloud instance, or a virtual machine.
+
+[COMMENT] Alternatively, you can bring up the Chef compliance scanner [through the AWS Marketplace](https://docs.chef.io/aws_marketplace.html#chef-compliance-ami). The AWS Marketplace setup comes preconfigured with the necessary system requirements and network settings. After installing from the AWS Marketplace, you can move to [step 3](#step3).
+
+[START_BOX]
+
+## 1. Install the Chef compliance scanner
+
+[COMMENT] We use `sudo` to highlight where root access is required. You can omit `sudo` from the commands if you're running as the root user.
+
+Follow these steps to run the Chef compliance scanner on your own hardware or virtual machine:
+
+1. [Choose your platform](https://docs.chef.io/install_compliance.html#platforms) and bring up a system to run the Chef compliance scanner.
+1. Log in to your server directly, typically over SSH. Then, [review the prerequisites](https://docs.chef.io/install_compliance.html#prerequisites) to ensure your system is ready.
+
+    The Chef compliance scanner requires a resolvable hostname. If you're running the Chef compliance scanner on a virtual machine or other system that's not registered with a name server, choose a hostname such as `chef-compliance.test`.
+
+    If you're running the Chef compliance scanner on Red Hat Enterprise Linux or CentOS, these commands will perform the prerequisite tasks on most configurations. Replace <% ph 'HOSTNAME' %> and <% ph 'IP_ADDRESS' %> with your values.
+
+    ```bash
+    $ sudo yum install -y ntp
+    $ sudo chkconfig ntpd on
+    $ ntpdate -s time.nist.gov
+    $ sudo hostname HOSTNAME
+    $ echo "IP_ADDRESS HOSTNAME" | sudo tee -a /etc/hosts
+    ```
+
+    Here are the corresponding commands for Ubuntu:
+
+    ```bash
+    $ sudo apt-get update
+    $ sudo apt-get install -y curl ntp
+    $ sudo service ntp start
+    $ ntpdate -s time.nist.gov
+    $ sudo hostname HOSTNAME
+    $ echo "IP_ADDRESS HOSTNAME" | sudo tee -a /etc/hosts
+    ```
+
+    Here's a complete example that sets up a CentOS virtual machine to run the Chef compliance scanner.
+
+    ```bash
+    $ sudo yum install ntp
+    $ sudo chkconfig ntpd on
+    $ ntpdate -s time.nist.gov
+    $ sudo hostname chef-compliance.test
+    $ echo "192.168.145.140 chef-compliance.test" | sudo tee -a /etc/hosts
+    ```
+
+    If you're running the Chef compliance scanner on a virtual machine or other system that's not registered with a name server, add a corresponding entry to your local <% fp '/etc/hosts' %> file to enable access to the Chef compliance scanner from your workstation. For example:
+
+    ```ruby
+    # /etc/hosts
+    ##
+    # Host Database
+    ##
+    127.0.0.1	    localhost
+    ::1             localhost
+    fe80::1%lo0	    localhost
+
+    192.168.145.140 chef-compliance.test
+    ```
+
+1. From your server, run this command to install the Chef compliance scanner.
+
+    ```bash
+    $ curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -P compliance
+    ```
+
+    Alternatively, you can [download and install the package manually](https://downloads.chef.io/compliance/).
+
+1. Run these commands to ensure the services are configured and ready to accept connections.
+
+    ```bash
+    $ sudo chef-compliance-ctl reconfigure --accept-license
+    $ sudo chef-compliance-ctl restart
+    ```
+
+    The `--accept-license` flag is required to accept the [Chef Master License and Services Agreement](https://docs.chef.io/chef_license.html#chef-mlsa) (Chef MLSA).
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Perform the initial setup
+
+> In this part, you access the the Chef compliance scanner web interface remotely from a web browser.
+
+Log in to the the Chef compliance scanner web interface and perform the initial setup.
+
+From your computer, open a web browser and navigate to your server's setup page. The URL comes in this form:
+
+**https://<% ph 'fqdn' %>/#/setup**
+
+The Chef compliance scanner comes with a self-signed certificate and you'll probably see a warning about it. For the purposes of the tutorial, it's safe to accept the certificate. In a production environment, you can [configure an SSL certificate](https://docs.chef.io/install_compliance.html#configure-ssl) that's rooted by a trusted certificate authority (CA).
+
+Next, click the **Setup Chef Compliance** button.
+
+![](compliance/setup_button.png)
+
+Review the **Online Master License and Services Agreement** and then click **Accept**.
+
+![](compliance/accept_license_button.png)
+
+Next, fill in the details for the administrator account and click **Next**. Save your username and password somewhere safe.
+
+![](compliance/create_admin_account.png)
+
+On the **Review** page, verify your account details and then click **Configure**.
+
+![](compliance/configure_button.png)
+
+After the process completes, click the **Dashboard** button. Then, enter your administrator account details and click **Sign in**.
+
+![](compliance/sign_in_button.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Review the dashboard
+
+The dashboard appears when you sign in. This is where you manage nodes, initiate scans, and review reports.
+
+![](compliance/dashboard.png)
+
+Click through each of the menu options to get a sense of what you can do. Here's a brief description of each option.
+
+* **Dashboard** &mdash; where you manage the nodes that you scan for compliance.
+* **Reports** &mdash; where you review the results of your compliance scans.
+* **Jobs** &mdash; displays the status of scheduled scans.
+* **Compliance** &mdash; displays the available [compliance profiles](https://docs.chef.io/compliance.html#compliance-profiles). The Chef compliance scanner comes with a set of preconfigured profiles. You can also add your own.
+* **Settings** &mdash; where you manage the private keys that allow the Chef compliance scanner to connect to your nodes. Although key-based authentication can provide better security, you can also configure the Chef compliance scanner to connect to your servers using passwords.
+
+You can view which users are logged in or log out of your session from the menu located at the upper-right corner.
+
+![](compliance/current_user.png)
+
+You can also manage organizations and users from the menu located at the bottom-left corner.
+
+![](compliance/manage_menu.png)
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Next, you'll prepare a node to scan.
+
+<% end %>

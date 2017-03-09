@@ -1,0 +1,118 @@
+---
+title: 'Get set up with AWS OpsWorks for Chef Automate'
+short_title: 'Get set up with AWS OpsWorks'
+order: 1
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 30 minutes
+snippet_path: deploy-infrastructure/windows/opsworks/set-up-your-chef-server
+snippet_workstation: ubuntu
+headings: [
+  { label: "The systems you'll need", href: '#thesystemsyou39llneedforthistutorial' },
+  { label: '1. Gather information', href: '#step2' },
+  { label: '2. Enable network access', href: '#step3' },
+  ]
+---
+In this part, you'll bring up an AWS OpsWorks for Chef Automate installation and configure network settings for use with Chef Automate's workflow feature.
+
+If you've gone through the [Manage a node](/tutorials/manage-a-node/windows/opsworks/) tutorial, you've already brought up an OpsWorks for Chef Automate installation and used Chef to configure a web server remotely from your workstation. Chef Automate's workflow feature requires additional systems and setup to enable changes to move through Chef Automate's integrated pipeline.
+
+In this part and the parts that follow, we'll refer to these installation guides.
+
+* [Install Chef Automate](https://docs.chef.io/install_chef_automate.html)
+* [AWS OpsWorks for Chef Automate](https://docs.chef.io/aws_opsworks_chef_automate.html)
+
+You can review these guides to familiarize yourself with the process before you proceed. Let's start by looking at the systems you'll need for this tutorial.
+
+[START_BOX]
+
+## The systems you'll need for this tutorial
+
+The systems that make up Chef Automate reflect the types of software you want to deliver. For example, if you use Chef to manage your infrastructure, your system may include a private [Chef Supermarket](https://docs.chef.io/supermarket.html) server that exists behind your firewall.
+
+The setup you'll need for this tutorial includes the minimum number of systems that are typical for many users. Here's a diagram:
+
+<img src="/assets/images/automate/automate-scenario-architecture-opsworks.svg" style="width: 100%;" alt="An example Chef Automate installation" />
+
+The diagram shows these components:
+
+**AWS OpsWorks for Chef Automate** &ndash; AWS OpsWorks is a managed service that runs on Amazon Web Services that includes a Chef server and Chef Automate.
+
+**Runners** &ndash; To use Chef Automate's workflow feature, you'll need one or more runners, sometimes called _build nodes_. As a change moves through the Chef Automate pipeline, runners execute jobs scheduled by Chef Automate. Runners typically exist as their own servers. If you set up multiple runners, phases can run in parallel.
+
+**Acceptance, Union, Rehearsal, and Delivered environments** &ndash; Chef Automate deploys build artifacts, or the pipeline's final output, to these environments. The output of your pipeline informs you how you set up your environments.
+
+For example, you might deploy a SQL Server database to a Windows Server environment. Or you might deploy web content and other media to an Amazon S3 bucket. In this tutorial, you'll publish a cookbook that configures a basic web application on Windows Server. Therefore, the Windows Server runtime environment exists for each of these stages because the artifacts produced in the Build stage need to be deployed to each of them.
+
+Each environment is named for the stage in which it is used. For example, the union environment is used in the Union stage of the pipeline. These environments typically resemble your production environment and can often be part of your production environment. Delivered is the final environment. What "delivered" means for your system is up to you. It could mean deploying the change so that it is live and receiving production traffic, or it might mean deploying the change to a staging or preproduction environment that is later promoted manually or through some other mechanism.
+
+**Your workstation** &ndash; Workstations are typically either a laptop or desktop computer. A workstation can run Windows, Mac OS X, or Linux. From your workstation, you access Chef Automate using either the command line or the web interface. Other common tasks include creating projects, writing build cookbooks, submitting new features to the pipeline, and reviewing and approving others' changes.
+
+[END_BOX]
+
+[START_BOX]
+
+## 1. Bring up an AWS OpsWorks for Chef Automate instance
+
+You'll bring up runners and infrastructure to run your cookbook later in this tutorial. Before you begin, you'll need an AWS OpsWorks for Chef Automate installation and a workstation that is set up to use it.
+
+If you don't already have an AWS OpsWorks for Chef Automate installation, we recommend that you work through the [Manage a node](/tutorials/manage-a-node/windows/opsworks/set-up-opsworks/) tutorial first, then come back here.
+
+The _Manage a node_ tutorial shows you Chef Automate's visibility feature, which enables you to visualize the status of your nodes. In this tutorial, you'll extend this setup to use Chef Automate's workflow feature to deliver changes more automatically.
+
+<%= link_to("Start the Manage a node tutorial <i class='fa fa-angle-double-right'></i>", "/tutorials/manage-a-node/windows/opsworks/set-up-opsworks/", class: 'button radius cta cta') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Gather information about your AWS OpsWorks installation
+
+To prepare for the parts that follow, gather the following details about your AWS OpsWorks installation.
+
+* **Your Chef Automate server's FQDN.** You can find your server's FQDN in the AWS Management console. Here's an example for a server named **test** in the **US East** region.
+  ![](automate/opsworks_console_server_info.png)
+* **Your Chef Automate username and password**. When you first bring up your installation, you can access your sign-in credentials through the OpsWorks console or by downloading a file named <% fp 'credentials.csv' %>. Keep in mind that AWS does not store your sign-in credentials, so be sure to store them in a safe place. AWS OpsWorks provides the built-in **admin** user, which you'll see in this tutorial. Although using the **admin** user is the easiest way to get started, you can [set up an additional user account](https://docs.chef.io/delivery_users_and_roles.html#add-users) if you prefer.
+  ![](automate/opsworks_credentials.png)
+* **The location of the starter kit on your workstation.** Open a terminal window and `cd` to this location. In the _Manage a node_ tutorial, we suggested you rename the starter kit directory to <% fp 'learn-chef' %>. If you decided not to rename this directory, just remember to replace the path names shown in this tutorial with your own.
+
+You may also want to [log in to the Chef Automate dashboard](/tutorials/manage-a-node/windows/opsworks/set-up-opsworks#step4) now and have your browser window handy for the parts that follow.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Enable inbound network access
+
+For this tutorial, you need to modify your Chef Automate server's security group to enable [inbound network access](https://docs.chef.io/install_chef_automate.html#node-hostnames-and-network-access) over TCP on these ports:
+
+<dl>
+  <dt><b>8443 (Chef server)</b></dt>
+  <dd>Recall that runners execute jobs scheduled by Chef Automate. As a cookbook moves through the pipeline, runners use <i>push jobs</i> to initiate <code>chef-client</code> to run on infrastructure during the Acceptance, Union, Rehearsal, and Delivered stages. Runners require a trusted connection to the Chef server to initiate push jobs. You need to open port 8443 on your Chef server so that you can later retrieve the SSL certificate from this port to establish trust. You'll learn more about push jobs later in this tutorial.</dd>
+
+
+  <dt>8989 (Chef Automate Git)</dt>
+  <dd>Chef Automate uses revision control to manage your project's source code. Chef Automate integrates with revision control systems such as <a href="https://docs.chef.io/integrate_delivery_github.html">GitHub</a> and <a href="https://docs.chef.io/integrate_delivery_bitbucket.html">Bitbucket</a>. Chef Automate also provides its own Git server, which you'll use in this tutorial. Chef Automate's Git server requires inbound network access on port 8989.</dd>
+
+  <dt>10000-10003 (push jobs)</dt>
+  <dd>Later in this tutorial, you'll learn how Chef Automate uses <i>push jobs</i> to run <code>chef-client</code> on your infrastructure nodes to apply configuration changes. Ports 10000-10003 are required to run push jobs.</dd>
+</dl>
+
+-- --
+
+One way to enable access on these ports is from the EC2 management console. From the **Instances** page, locate your AWS OpsWorks instance and then, on the **Description** tab, locate your instance's security group. Here's an example.
+
+<img src="/assets/images/automate/ec2_find_security_group.png" style="width: 50%;" />
+
+Click on your security group. Then [add security group rules](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#adding-security-group-rule) that permits inbound access on ports 8443, 8989, and 10000-10003. For learning purposes, you can permit traffic from all sources (0.0.0.0) &ndash; authentication is still required to access services. In practice, you might restrict inbound traffic to certain sources, such as those on your company's network or a  [VPC](https://aws.amazon.com/vpc/).
+
+Your security group rules will look like this.
+
+<img src="/assets/images/automate/security_group_push_jobs.png" style="width: 60%;" />
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Next, you'll extend your workstation setup to be able to push configuration changes through Chef Automate's integrated pipeline.
+
+<% end %>

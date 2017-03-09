@@ -1,0 +1,125 @@
+[HEADLINE] Like files, packages and services are also types of resources. Chef applies resources in the order you specify.
+
+Let's extend what you learned about file management in the previous lesson to manage an Internet Information Services (IIS) web server.
+
+Of course, you can set up one web server manually. But with Chef it'll be easier to manage your infrastructure as you scale, add complexity, and roll out new configuration policies.
+
+[START_BOX]
+
+## 1. Install IIS
+
+Let's install IIS. From your <code class="file-path">~\chef-repo</code> directory, add this recipe to a file named <code class="file-path">webserver.rb</code>.
+
+<% code_snippet(page: current_page, path: 'install-iis/webserver-1') %>
+
+We don't need to specify an action because `:run` is the default.
+
+Now run `chef-client` in local mode to apply the recipe.
+
+<% command_snippet(page: current_page, path: 'install-iis/package-ccr-1') %>
+
+Run the recipe a second time.
+
+<% command_snippet(page: current_page, path: 'install-iis/package-ccr-2') %>
+
+This time, Chef does not reinstall IIS. That's because the `not_if` attribute skips the resource when the condition is true. In this case, we use the `Get-WindowsFeature` PowerShell cmdlet to check whether the `Web-Server` feature is installed.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Start the World Wide Web Publishing Service
+
+Now let's first enable the IIS World Wide Web Publishing Service (W3SVC) service when the server boots and then start the service. Modify <code class="file-path">webserver.rb</code> to look like this.
+
+<% code_snippet(page: current_page, path: 'start-the-world-wide-web-publishing-service/webserver-2') %>
+
+This code declares multiple actions.
+
+Now apply it.
+
+<% command_snippet(page: current_page, path: 'start-the-world-wide-web-publishing-service/package-ccr-3') %>
+
+IIS is already installed, so again there's nothing to do. Similarly, the W3SVC service is already started and enabled. The command would install IIS if it got uninstalled and enable the W3SVC service if it was stopped or disabled. With Chef, this is easy to verify.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Configure the home page
+
+Let's spruce things up and add a custom home page.
+
+You already know how to configure a `file` resource; append one that configures the default home page, <code class="file-path">c:\inetpub\wwwroot\Default.htm</code>, to the end of <code class="file-path">webserver.rb</code>. The entire recipe now looks like this.
+
+<% code_snippet(page: current_page, path: 'add-a-home-page/webserver-3') %>
+
+Now apply it.
+
+<% command_snippet(page: current_page, path: 'add-a-home-page/package-ccr-4') %>
+
+IIS and W3SVC are already in the desired state, but you'll see that the home page, <code class="file-path">c:\inetpub\wwwroot\Default.htm</code>, is created.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Confirm your web site is running
+
+Run the `Invoke-WebRequest` PowerShell cmdlet to confirm that your web page is available.
+
+<% command_snippet(page: current_page, path: 'confirm-your-web-site-is-running/iwr-localhost') %>
+
+<% if current_page.data.page_variants && current_page.data.page_variants.free_vm %>
+
+Normally, you could also access your web server from a browser on another machine. However, the free trial virtual machine does not have a public IP address.
+
+<% else %>
+
+Assuming your server's firewall is open for inbound access on port 80, you can access your web server from a browser on another machine. You'll see something like this.
+
+![The basic home page](misc/webserver-basic-remote.png)
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## Summary
+
+You saw how to work with the package and service resources. You now know how to work with three types of resources: [file](https://docs.chef.io/resource_file.html), [powershell_script](https://docs.chef.io/resource_powershell_script.html), and [service](https://docs.chef.io/resource_service.html).
+
+You also saw how to apply multiple actions. But how does Chef know what order to apply resources and actions?
+
+### Chef works in the order you specify
+
+Let's take another quick look at our web server recipe.
+
+<% code_snippet(page: current_page, path: 'add-a-home-page/webserver-3') %>
+
+The resources are applied in the order they are specified in the recipe. So here IIS is installed, then the W3SVC service is configured, and finally the home page is set. If any resource is already in the desired state, Chef simply moves on to the next one.
+
+The same idea applies to the action list `[:enable, :start]` for configuring the W3SVC service. The service is enabled when the server boots before the service is started.
+
+It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the W3SVC service before IIS is even installed.
+
+A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't be enabled on boot then we don't want to start it.
+
+[END_BOX]
+
+[START_BOX]
+
+## Exercises
+
+<%= partial "/layouts/exercises", locals: { path: '/tutorials/learn-the-basics/windows/shared/configure-a-package-and-service/exercises', questions: [1,2,3,4] } %>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+You may notice one big problem with our recipe &ndash; the HTML code lives inside it, so there is no clear separation between our web site code and our recipe to manage it. It's a good incremental step because it helps you get things working, but this of course would never scale to a full web site.
+
+Next you'll learn how to create a _cookbook_ to make your Chef recipes more manageable.
+
+<% end %>

@@ -1,0 +1,266 @@
+---
+title: 'Set up an Azure instance to manage'
+order: 1
+description: "Set up your Chef environment."
+keywords: TODO
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 30 minutes
+snippet_path: learn-the-basics/ubuntu/azure/set-up-a-machine-to-manage
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Access your Azure account', href: '#step1' },
+  { label: '2. Launch an instance', href: '#step2' },
+  { label: "3. Verify your SSH client", href: '#step3' },
+  { label: '4. Connect to your instance', href: '#step4' },
+  { label: '5. Install the Chef DK', href: '#step5' },
+  { label: '6. Prepare a text editor', href: '#step6' },
+  { label: 'Cleaning up', href: '#cleaningup' }
+  ]
+---
+<%= partial '../../shared/get-set-up/intro' %>
+
+In this part, you'll bring up an Ubuntu 14.04 instance on Microsoft Azure.
+
+You'll also learn how to [clean up](#cleaningup) your virtual machine when you're done with this tutorial.
+
+<% accordion('test-configuration', 'Test configuration', true) do %>
+
+<% markdown do %>
+
+The sample output you see might differ depending on the Azure machine image that you choose. The version of the Chef Development Kit that you use can also affect the output that you see. We recommend that you install the components as directed in the tutorial, using the specific versions that have been tested.
+
+For technical support with Azure, [read the FAQ](https://azure.microsoft.com/en-us/support/faq/), [visit the Azure forums](https://azure.microsoft.com/en-us/support/forums/), or [contact support](https://azure.microsoft.com/en-us/support/options/). We're also happy to help as best we can.
+
+<% render_machine_config('snippets/learn-the-basics/ubuntu/azure/machine_config.md') %>
+
+<% end %>
+
+<% end %>
+
+[START_BOX]
+
+## 1. Access your Azure account
+
+Log in to your Azure account. If you don't have an account, Microsoft is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 (USD) of usage.
+
+If you are unable to use Azure, you can [try a different option](/tutorials/learn-the-basics/ubuntu/) for this tutorial.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Launch an Ubuntu 14.04 instance
+
+Next, bring up an Ubuntu instance on Azure.
+
+If you're new to Azure, their [Create a Virtual Machine Running Linux using the Azure portal](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tutorial-portal-rm/) tutorial walks you through the creation of your first Linux virtual machine.
+
+[COMMENT] This tutorial refers to the Azure Portal documentation to help you manage your virtual machine. Azure also provides a [command-line interface](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-quick-create-cli/) (CLI).
+
+
+When you're ready to continue with this tutorial, bring up an **Ubuntu Server 14.04 LTS** instance, published by Canonical.
+
+We recommend that you use key-based authentication when working with Linux instances. You can also use password authentication.
+
+When you choose the instance size, select **DS1_V2 Standard**.
+
+You can leave the remaining settings at their default values. If you choose to [assign a network security group](https://azure.microsoft.com/en-us/documentation/articles/virtual-networks-create-nsg-arm-pportal/) to your instance, be sure to enable access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+
+[COMMENT] Technically, port 443 is not required for this tutorial. But setting up that port now prepares you for the next tutorial, where you'll configure your server to be managed remotely.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. If you're running Windows &ndash; verify your SSH client
+
+In this tutorial, you'll connect to your Linux instance over SSH. To do so, you'll need an SSH client. Mac OS and most Linux distributions come with an SSH client. On Windows, you need to install one.
+
+The easiest way to set up an SSH client is to install the Chef Development Kit (Chef DK) on your workstation. Chef DK version 0.15 and later comes with [Git for Windows](https://git-scm.com/download/win), which includes an SSH client.
+
+Installing the Chef DK now also prepares you for the next tutorial, where you'll use Chef to manage a server remotely from your workstation.
+
+There are two ways to install the Chef DK on Windows.
+
+1. [Download and run the installer](https://downloads.chef.io/chef-dk/) from the Chef downloads page.
+2. Run the installer from PowerShell.
+
+<% command_snippet(path: 'learn-the-basics/ubuntu/virtualbox/set-up-a-machine-to-manage/install-the-chef-dk/install-chefdk', workstation: 'windows') %>
+
+After you install the Chef DK, verify that Git and an SSH client are set up properly.
+
+First, open the **Chef Development Kit** shortcut from the desktop or **Start** menu. Open the shortcut as **Adminstrator**.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+Next, run these commands.
+
+<% command_snippet(path: 'learn-the-basics/ubuntu/virtualbox/set-up-a-machine-to-manage/verify-your-ssh-client/git--version', workstation: 'windows') %>
+
+<% command_snippet(path: 'learn-the-basics/ubuntu/virtualbox/set-up-a-machine-to-manage/verify-your-ssh-client/ssh-no-args', workstation: 'windows', features: [:stderr, :stdin]) %>
+
+Keep your **Chef Development Kit** window open for the next part.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Connect to your Ubuntu instance
+
+Next, connect to your instance.
+
+When you created your instance, you chose whether to use key-based authentication or password authentication.
+
+Here's an example of how to connect over SSH using key-based authentication. (Replace <% fp '~/.ssh/id_rsa' %> with the path to your private key file, <% ph 'chef' %> with your username, and <% ph '40.117.150.107' %> with your IP address.)
+
+```bash
+$ ssh -i ~/.ssh/id_rsa chef@40.117.150.107
+The authenticity of host '40.117.150.107 (40.117.150.107)' can't be established.
+RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '40.117.150.107' (RSA) to the list of known hosts.
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 3.13.0-91-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+  System information as of Mon Aug 29 14:32:37 UTC 2016
+
+  System load: 0.32              Memory usage: 5%   Processes:       82
+  Usage of /:  10.0% of 7.74GB   Swap usage:   0%   Users logged in: 0
+
+  Graph this data and manage this system at:
+    https://landscape.canonical.com/
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+0 packages can be updated.
+0 updates are security updates.
+
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+chef@ubuntu-azure:~$
+```
+
+Here's an example using password authentication.
+
+```bash
+$ ssh chef@40.117.150.107
+The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
+RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
+chef@40.117.150.107's password:
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 3.13.0-91-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+  System information as of Mon Aug 29 14:32:37 UTC 2016
+
+  System load: 0.32              Memory usage: 5%   Processes:       82
+  Usage of /:  10.0% of 7.74GB   Swap usage:   0%   Users logged in: 0
+
+  Graph this data and manage this system at:
+    https://landscape.canonical.com/
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+0 packages can be updated.
+0 updates are security updates.
+
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+chef@ubuntu-azure:~$
+```
+
+Additional resources:
+
+* [How to Use SSH with Windows on Azure](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-ssh-from-windows/)
+* [How to Use SSH with Linux and Mac on Azure](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-ssh-from-linux/)
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Install the Chef DK on your Ubuntu instance
+
+Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
+
+From your SSH connection, first update the `apt` cache and then install `curl`.
+
+```bash
+# ~
+chef@ubuntu-azure:~$ sudo apt-get update
+chef@ubuntu-azure:~$ sudo apt-get -y install curl
+```
+
+Next, run this to install the Chef DK.
+
+<% command_snippet(path: 'learn-the-basics/ubuntu/azure/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'ubuntu', features: [:stdin, :stderr, :stdout]) %>
+
+The `-c` and `-v` arguments specify the Chef DK version this tutorial was last tested with.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Prepare a text editor on your Ubuntu instance
+
+Because Chef uses code to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
+
+From your SSH connection, install a text editor now. Because you're accessing your server from an SSH connection, choose a command-line text editor such as `emacs`, `nano`, or `vim`.
+
+If you're new to using command-line text editors on Ubuntu, here are some resources to help get you started.
+
+<% accordion('emacs-gs', 'Emacs') do %>
+
+<%= partial 'layouts/partials/emacs_gs_deb' %>
+
+<% end %>
+
+<% accordion('nano-gs', 'Nano') do %>
+
+<%= partial 'layouts/partials/nano_gs_deb' %>
+
+<% end %>
+
+<% accordion('vim-gs', 'Vim') do %>
+
+<%= partial 'layouts/partials/vim_gs_deb' %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## Cleaning up
+
+After you complete the tutorial, be sure to destroy your virtual machine. Or, you can leave your server running if you want to use it to complete the next tutorial.
+
+You can destroy your virtual machine from the Azure Portal or the [CLI](https://azure.microsoft.com/en-us/documentation/articles/azure-cli-arm-commands/#azure-vm-commands-to-manage-your-azure-virtual-machines).
+
+![](partner/azure/delete_vm.png)
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you have your virtual machine with the Chef DK and a text editor set up, let's use Chef to configure a file, a kind of _resource_, on it.
+
+<% end %>

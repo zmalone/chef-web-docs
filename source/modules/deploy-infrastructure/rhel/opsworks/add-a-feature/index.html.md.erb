@@ -1,0 +1,269 @@
+---
+title: 'Add a feature to the web configuration'
+short_title: 'Add a feature'
+order: 6
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 25 minutes
+snippet_path: deploy-infrastructure/rhel/opsworks/set-up-your-chef-server
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Create the branch', href: '#step1' },
+  { label: '2. Modify the template', href: '#step2' },
+  { label: '3. Verify the change locally', href: '#step3' },
+  { label: '4. Submit your change', href: '#step4' }
+  ]
+---
+At this point, you've validated that your pipeline works and you've brought up infrastructure to receive build artifacts. You're ready to use Chef Automate for what it was intended &ndash; moving changes quickly and safely all the way from your workstation to production.
+
+In this part, you add a feature to the web configuration by changing the `learn_chef_httpd` cookbook.
+
+Although in practice you wouldn't typically manage web content directly in your Chef cookbooks, for learning purposes you'll modify the HTML template to display information about your server, similar to [what you did](/tutorials/manage-a-node/rhel/opsworks/update-your-nodes-configuration/) in the _Manage a node_ tutorial.
+
+You'll also learn how to verify your work from your workstation before you submit the change to the pipeline.
+
+Let's start by creating a feature branch for your change.
+
+[START_BOX]
+
+## 1. Create the feature branch
+
+You're already likely on the `master` branch. If you're not, you can run the following commands to switch to `master` and synchronize with the remote Git repo.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git checkout master
+Already on 'master'
+Your branch is up-to-date with 'delivery/master'.
+```
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git pull --prune
+Already up-to-date.
+```
+
+Next, create a feature branch named `server_info`.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git checkout -b server_info
+Switched to a new branch 'server_info'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Modify the HTML template
+
+Next, modify the HTML template file, <% fp '~/learn-chef/cookbooks/learn_chef_httpd/templates/index.html.erb' %>, like this.
+
+<%= partial 'html-template' %>
+
+The updated HTML template uses node attributes to access the node's operating system, number of CPU cores, and total memory.
+
+One way to know which node attributes are available is by running [Ohai](https://docs.chef.io/ohai.html) on your node. You can also view a node's attributes from the Chef Automate web interface. For example, to view the node attributes for the Acceptance node, select the **Nodes** tab, select `acceptance-node` from the list at the bottom of the page, and then select the **Attributes** tab from the node state page.
+
+![](automate/vis-node-attributes.png)
+
+Each level of the tree corresponds to a level in the node attribute Hash. In the example illustration, to access `logical_block_size`, you would write `node['block_device']['loop0']['logical_block_size']` in your cookbook.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Verify the change locally
+
+Before you submit a change to the Chef Automate pipeline, you want to verify that the change works as expected and passes unit, lint, and syntax checks. Running these checks locally is a good way to be certain that your change is valid before it reaches the pipeline.
+
+For a Chef cookbook, you might run [Test Kitchen](https://docs.chef.io/kitchen.html) as you build your feature to verify that it behaves as you expect on a temporary instance that resembles production. You might also run ChefSpec tests, Foodcritic, and RuboCop on your workstation. For an application or service, you might run a different set of tools to verify your work.
+
+Another approach is to run [delivery local](https://docs.chef.io/ctl_delivery.html#delivery-local). The `delivery local` command runs a phase of Chef Automate locally, based on settings in your <% fp 'project.toml' %> file. (This file is created for you when you run the `chef generate cookbook` command.)
+
+Your <% fp '.delivery/project.toml' %> file looks like this.
+
+```toml
+# ~/learn-chef/cookbooks/learn_chef_httpd/.delivery/project.toml
+# Delivery Prototype for Local Phases Execution
+#
+# The purpose of this file is to prototype a new way to execute
+# phases locally on your workstation. The delivery-cli will read
+# this file and execute the command(s) that are configured for
+# each phase. You can customize them by just modifying the phase
+# key on this file.
+#
+# By default these phases are configured for Cookbook Workflow only
+#
+# As this is still a prototype we are not modifying the current
+# config.json file and it will continue working as usual.
+
+[local_phases]
+unit = "rspec spec/"
+lint = "cookstyle"
+syntax = "foodcritic . -f correctness"
+provision = "chef exec kitchen create"
+deploy = "chef exec kitchen converge"
+smoke = "chef exec kitchen verify"
+cleanup = "chef exec kitchen destroy"
+```
+
+Each variable name &ndash; `unit`, `lint`, `syntax`, and so on &ndash; represents a pipeline phase. Each value represents the command to run that phase. For example, the `unit` phase runs [RSpec](http://rspec.info), a unit test framework for Ruby.
+
+The details of how the various test tools work is beyond the scope of this tutorial. If you're unfamilar with testing tools such as RSpec, Foodcritic, and Test Kitchen, you can later check out [Getting started with automated testing](/skills/get-started-with-testing/) to learn more about using automated testing to verify your Chef code.
+
+The `unit`, `lint` and `syntax` phases are part of the Verify and Build stages. The `provision`, `deploy`, and `smoke` phases are part of the Acceptance, Union, Rehearsal, and Delivered stages. The `cleanup` phase is provided as a convenient way to clean up any resources created by the previous phases.
+
+Let's start by running the `unit` phase locally. The `learn_chef_httpd` cookbook's <% fp 'spec' %> directory contains just the default unit test. RSpec examines your source code without actually running it. The default test verifies that the resources in the cookbook's default recipe are properly defined and would converge without error.
+
+From the <% fp '~/learn-chef/cookbooks/learn_chef_httpd' %> directory, run `delivery local unit` to run the unit phase.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ delivery local unit
+Chef Delivery
+Running Unit Phase
+.
+
+Finished in 0.27299 seconds (files took 3.2 seconds to load)
+1 example, 0 failures
+```
+
+You'll see no errors reported.
+
+Next, run `delivery local lint` to run lint testing.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ delivery local lint
+Chef Delivery
+Running Lint Phase
+Inspecting 6 files
+......
+
+6 files inspected, no offenses detected
+```
+
+The lint phase also passes.
+
+Finally, run `delivery local syntax` to perform syntax checks.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ delivery local syntax
+Chef Delivery
+Running Syntax Phase
+
+```
+
+The syntax phase passes.
+
+If you've gone through the [Get started with Test Kitchen](/tutorials/local-development/) tutorial or have familiarity with Vagrant and VirtualBox, you can run the `provision`, `deploy`, `smoke`, and `cleanup` phases to test the web configuration on a temporary instance using Test Kitchen.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Submit your change to the pipeline
+
+Now that all tests pass, you're almost ready to submit your change to the pipeline. First, you need to commit your changes to your feature branch.
+
+First, run `git status` to see what changes are not yet staged for commit.
+
+```bash
+$ git status
+On branch server_info
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   templates/index.html.erb
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+As expected, you see the HTML template listed as a modified file. Run the following `git add` command to stage the file.
+
+```bash
+$ git add templates/index.html.erb
+```
+
+Next, run the following `git commit` command to commit the change to your branch.
+
+```bash
+$ git commit -m "Show additional server info"
+[server_info 8a01c91] Show additional server info
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+```
+
+Now run `git status` to verify that there are no further pending changes.
+
+```bash
+$ git status
+On branch server_info
+nothing to commit, working directory clean
+```
+
+When a cookbook changes, it's important to update its version to ensure that a given set of functionality is tied to a given version. You [learned about cookbook versions](/tutorials/manage-a-node/rhel/opsworks/update-your-nodes-configuration#step2) in the _Manage a node_ tutorial.
+
+Recall that a cookbook's version is listed in its <% fp 'metadata.rb' %> file. Here's an example for the `learn_chef_httpd` cookbook.
+
+```ruby
+# ~/learn-chef/cookbooks/learn_chef_httpd/metadata.rb
+name 'learn_chef_httpd'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures learn_chef_httpd'
+long_description 'Installs/Configures learn_chef_httpd'
+version '0.1.0'
+issues_url 'https://github.com/learn-chef/learn_chef_httpd/issues' if respond_to?(:issues_url)
+source_url 'https://github.com/learn-chef/learn_chef_httpd' if respond_to?(:source_url)
+```
+
+You run the [delivery review](https://docs.chef.io/ctl_delivery.html#delivery-review) command to submit your change. Before you do that, you could manually update the version and commit that change to your branch. Most Chef users follow [Semantic Versioning](http://semver.org) rules.
+
+Another approach is to pass the `--auto-bump` argument to `delivery review` to automatically bump the version in the metadata file, which you'll do here. The `--auto-bump` increments the `PATCH` component of the version. For example, version "0.1.0" becomes "0.1.1".
+
+Run `delivery review --auto-bump` to submit your changes to the pipeline.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ delivery review --auto-bump
+Chef Delivery
+Loading configuration from /home/ubuntu/learn-chef/cookbooks/learn_chef_httpd
+Project learn_chef_httpd is a cookbook
+Validating version in metadata
+The version hasn't been updated (0.1.0)
+Bumping version to: 0.1.1
+Review for change server_info targeted for pipeline master
+Created new patchset
+https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io/e/default/#/organizations/my-org/projects/learn_chef_httpd/changes/ec83d391-6c4a-465d-89df-9d015886b888
+```
+
+When the Chef Automate UI appears, trace the change's progress through the pipeline.
+
+<img style="max-width:75%;" src="/assets/images/automate/wf-server_info-verify.png"/>
+
+1. Review the changes in the web interface. Click **APPROVE** when all tests pass. In practice, others would help review and approve your code changes.
+1. Watch the change progress through the Build and Acceptance stages.
+1. After the Acceptance stage completes, navigate to the web server for your Acceptance environment in a second browser window. You'll see that the updated version of the web configuration shows additional server info.
+
+<img style="max-width:100%;" src="/assets/images/automate/web_server_info_rhel.png"/>
+
+After you verify the change in Acceptance, click the **DELIVER** button. Watch the change progress through the Union, Rehearsal, and Delivered stages.
+
+<img style="max-width:75%;" src="/assets/images/automate/wf-server_info-delivered.png"/>
+
+As each stage finishes, you can verify that the web application comes up in the associated environment.
+
+Great work! By testing your changes locally, you can discover and fix potential problems before you submit your work. Once you do submit something, Chef Automate's central pipeline lets you and your team review both the code and build artifacts before you move any changes to production.
+
+After your change gets merged into Chef Automate's `master` branch (this happens when you click the **APPROVE** button at the end of the Verify stage), you may want to integrate the change into your local `master` branch to prepare your copy of the source code for the next feature or bug fix. You'll checkout the `master` branch and run `git pull` in the next part.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Next, you'll implement the smoke phase to quickly validate that your web server is running and functional.
+
+<% end %>
