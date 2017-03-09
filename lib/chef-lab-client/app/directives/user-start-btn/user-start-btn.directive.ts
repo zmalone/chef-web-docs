@@ -1,5 +1,5 @@
 import { Directive, OnInit, ElementRef, HostListener, Host, Input } from '@angular/core'
-import { UserProfileService } from '../../services/user-profile.service'
+import { ProgressService } from '../../services/progress.service'
 
 @Directive({
   selector: '.user-start-btn',
@@ -11,16 +11,15 @@ export class UserStartBtnDirective implements OnInit {
   @Input()
   module: string
 
-  constructor(private userProfileService?: UserProfileService, private el?: ElementRef) {
+  constructor(private progressService?: ProgressService, private el?: ElementRef) {
     this.el = el
   }
 
   ngOnInit() {
-    this.userProfileService.activeUserProfile.subscribe((active) => {
-      const progress: number = (active && active.modules[this.module]) ? active.modules[this.module].progress : 0
-      if (progress === 100) {
-        this.el.nativeElement.innerHTML = 'Revisit'
-      } else if (progress > 0) {
+    this.progressService.activeUserProgress.subscribe((active) => {
+      const lastUnit = this.progressService.getLastStarted('modules', this.module)
+      // this.el.nativeElement.innerHTML = 'Revisit'
+      if (lastUnit.url) {
         this.el.nativeElement.innerHTML = 'Continue'
       } else {
         this.el.nativeElement.innerHTML = 'Start'
@@ -31,8 +30,7 @@ export class UserStartBtnDirective implements OnInit {
   @HostListener('click', ['$event'])
   clicked(e) {
     e.preventDefault()
-    // TODO: Preventing the default and then going to the default makes no sense!
-    // But here's how we can alter the destination if needed.
-    window.location.href = this.href
+    const lastUnit = this.progressService.getLastStarted('modules', this.module)
+    window.location.href = lastUnit.url || this.href
   }
 }
