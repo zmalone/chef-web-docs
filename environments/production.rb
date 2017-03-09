@@ -11,12 +11,12 @@ activate :external_pipeline,
 # We strip the `.css` to prevent Gulp generating `site.css.css`
 ignore 'assets/stylesheets/application'
 
-# For quick test builds, we can disable most of the content
-# ignore 'automate/**/*'
-# ignore 'local-development/**/*'
-# ignore 'manage-a-web-app/**/*'
-# ignore 'skills/**/*'
-# ignore 'tutorials/**/*'
+# Disable most of the old content that has not yet been migrated to the new structure
+ignore 'automate/**/*'
+ignore 'local-development/**/*'
+ignore 'manage-a-web-app/**/*'
+ignore 'skills/**/*'
+ignore 'tutorials/**/*'
 
 # Check to see if file revving is enabled
 rev_manifest = REV_MANIFEST if defined?(REV_MANIFEST)
