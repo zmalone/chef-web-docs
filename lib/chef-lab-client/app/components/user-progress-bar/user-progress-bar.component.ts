@@ -1,9 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { UserProfileService } from '../../services/user-profile.service';
+import { Component, OnInit, Input } from '@angular/core'
+import { ProgressService } from '../../services/progress.service'
 
 @Component({
   selector: 'user-progress-bar',
-  templateUrl: './user-progress-bar.component.html'
+  templateUrl: './user-progress-bar.component.html',
 })
 export class UserProgressBarComponent implements OnInit {
   public progress: number
@@ -11,11 +11,14 @@ export class UserProgressBarComponent implements OnInit {
   @Input()
   module: string
 
-  constructor(private userProfileService: UserProfileService) {}
+  constructor(
+    private progressService: ProgressService,
+  ) {}
 
   ngOnInit() {
-    this.userProfileService.activeUserProfile.subscribe((active) => {
-      this.progress = (active && active.modules[this.module]) ? active.modules[this.module].progress : 0
+    this.progressService.activeUserProgress.subscribe((data) => {
+      const moduleData = (data && data.modules) ? data.modules : {}
+      this.progress = 50
     })
   }
 }

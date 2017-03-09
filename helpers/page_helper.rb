@@ -36,12 +36,69 @@ module PageHelper
       return page.parent.parent.children.select {|s| s.data.order == page.parent.data.order + 1}.first
     elsif page.children && page.children.first
       return page.children.first
-    else
+    elsif page.parent && page.parent.children
       next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
       if next_page != nil && next_page.appendix?
         next_page = nil
       end
       next_page
+    end
+  end
+
+  def get_page_section(page)
+    match = page.url.match(/^\/?(modules|tracks)\/(.+)$/)
+    return (match) ? match[1] : ''
+  end
+
+  def get_page_id(page)
+    if (page.data.id)
+      return page.data.id
+    end
+
+    match = page.url.match(/^\/?(modules|tracks)\/(.+)$/)
+    return if !match
+    path = match[2]
+    root = find_root(page)
+    if root.url != page.url
+      if page.parent
+        parts = path.split('/')
+        thisId = parts.last
+        parentId = get_page_id(page.parent)
+        return "#{parentId}/#{thisId}"
+      end
+    end
+    path
+  end
+
+  def find_root_module(page)
+    root = find_root(page)
+    get_page_id(root)
+  end
+
+  def find_root(page)
+    root = page
+    while root.parent
+      root = root.parent
+    end
+    root
+  end
+
+  def calculate_elapsed_time(page)
+    if page.data && page.data.time_to_complete
+      range = parse_time(page.data.time_to_complete)
+    end
+  end
+
+  def parse_time(time_string)
+    if time_string
+      data = time_string.match(/^([\d]+)(-([\d]+))?\s(minutes?|hours?)$/)
+      range_min = data[1].to_i
+      range_max = (data[3]) ? data[3].to_i : range_min
+      if data[4].start_with? 'hour'
+        range = [range_min * 60, range_max * 60]
+      else
+        range = [range_min, range_max]
+      end
     end
   end
 end

@@ -1,7 +1,7 @@
 ---
 id: develop-locally
 title: 'Develop Locally'
-description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras pharetra, erat sed consectetur ultrices, metus diam mollis est, facilisis mollis magna risus eget velit.'
+description: "Learn how local development helps you to correct mistakes early, before you apply your changes to production systems."
 order: 4
 level: Chef | Beginner
 ---
