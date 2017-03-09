@@ -47,7 +47,7 @@ module PageHelper
 
   def get_page_section(page)
     match = page.url.match(/^\/?(modules|tracks)\/(.+)$/)
-    match[1]
+    return (match) ? match[1] : ''
   end
 
   def get_page_id(page)
@@ -56,6 +56,7 @@ module PageHelper
     end
 
     match = page.url.match(/^\/?(modules|tracks)\/(.+)$/)
+    return if !match
     path = match[2]
     root = find_root(page)
     if root.url != page.url
@@ -80,5 +81,24 @@ module PageHelper
       root = root.parent
     end
     root
+  end
+
+  def calculate_elapsed_time(page)
+    if page.data && page.data.time_to_complete
+      range = parse_time(page.data.time_to_complete)
+    end
+  end
+
+  def parse_time(time_string)
+    if time_string
+      data = time_string.match(/^([\d]+)(-([\d]+))?\s(minutes?|hours?)$/)
+      range_min = data[1].to_i
+      range_max = (data[3]) ? data[3].to_i : range_min
+      if data[4].start_with? 'hour'
+        range = [range_min * 60, range_max * 60]
+      else
+        range = [range_min, range_max]
+      end
+    end
   end
 end

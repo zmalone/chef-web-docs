@@ -15,7 +15,7 @@ export class ModuleNextBtnDirective {
   clicked(e) {
     e.preventDefault()
     const win = (window as any)
-    this.progressService.complete(win.currentSection, win.currentPageId)
+    this.progressService.complete(win.currentPage)
       .subscribe(
         () => {},
         err => {

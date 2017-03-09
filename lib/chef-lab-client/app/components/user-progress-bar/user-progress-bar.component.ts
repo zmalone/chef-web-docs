@@ -18,12 +18,7 @@ export class UserProgressBarComponent implements OnInit {
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe((data) => {
       const moduleData = (data && data.modules) ? data.modules : {}
-      // TODO: Get the actual total number of steps in the module
-      const totalNum = 10
-      const numCompleted = Object.keys(moduleData).filter(key => {
-        return (key.startsWith(this.module + '/') && moduleData[key].completed_at)
-      }).length
-      this.progress = Math.round(100 * (numCompleted / totalNum))
+      this.progress = 50
     })
   }
 }

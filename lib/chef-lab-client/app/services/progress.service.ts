@@ -10,16 +10,29 @@ export class ProgressService {
     private http: Http,
   ) {}
 
-  public start(section: string, pageId: string) {
-    return this.updateDateStamp(section, pageId, 'started_at')
+  public start(page: any) {
+    return this.updateDateStamp(page, 'started_at')
   }
 
-  public complete(section: string, pageId: string) {
-    return this.updateDateStamp(section, pageId, 'completed_at')
+  public complete(page: any) {
+    return this.updateDateStamp(page, 'completed_at')
   }
 
-  private updateDateStamp(section: string, pageId: string, field: string) {
-    if (!section) return
+  public getLastStarted(section: string, module: string) {
+    const data = this.getProgress(section, module)
+    const incomplete = Object.keys(data).filter(key => {
+      return !data[key].completed_at
+    })
+    const sorted = incomplete.sort((a, b) => {
+      return data[a].started_at > data[b].started_at ? 1 : data[a].started_at < data[b].started_at ? -1 : 0
+    })
+    return data[sorted[0]] || {}
+  }
+
+  private updateDateStamp(page: any, field: string) {
+    if (!page.section || !page.id) return
+    const section = page.section
+    const pageId = page.id
     const dataLocal = this.getProgress()
 
     // Build full and partial data objects
@@ -28,6 +41,7 @@ export class ProgressService {
     const dataChange = {}
     dataChange[section] = {}
     dataChange[section][pageId] = {}
+    dataLocal[section][pageId].url = page.url
     dataLocal[section][pageId][field] = dataChange[section][pageId][field] = new Date().toISOString()
 
     // Update local storage with the full data object
@@ -50,9 +64,21 @@ export class ProgressService {
     return httpObservable
   }
 
-  private getProgress(section?: string) {
+  private getProgress(section?: string, item?: string) {
     const existing = localStorage.getItem('userProgressInfo')
-    const data = (existing) ? JSON.parse(existing) : {}
-    return (section) ? data[data] : data
+    let data = (existing) ? JSON.parse(existing) : {}
+    if (section) {
+      data = data[section] || {}
+      if (item) {
+        const ret = {}
+        Object.keys(data).forEach(key => {
+          if (key.match(new RegExp('^' + item + '(\/.+)?$'))) {
+            ret[key] = data[key]
+          }
+        })
+        return ret
+      }
+    }
+    return data
   }
 }
