@@ -39,7 +39,13 @@
           a href="#"  Yet another
   .module-content
     .row
-      = yield
+      - if current_page.data.hide_next
+        = yield
+      - else
+        .medium-9.columns
+          = yield
+        .medium-3.columns.sidebar
+          = partial "layouts/side-navigation"
   div
     - if !current_page.data.hide_next
       - next_page = find_next_page(current_page)
