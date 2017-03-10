@@ -5,7 +5,6 @@ description: 'During Chef Essentials we bootstrap three nodes. In this video we 
 order: 1
 keywords: training, videos, screencasts
 category: 'beyond-essentials'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

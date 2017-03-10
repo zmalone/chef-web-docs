@@ -4,7 +4,6 @@ title: 'Foundations of DevOps'
 description: ''
 order: 1
 category: 'devops'
-layout: skills-topic
 sections: [1, 2, 3]
 icon: devops-foundations.png
 ---

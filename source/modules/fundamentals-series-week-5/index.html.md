@@ -6,7 +6,6 @@ order: 5
 description: "In this lesson you'll learn about environments and how to use Chef to launch a server on Amazon EC2."
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-layout: skills-topic
 sections: [1, 2, 3]
 icon: video.png
 ---

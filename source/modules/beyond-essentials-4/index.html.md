@@ -5,7 +5,6 @@ description: 'There are many locations in which you can change the value of defa
 order: 4
 keywords: training, videos, screencasts
 category: 'beyond-essentials'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

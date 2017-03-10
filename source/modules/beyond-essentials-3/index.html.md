@@ -5,7 +5,6 @@ description: 'After bootstrapping a node we run chef-client to have it connect w
 order: 3
 keywords: training, videos, screencasts
 category: 'beyond-essentials'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

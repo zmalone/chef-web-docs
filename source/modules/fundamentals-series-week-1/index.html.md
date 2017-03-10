@@ -6,7 +6,6 @@ order: 1
 description: In this lesson you'll get an overview of Chef, set up your  workstation, and sign up for hosted Chef.
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-layout: skills-topic
 sections: [1, 2]
 icon: video.png
 ---

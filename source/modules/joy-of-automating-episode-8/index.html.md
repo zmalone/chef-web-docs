@@ -5,7 +5,6 @@ description: 'Learn how to use Chef to manage a configuration file'
 order: 8
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

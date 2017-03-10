@@ -5,7 +5,6 @@ description: 'Learn how to create a custom plugin for a cookbook.'
 order: 7
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

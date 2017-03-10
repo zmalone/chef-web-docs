@@ -4,7 +4,6 @@ title: 'Continuous Availability at IBM'
 description: ''
 order: 1
 category: 'example-workflows'
-layout: skills-topic
 sections: [1, 2, 3, 4, 5, 6, 7, 8]
 icon: devops-foundations.png
 ---

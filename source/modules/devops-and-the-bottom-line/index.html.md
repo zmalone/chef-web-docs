@@ -4,7 +4,6 @@ title: 'DevOps and the bottom line'
 description: "Learn how companies that practice DevOps show a measurable link between IT investment and organizational performance."
 order: 5
 category: 'devops'
-layout: skills-topic
 sections: []
 icon: devops-measure.png
 ---

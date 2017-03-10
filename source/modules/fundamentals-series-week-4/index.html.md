@@ -6,7 +6,6 @@ order: 4
 description: "In this lesson you'll learn how to use data bags to create data-driven recipes."
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-layout: skills-topic
 sections: [1, 2, 3]
 icon: video.png
 ---

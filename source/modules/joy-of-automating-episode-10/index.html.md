@@ -5,7 +5,6 @@ description: 'Learn how to refactor a recipe to define helper methods.'
 order: 10
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

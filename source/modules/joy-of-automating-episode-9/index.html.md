@@ -5,7 +5,6 @@ description: 'Learn how to work with community cookbooks and refactor a template
 order: 9
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

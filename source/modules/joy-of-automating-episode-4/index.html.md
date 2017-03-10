@@ -5,7 +5,6 @@ description: 'Learn to convert application installation and configuration instru
 order: 4
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

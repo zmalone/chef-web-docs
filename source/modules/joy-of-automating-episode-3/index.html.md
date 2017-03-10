@@ -5,7 +5,6 @@ description: 'Starting with an existing cookbook we fix it, add tests, and then 
 order: 3
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

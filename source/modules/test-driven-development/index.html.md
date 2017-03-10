@@ -4,7 +4,6 @@ title: 'Overview of test driven infrastructure with Chef'
 description: 'Learn about some of the more popular Chef testing tools and how they fit in a continuous integration pipeline.'
 order: 2
 category: 'planning-and-practices'
-layout: skills-topic
 sections: [1, 2, 3, 4, 5, exercises]
 icon: magnify.png
 byline: Joshua Timberman

@@ -4,7 +4,6 @@ title: 'Forging connections among people with diverse skills'
 description: 'Diversity in the workplace offers a variety of backgrounds and perspectives, which can lead to better products.'
 order: 3
 category: 'devops'
-layout: skills-topic
 sections: [1, 2]
 icon: devops-diverse-skills.png
 ---

@@ -6,7 +6,6 @@ order: 2
 description: "In this lesson you'll set up a node and write your first cookbook."
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-layout: skills-topic
 sections: [1, 2, 3, 4]
 icon: video.png
 ---

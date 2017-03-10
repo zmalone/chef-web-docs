@@ -6,7 +6,6 @@ order: 3
 description: "In this lesson you'll learn about nodes, node attributes, and roles."
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-layout: skills-topic
 sections: [1, 2, 3]
 icon: video.png
 ---

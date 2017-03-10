@@ -1,6 +1,5 @@
 ---
 title: 'Develop a web app cookbook for Windows Server'
-layout: lesson-overview
 platform: Windows Server
 logo: windows.svg
 order: 2

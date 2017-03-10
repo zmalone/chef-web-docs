@@ -1,6 +1,5 @@
 ---
 title: 'Develop a web app cookbook for Ubuntu'
-layout: lesson-overview
 platform: Ubuntu
 logo: ubuntu.svg
 order: 3

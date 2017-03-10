@@ -5,7 +5,6 @@ description: 'Learn ways to remove duplication from the test suite. In this epis
 order: 5
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

@@ -5,7 +5,6 @@ description: 'Learn ways build a custom resource in a test-driven approach.'
 order: 6
 keywords: training, videos, screencasts
 category: 'joy-of-automating'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

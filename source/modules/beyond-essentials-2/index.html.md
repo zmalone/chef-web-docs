@@ -5,7 +5,6 @@ description: 'In Chef Essentials we run chef-client a number of times. First in 
 order: 2
 keywords: training, videos, screencasts
 category: 'beyond-essentials'
-layout: skills-topic
 sections: []
 icon: video.png
 ---

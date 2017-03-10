@@ -6,7 +6,6 @@ order: 6
 description: "In this lesson you'll learn about the Chef community site."
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
-layout: skills-topic
 sections: [1, 2, 3]
 icon: video.png
 ---
