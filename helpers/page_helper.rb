@@ -118,6 +118,16 @@ module PageHelper
     end
   end
 
+  def find_chef_server_env_page(page)
+    if page.data.chef_server
+      chef_server_info = page
+    else if page.parent.data.chef_server
+           chef_server_info = page.parent
+         end
+    end
+    chef_server_info
+  end
+
   def parse_time(time_string)
     if time_string
       data = time_string.match(/^([\d]+)(-([\d]+))?\s(minutes?|hours?)$/)
