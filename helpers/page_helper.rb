@@ -86,7 +86,20 @@ module PageHelper
     path
   end
 
-  def find_root_module(page)
+  def find_track(page)
+    module_id = find_root_id(page)
+    track = find_pages_by_folder('tracks').select { |page|
+      if !page.blank? && page.data.modules
+        page.data.modules.select { |id|
+          id == module_id
+        }.any?
+      end
+    }.first
+    logger.warn "WARN: Unable to find track for '#{page.url}'" if track.blank?
+    track
+  end
+
+  def find_root_id(page)
     root = find_root(page)
     get_page_id(root)
   end
