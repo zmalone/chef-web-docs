@@ -1,4 +1,5 @@
 ---
+id: beyond-essentials-4
 title: 'Attribute precedence explained'
 description: 'There are many locations in which you can change the value of default attributes. In Chef Essentials we explore one location. In this follow up video we give an overview of all the other locations.'
 order: 4

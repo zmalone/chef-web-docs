@@ -1,4 +1,5 @@
 ---
+id: fundamentals-series-week-4
 title: 'Chef fundamentals series part 4: Common configuration data with data bags'
 nav_title: 'Part 4: Common configuration data with data bags'
 order: 4

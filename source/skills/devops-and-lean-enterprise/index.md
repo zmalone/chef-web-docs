@@ -1,4 +1,5 @@
 ---
+id: devops-and-lean-enterprise
 title: 'DevOps and the Lean enterprise'
 description: 'While DevOps was born in the world of software, it embraces many aspects of Lean, which began as a way of streamlining manufacturing processes.'
 order: 2

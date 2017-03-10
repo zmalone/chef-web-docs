@@ -1,4 +1,5 @@
 ---
+id: fundamentals-series-week-5
 title: 'Chef fundamentals series part 5: Environments and knife-ec2'
 nav_title: 'Part 5: Environments and knife-ec2'
 order: 5

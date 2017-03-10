@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-8
 title: 'Episode 8: Managing Configuration - ssh_config on Linux'
 description: 'Learn how to use Chef to manage a configuration file'
 order: 8

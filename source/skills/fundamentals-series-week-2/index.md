@@ -1,4 +1,5 @@
 ---
+id: fundamentals-series-week-2
 title: 'Chef fundamentals series part 2: Node setup, resources, and recipes'
 nav_title: 'Part 2: Node setup, resources, and recipes'
 order: 2

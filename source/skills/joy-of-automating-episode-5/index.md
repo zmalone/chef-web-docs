@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-5
 title: 'Episode 5: Refactoring - Test Suite: ChefSpec and RSpec'
 description: 'Learn ways to remove duplication from the test suite. In this episode we refactor ChefSpec and learn the powerful features of RSpec.'
 order: 5

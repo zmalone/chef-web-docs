@@ -1,4 +1,5 @@
 ---
+id: fundamentals-series-chef-lab
 title: 'Chef training lab'
 order: 7
 description: 'Chef training lab'

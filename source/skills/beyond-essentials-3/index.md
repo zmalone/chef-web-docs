@@ -1,4 +1,5 @@
 ---
+id: beyond-essentials-3
 title: 'What is the security model used by chef-client'
 description: 'After bootstrapping a node we run chef-client to have it connect with the Chef server. One of the most important steps in the chef-client process is the authentication model. In this video we provide an overview of the security model used between the node and the Chef server.'
 order: 3

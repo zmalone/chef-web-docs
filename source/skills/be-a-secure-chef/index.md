@@ -1,4 +1,5 @@
 ---
+id: be-a-secure-chef
 title: 'How to be a secure Chef'
 description: 'Learn how a secure workflow can help you deliver your applications and services securely without losing speed.'
 order: 1

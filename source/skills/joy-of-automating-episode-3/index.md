@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-3
 title: 'Episode 3: Working with Legacy Code - Redis'
 description: 'Starting with an existing cookbook we fix it, add tests, and then refactor.'
 order: 3

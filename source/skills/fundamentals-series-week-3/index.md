@@ -1,4 +1,5 @@
 ---
+id: fundamentals-series-week-3
 title: 'Chef fundamentals series part 3: Node object and Chef roles'
 nav_title: 'Part 3: Node object and Chef roles'
 order: 3

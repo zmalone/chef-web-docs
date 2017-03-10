@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-6
 title: 'Episode 6: Refactoring - Custom Resource - Redis'
 description: 'Learn ways build a custom resource in a test-driven approach.'
 order: 6
