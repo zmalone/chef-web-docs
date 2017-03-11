@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-4
 title: 'Episode 4: Using Community Cookbooks - Jenkins on Ubuntu'
 description: 'Learn to convert application installation and configuration instructions into tested recipes. In this episode we install Jenkins onto ubuntu.'
 order: 4

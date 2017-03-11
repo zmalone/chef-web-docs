@@ -1,4 +1,5 @@
 ---
+id: beyond-essentials-1
 title: 'What happens during knife bootstrap'
 description: 'During Chef Essentials we bootstrap three nodes. In this video we give an overview of what happens during that bootstrap process.'
 order: 1

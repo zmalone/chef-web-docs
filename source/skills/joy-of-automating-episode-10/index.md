@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-10
 title: 'Episode 10: Helper Methods - NTP Cookbook'
 description: 'Learn how to refactor a recipe to define helper methods.'
 order: 10

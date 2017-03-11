@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-2
 title: 'Episode 2: Scripts to Recipes with Python, Pip, and Django'
 description: 'Converting the application installation and configuration instructions into tested recipes. How to Install Django from multiple sources: packages; pip; and virtualenv.'
 order: 2

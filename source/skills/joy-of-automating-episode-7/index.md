@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-7
 title: 'Episode 7: Custom Ohai Plugin - Apache'
 description: 'Learn how to create a custom plugin for a cookbook.'
 order: 7

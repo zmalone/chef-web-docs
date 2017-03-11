@@ -1,4 +1,5 @@
 ---
+id: fundamentals-series-week-6
 title: 'Chef fundamentals series part 6: Community cookbooks and further resources'
 nav_title: 'Part 6: Community cookbooks and further resources'
 order: 6

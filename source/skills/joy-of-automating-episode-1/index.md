@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-1
 title: 'Episode 1: Scripts to Recipes with Tomcat on CentOS 7'
 description: 'Converting the application installation and configuration instructions into tested recipes. In this episode we initially install Tomcat onto CentOS 7.'
 order: 1

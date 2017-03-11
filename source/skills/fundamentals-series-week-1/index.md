@@ -1,4 +1,5 @@
 ---
+id: fundamentals-series-week-1
 title: 'Chef fundamentals series part 1: Overview of Chef'
 nav_title: 'Part 1: Overview of Chef'
 order: 1

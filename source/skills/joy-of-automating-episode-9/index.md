@@ -1,4 +1,5 @@
 ---
+id: joy-of-automating-episode-9
 title: 'Episode 9: Refactoring Templates - chef-client cookbook'
 description: 'Learn how to work with community cookbooks and refactor a template with complicated logic to make it clear'
 order: 9
