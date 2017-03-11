@@ -10,6 +10,6 @@ category: Admin
 modules:
 - getting-started
 - develop-locally
-- learn-basics
+- learn-the-basics
 - manage-a-node
 ---

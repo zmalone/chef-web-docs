@@ -8,8 +8,8 @@ level: Beginner
 track_class: card-green
 category: Admin
 modules:
-- getting-started
-- develop-locally
-- learn-basics
+- how-to-learn-chef
+- learn-the-basics
 - manage-a-node
+- develop-locally
 ---
