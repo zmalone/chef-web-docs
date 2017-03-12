@@ -5,7 +5,12 @@
         = current_page.data.title
       user-progress-bar module="#{find_root_id(current_page)}"
   .row
-    = partial 'layouts/_breadcrumbs', locals: {current_track:find_track(current_page), current_module:find_page_by_id('modules',find_root_id(current_page)), current_page:current_page}
+    - page_info = get_content_nav_bar_info(current_page)
+    - current_track = page_info['current_track']
+    - current_module = page_info['current_module']
+    - current_env = page_info['current_env']
+    - current_chef_env = page_info['current_chef_env']
+    = partial 'layouts/_breadcrumbs', locals: {current_track: current_track, current_module: current_module, current_env: current_env, current_chef_env: current_chef_env}
   .module-content
     .row
       - if current_page.data.hide_next
