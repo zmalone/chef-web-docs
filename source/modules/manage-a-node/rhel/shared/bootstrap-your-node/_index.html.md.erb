@@ -1,0 +1,186 @@
+Recall that any computer that's managed by a Chef server is called a _node_, and that `chef-client` is the command that applies the policy defined by your cookbooks to a node. We call the process that installs `chef-client` on a node and the initial check-in to the Chef server _bootstrapping_ the node.
+
+In this part you'll bootstrap your node and execute the `learn_chef_httpd` cookbook on it.
+
+[START_BOX]
+
+## 1. Run the bootstrap command
+
+[WINDOWS] Remember, if your workstation is running Windows, we recommend that you <%= link_to 'open a Chef DK command prompt', current_page.first_page, anchor: 'step2' %> to ensure your PowerShell session is set up to work with Chef.
+
+[knife bootstrap](https://docs.chef.io/knife_bootstrap.html) is the command you use to bootstrap a node. As part of the `knife bootstrap` command, you specify arguments depending on how you would normally connect to your node over SSH.
+
+Key-based authentication is typically recommended over password authentication because it is more secure, but you can bootstrap your node using either method. If you're bootstrapping a local virtual machine, you may also have to specify the SSH forwarded port.
+
+In each of the methods shown below, the `--node-name` argument uniquely identifies the node with the Chef server. Its value can be whatever you want. If you previously used the name `node1-centos` to bootstrap a different node, you can respond with 'Y' to overwrite that node's entry on your Chef server. Alternatively, you can choose a different name or <%= link_to("remove the previous node", current_page.last_page, :anchor => 'deletethenodefromthechefserver') %> from your Chef server.
+
+<% accordion('azure-node', "If you're bootstrapping a Microsoft Azure instance") do %>
+
+<%= partial '../../../shared/bootstrap_azure' %>
+
+<% end %>
+
+Choose the option that matches how you normally connect to your node over SSH.
+
+* [Bootstrap using key-based authentication](#bootstrapusingkeybasedauthentication)
+* [Bootstrap using password authentication](#bootstrapusingpasswordauthentication)
+* [Bootstrap a local virtual machine using a forwarded port](#bootstrapalocalvirtualmachineusingaforwardedport)
+
+### Bootstrap using key-based authentication
+
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap ADDRESS --ssh-user USER --sudo --identity-file IDENTITY_FILE --node-name node1-centos --run-list 'recipe[learn_chef_httpd]'
+```
+
+Here's an example:
+
+<% command_snippet(page: current_page, path: 'bootstrap-your-node/bootstrap-node1-centos', features: [:stdin, :stderr, :stdout]) %>
+
+### Bootstrap using password authentication
+
+Replace <code class="placeholder">ADDRESS</code> with your remote node's external address, <code class="placeholder">USER</code> with your username, and <code class="placeholder">PASSWORD</code> with your user's password.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap ADDRESS --ssh-user USER --ssh-password 'PASSWORD' --sudo --use-sudo-password --node-name node1-centos --run-list 'recipe[learn_chef_httpd]'
+```
+
+The output will resemble the output shown for key-based authentication above.
+
+### Bootstrap a local virtual machine using a forwarded port
+
+Replace <code class="placeholder">PORT</code> with your SSH forwarded port, for example, 2222, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">/home/user/.vagrant/machines/default/virtualbox/private_key</code>.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap localhost --ssh-port PORT --ssh-user vagrant --sudo --identity-file IDENTITY_FILE --node-name node1-centos --run-list 'recipe[learn_chef_httpd]'
+```
+
+The output will resemble the output shown for key-based authentication above.
+
+<% accordion('troubleshooting', 'Troubleshooting') do %>
+
+<% markdown do %>
+
+If the operation times out or fails, here are some things to try.
+
+* Ensure that you run `knife` commands from your <code class="file-path">learn-chef</code> directory or one of its sub-directories.
+* Ensure you have a <code class="file-path">learn-chef/.chef</code> directory and that it contains a <code class="file-path">knife.rb</code> file and your RSA private key file.
+* Ensure that your node's IP address is accessible from your network.
+* Ensure the user name you provide has root or `sudo` access on the node.
+* Ensure your node provides network access on these ports:
+  * 22 (SSH)
+  * 80 (HTTP)
+  * 443 (HTTPS)
+
+<% end %>
+
+<% end %>
+
+<% accordion('bootstrap-detail', 'The bootstrap process in detail') do %>
+
+<% markdown do %>
+
+You can [review the documentation](https://docs.chef.io/knife_bootstrap.html#options) to better understand the role of each `knife bootstrap` option. Here are the options that you used:
+
+**General options**
+
+* `--ssh-user`
+* `--sudo`
+* `--node-name`
+* `--run-list`
+
+**Options specific to key-based authentication**
+
+* `--identity-file`
+
+**Options specific to password authentication**
+
+* `--ssh-password`
+* `--use-sudo-password`
+
+**Options specific to SSH forwarded port**
+
+* `--ssh-port`
+* `--identity-file`
+
+You can also watch [what happens during knife bootstrap](/modules/beyond-essentials-1) to further understand the process.
+
+<% end %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Confirm the result
+
+Two things just happened.
+
+First, your node was associated with your Chef server. To verify this, run the `knife node list` command.
+
+<% command_snippet(page: current_page, path: 'bootstrap-your-node/knife-node-list-node1-centos', features: [:stdin, :stdout]) %>
+
+You can use the `knife node show` command to view data about your node.
+
+<% command_snippet(page: current_page, path: 'bootstrap-your-node/knife-node-show-node1-centos', features: [:stdin, :stdout]) %>
+
+<% if ['aws-automate', 'opsworks'].include?(current_page.parent.data.environment) %>
+
+You can also view your node from the Chef Automate dashboard. Refresh the page and you see that your node appears and its last `chef-client` run was successful.
+
+![](manage-a-node/chef_automate_nodes_bootstrap_node1.png)
+
+<% end %>
+
+The second thing that happened was that your node did an initial check-in with the Chef server and ran the `learn_chef_httpd` cookbook. That's because you specifed `learn_chef_httpd` as the `--run-list` argument.
+
+To verify the configuration, run `curl`. Replace the IP address you see here with yours.
+
+<% command_snippet(page: current_page, path: 'bootstrap-your-node/curl-node1-centos-1', features: [:stdin, :stdout]) %>
+
+You can also open a web browser from your workstation and navigate to your web server.
+
+![The basic home page](misc/webserver-basic-remote.png)
+
+If you bootstrapped a Vagrant instance, an easy way to verify the configuration is to create an SSH connection to the instance and run `curl localhost`.
+
+```bash
+$ vagrant ssh
+Last login: Thu Dec  3 17:17:26 2015 from 10.0.2.2
+[vagrant@localhost ~]$ curl localhost
+<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>
+[vagrant@localhost ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+```
+
+<% if ['aws-automate', 'opsworks'].include?(current_page.parent.data.environment) %>
+
+From the Chef Automate dashboard, select your node to view details about the `chef-client` run.
+
+![](manage-a-node/chef_automate_nodes_bootstrap_node1_details.png)
+
+You'll also see details for each resource in your cookbook.
+
+![](manage-a-node/chef_automate_nodes_bootstrap_node1_details_resources.png)
+
+<% end %>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+The `knife bootstrap` command established an SSH connection to the node, installed `chef-client`, downloaded the `learn_chef_httpd` cookbook on the node, and ran it. In one command, Chef carried out most of the steps you previously performed manually.
+
+Next let's modify your configuration by adding some info about your web server to your home page.
+
+<% end %>

@@ -1,0 +1,249 @@
+---
+title: 'Remediate the compliance failure on a local virtual machine'
+order: 2
+keywords: TODO
+sections: []
+time_to_complete: 60 minutes
+snippet_path: compliance_scanner/windows/virtualbox/remediate-the-compliance-failure-locally
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Understand the failure', href: '#step1' },
+  { label: '2. Login through the CLI', href: '#step2' },
+  { label: '3. Create the cookbook', href: '#step3' },
+  { label: '4. Apply the cookbook locally', href: '#step4' },
+  { label: '5. Replicate the failure locally', href: '#step5' },
+  { label: '6. Remediate the failure', href: '#step6' }
+]
+---
+Recall that in the previous tutorial you ran the **cis-windows2012r2-level1-memberserver** compliance profile and that it failed the password complexity rule.
+
+![](compliance/scan_report_issues_admpwd_windows2012.png)
+
+CIS recommends that you enforce [maximum password complexity](http://winintro.com/?Category=LAPS&Policy=FullArmor.Policies.C9E1D975_EA58_48C3_958E_3BC214D89A2E%3A%3APOL_AdmPwd). A complex password contains a combination of uppercase characters, lowercase characters, digits, and non-alphabetic characters such as !, $, #, and %. According to CIS, passwords that contain only alphanumeric characters are extremely easy to discover using publicly available tools.
+
+In this part, you'll verify the failure of the password complexity rule on a local virtual machine and remediate it. By starting with local development with Test Kitchen, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers.
+
+You can configure Test Kitchen to download and run compliance profiles on your test instances. For example, you can pull compliance profiles from [Chef Supermarket](https://docs.chef.io/supermarket.html), a Git repository, or from your Chef compliance scanner. Here, you'll configure Test Kitchen to download the **cis/cis-windows2012r2-level1-memberserver** profile from your Chef compliance scanner.
+
+[START_BOX]
+
+### 1. Understand the compliance failure
+
+Let's take a closer look at what the password complexity rule checks for.
+
+From the **Compliance** menu in the Chef compliance scanner web interface, select the **CIS Microsoft Windows Server 2012 R2 Benchmark Level 1 - Member Server** profile.
+
+Then scroll to the **Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)** rule. You'll see this:
+
+![](compliance/password_complexity_rule.png)
+
+The code you see is [InSpec](http://inspec.io), an auditing and testing framework that's built on the Ruby programming language. If you're familiar with testing frameworks such as [RSpec](http://rspec.info) and [Serverspec](http://serverspec.org), InSpec code will look familiar to you.
+
+InSpec provides [built-in resource types](http://inspec.io/docs/reference/resources/) that describe the various parts of a system, such as files, users, and services. In this example, you see the [registry_key](http://inspec.io/docs/reference/resources/registry_key/) resource.
+
+The rule examines the "HKEY\_LOCAL\_MACHINE\\SOFTWARE\\Policies\\Microsoft Services\\AdmPwd" registry key for these features:
+
+1. The registry key has a value named "PasswordComplexity".
+1. The "PasswordComplexity" value's associated data is "4".
+
+When you scanned your Windows Server node, you saw that the rule failed.
+
+![](compliance/scan_report_issues_admpwd_windows2012.png)
+
+The illustration shows that both checks failed &ndash; the registry key value doesn't exist, so therefore its associated data cannot be "4"
+
+Let's connect to your node and verify that the password complexity registry key value does not exist.
+
+Connect to your node now, either directly or over Remote Desktop. Then, from a PowerShell prompt, run the following.
+
+```ps
+$ Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+Get-ItemProperty : Cannot find path 'HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd' because it does not exist.
+At line:1 char:1
++ Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (HKLM:\SOFTWARE\...Services\AdmPwd:String) [Get-ItemProperty], ItemNotFo
+   undException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetItemPropertyCommand
+```
+
+You see that the registry key "HKLM:\\SOFTWARE\\Policies\\Microsoft Services\\AdmPwd" does not exist. If you're more familiar with the Registry Editor utility (regedit.exe), you could also try browsing to this key to verify that it does not exist.
+
+Now that you better understand why the rule failed, you can begin to write Chef code to remediate the failure.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Login to the Chef compliance scanner through the InSpec CLI
+
+Later in this part, you'll scan a test instance against the CIS Benchmarks profile through Test Kitchen. Test Kitchen uses the [kitchen-inspec](http://inspec.io/docs/reference/plugin_kitchen_inspec.html/) plugin to run InSpec tests. `kitchen-inspec` comes with the Chef DK.
+
+To download compliance profiles from your Chef compliance scanner, `kitchen-inspec` requires login credentials.
+
+To do so, you run the `inspec compliance login` command. The [inspec](http://inspec.io/docs/reference/cli/) command-line interface (CLI) utility comes with the Chef DK.
+
+To login from the CLI, you first need an authorization token. To get that, select **About** from the menu located at the upper-right corner in the web interface.
+
+![](compliance/webui_about.png)
+
+Then copy the contents of the **Refresh token** field to the clipboard.
+
+![](compliance/webui_token.png)
+
+Next, run this command to connect InSpec to your Chef compliance scanner. Replace <% ph 'FQDN' %> with your Chef compliance scanner's FQDN, <% ph 'USER' %> with the username you use to login to the Chef compliance scanner web interface, and <% ph 'TOKEN' %> with your authorization token.
+
+```bash
+# ~/learn-chef
+$ inspec compliance login https://FQDN --user USER --insecure --refresh_token 'TOKEN'
+```
+
+Here's an example:
+
+<% command_snippet(page: current_page, path: 'login-to-compliance-scanner/inspec-compliance-login') %>
+
+[COMMENT] The `--insecure` flag bypasses SSL verification because the Chef compliance scanner comes with a self-signed certificate. In a production environment, you can [configure an SSL certificate](https://docs.chef.io/install_compliance.html#configure-ssl) that's rooted by a trusted certificate authority (CA) and omit the `--insecure` flag.
+
+As a verification step, you can run `inspec compliance profiles` to prove that you've successfully authenticated. This command lists all available compliance profiles from your Chef compliance scanner.
+
+<% command_snippet(page: current_page, path: 'login-to-compliance-scanner/inspec-compliance-profiles') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create the admpwd cookbook
+
+To remediate the failure, you'll write a Chef cookbook named `admpwd`. Recall that a cookbook provides structure to your Chef code. A cookbook contains recipes, which in turn contain resources that descibe the desired state of the system.
+
+For learning purposes, we name the cookbook `admpwd` because we're configuring the behavior of the administrator password. In practice, you would choose a name that reflects the scope of what your cookbook does.
+
+In this part, you create the `admpwd` cookbook. Although initially empty, in the next step you apply the cookbook to a Windows Server 2012 R2 instance using Test Kitchen to verify that the instance comes up and successfully runs `chef-client`.
+
+To get started, first move to the <% fp('~/learn-chef') %> directory.
+
+<% command_snippet(page: current_page, path: 'create-the-admpwd-cookbook/cd-learn-chef-1', features: :stdin) %>
+
+Ensure that you have a directory named <% fp('~/learn-chef/cookbooks') %>.
+
+<% command_snippet(page: current_page, path: 'create-the-admpwd-cookbook/mkdir-learn-chef-cookbooks', features: :stdin) %>
+
+Run the following `chef generate cookbook` command to create the `admpwd` cookbook.
+
+<% command_snippet(page: current_page, path: 'create-the-admpwd-cookbook/chef-generate-cookbook') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Apply the admpwd cookbook on a Test Kitchen instance
+
+Now you'll verify that the empty cookbook runs successfully on a Windows Server 2012 R2 test instance. Replace the contents of your copy of <% fp('~/learn-chef/cookbooks/admpwd/.kitchen.yml') %> with this.
+
+<% code_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-1-yml') %>
+
+This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance. It resembles the configuration you used in the [Get started with Test Kitchen](/modules/local-development/windows/virtualbox/apply-a-cookbook#step2) tutorial. `windows-2012r2` is the name you provided for your base Windows Server 2012 R2 Vagrant box that you built from the Packer template.
+
+The `verifier` section tells Test Kitchen to look for InSpec tests. More on that later.
+
+Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/admpwd') %> directory.
+
+<% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/cd-learn-chef-cookbooks-admpwd-1', features: :stdin) %>
+
+Run `kitchen list`. You'll see that the instance is not yet created.
+
+<% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-list-1') %>
+
+Now run `kitchen converge`. This command downloads the base Windows Server 2012 R2 box if needed, brings up an instance, installs `chef-client`, and applies the `admpwd` cookbook.
+
+<% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-converge-1') %>
+
+As expected, 0 resources were applied because the cookbook is empty. But it's a great first step to verifying that the instance comes up and `chef-client` runs successfully.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Replicate the failure on your Test Kitchen instance
+
+In the previous tutorial, you saw the password complexity rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
+
+Recall that the InSpec code for the password complexity rule looks like this. This rule comes from the **cis/cis-windows2012r2-level1-memberserver** profile.
+
+![](compliance/password_complexity_rule.png)
+
+Also recall that your <% fp '.kitchen.yml' %> file looks like this.
+
+<% code_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-2-yml') %>
+
+The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-windows2012r2-level1-memberserver** profile from the Chef compliance scanner when it runs tests. You specified your Chef compliance scanner when you ran `inspec compliance login` earlier.
+
+You're now ready to scan your test instance. Normally, you might run `kitchen verify` to run the compliance profile. However, the CIS Benchmarks profile contains many rules, and `kitchen verify` outputs the compliance status for each rule.
+
+To make it easier to pinpoint just the status of the password complexity rule, run `kitchen verify` and redirect the output to a text file, like this.
+
+<% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-verify-redirect-1', features: :stdin) %>
+
+You can locate the status of a test by searching for its name. Here's how to locate the status of the password complexity rule.
+
+<% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/grep-rule-1') %>
+
+Alternatively, you can search for the rule name from a text editor.
+
+The "(2 failed)" part tells us that both parts of the test failed, the same way it did on your node.
+
+Now that you've replicated the failure on a test instance, you can write Chef code to remediate it.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Remediate the failure
+
+In practice, you and your team would decide the appropriate way to fix the compliance failure. For example, you might define a complete set of rules for your organization that satisfies each of CIS's recommended password complexity settings.
+
+For learning purposes, let's write just enough code to make the test pass. To do so, you need to create the "HKEY\_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft Services\\AdmPwd" registry key, add a value named "PasswordComplexity", and set that value's associated data to "4" (a `DWORD` value).
+
+Write your default recipe, <% fp '~/learn-chef/cookbooks/admpwd/recipes/default.rb' %>, like the following.
+
+<% code_snippet(page: current_page, path: 'remediate-the-failure/default-rb') %>
+
+This code uses the [registry_key](https://docs.chef.io/resource_registry_key.html) resource to create the registry key ensure that it has the "PasswordComplexity" value. If the value and its associated data already exist, Chef does nothing.
+
+Next, from your <% fp '~/learn-chef/cookbooks/admpwd' %> directory, run `kitchen converge` to apply the configuration.
+
+<% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-converge-2') %>
+
+You see from the output that the required data is added to the registry.
+
+Now run `kitchen verify` to run the compliance profile a second time.
+
+<% command_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-verify-redirect-1', features: :stdin) %>
+
+Repeat the step where you search <% fp 'verify.txt' %> for the profile named "Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)".
+
+<% command_snippet(page: current_page, path: 'remediate-the-failure/grep-rule-2') %>
+
+Success! The output no longer contains the failure. This gives you confidence that the password complexity rule would pass after this cookbook is applied to your node.
+
+If the test were to fail, you would examine the failure, modify your cookbook to try something else, and then run `kitchen converge` to apply the change followed by `kitchen verify` to run your compliance scan.
+
+[COMMENT] Test Kitchen instances are meant to be disposable. If you place your test instance in an unrepairable state or want to start over, run `kitchen destroy` to destroy your instance followed by `kitchen converge` to bring up a new one. The copy of your cookbook on your workstation is unaffected.
+
+As a final verification step, you can run the same PowerShell cmdlet you ran earlier on your node to verify that the registry key exists.
+
+<% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-exec-1') %>
+
+You see the "PasswordComplexity" value and that its associated data is "4".
+
+When you're finished, run `kitchen destroy` to tear down your test instance.
+
+<% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-destroy') %>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you've verified the remediation on a test instance, you'll upload your `admpwd` cookbook to your Chef server and apply the configuration to your Windows Server  node. After that, you'll rerun the compliance scan on your node to verify the fix.
+
+<% end %>

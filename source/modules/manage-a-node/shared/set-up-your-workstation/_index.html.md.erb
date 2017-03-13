@@ -1,0 +1,179 @@
+<% platform_long_name = case current_page.parent.data.platform_id
+when 'rhel'
+  'Red Hat Enterprise Linux or CentOS'
+when 'ubuntu'
+  'Ubuntu'
+when 'windows'
+  'Windows Server'
+end %>
+Recall that your workstation is the computer from which you author your cookbooks and administer your network. Although you're configuring <%= platform_long_name %>, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
+
+[COMMENT] Remember, you can also use a virtual machine as your workstation. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites). <% if current_page.parent.data.environment == 'virtualbox' %>Also ensure that nested virtualization, available through a program such as VMware Fusion, is enabled if you're using another virtual machine as your workstation.<% end %>
+
+[WINDOWS] If you're using a Windows 7 workstation, [you'll need to install Windows PowerShell 4.0](http://social.technet.microsoft.com/wiki/contents/articles/21016.how-to-install-windows-powershell-4-0.aspx) or later before you begin. PowerShell is part of the Windows Management Framework.
+
+[START_BOX]
+
+## 1. Install the Chef DK
+
+In the first tutorial, [Learn the Chef basics](/modules/learn-the-basics/), you used the tools provided by the Chef Development Kit (Chef DK) to configure a virtual machine directly. Now it's time to install the Chef DK on your workstation so that you can manage a node remotely.
+
+<a class='button radius cta' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install the Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Open a command prompt
+
+In this tutorial, you'll run Chef commands from a command prompt to manage your node remotely.
+
+#### Linux or Mac OS
+
+If you're running Linux or Mac OS as your workstation, open a terminal window like you normally would.
+
+#### Windows
+
+If you're running Windows as your workstation, open the Chef Development Kit desktop shortcut. The desktop shortcut brings up a PowerShell session that's configured to work with Chef.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Verify your Chef DK installation
+
+Next, ensure that you can access the Chef DK from the command line. Run `chef --version` to verify the version. This tutorial was last tested on the versions shown here.
+
+<% command_snippet(page: current_page, path: 'verify-chef-dk/chef-version') %>
+
+[COMMENT] If you receive an error, the [documentation](https://docs.chef.io/install_dk.html) describes additional steps that can help you set up your workstation. For example, if you're running multiple versions of Ruby, you may need to configure your terminal session [to use Chef's Ruby](https://docs.chef.io/install_dk.html#set-system-ruby).
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Set up your text editor
+
+Now's a good time to make sure your favorite text editor is set up. As you did in the previous tutorial, choose a text editor that provides features such as syntax highlighting and line numbering.
+
+Here are a few graphical text editors that are popular among Chef users.
+
+* [Atom](http://atom.io)
+* [Sublime Text](http://www.sublimetext.com)
+* [Visual Studio Code](https://code.visualstudio.com)
+
+If you're on Linux or Mac OS and prefer using a command-line text editor, `emacs`, `nano`, and `vim` are popular. Here are some resources to help get you started.
+
+* [Absolute Beginner's Guide to Emacs](http://www.jesshamrick.com/2012/09/10/absolute-beginners-guide-to-emacs/)
+* [The Beginner’s Guide to Nano, the Linux Command-Line Text Editor](http://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/)
+* [Interactive Vim tutorial](http://www.openvim.com/)
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Create a working directory
+
+Create a directory to hold your work as you progress through the Learn Chef tutorials. Chef users commonly create a directory for their organization and a subdirectory for each project, as is common when working with Git.
+
+For the Learn Chef tutorials, we'll use <code class="file-path">~/learn-chef</code> as the root directory.
+
+```bash
+# ~
+$ mkdir ~/learn-chef
+$ cd ~/learn-chef
+```
+
+You can use a different directory if you'd like &ndash; just be sure to adjust the paths you see in the tutorials.
+
+[WINDOWS] In the Learn Chef tutorials, we use the <code class="file-path">~</code> character in directory names, which is a common shortcut for the user's home directory on Linux, but also works in PowerShell. On Windows, <code class="file-path">~</code> refers to your home directory, for example, <code class="file-path">C:\Users\Administrator</code>.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Install Git
+
+In this tutorial, you'll obtain starter code from GitHub. You do not need to create a GitHub account, but you'll need a Git client.
+
+Git is popular here at Chef and with the Chef community. Even if you use another version control system, you may find it useful to install the Git client so that you can participate in the community's many open-source projects.
+
+#### Linux or Mac OS
+
+If you're running Linux or Mac OS as your workstation, [download and install Git](https://git-scm.com/downloads) now.
+
+After you install Git, run `git --version` to verify the installation.
+
+<% command_snippet(page: current_page, path: 'install-git/git-version') %>
+
+#### Windows
+
+If you're running Windows as your workstation, Chef DK version 0.15 and later comes with [Git for Windows](https://git-scm.com/download/win).
+
+From your Chef DK PowerShell session, run `git --version` to verify the installation.
+
+<% command_snippet(path: 'learn-the-basics/ubuntu/virtualbox/set-up-a-machine-to-manage/verify-your-ssh-client/git--version', workstation: 'windows', replace_prompt: "PS >") %>
+
+[END_BOX]
+
+[START_BOX]
+
+<% if current_page.parent.data.platform_id == 'windows' %>
+
+## 7. Verify your RDP client
+
+Although not required, you may find it useful to have an RDP client installed on your workstation. This enables you to connect to your Windows Server instance to verify your work.
+
+<% accordion('install-rdp-windows', 'Windows users') do %>
+
+<% markdown do %>
+
+Windows comes with an RDP client. Run `mstsc` from the command prompt to bring up Remote Desktop.
+
+<% end %>
+
+<% end %>
+
+<% accordion('install-rdp-macosx', 'Mac OS X users') do %>
+
+<% markdown do %>
+
+[Download Microsoft Remote Desktop](https://itunes.apple.com/us/app/microsoft-remote-desktop/id715768417?mt=12) from the Apple App Store. The RDP client from Microsoft's web site might not work.
+
+<% end %>
+
+<% end %>
+
+<% accordion('install-rdp-linux', 'Linux users') do %>
+
+<% markdown do %>
+
+[Remmina](http://www.remmina.org/wp/) is a popular RDP client for Linux.
+
+<% end %>
+
+<% end %>
+
+<% else %>
+
+## 7. Verify your SSH client
+
+Although not required, you may find it useful to have an SSH client installed on your workstation. This enables you to connect to your Linux server to verify your work. Mac OS and most Linux distributions come with an SSH client. On Windows, you need to install one.
+
+On Windows you can install the client or you can use the SSH client that comes with Git for Windows, which is part of the Chef DK.
+
+From your Chef DK PowerShell session, run `ssh` to verify that your SSH client is available.
+
+<% command_snippet(path: 'learn-the-basics/ubuntu/virtualbox/set-up-a-machine-to-manage/verify-your-ssh-client/ssh-no-args', workstation: 'windows', replace_prompt: "PS >", features: [:stdin, :stderr]) %>
+
+<% end %>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you have the Chef tools, a text editor, and a working directory set up on your workstation, let's set up your Chef server.
+
+<% end %>

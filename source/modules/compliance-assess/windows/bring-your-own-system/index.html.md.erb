@@ -1,0 +1,67 @@
+---
+title: 'Scan for compliance'
+short_title: 'Bring your own system'
+platform: 'Windows Server'
+logo: ubuntu.svg
+order: 2
+machine_config: snippets/compliance_scanner/windows/virtualbox/machine_config.md
+---
+Whether you must comply with regulatory frameworks such as PCI, HIPAA, Dodd-Frank, or STIG, or you have internal company standards you must meet, adhering to your compliance policies helps you deliver safe, secure applications and services.
+
+Meeting the challenge of compliance requires both planning and action, and can be broken down into these stages:
+
+* **Analyze** &mdash; Be clear about your compliance requirements and the desired state of your infrastructure.
+* **Specify** &mdash; Translate your desired state into a formal language that precisely specifies your requirements.
+* **Test** &mdash; Verify whether the actual state of your infrastructure meets the desired state. Automated tests scale better than manual tests, and can be written even before a new software system or service is developed to provide a clear set of standards that must be met.
+* **Remediate** &ndash; When a compliance risk is identified, configure your infrastructure to meet the desired state. Like automated testing, configuring your infrastructure through automation can reduce risk more effectively because the process is more scalable and repeatable than manual configuration.
+* **Certify** &mdash; Although not always required, many compliance processes require a final human sign off. The better your tests, the shorter the certification step can be.
+
+Think about your current compliance and audit process. How can you _prove_ that the actual state of your infrastructure meets your requirements?
+
+With Chef, you write code to describe the desired state of your infrastructure. When Chef runs, it applies the configuration only when the current state differs from the desired state. This approach is called _test and repair_.
+
+But compliance is not only about what's _on_ the system; it's also about what's _not_ on the system. For example, a database server in production might have certain requirements around which users can access data and which ports are open, but it may also be required to disallow access to services such as FTP and Telnet.
+
+The [Chef compliance scanner](https://docs.chef.io/compliance.html) enables you to assess your infrastructure's adherence to compliance requirements and to monitor that infrastructure on an ongoing basis. It includes:
+
+* the Chef compliance scanner.
+* prebuilt compliance profiles to help you get started quickly.
+* a language for writing audit controls, called [InSpec](http://inspec.io).
+
+With the Chef compliance scanner, the audit process is repeatable. You can automatically run compliance scans every day, every hour, or on every change, giving you increased confidence that even minor changes won't break any compliance rules.
+
+<img src="/assets/images/networks/compliance-winrm-node.svg" style="width: 80%; box-shadow: none;"/>
+
+The Chef compliance scanner works with any Linux or Windows Server system, whether it is managed by Chef or not. For Windows Server, the Chef compliance scanner runs compliance tests remotely over WinRM. For Linux, it uses SSH. In other words, you can monitor your systems without installing additional software.
+
+Start by using the Chef compliance scanner to scan your infrastructure for audit failures. Next, write Chef or other automation code that addresses those audit failures. Then scan your systems again to make sure they pass all the tests. With this approach, you can ensure that your servers always stay in compliance.
+
+In this tutorial, you'll set up a Chef compliance scanner and scan a Windows Server system for potential compliance risks. You'll use the built-in [Center for Internet Secuirty (CIS) Benchmarks](https://benchmarks.cisecurity.org), which are a set of common configuration guidelines used by government, business, industry, and academia.
+
+During the tutorial, you'll discover vulnerabilities that can impact your server's security, including passwords that are extremely easy to discover using publicly available tools. In the next tutorial, you'll use Chef to fix this problem.
+
+After completing this tutorial, you should be able to:
+
+* install and configure the Chef compliance scanner.
+* prepare a server, or _node_, to scan.
+* scan your node against the built-in compliance profiles.
+
+On the next page, you'll start by installing the Chef compliance scanner on your own hardware or virtual machine or from the AWS Marketplace. If you want to know more before you proceed, here's a 50-minute webcast that gives an overview of the Chef compliance scanner.
+
+<% accordion('compliance-webcast', 'Watch the webcast') do %>
+
+<iframe width="640" height="360" src="https://www.youtube.com/embed/OdUar5MRW1E" frameborder="0" allowfullscreen></iframe>
+
+<% end %>
+
+<br />
+
+<% accordion('test-configuration', 'Test configuration') do %>
+
+<% markdown do %>
+
+<% render_machine_config(current_page.data.machine_config) %>
+
+<% end %>
+
+<% end %>

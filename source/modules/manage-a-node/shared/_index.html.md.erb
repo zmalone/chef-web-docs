@@ -1,0 +1,107 @@
+<%
+case current_page.data.platform_id
+when 'rhel'
+  platform_long_name = 'Red Hat Enterprise Linux 7 or CentOS 7'
+  platform_short_name = 'Red Hat Enterprise Linux or CentOS'
+when 'ubuntu'
+  platform_long_name = 'Ubuntu 14.04'
+  platform_short_name = 'Ubuntu'
+when 'windows'
+  platform_long_name = 'Windows Server 2012 R2'
+  platform_short_name = 'Windows Server'
+end
+
+case current_page.data.environment
+when 'opsworks'
+  server_environment = 'AWS OpsWorks for Chef Automate'
+else
+  server_environment = 'Chef server'
+end
+%>
+If you've gone through [Learn the Chef basics](/modules/learn-the-basics/), you saw how to use Chef to bring up a web server and serve a basic home page. You configured the server by running the commands directly on it. Now, let's simulate a production environment more closely by using Chef to configure another web server that you manage remotely, from your workstation.
+
+Typically, Chef is comprised of three parts &ndash; your workstation, a Chef server, and nodes.
+
+<img src="/assets/images/networks/workstation-server-node.png" style="width: 100%; box-shadow: none;" alt="Your workstation, a Chef server, and nodes" />
+
+* Your __workstation__ is the computer from which you author your cookbooks and administer your network. It's typically the machine you use everyday. Although you'll be configuring <%= platform_short_name %>, your workstation can be any OS you choose &ndash; be it Linux, Mac OS, or Windows.
+* Your __Chef server__ acts as a central repository for your cookbooks as well as for information about every node it manages. For example, the Chef server knows a node's fully qualified domain name (FQDN) and its platform.
+* A __node__ is any computer that is managed by a Chef server. Every node has the Chef client installed on it. The Chef client talks to the Chef server. A node can be any physical or virtual machine in your network.
+
+In the parts that follow, you'll use each of them.
+
+<% if ['aws-automate', 'opsworks'].include?(current_page.data.environment) %>
+
+Chef Automate extends this setup by giving your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. It enables multiple teams to work together on systems made up of many different components and services, and promotes the DevOps principles of cross-team collaboration, cooperation, and transparency.
+
+![](automate/automate-architecture.svg)
+
+Chef Automate provides a full-stack continuous delivery solution, which includes [workflow](https://docs.chef.io/workflow.html), [visibility](https://docs.chef.io/visibility.html), and [compliance](https://docs.chef.io/compliance.html). In this tutorial, you'll set up a Chef server and a Chef Automate server and use Chef Automate's visibility feature to gain insight into what's happening on your Chef server to better understand what happens when `chef-client` runs on your nodes.
+
+<% if current_page.data.environment == 'opsworks' %>
+
+In a typical environment, you would install Chef Automate and Chef server each on its own system. [AWS OpsWorks for Chef Automate](https://aws.amazon.com/opsworks/chefautomate/?sc_channel=el&sc_campaign=ops-works-chef-automate-launch-2016&sc_publisher=chef&sc_country=global&sc_geo=global&sc_category=opsworks-chef-automate&sc_outcome=devadopt) enables you to run a Chef server and a Chef Automate server easily in AWS (both servers run on the same EC2 instance). OpsWorks handles their operations, backups, restorations, and software upgrades, freeing you from many configuration management tasks.
+
+<% end %>
+
+You access Chef Automate's visibility feature through a web interface. Here's an example that details the result of a successful `chef-client` run.
+
+![](manage-a-node/chef_automate_nodes_bootstrap_node1_details.png)
+
+<% end %>
+
+After completing this tutorial, you should be able to:
+
+<% if current_page.data.environment == 'aws-automate' %>
+* bring up a Chef server, Chef Automate server, and a node to manage.
+<% elsif current_page.data.environment == 'opsworks' %>
+* bring up an OpsWorks for Chef Automate installation and a node to manage.
+<% else %>
+* bring up a Chef server and a node to manage.
+<% end %>
+* write Chef code to define a policy from your workstation.
+* apply that policy to a node.
+* update your policy and apply it to a node.
+* understand how to diagnose and resolve a failed `chef-client` run.
+<% if ['aws-automate', 'opsworks'].include?(current_page.data.environment) %>
+* use Chef Automate's visibility feature to visualize the status of your nodes.
+<% end %>
+* set up `chef-client` to run periodically.
+<% if current_page.data.environment != 'virtualbox' %>
+* use _search_ to run `chef-client` on multiple nodes.
+<% end %>
+* use _roles_ to define your node's behavior and attributes based on its function.
+
+<hr>
+
+<% if current_page.data.environment == 'aws-automate' %>
+**Note**&nbsp;&nbsp;To successfully complete this tutorial, you'll need three systems in addition to <%= server_environment %>:
+<% else %>
+**Note**&nbsp;&nbsp;To successfully complete this tutorial, you'll need two systems in addition to <%= server_environment %>:
+<% end %>
+
+<% if current_page.data.environment == 'aws-automate' %>
+* A system running Chef Automate for visibility into what's happening on your Chef server.
+<% end %>
+* A system running Linux, Mac OS, or Windows to act as your workstation. <% if current_page.data.environment != 'virtualbox' %>You can use a virtual machine or cloud instance if you don't want to use your primary computer.<% end %>
+* A system running <%= platform_long_name %> to act as your node. This system can use spare hardware or run as a virtual machine or cloud instance.
+
+<% if current_page.data.environment == 'opsworks' %>
+
+You don't have to bring up any systems yet. The pages that follow explain everything you'll need to get set up. You'll begin by setting up OpsWorks for Chef Automate and your workstation to work with it.
+
+<% else %>
+
+You don't have to bring up any systems yet. The pages that follow explain everything you'll need to get set up. You'll begin by setting up your workstation for Chef development.
+
+<% end %>
+
+<% accordion('test-configuration', 'Test configuration') do %>
+
+<% markdown do %>
+
+<% render_machine_config(current_page.data.machine_config) %>
+
+<% end %>
+
+<% end %>
