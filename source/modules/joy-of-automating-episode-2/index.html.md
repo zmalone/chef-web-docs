@@ -18,9 +18,9 @@ In this episode we focused on converting the installation of Django into tested 
 
 ## Activity
 
-In this episode we focus on taking the manual installation instructions found in [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-install-the-django-web-framework-on-ubuntu-14-04) and create a recipe that does the work for us.
+In this episode we focus on taking the manual installation instructions found in [this tutorial](https://www.digitalocean.com/community/modules/how-to-install-the-django-web-framework-on-ubuntu-14-04) and create a recipe that does the work for us.
 
-* [How to Install The Django Web Framework](https://www.digitalocean.com/community/tutorials/how-to-install-the-django-web-framework-on-ubuntu-14-04)
+* [How to Install The Django Web Framework](https://www.digitalocean.com/community/modules/how-to-install-the-django-web-framework-on-ubuntu-14-04)
 
 The completed exercise can be found here: [https://github.com/chef-training/django](https://github.com/chef-training/django)
 
@@ -46,7 +46,7 @@ When you are done with the initial implementation we encourage you to challenge 
 
 ### Another installation
 
-We walked through several installations. As an exercise walk through the final installation of [installing Django through git](https://www.digitalocean.com/community/tutorials/how-to-install-the-django-web-framework-on-ubuntu-14-04#development-version-install-through-git). You will need the [git](https://docs.chef.io/resource_git.html) resource.
+We walked through several installations. As an exercise walk through the final installation of [installing Django through git](https://www.digitalocean.com/community/modules/how-to-install-the-django-web-framework-on-ubuntu-14-04#development-version-install-through-git). You will need the [git](https://docs.chef.io/resource_git.html) resource.
 
 ### Custom resource
 

@@ -14,9 +14,9 @@ icon: video.png
 
 ## Activity
 
-In this episode we focus on taking the manual installation instructions found in [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-centos-7) and create a recipe that does the work for us.
+In this episode we focus on taking the manual installation instructions found in [this tutorial](https://www.digitalocean.com/community/modules/how-to-install-apache-tomcat-8-on-centos-7) and create a recipe that does the work for us.
 
-* [How to Install Apache Tomcat 8 on CentOS 7](https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-centos-7)
+* [How to Install Apache Tomcat 8 on CentOS 7](https://www.digitalocean.com/community/modules/how-to-install-apache-tomcat-8-on-centos-7)
 
 ## Resources
 

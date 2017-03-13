@@ -8,4 +8,4 @@ Before participating in [Part 3: Node object and Chef roles][spring-fund-week-3]
 
 <iframe width="560" height="315" src="//www.youtube.com/embed/grvlVNvCU9w" frameborder="0" allowfullscreen></iframe>
 
-[spring-fund-week-3]: /skills/fundamentals-series-week-3
+[spring-fund-week-3]: /modules/fundamentals-series-week-3

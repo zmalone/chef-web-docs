@@ -25,11 +25,11 @@ headings: [
 ---
 [HEADLINE] ChefSpec simulates the execution of your resources, giving you an even faster feedback loop as you create and refine your recipes.
 
-In the [Verify with InSpec](/tutorials/inspec/) tutorial, you learned how to use InSpec to automatically verify a basic web server configuration on a virtual machine running on your workstation. Although automated testing is faster than manual testing, it can still take some time for the instance to come up, run `chef-client`, and run the tests.
+In the [Verify with InSpec](/modules/inspec/) tutorial, you learned how to use InSpec to automatically verify a basic web server configuration on a virtual machine running on your workstation. Although automated testing is faster than manual testing, it can still take some time for the instance to come up, run `chef-client`, and run the tests.
 
 You'll want to verify your work on a virtual instance before you run your cookbook in production, but as you develop your cookbook, you can use [ChefSpec](https://docs.chef.io/chefspec.html) to speed up the feedback cycle even more. ChefSpec _simulates_ the execution of your resources in memory, and does not involve the creation of a virtual instance. It's the fastest way to test your resources and is a great way to validate the correctness of your work, even before you set up a virtual instance to test on.
 
-[COMMENT] If you're new to automated testing, consider reading [Getting started with automated testing](/skills/get-started-with-testing/) before you start this tutorial.
+[COMMENT] If you're new to automated testing, consider reading [Getting started with automated testing](/modules/get-started-with-testing/) before you start this tutorial.
 
 ChefSpec testing is also helpful when you use [continuous delivery](https://en.wikipedia.org/wiki/Continuous_delivery) (CD) systems such as [Chef Automate](https://www.chef.io/automate/) because ChefSpec enables you to verify your code without the need to bring up additional test systems.
 
@@ -113,7 +113,7 @@ The `describe` block tells ChefSpec to run the `web_content::default` recipe in 
 
 `ChefSpec::ServerRunner` specifies how to run `chef-client` in memory. It's a common option because it also simulates an in-memory Chef server, allowing you to access [data bags](https://docs.chef.io/data_bags.html) and other features.
 
-ChefSpec code resembles InSpec because both are based on the [RSpec](http://rspec.info) testing framework. RSpec [provides two ways to express tests](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/). In the [Verify with InSpec](/tutorials/inspec/) tutorial, you use what's commonly called RSpec's _should_ syntax. In this part, you'll use RSpec's _expectation_ syntax.
+ChefSpec code resembles InSpec because both are based on the [RSpec](http://rspec.info) testing framework. RSpec [provides two ways to express tests](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/). In the [Verify with InSpec](/modules/inspec/) tutorial, you use what's commonly called RSpec's _should_ syntax. In this part, you'll use RSpec's _expectation_ syntax.
 
 [END_BOX]
 
@@ -132,7 +132,7 @@ end
 
 Remember that ChefSpec simulates your Chef code in memory. So although ChefSpec cannot tell you whether your system will behave as you expect, knowing that `chef-client` completes without error is a good first step.
 
-Now let's run your tests. In the [Verify with InSpec](/tutorials/inspec/) tutorial, you ran your InSpec tests through Test Kitchen. To run ChefSpec tests, you run a program called [rspec](https://relishapp.com/rspec/rspec-core/docs/command-line).
+Now let's run your tests. In the [Verify with InSpec](/modules/inspec/) tutorial, you ran your InSpec tests through Test Kitchen. To run ChefSpec tests, you run a program called [rspec](https://relishapp.com/rspec/rspec-core/docs/command-line).
 
 From your <% fp '~/learn-chef/cookbooks/web_content' %> directory, run `rspec` like this to verify that the empty cookbook would run without error.
 
@@ -162,7 +162,7 @@ Modify your copy of <% fp 'default_spec.rb' %> like this.
 
 <% code_snippet(page: current_page, path: 'specify-the-platform/default_spec_4') %>
 
-If you wanted to write tests for another platform, for example, Windows Server 2008 R2, you would define a second `context` block. The [Linux version of this tutorial](/tutorials/chefspec/rhel/) shows how to write a single set of tests that can be shared among platforms.
+If you wanted to write tests for another platform, for example, Windows Server 2008 R2, you would define a second `context` block. The [Linux version of this tutorial](/modules/chefspec/rhel/) shows how to write a single set of tests that can be shared among platforms.
 
 Run `rspec` a second time to verify that the test continues to pass.
 
@@ -273,7 +273,7 @@ Run `rspec` to test the change.
 
 The output shows an error. The test expects the `IIS_IUSRS` group to have read access, but the default recipe now specifies `IIS_WPG`.
 
-In practice, this error might be discovered during the development phase or by a continuous delivery system, such as [Chef Automate](https://www.chef.io/automate/). (The [Deploy infrastructure changes](/tutorials/deploy-infrastructure/) tutorial walks you through an example of using Chef Automate's workflow feature to safely move changes from development to production, including running any associated tests.)
+In practice, this error might be discovered during the development phase or by a continuous delivery system, such as [Chef Automate](https://www.chef.io/automate/). (The [Deploy infrastructure changes](/modules/deploy-infrastructure/) tutorial walks you through an example of using Chef Automate's workflow feature to safely move changes from development to production, including running any associated tests.)
 
 After discovering the error, you and your team would decide how to resolve it. You decide that, like the content directory, the group name must be configurable.
 
@@ -337,13 +337,13 @@ In this tutorial, you created a basic web content configuration and used ChefSpe
 
 If you're new to Ruby programming or testing with ChefSpec, one of the best ways to improve your skills is to adapt other examples that you see. The [ChefSpec documentation](https://docs.chef.io/chefspec.html#examples) provides additional examples. The [ChefSpec project page](http://www.rubydoc.info/github/sethvargo/chefspec) contains many more. Learn more about writing great tests and see practical examples at [betterspecs.org](http://betterspecs.org).
 
-Although your code may behave as you expect, it's also important to ensure your code is easy to read and maintain, and avoids defects that can be difficult to fix later. Lint testing, or _linting_, is one way to help ensure that your code adheres to standard style guidelines and avoids common problems. In the [Verify code style](/tutorials/verify-style/) tutorial, you'll use the tools RuboCop and Foodcritic to identify potential issues in variations of the web server cookbook you created here.
+Although your code may behave as you expect, it's also important to ensure your code is easy to read and maintain, and avoids defects that can be difficult to fix later. Lint testing, or _linting_, is one way to help ensure that your code adheres to standard style guidelines and avoids common problems. In the [Verify code style](/modules/verify-style/) tutorial, you'll use the tools RuboCop and Foodcritic to identify potential issues in variations of the web server cookbook you created here.
 
-Learn more about how to test and debug your Chef code in our [Joy of Automating](/skills/) video series, hosted by Franklin Webber.
+Learn more about how to test and debug your Chef code in our [Joy of Automating](/modules/) video series, hosted by Franklin Webber.
 
-You may be interested in reading the [Linux version of this tutorial](/tutorials/chefspec/rhel/), which illustrates other ways you can use ChefSpec that were not covered here.
+You may be interested in reading the [Linux version of this tutorial](/modules/chefspec/rhel/), which illustrates other ways you can use ChefSpec that were not covered here.
 
-If you're involved in your company's compliance and audit process, you may be interested in the [Chef compliance scanner](/tutorials/compliance-assess/rhel/), which uses InSpec as its auditing and testing framework.
+If you're involved in your company's compliance and audit process, you may be interested in the [Chef compliance scanner](/modules/compliance-assess/rhel/), which uses InSpec as its auditing and testing framework.
 
 You may also be interested in [Chef Automate](https://www.chef.io/automate/), which gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. Chef Automate reinforces the Chef workflow, where you begin by developing and testing your configuration from your local workstation. Then, you submit your change to Chef Automate's pipeline, where your change goes through sets of automated tests before going out into production. If you have many different teams, each delivering software in its own way, you can use Chef Automate to bring a standard, proven approach to all of your organization's deployments.
 

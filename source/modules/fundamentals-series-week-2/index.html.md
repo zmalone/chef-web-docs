@@ -41,4 +41,4 @@ Be sure to [watch the Chef blog for updates](http://blog.chef.io) on when the ne
 
 [END_BOX]
 
-[chef-lab]: /skills/fundamentals-series-chef-lab
+[chef-lab]: /modules/fundamentals-series-chef-lab

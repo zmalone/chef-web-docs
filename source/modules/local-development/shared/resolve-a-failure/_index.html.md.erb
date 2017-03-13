@@ -29,7 +29,7 @@
 %>
 <% key_point "Test Kitchen can help you detect and remedy failures before your change reaches production." %>
 
-In the _Manage a node_ tutorial, you applied a configuration change that [failed on your node](/tutorials/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure). Imagine your node represents a piece of your production infrastructure. A failure in production can cause both an interruption to your team as well as reduced access to services for your users.
+In the _Manage a node_ tutorial, you applied a configuration change that [failed on your node](/modules/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure). Imagine your node represents a piece of your production infrastructure. A failure in production can cause both an interruption to your team as well as reduced access to services for your users.
 
 In this part, you'll repeat the exercise where you apply a change that, although it might appear correct, will actually fail on your test instance. You'll then remedy the failure and verify that `chef-client` succeeds.
 
@@ -40,11 +40,11 @@ In doing so, you'll see how, with Test Kitchen, you can detect and remedy failur
 <% if windows? %>
 ## 1. Assign read access to the IIS_IUSRS group
 
-Let's make the same change to the web server cookbook that we did [previously](/tutorials/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure#step1). By default, IIS provides access to web content to the `IIS_IUSRS` group. But let's modify our Chef recipe to ensure that this group has read rights to the <% fp 'c:\inetpub\wwwroot' %> directory.
+Let's make the same change to the web server cookbook that we did [previously](/modules/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure#step1). By default, IIS provides access to web content to the `IIS_IUSRS` group. But let's modify our Chef recipe to ensure that this group has read rights to the <% fp 'c:\inetpub\wwwroot' %> directory.
 <% else %>
 ## 1. Assign an owner to the home page
 
-Let's make the same change to the web server cookbook that we did [previously](/tutorials/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure#step1). Here, we want to assign the `web_admin` user as the owner of the home page, <% fp '/var/www/html/index.html' %>. We also want to configure the home page so that the `web_admin` user has read and write access, and everyone else has read-only access.
+Let's make the same change to the web server cookbook that we did [previously](/modules/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure#step1). Here, we want to assign the `web_admin` user as the owner of the home page, <% fp '/var/www/html/index.html' %>. We also want to configure the home page so that the `web_admin` user has read and write access, and everyone else has read-only access.
 <% end %>
 
 Recall that your default recipe looks like this.
@@ -71,7 +71,7 @@ Now see what happens when you run `kitchen converge`. Because you destroyed your
 
 <% command_snippet(page: current_page, path: "set-web-content-owner/kitchen-converge-#{cookbook}-#{environment}-3", features: [:stdin, :stdout, :stderr]) %>
 
-Here you see the same failure that you saw [previously](/tutorials/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure#step2) when you ran this code on your node.
+Here you see the same failure that you saw [previously](/modules/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure#step2) when you ran this code on your node.
 
 <% if windows? %>
 ```bash
@@ -97,7 +97,7 @@ You also see that Test Kitchen returns with a non-zero exit code.
 
 ## 3. Resolve the failure
 
-Now you'll resolve the failure just as you did [previously](/tutorials/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure#step3).
+Now you'll resolve the failure just as you did [previously](/modules/manage-a-node/<%= platform[:id] %>/hosted/resolve-a-failure#step3).
 
 <% if windows? %>
 Modify your default recipe to use the correct account name (`IIS_USRS` becomes `IIS_IUSRS`.)

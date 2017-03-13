@@ -28,7 +28,7 @@ A programmer's text editor that allows the participants to have multiple files o
 
 The [chef-client][omnibus-installer] application which includes the `knife` command line utility.
 
-[spring-fund-week-1]: /skills/fundamentals-series-week-1
+[spring-fund-week-1]: /modules/fundamentals-series-week-1
 [puTTY]: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
 [iTerm2]: http://www.iterm2.com/#/section/home
 [sublime-text-2]: http://www.sublimetext.com/
