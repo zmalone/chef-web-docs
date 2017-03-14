@@ -3,7 +3,7 @@ title: 'Set up your workstation'
 order: 1
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 30 minutes
-snippet_path: local-development/windows/ec2
+snippet_path: local-development/rhel/vagrant
 snippet_workstation: ubuntu
 headings: [
   { label: '1. Set up your workstation', href: '#step1' },
@@ -17,24 +17,26 @@ Here you'll make sure that your workstation is set up for Chef development. You'
 If you don't have an AWS account, their [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s
 ) gives you 750 hours per month of usage on the t2.micro tier.
 
+[COMMENT] Although this tutorial focuses on Red Hat Enterprise Linux, in this tutorial you'll use CentOS, a free computing platform that's functionally compatible with Red Hat Enterprise Linux. CentOS typically costs less to run on EC2, and is an ideal way to quickly test out your Chef code.
+
 [START_BOX]
 
 ## 1. Set up your workstation for Chef development
 
-Although this tutorial doesn't involve the Chef server or bootstrapping a node, we recommend that you complete [Manage a Windows Server node](/tutorials/manage-a-node/windows/) before starting this tutorial.
+Although this tutorial doesn't involve the Chef server or bootstrapping a node, we recommend that you complete [Manage a Red Hat Enterprise Linux node](/tutorials/manage-a-node/rhel/) before starting this tutorial.
 
-If you prefer to learn about local development now, before learning how to bootstrap a node, [perform these steps](/tutorials/manage-a-node/windows/hosted/set-up-your-workstation/) to set up your workstation. Then come back to this page.
+If you prefer to learn about local development now, before learning how to bootstrap a node, [perform these steps](/tutorials/manage-a-node/rhel/hosted/set-up-your-workstation/) to set up your workstation. Then come back to this page.
 
 At this point, your workstation should:
 
 * have the latest version of the Chef Development Kit.
 * have a programmer's text editor that you're comfortable working with.
 * have the <% fp '~/learn-chef' %> directory for you to work in.
-* have Git and an RDP client.
+* have Git and an SSH client.
 
 Having Git is important because you'll use it to download starter code to work with.
 
-Having an RDP client is important because you can use it to log in to your Windows Server instance to verify your work.
+Having an SSH client is important because you can use it to log in to your Windows Server instance to verify your work.
 
 If your workstation is running Windows, remember to open the Chef Development Kit desktop shortcut. The desktop shortcut brings up a PowerShell session that's configured to work with Chef.
 
@@ -55,7 +57,7 @@ In this part, you'll:
 1. [Note your region and availability zone](#step2.3)
 1. [Note your VPC subnet](#step2.4)
 1. [Create a security group](#step2.5)
-1. [Get the AMI ID for Windows Server 2012 R2 in your region](#step2.6)
+1. [Get the AMI ID for CentOS 7 in your region](#step2.6)
 1. [Prepare your key pair file](#step2.7)
 
 You can use this table as a checklist of the things you'll need.
@@ -66,8 +68,8 @@ You can use this table as a checklist of the things you'll need.
 | <i class='fa fa-square-o'></i>&nbsp; Region and availability zone  | us-east-1b |
 | <i class='fa fa-square-o'></i>&nbsp; VPC subnet ID                 | subnet-eacb348e |
 | <i class='fa fa-square-o'></i>&nbsp; Security group ID             | sg-2d3b3b48 |
-| <i class='fa fa-square-o'></i>&nbsp; Windows Server 2012 R2 AMI ID  | ami-c3b3b1f3 |
-| <i class='fa fa-square-o'></i>&nbsp; AWS key pair file              | See [example](#step2.7) |
+| <i class='fa fa-square-o'></i>&nbsp; CentOS 7 AMI ID               | ami-6d1c2007 |
+| <i class='fa fa-square-o'></i>&nbsp; AWS key pair file             | See [example](#step2.7) |
 
 You may want to talk to your AWS administrator if you're unsure of which settings to use.
 
@@ -75,7 +77,7 @@ You may want to talk to your AWS administrator if you're unsure of which setting
 
 If you've used EC2 in the past, your [IAM](http://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) role likely already grants permission to launch instances.
 
-If you're unable to [manually launch an EC2 instance](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/EC2_GetStarted.html),
+If you're unable to [manually launch an EC2 instance](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html),
 learn how to [update your IAM role to grant permission](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html#permission-to-pass-iam-roles) or ask your AWS administrator for help.
 
 ### 2.2. Create your credentials file
@@ -107,29 +109,29 @@ If you don't have a subnet that you can use, [see the AWS documentation](http://
 
 ### 2.5. Create a security group
 
-When you launch an instance, you associate one or more [security groups](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/using-network-security.html) with the instance.
+When you launch an instance, you associate one or more [security groups](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html) with the instance.
 
 Ensure that you have security groups available in your region that allow inbound access on these ports:
 
+* **22** (SSH)
 * **80** (HTTP)
-* **5985** (WinRM)
-* **3389** (RDP)
+* **443** (HTTPS)
 
-### 2.6. Get the AMI ID for Windows Server 2012 R2 in your region
+### 2.6. Get the AMI ID for CentOS 7 in your region
 
-There are multiple ways to [get the AMI ID](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/finding-an-ami.html) for Windows Server 2012 R2 for your region.
+There are multiple ways to [get the AMI ID](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html) for CentOS 7 for your region.
 
 If you don't have a preference, you can get the ID from the [AWS Marketplace](https://aws.amazon.com/marketplace).
 
 From the **Manual Launch** tab, note the ID for your region. Here's an example for the EU (Ireland) region. Don't launch the instance now &ndash; you'll launch from Test Kitchen in the next part.
 
-![Windows Server 2012 R2 on AWS Marketplace](misc/AWS_Marketplace__Microsoft_Windows_Server_2012_R2_Core.png)
+![CentOS 7 on AWS Marketplace](misc/AWS_Marketplace__CentOS_7__x86_64__-_with_Updates_HVM.png)
 
-[COMMENT] The ID changes when a new AMI is released with security updates, so be sure to get the latest ID from the AWS Marketplace.
+[COMMENT] The ID can change when a new AMI is released with security updates, so be sure to get the latest ID from the AWS Marketplace.
 
 ### 2.7. Prepare your key pair file
 
-You'll need an EC2 key pair file on your workstation so that Test Kitchen can retrieve the password for your Windows instance.
+You'll need an EC2 key pair file on your workstation so that Test Kitchen can connect to your instance over SSH.
 
 If you don't have your key pair file set up, [the AWS documentation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html) shows you how.
 
