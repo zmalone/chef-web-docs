@@ -130,4 +130,21 @@ module PageHelper
       end
     end
   end
+
+  def get_content_nav_bar_info(current_page)
+    output = {'current_track':nil, 'current_module':nil, 'current_env': nil, 'current_chef_env': nil}
+    output['current_track'] = find_track(current_page)
+    pages = [current_page]
+    pages.unshift pages.first.parent while pages.first.parent
+    if(!pages[0].nil?)
+      output['current_module'] = pages[0]
+    end
+    if(!pages[1].nil?)
+      output['current_env'] = pages[1]
+    end
+    if(!pages[2].nil?)
+      output['current_chef_env'] = pages[2]
+    end
+    return output
+  end
 end
