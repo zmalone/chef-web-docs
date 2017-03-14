@@ -1,12 +1,13 @@
 .breadcrumbs
-  a aria-controls="drop1" aria-expanded="false" data-dropdown="drop1"
-    h5 Tracks
-    span
-      = current_track.data.title
-  ul#drop1.f-dropdown aria-hidden="true" data-dropdown-content="" tabindex="-1"
-    - find_pages_by_folder('tracks').each do |item|
-      li
-        = link_to item.data.title, item
+  - if current_track
+    a aria-controls="drop1" aria-expanded="false" data-dropdown="drop1"
+      h5 Tracks
+      span
+        = current_track.data.title
+    ul#drop1.f-dropdown aria-hidden="true" data-dropdown-content="" tabindex="-1"
+      - find_pages_by_folder('tracks').each do |item|
+        li
+          = link_to item.data.title, item
   a aria-controls="drop2" aria-expanded="false" data-dropdown="drop2"
     h5 MODULES
     - if current_module
@@ -16,11 +17,12 @@
       span Select one
 
   ul#drop2.f-dropdown.content aria-hidden="true" data-dropdown-content="" tabindex="-1"
-    - current_track.data.modules.each_with_index do |module_id, index|
-      - page = find_page_by_id('modules', module_id)
-      - if page
-        li
-          = link_to page.data.title, page.url
+    - if current_track
+      - current_track.data.modules.each_with_index do |module_id, index|
+        - page = find_page_by_id('modules', module_id)
+        - if page
+          li
+            = link_to page.data.title, page.url
   - if current_module
     - if current_module.data.environments
       a aria-controls="drop3" aria-expanded="false" data-dropdown="drop3"

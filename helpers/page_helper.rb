@@ -60,7 +60,11 @@ module PageHelper
     elsif page.children && page.children.first
       return page.children.first
     elsif page.parent && page.parent.children
-      next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
+      if page.data.order
+        next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
+      else
+        next_page = page.parent.children.first
+      end
       if next_page != nil && next_page.appendix?
         next_page = nil
       end
@@ -207,7 +211,7 @@ module PageHelper
 
   def is_fork?(page)
     tree, current_tree = get_module_trees_from_page(page)
-    current_tree[:is_fork]
+    current_tree[:is_fork] if current_tree
   end
 
   def tree_calculate_time(tree)
