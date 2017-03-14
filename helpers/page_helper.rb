@@ -121,6 +121,7 @@ module PageHelper
 
   def get_page_duration(page)
     tree, current_tree = get_module_trees_from_page(page)
+    return unless tree && current_tree
     all = tree_calculate_time(tree)
     remaining = tree_calculate_time(current_tree)
     {
