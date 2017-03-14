@@ -120,19 +120,24 @@ module PageHelper
   end
 
   def get_page_duration(page)
-    module_match = page.source_file.match(/\/modules\/(.+)/)
-    return nil if !module_match
-    module_path = module_match[1]
-    parts = module_path.split('/')
-    module_folder = parts[0]
-    tree = restructure_tree(data.tree.modules[module_folder])
-    current_tree = filter_tree_by_path(tree, module_match[0])
+    tree, current_tree = get_module_trees_from_page(page)
     all = tree_calculate_time(tree)
     remaining = tree_calculate_time(current_tree)
     {
         all: all,
         remaining: remaining
     }
+  end
+
+  def get_module_trees_from_page(page)
+    module_match = page.source_file.match(/\/modules\/(.+)/)
+    return nil unless module_match
+    module_path = module_match[1]
+    parts = module_path.split('/')
+    module_folder = parts[0]
+    tree = restructure_tree(data.tree.modules[module_folder])
+    current_tree = filter_tree_by_path(tree, module_match[0])
+    [tree, current_tree]
   end
 
   def restructure_tree(tree_hash)
@@ -183,11 +188,13 @@ module PageHelper
           elsif tree_by_path
             found << tree_by_path
           end
-        else
+        elsif !tree[:is_fork]
           found << child
         end
       end
-      if found.count > 0
+      if found.count == 1
+        return found.first
+      elsif found.count > 0
         return {
           filtered: true,
           children: found
@@ -195,6 +202,11 @@ module PageHelper
       end
       nil
     end
+  end
+
+  def is_fork?(page)
+    tree, current_tree = get_module_trees_from_page(page)
+    current_tree[:is_fork]
   end
 
   def tree_calculate_time(tree)
