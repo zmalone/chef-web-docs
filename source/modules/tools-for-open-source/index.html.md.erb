@@ -1,0 +1,418 @@
+---
+id: tools-for-open-source
+title: 'Open Source collaboration'
+description: 'Learn a workflow for open-source collaboration.'
+order: 7
+category: 'devops'
+icon: devops-foundations.png
+---
+This article was contributed by Jennifer Davis ([@sigje](https://twitter.com/sigje/))
+
+In my Skills Library article, [Examining tools with a DevOps lens](/modules/tools-for-devops/), I shared some ideas about how to evaluate tools in the context of a DevOps culture. In this article, I'm going to dig into some of the technical aspects of working with tools that enable automation and improve our understanding, transparency, and collaboration.
+
+One of the best things about open source communities is their emphasis on collaboration. One of the worst things is that the process for successful collaboration can be implicit rather than clearly articulated. In this article, I’ll illustrate how tools can support collaboration and use the Chef community cookbook, [users](https://supermarket.chef.io/cookbooks/users), an open source project, as an example.
+
+It can be challenging to add a user to a system that exists on multiple platforms and it’s unlikely that a single person would know everything that is required for every single platform. The goal of the `users` cookbook is to distill those complexities into an easy to use resource.
+
+Even if you're unfamiliar with the intricacies of using Chef, you can still understand the intent of the cookbook and contribute to it by providing additional context or correcting assumptions about existing platforms.
+
+[START_BOX]
+
+##The CONTRIBUTING file
+Community cookbooks managed by Chef should have a <code class="file-path">CONTRIBUTING.md</code> doc in the root directory. This doc is, in fact, a recommended practice for all open source projects. GitHub will include a banner linking to this doc when a contributor creates an issue or opens a Pull Request (PR).
+
+In this file, you can describe the ways in which you would best like to interact with contributors, and the types of contributions that you would and would not like to receive. For instance, if your project is written in Python but you don’t care for PEP-8, you could state that contributors should not apply PEP-8 conventions.
+
+Often, contributing documents only sketch out the minimum processes to get started. However, there are many workflows and branching strategies that individuals use to collaborate and resolve the conflicts that arise when there are different perspectives and approaches. One example is [git](https://git-scm.com).
+
+[END_BOX]
+
+[START_BOX]
+
+##Git configuration files
+
+Many learning git tutorials teach how to use solo git but leave out the complexities of using the tool collaboratively. You can read up on the intricacies of git usage but, without a way to practice, understanding git workflows can be difficult.
+
+One way to learn about some of the hidden secrets of git is to examine the dotfiles available on GitHub. (By the way, if something doesn’t make sense, [review the git documentation](https://git-scm.com/docs/git-log)). Let’s take a look at a modified example of a git alias from [Fletcher Nichol’s dotfile](https://github.com/fnichol/dotfiles/blob/master/home/.gitconfig).
+
+```bash
+$ graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset %C(cyan)(%an)%Creset' --date=relative
+```
+<br>
+The ```--graph``` option creates a text-based graphical representation of the commit history. The ```--pretty``` flag lets you specify a formating string.
+
+The formatting string lets us focus on what we want when looking at the history of commits. In this case, the alias show us the following information in different colors.
+
+```bash
+%h: abbreviated commit hash
+%d: ref names
+%s: subject
+%cr: committer date, relative
+%an: author name
+```
+<br>
+Finally ```--date=relative``` shows dates relative to the current time, such as “2 hours ago”.
+
+Here's an example of the output.
+
+![](./images/git_graph_example.png)
+
+If there is a commit of interest, this view makes it really easy to just do a ```git show``` of the object you want to inspect.
+
+Examining past commits helps us understand how the code is structured on a project, as well as some of the design patterns that the project uses for git workflows.
+
+[END_BOX]
+
+[START_BOX]
+
+##Issues and Pull Requests
+
+By looking at some of `users`'s [open issues](https://github.com/chef-cookbooks/users/issues) and [PRs](https://github.com/chef-cookbooks/users/pulls), we can learn more about the project and get an idea of the needs of its users.
+
+[Travis](https://travis-ci.org/) is a hosted, distributed and continuous integration service used to build and test software. [Travis integration](https://docs.travis-ci.com/user/for-beginners) is free for open source projects so it is an excellent mechanism for testing pull requests prior to integrating them into the code. The <code class="file-path">.travis.yml</code> file defines the configuration.
+
+As an example, let's look at [PR 117](https://github.com/chef-cookbooks/users/pull/117) from [Arnoud Vermeer](https://github.com/funzoneq). The GitHub GUI will link to a [build](https://travis-ci.org/chef-cookbooks/users/builds/85706180). We can see that PR 117 fails the RuboCop check.
+
+![](./images/example_pr117_failure.png)
+
+When we look at a PR we may find that there are changes we want to accept and changes that we don’t want to accept. We can cherry pick explicitly what we want to accept with the ```cherry-pick``` command with git, or we can adopt different workflows that have a similar effect.
+
+[END_BOX]
+
+[START_BOX]
+
+##Examining a Pull Request - Example 1
+
+To make it easier to work with PR 117, let’s incorporate another helpful git alias, ```git pr```.
+
+```bash
+$ pr = "!_git_pr() { git fetch origin pull/$1/head:pr-$1 && git checkout pr-$1; }; _git_pr"
+
+```
+<br>
+The ```git pr``` alias allows us to quickly pull down and examine someone’s contributions from a PR. In this case, I want to pull down PR 117 in the `users` cookbook and examine it.
+
+```bash
+users git:(master) $ git pr 117
+remote: Counting objects: 8, done.
+remote: Total 8 (delta 4), reused 4 (delta 4), pack-reused 4
+Unpacking objects: 100% (8/8), done.
+From github.com:chef-cookbooks/users
+ * [new ref]         refs/pull/117/head -> pr-117
+Switched to branch 'pr-117'
+```
+<br>
+We can examine the commits in the pull request with ```git graph```.
+
+![](./images/git_graph_users_before.png)
+
+This shows two commits, 7623e00 and bc74a45.
+
+The main changes are in bc74a45. In this commit the contributor has added code that, on FreeBSD platforms, checks to see if the shell specified in the data bag JSON object exists on the node as specified or in <code class="file-path">/usr/local</code>. If the shell isn’t in either of these locations, then the code sets the shell to the FreeBSD default shell <code class="file-path">/bin/sh</code>.
+
+This PR exposes some fragility in our current definition because we don’t check for the existence of the shell on any other platform. Depending on our current priorities and workload, we may rewrite the resource to be less fragile or accept the contributions as they are.
+
+[END_BOX]
+
+[START_BOX]
+
+##Examining a Pull Request - Example 2
+
+There are additional utilities that can help us even more than simple git aliases. One example is [hub](https://hub.github.com/). As a wrapper around git, hub provides some useful additions to the git client, making it easier to work with PRs. Once you’ve installed hub, you can see the project’s issues, open up a project’s wiki, and use a number of other options from the command line.
+
+When working with a PR, you can quickly create a new branch with its contents with a simple checkout.
+
+```bash
+$ git checkout https://github.com/chef-cookbooks/users/pull/117
+
+```
+<br>
+The results are similar to the ```git pr``` alias.
+
+```bash
+users git:(master) $ git checkout https://github.com/chef-cookbooks/users/pull/117
+Updating funzoneq
+remote: Counting objects: 8, done.
+remote: Total 8 (delta 4), reused 4 (delta 4), pack-reused 4
+Unpacking objects: 100% (8/8), done.
+From git://github.com/funzoneq/users
+ * [new branch]      master     -> funzoneq/master
+Branch funzoneq-master set up to track remote branch master from funzoneq.
+
+```
+<br>
+This command creates an appropriately named branch and allows you to take what you want from the PR and add any necessary changes. For example, if a PR has minor failures with any test cases, you might want to check out the PR, tweak it until any failing test passes, and then commit the code.
+
+After checking out the PR, the commits can be evaluated.
+
+[END_BOX]
+
+[START_BOX]
+
+##Squashing commits
+
+```bash
+$ git rebase origin/master -i
+
+```
+<br>
+Commits can be skipped, squashed, or edited interactively. Squashing is the process of taking one or more commits and merging them into a previous commit. Squashing simplifies the set of commits that a peer has to review. For just this reason, some project owners prefer that commits be rebased or squashed prior to sending a pull request.
+
+On the other hand, some organizations or teams discourage rebasing or squashing in order to have a high level of verbosity and a more complete code history. Check the contributing documentation or talk to a team member before you adopt a specific practice.
+
+```plaintext
+pick bc74a45 Check if shell exists on FreeBSD. If not, fall back to /bin/sh by default. If it's a manually installed shell, then it lives in /usr/local/bin/{bash,zsh,rbash}
+pick 7623e00 Make Travis CI happy
+
+# Rebase 72d3800..7623e00 onto 72d3800
+#
+# Commands:
+#  p, pick = use commit
+#  r, reword = use commit, but edit the commit message
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
+#  f, fixup = like "squash", but discard this commit's log message
+#  x, exec = run command (the rest of the line) using shell
+#
+# These lines can be re-ordered; they are executed from top to bottom.
+#
+# If you remove a line here THAT COMMIT WILL BE LOST.
+#
+# However, if you remove everything, the rebase will be aborted.
+#
+# Note that empty commits are commented out
+
+```
+<br>
+I can modify the second ```pick``` to ```s``` and squash this into a single commit.
+
+When I squash the commit, it creates a new object. After I squash the commit, ```git graph``` shows me a new commit object.
+
+![](./images/git_graph_users_after.png)
+
+[END_BOX]
+
+[START_BOX]
+
+##Testing
+
+I can now test to see if the Travis issue is still a problem in the current branch by running RuboCop again.
+
+```bash
+users git:(funzoneq-master) rubocop
+Inspecting 16 files
+................
+```
+<br>
+(With RuboCop, a "." represents a file without issues.)
+
+```bash
+$ git push -fu origin funzoneq-master
+```
+<br>
+This sets up a tracking branch and force pushes the edit of the history. In this example, it gives me the option to do a PR (which I did), resulting in [PR 123](https://github.com/chef-cookbooks/users/pull/123). I can do this because I have permission to commit to this repository.
+
+[END_BOX]
+
+[START_BOX]
+
+##Examining an Issue
+
+Let’s take a look at a reported issue, [Issue 118](https://github.com/chef-cookbooks/users/issues/118). In this issue, [Chris Gianelloni](https://twitter.com/wolf31o2) reported a problem with the `users` cookbook on Mac OS X.
+
+There is no PR in this case, so I create a branch with ```git checkout -b```.
+
+```bash
+$ git checkout -b issues_118
+```
+<br>
+In the earlier example, I skipped over how to validate that the code actually worked on the system. We can manually test the code if we have a Mac OS X laptop and use the [chef-apply](https://docs.chef.io/ctl_chef_apply.html) command, an executable that runs a single recipe from the command line.
+
+Examining the cookbook structure shows that there are [ChefSpec tests](https://github.com/chef-cookbooks/users/tree/master/spec), but no other tests. Inside the <code class="file-path">test</code> directory, there is only a <code class="file-path">fixtures</code> directory that includes sample cookbooks. The lack of test coverage exposes the risk of making changes to code in this project.
+
+In the December 21, 2014 [Sysadvent](http://sysadvent.blogspot.com/), I had an article called [Baking Delicious Resources with Chef](http://sysadvent.blogspot.com/2014/12/day-21-baking-delicious-resources-with.html). In it, I discussed how to write [custom resources](https://docs.chef.io/custom_resources.html) and use [Test Kitchen](http://kitchen.ci/). Test Kitchen is an implementation of sandbox automation that can run on an individual’s computer and integrates with a number of different cloud providers and virtualization technologies including Amazon EC2, CloudStack, Digital Ocean, Rackspace, OpenStack, Vagrant, and Docker. It has a static configuration that can be easily checked into version control along with a software project.
+
+[END_BOX]
+
+[START_BOX]
+
+##Using Test Kitchen to spin up instances
+
+Inside the `users` cookbook, there is a <code class="file-path">.kitchen.yml</code> file that has a [Vagrant driver](https://www.vagrantup.com/) and the `chef_zero` driver, along with a number of platforms. These entries allow us to test any of the platforms listed with Vagrant and [VirtualBox](https://www.virtualbox.org/).
+
+Apple’s EULA has implications for Mac OS X image availability. While there are some images available on the Internet, organizations (and individuals) have to consider how they will meet Apple’s legal requirements. Within Chef, we use [Atlas](https://www.hashicorp.com/atlas.html) to store private images for employees to use.
+
+To test the Mac OS X platform, I created a new file <code class="file-path">.kitchen.vmware.yml</code> with the following configuration:
+
+```yaml
+# .kitchen.vmware.yml
+driver:
+  name: vagrant
+  provider: vmware_fusion
+  customize:
+    numvcpus: 2
+    memsize: 2048
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: macosx-10.11
+    driver:
+      box: chef/macosx-10.11 # private
+```
+<br>
+Once I do a `vagrant login` on the command line I can download the image. I created a symlink to <code class="file-path">.kitchen.vmware.yml</code>.
+
+```bash
+$ ln -s .kitchen.vmware.yml .kitchen.local.yml
+```
+
+[COMMENT] It’s also possible to define the environment variable `KITCHEN_LOCAL_YAML` rather than create a symlink.
+
+I can list my instances and see the Mac OS X 10.11 images.
+
+```bash
+users git:(issues_118) $ kitchen list
+Instance               Driver   Provisioner  Verifier  Transport  Last Action
+default-macosx-1011    Vagrant  ChefZero     Busser    Ssh        <Not Created>
+sysadmins-macosx-1011  Vagrant  ChefZero     Busser    Ssh        <Not Created>
+```
+<br>
+I performed a ```kitchen converge default-macosx-1011``` and reproduced the issue that Chris reported.
+
+```bash
+================================================================================
+           Error executing action 'create' on resource 'user[test_user]'
+
+
+           ArgumentError
+           -------------
+           can't find user for test_user
+
+```
+<br>
+Logging into the host with ```kitchen login default-macosx-1011```, I could use the ```dscl``` command to check to see if the user was created.
+
+```bash
+$ dscl . list /Users | grep test_user
+test_user
+```
+<br>
+After digging a little further, and with some pair code review with [Nathen Harvey](https://twitter.com/nathenharvey), we discovered that the issue was that the directory resource wanted a UID rather than a username when declaring the owner on Mac OS X.
+
+Switching from username to UID resolved the errors, but the fix was only tested against Mac OS X. We needed to do some tests against other operating systems to make sure we hadn’t broken the provider.
+
+To speed up the tests, I use Docker rather than trying to spin up that many VMs with Virtual Box or VMware. I already had docker-machine installed. If you don’t, check out this [getting started guide](https://docs.docker.com/machine/get-started/).
+
+```bash
+users git:(issues_118) $ docker-machine start  default
+Started machines may have new IP addresses. You may need to re-run the `docker-machine env` command.
+users git:(issues_118) $ docker-machine env default
+users git:(issues_118) $ eval "$(docker-machine env default)"
+```
+<br>
+I’m going to use [someara’s kitchen-dokken](https://github.com/someara/kitchen-dokken) plugin rather than kitchen-docker. After cleaning up my previous run with ```kitchen destroy```, I update the symlink to point to <code class="file-path">.kitchen.dokken.yml</code>. Now, when I issue a kitchen list:
+
+```bash
+users git:(issues_118) $ kitchen list
+Instance               Driver  Provisioner  Verifier  Transport  Last Action
+default-centos-6       Dokken  Dokken       Busser    Dokken     <Not Created>
+default-centos-7       Dokken  Dokken       Busser    Dokken     <Not Created>
+default-fedora-21      Dokken  Dokken       Busser    Dokken     <Not Created>
+default-debian-7       Dokken  Dokken       Busser    Dokken     <Not Created>
+default-ubuntu-1204    Dokken  Dokken       Busser    Dokken     <Not Created>
+default-ubuntu-1404    Dokken  Dokken       Busser    Dokken     <Not Created>
+sysadmins-centos-6     Dokken  Dokken       Busser    Dokken     <Not Created>
+sysadmins-centos-7     Dokken  Dokken       Busser    Dokken     <Not Created>
+sysadmins-fedora-21    Dokken  Dokken       Busser    Dokken     <Not Created>
+sysadmins-debian-7     Dokken  Dokken       Busser    Dokken     <Not Created>
+sysadmins-ubuntu-1204  Dokken  Dokken       Busser    Dokken     <Not Created>
+sysadmins-ubuntu-1404  Dokken  Dokken       Busser    Dokken     <Not Created>
+```
+<br>
+A successful ```kitchen create``` and ```kitchen converge -c``` confirm that the changes work as expected. The ```kitchen converge -c``` command runs a converge against all matching instances concurrently.
+
+Since there are no integration tests, we manually log in and check whether the home directory gets created as expected.
+
+```bash
+root@079f902cf103:/home/test_user $ ls -al
+total 24
+drwxr-xr-x 3 test_user test_user 4096 Dec 20 07:02 .
+drwxr-xr-x 3 root      root      4096 Dec 20 07:02 ..
+-rw-r--r-- 1 test_user test_user  220 Apr  9  2014 .bash_logout
+-rw-r--r-- 1 test_user test_user 3637 Apr  9  2014 .bashrc
+-rw-r--r-- 1 test_user test_user  675 Apr  9  2014 .profile
+drwx------ 2 test_user root      4096 Dec 20 07:02 .ssh
+```
+<br>
+After manual verification, I commited, checked in the code, and created a PR.
+
+[END_BOX]
+
+[START_BOX]
+
+##More than code
+
+Of course, there's more to collaboration than sharing code. There's also a need to work collaboratively on written content. Here are some techniques that I've used.
+
+To get feedback on my Sysadvent article, I posted it up on GitHub in a private repository, and then invited my peer reviewers to the repository.
+
+To collaborate on writing [Effective Devops](http://shop.oreilly.com/product/0636920039846.do) with [Katherine Daniels](https://twitter.com/beerops), we used git, AsciiDoc, and [O’Reilly Atlas](https://atlas.oreilly.com/), which is a git-backed, web-based platform for publishing books.
+
+The lightweight formats of Markdown and AsciiDoc can be collaborative if you use them with git. I find that their limitations, compared to more traditional writing tools, are around GUI formating within the editors I use. I regularly find myself having to do a few extra commits to the repository to check what the browser view or generated PDF looks like with included images. Overall, this is a small price to pay when getting the benefit of a stronger piece through collaboration. Some of these limitations may be overcome with the use of extensions available in specific editors.
+
+[END_BOX]
+
+[START_BOX]
+
+##Summary
+
+Using Test Kitchen allows me to quickly change which set of tools I want to use - Docker, Vagrant with Virtual Box, or Vagrant with VMware - depending on what I want to do. The Test Kitchen configuration files can be saved along with the project, so that anyone can quickly set up the correctly configured environment and begin to collaborate.
+
+Combined with the flexibility of Test Kitchen, Vagrant allows me to combine private and publicly available resources so if you are in a situation where you are working on something internal to your company while also contributing to an open source project, you can manage that complexity. In the Mac OS X example I used in this article, I can tell my team how to replicate my testing strategy without adding initial complexity to the base <code class="file-path">.kitchen.yml</code> file. I can be transparent about my process without blocking people who don’t have access to Chef’s internal images or VMware Fusion.
+
+Additionally, local git configurations or tools like hub can simplify the collaboration process by allowing us to cherry pick our commits. Talk to your team, peers in the industry, or review a project’s <code class="file-path">CONTRIBUTING.md</code> file to discover other mechanisms that individuals use when working together.
+
+Here are a few examples of helpful git snippets that other folks shared with me via Twitter:
+
+<blockquote class="twitter-tweet" data-conversation="none" lang="en"><p lang="und" dir="ltr"><a href="https://twitter.com/sigje">@sigje</a> <a href="https://t.co/CR2HURUcmk">https://t.co/CR2HURUcmk</a></p>&mdash; Robb Kidd (@robbkidd) <a href="https://twitter.com/robbkidd/status/678225258994905088">December 19, 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet" data-conversation="none" lang="en"><p lang="en" dir="ltr"><a href="https://twitter.com/sigje">@sigje</a> My favorite git alias:&#10;&#10;up = &quot;!f() { git stash &amp;&amp; git pull --rebase origin master &amp;&amp; git stash pop; }; f&quot;</p>&mdash; Joe Nuspl (@JoeNuspl) <a href="https://twitter.com/JoeNuspl/status/678480616724152320">December 20, 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+Kennon Kwok also shared [tig](https://github.com/jonas/tig), a text mode interface for Git as a useful utility.
+
+In addition, folks mentioned [Seth Vargo](https://twitter.com/sethvargo) as being the inspiration for some common habits, and Seth has kindly shared his [Git config](https://gist.github.com/sethvargo/73dd1d915411ebffaec0).
+
+[END_BOX]
+
+[START_BOX]
+
+##Further Resources
+
+* [Emma Jane Hogbin Westby’s Git for Teams](http://gitforteams.com/)
+* [Atlassian git rebase history](https://www.atlassian.com/git/modules/rewriting-history/)
+* [Travis CI for Complete Beginners](https://docs.travis-ci.com/user/for-beginners)
+* ​ [Introduction to Rubocop with Frank Webber](https://www.youtube.com/watch?v=HRrc6UCXFMs)
+* [Learn Chef tutorials](https://learn.chef.io/modules/get-started-with-testing/)
+* [Atlas documentation](https://atlas.hashicorp.com/help)
+* [Docker Machine](https://docs.docker.com/machine/)
+* [Getting Started with Docker Machine](https://docs.docker.com/machine/get-started/)
+* [kitchen-dokken](https://github.com/someara/kitchen-dokken)
+* [Continuous Integration article from Martin Fowler](http://www.martinfowler.com/articles/continuousIntegration.html)
+
+[END_BOX]
+
+[START_BOX]
+
+##Thank you!
+
+Thank you [H. Waldo Grunenwald](https://twitter.com/gwaldo), [Robb Kidd](https://twitter.com/robbkidd), [Carlos Maldonado](https://twitter.com/kamihack), [VM Brasseur](https://twitter.com/vmbrasseur), and [Kennon Kwok](https://twitter.com/kennonkwok) for peer review and aditional edits.
+
+Thank you to all of the [Chef Community Engineering Team](https://twitter.com/chef) that provided answers to my questions over the last few months and inspiring this article.
+
+Thank you to Arnoud Vermeer for contributing PR 117 and Chris Gianelloni for contributing Issue 118, giving me the opportunity to add context to talking about collaboration with their reported issues and pull requests. Your continued contributions to the Chef community are valued and appreciated!
+
+[END_BOX]

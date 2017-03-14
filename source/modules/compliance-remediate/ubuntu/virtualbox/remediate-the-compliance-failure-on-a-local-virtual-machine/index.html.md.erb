@@ -1,0 +1,264 @@
+---
+title: 'Remediate the compliance failure on a local virtual machine'
+order: 2
+keywords: TODO
+sections: []
+time_to_complete: 60 minutes
+snippet_path: compliance_scanner/ubuntu/virtualbox/remediate-the-compliance-failure-locally
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Understand the failure', href: '#step1' },
+  { label: '2. Login through the CLI', href: '#step2' },
+  { label: '3. Create the ufw cookbook', href: '#step3' },
+  { label: '4. Apply the cookbook locally', href: '#step4' },
+  { label: '5. Replicate the failure locally', href: '#step5' },
+  { label: '6. Remediate the failure', href: '#step6' }
+]
+---
+Recall that in the previous tutorial you ran the **cis-ubuntu14.04lts-level1** compliance profile and that it failed the **Ensure Firewall is active** rule.
+
+![](compliance/scan_report_issues_firewall_ubuntu1404.png)
+
+Configuring the firewall helps ensure that your server provides access to ports from addresses that you trust. Although `iptables` may be active, CIS recommends that you enable [Uncomplicated Firewall](https://help.ubuntu.com/community/UFW), or UFW, to ease firewall configuration.
+
+In this part, you'll verify the failure of the **Ensure Firewall is active** rule on a local virtual machine and remediate it. By starting with local development with Test Kitchen, you can verify configuration changes on temporary test instances before you apply the updated configuration to your production servers.
+
+You can configure Test Kitchen to download and run compliance profiles on your test instances. For example, you can pull compliance profiles from [Chef Supermarket](https://docs.chef.io/supermarket.html), a Git repository, or from your Chef compliance scanner. Here, you'll configure Test Kitchen to download the **cis/cis-ubuntu14.04lts-level1** profile from your Chef compliance scanner.
+
+[START_BOX]
+
+### 1. Understand the compliance failure
+
+Let's take a closer look at what the **Ensure Firewall is active** rule checks for.
+
+From the **Compliance** menu in the Chef compliance scanner web interface, select the **CIS Ubuntu Linux 14.04 LTS Benchmark Level 1** profile. Then scroll to the **Ensure Firewall is active** rule. You'll see this:
+
+![](compliance/ensure_firewall_is_active_rule.png)
+
+The code you see is [InSpec](http://inspec.io), an auditing and testing framework that's built on the Ruby programming language. If you're familiar with testing frameworks such as [RSpec](http://rspec.info) and [Serverspec](http://serverspec.org), InSpec code will look familiar to you.
+
+InSpec provides [built-in resource types](http://inspec.io/docs/reference/resources/) that describe the various parts of a system, such as files, users, and services. In this example, you see the [bash](http://inspec.io/docs/reference/resources/bash/) resource.
+
+The rule uses a regular expression to verify whether the result of running the `ufw status` command prints "Status: active" to standard output.
+
+[COMMENT] [Learn more about regular expressions in Ruby](http://www.tutorialspoint.com/ruby/ruby_regular_expressions.htm). Then see the regular expression in action. Go to [rubular.com](http://rubular.com) and enter the regular expression `^Status: active$`. Then test it against a few strings and note the behavior. Two strings you might test against are `Status: active` and `Status: inactive`.
+
+When you scanned your Ubuntu node, you saw that the rule failed.
+
+![](compliance/scan_report_issues_firewall_ubuntu1404.png)
+
+Let's connect to your node and verify that UFW is not enabled.
+
+You can connect using the private key you created in the previous tutorial. Here's an example.
+
+```bash
+$ ssh -i ~/.ssh/node1 root@10.1.1.37
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 4.2.0-35-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Tue May 10 01:26:23 2016 from 192.168.145.1
+```
+
+Run `ufw status`.
+
+```bash
+root@default-ubuntu-1404:~$ sudo ufw status
+Status: inactive
+```
+
+You see that its status is "inactive".
+
+Now that you better understand why the rule failed, you can begin to write Chef code to remediate the failure.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Login to the Chef compliance scanner through the InSpec CLI
+
+Later in this part, you'll scan a test instance against the CIS profile through Test Kitchen. Test Kitchen uses the [kitchen-inspec](http://inspec.io/docs/reference/plugin_kitchen_inspec.html/) plugin to run InSpec tests. `kitchen-inspec` comes with the Chef DK.
+
+To download compliance profiles from your Chef compliance scanner, `kitchen-inspec` requires login credentials.
+
+To do so, you run the `inspec compliance login` command. The [inspec](http://inspec.io/docs/reference/cli/) command-line interface (CLI) utility comes with the Chef DK.
+
+To login from the CLI, you first need an authorization token. To get that, select **About** from the menu located at the upper-right corner in the web interface.
+
+![](compliance/webui_about.png)
+
+Then copy the contents of the **Refresh token** field to the clipboard.
+
+![](compliance/webui_token.png)
+
+Next, run this command to connect InSpec to your Chef compliance scanner. Replace <% ph 'FQDN' %> with your Chef compliance scanner's FQDN, <% ph 'USER' %> with the username you use to login to the Chef compliance scanner web interface, and <% ph 'TOKEN' %> with your authorization token.
+
+```bash
+# ~/learn-chef
+$ inspec compliance login https://FQDN --user USER --insecure --refresh_token 'TOKEN'
+```
+
+Here's an example:
+
+<% command_snippet(page: current_page, path: 'login-to-compliance-scanner/inspec-compliance-login') %>
+
+[COMMENT] The `--insecure` flag bypasses SSL verification because the Chef compliance scanner comes with a self-signed certificate. In a production environment, you can [configure an SSL certificate](https://docs.chef.io/install_compliance.html#configure-ssl) that's rooted by a trusted certificate authority (CA) and omit the `--insecure` flag.
+
+As a verification step, you can run `inspec compliance profiles` to prove that you've successfully authenticated. This command lists all available compliance profiles from your Chef compliance scanner.
+
+<% command_snippet(page: current_page, path: 'login-to-compliance-scanner/inspec-compliance-profiles') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create the ufw cookbook
+
+To remediate the failure, you'll write a Chef cookbook named `ufw`. Recall that a cookbook provides structure to your Chef code. A cookbook contains recipes, which in turn contain resources that descibe the desired state of the system.
+
+In this part, you create the `ufw` cookbook. Although initially empty, in the next step you apply the cookbook to an Ubuntu 14.04 instance using Test Kitchen to verify that the instance comes up and successfully runs `chef-client`.
+
+To get started, first move to the <% fp('~/learn-chef') %> directory.
+
+<% command_snippet(page: current_page, path: 'create-the-ufw-cookbook/cd-learn-chef-1', features: :stdin) %>
+
+Ensure that you have a directory named <% fp('~/learn-chef/cookbooks') %>.
+
+<% command_snippet(page: current_page, path: 'create-the-ufw-cookbook/mkdir-learn-chef-cookbooks', features: :stdin) %>
+
+Run the following `chef generate cookbook` command to create the `ufw` cookbook.
+
+<% command_snippet(page: current_page, path: 'create-the-ufw-cookbook/chef-generate-cookbook') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Apply the ufw cookbook on a Test Kitchen instance
+
+Now you'll verify that the empty cookbook runs successfully on an Ubuntu 14.04 test instance. Replace the contents of your copy of <% fp('~/learn-chef/cookbooks/ufw/.kitchen.yml') %> with this.
+
+<% code_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-1-yml') %>
+
+This configuration uses the Vagrant driver and brings up an Ubuntu 14.04 instance. The `verifier` section tells Test Kitchen to look for InSpec tests. More on that later.
+
+Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/ufw') %> directory.
+
+<% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/cd-learn-chef-cookbooks-ufw-1', features: :stdin) %>
+
+Run `kitchen list`. You'll see that the instance is not yet created.
+
+<% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-list-1') %>
+
+Now run `kitchen converge`. This command downloads the base Ubuntu 14.04 box if needed, brings up an instance, installs `chef-client`, and applies the `ufw` cookbook.
+
+<% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-converge-1') %>
+
+As expected, 0 resources were applied because the cookbook is empty. But it's a great first step to verifying that the instance comes up and `chef-client` runs successfully.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Replicate the failure on your Test Kitchen instance
+
+In the previous tutorial, you saw the firewall rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
+
+Recall that the InSpec code for the firewall rule looks like this. This rule comes from the **cis/cis-ubuntu14.04lts-level1** profile.
+
+![](compliance/ensure_firewall_is_active_rule.png)
+
+Also recall that your <% fp '.kitchen.yml' %> file looks like this.
+
+<% code_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-2-yml') %>
+
+The `inspec_tests` part tells Test Kitchen to download and run the **cis/cis-ubuntu14.04lts-level1** profile from the Chef compliance scanner when it runs tests. You specified your Chef compliance scanner when you ran `inspec compliance login` earlier.
+
+You're now ready to scan your test instance. Run `kitchen verify` to run the compliance profile.
+
+<% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-verify', features: :stdin) %>
+
+For brevity, we've omitted the sample output. When you scanned your node from the web interface, you likely noticed that many tests fail the CIS recommendations. You'll see a similar number of failures when you run the same tests against your test instance.
+
+For now, we're only interested in seeing the **Ensure Firewall is active** rule fail. We're working to make it easier to pinpoint specific failures in the output. For now, run `kitchen verify` a second time and redirect the output to a text file, like this.
+
+<% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-verify-redirect-1', features: :stdin) %>
+
+You can locate the status of a test by searching for its name. Here's how to locate the status of the **Ensure Firewall is active** rule.
+
+<% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/grep-rule-1') %>
+
+Alternatively, you can search for the rule name from a text editor.
+
+You see that "Status: active" was expected, but `ufw status` returned "Status: inactive". This result matches what you discovered when you ran `ufw status` manually on your node.
+
+Now that you've replicated the failure on a test instance, you can write Chef code to remediate it.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Remediate the failure
+
+In practice, you and your team would decide the appropriate way to fix the compliance failure. For example, you might define a complete set of firewall rules that enables port access to only the addresses you trust.
+
+For learning purposes, let's write just enough code to make the test pass. When you enable the firewall, you also need to allow SSH access.
+
+Write your default recipe, <% fp '~/learn-chef/cookbooks/ufw/recipes/default.rb' %>, like the following.
+
+<% code_snippet(page: current_page, path: 'remediate-the-failure/default-rb') %>
+
+This code uses the [execute](https://docs.chef.io/resource_execute.html) resource to both enable SSH access and to enable the firewall. Each resource uses a `not_if` [guard](https://docs.chef.io/resource_common.html#guards) to ensure that the command is run only when needed.
+
+[COMMENT] In practice, you might use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook from Chef Supermarket, which provides a more robust set of resources to manage the firewall. The [Develop a web app cookbook tutorial shows how](/manage-a-web-app/ubuntu/configure-the-firewall/).
+
+Next, from your <% fp '~/learn-chef/cookbooks/ufw' %> directory, run `kitchen converge` to apply the configuration.
+
+<% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-converge-2') %>
+
+You see from the output that `ufw` is enabled and allows SSH access.
+
+Now run `kitchen verify` to run the compliance profile a second time.
+
+<% command_snippet(page: current_page, path: 'apply-the-ufw-cookbook/kitchen-verify-redirect-1', features: :stdin) %>
+
+Repeat the step where you search <% fp 'verify.txt' %> for the profile named "Ensure Firewall is active".
+
+<% command_snippet(page: current_page, path: 'remediate-the-failure/grep-rule-2') %>
+
+Success! The output no longer contains the failure. This gives you confidence that the firewall rule would pass after this cookbook is applied to your node.
+
+If the test were to fail, you would examine the failure, modify your cookbook to try something else, and then run `kitchen converge` to apply the change followed by `kitchen verify` to run your compliance scan.
+
+[COMMENT] Test Kitchen instances are meant to be disposable. If you place your test instance in an unrepairable state or want to start over, run `kitchen destroy` to destroy your instance followed by `kitchen converge` to bring up a new one. The copy of your cookbook on your workstation is unaffected.
+
+As a final verification step, you can login to your test instance and run `sudo ufw status` to confirm that `ufw` is enabled.
+
+```bash
+# ~/learn-chef/cookbooks/ufw
+$ kitchen login
+Welcome to Ubuntu 14.04.4 LTS (GNU/Linux 4.2.0-35-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Tue May 10 20:33:13 2016 from 10.0.2.2
+root@default-ubuntu-1404:~$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+22                         ALLOW       Anywhere
+22 (v6)                    ALLOW       Anywhere (v6)
+root@default-ubuntu-1404:~$ logout
+Connection to 127.0.0.1 closed.
+```
+
+When you're finished, run `kitchen destroy` to tear down your test instance.
+
+<% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-destroy') %>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you've verified the remediation on a test instance, you'll upload your `ufw` cookbook to your Chef server and apply the configuration to your Ubuntu node. After that, you'll rerun the compliance scan on your node to verify the fix.
+
+<% end %>
