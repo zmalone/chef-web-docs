@@ -12,11 +12,11 @@ activate :external_pipeline,
 ignore 'assets/stylesheets/application'
 
 # Disable most of the old content that has not yet been migrated to the new structure
-ignore 'automate/**/*'
-ignore 'local-development/**/*'
-ignore 'manage-a-web-app/**/*'
-ignore 'skills/**/*'
-ignore 'tutorials/**/*'
+ignore 'automate/**'
+ignore 'local-development/**'
+ignore 'manage-a-web-app/**'
+ignore 'skills/**'
+ignore 'tutorials/**'
 
 # Check to see if file revving is enabled
 rev_manifest = REV_MANIFEST if defined?(REV_MANIFEST)
