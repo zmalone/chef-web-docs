@@ -1,0 +1,159 @@
+---
+title: 'Add a runner'
+order: 3
+time_to_complete: 60 minutes
+snippet_path: deploy-infrastructure/rhel/automate/set-up-your-chef-server
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Bring up a system', href: '#step1' },
+  { label: '2. Set the hostname', href: '#step2' },
+  { label: '3. Configure the runner', href: '#step3' },
+  ]
+---
+As a change moves through the Chef Automate pipeline, runners, sometimes called _build nodes_, execute jobs scheduled by Chef Automate. Runners typically exist as their own servers.
+
+In this part, you'll set up one runner. Later, you can add additional runners to see how multiple phases can run in parallel.
+
+In this part, we'll refer to the [installation guide](https://docs.chef.io/install_chef_automate.html#set-up-a-build-node-runner-optional).
+
+You can review the guide to familiarize yourself with the process before you proceed. Let's start by bringing up a system to act as your runner.
+
+[WINDOWS] If your workstation is running Windows, remember to run commands from a [Chef Development Kit PowerShell prompt](/modules/manage-a-node/rhel/automate/set-up-your-workstation#step2). Doing so will ensure that utilties such as `ssh` and `scp` are available.
+
+[START_BOX]
+
+## 1. Bring up a system to act as your runner
+
+Although not required, you may find it easiest to bring up your runner in the same environment as your Chef Automate instance. Your runner's FQDN must be reachable by your Chef Automate server. The examples you see on this page use CentOS 7 running as an Amazon EC2 t2.small instance.
+
+Bring up a system for your runner that meets the [platform](https://docs.chef.io/install_chef_automate.html#platforms), [infrastructure](https://docs.chef.io/install_chef_automate.html#infrastructure), and [network](https://docs.chef.io/install_chef_automate.html#node-hostnames-and-network-access) requirements.
+
+Ensure your instance permits inbound network access on port 22 (SSH) through the firewall or security group. No other port settings are required.
+
+Once your system is running, connect to it over SSH from your workstation. Here's an example:
+
+```bash
+$ ssh -i ~/.ssh/private_key centos@54.204.134.198
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Set the runner's hostname
+
+Chef Automate communicates with a runner through its FQDN. Ensure your runner's internal hostname matches its public hostname.
+
+If your runner is an EC2 instance, run `hostname` from your SSH connection to view the current hostname. You should see the system's private hostname.
+
+```bash
+$ hostname
+ip-172-31-24-155
+```
+
+Run this command to use the EC2 metadata service to set the public hostname.
+
+```bash
+$ echo $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) | xargs sudo hostname
+```
+
+Run `hostname` again to verify the configuration.
+
+```bash
+$ hostname
+ec2-52-90-116-141.compute-1.amazonaws.com
+```
+
+Keep the SSH connection to your runner open for later.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Configure the runner
+
+Next, you need to configure software on your runner. The easiest way to do that is from your Chef Automate instance.
+
+Your Chef Automate server requires the SSH key (or password) that you use to connect to your runner. If you use key-based authentication to connect to your runner, copy the SSH key you use to connect to your runner from your workstation to your Chef Automate server. Here's an example that uses the `scp` utility (note the trailing colon `:` character at the end of the command.)
+
+```bash
+$ scp -i ~/.ssh/private_key ~/.ssh/private_key ubuntu@ec2-54-226-3-109.compute-1.amazonaws.com:
+The authenticity of host 'ec2-54-226-3-109.compute-1.amazonaws.com (172.31.59.186)' can't be established.
+ECDSA key fingerprint is d7:da:5c:50:0a:b2:62:62:04:9c:1f:e7:5a:53:27:33.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'ec2-54-226-3-109.compute-1.amazonaws.com,172.31.59.186' (ECDSA) to the list of known hosts.
+private_key                                                                                             100% 1679     1.6KB/s   00:00
+```
+
+Next, create an SSH connection to your Chef Automate server. Here's an example. Replace the private key name, username, and FQDN you see with yours.
+
+```bash
+$ ssh -i ~/.ssh/private_key ubuntu@ec2-54-226-3-109.compute-1.amazonaws.com
+```
+
+From your SSH connection, verify that the SSH key was written to the home directory.
+
+```bash
+# ~
+$ ls ~/private_key
+/home/ubuntu/private_key
+```
+
+Next, from your SSH connection, run the [automate-ctl install-runner](https://docs.chef.io/ctl_delivery_server.html#install-runner) command as follows to configure your runner.
+
+Replace <% ph 'RUNNER_FQDN' %> with your runner's FQDN, <% ph 'RUNNER_USERNAME' %> with the username you would normally connect to your runner over SSH, and <% ph 'RUNNER_SSH_KEY' %> with the SSH key name you copied in the previous step.
+
+```bash
+$ sudo automate-ctl install-runner RUNNER_FQDN RUNNER_USERNAME --ssh-identity-file RUNNER_SSH_KEY --yes
+```
+
+Here's an example.
+
+```bash
+$ sudo automate-ctl install-runner ec2-54-175-200-0.compute-1.amazonaws.com centos --ssh-identity-file private_key --yes
+Preflight check...
+  Fetching Chef Server certificates for local use.
+  Verifying no legacy runners exist for this name.
+Connecting to ec2-54-175-200-0.compute-1.amazonaws.com and retrieving information about your node...
+/opt/delivery/embedded/lib/ruby/gems/2.2.0/gems/train-0.22.1/lib/train/transports/ssh_connection.rb:188:in `establish_connection': Passing nil, or [nil] to Net::SSH.start is deprecated for keys: forward_agent
+  Connected to ec2-54-175-200-0.compute-1.amazonaws.com.
+  Retrieved os info. Platform: centos Version: 7.2.1511
+Downloading the latest version of the ChefDK. This make take a few minutes...
+  Package successfully downloaded to /tmp/chefdk-1.2.22-1.el7.x86_64.rpm.
+Preparing files necessary for installation...
+  Created temporary install directory.
+  Set ownership to user centos.
+  Copied ChefDK to temporary directory.
+  Copied installer software to temporary directory.
+  Copied keys to temporary directory.
+Installing the ChefDK on runner...
+  Installation via rpm completed.
+Fetching Automate certificates to runner...
+  Creating /etc/chef/trusted_certs on runner.
+  Fetched Automate certificate from ec2-54-161-68-251.compute-1.amazonaws.com.
+  Fetched Automate certificate from ec2-54-226-3-109.compute-1.amazonaws.com.
+  Fetched Automate certificate from {}.
+Registering runner to Chef Server...
+  Registered ec2-54-175-200-0.compute-1.amazonaws.com.
+Registering node as an Automate Runner...
+  Installed job runner software on runner.
+  Configured runner as job runner on Automate server.
+Cleaning up...
+  All temporary files removed.
+```
+
+(If you're using password authentication to connect to your runner, [see the documentation](https://docs.chef.io/install_chef_automate.html#set-up-a-build-node-runner-optional) for the required arguments.)
+
+Next, verify that your runner is configured correctly. From the Chef Automate web interface, navigate to **Workflow**, **Runners**, **Manage Runners**. Then click the **TEST** button to create a test connection to your runner.
+
+![](automate/automate-test-runner.png)
+
+Keep the Chef Automate web interface open for the next part.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Next, you'll create a project and watch the `learn_chef_httpd` cookbook move through each stage of the Chef Automate pipeline.
+
+<% end %>

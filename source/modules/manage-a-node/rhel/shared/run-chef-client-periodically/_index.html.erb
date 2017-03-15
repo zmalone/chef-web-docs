@@ -10,7 +10,7 @@ In this part, you'll use the `chef-client` cookbook to set up your node to run `
 
 This is the final part of this tutorial, so you'll also learn how to optionally [clean up your environment](#howtocleanupyourenvironment) by removing your cookbook and node from the Chef server.
 
-[COMMENT] See the [Deploy infrastructure changes with Chef Automate](/tutorials/deploy-infrastructure/) tutorial to learn more about using Chef Automate's pipline and workflow capabilities.
+[COMMENT] See the [Deploy infrastructure changes with Chef Automate](/modules/deploy-infrastructure/) tutorial to learn more about using Chef Automate's pipline and workflow capabilities.
 
 [START_BOX]
 
@@ -46,19 +46,65 @@ Berkshelf downloads the `chef-client` cookbook and its dependent cookbooks to th
 
 <% command_snippet(page: current_page, path: 'get-chef-client-cookbook/ls-dot-berkshelf-cookbooks-node1-centos') %>
 
-Next, you need to upload the `chef-client` cookbooks and its dependencies to your Chef server.
+Next, you need to upload the `chef-client` cookbook and its dependencies to your Chef server.
 
 Previously, you ran `knife cookbook upload` to upload your `learn_chef_httpd` cookbook to the Chef server. Remember that the `chef-client` cookbook has dependencies on other cookbooks, so you need a way to upload everything.
 
 You could run `knife cookbook upload` to manually upload each cookbook. An easier way is to run `berks upload`. Like `berks install`, `berks upload` handles dependencies for you.
 
-Run `berks upload` like this.
+<% if ['opsworks', 'virtualbox'].include?(current_page.parent.data.environment) %>
+
+Run `berks upload` to upload the `chef-client` cookbook and its dependencies to Chef server. The syntax varies slightly between Windows and other operating systems. Here are a few examples.
+
+**Linux and Mac OS X**
 
 <% command_snippet(page: current_page, path: 'get-chef-client-cookbook/berks-upload-chef-client-node1-centos') %>
 
-<% if ['opsworks', 'virtualbox'].include?(current_page.parent.data.environment) %>The `SSL_CERT_FILE` environment variable tells Berkshelf the location of your Chef server's SSL certificate, which is used to ensure that the connection is trusted.
-<% elsif ['aws-marketplace', 'azure-marketplace', 'aws-automate'].include?(current_page.parent.data.environment) %>
+**Windows**
+
+<% if current_page.parent.data.environment == 'opsworks' %>
+
+```ps
+# ~/learn-chef
+$ $env:SSL_CERT_FILE='.chef/ca_certs/opsworks-cm-ca-2016-root.pem'
+$ berks upload
+Uploaded chef-client (7.0.0) to: 'https://test-xcdbs22xaaf3cmpz.gamma.opsworks-cm.io:443/organizations/default'
+Uploaded compat_resource (12.16.2) to: 'https://test-xcdbs22xaaf3cmpz.gamma.opsworks-cm.io:443/organizations/default'
+Uploaded cron (3.0.0) to: 'https://test-xcdbs22xaaf3cmpz.gamma.opsworks-cm.io:443/organizations/default'
+Uploaded logrotate (2.1.0) to: 'https://test-xcdbs22xaaf3cmpz.gamma.opsworks-cm.io:443/organizations/default'
+Uploaded ohai (4.2.2) to: 'https://test-xcdbs22xaaf3cmpz.gamma.opsworks-cm.io:443/organizations/default'
+Uploaded windows (2.1.1) to: 'https://test-xcdbs22xaaf3cmpz.gamma.opsworks-cm.io:443/organizations/default'
+```
+
+<% elsif current_page.parent.data.environment == 'virtualbox' %>
+
+```ps
+# ~/learn-chef
+$ $env:SSL_CERT_FILE='.chef/ca_certs/opsworks-cm-ca-2016-root.pem'
+$ berks upload
+Uploaded chef-client (7.0.0) to: 'https://chef-server.test:443/organizations/4thcoffee'
+Uploaded compat_resource (12.16.2) to: 'https://chef-server.test:443/organizations/4thcoffee'
+Uploaded cron (3.0.0) to: 'https://chef-server.test:443/organizations/4thcoffee'
+Uploaded logrotate (2.1.0) to: 'https://chef-server.test:443/organizations/4thcoffee'
+Uploaded ohai (4.2.2) to: 'https://chef-server.test:443/organizations/4thcoffee'
+Uploaded windows (2.1.1) to: 'https://chef-server.test:443/organizations/4thcoffee'
+```
+
+<% end %>
+
+The `SSL_CERT_FILE` environment variable tells Berkshelf the location of your Chef server's SSL certificate, which is used to ensure that the connection is trusted.
+
+<% else %>
+
+Run `berks upload` to upload the `chef-client` cookbook and its dependencies to Chef server.
+
+<% command_snippet(page: current_page, path: 'get-chef-client-cookbook/berks-upload-chef-client-node1-centos') %>
+
+<% end %>
+
+<% if ['aws-marketplace', 'azure-marketplace', 'aws-automate'].include?(current_page.parent.data.environment) %>
 Berkshelf requires a trusted SSL certificate in order to upload cookbooks. The `--no-ssl-verify` flag disables SSL verification, which is typically fine for testing purposes. Chef server comes with a self-signed SSL certificate. For production, you might use [a trusted SSL certificate](https://osxdominion.wordpress.com/2015/02/25/configuring-chef-server-12-to-use-trusted-ssl-certs/). The [documentation](http://docs.chef.io/server_security.html#ssl-protocols) describes how Chef server works with SSL certificates.
+
 <% end %>
 
 [END_BOX]
@@ -251,11 +297,13 @@ That's it for this tutorial. When you're done experimenting, be sure to [clean u
 
 Also be sure to check out these videos, which go deeper into what happens during the bootstrap process and when `chef-client` runs.
 
-* [What happens during knife bootstrap](/skills/beyond-essentials-1)
-* [What happens during a chef-client run](/skills/beyond-essentials-2)
-* [What is the security model used by chef-client](/skills/beyond-essentials-3)
+* [What happens during knife bootstrap](/modules/beyond-essentials-1)
+* [What happens during a chef-client run](/modules/beyond-essentials-2)
+* [What is the security model used by chef-client](/modules/beyond-essentials-3)
 
-In the next tutorial, [Get started with Test Kitchen](/tutorials/local-development/rhel/), you'll learn how _local development_ with Test Kitchen can help you iterate faster and correct mistakes earlier in the development process. With local development, you verify your cookbooks on local test instances that resemble production before you apply your work to a bootstrapped node.
+If you want to keep working with your Chef Automate installation, you might be interested in the [Deploy infrastructure changes with Chef Automate](/modules/deploy-infrastructure) tutorial. Here, you'll use Chef Automate's _workflow_ feature to move cookbook changes from your workstation all the way out to production-like systems with greater speed and safety.
+
+If you're more interested in writing cookbooks, check out [Get started with Test Kitchen](/modules/local-development/), where you'll learn how _local development_ with Test Kitchen can help you iterate faster and correct mistakes earlier in the development process. With local development, you verify your cookbooks on local test instances that resemble production before you apply your work to a bootstrapped node.
 
 [TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
 

@@ -1,0 +1,267 @@
+---
+title: 'Extend the build cookbook'
+order: 7
+time_to_complete: 30 minutes
+snippet_path: deploy-infrastructure/rhel/opsworks/set-up-your-chef-server
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Create a branch', href: '#step1' },
+  { label: '2. Write the smoke recipe', href: '#step2' },
+  { label: '3. Submit the change', href: '#step3' },
+  { label: 'Skipped phases', href: '#skippedphases' }
+  ]
+---
+In the previous part, you manually verified that the web configuration was running in each of the Acceptance, Union, Rehearsal, and Delivered environments. In practice, it's common to have some manual verification process to validate that your application or service is up and functioning. For example, if you're deploying a web application, someone will typically test out a new feature manually on a pre-production server before releasing the feature to production.
+
+However, you can also write _smoke tests_ to quickly validate that the application or service is running and functional. If the smoke tests fail, you know that the application or service has failed.
+
+Remember that Chef Automate works with almost any kind of application or infrastructure project, and that the `delivery-truck` cookbook helps perform many common tasks that are needed to deliver Chef cookbooks. However, because a cookbook can configure any part of the system, `delivery-truck` cannot provide a default implementation for some phases, such as the smoke phase.
+
+In this part, you implement the smoke phase to run cURL and verify that the web server responds with a 200 (OK) response. The smoke phase runs in the Acceptance, Union, Rehearsal, and Delivered stages.
+
+<img src="/assets/images/delivery/delivery_full_workflow_smoke.svg" style="width: 100%; box-shadow: none;" />
+
+[START_BOX]
+
+## 1. Create a feature branch
+
+First, checkout the `master` branch and pull down the latest changes from Chef Automate's Git server.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'delivery/master'.
+```
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git pull --prune
+From ssh://default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd
+ x [deleted]         (none)     -> delivery/_for/master/server_info
+remote: Counting objects: 1, done.
+remote: Total 1 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (1/1), done.
+   903812f..5c9dd6d  master     -> delivery/master
+Updating 903812f..5c9dd6d
+Fast-forward
+ metadata.rb              | 2 +-
+ templates/index.html.erb | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+```
+
+Next, create a new branch named `smoke`.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git checkout -b smoke
+Switched to a new branch 'smoke'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Write the recipe for the smoke phase
+
+Smoke tests are meant to be fast so that you quickly discover if the application or service is not working. For the web configuration, we'll simply run cURL to verify that the server responds with a 200 (OK) HTTP status code.
+
+Write your `smoke` recipe, <br><%fp '~/learn-chef/cookbooks/learn_chef_httpd/.delivery/build_cookbook/recipes/smoke.rb' %>,  like this.
+
+```ruby
+# ~/learn-chef/cookbooks/learn_chef_httpd/.delivery/build_cookbook/recipes/smoke.rb
+include_recipe 'delivery-truck::smoke'
+
+# Create a search query that matches the current environment.
+search_query = "chef_environment:#{delivery_environment}"
+
+# Run the query.
+nodes = delivery_chef_server_search(:node, search_query)
+
+# cURL the IP address of each result and verify a 200 (OK) response.
+nodes.each do |node|
+  address = node['ipaddress']
+  execute "cURL #{address} and verify 200 response" do
+    command "curl -IL #{address} | grep '^HTTP/1\.1 200 OK'"
+  end
+end
+```
+
+This code performs a similar query as the one in the deploy phase. For each node in the environment (we expect only one), we use the [execute](https://docs.chef.io/resource_execute.html) resource to run `curl` with the `-IL` flag (fetch HTTP reader only and follow any redirects) and search the result for the expected response code.
+
+If the cURL command fails, the details are shown in the output and the pipeline moves to a failed state. You may then need to work with your team to examine and fix the failure. The fix may require you to push a new change through the pipeline, which is a completely acceptable thing to do.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Submit, review, and approve the change
+
+In practice, before you submit your change you might run [InSpec](/modules/inspec/) tests that verify that port 80 is open and that your web service is ready to receive requests. When you run `delivery local smoke`, Test Kitchen applies your cookbook to a temporary instance and runs the InSpec tests.
+
+Because automated testing using Test Kitchen is outside the scope of this tutorial, let's go ahead and submit the change and try out the smoke test when the pipeline runs. Follow the same steps as before to submit your change and trigger the pipeline.
+
+First, run `git status` to see what changes have not yet been staged.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git status
+On branch smoke
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   .delivery/build_cookbook/recipes/smoke.rb
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+Next, add <% fp 'smoke.rb' %> for staging.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git add .delivery/build_cookbook/recipes/smoke.rb
+```
+
+Now commit the change.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git commit -m "Add smoke test"
+[smoke 51fdf29] Add smoke test
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+ rewrite .delivery/build_cookbook/recipes/smoke.rb (73%)
+```
+
+Finally, run `delivery review --auto-bump` to submit your changes to the pipeline.
+
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ delivery review --auto-bump
+Chef Delivery
+Loading configuration from /home/ubuntu/learn-chef/cookbooks/learn_chef_httpd
+Project learn_chef_httpd is a cookbook
+Validating version in metadata
+The version hasn't been updated (0.2.1)
+Bumping version to: 0.2.2
+Review for change smoke targeted for pipeline master
+Created new patchset
+https://test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io/e/default/#/organizations/my-org/projects/learn_chef_httpd/changes/64c91b22-40bb-4937-a67c-e4a41cc22cb3
+```
+
+Trace the change's progress through the pipeline to the Acceptance stage.
+
+1. Review the changes in the web interface. Click **APPROVE** when all tests pass.
+1. Watch the change progress through the Build and Acceptance stages.
+
+From the Acceptance stage tab, expand the smoke phase and watch as the smoke test runs and passes.
+
+<img src="/assets/images/automate/wf-smoke-curl-log.png" style="max-width: 60%;" />
+
+After Acceptance succeeds, click the **DELIVER** button, then click **CONFIRM**.
+
+<img src="/assets/images/automate/wf-smoke-curl-press-deliver.png" style="max-width: 50%;" />
+
+This moves the change through the Union, Rehearsal, and Delivered stages.
+
+<img src="/assets/images/automate/wf-smoke-curl-union.png" style="max-width: 75%;" />
+
+Nice job! With smoke testing in place, you have increased confidence in your changes, which enables you to perform less manual testing. For instance, you might continue to manually verify new features in the Acceptance and Delivered environments, but you might not necessarily need to verify each change in Union and Rehearsal.
+
+As your project evolves, you can implement additional phases such as quality, security, and functional to build further confidence in your changes and further reduce the need to manually verify new features.
+
+Remember to integrate the latest changes into your local `master` branch before creating a new feature branch.
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'delivery/master'.
+```
+
+```bash
+# ~/learn-chef/cookbooks/learn_chef_httpd
+$ git pull --prune
+From ssh://default@test-t8g63tmuzohfpopb.us-east-1.opsworks-cm.io:8989/default/my-org/learn_chef_httpd
+ x [deleted]         (none)     -> delivery/_for/master/smoke
+remote: Counting objects: 1, done.
+remote: Total 1 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (1/1), done.
+   5c9dd6d..434904c  master     -> delivery/master
+Updating 5c9dd6d..434904c
+Fast-forward
+ .delivery/build_cookbook/recipes/smoke.rb | 19 ++++++++++++++-----
+ metadata.rb                               |  2 +-
+ 2 files changed, 15 insertions(+), 6 deletions(-)
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## Skipped phases
+
+There are many other types of tests you can run that we haven't discussed here. For example, the Build stage has a quality phase. You can use this phase to run additional test suites and code analysis tools that are too time consuming to run in the Verify stage. You don't want to run these tests until you know the code is approved.
+
+In many organizations, a change must pass a suite of security tests before it can be deployed. The Build stage is a good place to run these tests, as well.
+
+Functional tests can run in the Acceptance, Union, Rehearsal and Delivered stages. These tests should give you confidence that the system is meeting its business requirements.
+
+Even when a phase does no work, it still takes time for its recipe to run. You can omit phases entirely from the pipeline by including them in the `skip_phases` portion of your project's configuration file.
+
+Here's an example that skips the phases we haven't discussed here &ndash; quality, security, and functional.
+
+```ruby
+# .delivery/config.json
+{
+  "version": "2",
+  "build_cookbook": {
+    "name": "build_cookbook",
+    "path": ".delivery/build_cookbook"
+  },
+  "skip_phases": ["quality", "security", "functional"],
+  "build_nodes": {},
+  "dependencies": []
+}
+```
+
+<img src="/assets/images/delivery/delivery_full_workflow_skipped.svg" style="width: 100%; box-shadow: none;" />
+
+Your changes will move more quickly through the pipeline because those phases are skipped.
+
+![](delivery/skip-phases.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## Conclusion
+
+In this tutorial you created a build cookbook that deploys a Chef cookbook. You used the `delivery-truck` cookbook to automatically publish your cookbook to the Chef server and run `chef-client` on your node. You added a feature to the web configuration and also implemented the smoke phase to help verify that your web site is up and running.
+
+Along the way, you learned about Chef Automate's pipeline stages and phases. You configured them to run automated tests and to publish your changes. As a bonus, you got to practice your Git skills.
+
+Now's a great time to experiment further with your Chef Automate installation and practice the skills you just learned. Because Chef Automate is all about collaboration, a great next step is to [add a second user](https://docs.chef.io/delivery_users_and_roles.html) to your organization and have that user [set up a workstation to use it](/modules/deploy-infrastructure/rhel/opsworks/set-up-your-workstation/). Then add a new feature to the web configuration and watch it move down the pipeline. Even a small change such as adding CSS or a new unit test is enough to practice the workflow.
+
+Submit a change and use your established review process to approve and deliver new features. If you pair up with a coworker, you can perform the tasks that most closely map to your job roles.
+
+If you use [Slack](https://slack.com), you can [integrate with Slack](https://docs.chef.io/integrate_delivery_slack.html) to receive event notifications, such as when a change was approved by a teammate or when a change was delivered for failed.
+
+### Learn more
+
+Be sure to [explore the Chef documentation](https://docs.chef.io/chef_automate.html) to learn more about Chef Automate's features.
+
+This tutorial focused on Chef Automate's workflow and visibility features. Chef Automate also includes the [Chef compliance scanner](https://docs.chef.io/compliance.html), which enables you to assess your infrastructure's adherence to compliance requirements and to monitor that infrastructure on an ongoing basis.
+
+[See the Learn Chef tutorial](/modules/compliance-assess/) to get started with the Chef compliance scanner.
+
+You may also be interested in Chef's other open-source projects &ndash; [Habitat](https://www.habitat.sh) and [InSpec](https://www.chef.io/inspec/).
+
+### Talk to us
+
+Learn more about how to bring the full power of Chef Automate to accomplish your business goals. Go to [www.chef.io/automate](https://www.chef.io/automate) to read the whitepaper. Then click the **Contact Us** button to talk to us about how Chef Automate can help transform your workflow.
+
+Have questions or suggestions on how Chef Automate can better fit your workflow? [Drop us feedback](https://feedback.chef.io/forums/289357-chef-automate-feedback).
+
+[END_BOX]

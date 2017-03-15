@@ -6,7 +6,7 @@
 
 In this part, you'll set up Chef server and Chef Automate, each on its own server. You'll also set up your workstation to work with these systems.
 
-If you're new to Chef, you might consider first working through this tutorial [using hosted Chef](/tutorials/manage-a-node/rhel/hosted/) to understand how Chef server works. You can then come back and install Chef server and Chef Automate in your environment.
+If you're new to Chef, you might consider first working through this tutorial [using hosted Chef](/modules/manage-a-node/rhel/hosted/) to understand how Chef server works. You can then come back and install Chef server and Chef Automate in your environment.
 
 [START_BOX]
 
@@ -16,13 +16,12 @@ The Chef documentation explains the steps required to bring up Chef server and C
 
 The following sections outline the minimal setup that's required for this tutorial. Here's a brief overview of what components you'll set up:
 
-* A Chef Automate server configured with:
-  * a single organization.
-  * a single user.
 * A Chef server configured with:
   * a single organization.
   * a single user.
   * the ability to send event data to Chef Automate.
+* A Chef Automate server configured with:
+  * a single user.
 
 You can add [additional components](https://docs.chef.io/workflow.html#components), such as build nodes or a Chef Supermarket server, at a later time.
 
@@ -67,11 +66,11 @@ Chef Automate and Chef server can run on several Linux distrubutions.
 
 Start by reviewing the [platform](https://docs.chef.io/install_chef_automate.html#platforms) and  [infrastructure](https://docs.chef.io/install_chef_automate.html#infrastructure) requirements for Chef Automate and Chef server. For this tutorial, you don't need to configure build nodes.
 
-[COMMENT] If you choose Ubuntu, you can use installation scripts that we provide.
+[COMMENT] If you choose Ubuntu, you can use installation scripts that we provide. The scripts we provide are suitable for evaluation or learning purposes.
 
 Now bring up two systems, one to run Chef Automate and one to run Chef server. Bring up your systems in the environment you're most comfortable with. You can use cloud instances, virtual machines, or spare hardware.
 
-Next, from your workstation, create an SSH connection to each system in its own terminal window. On Windows, the Chef DK comes with Git for Windows, which includes an SSH client.
+Next, from your workstation, create an SSH connection to each system in its own terminal window. On Windows, we recommend that you <%= link_to 'open a Chef DK command prompt', current_page.first_page, anchor: 'step2' %> to ensure you have access to an SSH client.
 
 If your systems use key-based authentication, you would run `ssh` similar to this.
 
@@ -123,7 +122,7 @@ Similarly, you might assign your Chef server the hostname "chef-server.test":
 $ sudo hostname chef-server.test
 ```
 
-You then need to modify the hosts file on your other servers and your workstation to associate each hostname with its IP address. [This article](https://support.rackspace.com/how-to/modify-your-hosts-file/) describes how to do that on Windows, Linux, and Mac OS X. 
+You then need to modify the hosts file on your other servers and your workstation to associate each hostname with its IP address. [This article](https://support.rackspace.com/how-to/modify-your-hosts-file/) describes how to do that on Windows, Linux, and Mac OS X.
 
 Following this example, say your Chef Automate server's IP address is 10.1.1.33. On a Mac OS or Linux workstation, you would run a command similar to this:
 
@@ -177,16 +176,14 @@ Start by adding the following to <% fp '/tmp/install-chef-server.sh' %> on your 
 This script:
 
 * Updates the `apt` cache, installs `curl`, and sychronizes the system time.
-* Downloads and installs the Chef server package. The package version you see is the latest one this tutorial was tested with.
+* Downloads and installs the Chef server package. The package version you see is the latest one this tutorial was tested with. [You can install a different version](https://downloads.chef.io/chef-server) if you prefer.
 * Configures, starts, and waits for all services to initialize.
-* Creates two users and two organizations:
-  * The **admin** user can administer the Chef server.
-  * The **delivery** user is required by Chef Automate for internal use.
-  * The **4thcoffee** and **cohovineyard** [organizations](https://docs.chef.io/server_orgs.html) provide role-based access control to objects on the Chef server.
+* Creates the **delivery** user, which belongs to the **automate** organization, who can administer the Chef server. An [organization](https://docs.chef.io/server_orgs.html) provides role-based access control to objects on the Chef server.
 
-From your Chef server, run the script like this.
+From your Chef server, make the script executable and then run the script like this.
 
 ```bash
+$ chmod +x /tmp/install-chef-server.sh
 $ sudo /tmp/install-chef-server.sh
 ```
 
@@ -195,11 +192,10 @@ $ sudo /tmp/install-chef-server.sh
 If you're not running Chef server on Ubuntu, you can modify the setup script or manually perform the steps. Here's a summary of what you need to do.
 
 1. [Install the Chef server package](https://docs.chef.io/install_chef_automate.html#chef-server-installation) and set up an initial user and orgnanization.
-1. [Create a user and organization to manage your cluster](https://docs.chef.io/install_chef_automate.html#create-a-user-and-organization-to-manage-your-cluster).
-1. Copy the private key files generated by the `chef-server-ctl user-create` command to a directory where you can easily retrieve it later through a remote copy utility such as `scp`, for instance, <% fp '/tmp' %>. Here's an example.
+1. [Create a user and organization to manage your installation](https://docs.chef.io/install_chef_automate.html#create-a-user-and-organization-to-manage-your-cluster).
+1. Copy the private key file generated by the `chef-server-ctl user-create` command for the `delivery` user to a directory where you can easily retrieve it later through a remote copy utility such as `scp`, for instance, <% fp '/tmp' %>. Here's an example.
 
 ```bash
-$ cp ~/admin.pem /tmp
 $ cp ~/delivery.pem /tmp
 ```
 
@@ -218,11 +214,11 @@ You'll copy both of these files to the <% fp '/tmp' %> directory on your Chef Au
 
 Using a file transfer utility such as `scp`, start by copying your license key file from your workstation to your Chef Automate server.
 
-Here's an example. On Windows, the Chef DK installs Git for Windows, including the `scp` utility.
+Here's an example. On Windows, the Chef DK command prompt provides access to the `scp` utility.
 
 <% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/aws-automate/set-up-your-chef-server/copy-license-to-chef-automate/scp-license', features: [:stdin, :stderr] ) %>
 
-The easiest way to copy your private key is to first transfer the key from your Chef server to your workstation and then transfer the key from your workstation to your Chef Automate server.
+Next, you need to transfer the private key for the **delivery** user from your Chef server to Chef Automate. The easiest way to copy your private key is to first transfer the key from your Chef server to your workstation and then transfer the key from your workstation to your Chef Automate server.
 
 Here's an example of how to download the key from Chef server to your workstation. Replace the hostname you see here with your Chef server's hostname. If you're running from a Windows workstation, replace <% fp '/tmp' %> with another location on your system, such as <% fp 'C:\Temp' %>.
 
@@ -243,6 +239,8 @@ Here's an example of how to upload the key from your workstation to Chef Automat
 
 Just like for Chef server, if you're running Chef Automate on Ubuntu, for learning purposes you can run a shell script that we provide on your Chef Automate server to get a basic setup. For production use, you can later use the procedures outlined in the [documentation](https://docs.chef.io/install_chef_automate.html#chef-automate-server-installation-and-configuration).
 
+### 6.1 Install the package
+
 Start by adding the following to <% fp '/tmp/install-chef-automate.sh' %> on your Chef Automate server.
 
 <% code_snippet(path: 'manage-a-node/rhel/aws-automate/set-up-your-chef-server/create-chef-automate-install-script/install-chef-automate-sh') %>
@@ -250,14 +248,86 @@ Start by adding the following to <% fp '/tmp/install-chef-automate.sh' %> on you
 This script:
 
 * Updates the `apt` cache, installs `curl`, and sychronizes the system time.
-* Downloads and installs the Chef Automate package. The package version you see is the latest one this tutorial was tested with.
-* Performs the initial setup process.
-* Creates the **delivery** user who can access and administer the server.
+* Downloads and installs the Chef Automate package. The package version you see is the latest one this tutorial was tested with. [You can install a different version](https://downloads.chef.io/automate/) if you prefer.
+* Runs the [preflight check](https://docs.chef.io/ctl_delivery_server.html#preflight-check), which helps identify common problems in your environment before you configure the Chef Automate server.
+
+From your Chef Automate server, make the script executable and then run the script like this.
+
+```bash
+$ chmod +x /tmp/install-chef-automate.sh
+$ sudo /tmp/install-chef-automate.sh
+```
+
+### 6.2 Verify preflight status
+
+The `automate-ctl preflight-check` command that you ran as part of the setup script checks for common problems in your environment before you configure the Chef Automate server. Here's example output.
+
+```bash
+# ~
+Running Preflight Checks:
+  Checking for required resources...
+    ✖ [failed]  CPU at least 4 cores
+    ✔ [passed]  memory at least 16GB
+  Checking for required directories...
+    ✔ [passed]  /var
+    ✖ [failed]  /var has at least 80GB free
+    ✔ [passed]  /etc
+  Checking for required umask...
+    ✔ [passed]  0022
+  Checking for available ports...
+    ✔ [passed]  port 80 (http)
+    ✔ [passed]  port 443 (https)
+    ✔ [passed]  port 8080 (api)
+    ✔ [passed]  port 9611 (api)
+    ✔ [passed]  port 4369 (api)
+    ✔ [passed]  port 8989 (git ssh)
+    ✔ [passed]  port 5432 (PostgreSQL)
+    ✔ [passed]  port 9200 (Elasticsearch)
+    ✔ [passed]  port 9300 (Elasticsearch)
+    ✔ [passed]  port 5672 (RabbitMQ)
+    ✔ [passed]  port 15672 (RabbitMQ)
+    ✔ [passed]  port 25672 (RabbitMQ)
+    ✔ [passed]  port 5601 (Kibana)
+  Checking for installed software...
+    ✔ [passed]  ssh client is installed
+
+------------------------------------
+Chef Automate Preflight Check Report
+------------------------------------
+
+Unfortunately there are 2 problems with your environment that
+must be addressed before setting up Chef Automate:
+
+  * Error PF03: System has less than 4 CPU cores
+    Remedy: Please increase CPU cores to at least 4
+
+  * Error PF04: System has less than 80GB at /var
+    Remedy: Please increase free space at '/var' to at least 80GB
+
+This report was also written to: /tmp/automate_preflight_report.txt
+```
+
+Compare this with your output. In this example, the preflight check found 2 problems &ndash; the system does not have at least 4 CPU cores and it has less than 80GB of storage in <% fp '/var' %>. For evalutation or learning purposes, this is likely OK. However, ensure that your configuration meets the requirements for the umask, ports, and installed software categories. For production, ensure your system meets each requirement before you proceed.
+
+### 6.3 Configure the server
+
+Now that you've installed the package and verified preflight requirements, you're ready to configure your Chef Automate server. If you're running Chef Automate on Ubuntu, you can use this script.
+
+Start by adding the following to <% fp '/tmp/setup-chef-automate.sh' %> on your Chef Automate server.
+
+<% code_snippet(path: 'manage-a-node/rhel/aws-automate/set-up-your-chef-server/create-chef-automate-setup-script/setup-chef-automate-sh') %>
+
+This script:
+
+* Runs `automate-ctl setup` to perform the initial setup process.
+* Waits for all services to initialize.
+* Creates the **user1** user who can access and administer the server. You can replace this name if you prefer.
 
 From your Chef Automate server, run the script like this. Replace <% ph 'CHEF_SERVER_FQDN' %> with your Chef server's hostname.
 
 ```bash
-$ sudo /tmp/install-chef-automate.sh "CHEF_SERVER_FQDN"
+$ chmod +x /tmp/setup-chef-automate.sh
+$ sudo /tmp/setup-chef-automate.sh "CHEF_SERVER_FQDN"
 ```
 
 -- -- --
@@ -301,24 +371,36 @@ $ sudo chef-server-ctl reconfigure
 
 <%= partial '../../shared/set-up-your-chef-server/knife_and_rsa_key' %>
 
-Your <code class="file-path">~/learn-chef/.chef</code> directory should contain two files:
+In this part, you'll create the <code class="file-path">~/learn-chef/.chef</code> directory and add these two files:
 
 * your `knife` configuration file, <code class="file-path">knife.rb</code>
 * your RSA private key
 
-Your `knife` configuration file should resemble this one. (`node_name`, `client_key`, and `chef_server_url` contain your information.)
+Start by creating the <% fp '~/learn-chef/.chef' %> directory.
+
+```bash
+$ mkdir ~/learn-chef/.chef
+```
+
+Add the following to your `knife` configuration file, <% fp '~/learn-chef/.chef/knife.rb' %>.
 
 <% code_snippet(page: current_page, path: 'generate-knife-config/knife-rb') %>
 
-Earlier, you copied the RSA private key for the **delivery** user from your Chef server to a temporary location so that you could upload it to your Chef Automate server. Now copy the private key for the **admin** user from your Chef server to your <% fp '.chef' %> directory. Here's an example that uses `scp`. Replace the hostname you see with your Chef server's IP address.
+Next, replace the domain name you see in `chef_server_url` with your Chef server's FQDN.
 
-<% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/aws-automate/set-up-your-chef-server/download-admin-pem/download-admin-pem-to-workstation', features: [:stdin, :stderr]) %>
+Earlier, you copied the RSA private key for the **delivery** user from your Chef server to a temporary location so that you could upload it to your Chef Automate server. Now copy that key to your <% fp '.chef' %> directory. Here's an example.
+
+```bash
+$ cp /tmp/delivery.pem ~/learn-chef/.chef
+```
+
+<% #command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/aws-automate/set-up-your-chef-server/download-admin-pem/download-admin-pem-to-workstation', features: [:stdin, :stderr]) %>
 
 Your RSA private key should resemble this one.
 
 ```bash
 # ~
-$ cat ~/learn-chef/.chef/admin.pem
+$ cat ~/learn-chef/.chef/delivery.pem
 -----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAqJCxFv1BoqlTJeK5zTZ6vX6hvQuDzlaN0v+Fo5R2zobP72Ga
 N8GUOhaYSM0Zkg+epchPS9JX81Euv847g662BBneuT4+W6ImqtHtoqB2iEw9vJbZ
@@ -362,15 +444,11 @@ After you set up your workstation, fetch and validate the SSL certificate from y
 
 Chef Automate provides a web interface where you can monitor and visualize the status of your nodes. Let's take a look.
 
-1. From a web browser, navigate to your Chef Automate server over HTTPS using its hostname, for example, **https://chef-automate.test** or **https://ec2-54-205-85-17.compute-1.amazonaws.com**.
+1. From a web browser, navigate to your Chef Automate server over HTTPS using its hostname, for example, **https://chef-automate.test/e/default/** or **https://ec2-54-205-85-17.compute-1.amazonaws.com/e/default/**.
 
   [COMMENT] When prompted, accept the server's certificate. Chef Automate comes with a self-signed SSL certificate. In a production environment, you would typically set up a certificate chain that's rooted by a trusted certificate authority (CA) to enable the Chef Automate server to verify its authenticity.
 
-1. Enter the enterprise you created in [step 6](#step6). If you used the setup script we provide, the name is **chordata**.
-
-  ![](manage-a-node/chef_automate_sign_in_enterprise.png)
-
-1. Sign in using the Chef Automate user you set up in [step 6](#step6). If you used the setup script we provide, the username is **delivery** and the password is **P4ssw0rd!**.
+1. Sign in using the Chef Automate user you set up in [step 6.3](#step6). If you used the setup script we provide, the username is **user1** and the password is **P4ssw0rd!**.
 
   ![](manage-a-node/chef_automate_sign_in.png)
 

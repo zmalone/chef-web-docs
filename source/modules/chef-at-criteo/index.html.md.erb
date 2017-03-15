@@ -1,0 +1,99 @@
+---
+id: chef-at-criteo
+title: 'Chef at Criteo'
+description: 'Learn how Criteo uses Chef to manage its infrastructure.'
+order: 3
+category: 'example-workflows'
+icon: devops-diverse-skills.png
+---
+[Criteo](http://www.criteo.com/) is the leading performance marketing technology company. It is based in Paris with offices around the world.  Criteo enables e-commerce businesses to provide personalized ads and email to users who have previously visited a retailer's site. To provide this service, Criteo must log and process extremely large amounts of data. They use that data to build a real-time model that can predict consumer behavior.
+
+[START_BOX]
+##Chef at Criteo
+Criteo has seven data centers spread across three continents, with approximately 6,000 Windows servers and 9,000 Linux servers. Criteo manages all 15,000 of them with Chef. The group primarily responsible for Criteo's infrastructure and for Chef automation is the SRE team. Although they don't work on the physical deployment of servers, once they are racked the SRE team takes over. They automate everything from bare metal provisioning to platform-level applications such as [Hadoop](http://hadoop.apache.org/), [Kafka](http://kafka.apache.org/), and [SQL Server](https://www.microsoft.com/en-us/server-cloud/products/sql-server/).
+
+The entire SRE team at Criteo has over 70 people, but there is a core group of 12 that is responsible for writing the cookbooks that provide basic services.  They use more than 400 cookbooks. About half are community cookbooks and the other half are internal.
+
+Criteo first began using Chef in 2012. Initially, a group of system engineers used it to manage a small Hadoop cluster (two racks) in their lab. It was installed in production in mid-2012, but was initially only used in a limited way. In 2013, people began to use it to set up a production-scale Hadoop cluster. Since then, Chef has become ubiquitous throughout the IT organization.
+
+Chef's adoption also helped bring about a change in culture at Criteo. The systems engineers and the systems administrators merged together to form what is now the SRE team. The team sits together (there are very few remote members), and they've adopted DevOps culture and practices, such as blameless postmortems.
+
+Chef has greatly increased Criteo's ability to scale. Maxime Brugidou is an SRE lead at Criteo. He says, "Chef has had a tremendous impact on our business. We were able to scale our operations in a way that would have been impossible without it. For example, we have two engineers who handle a fleet of 4K servers, and this isn't even their main priority.
+
+"I can't imagine our business being successful without this level of automation. We've had to install thousand and thousands of servers over the years and open new data centers. It would have not have been possible with the tools we used to use."
+
+[END_BOX]
+
+[START_BOX]
+
+##Criteo's Chef Deployment
+Currently, Criteo is using Chef server 11 and Chef client 12. They are gradually migrating to Chef server 12. There are eight organizations and two environments, one for preproduction and another for production. The environments are completely separate, and the pre-production environment is a smaller version of the production environment. Both applications and infrastructure use the two environments. Each organization has its own Chef server. Multiple organizations simplify the workflow, and each one can deploy independently of the others.
+
+Currently, Criteo uses its own data centers. There are no plans to migrate to the cloud. Maxime says, "There's been a lot of discussion, and there are two arguments for staying where we are. One is price. For us, at our scale, it would be expensive. The second reason is that we really like being in control, especially on the network side.
+
+"When Criteo started, about 10 years ago, there was no cloud in France. It didn't exist at all. If the company had started five years later, perhaps it would be different."
+
+[END_BOX]
+
+[START_BOX]
+
+##The Criteo Workflow
+Maxime described the workflow. "We use local development and run [Foodcritic](http://www.foodcritic.io/), [RuboCop](http://batsov.com/rubocop/), [ChefSpec](https://docs.chef.io/chefspec.html) and [Test Kitchen](https://docs.chef.io/kitchen.html) with [VirtualBox](https://www.virtualbox.org/wiki/VirtualBox) (hopefully, the developer has enough RAM for VirtualBox). Once the tests pass, a developer submits a merge request in [GitLab](https://about.gitlab.com/). That merge request is tested by Jenkins CI, which runs the same tests as those that ran in local development. Then, if the second set of tests pass and someone has reviewed the code, the change gets merged.
+
+"At this point, there are two possible paths. If it's simply a cookbook, then we update the version number and manage it with [Berkshelf](http://berkshelf.com/). Right now, most of the cookbooks are in GitLab but the team is starting to use [Supermarket](https://supermarket.chef.io/).
+
+"If it's a cookbook change that affects production, then the workflow is different. It gets merged into our development branch where, with Jenkins, we run all the tests again. We then deploy it to pre-production.
+
+"Within 30 minutes, Jenkins checks to see if all the nodes have reported successfully. If there's a problem, then the pipeline stops. If everything's fine, then someone manually deploys it to production."
+
+Because organizations are independent of each other, the frequency with which they deploy changes varies. At best, an organization deploys four times a day, with one or two times a day being the most common. The limiting factor is that the Test Kitchen tests take time to run.
+
+The separation into organizations also means that changes in one organization don't often break another organization. If that does happen, it shows up in the pre-production environment, which all organizations share. Maxime says, "We rarely have that kind of incident so we don't have a mechanism to check to see if we've broken something in pre-production that affects someone else. If pre-production breaks, we can hear people yelling. If the problem is from a change delivered using Chef, we just push a new fix."
+
+[END_BOX]
+
+[START_BOX]
+
+##Applications and Chef
+Applications use a different pipeline than the one used for infrastructure. Although it's possible for an application to require changes to the infrastructure, Maxime's team tries to avoid that situation by providing a catalog of the types of applications developers can create. The team has already written the roles and cookbooks for those applications.
+
+The team has also tried to make it easy for developers who need something special, such as a specific IIS configuration. The developers don't need to know a lot of Chef because they only have to deal with roles and their attributes. The developer makes a change to the code and someone on Maxime's team reviews it before it's merged.
+
+Otherwise, the only time Chef interacts with an application is if the SRE team installs a new node. In that case, they use an internal  tool to load the binaries.
+
+[END_BOX]
+
+[START_BOX]
+
+##Automating Windows
+When Criteo began, it was a Windows shop with a .NET and SQL Server stack. Servers were set up manually and deployment meant dragging and dropping DLLs. Over time, the infrastructure has grown to include Linux servers, but there are still several thousand Windows servers to manage. Baptiste Courtois is a member of the SRE team and he handles the Windows automation. His first experience of using Chef with Windows was when he came to Criteo two years ago. On the differences between the two operating systems he says, "On Linux, you write files that will be read by a service. If you can edit a file and restart processes, you can manage Linux. On Windows, most of the changes are done through the registry and you have to reboot once the changes are made. You have to time your reboot properly to avoid downtime. You have to make sure the service restarts. For some products, there are a lot of interactions between services, files and databases. Configuring Windows is very different than configuring Linux."
+
+When he began, Baptiste relied on the IIS community cookbook and Chef documentation to begin automating the Windows servers. He was able to automate all of the Windows web servers, the Windows Server Update Services (WSUS) servers, and the SQL servers. Today, the web stacks in production are fully automated and the team uses Test Kitchen for validation.
+
+There were some challenges along the way, particularly in ramping up on Test Kitchen. Windows uses WinRM for communication rather than SSH, and, while Test Kitchen can use WinRM, there were few if any examples of this in the community. In response, the SRE team developed Vagrant and Test Kitchen plug-ins.
+
+Another unique aspect of their environments is that, at Criteo, the team prefers to use the systems account rather than the administrative account.  This is because the systems account has all the same rights as the administrative account as well as access to some additional registry keys. Again, because this approach is less commonly used, Baptiste and his team members needed to create their own Chef recipes to suit their particular situation.
+
+Over the past two years, Baptiste has seen big improvements in what Chef offers for Windows servers. In part, this is because of the community and it's also because of the Windows team at Chef. He says, "There are many talented people on the Chef team working on Windows, and I really like what they are doing. It's much easier now to automate Windows with Chef than when I started."
+
+###Using the Windows API
+Right now, the SRE team doesn’t have plans to use Windows PowerShell Desired State Configuration (DSC). There are several reasons. One is that, aside from Baptiste, there isn't much familiarity with PowerShell on the team. Another is that Baptiste is confident that he and his colleagues can do everything they need to do using Windows management APIs. He says, "[Jeffrey Snover](https://channel9.msdn.com/events/speakers/Jeffrey-Snover) talks about how Linux is a document-oriented operating system while Windows is an API-oriented system. I have no problems using those APIs. I can call them from Ruby and implement my own providers. I only use PowerShell when, for some reason, I can't use Ruby."
+
+[END_BOX]
+
+[START_BOX]
+
+##Lessons Learned
+Baptiste and Maxime have learned a great deal since they began their journey with Chef. A few lessons stood out.
+
+Maxime says, "Use [Supermarket](https://supermarket.chef.io/) cookbooks as much as you can. Don't hesitate to fork a cookbook and do a pull request whenever you have an issue with it, and don't keep your fork forever.
+
+"One thing that takes a lot of effort but that you have to do is update your dependencies very frequently. When we test our cookbooks with ChefSpec and Test Kitchen, we try to always test with the latest dependencies from Supermarket, even for gems like Test Kitchen. When there's a new version of Test Kitchen, it breaks our tests most of the time but at least we're up to date. If you wait six months, the migration is going to be horrible. It takes a lot of energy to do it constantly, but if you don’t do it, you will never do it and you'll end up with tons of debt and a big project to migrate."
+
+Baptiste adds, "When I joined Maxime's team, I was amazed by the fact that we were trusting automation completely. We were updating our gems every day, we were updating everything and we weren't trying to have really safe code. We trusted what we did and, if it broke, we fixed what we broke but continue to try going forward and not roll back except in emergencies.
+
+"For example, when we were migrating our Windows servers to Chef, even if we rebooted some servers and it created some down time at some point, it wasn't that important. We really trusted what we did and we moved forward. We improved our recipes and automation skills. We built an orchestration system and now we are trying to improve it to make it really amazing. We are working with amazing tools and talented people.”
+
+Maxime expanded on this. "In our business, if we have ten minutes of down time it costs a lot of money and, of course, we try to avoid it. However, you can't be afraid. We adopted automation, and we built a workflow and a pipeline to do more changes more frequently. That's a very important thing. When you start automating your infrastructure, you're always afraid. People will say, 'No, we shouldn't touch it. It will break.' Yeah, maybe it will break but, with automation, we can make sure that next time we don't break it because we have tests and our fix is repeatable. It's very important that you move forward and you don't get stuck."
+
+[END_BOX]

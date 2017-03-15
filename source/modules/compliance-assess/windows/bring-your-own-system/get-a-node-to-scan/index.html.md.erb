@@ -1,0 +1,106 @@
+---
+title: 'Get a node to scan'
+order: 2
+keywords: TODO
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 30 minutes
+headings: [
+  { label: '1. Get a node to scan', href: '#step1' },
+  { label: '2. Add your node', href: '#step2' },
+  { label: '3. Create a test connection', href: '#step3' }
+]
+---
+In this part, you'll prepare a Windows Server 2012 R2 node to scan, add your node to the Chef compliance scanner, and verify that the Chef compliance scanner can connect to your node. Recall that for Windows Server systems, the Chef compliance scanner runs compliance tests remotely over WinRM.
+
+[COMMENT] Although the Chef compliance scanner works with many versions of Windows, for learning purposes we recommend that you use Windows Server 2012 R2 to ensure that what you see matches the procedures and output that's shown here.
+
+[START_BOX]
+
+## 1. Get a Windows Server 2012 R2 node to scan
+
+For this part, you need to bring up a Windows Server 2012 R2 server that has the standard configuration. Your server also needs to provide:
+
+* an IP address that's reachable from both your workstation and your Chef compliance scanner.
+* access to the `Administrator` user account or an account with administrative access.
+* inbound network access on ports 3389 (RDP), and 5985 (WinRM) through the firewall.
+
+Although not required, you may find it easiest to bring up your node in the same environment as your Chef compliance scanner. For example, if you're running the Chef compliance scanner on a virtual machine, your node can be a second virtual machine on the same private network.
+
+If you're interested in using Chef to remediate compliance failures, as you'll do in the next tutorial, now's a good time to make sure that your node has port 443 (HTTPS) open for network traffic. This will enable your node to communicate with a Chef server (you'll set up a Chef server in the next tutorial if you don't have one already).
+
+The [Manage a node](/modules/manage-a-node/windows/hosted/get-a-node-to-bootstrap/) tutorial describes some options on how to set up a Windows Server 2012 R2 node in the cloud or on a virtual machine, as well as how to prepare your node for use with Chef.
+
+Bring up a Windows Server 2012 R2 system now. In the next steps, you add your node to the Chef compliance scanner and set up your node to be connectable over WinRM.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Add your node to the Chef compliance scanner
+
+Now you add your node to the Chef compliance scanner.
+
+From the **Dashboard** menu, click **Add** or **Add Nodes**.
+
+![](compliance/add_node_button.png)
+
+Enter your node's hostname or IP address. Leave the **Add to environment** field empty. The Chef compliance scanner creates a default environment for you.
+
+![](compliance/add_node_ip_env_ubuntu.png)
+
+Under **Access configuration**, select **WinRM**. Then enter the username and password for the user account the Chef compliance scanner will connect through. Ensure **Communication Protocol** is set to **HTTP**.
+
+![](compliance/add_node_access_winrm.png)
+
+As a recommended step, verify that your node is connectable over WinRM. Click **Show Description** to reveal the configuration steps you need.
+
+![](compliance/add_node_show_description.png)
+
+Connect to your Windows Server instance, either directory or over Remote Desktop. Then run the commands shown to enable  WinRM and verify your node is connectable.
+
+![](compliance/add_node_config_winrm.png)
+
+After you've verified that your node is connectable, click the **Add 1 node** button.
+
+![](compliance/add_node_confirm_button.png)
+
+You're taken back to the dashboard.
+
+![](compliance/add_node_confirm_ubuntu.png)
+
+As an optional step, you can give your node a name to help you identify it later. To do so, click on your node from the dashboard.
+
+In the **Name** field, give your node a descriptive name, for example, **node1-windows2012**.
+
+![](compliance/name_node-windows2012.png)
+
+Scroll to the bottom of the page and click **Save**.
+
+![](compliance/edit_node_save_button.png)
+
+[COMMENT] You can repeat these steps to add additional nodes. You can also add multiple nodes at the same time by separating each hostname or IP address with a comma or a space. The Chef compliance scanner also provides a REST API that enables you to programatically [add multiple nodes in bulk](https://docs.chef.io/api_compliance.html#post-bulk).
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create a test connection to your node
+
+In the previous step, you've already manually verified that your node is connectable. As a final verification step, let's verify that the Chef compliance scanner can connect to your node.
+
+From the dashboard, select your node and click the **Connectivity** button.
+
+![](compliance/connectivity_button_windows2012.png)
+
+The Chef compliance scanner creates a test connection over WinRM. You see this in the connectivity report.
+
+![](compliance/connectivity_report_windows2012.png)
+
+<% accordion('troubleshooting-connectivity', 'Troubleshooting connectivity issues') do %>
+
+<%= partial 'troubleshooting' %>
+
+<% end %>
+
+[END_BOX]
