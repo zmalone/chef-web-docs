@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core'
-import { Http, Response } from '@angular/http'
 import { ReplaySubject } from 'rxjs'
+import { HttpClient } from './http-client.service'
 
 @Injectable()
 export class ProgressService {
   public activeUserProgress: ReplaySubject<any> = new ReplaySubject(1)
 
   constructor(
-    private http: Http,
+    private http: HttpClient,
   ) {}
 
   public start(page: any) {

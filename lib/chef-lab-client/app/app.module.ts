@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { HttpModule } from '@angular/http'
 import { ToastModule } from 'ng2-toastr'
+import { HttpClient } from './services/http-client.service'
 import { ErrorHandlerService } from './services/error-handler.service'
 import { RouterModule, Routes } from '@angular/router'
 import { Angular2TokenService, A2tUiModule } from 'angular2-token'
@@ -51,6 +52,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     A2tUiModule,
   ],
   providers: [
+    HttpClient,
     ErrorHandlerService,
     Angular2TokenService,
     UserProfileService,

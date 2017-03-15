@@ -13,7 +13,7 @@
     = partial 'layouts/_breadcrumbs', locals: {current_track: current_track, current_module: current_module, current_env: current_env, current_chef_env: current_chef_env}
   .module-content
     .row
-      - if current_page.data.hide_next
+      - if is_fork?(current_page)
         = yield
       - else
         .medium-9.columns
@@ -21,7 +21,7 @@
         .medium-3.columns.sidebar
           = partial "layouts/side-navigation"
   div
-    - if !current_page.data.hide_next
+    - if !is_fork?(current_page)
       - next_page = find_next_page(current_page)
       - if next_page
         a.button.btn-primary.module-next-btn href="#{next_page.url}" Next
