@@ -13,6 +13,41 @@ describe PageHelper do
     expect(helper.sitemap).to_not be_nil
   end
 
+  describe '.get_tree_data' do
+    let(:track_name) { 'infrastructure-automation' }
+    let(:track_json) do
+      {
+        url: '/modules/manage-a-node',
+        minutes: 300..500,
+        children: ['/modules/manage-a-node/rhel/']
+      }
+    end
+
+    let(:module_name) { 'manage-a-node' }
+    let(:module_json) do
+      {
+        url: "/modules/manage-a-node",
+        minutes: 300..500,
+        children: ['/modules/manage-a-node/rhel/']
+      }
+    end
+
+    let(:tree_data) { helper.get_tree_data }
+
+    it 'has known track' do
+      expect(tree_data['tracks'][trackname]).to eq track_json
+    end
+
+    it 'has known module' do
+      expect(tree_data['modules'][module_name]).to eq module_json
+    end
+
+    it 'has known page' do
+      expect(tree_data['modules'][page_name]).to eq page_json
+    end
+  end
+
+
   describe '.get_sitemap_path' do
     it 'strips trailing file extensions' do
       expect(helper.get_sitemap_path('/some/path/index.html.md.erb')).to eq '/some/path/index.html'
