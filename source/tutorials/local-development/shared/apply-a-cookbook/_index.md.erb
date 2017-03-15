@@ -12,7 +12,10 @@
     'Azure'
   when 'gcp'
     'Google Compute Engine'
+  when 'hyper-v'
+    'Hyper-V'
   end
+  shell = environment == 'hyper-v' ? 'ps' : nil
   platform = case current_page.parent.parent.data.platform_id
   when 'rhel'
     {
@@ -107,11 +110,11 @@ If you still have the `<%= cookbook %>` cookbook on your system, you're all set 
 
 Start by creating the <% fp '~/learn-chef/cookbooks' %> directory.
 
-<% command_snippet(workstation: 'ubuntu', path: "local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/mkdir-learn-chef-cookbooks", features: :stdin) %>
+<% command_snippet(workstation: 'ubuntu', path: "local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/mkdir-learn-chef-cookbooks", features: :stdin, shell: shell) %>
 
 Now `cd` there.
 
-<% command_snippet(workstation: 'ubuntu', path: "local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/cd-learn-chef-cookbooks", features: :stdin) %>
+<% command_snippet(workstation: 'ubuntu', path: "local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/cd-learn-chef-cookbooks", features: :stdin, shell: shell) %>
 
 Next, clone the `<%= cookbook %>` cookbook from GitHub.
 
@@ -143,7 +146,7 @@ Here's what your <% fp '.kitchen.yml' %> file looks like.
 Here's what the initial <% fp '.kitchen.yml' %> file looks like.
 <% end %>
 
-<% code_snippet(path: "local-development/#{platform[:id]}/vagrant/apply-the-cookbook-#{cookbook}-vagrant/understand-kitchen-yml-#{cookbook}-vagrant/kitchen-yml-#{cookbook}-vagrant") %>
+<% code_snippet(path: "local-development/#{platform[:id]}/vagrant/apply-the-cookbook-#{cookbook}-vagrant/understand-kitchen-yml-#{cookbook}-vagrant/kitchen-yml-#{cookbook}-vagrant", language: environment == 'hyper-v' ? 'yaml-Win32' : nil) %>
 
 [COMMENT] On Linux and Mac OS, <% fp '.kitchen.yml' %> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
@@ -174,6 +177,12 @@ This configuration uses the `m1.small` [instance type](http://docs.aws.amazon.co
 This configuration uses the `t2.micro` [instance type](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html) (`m1.small` is the default). While an `m1.small` or larger instance type can provide better performance, the `t2.micro` instance type enables [free-tier](http://aws.amazon.com/free/) access. In practice, you would choose an instance size that fits your requirements.
 
 <% end %>
+
+<% elsif environment == 'hyper-v' %>
+Next, replace these values:
+
+* `password` with the Administrator password you specified when you built your base virtual machine.
+* `parent_vhd_folder`, `parent_vhd_name` and `vm_switch` with your names if you chose names other than the ones shown on the previous page.
 
 <% elsif environment == 'azure' %>
 Next, replace these values:
@@ -411,6 +420,8 @@ Your instance is now accessible from Remote Desktop.
 <% elsif environment == 'hyper-v' %>
 
 When you use the Hyper-V driver, login to your instance, `default-windows-2012r2`, through Hyper-V Manager. Login as `Administrator` and use the same password that you set when you created the base virtual machine.
+
+<img src="/assets/images/misc/rdp-example-hyperv.png" style="width: 50%;"/>
 
 <% elsif environment == 'vagrant' %>
 
