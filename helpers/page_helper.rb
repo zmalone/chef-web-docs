@@ -77,14 +77,6 @@ module PageHelper
     return (match) ? match[1] : ''
   end
 
-  def get_page_id(page)
-    if page.data.id
-      return page.data.id
-    end
-
-    page.url.split('/')[2..-1].join('/')
-  end
-
   def find_track(page)
     module_id = find_root_id(page)
     track = find_pages_by_folder('tracks').select { |page|
@@ -100,7 +92,7 @@ module PageHelper
 
   def find_root_id(page)
     root = find_root(page)
-    get_page_id(root)
+    root.id
   end
 
   def find_root(page)
@@ -156,7 +148,7 @@ module PageHelper
   end
 
   def format_tree_data(tree)
-    page_id = tree[:page_id] || get_page_id(tree[:page])
+    page_id = tree[:page_id] || tree[:page].id
     data = {}
     data[page_id] = {
       url: tree[:page].url
@@ -167,7 +159,7 @@ module PageHelper
 
     if tree[:children]
       tree[:children].each do |child|
-        child_id = child[:page_id] = child[:page_id] || get_page_id(child[:page])
+        child_id = child[:page_id] = child[:page_id] || child[:page].id
         data[page_id][:children] << child_id
         data.merge!(format_tree_data(child))
       end
