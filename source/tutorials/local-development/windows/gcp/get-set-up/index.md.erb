@@ -1,0 +1,141 @@
+---
+title: 'Set up your workstation'
+order: 1
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 2 hours
+snippet_path: local-development/windows/vagrant
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Set up your workstation', href: '#step1' },
+  { label: '2. Prepare your account', href: '#step2' },
+  { label: '3. Create an image', href: '#step3' }
+]
+---
+Test Kitchen enables you to specify details about your virtual machine. When working with Google Cloud Platform, this includes which image to use, the instance size, networking settings, and how to run Chef &ndash; including which recipes and which tests to run. Test Kitchen is the interface you use to create, destroy, and run Chef on your instances.
+
+Here you'll make sure that your workstation is set up for Chef development. You'll also prepare your Google account to create test instances.
+
+Log in to your Google Cloud Platform account. If you don't have an account, Google is offering a [60-day free trial](https://cloud.google.com/compute/) for up to $300 (USD) of usage.
+
+[COMMENT] Although Test Kitchen supports multiple versions of Windows Server, for this tutorial we recommend you use Windows Server 2012 R2 to ensure the results you see match what's shown.
+
+[START_BOX]
+
+## 1. Set up your workstation for Chef development
+
+Although this tutorial doesn't involve the Chef server or bootstrapping a node, we recommend that you complete [Manage a Windows Server node](/tutorials/manage-a-node/windows/) before starting this tutorial.
+
+If you prefer to learn about local development now, before learning how to bootstrap a node, [perform these steps](/tutorials/manage-a-node/windows/hosted/set-up-your-workstation/) to set up your workstation. Then come back to this page.
+
+At this point, your workstation should:
+
+* have the latest version of the Chef Development Kit.
+* have a programmer's text editor that you're comfortable working with.
+* have the <% fp '~/learn-chef' %> directory for you to work in.
+* have Git and an RDP client.
+
+Having Git is important because you'll use it to download starter code to work with.
+
+Having an RDP client is important because you can use it to log in to your Windows Server instance to verify your work.
+
+If your workstation is running Windows, remember to open the Chef Development Kit desktop shortcut. The desktop shortcut brings up a PowerShell session that's configured to work with Chef.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Prepare your Google account
+
+You'll use Test Kitchen to create a Google Compute Engine instance later in this tutorial. For now, let's ensure you have everything you'll need to create and connect to your instance.
+
+Test Kitchen uses drivers, or plugins, to work with cloud and virtualization platforms. Some drivers come with the Chef DK. For Google Compute Engine, you need to install the `kitchen-google` driver on your workstation manually. You also need to create a configuration file on your workstation that authenticates access to Google Compute Engine resources.
+
+Review the [kitchen-google](https://github.com/test-kitchen/kitchen-google) project page and perform the steps to install the driver and set your configuration file. Here are the important points to keep in mind.
+
+* Ensure you have access to a [Google Cloud Platform project](https://github.com/test-kitchen/kitchen-google#google-cloud-platform-gcp-project) and note its name for later. An example project name is "funky-penguin-12345".
+* Ensure you have a [credentials file](https://github.com/test-kitchen/kitchen-google#authentication-and-authorization) to enable Test Kitchen to authenticate commands. An example credentials file looks like this.
+
+```ruby
+# ~/.config/gcloud/application_default_credentials.json
+{
+  "client_id": "54525506288.apps.googleusercontent.com",
+  "client_secret": "msJ39g2yerjDjyT33lZH8NC2",
+  "refresh_token": "1/tm5xAD7g77HpCGUmLeExnS4XjOkVWOfUSlTK_CH6Rzz",
+  "type": "authorized_user"
+}
+```
+* Ensure you have an [SSH keypair](https://github.com/test-kitchen/kitchen-google#ssh-keys) to enable Test Kitchen to connect to your instances. You [provide the public part](https://cloud.google.com/compute/docs/instances/connecting-to-instance#generatesshkeypair) of the key pair as metadata for your project; the private part stays with you. Here's an example from the Compute Engine console.
+
+![](misc/compute-engine-ssh-key-metadata.png)
+
+* Here's an example of how to install the `kitchen-google` driver.
+
+<% command_snippet(workstation: 'ubuntu', path: 'local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/install-kitchen-google') %>
+
+Also note the [zone](https://cloud.google.com/compute/docs/regions-zones/regions-zones), for example, **us-east1-c**, where you'll run your test instances.
+
+If you're new to Google Cloud Platform, Google's [Quickstart Using a Windows VM](https://cloud.google.com/compute/docs/quickstart-windows) tutorial walks you through the creation of your first Windows virtual machine. After you verify that you're able to create an instance, note the zone for later.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create a Windows Server image
+
+Test Kitchen connects to Windows Server instances over WinRM. Although WinRM is enabled by default on Windows Server 2012 R2, the Windows firewall permits inbound traffic on port 5985 (WinRM) only from systems in the same local domain.
+
+Therefore, you need to create a custom OS image that's preconfigured to accept inbound traffic on port 5985 from any remote address. If you've gone through the _Manage a node_ tutorial, recall that you needed to [perform a similar step](/tutorials/manage-a-node/windows/hosted/get-a-node-to-bootstrap#step4) to prepare your node for use with Chef.
+
+Although there are a few ways to create a custom OS image, here's one way that uses the Google Compute Engine console.
+
+1. [Log in to the Google Cloud Platform console](https://console.cloud.google.com/) and open the **Compute Engine** tab.
+1. Create a new VM instance using these settings:
+  * The zone you want to work in.
+  * Machine type **n1-standard-1**.
+  * Boot disk **Windows Server 2012 R2** or **Windows Server 2012 R2 Core**.
+  * Under **Firewall**, select **Allow HTTP traffic** and **Allow HTTPS traffic**.
+  * Expand the **Management, disk, networking, SSH keys** section. Under **Metadata**, add this key-value pair.
+
+  | Key | Value |
+  |---------------------:|-------------|
+  | `sysprep-specialize-script-cmd` | `netsh advfirewall firewall add rule name="winrm" dir=in action=allow protocol=TCP localport=5985` |
+
+1. Click the **Create** button to create your VM.
+
+The **sysprep-specialize-script-cmd** metadata key [provides a startup script for Windows instances](https://cloud.google.com/compute/docs/startupscript#providing_a_startup_script_for_windows_instances) which runs during sysprep, but before the system boots.
+
+Next, wait for your instance to come up. Once you see the external IP address appear, you can verify that your system is connectable over WinRM. One way to do that is by running the `knife wsman test` command. This command provides functionality that's similar to PowerShell's
+[Test-WSMan](https://technet.microsoft.com/en-us/library/hh849873.aspx) cmdlet, but is available from any operating system that can run Chef DK, including Windows, Mac OS, and Linux.
+
+Run the following command, replacing <% ph 'IP_ADDRESS' %> with your node's external IP address.
+
+```bash
+# ~/learn-chef
+$ knife wsman test IP_ADDRESS --manual-list
+```
+
+Here's an example:
+
+```bash
+# ~/learn-chef
+$ knife wsman test 35.185.24.96 --manual-list
+Connected successfully to 35.185.24.96 at http://35.185.24.96:5985/wsman.
+```
+
+If the command fails, wait a minute and try again. If it continues to fail, you can  [connect to your instance](https://cloud.google.com/compute/docs/instances/windows/connecting-to-windows-instance) and [verify that port 5985 is open through the firewall](https://technet.microsoft.com/en-us/library/cc753558.aspx) to any remote system.
+
+Once you've verified that you can successfully connect, you can create the OS image.
+
+The [Google Cloud Platform documentation](https://cloud.google.com/compute/docs/instances/windows/creating-windows-os-image) describes the process, including how to terminate your instance (but preserving the boot disk), and how to create the image. When prompted, name the image **windows-2012-r2-core-test-kitchen**. (If you choose another name, be sure to specify your name on the page that follows.)
+
+As an optional step, you can create an instance of your OS image and verify that the `knife wsman test` command continues to pass. You can terminate your instance when you're finished.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you're all set up, let's get a hang for how Test Kitchen works by applying the web server cookbook you wrote in the previous tutorial on a local test instance.
+
+<% end %>
