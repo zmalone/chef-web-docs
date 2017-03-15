@@ -6,6 +6,7 @@ describe PageHelper do
 
   before(:each) do
     allow(helper).to receive(:sitemap).and_return(MM_TEST_APP.sitemap)
+    allow(helper).to receive(:data).and_return(MM_TEST_APP.data) # middleman-navtree data
     allow(helper).to receive(:logger).and_return(MM_TEST_APP.logger)
   end
 
@@ -17,33 +18,50 @@ describe PageHelper do
     let(:track_name) { 'infrastructure-automation' }
     let(:track_json) do
       {
-        url: '/modules/manage-a-node',
-        minutes: 300..500,
-        children: ['/modules/manage-a-node/rhel/']
+        url: '/tracks/infrastructure-automation',
+        minutes: [185, 415],
+        children: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node', 'develop-locally']
       }
     end
 
     let(:module_name) { 'manage-a-node' }
     let(:module_json) do
       {
-        url: "/modules/manage-a-node",
-        minutes: 300..500,
-        children: ['/modules/manage-a-node/rhel/']
+        url: '/modules/manage-a-node',
+        minutes: [130, 310],
+        is_fork: true,
+        children: ['manage-a-node/rhel', 'manage-a-node/ubuntu', 'manage-a-node/windows']
+      }
+    end
+
+    let(:page_name) { 'manage-a-node/rhel/automate/bootstrap-your-node' }
+    let(:page_json) do
+      {
+        url: '/modules/manage-a-node/rhel/automate/bootstrap-your-node',
+        minutes: [20, 20]
       }
     end
 
     let(:tree_data) { helper.get_tree_data }
 
+    it 'has track data' do
+      expect(tree_data[:tracks]).to be_an_instance_of(Hash)
+    end
+
+    it 'has module data' do
+      expect(tree_data[:modules]).to be_an_instance_of(Hash)
+    end
+
     it 'has known track' do
-      expect(tree_data['tracks'][trackname]).to eq track_json
+      expect(tree_data[:tracks][track_name]).to eq track_json
     end
 
     it 'has known module' do
-      expect(tree_data['modules'][module_name]).to eq module_json
+      expect(tree_data[:modules][module_name]).to eq module_json
     end
 
     it 'has known page' do
-      expect(tree_data['modules'][page_name]).to eq page_json
+      expect(tree_data[:modules][page_name]).to eq page_json
     end
   end
 

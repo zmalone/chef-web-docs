@@ -78,23 +78,11 @@ module PageHelper
   end
 
   def get_page_id(page)
-    if (page.data.id)
+    if page.data.id
       return page.data.id
     end
 
-    match = page.url.match(/^\/?(modules|tracks)\/(.+)$/)
-    return if !match
-    path = match[2]
-    root = find_root(page)
-    if root.url != page.url
-      if page.parent
-        parts = path.split('/')
-        thisId = parts.last
-        parentId = get_page_id(page.parent)
-        return "#{parentId}/#{thisId}"
-      end
-    end
-    path
+    page.url.split('/')[2..-1].join('/')
   end
 
   def find_track(page)
@@ -134,6 +122,61 @@ module PageHelper
     }
   end
 
+  def time_diff_milli(start, finish)
+    (finish - start) * 1000.0
+  end
+
+  def get_tree_data
+    tree = {
+      tracks: {},
+      modules: {}
+    }
+
+    data.tree.modules.keys.each do |module_id|
+      module_tree = restructure_tree(data.tree.modules[module_id])
+      tree_calculate_time(module_tree)
+      tree[:modules].merge!(format_tree_data(module_tree))
+    end
+
+    data.tree.tracks.keys.each do |track_id|
+      track = restructure_tree(data.tree.tracks[track_id])
+      track_calculate_time(track, tree[:modules])
+      tree[:tracks].merge!(format_tree_data(track))
+    end
+    tree
+  end
+
+  def track_calculate_time(track, modules)
+    track[:minutes] ||= [0, 0]
+    track[:modules].each do |module_id|
+      range = (modules[module_id] && modules[module_id][:minutes]) ? modules[module_id][:minutes] : [0, 0]
+      track[:minutes][0] += range[0]
+      track[:minutes][1] += range[1]
+    end
+  end
+
+  def format_tree_data(tree)
+    page_id = tree[:page_id] || get_page_id(tree[:page])
+    data = {}
+    data[page_id] = {
+      url: tree[:page].url
+    }
+    data[page_id][:minutes] = tree[:minutes] if tree[:minutes]
+    data[page_id][:is_fork] = tree[:is_fork] if tree[:is_fork]
+    data[page_id][:children] = [] if tree[:children]
+
+    if tree[:children]
+      tree[:children].each do |child|
+        child_id = child[:page_id] = child[:page_id] || get_page_id(child[:page])
+        data[page_id][:children] << child_id
+        data.merge!(format_tree_data(child))
+      end
+    elsif tree[:modules]
+      data[page_id][:children] = tree[:modules]
+    end
+    data
+  end
+
   def get_module_trees_from_page(page)
     module_match = page.source_file.match(/\/modules\/(.+)/)
     return nil unless module_match
@@ -141,7 +184,8 @@ module PageHelper
     parts = module_path.split('/')
     module_folder = parts[0]
     tree = restructure_tree(data.tree.modules[module_folder])
-    current_tree = filter_tree_by_path(tree, module_match[0])
+    current_tree = {}
+    # current_tree = filter_tree_by_path(tree, module_match[0])
     [tree, current_tree]
   end
 
@@ -162,21 +206,24 @@ module PageHelper
       child_items = child_items.compact
       is_fork = false
       child_items.each do |child_item|
-        is_fork = true if child_item[:children].count > 0
-        child_item[:order] = 0
-        page = find_page_by_path(child_item[:path])
-        if page && page.data && page.data.order
-          child_item[:order] = page.data.order
-        end
+        is_fork = true if child_item[:children] && child_item[:children].count > 0
+        # child_item[:order] = 0
+        # page = find_page_by_path(child_item[:path])
+        # if page && page.data && page.data.order
+          # child_item[:order] = page.data.order
+        # end
       end
-      child_items.sort_by! do |a|
-        a[:order]
-      end
-      {
-        path: index_path,
-        children: child_items,
-        is_fork: is_fork
+      # child_items.sort_by! do |a|
+      #   a[:order]
+      # end
+      page = find_page_by_path(index_path)
+      ret = {
+        page: page
       }
+      ret[:modules] = page.data.modules.to_a if page.data.modules
+      ret[:children] = child_items if child_items.count > 0
+      ret[:is_fork] = true if is_fork
+      ret
     end
   end
 
@@ -185,16 +232,18 @@ module PageHelper
       tree
     else
       found = []
-      tree[:children].each do |child|
-        if found.count == 0
-          tree_by_path = filter_tree_by_path(child, filepath)
-          if tree_by_path && tree_by_path[:filtered]
-            return tree_by_path
-          elsif tree_by_path
-            found << tree_by_path
+      if tree[:children]
+        tree[:children].each do |child|
+          if found.count == 0
+            tree_by_path = filter_tree_by_path(child, filepath)
+            if tree_by_path && tree_by_path[:filtered]
+              return tree_by_path
+            elsif tree_by_path
+              found << tree_by_path
+            end
+          elsif !tree[:is_fork]
+            found << child
           end
-        elsif !tree[:is_fork]
-          found << child
         end
       end
       if found.count == 1
@@ -215,29 +264,32 @@ module PageHelper
   end
 
   def tree_calculate_time(tree)
-    return tree[:time_to_complete] if tree[:time_to_complete]
+    return tree[:minutes] if tree[:minutes]
 
-    page = find_page_by_path(tree[:path])
-    range = get_time_to_complete(page)
+    # page = find_page_by_path(tree[:url])
+    # page = sitemap.find_resource_by_destination_path(tree[:url])
+    range = get_time_to_complete(tree[:page])
 
     unless range
       range = [0, 0]
-      tree[:children].each do |child|
-        child_range = tree_calculate_time(child)
-        # Are we adding the child times? Or finding the extended range (forks)?
-        if child_range
-          if tree[:is_fork]
-            range[0] = (range[0] > 0) ? [range[0], child_range[0]].min : child_range[0]
-            range[1] = [range[1], child_range[1]].max
-          else
-            range[0] = range[0] + child_range[0]
-            range[1] = range[1] + child_range[1]
+      if tree[:children]
+        tree[:children].each do |child|
+          child_range = tree_calculate_time(child)
+          # Are we adding the child times? Or finding the extended range (forks)?
+          if child_range
+            if tree[:is_fork]
+              range[0] = (range[0] > 0) ? [range[0], child_range[0]].min : child_range[0]
+              range[1] = [range[1], child_range[1]].max
+            else
+              range[0] = range[0] + child_range[0]
+              range[1] = range[1] + child_range[1]
+            end
           end
         end
       end
     end
 
-    tree[:time_to_complete] = range
+    tree[:minutes] = range if range[0] > 0 || range[1] > 0
   end
 
   def get_time_to_complete(page)
