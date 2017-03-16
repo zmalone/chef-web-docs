@@ -43,13 +43,17 @@ module PageNavHelpers
           next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
         end
 
+        # We don't want a Next button if the next page is an appendix. Rather, we want to
+        # show the conclusion.
+        if next_page.data.appendix == true
+          next_page = nil
+        end
+
         if next_page
-          #output << link_to("#next", anchor: "next")
           output << content_tag(:a, "", {"name"=>"next", "href"=>"#next"})
           heading = "Next:&nbsp;#{next_page.data.title}"
         else
           output << content_tag(:a, "", {"name"=>"conclusion", "href"=>"#conclusion"})
-          #output << link_to("#conclusion", anchor: "conclusion")
           heading = "Conclusion"
         end
 
