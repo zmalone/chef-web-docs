@@ -1,6 +1,7 @@
 ---
 title: DevOps Transformation
 track_id: 6
+track_hero: /assets/images/tracks/compliance-automation.jpg
 image_url: /assets/images/coasters/devOps-transformation.png
 description: 'Learn the cultural and technological changes that must occur to adopt DevOps principles in your organization. Begin your own DevOps journey through videos, case studies, and exercises to evaluate your progress.'
 hours: 3
