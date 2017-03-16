@@ -1,6 +1,7 @@
 ---
 title: Continuous Deployment
 track_id: 10
+track_hero: /assets/images/tracks/compliance-automation.jpg
 image_url: /assets/images/coasters/continuous-deployment.png
 description: "Learn about Chef Automate, the platform for continuous deployment. Find out how to use Chef Automate to gain visibility into your infrastructure. Then, learn how to deploy a cookbook using the Chef Automate pipeline."
 hours: 7
