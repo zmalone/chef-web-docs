@@ -45,7 +45,7 @@ module PageNavHelpers
 
         # We don't want a Next button if the next page is an appendix. Rather, we want to
         # show the conclusion.
-        if next_page.data.appendix == true
+        if next_page&.data&.appendix == true
           next_page = nil
         end
 
