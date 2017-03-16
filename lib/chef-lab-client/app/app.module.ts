@@ -62,4 +62,8 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     AppComponent,
   ],
 })
-export class AppModule { }
+export class AppModule {
+  constructor (private progressService: ProgressService) {
+    progressService.init()
+  }
+}

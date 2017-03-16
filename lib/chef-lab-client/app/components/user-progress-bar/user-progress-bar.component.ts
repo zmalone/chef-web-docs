@@ -17,8 +17,7 @@ export class UserProgressBarComponent implements OnInit {
 
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe((data) => {
-      const moduleData = (data && data.modules) ? data.modules : {}
-      this.progress = 50
+      this.progress = this.progressService.getProgress('modules', this.module)
     })
   }
 }
