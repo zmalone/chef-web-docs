@@ -18,6 +18,7 @@ end
 
 group :test do
   gem 'rspec' # Unit testing
+  gem 'guard-rspec', require: false
 end
 
 group :production do

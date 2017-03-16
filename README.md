@@ -48,7 +48,7 @@ A server process needs to be running in order to use Middleman.
         $ bundle exec middleman server
 
 1. The site should now be available locally on port 3001 using BrowserSync for live reloading during
-    development, although the HTML will also be available on port 4567 via Middleman. 
+    development, although the HTML will also be available on port 4567 via Middleman.
 
         $ http://localhost:3001
 
@@ -75,7 +75,7 @@ Create a build
         $ echo $?
         $ 0
 
-You can test the build by running a local development server (such as 
+You can test the build by running a local development server (such as
 https://www.npmjs.com/package/http-server) to serve the `build` folder.
 
 Installing current versions of Node and Ruby on Ubuntu
@@ -100,7 +100,14 @@ The Node and Ruby packages for Ubuntu are outdated. Here is one method of updati
         $ bundle install
 
    ##### Increase the number of inotify watches (if you see an error in dev mode):
-        $ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p 
+        $ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+
+Testing Middleman Helpers
+----------------------------
+
+- run `bundle exec rspec` to run all specs
+- run `bundle exec guard` to auto-run specs for middleman changes
 
 
 Publishing

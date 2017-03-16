@@ -19,6 +19,11 @@ class Middleman::Sitemap::Store
 end
 
 class Middleman::Sitemap::Resource
+  def id
+    return self.data.id if self.data.id
+    self.url.sub(/\/(modules\/|tracks\/)?/, '')
+  end
+
   def title
     parents(true).map { |page| page.data.ignore_breadcrumb ? '' : (page.data.toc_title || page.data.title) }.compact.join(' - ').presence
   end
