@@ -2,13 +2,13 @@
   <div class="row">
     <div class="large-5 medium-8 small-12 columns profile-card">
       <a class="settings" (click)="showForm()"><i class="fa fa-cog"></i></a>
-      <div class="user-info">
+      <div class="user-info" *ngIf="user">
         <div class="avatar">
-          <div class="name" *ngIf="user">
+          <div class="name">
             {{user.name}}
           </div>
         </div>
-        <div class="display-name" *ngIf="user">
+        <div class="display-name">
           {{user|display_name}}<span *ngIf="user.role">{{user.role}}</span><span *ngIf="user.company">{{user.company}}</span>
         </div>
       </div>
@@ -20,15 +20,18 @@
       <form class="edit-profile ng-untouched ng-pristine ng-valid" (ngSubmit)="updateUserProfile()">
         <a class="close-btn" (click)="hideForm()">×</a>
         <div class="large-12 columns custom-form">
-          <div class="input-control">
-            <md-input-container>
-            <input mdInput id="name" placeholder="Name" name="name" required type="text" [(ngModel)]="userInfo.name" #name="ngModel">
-            <div *ngIf="name.errors && (name.dirty || name.touched)">Name is required</div>
-            </md-input-container>
+          <div class="input-control" *ngIf="updateStatus">
+            <div class="success">Profile updated successfully.</div>
           </div>
           <div class="input-control">
             <md-input-container>
-            <input mdInput id="displayname" placeholder="Display Name" name="nickname" required type="text" [(ngModel)]="userInfo.nickname" #nickname="ngModel">
+            <input mdInput id="name" placeholder="Name" name="name" required type="text" [(ngModel)]="userInfo.name" #name="ngModel">
+            </md-input-container>
+            <div class="error" *ngIf="name.errors && (name.dirty || name.touched)">Name is required</div>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+            <input mdInput id="displayname" placeholder="Display Name" name="nickname"  type="text" [(ngModel)]="userInfo.nickname" #nickname="ngModel">
             </md-input-container>
           </div>
           <div class="input-control">
@@ -42,7 +45,12 @@
             </md-input-container>
           </div>
           <div class="input-control">
-            <input id="country" name="country" required type="text" [(ngModel)]="userInfo.country" #country="ngModel">
+            <select id="country" name="country" [(ngModel)]="userInfo.country">
+              <option value="">Select</option>o
+              <option *ngFor="let country of countries" value= {{country.code}}>
+                {{country.name}}
+              </option>
+            </select>
           </div>
         </div>
         <div class="large-6 columns">

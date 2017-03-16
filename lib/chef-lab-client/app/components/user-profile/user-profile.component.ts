@@ -2,27 +2,30 @@ import { Component, OnInit, ViewContainerRef } from '@angular/core'
 import { UserProfileService } from '../../services/user-profile.service'
 import { ErrorHandlerService } from '../../services/error-handler.service'
 import { User } from '../../model/user'
-import { ToastsManager } from 'ng2-toastr'
+import { COUNTRY } from './data/countries'
 
 @Component({
   selector: 'user-profile',
   templateUrl: './user-profile.component.html',
-  providers: [UserProfileService, ErrorHandlerService, ToastsManager],
+  providers: [UserProfileService, ErrorHandlerService],
 })
 export class UserProfileComponent implements OnInit {
   user: User
   userInfo: any
   frmStatus: boolean
+  updateStatus: boolean
+  countries: any
 
   constructor(
     private userProfileService: UserProfileService,
     private errHandlerService: ErrorHandlerService,
-    public toastr: ToastsManager,
   ) {
   }
 
   ngOnInit() {
     this.getUserProfile()
+    this.countries = COUNTRY
+    this.updateStatus = false
   }
 
   getUserProfile() {
@@ -41,6 +44,8 @@ export class UserProfileComponent implements OnInit {
       .subscribe(
         res => {
           this.getUserProfile()
+          window.scrollTo( 0, 0 )
+          this.updateStatus = true
           return true
         },
         err => this.errHandlerService.handleError(err),
@@ -51,6 +56,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   hideForm() {
+    this.updateStatus = false
     this.frmStatus = false
   }
 

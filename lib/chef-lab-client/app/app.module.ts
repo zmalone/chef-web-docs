@@ -23,7 +23,7 @@ import { LoginLinkedInDirective } from './directives/login-linkedin/login-linked
 import { LoginChefDirective } from './directives/login-chef/login-chef.directive'
 import { ProgressService } from './services/progress.service'
 import { UserProfileComponent } from './components/user-profile/user-profile.component'
-import { MaterialModule } from '@angular/material';
+import { MaterialModule } from '@angular/material'
 
 
 const routerConfig: Routes = []
