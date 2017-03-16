@@ -1,0 +1,88 @@
+---
+title: 'Set up your workstation'
+order: 1
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 30 minutes
+snippet_path: local-development/rhel/azure
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Set up your workstation', href: '#step1' },
+  { label: '2. Prepare your Azure account', href: '#step2' }
+]
+---
+Test Kitchen enables you to specify details about your virtual machine. When working with Azure, this includes which image to use, the instance size, networking settings, and how to run Chef &ndash; including which recipes and which tests to run. Test Kitchen is the interface you use to create, destroy, and run Chef on your instances.
+
+Here you'll make sure that your workstation is set up for Chef development. You'll also prepare your Azure account to create test instances.
+
+If you don't have an Azure account, Microsoft is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 (USD) of usage.
+
+[COMMENT] Although this tutorial focuses on Red Hat Enterprise Linux, in this tutorial you'll use CentOS, a free computing platform that's functionally compatible with Red Hat Enterprise Linux. CentOS typically costs less to run on Azure, and is an ideal way to quickly test out your Chef code.
+
+[START_BOX]
+
+## 1. Set up your workstation for Chef development
+
+Although this tutorial doesn't involve the Chef server or bootstrapping a node, we recommend that you complete [Manage a Red Hat Enterprise Linux node](/tutorials/manage-a-node/rhel/) before starting this tutorial.
+
+If you prefer to learn about local development now, before learning how to bootstrap a node, [perform these steps](/tutorials/manage-a-node/rhel/hosted/set-up-your-workstation/) to set up your workstation. Then come back to this page.
+
+At this point, your workstation should:
+
+* have the latest version of the Chef Development Kit.
+* have a programmer's text editor that you're comfortable working with.
+* have the <% fp '~/learn-chef' %> directory for you to work in.
+* have Git and an SSH client.
+
+Having Git is important because you'll use it to download starter code to work with.
+
+Having an SSH client is important because you can use it to log in to your CentOS instance to verify your work.
+
+If your workstation is running Windows, remember to open the Chef Development Kit desktop shortcut. The desktop shortcut brings up a PowerShell session that's configured to work with Chef.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Prepare your Azure account
+
+You'll use Test Kitchen to create an Azure instance later in this tutorial. For now, let's ensure you have everything you'll need to create and connect to your instance.
+
+Test Kitchen uses drivers, or plugins, to work with cloud and virtualization platforms. Some drivers come with the Chef DK. For Azure, you need to install the `kitchen-azurerm` driver on your workstation manually. You also need to create a configuration file on your workstation that authenticates access to Azure resources.
+
+Review the [kitchen-azurerm](https://github.com/pendrica/kitchen-azurerm) project page and perform the steps to install the driver and set your configuration file.
+
+Here's an example of how to install the `kitchen-azurerm` driver.
+
+<% command_snippet(workstation: 'ubuntu', path: 'local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/install-kitchen-azurerm') %>
+
+The process involves compiling Ruby gems from source. If you receive an error, you may need to install build tools that can compile the sources. For example, on Mac OS, you can install [Xcode](https://developer.apple.com/xcode/ide/). On Linux, you can install **build-essential**. Here's an example for Ubuntu:
+
+```bash
+$ sudo apt-get install build-essential
+```
+
+Here's an example Azure <% fp 'credentials' %> file.
+
+```ruby
+# ~/.azure/credentials
+[12345678-YOUR-GUID-HERE-123456789abc]
+client_id = "12345678-1234-1234-1234-CBA987654321"
+client_secret = "5VqaLPR3EDPt+your-secret-here-BHdLBXVggpb3="
+tenant_id = "12345678-1234-1234-1234-CBA987654321"
+```
+
+Also note the [region](https://azure.microsoft.com/en-us/regions/), for example, **East US** or **UK West**, where you'll run your test instances.
+
+You'll also need an [SSH public and private key pair](https://docs.microsoft.com/en-us/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys) to connect to your instances. 
+
+If you're new to Azure, their [Create a Linux virtual machine with the Azure portal](https://docs.microsoft.com/en-us/azure/virtual-machines/virtual-machines-linux-quick-create-portal?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json) tutorial walks you through the creation of your first Linux virtual machine. After you verify that you're able to create an instance, note the region for later.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you're all set up, let's get a hang for how Test Kitchen works by applying the web server cookbook you wrote in the previous tutorial on a local test instance.
+
+<% end %>

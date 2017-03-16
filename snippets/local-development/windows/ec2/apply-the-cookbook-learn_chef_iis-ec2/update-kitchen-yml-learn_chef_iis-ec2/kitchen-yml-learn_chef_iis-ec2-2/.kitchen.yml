@@ -6,12 +6,15 @@ driver:
   availability_zone: b
   subnet_id: subnet-3f22bd15
   instance_type: m1.small
-  image_id: ami-3f0c4628
+  image_id: ami-abf616bd
   security_group_ids: sg-48984132
   retryable_tries: 120
 
 provisioner:
   name: chef_zero
+
+verifier:
+  name: inspec
 
 transport:
   ssh_key: /root/.ssh/learn-chef.pem
@@ -25,5 +28,5 @@ suites:
       - recipe[learn_chef_iis::default]
     verifier:
       inspec_tests:
-        - test/recipes
+        - test/smoke/default
     attributes:

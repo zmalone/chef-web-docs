@@ -1,0 +1,288 @@
+---
+title: 'Set up your workstation'
+order: 1
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: About 2 hours
+snippet_path: local-development/windows/vagrant
+snippet_workstation: ubuntu
+headings: [
+  { label: 'Before you begin', href: '#beforeyoubegin' },
+  { label: '1. Set up your workstation', href: '#step1' },
+  { label: '2. Install kitchen-hyperv', href: '#step2' },
+  { label: '3. Enable Hyper-V', href: '#step3' },
+  { label: '4. Create a base VM', href: '#step4' }
+]
+---
+This tutorial uses Test Kitchen along with Microsoft Hyper-V to manage test instances.
+
+Test Kitchen enables you to specify details about your virtual machine, including its operating system, available memory, and network settings, and how to run Chef &ndash; including which recipes and which tests to run. Test Kitchen is the interface you use to create, destroy, and run Chef on your instances. Test Kitchen communicates with Windows instances over WinRM.
+
+To use the Test Kitchen with Hyper-V, you first create a _base_, or parent, virtual machine that's set to some standard configuration. When Test Kitchen runs, it first creates a _child_ instance by loading the base configuration into a new virtual machine instance. Then Test Kitchen applies your cookbooks to the child instance. The Hyper-V driver creates a [differencing disk](https://technet.microsoft.com/library/cc720381.aspx) that captures what changes are made to the child instance. A differencing disk enables the parent disk to remain unmodified, and helps keep the size of Test Kitchen child instances smaller.
+
+Here you'll make sure that your workstation is set up for Chef development. You'll also configure a base virtual machine to run Windows Server 2012 R2 that can perform common tasks such as accept remote WinRM connections and access the Internet. You'll use this base virtual machine in the next part.
+
+Although it can take some time to set up the base image, you only have to do this one time. Once you have a base virtual machine set up, you can reuse it as many times as you need as you develop and test your cookbooks.
+
+[START_BOX]
+
+## Before you begin
+
+Your workstation &ndash; the system from which you develop your cookbooks &ndash; can be a physical machine or a virtual machine that supports nested virtualization.
+
+Ensure that your workstation supports and is configured to use CPU virtualization. This setting is typically configured through your system's BIOS. If you're using a virtual machine as your workstation through a program such as VMware Fusion, [ensure that nested virtualization is enabled](https://communities.vmware.com/docs/DOC-8970) on the workstation VM.
+
+Also ensure that your workstation meets the [system requirements](https://en.wikipedia.org/wiki/Hyper-V#System_requirements) for running Hyper-V. We recommend your system have at least 50 GB of free disk space available and at least 8 GB of memory.
+
+[END_BOX]
+
+[START_BOX]
+
+## 1. Set up your workstation for Chef development
+
+Although this tutorial doesn't involve the Chef server or bootstrapping a node, we recommend that you complete [Manage a Windows Server node](/tutorials/manage-a-node/windows/) before starting this tutorial.
+
+If you prefer to learn about local development now, before learning how to bootstrap a node, [perform these steps](/tutorials/manage-a-node/windows/hosted/set-up-your-workstation/) to set up your workstation. Then come back to this page.
+
+At this point, your workstation should:
+
+* have the latest version of the Chef Development Kit (Chef DK).
+* have a programmer's text editor that you're comfortable working with.
+* have the <% fp '~/learn-chef' %> directory for you to work in.
+* have Git, which is included in the Chef DK.
+
+Having Git is important because you'll use it to download starter code to work with.
+
+In this tutorial, you'll run both PowerShell and Chef commands. Remember to open the Chef Development Kit desktop shortcut. The desktop shortcut brings up a PowerShell session that's configured to work with Chef.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Install the kitchen-hyperv driver
+
+Although Chef DK comes with Test Kitchen, you need to install the [kitchen-hyperv](https://github.com/test-kitchen/kitchen-hyperv) driver to enable Test Kitchen to communicate with Hyper-V.
+
+Run this command to install it.
+
+```ps
+# ~
+$ chef gem install kitchen-hyperv
+Fetching: kitchen-hyperv-0.3.0.gem (100%)
+Successfully installed kitchen-hyperv-0.3.0
+Parsing documentation for kitchen-hyperv-0.3.0
+Installing ri documentation for kitchen-hyperv-0.3.0
+Done installing documentation for kitchen-hyperv after 1 seconds
+1 gem installed
+```
+
+The [chef gem](https://docs.chef.io/ctl_chef.html#chef-gem) command ensures that the Ruby gem is installed into the Chef DK environment.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Enable the Hyper-V Windows feature
+
+You'll use Test Kitchen to create an instance under Hyper-V later in this tutorial. For now, let's ensure you have everything you'll need to create and connect to your instance.
+
+Start by running this PowerShell command to enable Hyper-V.
+
+```ps
+$ Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+```
+
+You'll need to reboot your workstation after the installation completes.
+
+The [Hyper-V documentation](https://technet.microsoft.com/en-us/library/hh846766.aspx#BKMK_Step1) provides additional options, including how to enable Hyper-V through the user interface.
+
+After your system reboots, open a new Chef DK PowerShell prompt. Then, ensure that the Hyper-V module for PowerShell is enabled. Start by running this command to list all loaded Hyper-V cmdlets.
+
+```ps
+$ Get-Command –Module Hyper-V
+```
+
+If the command returns no results, run these commands to load the Hyper-V PowerShell module.
+
+```ps
+$ Import-Module ServerManager
+$ Add-WindowsFeature RSAT-Hyper-V-Tools –IncludeAllSubFeature
+
+Success Restart Needed Exit Code      Feature Result
+------- -------------- ---------      --------------
+True    No             Success        {Hyper-V Module for Windows PowerShell, Hy...
+```
+
+Now list all loaded Hyper-V cmdlets a second time.
+
+```ps
+$ Get-Command –Module Hyper-V
+
+CommandType     Name                                               Version    Source
+-----------     ----                                               -------    ------
+Cmdlet          Add-VMAssignableDevice                             2.0.0.0    Hyper-V
+Cmdlet          Add-VMDvdDrive                                     2.0.0.0    Hyper-V
+Cmdlet          Add-VMFibreChannelHba                              2.0.0.0    Hyper-V
+Cmdlet          Add-VMGroupMember                                  2.0.0.0    Hyper-V
+Cmdlet          Add-VMHardDiskDrive                                2.0.0.0    Hyper-V
+[...]
+Cmdlet          Test-VHD                                           2.0.0.0    Hyper-V
+Cmdlet          Test-VMNetworkAdapter                              2.0.0.0    Hyper-V
+Cmdlet          Test-VMReplicationConnection                       2.0.0.0    Hyper-V
+Cmdlet          Update-VMVersion                                   2.0.0.0    Hyper-V
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Create a base virtual machine
+
+In this part, you build a base virtual machine that and can receive remote WinRM commands and that can access the network. Because of the way Windows Server 2012 R2 is licensed, we can't provide you with a preconfigured virtual machine. Here, you'll use the evaluation version of Windows Server 2012 R2 to build your own.
+
+Here are the steps you'll perform.
+
+1. Download the evaluation version of Windows Server 2012 R2 as an ISO image
+1. Create a Hyper-V virtual switch to provide your virtual machine with Internet access.
+1. Create a location to store virtual machines.
+1. Create an empty base virtual machine.
+1. Connect to your virtual machine through Hyper-V Manager.
+1. Install Windows Server 2012 R2 on your virtual machine.
+1. Configure the base virtual machine to accept remote WinRM connections.
+1. Shut down your virtual machine.
+
+### 4.1 Download the evaluation version of Windows Server 2012 R2
+
+To install Windows Server on your virtual machine, you'll download the evaluation version of Windows Server as an ISO image and mount that image as a DVD drive. When your virtual machine boots, it will run the installer from the virtual DVD drive.
+
+Download the ISO image of the evaluation version of Windows Server 2012 R2 to your workstation from this URL to the <code class="file-path">C:\iso</code> directory on your workstation. If you can't download the file to this location, you can choose another &ndash; just be sure to change <code class="file-path">C:\iso</code> to your path in the steps that follow.
+
+<http://care.dlservice.microsoft.com/dl/download/6/2/A/62A76ABB-9990-4EFC-A4FE-C7D698DAEB96/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO>
+
+While you wait for the download, you can continue to the next step.
+
+### 4.2 Create a Hyper-V virtual switch
+
+Next, you'll need to configure the base virtual image to have Internet access.
+
+To do so, you'll choose the network adapter on your workstation that can access the Internet and create a [virtual switch](https://technet.microsoft.com/en-us/library/Hh831823.aspx) that provides the virtual machine with access to that adapter.
+
+The first step is to list all network adapters. From a PowerShell window on your workstation, run the [Get-NetAdapter](https://technet.microsoft.com/library/JJ130867.aspx) cmdlet to list all available adapters.
+
+```ps
+$ Get-NetAdapter
+
+Name                      InterfaceDescription                    ifIndex Status       MacAddress             LinkSpeed
+----                      --------------------                    ------- ------       ----------             ---------
+Ethernet0                 Intel(R) 82574L Gigabit Network Conn...       5 Up           00-0C-29-1D-99-B3         1 Gbps
+Bluetooth Network Conn... Bluetooth Device (Personal Area Netw...       4 Disconnected B8-E8-56-47-FB-43         3 Mbps
+```
+
+The output you see depends on what network adapters you have installed. In this example, the `Up` status indicates that `Ethernet0` is configured for external network traffic.
+
+The next step is to create a variable that refers to your public network adapter. Run this from your PowerShell window, replacing `Ethernet0` with the value in the `Name` column that matches your external adapter.
+
+```ps
+$ $net_adapter = Get-NetAdapter -Name Ethernet0
+```
+
+Now run [New-VMSwitch](https://technet.microsoft.com/library/hh848455.aspx) to create the virtual switch. You'll use the name of the switch, `ExternalSwitch`, in a later step when you create the base virtual machine.
+
+```ps
+$ New-VMSwitch -Name ExternalSwitch -NetAdapterName $net_adapter.Name -AllowManagementOS $True -Notes "Provide public network access to VMs"
+
+Name           SwitchType NetAdapterInterfaceDescription
+----           ---------- ------------------------------
+ExternalSwitch External   Intel(R) 82574L Gigabit Network Connection
+```
+
+### 4.3 Create a location to store virtual machines
+
+Now let's create a location on disk to store the base virtual machine and the virtual machines that Test Kitchen creates.
+
+For this tutorial, we'll use <code class="file-path">C:\Hyper-V</code>. You can use a different location if you prefer, just be sure to replace <code class="file-path">C:\Hyper-V</code> with your path in the steps that follow.
+
+Run this command to create the directory.
+
+```ps
+$ mkdir C:\Hyper-V
+```
+
+### 4.4 Create an empty base virtual machine
+
+If your download is complete, you now have everything you need to create the base virtual machine. You have a location to store it, a Hyper-V virtual switch, and the Windows Server 2012 R2 ISO image on your hard drive.
+
+Run these commands to create a new virtual machine, mount the ISO image to it as a DVD drive, and start the virtual machine.
+
+```ps
+$ $vm = New-VM -Name WindowsServer2012R2 -MemoryStartupBytes 1GB -NewVHDPath "C:\Hyper-V\WindowsServer2012R2.vhdx" -NewVHDSizeBytes 40GB -Path "C:\Hyper-V" -SwitchName ExternalSwitch
+$ $vm | Add-VMDvdDrive -Path "C:\iso\9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO"
+$ $vm | Set-VM -AutomaticStartAction StartIfRunning -AutomaticStopAction ShutDown
+$ $vm | Start-VM
+```
+
+The [New-VM](https://technet.microsoft.com/library/hh848537.aspx) command also creates a new virtual hard disk drive for the virtual machine that can grow as large as 40 GB and associates the virtual machine with your virtual switch.
+
+### 4.5 Connect to your virtual machine through Hyper-V Manager
+
+Now start Hyper-V Manager on your workstation, either from the **Start** screen or by running this command.
+
+```ps
+$ C:\Windows\System32\mmc.exe C:\Windows\System32\virtmgmt.msc
+```
+
+Your base virtual machine appears in the **Virtual Machines** panel.
+
+![Hyper-V Manager](misc/hyperv-view-vm.png)
+
+Now connect to your virtual machine either by double-clicking it or from the **Connect** option in the **Actions** pane.
+
+### 4.6 Install Windows Server 2012 R2 on your virtual machine
+
+At this point your virtual machine has an empty hard drive and is mounted to your ISO image as a virtual DVD drive. Now you need to install Windows Server 2012 R2 on the hard drive.
+
+The `New-VM` cmdlet that you ran earlier sets this boot order:
+
+1. Network
+1. Hard disk drive
+1. DVD drive
+
+Your virtual network doesn't have a boot server and your virtual hard drive does not yet have an operating system installed on it, so the startup process automatically moves to booting from the virtual DVD drive. You'll see the Windows Server installer start automatically.
+
+![Windows setup](misc/hyperv-windows-setup.png)
+
+Proceed through the installation process. Two of the steps require specific options:
+
+* Select **Windows Server 2012 Standard Evaluation (Server with a GUI)** when prompted to select the operating system you want to install.
+* Choose **Custom: Install Windows only (advanced)** when prompted which type of installation do you want.
+
+Choose the default option for the other steps.
+
+From the **Settings** screen, you'll be prompted to create a password for the `Administrator` user. Note the password that you choose.
+
+### 4.7 Configure the base virtual machine to accept remote WinRM connections
+
+In [Manage a node](/tutorials/manage-a-node/windows/), you configured your node to [accept remote WinRM connections](/tutorials/manage-a-node/windows/hosted/get-a-node-to-bootstrap#step4) before you bootstrapped it. You'll need to follow a similar process on your base virtual machine.
+
+By default, the Windows firewall permits inbound traffic on port 5985 (WinRM) only from systems in the same local domain. Let's make sure that the firewall is configured to accept inbound connections from any remote address.
+
+After the Windows Server installation completes, connect to your virtual machine as `Administrator`. Then, from a PowerShell window, run this command to change the default rule to enable inbound traffic from any remote address.
+
+```ps
+$ Get-NetFirewallPortFilter | ?{$_.LocalPort -eq 5985 } | Get-NetFirewallRule | ?{ $_.Direction –eq "Inbound" -and $_.Profile -eq "Public" -and $_.Action –eq "Allow"} | Set-NetFirewallRule -RemoteAddress "Any"
+```
+
+### 4.8 Shut down your virtual machine
+
+In practice, at this point you might finalize your base VM's configuration by customizing any settings or installing any additional software you need.
+
+The final step is to shut down your virtual machine, either from the instance or through Hyper-V. This step is important because Test Kitchen requires the instance to be shut down so that it can properly create the differencing disk.
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Now that you're all set up, let's get a hang for how Test Kitchen works by applying the web server cookbook you wrote in the previous tutorial on a local test instance.
+
+<% end %>
