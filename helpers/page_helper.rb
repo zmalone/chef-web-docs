@@ -17,6 +17,7 @@ module PageHelper
     page
   end
 
+  # TODO: Consolidate with newer tree helpers/logic
   def find_pages_by_folder(folder, depth = -1)
     # logger.info "Find page in folder '#{folder}'"
     pages = []
@@ -28,16 +29,19 @@ module PageHelper
     pages.compact
   end
 
+  # TODO: Consolidate with newer tree helpers/logic
   def extract_filepaths_from_tree(hash, max_depth = -1, current_depth = 0)
     filepaths = []
     if max_depth == -1 || max_depth > current_depth
       current_depth = current_depth + 1
-      values = hash.to_hash.values
-      values.each do |val|
-        if val.respond_to? :to_hash
-          filepaths.concat(extract_filepaths_from_tree(val, max_depth, current_depth + 1))
-        else
-          filepaths << val
+      if hash.respond_to? :to_hash
+        values = hash.to_hash.values
+        values.each do |val|
+          if val.respond_to? :to_hash
+            filepaths.concat(extract_filepaths_from_tree(val, max_depth, current_depth + 1))
+          else
+            filepaths << val
+          end
         end
       end
     end
@@ -126,14 +130,18 @@ module PageHelper
 
     data.tree.modules.keys.each do |module_id|
       module_tree = restructure_tree(data.tree.modules[module_id])
-      tree_calculate_time(module_tree)
-      tree[:modules].merge!(format_tree_data(module_tree))
+      if module_tree
+        tree_calculate_time(module_tree)
+        tree[:modules].merge!(format_tree_data(module_tree))
+      end
     end
 
     data.tree.tracks.keys.each do |track_id|
       track = restructure_tree(data.tree.tracks[track_id])
-      track_calculate_time(track, tree[:modules])
-      tree[:tracks].merge!(format_tree_data(track))
+      if track
+        track_calculate_time(track, tree[:modules])
+        tree[:tracks].merge!(format_tree_data(track))
+      end
     end
     tree
   end
@@ -182,6 +190,7 @@ module PageHelper
   end
 
   def restructure_tree(tree_hash)
+    return unless tree_hash.respond_to? :keys
     keys = tree_hash.keys
     child_keys = keys.reject { |key| key =~ /\./ }
     index_path = tree_hash[keys.select { |key| key =~ /^index\./ }.first]
