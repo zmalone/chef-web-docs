@@ -94,18 +94,13 @@ class Middleman::Sitemap::Resource
   end
 
   def minutes
-    if self.data.time_to_complete
-      data = self.data.time_to_complete.match(/^([\d]+)(-([\d]+))?\s(minutes?|hours?)$/)
-      if data
-        range_min = data[1].to_i
-        range_max = (data[3]) ? data[3].to_i : range_min
-        if data[4].start_with? 'hour'
-          [range_min * 60, range_max * 60]
-        else
-          [range_min, range_max]
-        end
-      end
-    end
+    return unless self.data.time_to_complete
+    data = self.data.time_to_complete.match(/^([\d]+)(-([\d]+))?\s(minutes?|hours?)$/)
+    return unless data
+    range_min = data[1].to_i
+    range_max = (data[3]) ? data[3].to_i : range_min
+    return [range_min, range_max] unless data[4].start_with? 'hour'
+    [range_min * 60, range_max * 60]
   end
 
   def <=>(other_resource)

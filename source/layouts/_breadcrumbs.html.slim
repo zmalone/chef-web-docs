@@ -1,56 +1,21 @@
 .breadcrumbs
+  - current_track = find_track(current_page)
   - if current_track
     a aria-controls="drop1" aria-expanded="false" data-dropdown="drop1"
       h5 Tracks
       span
-        = current_track.data.title
+        = current_track.page.data.title
     ul#drop1.f-dropdown.medium aria-hidden="true" data-dropdown-content="" tabindex="-1"
       - tracks.children.each do |item|
         li
           = link_to item.page.data.title, item.page
-  a aria-controls="drop2" aria-expanded="false" data-dropdown="drop2"
-    h5 MODULES
-    - if current_module
+  - get_current_breadcrumbs(current_page).each_with_index do |breadcrumb, index|
+    a aria-controls="drop#{index + 2}" aria-expanded="false" data-dropdown="drop#{index + 2}"
+      h5
+        = breadcrumb.label
       span
-        = current_module.data.title
-    - else
-      span Select one
-
-  ul#drop2.f-dropdown.content aria-hidden="true" data-dropdown-content="" tabindex="-1"
-    - if current_track
-      - current_track.data.modules.each_with_index do |module_id, index|
-        - page = find_page_by_id('modules', module_id)
-        - if page
-          li
-            = link_to page.data.title, page.url
-  - if current_module
-    - if current_module.data.environments
-      a aria-controls="drop3" aria-expanded="false" data-dropdown="drop3"
-        h5 Server environment
-        - if current_env
-          span
-            = current_env.data.short_title
-        - else
-          span Select One
-      ul#drop3.f-dropdown.content aria-hidden="true" data-dropdown-content="" tabindex="-1"
-        - current_module.data.environments.each_with_index do |environment, index|
-          - for page in current_module.children.sort_by { |x| x.data.title }
-            - if page.data.platform_id == environment
-              li
-                = link_to page.data.short_title, page.url
-  - if current_env
-    - if current_env.data.chef_server
-      a aria-controls="drop4" aria-expanded="false" data-dropdown="drop4"
-        h5 Chef Server environments
-        - if current_chef_env
-          span
-            = current_chef_env.data.short_title
-        - else
-          span Select One
-      ul#drop4.f-dropdown.content aria-hidden="true" data-dropdown-content="" tabindex="-1"
-        - current_env.data.chef_server.each_with_index do |chef_env, index|
-          - for page in current_env.children.sort_by { |x| x.data.title }
-            - if page.data.environment == chef_env
-              li
-                = link_to page.data.short_title, page.url
-
+        = breadcrumb.title
+    ul.f-dropdown.content id="drop#{index + 2}" aria-hidden="true" data-dropdown-content="" tabindex="-1"
+      - for page in breadcrumb.options.sort_by { |x| x.data.short_title || x.data.title }
+        li
+          = link_to (page.data.short_title || page.data.title), page

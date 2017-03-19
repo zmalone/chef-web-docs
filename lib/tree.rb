@@ -53,11 +53,17 @@ class Tree < ::Middleman::Extension
   end
 
   def get_module_by_id(id)
-    get_by_id(modules, id)
+    return if id.nil?
+    module_obj = get_by_id(modules, id)
+    logger.warn "WARN: Unable to find module '#{id}'" unless module_obj
+    module_obj
   end
 
   def get_track_by_id(id)
-    get_by_id(tracks, id)
+    return if id.nil?
+    track = get_by_id(tracks, id)
+    logger.warn "WARN: Unable to find track '#{id}'" unless track
+    track
   end
 
   def get_by_id(tree, id)
@@ -77,7 +83,7 @@ class Tree < ::Middleman::Extension
     resources
   end
 
-  def process_tree(file_tree)
+  def process_tree(file_tree, parent = nil)
     data = Hashie::Mash.new
     file_and_folders = file_tree.keys
     folders = file_and_folders.reject { |key| key =~ /\./ }
@@ -97,10 +103,11 @@ class Tree < ::Middleman::Extension
       data.minutes = page.minutes || [0, 0]
       data.remaining = data.minutes.clone
       data.modules = page.data.modules.to_a if page.data.modules
+      data.parent = parent.id unless parent.nil?
       data.children = []
 
       folders.each do |folder|
-        child = process_tree(file_tree[folder])
+        child = process_tree(file_tree[folder], data)
         unless child.empty?
           data.children << child
           data.is_fork = true if child.children.count > 0
@@ -127,14 +134,16 @@ class Tree < ::Middleman::Extension
         end
       end
 
-      # Add up remaining time for child modules
+      # Verify the existence of modules on a track, and add up the time
       if data.modules
-        data.modules.each do |module_id|
+        data.modules.delete_if do |module_id|
           child = self.get_module_by_id(module_id)
-          if child
+          next true unless child
+          if child.remaining
             data.remaining[0] += child.remaining[0]
             data.remaining[1] += child.remaining[1]
           end
+          false
         end
       end
     end
