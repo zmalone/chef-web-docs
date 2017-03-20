@@ -24,7 +24,7 @@ module PageHelper
     return (match) ? [match[1], match[3]] : ''
   end
 
-  def find_module(page)
+  def get_module(page)
     root = page
     section, id = get_page_section(page)
     return unless section === 'modules'
@@ -34,10 +34,10 @@ module PageHelper
     get_module_by_id(root.id)
   end
 
-  def find_track(page)
+  def get_track(page)
     section, id = get_page_section(page)
     return get_track_by_id(page.id) if section === 'tracks' && id
-    module_obj = find_module(page)
+    module_obj = get_module(page)
     track = tracks.children.select { |track|
       track.modules.select { |id|
         id == module_obj.id
@@ -49,8 +49,8 @@ module PageHelper
 
   def get_current_breadcrumbs(page)
     breadcrumbs = []
-    module_root = find_module(page)
-    track = find_track(page)
+    module_root = get_module(page)
+    track = get_track(page)
 
     # Initialize a module object at the current page
     module_obj = module_root ? get_module_by_id(page.id) : nil

@@ -69,17 +69,17 @@ describe PageHelper do
     end
   end
 
-  describe '.find_module' do
+  describe '.get_module' do
     let(:module_id) { 'manage-a-node' }
     let(:module_child_path) { '/modules/manage-a-node/rhel/automate/index.html' }
     let(:module_child_page) { helper.sitemap.find_resource_by_path(module_child_path) }
 
     it 'returns the root module tree object' do
-      expect(helper.find_module(module_child_page).id).to eq module_id
+      expect(helper.get_module(module_child_page).id).to eq module_id
     end
   end
 
-  describe '.find_track' do
+  describe '.get_track' do
     let(:track_id) { 'infrastructure-automation' }
     let(:track_path) { '/tracks/infrastructure-automation/index.html' }
     let(:track_page) { helper.sitemap.find_resource_by_path(track_path) }
@@ -87,11 +87,11 @@ describe PageHelper do
     let(:module_child_page) { helper.sitemap.find_resource_by_path(module_child_path) }
 
     it 'returns the current track for a track page' do
-      expect(helper.find_track(track_page).id).to eq track_id
+      expect(helper.get_track(track_page).id).to eq track_id
     end
 
     it 'returns the current track for a module page' do
-      expect(helper.find_track(module_child_page).id).to eq track_id
+      expect(helper.get_track(module_child_page).id).to eq track_id
     end
   end
 end
