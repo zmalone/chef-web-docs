@@ -38,6 +38,7 @@ module PageHelper
     section, id = get_page_section(page)
     return get_track_by_id(page.id) if section === 'tracks' && id
     module_obj = get_module(page)
+    return unless module_obj
     track = tracks.children.select { |track|
       track.modules.select { |id|
         id == module_obj.id
@@ -99,6 +100,15 @@ module PageHelper
   def is_fork?(page)
     is_module = get_module_by_id(page.id)
     is_module.is_fork if is_module
+  end
+
+  def get_page_classes(page, existing_classes)
+    classes = [existing_classes]
+    if get_module_by_id(page.id)
+      fork_class = is_fork?(page) ? 'multi-page' : 'unit-page'
+      classes << fork_class
+    end
+    classes.join(' ')
   end
 
   def get_tree_data
