@@ -39,7 +39,13 @@ export class AppComponent implements OnInit {
   }
 
   public logout  = function(){
-    return this._tokenService.signOut()
+    if (this._tokenService.signOut() ){
+      localStorage.clear()
+      window.location.href = '/'
+      return true
+    }else{
+      return false
+    }
   }
 
   public getUserInfo  = function() {
