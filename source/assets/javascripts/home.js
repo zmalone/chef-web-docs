@@ -32,9 +32,38 @@ $(document).ready(function() {
   }, function() {
 
   });
+
+  var SHOW_MODULE = 16
+  var SHOW_TRACK = 4
+
+  $("div.module-hide").slice(0, SHOW_MODULE).show();
+  $("div.track-hide").slice(0, SHOW_TRACK).show();
+  $(".module-load-more").on('click', function (e) {
+    e.preventDefault();
+    $("div.module-hide:hidden").slice(0, SHOW_MODULE).slideDown();
+    if ($("div.module-hide:hidden").length == 0) {
+      $(".load-module").fadeOut('slow');
+    }
+    $('html,body').animate({
+      scrollTop: $(this).offset().top
+    }, 500);
+  });
+  $(".track-load-more").on('click', function (e) {
+    e.preventDefault();
+    $("div.track-hide:hidden").slice(0, SHOW_TRACK).slideDown();
+    if ($("div.track-hide:hidden").length == 0) {
+      $(".load-track").fadeOut('slow');
+    }
+    $('html,body').animate({
+      scrollTop: $(this).offset().top
+    }, 500);
+  });
+
 });
 $('.cls-modal').click(function(){
     $('#SignupModal').foundation('reveal','close')
     $('#loginModal').foundation('reveal','close')
 })
+
+
 
