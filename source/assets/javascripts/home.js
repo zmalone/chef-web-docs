@@ -34,29 +34,27 @@ $(document).ready(function() {
   });
 
   var SHOW_MODULE = 16
-  var SHOW_TRACK = 4
+  var SHOW_TRACK = 10
 
   $("div.module-hide").slice(0, SHOW_MODULE).show();
   $("div.track-hide").slice(0, SHOW_TRACK).show();
   $(".module-load-more").on('click', function (e) {
     e.preventDefault();
-    $("div.module-hide:hidden").slice(0, SHOW_MODULE).slideDown();
+    $("div.module-hide:hidden").slice(0, SHOW_MODULE).each(function(index) {
+      $(this).delay(500*index).fadeIn(300);
+    });
     if ($("div.module-hide:hidden").length == 0) {
       $(".load-module").fadeOut('slow');
     }
-    $('html,body').animate({
-      scrollTop: $(this).offset().top
-    }, 500);
   });
   $(".track-load-more").on('click', function (e) {
     e.preventDefault();
-    $("div.track-hide:hidden").slice(0, SHOW_TRACK).slideDown();
+    $("div.track-hide:hidden").slice(0, SHOW_TRACK).each(function(index) {
+      $(this).delay(400*index).fadeIn(300);
+    });
     if ($("div.track-hide:hidden").length == 0) {
       $(".load-track").fadeOut('slow');
     }
-    $('html,body').animate({
-      scrollTop: $(this).offset().top
-    }, 500);
   });
 
 });
