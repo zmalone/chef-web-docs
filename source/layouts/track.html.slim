@@ -7,31 +7,30 @@
         .tag-img
           img src="#{current_page.data.image_url}"
   .row
-    = partial 'layouts/_breadcrumbs', locals: { current_track:current_page, current_module:nil, current_env:nil, current_chef_env:nil }
+    = partial 'layouts/_breadcrumbs'
     h3
-      | Modules (4)
+      | Modules (#{get_track(current_page).modules.count})
   .track-modules
-    - current_page.data.modules.each_with_index do |module_id, index|
-      - page = find_page_by_id('modules', module_id)
-      - if page
-        .row
-          .large-card.large-12.medium-12.small-12.large-centered.medium-centered.columns
-            .head class="#{current_page.data.track_class}"
-              = index + 1
-              | &nbsp;
-              = page.data.title
-              user-module-progress module="#{module_id}"
-            .row
-              .columns.large-8.medium-8.desc
-                p
-                  = page.data.description
-                a href="" watch video
-              .columns.large-4.medium-4.btn-wrap
-                a.button.btn-primary.user-start-btn href="#{page.url}" module="#{module_id}" Start
-                ul.links
-                  li
-                    a href=""
-                      = page.data.level
+    - get_track(current_page).modules.each_with_index do |module_id, index|
+      - module_obj = get_module_by_id(module_id)
+      .row
+        .large-card.large-12.medium-12.small-12.large-centered.medium-centered.columns
+          .head class="#{current_page.data.track_class}"
+            = index + 1
+            | &nbsp;
+            = module_obj.page.data.title
+            user-module-progress module="#{module_id}"
+          .row
+            .columns.large-8.medium-8.desc
+              p
+                = module_obj.page.data.description
+              a href="" watch video
+            .columns.large-4.medium-4.btn-wrap
+              a.button.btn-primary.user-start-btn href="#{module_obj.page.url}" module="#{module_id}" Start
+              ul.links
+                li
+                  a href=""
+                    = module_obj.page.data.level
   .related-tracks
     .row
       h3 Related Tracks

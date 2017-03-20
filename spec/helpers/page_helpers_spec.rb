@@ -5,6 +5,9 @@ describe PageHelper do
   subject(:helper) { Object.new.extend(PageHelper) }
 
   before(:each) do
+    # Add extension helpers to context.
+    MM_TEST_APP.extensions.add_exposed_to_context(helper)
+
     allow(helper).to receive(:sitemap).and_return(MM_TEST_APP.sitemap)
     allow(helper).to receive(:data).and_return(MM_TEST_APP.data) # middleman-navtree data
     allow(helper).to receive(:logger).and_return(MM_TEST_APP.logger)
@@ -19,8 +22,8 @@ describe PageHelper do
     let(:track_json) do
       {
         url: '/tracks/infrastructure-automation',
-        minutes: [185, 415],
-        children: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node', 'develop-locally']
+        remaining: [185, 415],
+        modules: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node']
       }
     end
 
@@ -28,7 +31,7 @@ describe PageHelper do
     let(:module_json) do
       {
         url: '/modules/manage-a-node',
-        minutes: [130, 310],
+        remaining: [130, 310],
         is_fork: true,
         children: ['manage-a-node/rhel', 'manage-a-node/ubuntu', 'manage-a-node/windows']
       }
@@ -38,6 +41,7 @@ describe PageHelper do
     let(:page_json) do
       {
         url: '/modules/manage-a-node/rhel/automate/bootstrap-your-node',
+        remaining: [20, 20],
         minutes: [20, 20]
       }
     end
@@ -65,30 +69,29 @@ describe PageHelper do
     end
   end
 
+  describe '.get_module' do
+    let(:module_id) { 'manage-a-node' }
+    let(:module_child_path) { '/modules/manage-a-node/rhel/automate/index.html' }
+    let(:module_child_page) { helper.sitemap.find_resource_by_path(module_child_path) }
 
-  describe '.get_sitemap_path' do
-    it 'strips trailing file extensions' do
-      expect(helper.get_sitemap_path('/some/path/index.html.md.erb')).to eq '/some/path/index.html'
-    end
-
-    it 'strips trailing file extensions (even when not html)' do
-      expect(helper.get_sitemap_path('index.erb.html.another')).to eq 'index.erb'
-    end
-
-    it 'returns nil for partial' do
-      expect(helper.get_sitemap_path('/_index.erb')).to be_nil
+    it 'returns the root module tree object' do
+      expect(helper.get_module(module_child_page).id).to eq module_id
     end
   end
 
-  describe '.find_page_by_path' do
-    let(:page) { 'modules/manage-a-node/index.html.md.erb' }
+  describe '.get_track' do
+    let(:track_id) { 'infrastructure-automation' }
+    let(:track_path) { '/tracks/infrastructure-automation/index.html' }
+    let(:track_page) { helper.sitemap.find_resource_by_path(track_path) }
+    let(:module_child_path) { '/modules/manage-a-node/rhel/automate/index.html' }
+    let(:module_child_page) { helper.sitemap.find_resource_by_path(module_child_path) }
 
-    it 'returns existing page' do
-      expect(helper.find_page_by_path(page)).to_not be_nil
+    it 'returns the current track for a track page' do
+      expect(helper.get_track(track_page).id).to eq track_id
     end
 
-    it 'returns nil for an unknown page' do
-      expect(helper.find_page_by_path('/some/path/unknown.html.md.erb')).to be_nil
+    it 'returns the current track for a module page' do
+      expect(helper.get_track(module_child_page).id).to eq track_id
     end
   end
 end

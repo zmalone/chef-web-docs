@@ -3,6 +3,7 @@ require 'slim'
 require 'lib/gulp'
 require 'lib/sitemap'
 require 'lib/markdown'
+require 'lib/tree'
 require 'lib/helpers/deploy_helpers'
 require 'lib/helpers/feature_helpers'
 require 'lib/helpers/tab_helpers'
@@ -113,7 +114,7 @@ set :fonts_dir, 'assets/fonts'
 set :root_dir, File.dirname(__FILE__)
 
 # Enable generation of navigation tree data based on the site structure
-activate :navtree
+activate :tree
 
 # Redirects
 chef_docs_url = ''
