@@ -35,26 +35,34 @@ $(document).ready(function() {
 
   var SHOW_MODULE = 16
   var SHOW_TRACK = 10
+  var ANIMATION_DURATION = 685
+  var ANIMATION_OFFSET = 162
 
   $("div.module-hide").slice(0, SHOW_MODULE).show();
   $("div.track-hide").slice(0, SHOW_TRACK).show();
   $(".module-load-more").on('click', function (e) {
     e.preventDefault();
-    $("div.module-hide:hidden").slice(0, SHOW_MODULE).each(function(index) {
-      $(this).delay(500*index).fadeIn(300);
-    });
-    if ($("div.module-hide:hidden").length == 0) {
+    if (SHOW_MODULE >= $("div.module-hide:hidden").length) {
       $(".load-module").fadeOut('slow');
     }
+    $("div.module-hide:hidden").slice(0, SHOW_MODULE).each(function(index) {
+      $(this).delay(ANIMATION_OFFSET * index).fadeIn({
+        duration: ANIMATION_DURATION,
+        easing: 'linear'
+      });
+    });
   });
   $(".track-load-more").on('click', function (e) {
     e.preventDefault();
-    $("div.track-hide:hidden").slice(0, SHOW_TRACK).each(function(index) {
-      $(this).delay(400*index).fadeIn(300);
-    });
-    if ($("div.track-hide:hidden").length == 0) {
+    if (SHOW_TRACK >= $("div.track-hide:hidden").length) {
       $(".load-track").fadeOut('slow');
     }
+    $("div.track-hide:hidden").slice(0, SHOW_TRACK).each(function(index) {
+      $(this).delay(ANIMATION_OFFSET * index).fadeIn({
+        duration: ANIMATION_DURATION,
+        easing: 'linear'
+      });
+    });
   });
 
 });
