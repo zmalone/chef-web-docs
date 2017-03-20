@@ -32,9 +32,44 @@ $(document).ready(function() {
   }, function() {
 
   });
+
+  var SHOW_MODULE = 16
+  var SHOW_TRACK = 10
+  var ANIMATION_DURATION = 685
+  var ANIMATION_OFFSET = 162
+
+  $("div.module-hide").slice(0, SHOW_MODULE).show();
+  $("div.track-hide").slice(0, SHOW_TRACK).show();
+  $(".module-load-more").on('click', function (e) {
+    e.preventDefault();
+    if (SHOW_MODULE >= $("div.module-hide:hidden").length) {
+      $(".load-module").fadeOut('slow');
+    }
+    $("div.module-hide:hidden").slice(0, SHOW_MODULE).each(function(index) {
+      $(this).delay(ANIMATION_OFFSET * index).fadeIn({
+        duration: ANIMATION_DURATION,
+        easing: 'linear'
+      });
+    });
+  });
+  $(".track-load-more").on('click', function (e) {
+    e.preventDefault();
+    if (SHOW_TRACK >= $("div.track-hide:hidden").length) {
+      $(".load-track").fadeOut('slow');
+    }
+    $("div.track-hide:hidden").slice(0, SHOW_TRACK).each(function(index) {
+      $(this).delay(ANIMATION_OFFSET * index).fadeIn({
+        duration: ANIMATION_DURATION,
+        easing: 'linear'
+      });
+    });
+  });
+
 });
 $('.cls-modal').click(function(){
     $('#SignupModal').foundation('reveal','close')
     $('#loginModal').foundation('reveal','close')
 })
+
+
 

@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 
 gem 'middleman',            '~> 4.2.1'
 gem 'middleman-syntax',     '~> 3.0.0'
-gem 'middleman-navtree',    '~> 0.1.11'
 gem 'middleman-minify-html','~> 3.4.1'
 gem 'builder',              '~> 3.2.3'
 gem 'redcarpet',            '~> 3.4.0'
@@ -18,6 +17,7 @@ end
 
 group :test do
   gem 'rspec' # Unit testing
+  gem 'guard-rspec', require: false
 end
 
 group :production do

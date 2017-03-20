@@ -22,6 +22,9 @@ import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.
 import { LoginLinkedInDirective } from './directives/login-linkedin/login-linkedin.directive'
 import { LoginChefDirective } from './directives/login-chef/login-chef.directive'
 import { ProgressService } from './services/progress.service'
+import { UserProfileComponent } from './components/user-profile/user-profile.component'
+import { MaterialModule } from '@angular/material'
+
 
 const routerConfig: Routes = []
 
@@ -41,6 +44,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     LoginTwitterDirective,
     LoginLinkedInDirective,
     LoginChefDirective,
+    UserProfileComponent,
   ],
   imports: [
     routes,
@@ -50,6 +54,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     RouterModule,
     ToastModule.forRoot(),
     A2tUiModule,
+    MaterialModule,
   ],
   providers: [
     HttpClient,
@@ -62,4 +67,8 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     AppComponent,
   ],
 })
-export class AppModule { }
+export class AppModule {
+  constructor (private progressService: ProgressService) {
+    progressService.init()
+  }
+}

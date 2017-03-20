@@ -24,14 +24,14 @@ html lang="en"
     - if current_page.data.redirect
       = partial "layouts/redirect", locals: {target: current_page.data.redirect}
 
-  body class=page_classes
+  body class="#{get_page_classes(current_page, page_classes)}"
     app-root
     noscript#app-content
       .contain-to-grid.fixed
         nav.nav-main.top-bar data-options=("sticky_on: large") data-topbar="" role="navigation"
           a name="top" href="#top"
           .left
-            = link_to chef_www_url, class: 'logo-learn-chef' do
+            = link_to '/', class: 'logo-learn-chef' do
               = image_tag('learn-chef-rally-logo.svg', onerror: 'learn-chef-rally-logo.png')
           i#nav-icon.fa.fa-bars
           ul.links
@@ -48,11 +48,11 @@ html lang="en"
               li
                 a.icon.ic-option data-dropdown="dropOptions" aria-controls="dropOptions" aria-expanded="false" data-options="align:left"
                 ul#dropOptions.f-dropdown.nav-dropdown aria-hidden="true" data-dropdown-content="" tabindex="-1"
-                  li
+                  li template="ngIf isAuthenticated()"
                     = link_to '/profile/'
                       i.icon-sprite.ic-profile
                       span Profile
-                  li
+                  li template="ngIf isAuthenticated()"
                     a href="#"
                       i.icon-sprite.ic-progress
                       span Progress
@@ -66,35 +66,33 @@ html lang="en"
                       span About Chef
 
       //Modal for login and Sign up
-      #loginModal.reveal-modal.small.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+      #loginModal.reveal-modal.tiny.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
         .modal-title
           = image_tag('login/learn-chef-login.png')
         .modal-body
           p.lead Login to your account
-          a.login-chef.cls-modal
-            = image_tag('login/chef-supermarket.png')
           p.social
-            a.ic-google.login-google.cls-modal
+            a.fa.fa-google.login-google.cls-modal
             a.fa.fa-github.login-github.cls-modal
-            a.ic-twitter.login-twitter.cls-modal
-            a.ic-linkedin.login-linkedin.cls-modal
+            a.fa.fa-twitter.login-twitter.cls-modal
+            a.fa.fa-linkedin.login-linkedin.cls-modal
+            a.ic-chef-supermarket.login-chef.cls-modal
           a.close-reveal-modal aria-label="Close"
             i.icon.ic-close
       //Modal for login and Sign up
-      #SignupModal.reveal-modal.small.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+      #SignupModal.reveal-modal.tiny.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
         .modal-title
           = image_tag('login/learn-chef-login.png')
         .modal-body
           p.lead Join the rally using
-          a.login-chef.cls-modal
-            = image_tag('login/chef-supermarket.png')
           p.social
-            a.ic-google.login-google.cls-modal
+            a.fa.fa-google.login-google.cls-modal
             a.fa.fa-github.login-github.cls-modal
-            a.ic-twitter.login-twitter.cls-modal
-            a.ic-linkedin.login-linkedin.cls-modal
-            a.close-reveal-modal aria-label="Close"
-              i.icon.ic-close
+            a.fa.fa-twitter.login-twitter.cls-modal
+            a.fa.fa-linkedin.login-linkedin.cls-modal
+            a.ic-chef-supermarket.login-chef.cls-modal
+          a.close-reveal-modal aria-label="Close"
+            i.icon.ic-close
       section
         .content
           = yield
@@ -147,7 +145,7 @@ html lang="en"
                 li.separator
                   a href="https://www.chef.io/contact-us/" target="_blank" Contact Chef
                 li
-                  a href="" Privacy Policy
+                  a href="https://www.chef.io/privacy-policy" target="_blank" Privacy Policy
               .head
                 | Subscribe to updates
               button.btn.btn-primary Keep me updated

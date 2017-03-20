@@ -1,0 +1,68 @@
+<div class="profile-hero">
+  <div class="row">
+    <div class="large-5 medium-8 small-12 columns profile-card">
+      <a class="settings" (click)="showForm()"><i class="fa fa-cog"></i></a>
+      <div class="user-info" *ngIf="user">
+        <div class="avatar">
+          <div class="name">
+            {{user.name}}
+          </div>
+        </div>
+        <div class="display-name">
+          {{user|display_name}}<span *ngIf="user.role">{{user.role}}</span><span *ngIf="user.company">{{user.company}}</span>
+        </div>
+      </div>
+      <div class="rally-info">
+        <img src="/assets/images/learn-chef-rally-logo.png"><span>Rallygoers since 2013</span>
+      </div>
+    </div>
+    <div class="large-7 medium-8 small-12 columns" ng-hide="true" *ngIf="frmStatus">
+      <form class="edit-profile ng-untouched ng-pristine ng-valid" (ngSubmit)="updateUserProfile()">
+        <a class="close-btn" (click)="hideForm()">×</a>
+        <div class="large-12 columns custom-form">
+          <div class="input-control" *ngIf="updateStatus">
+            <div class="success">Profile updated successfully.</div>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+            <input mdInput id="name" placeholder="Name" name="name" required type="text" [(ngModel)]="userInfo.name" #name="ngModel">
+            </md-input-container>
+            <div class="error" *ngIf="name.errors && (name.dirty || name.touched)">Name is required</div>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+            <input mdInput id="displayname" placeholder="Display Name" name="nickname"  type="text" [(ngModel)]="userInfo.nickname" #nickname="ngModel">
+            </md-input-container>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+            <input mdInput id="role" placeholder="Role" name="role" type="text" [(ngModel)]="userInfo.role" #role="ngModel">
+            </md-input-container>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+            <input mdInput id="company" placeholder="Company" name="company" type="text" [(ngModel)]="userInfo.company" #company="ngModel">
+            </md-input-container>
+          </div>
+          <div class="input-control">
+            <select id="country" name="country" placeholder="Country" [(ngModel)]="userInfo.country">
+              <option value="">Select</option>o
+              <option *ngFor="let country of countries" value= {{country.code}}>
+                {{country.name}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="large-6 columns">
+          <a class="link" href="https://www.chef.io/privacy-policy" target="_blank">Privacy Policy</a>
+        </div>
+        <div class="large-6 columns check-box">
+          <input name="share_profile" [(ngModel)]="userInfo.share_profile" id="share_profile" type="checkbox"><label for="share_profile" translate=""> Share profile to public</label>
+        </div>
+        <div class="large-12 columns">
+          <button type="submit" class="btn btn-primary">Submit</button><a class="fa fa-{{userInfo.provider}} login-type" href=""></a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

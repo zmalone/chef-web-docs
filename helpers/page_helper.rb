@@ -1,58 +1,4 @@
 module PageHelper
-  # Takes a raw filesystem path and returns a path as used by Middleman's internal sitemap, without
-  # additional extensions, and skipping partials.
-  # E.g. index.html -> index.html, index.html.md -> index.html, index.html.md.erb -> index.html
-  # E.g. _index.erb -> nil
-  def get_sitemap_path(path)
-    return unless path.is_a? String
-    return if path.match(/\/_[^\/]+$/)
-    path.sub(/(\.[\w]+)[\.\w]*$/, '\\1')
-  end
-
-  # Call sitemap.find_resource_by_path after formatting the path to match Middleman sitemap standard
-  def find_page_by_path(filepath)
-    path = get_sitemap_path(filepath)
-    page = sitemap.find_resource_by_path(path) unless path.blank?
-    logger.warn "WARN: Unable to find page #{filepath}" if !path.nil? && page.blank?
-    page
-  end
-
-  def find_pages_by_folder(folder, depth = -1)
-    # logger.info "Find page in folder '#{folder}'"
-    pages = []
-    data.tree[folder].map do |item|
-      extract_filepaths_from_tree(item.last, depth).each do |filepath|
-        pages << find_page_by_path(filepath)
-      end
-    end
-    pages.compact
-  end
-
-  def extract_filepaths_from_tree(hash, max_depth = -1, current_depth = 0)
-    filepaths = []
-    if max_depth == -1 || max_depth > current_depth
-      current_depth = current_depth + 1
-      values = hash.to_hash.values
-      values.each do |val|
-        if val.respond_to? :to_hash
-          filepaths.concat(extract_filepaths_from_tree(val, max_depth, current_depth + 1))
-        else
-          filepaths << val
-        end
-      end
-    end
-    filepaths
-  end
-
-  # Find a page by the ID attribute in the frontmatter data
-  # TODO: Do some profiling on this, and consider adding caching if there's a performance problem
-  def find_page_by_id(folder, id)
-    page = find_pages_by_folder(folder).map { |page|
-      (!page.blank? && page.data.id == id) ? page : nil
-    }.compact.first
-    logger.warn "WARN: Unable to find page '#{id}' in '#{folder}'" if page.blank?
-    page
-  end
 
   def find_next_page(page)
     if page.parent && page.parent.data.layout == "lesson-options"
@@ -73,208 +19,143 @@ module PageHelper
   end
 
   def get_page_section(page)
-    match = page.url.match(/^\/?(modules|tracks)\/(.+)$/)
-    return (match) ? match[1] : ''
+    return unless page
+    match = page.url.match(/^\/?(modules|tracks)(\/([^\/]+))?(\/.*)?$/)
+    return (match) ? [match[1], match[3]] : ''
   end
 
-  def get_page_id(page)
-    if (page.data.id)
-      return page.data.id
+  def get_module(page)
+    root = page
+    section, id = get_page_section(page)
+    return unless section === 'modules'
+    while root.parent && root.parent.url.start_with?("/modules/#{id}")
+      root = root.parent
     end
-
-    match = page.url.match(/^\/?(modules|tracks)\/(.+)$/)
-    return if !match
-    path = match[2]
-    root = find_root(page)
-    if root.url != page.url
-      if page.parent
-        parts = path.split('/')
-        thisId = parts.last
-        parentId = get_page_id(page.parent)
-        return "#{parentId}/#{thisId}"
-      end
-    end
-    path
+    get_module_by_id(root.id)
   end
 
-  def find_track(page)
-    module_id = find_root_id(page)
-    track = find_pages_by_folder('tracks').select { |page|
-      if !page.blank? && page.data.modules
-        page.data.modules.select { |id|
-          id == module_id
-        }.any?
-      end
+  def get_track(page)
+    section, id = get_page_section(page)
+    return get_track_by_id(page.id) if section === 'tracks' && id
+    module_obj = get_module(page)
+    return unless module_obj
+    track = tracks.children.select { |track|
+      track.modules.select { |id|
+        id == module_obj.id
+      }.any?
     }.first
-    logger.warn "WARN: Unable to find track for '#{page.url}'" if track.blank?
+    logger.warn "WARN: Unable to find track for '#{module_obj.id}'" if track.blank?
     track
   end
 
-  def find_root_id(page)
-    root = find_root(page)
-    get_page_id(root)
-  end
+  def get_current_breadcrumbs(page)
+    breadcrumbs = []
+    module_root = get_module(page)
+    track = get_track(page)
+    return [] unless track  # no breadcrumb when no tracks for a module
 
-  def find_root(page)
-    root = page
-    while root.parent
-      root = root.parent
-    end
-    root
-  end
+    # Initialize a module object at the current page
+    module_obj = module_root ? get_module_by_id(page.id) : nil
 
-  def get_page_duration(page)
-    tree, current_tree = get_module_trees_from_page(page)
-    return unless tree && current_tree
-    all = tree_calculate_time(tree)
-    remaining = tree_calculate_time(current_tree)
-    {
-        all: all,
-        remaining: remaining
-    }
-  end
+    # Get the options (children) for the current page
+    if module_obj
+      if module_obj.is_fork
+        breadcrumbs << Hashie::Mash.new({
+          title: 'Select One',
+          options: module_obj.children.map { |child| child.page }
+        })
+      end
 
-  def get_module_trees_from_page(page)
-    module_match = page.source_file.match(/\/modules\/(.+)/)
-    return nil unless module_match
-    module_path = module_match[1]
-    parts = module_path.split('/')
-    module_folder = parts[0]
-    tree = restructure_tree(data.tree.modules[module_folder])
-    current_tree = filter_tree_by_path(tree, module_match[0])
-    [tree, current_tree]
-  end
-
-  def restructure_tree(tree_hash)
-    keys = tree_hash.keys
-    child_keys = keys.reject { |key| key =~ /\./ }
-    index_path = tree_hash[keys.select { |key| key =~ /^index\./ }.first]
-    if child_keys.count > 0
-      keys = child_keys
-    end
-    unless index_path.nil?
-      child_items = []
-      keys.each do |page_key|
-        if tree_hash[page_key].respond_to? :keys
-          child_items << restructure_tree(tree_hash[page_key])
+      # Compile the rest of the breadcrumbs from the current item and parents (in reverse order)
+      loop do
+        parent = get_module_by_id(module_obj.parent)
+        if parent && parent.parent && parent.is_fork
+          breadcrumbs.unshift(Hashie::Mash.new({
+            title: module_obj.page.data.short_title || module_obj.page.data.title,
+            options: parent.children.map { |child| child.page }
+          }))
         end
+        break unless parent && parent.parent
+        module_obj = parent
       end
-      child_items = child_items.compact
-      is_fork = false
-      child_items.each do |child_item|
-        is_fork = true if child_item[:children].count > 0
-        child_item[:order] = 0
-        page = find_page_by_path(child_item[:path])
-        if page && page.data && page.data.order
-          child_item[:order] = page.data.order
-        end
-      end
-      child_items.sort_by! do |a|
-        a[:order]
-      end
-      {
-        path: index_path,
-        children: child_items,
-        is_fork: is_fork
-      }
     end
-  end
 
-  def filter_tree_by_path(tree, filepath)
-    if tree[:path] == filepath
-      tree
-    else
-      found = []
-      tree[:children].each do |child|
-        if found.count == 0
-          tree_by_path = filter_tree_by_path(child, filepath)
-          if tree_by_path && tree_by_path[:filtered]
-            return tree_by_path
-          elsif tree_by_path
-            found << tree_by_path
-          end
-        elsif !tree[:is_fork]
-          found << child
-        end
-      end
-      if found.count == 1
-        return found.first
-      elsif found.count > 0
-        return {
-          filtered: true,
-          children: found
-        }
-      end
-      nil
+    # Add module list for the current track
+    options = track.modules.map do |module_id|
+      get_module_by_id(module_id).page
     end
+    breadcrumbs.unshift(Hashie::Mash.new({
+      title: module_obj ? module_obj.page.data.short_title || module_obj.page.data.title : 'Select One',
+      options: options
+    }))
+
+    # Label the breadcrumbs, in forward order
+    labels = ['Modules', 'Server Environment', 'Chef Server Environment']
+    breadcrumbs.each do |breadcrumb|
+      breadcrumb.label = labels.shift
+    end
+
+    breadcrumbs
   end
 
   def is_fork?(page)
-    tree, current_tree = get_module_trees_from_page(page)
-    current_tree[:is_fork] if current_tree
+    is_module = get_module_by_id(page.id)
+    is_module.is_fork if is_module
   end
 
-  def tree_calculate_time(tree)
-    return tree[:time_to_complete] if tree[:time_to_complete]
+  def get_page_classes(page, existing_classes)
+    classes = [existing_classes]
+    if get_module_by_id(page.id)
+      fork_class = is_fork?(page) ? 'multi-page' : 'unit-page'
+      classes << fork_class
+    end
+    classes.join(' ')
+  end
 
-    page = find_page_by_path(tree[:path])
-    range = get_time_to_complete(page)
+  def get_tree_data
+    {
+      tracks: flatten_tree(tracks),
+      modules: flatten_tree(modules)
+    }
+  end
 
-    unless range
-      range = [0, 0]
-      tree[:children].each do |child|
-        child_range = tree_calculate_time(child)
-        # Are we adding the child times? Or finding the extended range (forks)?
-        if child_range
-          if tree[:is_fork]
-            range[0] = (range[0] > 0) ? [range[0], child_range[0]].min : child_range[0]
-            range[1] = [range[1], child_range[1]].max
-          else
-            range[0] = range[0] + child_range[0]
-            range[1] = range[1] + child_range[1]
-          end
-        end
+  def flatten_tree(tree)
+    data = {}
+    data[tree.id] = {}
+    data[tree.id][:url] = tree.page.url
+
+    # Copy over most of the keys, except the certain keys, i.e. the page object, or the children
+    tree.keys.reject { |key|
+      ['id', 'page', 'parent', 'children', 'order'].include?(key)
+    }.each { |key|
+      val = tree[key]
+      # Use default Ruby arrays and hashes
+      val = val.to_hash if val.is_a? Hash
+      val = val.to_a if val.is_a? Array
+      data[tree.id][key.to_sym] = val
+    }
+
+    if tree.children
+      tree.children.each do |child|
+        data[tree.id][:children] ||= []
+        data[tree.id][:children] << child.id
+        data.merge!(flatten_tree(child))
       end
     end
 
-    tree[:time_to_complete] = range
+    # Remove empty values
+    tree.delete(:minutes) unless tree[:minutes] && (tree[:minutes][0] > 0 || tree[:minutes][1] > 0)
+    tree.delete(:remaining) unless tree[:remaining] && (tree[:remaining][0] > 0 || tree[:remaining][1] > 0)
+
+    data
   end
 
-  def get_time_to_complete(page)
-    if page && page.data && page.data.time_to_complete
-      parse_time(page.data.time_to_complete)
-    end
+  def format_time(range)
+    return unless range
+    average = range.reduce(:+) / range.size.to_f
+    return if average == 0
+    return "#{average.ceil} minutes" unless average > 120
+    "#{(average / 60).ceil} hours"
   end
 
-  def parse_time(time_string)
-    if time_string
-      data = time_string.match(/^([\d]+)(-([\d]+))?\s(minutes?|hours?)$/)
-      if data
-        range_min = data[1].to_i
-        range_max = (data[3]) ? data[3].to_i : range_min
-        if data[4].start_with? 'hour'
-          [range_min * 60, range_max * 60]
-        else
-          [range_min, range_max]
-        end
-      end
-    end
-  end
-
-  def get_content_nav_bar_info(current_page)
-    output = {'current_track':nil, 'current_module':nil, 'current_env': nil, 'current_chef_env': nil}
-    output['current_track'] = find_track(current_page)
-    pages = [current_page]
-    pages.unshift pages.first.parent while pages.first.parent
-    if(!pages[0].nil?)
-      output['current_module'] = pages[0]
-    end
-    if(!pages[1].nil?)
-      output['current_env'] = pages[1]
-    end
-    if(!pages[2].nil?)
-      output['current_chef_env'] = pages[2]
-    end
-    return output
-  end
 end
