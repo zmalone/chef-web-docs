@@ -22,8 +22,8 @@ describe PageHelper do
     let(:track_json) do
       {
         url: '/tracks/infrastructure-automation',
-        remaining: [185, 415],
-        modules: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node']
+        remaining: [235, 495],
+        modules: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node',  'local-development', 'be-a-secure-chef']
       }
     end
 
@@ -69,29 +69,57 @@ describe PageHelper do
     end
   end
 
-  describe '.get_module' do
-    let(:module_id) { 'manage-a-node' }
-    let(:module_child_path) { '/modules/manage-a-node/rhel/automate/index.html' }
-    let(:module_child_page) { helper.sitemap.find_resource_by_path(module_child_path) }
+  let(:module_id) { 'manage-a-node' }
+  let(:module_path) { '/modules/manage-a-node/rhel/automate/index.html' }
+  let(:module_page) { helper.sitemap.find_resource_by_path(module_path) }
 
+  let(:module_sans_track) { double('test-module', id: 'test-module-not-in-a-track') }
+
+  let(:track_id) { 'infrastructure-automation' }
+  let(:track_path) { '/tracks/infrastructure-automation/index.html' }
+  let(:track_page) { helper.sitemap.find_resource_by_path(track_path) }
+
+  describe '.get_module' do
     it 'returns the root module tree object' do
-      expect(helper.get_module(module_child_page).id).to eq module_id
+      expect(helper.get_module(module_page).id).to eq module_id
     end
   end
 
   describe '.get_track' do
-    let(:track_id) { 'infrastructure-automation' }
-    let(:track_path) { '/tracks/infrastructure-automation/index.html' }
-    let(:track_page) { helper.sitemap.find_resource_by_path(track_path) }
-    let(:module_child_path) { '/modules/manage-a-node/rhel/automate/index.html' }
-    let(:module_child_page) { helper.sitemap.find_resource_by_path(module_child_path) }
-
     it 'returns the current track for a track page' do
       expect(helper.get_track(track_page).id).to eq track_id
     end
 
     it 'returns the current track for a module page' do
-      expect(helper.get_track(module_child_page).id).to eq track_id
+      expect(helper.get_track(module_page).id).to eq track_id
+    end
+
+    context 'when a module is not in any tracks' do
+      it 'returns nil and logs a warning' do
+        expect_any_instance_of(PageHelper).to receive(:get_module).and_return(module_sans_track)
+
+        expect(helper.logger).to receive(:warn).once
+        expect(helper.get_track(module_page)).to be_nil
+      end
+    end
+  end
+
+  describe '.get_current_breadcrumbs' do
+    it 'returns 3 levels for a unit page' do
+      expect(helper.get_current_breadcrumbs(module_page).size).to eq 3
+    end
+
+    it 'returns 1 level for a track page' do
+      expect(helper.get_current_breadcrumbs(track_page).size).to eq 1
+    end
+
+    context 'when a module is not in any tracks' do
+      it 'returns nil and logs a warning' do
+        allow_any_instance_of(PageHelper).to receive(:get_module).and_return(module_sans_track)
+
+        expect(helper.logger).to receive(:warn).at_least(:once)
+        expect(helper.get_current_breadcrumbs(module_page)).to be_empty
+      end
     end
   end
 end

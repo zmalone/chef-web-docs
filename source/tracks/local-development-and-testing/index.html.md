@@ -9,6 +9,9 @@ level: Beginner
 track_class: card-yellow
 category: Admin
 modules:
-- 1
-- 2
+- local-development
+- get-started-with-testing
+- inspec
+- chefspec
+- verify-style
 ---

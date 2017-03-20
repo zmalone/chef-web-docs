@@ -44,7 +44,7 @@ module PageHelper
         id == module_obj.id
       }.any?
     }.first
-    logger.warn "WARN: Unable to find track for '#{module_id}'" if track.blank?
+    logger.warn "WARN: Unable to find track for '#{module_obj.id}'" if track.blank?
     track
   end
 
@@ -52,6 +52,7 @@ module PageHelper
     breadcrumbs = []
     module_root = get_module(page)
     track = get_track(page)
+    return [] unless track  # no breadcrumb when no tracks for a module
 
     # Initialize a module object at the current page
     module_obj = module_root ? get_module_by_id(page.id) : nil
