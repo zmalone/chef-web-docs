@@ -22,8 +22,8 @@ describe PageHelper do
     let(:track_json) do
       {
         url: '/tracks/infrastructure-automation',
-        remaining: [185, 415],
-        modules: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node']
+        remaining: [235, 495],
+        modules: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node',  'local-development', 'be-a-secure-chef']
       }
     end
 
