@@ -37,7 +37,7 @@ export class ProgressService {
     const treeData = (window as any).dataTree
     const baseData = treeData[section][item]
     if (!baseData) return 0
-    const baseTimeRange = baseData.minutes || [0, 0]
+    const baseTimeRange = baseData.remaining || [0, 0]
     const baseTimeAvg = baseTimeRange.reduce((a, b) => { return a + b }) / baseTimeRange.length
     const userData = this.getUserProgressData(section, item)
     const complete = Object.keys(userData).filter(key => {
