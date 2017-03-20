@@ -13,5 +13,7 @@ modules:
 - how-to-learn-chef
 - learn-the-basics
 - manage-a-node
-- develop-locally
+- local-development
+- be-a-secure-chef
 ---
+
