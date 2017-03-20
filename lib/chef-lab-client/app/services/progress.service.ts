@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core'
-import { ReplaySubject } from 'rxjs'
+import { BehaviorSubject } from 'rxjs'
 import { HttpClient } from './http-client.service'
 
 @Injectable()
 export class ProgressService {
-  public activeUserProgress: ReplaySubject<any> = new ReplaySubject(1)
+  public activeUserProgress: BehaviorSubject<any> = new BehaviorSubject(1)
 
   constructor(
     private http: HttpClient,
   ) {}
+
+  init() {
+    this.initUserProgressData()
+  }
 
   public start(page: any) {
     return this.updateDateStamp(page, 'started_at')
@@ -18,8 +22,8 @@ export class ProgressService {
     return this.updateDateStamp(page, 'completed_at')
   }
 
-  public getLastStarted(section: string, module: string) {
-    const data = this.getProgress(section, module)
+  public getLastStarted(section: 'modules' | 'tracks', item: string) {
+    const data = this.getUserProgressData(section, item)
     const incomplete = Object.keys(data).filter(key => {
       return !data[key].completed_at
     })
@@ -29,11 +33,34 @@ export class ProgressService {
     return data[sorted[0]] || {}
   }
 
+  public getProgress(section: 'modules' | 'tracks', item: string) {
+    const treeData = (window as any).dataTree
+    const baseData = treeData[section][item]
+    if (!baseData) return 0
+    const baseTimeRange = baseData.remaining || [0, 0]
+    const baseTimeAvg = baseTimeRange.reduce((a, b) => { return a + b }) / baseTimeRange.length
+    const userData = this.getUserProgressData(section, item)
+    const complete = Object.keys(userData).filter(key => {
+      return userData[key].completed_at
+    })
+    let userCompletedAvg = 0
+    complete.forEach(module_id => {
+      const completeItem = treeData['modules'][module_id]
+      if (completeItem) {
+        const completedTimeRange = completeItem.minutes || [0, 0]
+        const completedTimeAvg = completedTimeRange.reduce((a, b) => { return a + b }) / completedTimeRange.length
+        userCompletedAvg += completedTimeAvg
+      }
+    })
+
+    return (baseTimeAvg) ? Math.min(100, Math.max(0, Math.round(100 * userCompletedAvg / baseTimeAvg))) : 0
+  }
+
   private updateDateStamp(page: any, field: string) {
     if (!page.section || !page.id) return
     const section = page.section
     const pageId = page.id
-    const dataLocal = this.getProgress()
+    const dataLocal = this.activeUserProgress.getValue()
 
     // Build full and partial data objects
     dataLocal[section] = dataLocal[section] || {}
@@ -64,9 +91,8 @@ export class ProgressService {
     return httpObservable
   }
 
-  private getProgress(section?: string, item?: string) {
-    const existing = localStorage.getItem('userProgressInfo')
-    let data = (existing) ? JSON.parse(existing) : {}
+  private getUserProgressData(section?: 'modules' | 'tracks', item?: string) {
+    let data = this.activeUserProgress.getValue()
     if (section) {
       data = data[section] || {}
       if (item) {
@@ -79,6 +105,13 @@ export class ProgressService {
         return ret
       }
     }
+    return data
+  }
+
+  private initUserProgressData() {
+    const existing = localStorage.getItem('userProgressInfo')
+    const data = (existing) ? JSON.parse(existing) : {}
+    this.activeUserProgress.next(data)
     return data
   }
 }

@@ -1,0 +1,10 @@
+export class User {
+  constructor(
+    public name: string,
+    public email: string,
+    public nickname: string,
+    public role: string,
+    public company: string,
+  ) {
+  }
+}
