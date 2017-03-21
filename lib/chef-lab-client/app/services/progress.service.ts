@@ -1,21 +1,25 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
-import { HttpClient } from './http-client.service'
+import { ErrorHandlerService } from './error-handler.service'
+import { Angular2TokenService } from 'angular2-token'
 
 @Injectable()
 export class ProgressService {
   public activeUserProgress: BehaviorSubject<any> = new BehaviorSubject(1)
 
   constructor(
-    private http: HttpClient,
-  ) {}
+    private errHandlerService: ErrorHandlerService,
+    private _tokenService: Angular2TokenService,
+  ) {
+  }
 
   init() {
     this.initUserProgressData()
   }
 
-  public start(page: any) {
-    return this.updateDateStamp(page, 'started_at')
+  public trackCurrentPage() {
+    const win = (window as any)
+    return this.updateDateStamp(win.currentPage, 'started_at')
   }
 
   public complete(page: any) {
@@ -28,32 +32,142 @@ export class ProgressService {
       return !data[key].completed_at
     })
     const sorted = incomplete.sort((a, b) => {
-      return data[a].started_at > data[b].started_at ? 1 : data[a].started_at < data[b].started_at ? -1 : 0
+      return (data[a].started_at > data[b].started_at) ? -1 : 1
     })
-    return data[sorted[0]] || {}
+    return (data[sorted[0]]) ? {...{ id: sorted[0] }, ...data[sorted[0]] } : {}
   }
 
-  public getProgress(section: 'modules' | 'tracks', item: string) {
-    const treeData = (window as any).dataTree
-    const baseData = treeData[section][item]
-    if (!baseData) return 0
-    const baseTimeRange = baseData.remaining || [0, 0]
+  public getLastAccessed(section: 'modules' | 'tracks', item: string) {
+    const data = this.getUserProgressData(section, item)
+    const sorted = Object.keys(data).sort((a, b) => {
+      const dateA = [data[a].started_at, data[a].completed_at].sort().reverse()[0]
+      const dateB = [data[b].started_at, data[b].completed_at].sort().reverse()[0]
+      return (dateA > dateB) ? -1 : 1
+    })
+    return (data[sorted[0]]) ? {...{ id: sorted[0] }, ...data[sorted[0]] } : {}
+  }
+
+  public getLastCompleted(section: 'modules' | 'tracks', item: string) {
+    const data = this.getUserProgressData(section, item)
+    const complete = Object.keys(data).filter(key => {
+      return data[key].completed_at
+    })
+    const sorted = complete.sort((a, b) => {
+      return (data[a].completed_at > data[b].completed_at) ? -1 : 1
+    })
+    return (data[sorted[0]]) ? {...{ id: sorted[0] }, ...data[sorted[0]] } : {}
+  }
+
+  public getModuleProgress(pageId: string) {
+    const moduleData = (window as any).dataTree['modules']
+
+    // Determine the active item from which to generate time estimates
+    // See if the item passed is the current path, or the module root
+    if (!moduleData[pageId]) return 0
+    let activeItemId = pageId
+    if (moduleData[pageId].parent === 'modules') {
+      // Get the user's current path through this module or track
+      // TODO: Consider validating the last started item to ensure it follows the last completed
+      const lastAccessed = this.getLastAccessed('modules', pageId)
+      if (lastAccessed.id) activeItemId = lastAccessed.id
+    }
+
+    // Get all the module IDs within the active path (parents, siblings, and children)
+    const activePathIds = this.getActivePathIds(activeItemId)
+
+    // Get the base time for the current path
+    const currentPageData = moduleData[activeItemId]
+    if (!currentPageData) return 0
+    const baseTimeRange = [0, 0]
+
+    // Use the parent of the current item for finding children and siblings, unless the parent is a multipage
+    let parent = currentPageData.parent
+    const childRoot = (parent && !moduleData[parent].is_fork) ? parent : activeItemId
+    if (moduleData[childRoot].remaining) {
+      baseTimeRange[0] += moduleData[childRoot].remaining[0]
+      baseTimeRange[1] += moduleData[childRoot].remaining[1]
+    }
+
+    // Add parent path time
+    if (moduleData[childRoot] && moduleData[childRoot].parent) {
+      parent = moduleData[childRoot].parent
+      while (parent) {
+        const parentData = moduleData[parent]
+        if (parentData.minutes) {
+          baseTimeRange[0] += parentData.minutes[0]
+          baseTimeRange[1] += parentData.minutes[1]
+        }
+        parent = parentData.parent
+      }
+    }
+
     const baseTimeAvg = baseTimeRange.reduce((a, b) => { return a + b }) / baseTimeRange.length
-    const userData = this.getUserProgressData(section, item)
+
+    // Add up the the user's time completed for the current path
+    const moduleId = this.getModuleRoot(pageId)
+    const userData = this.getUserProgressData('modules', moduleId)
     const complete = Object.keys(userData).filter(key => {
       return userData[key].completed_at
     })
     let userCompletedAvg = 0
-    complete.forEach(module_id => {
-      const completeItem = treeData['modules'][module_id]
-      if (completeItem) {
-        const completedTimeRange = completeItem.minutes || [0, 0]
-        const completedTimeAvg = completedTimeRange.reduce((a, b) => { return a + b }) / completedTimeRange.length
-        userCompletedAvg += completedTimeAvg
+    complete.forEach(completeId => {
+      if (activePathIds.indexOf(completeId) > -1) {
+        const completeItem = moduleData[completeId]
+        if (completeItem) {
+          const completedTimeRange = completeItem.minutes || [0, 0]
+          const completedTimeAvg = completedTimeRange.reduce((a, b) => { return a + b }) / completedTimeRange.length
+          userCompletedAvg += completedTimeAvg
+        }
       }
     })
 
     return (baseTimeAvg) ? Math.min(100, Math.max(0, Math.round(100 * userCompletedAvg / baseTimeAvg))) : 0
+  }
+
+  private getActivePathIds(activeItemId) {
+    const moduleData = (window as any).dataTree['modules']
+    let ids = []
+    if (!moduleData[activeItemId]) return ids
+
+    // Use the parent of the current item for finding children and siblings, unless the parent is a multipage
+    let parent = moduleData[activeItemId].parent
+    const childRoot = (parent && !moduleData[parent].is_fork) ? parent : activeItemId
+    ids.unshift(childRoot)
+
+    // Add parent path IDs
+    if (moduleData[childRoot] && moduleData[childRoot].parent) {
+      parent = moduleData[childRoot].parent
+      while (parent) {
+        ids.unshift(parent)
+        parent = moduleData[parent].parent
+      }
+    }
+
+    // Add sibling and child items
+    ids = ids.concat(this.getChildPathIds(childRoot))
+    return ids
+  }
+
+  private getChildPathIds(activeItemId) {
+    const moduleData = (window as any).dataTree['modules']
+    let ids = []
+    if (moduleData[activeItemId] && moduleData[activeItemId].children) {
+      moduleData[activeItemId].children.forEach((child) => {
+        ids.push(child)
+        ids = ids.concat(this.getChildPathIds(child))
+      })
+    }
+    return ids
+  }
+
+  private getModuleRoot(pageId) {
+    const moduleData = (window as any).dataTree['modules']
+    let moduleRoot = moduleData[pageId]
+    while (moduleRoot.parent && moduleRoot.parent !== 'modules') {
+      pageId = moduleRoot.parent
+      moduleRoot = moduleData[pageId]
+    }
+    return pageId
   }
 
   private updateDateStamp(page: any, field: string) {
@@ -67,7 +181,7 @@ export class ProgressService {
     dataLocal[section][pageId] = dataLocal[section][pageId] || {}
     const dataChange = {}
     dataChange[section] = {}
-    dataChange[section][pageId] = {}
+    dataChange[section][pageId] = Object.assign({}, dataLocal[section][pageId])
     dataLocal[section][pageId].url = page.url
     dataLocal[section][pageId][field] = dataChange[section][pageId][field] = new Date().toISOString()
 
@@ -75,7 +189,7 @@ export class ProgressService {
     localStorage.setItem('userProgressInfo', JSON.stringify(dataLocal))
 
     // Update the server with a partial objects of changes
-    const httpObservable = this.http.put(process.env.API_ENDPOINT + '/api/v1/progress', dataChange)
+    const httpObservable = this._tokenService.put('api/v1/progress', dataChange)
       .share()
     // Register all handlers to make RxJS catch exceptions, which other subscribers may need
     // See https://github.com/ReactiveX/rxjs/issues/2145
@@ -109,9 +223,19 @@ export class ProgressService {
   }
 
   private initUserProgressData() {
-    const existing = localStorage.getItem('userProgressInfo')
-    const data = (existing) ? JSON.parse(existing) : {}
-    this.activeUserProgress.next(data)
-    return data
+    return this._tokenService.get('api/v1/progress').map(res => res.json()).subscribe(
+      res => {
+        localStorage.setItem('userProgressInfo', res)
+        this.activeUserProgress.next(res)
+        this.trackCurrentPage()
+      },
+      error => {
+        console.log('Error getting user progress from the database', error)
+        const existing = localStorage.getItem('userProgressInfo')
+        const data = (existing) ? JSON.parse(existing) : {}
+        this.activeUserProgress.next(data)
+        this.trackCurrentPage()
+      },
+    )
   }
 }
