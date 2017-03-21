@@ -105,7 +105,8 @@ module PageHelper
 
   def get_page_classes(page, existing_classes)
     classes = [existing_classes]
-    if get_module_by_id(page.id)
+    section, id = get_page_section(page)
+    if section === 'modules' && get_module_by_id(page.id)
       fork_class = is_fork?(page) ? 'multi-page' : 'unit-page'
       classes << fork_class
     end
@@ -126,7 +127,7 @@ module PageHelper
 
     # Copy over most of the keys, except the certain keys, i.e. the page object, or the children
     tree.keys.reject { |key|
-      ['id', 'page', 'parent', 'children', 'order'].include?(key)
+      ['id', 'page', 'children', 'order'].include?(key)
     }.each { |key|
       val = tree[key]
       # Use default Ruby arrays and hashes
