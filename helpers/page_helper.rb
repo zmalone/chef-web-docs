@@ -126,7 +126,7 @@ module PageHelper
 
     # Copy over most of the keys, except the certain keys, i.e. the page object, or the children
     tree.keys.reject { |key|
-      ['id', 'page', 'parent', 'children', 'order'].include?(key)
+      ['id', 'page', 'children', 'order'].include?(key)
     }.each { |key|
       val = tree[key]
       # Use default Ruby arrays and hashes
