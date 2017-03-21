@@ -1,21 +1,25 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
-import { HttpClient } from './http-client.service'
+import { ErrorHandlerService } from './error-handler.service'
+import { Angular2TokenService } from 'angular2-token'
 
 @Injectable()
 export class ProgressService {
   public activeUserProgress: BehaviorSubject<any> = new BehaviorSubject(1)
 
   constructor(
-    private http: HttpClient,
-  ) {}
+    private errHandlerService: ErrorHandlerService,
+    private _tokenService: Angular2TokenService,
+  ) {
+  }
 
   init() {
     this.initUserProgressData()
   }
 
-  public start(page: any) {
-    return this.updateDateStamp(page, 'started_at')
+  public trackCurrentPage() {
+    const win = (window as any)
+    return this.updateDateStamp(win.currentPage, 'started_at')
   }
 
   public complete(page: any) {
@@ -177,7 +181,7 @@ export class ProgressService {
     dataLocal[section][pageId] = dataLocal[section][pageId] || {}
     const dataChange = {}
     dataChange[section] = {}
-    dataChange[section][pageId] = {}
+    dataChange[section][pageId] = Object.assign({}, dataLocal[section][pageId])
     dataLocal[section][pageId].url = page.url
     dataLocal[section][pageId][field] = dataChange[section][pageId][field] = new Date().toISOString()
 
@@ -185,7 +189,7 @@ export class ProgressService {
     localStorage.setItem('userProgressInfo', JSON.stringify(dataLocal))
 
     // Update the server with a partial objects of changes
-    const httpObservable = this.http.put(process.env.API_ENDPOINT + '/api/v1/progress', dataChange)
+    const httpObservable = this._tokenService.put('api/v1/progress', dataChange)
       .share()
     // Register all handlers to make RxJS catch exceptions, which other subscribers may need
     // See https://github.com/ReactiveX/rxjs/issues/2145
@@ -219,9 +223,19 @@ export class ProgressService {
   }
 
   private initUserProgressData() {
-    const existing = localStorage.getItem('userProgressInfo')
-    const data = (existing) ? JSON.parse(existing) : {}
-    this.activeUserProgress.next(data)
-    return data
+    return this._tokenService.get('api/v1/progress').map(res => res.json()).subscribe(
+      res => {
+        localStorage.setItem('userProgressInfo', res)
+        this.activeUserProgress.next(res)
+        this.trackCurrentPage()
+      },
+      error => {
+        console.log('Error getting user progress from the database', error)
+        const existing = localStorage.getItem('userProgressInfo')
+        const data = (existing) ? JSON.parse(existing) : {}
+        this.activeUserProgress.next(data)
+        this.trackCurrentPage()
+      },
+    )
   }
 }

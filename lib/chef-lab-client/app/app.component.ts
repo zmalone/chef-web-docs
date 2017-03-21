@@ -26,12 +26,11 @@ export class AppComponent implements OnInit {
         chef: '/auth/chef_oauth2',
       },
     })
+    this.progressService.init()
   }
 
   ngOnInit() {
     this.userProfileService.load(1)
-    const win = (window as any)
-    this.progressService.start(win.currentPage)
   }
 
   public isAuthenticated = function(){

@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { HttpModule } from '@angular/http'
 import { ToastModule } from 'ng2-toastr'
-import { HttpClient } from './services/http-client.service'
 import { ErrorHandlerService } from './services/error-handler.service'
 import { RouterModule, Routes } from '@angular/router'
 import { Angular2TokenService, A2tUiModule } from 'angular2-token'
@@ -50,14 +49,12 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     routes,
     BrowserModule,
     FormsModule,
-    HttpModule,
     RouterModule,
     ToastModule.forRoot(),
     A2tUiModule,
     MaterialModule,
   ],
   providers: [
-    HttpClient,
     ErrorHandlerService,
     Angular2TokenService,
     UserProfileService,
@@ -68,7 +65,6 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
   ],
 })
 export class AppModule {
-  constructor (private progressService: ProgressService) {
-    progressService.init()
+  constructor () {
   }
 }
