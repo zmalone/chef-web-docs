@@ -105,7 +105,8 @@ module PageHelper
 
   def get_page_classes(page, existing_classes)
     classes = [existing_classes]
-    if get_module_by_id(page.id)
+    section, id = get_page_section(page)
+    if section === 'modules' && get_module_by_id(page.id)
       fork_class = is_fork?(page) ? 'multi-page' : 'unit-page'
       classes << fork_class
     end
