@@ -20,6 +20,7 @@ execute 'build the site' do
     'NODE_ENV' => 'production',
     'API_ENDPOINT' => 'https://learnchef-backend-acceptance.chef.io'
   )
+  timeout_s 7200
   cwd node['delivery']['workspace']['repo']
 end
 
