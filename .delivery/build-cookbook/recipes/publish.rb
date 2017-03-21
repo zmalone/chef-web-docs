@@ -20,6 +20,7 @@ execute 'build the site' do
     'NODE_ENV' => 'production',
     'API_ENDPOINT' => 'http://learn-chef-api-dev.wirestone.net'
   )
+  timeout_s 7200
   cwd node['delivery']['workspace']['repo']
 end
 
