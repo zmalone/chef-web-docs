@@ -38,17 +38,17 @@ export class AppComponent implements OnInit {
     return this._tokenService.userSignedIn()
   }
 
-  public logout  = function(){
-    if (this._tokenService.signOut() ){
+  public logout = function(){
+    if (this._tokenService.signOut()) {
       localStorage.clear()
       window.location.href = '/'
       return true
-    }else{
+    } else {
       return false
     }
   }
 
-  public getUserInfo  = function() {
+  public getUserInfo = function() {
     if (this._tokenService.currentUserData) {
       return this._tokenService.currentUserData
     }
