@@ -23,7 +23,8 @@ describe PageHelper do
       {
         url: '/tracks/infrastructure-automation',
         remaining: [235, 495],
-        modules: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node',  'local-development', 'be-a-secure-chef']
+        modules: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node',  'local-development', 'be-a-secure-chef'],
+        parent: 'tracks'
       }
     end
 
@@ -33,6 +34,7 @@ describe PageHelper do
         url: '/modules/manage-a-node',
         remaining: [130, 310],
         is_fork: true,
+        parent: 'modules',
         children: ['manage-a-node/rhel', 'manage-a-node/ubuntu', 'manage-a-node/windows']
       }
     end
@@ -42,7 +44,8 @@ describe PageHelper do
       {
         url: '/modules/manage-a-node/rhel/automate/bootstrap-your-node',
         remaining: [20, 20],
-        minutes: [20, 20]
+        minutes: [20, 20],
+        parent: 'manage-a-node/rhel/automate'
       }
     end
 
@@ -120,6 +123,38 @@ describe PageHelper do
         expect(helper.logger).to receive(:warn).at_least(:once)
         expect(helper.get_current_breadcrumbs(module_page)).to be_empty
       end
+    end
+  end
+
+  describe '.find_next_page' do
+    let(:module_path_overview) { '/modules/manage-a-node/index.html' }
+    let(:module_path_multipage_1) { '/modules/manage-a-node/rhel/index.html' }
+    let(:module_path_multipage_2) { '/modules/manage-a-node/rhel/hosted/index.html' }
+    let(:module_path_unitpage_1) { '/modules/manage-a-node/rhel/hosted/set-up-your-workstation/index.html' }
+    let(:module_path_unitpage_2) { '/modules/manage-a-node/rhel/hosted/set-up-your-chef-server/index.html' }
+
+    it 'returns the first multipage from the module overview' do
+      page1 = helper.sitemap.find_resource_by_path(module_path_overview)
+      page2 = helper.sitemap.find_resource_by_path(module_path_multipage_1)
+      expect(helper.find_next_page(page1).page.path).to eq page2.path
+    end
+
+    it 'returns the next multipage from the first multipage' do
+      page1 = helper.sitemap.find_resource_by_path(module_path_multipage_1)
+      page2 = helper.sitemap.find_resource_by_path(module_path_multipage_2)
+      expect(helper.find_next_page(page1).page.path).to eq page2.path
+    end
+
+    it 'returns the first unit page from the last multipage' do
+      page1 = helper.sitemap.find_resource_by_path(module_path_multipage_2)
+      page2 = helper.sitemap.find_resource_by_path(module_path_unitpage_1)
+      expect(helper.find_next_page(page1).page.path).to eq page2.path
+    end
+
+    it 'returns the second unit page from the first unit page' do
+      page1 = helper.sitemap.find_resource_by_path(module_path_unitpage_1)
+      page2 = helper.sitemap.find_resource_by_path(module_path_unitpage_2)
+      expect(helper.find_next_page(page1).page.path).to eq page2.path
     end
   end
 end
