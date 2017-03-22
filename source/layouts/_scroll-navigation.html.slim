@@ -1,15 +1,14 @@
 - if current_page.data.headings
-  li
-    ul.side-nav.box style="padding-top: 0px; padding-bottom: 0px; font-size: 95%; border:none; background-color:transparent;"
+    ul
       - headings = current_page.data.headings.dup
-      - headings.insert(0, { label: '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp; Introduction', href: '#top' })
+      - headings.insert(0, { label: 'Introduction', href: '#top' })
       - if current_page != current_page.last_page && !current_page.next_page.appendix?
-        - headings << { label: '<i class="fa fa-share" aria-hidden="true"></i>&nbsp; Next steps', href: '#next' }
+        - headings << { label: 'Next steps', href: '#next' }
       - elsif !current_page.appendix?
-        - headings << { label: '<i class="fa fa-flag-checkered" aria-hidden="true"></i>&nbsp; Conclusion', href: '#conclusion' }
-      - headings << { label: '<i class="fa fa-comments-o" aria-hidden="true"></i>&nbsp; Leave feedback', href: '#disqus' } unless current_page.data.show_disqus == false
+        - headings << { label: 'Conclusion', href: '#conclusion' }
+      - headings << { label: 'Leave feedback', href: '#disqus' } unless current_page.data.show_disqus == false
       - headings.each do |heading|
-        li.track-nav style="font-size: 90%; margin: 0px;" == link_to heading[:href] do
+        li.track-nav == link_to heading[:href] do
           span == heading[:label]
           | &nbsp;&nbsp;
           <i class="fa fa-chevron-left nav-inactive" aria-hidden="true"></i>
