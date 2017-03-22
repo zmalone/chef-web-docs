@@ -41,7 +41,11 @@ class Middleman::Sitemap::Resource
   end
 
   def children
-    super.sort
+    @children_cache ||= super.sort
+  end
+
+  def parent
+    @parent_cache ||= super
   end
 
   def parents(include_self = false)

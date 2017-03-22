@@ -1,20 +1,14 @@
 module PageHelper
 
   def find_next_page(page)
-    if page.parent && page.parent.data.layout == "lesson-options"
-      return page.parent.parent.children.select {|s| s.data.order == page.parent.data.order + 1}.first
-    elsif page.children && page.children.first
-      return page.children.first
-    elsif page.parent && page.parent.children
-      if page.data.order
-        next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
-      else
-        next_page = page.parent.children.first
-      end
-      if next_page != nil && next_page.appendix?
-        next_page = nil
-      end
-      next_page
+    module_obj = get_module_by_id(page.id)
+    return unless module_obj
+    if module_obj.children && module_obj.children.first
+      module_obj.children.first
+    elsif module_obj.parent
+      parent = get_module_by_id(module_obj.parent)
+      index = parent.children.index(module_obj)
+      parent.children[index + 1]
     end
   end
 
