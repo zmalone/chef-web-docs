@@ -157,6 +157,17 @@ module ZurbFoundation
     content.gsub!(/<p><hr\s?\/?><\/p>/, '<hr>')
     content.gsub!(/<script[^>]*>[^<]*<\/script>/, '')
     content.gsub!('<p/>', '')
+    content.gsub!('<p><p>', '<p>')
+    content.gsub!('</p></p>', '</p>')
+    content.gsub!('<p></', '</') # TODO: It is ever valid to open a paragraph right before closing another tag?
+    in_paragraph = false
+    content.gsub!(/<(\/)?(p|P)[^>]*>/) { |match|
+      # Remove closing </p> tags if we're NOT in a paragraph, and opening <p> tags if we ARE in a paragraph
+      next '' if in_paragraph ^ $1
+      in_paragraph = !$1
+      next $&
+    }
+    content << '</p>' if in_paragraph
   end
 
   def render(string)
