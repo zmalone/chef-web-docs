@@ -1,20 +1,14 @@
 module PageHelper
 
   def find_next_page(page)
-    if page.parent && page.parent.data.layout == "lesson-options"
-      return page.parent.parent.children.select {|s| s.data.order == page.parent.data.order + 1}.first
-    elsif page.children && page.children.first
-      return page.children.first
-    elsif page.parent && page.parent.children
-      if page.data.order
-        next_page = page.parent.children.select {|s| s.data.order == page.data.order + 1}.first
-      else
-        next_page = page.parent.children.first
-      end
-      if next_page != nil && next_page.appendix?
-        next_page = nil
-      end
-      next_page
+    module_obj = get_module_by_id(page.id)
+    return unless module_obj
+    if module_obj.children && module_obj.children.first
+      module_obj.children.first
+    elsif module_obj.parent
+      parent = get_module_by_id(module_obj.parent)
+      index = parent.children.index(module_obj)
+      parent.children[index + 1]
     end
   end
 
@@ -105,7 +99,8 @@ module PageHelper
 
   def get_page_classes(page, existing_classes)
     classes = [existing_classes]
-    if get_module_by_id(page.id)
+    section, id = get_page_section(page)
+    if section === 'modules' && get_module_by_id(page.id)
       fork_class = is_fork?(page) ? 'multi-page' : 'unit-page'
       classes << fork_class
     end
@@ -126,7 +121,7 @@ module PageHelper
 
     # Copy over most of the keys, except the certain keys, i.e. the page object, or the children
     tree.keys.reject { |key|
-      ['id', 'page', 'parent', 'children', 'order'].include?(key)
+      ['id', 'page', 'children', 'order'].include?(key)
     }.each { |key|
       val = tree[key]
       # Use default Ruby arrays and hashes
