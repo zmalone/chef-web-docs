@@ -63,7 +63,9 @@ $(document).ready(function() {
       });
     });
   });
-  $('#sideNav').scrollToFixed({ marginTop: 100, limit: $($('.module-next-btn')).offset().top });
+  if ($('#sideNav').length) {
+    $('#sideNav').scrollToFixed({ marginTop: 100, limit: $($('.module-next-btn')).offset().top });
+  }
 });
 $('.cls-modal').click(function(){
     $('#SignupModal').foundation('reveal','close')
