@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core'
-import { UserProfileService } from '../../services/user-profile.service'
+import { ProgressService } from '../../services/progress.service'
 
 @Component({
   selector: 'user-module-progress',
@@ -7,15 +7,20 @@ import { UserProfileService } from '../../services/user-profile.service'
 })
 export class UserModuleProgressComponent implements OnInit {
   public progress: number
+  public started: boolean
+  public completed: boolean
 
   @Input()
   module: string
 
-  constructor(private userProfileService: UserProfileService) {}
+  constructor(private progressService: ProgressService) {}
 
   ngOnInit() {
-    this.userProfileService.activeUserProfile.subscribe((active) => {
-      this.progress = (active && active.modules[this.module]) ? active.modules[this.module].progress : 0
+    this.progressService.activeUserProgress.subscribe((active) => {
+      this.completed = this.progressService.isComplete('modules', this.module)
+      this.started = this.progressService.getLastAccessed('modules', this.module)
+      console.log(this.started)
+      this.progress = this.progressService.getModuleProgress(this.module)
     })
   }
 }
