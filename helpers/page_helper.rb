@@ -6,6 +6,7 @@ module PageHelper
     if module_obj.children && module_obj.children.first
       module_obj.children.first
     elsif module_obj.parent
+      return if module_obj.parent === 'modules'
       parent = get_module_by_id(module_obj.parent)
       index = parent.children.index(module_obj)
       parent.children[index + 1]

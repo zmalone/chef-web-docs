@@ -26,36 +26,19 @@ export class ProgressService {
     return this.updateDateStamp(page, 'completed_at')
   }
 
-  public getLastStarted(section: 'modules' | 'tracks', item: string) {
+  public isComplete(section: 'modules' | 'tracks', item: string) {
     const data = this.getUserProgressData(section, item)
-    const incomplete = Object.keys(data).filter(key => {
-      return !data[key].completed_at
-    })
-    const sorted = incomplete.sort((a, b) => {
-      return (data[a].started_at > data[b].started_at) ? -1 : 1
-    })
-    return (data[sorted[0]]) ? {...{ id: sorted[0] }, ...data[sorted[0]] } : {}
+    return data && data.completed_at
   }
 
   public getLastAccessed(section: 'modules' | 'tracks', item: string) {
-    const data = this.getUserProgressData(section, item)
+    const data = this.getUserProgressData(section, item, true)
     const sorted = Object.keys(data).sort((a, b) => {
       const dateA = [data[a].started_at, data[a].completed_at].sort().reverse()[0]
       const dateB = [data[b].started_at, data[b].completed_at].sort().reverse()[0]
       return (dateA > dateB) ? -1 : 1
     })
-    return (data[sorted[0]]) ? {...{ id: sorted[0] }, ...data[sorted[0]] } : {}
-  }
-
-  public getLastCompleted(section: 'modules' | 'tracks', item: string) {
-    const data = this.getUserProgressData(section, item)
-    const complete = Object.keys(data).filter(key => {
-      return data[key].completed_at
-    })
-    const sorted = complete.sort((a, b) => {
-      return (data[a].completed_at > data[b].completed_at) ? -1 : 1
-    })
-    return (data[sorted[0]]) ? {...{ id: sorted[0] }, ...data[sorted[0]] } : {}
+    return data[sorted[0]] && {...{ id: sorted[0] }, ...data[sorted[0]] }
   }
 
   public getModuleProgress(pageId: string) {
@@ -69,7 +52,7 @@ export class ProgressService {
       // Get the user's current path through this module or track
       // TODO: Consider validating the last started item to ensure it follows the last completed
       const lastAccessed = this.getLastAccessed('modules', pageId)
-      if (lastAccessed.id) activeItemId = lastAccessed.id
+      if (lastAccessed) activeItemId = lastAccessed.id
     }
 
     // Get all the module IDs within the active path (parents, siblings, and children)
@@ -105,7 +88,7 @@ export class ProgressService {
 
     // Add up the the user's time completed for the current path
     const moduleId = this.getModuleRoot(pageId)
-    const userData = this.getUserProgressData('modules', moduleId)
+    const userData = this.getUserProgressData('modules', moduleId, true)
     const complete = Object.keys(userData).filter(key => {
       return userData[key].completed_at
     })
@@ -182,7 +165,6 @@ export class ProgressService {
     const dataChange = {}
     dataChange[section] = {}
     dataChange[section][pageId] = Object.assign({}, dataLocal[section][pageId])
-    dataLocal[section][pageId].url = page.url
     dataLocal[section][pageId][field] = dataChange[section][pageId][field] = new Date().toISOString()
 
     // Update local storage with the full data object
@@ -205,18 +187,22 @@ export class ProgressService {
     return httpObservable
   }
 
-  private getUserProgressData(section?: 'modules' | 'tracks', item?: string) {
+  private getUserProgressData(section?: 'modules' | 'tracks', item?: string, wildcard?: boolean) {
     let data = this.activeUserProgress.getValue()
     if (section) {
       data = data[section] || {}
       if (item) {
-        const ret = {}
-        Object.keys(data).forEach(key => {
-          if (key.match(new RegExp('^' + item + '(\/.+)?$'))) {
-            ret[key] = data[key]
-          }
-        })
-        return ret
+        if (wildcard) {
+          const ret = {}
+          Object.keys(data).forEach(key => {
+            if (key.match(new RegExp('^' + item + '(\/.+)?$'))) {
+              ret[key] = data[key]
+            }
+          })
+          return ret
+        } else {
+          return data[item]
+        }
       }
     }
     return data

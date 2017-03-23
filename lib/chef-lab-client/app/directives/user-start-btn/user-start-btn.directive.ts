@@ -17,9 +17,9 @@ export class UserStartBtnDirective implements OnInit {
 
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe((active) => {
-      const lastUnit = this.progressService.getLastStarted('modules', this.module)
-      // this.el.nativeElement.innerHTML = 'Revisit'
-      if (lastUnit.url) {
+      if (this.isComplete()) {
+        this.el.nativeElement.innerHTML = 'Revisit'
+      } else if (this.getLastUrl()) {
         this.el.nativeElement.innerHTML = 'Continue'
       } else {
         this.el.nativeElement.innerHTML = 'Start'
@@ -30,7 +30,16 @@ export class UserStartBtnDirective implements OnInit {
   @HostListener('click', ['$event'])
   clicked(e) {
     e.preventDefault()
-    const lastUnit = this.progressService.getLastStarted('modules', this.module)
-    window.location.href = lastUnit.url || this.href
+    window.location.href = (!this.isComplete() && this.getLastUrl()) || this.href
+  }
+
+  isComplete() {
+    return this.progressService.isComplete('modules', this.module)
+  }
+
+  getLastUrl() {
+    const lastUnit = this.progressService.getLastAccessed('modules', this.module)
+    const moduleData = (window as any).dataTree['modules']
+    return (lastUnit && moduleData[lastUnit.id]) ? moduleData[lastUnit.id].url : ''
   }
 }
