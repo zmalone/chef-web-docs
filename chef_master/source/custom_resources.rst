@@ -5,8 +5,6 @@ Custom Resources
 
 As of Chef client version 12.5, this recommended approach for all custom resources. If you are using an older version of the chef-client, please use the version picker (in the top left of the navigation) to select your version, and then choose the same topic from the navigation tree ("Extend Chef > Custom Resources"). See also https://github.com/chef-cookbooks/compat_resource for using custom resources with chef-client 12.1 - 12.4.
 
-As of Chef client version 12.5, "resource attributes" are now known as "resource properties".
-
 As of Chef client 12.14, individual properties can be marked as `sensitive: true`, which suppresses the value of that property when exporting the resource's state.
 
 As of 12.14, individual properties can be marked as `sensitive: true`, which suppresses the value of that property when exporting the resource's state.
@@ -245,11 +243,11 @@ In the custom resource, add the following custom properties:
 .. code-block:: ruby
 
    property :instance_name, String, name_property: true
-   property :port, Fixnum, required: true
+   property :port, Integer, required: true
 
 where
 
-* ``String`` and ``Fixnum`` are Ruby types (all custom properties must have an assigned Ruby type)
+* ``String`` and ``Integer`` are Ruby types (all custom properties must have an assigned Ruby type)
 * ``name_property: true`` allows the value for this property to be equal to the ``'name'`` of the resource block
 
 The ``instance_name`` property is then used within the custom resource in many locations, including defining paths to configuration files, services, and virtual hosts.
@@ -298,7 +296,7 @@ Use the **template** resource to create an ``httpd.service`` on the node based o
    template "/lib/systemd/system/httpd-#{instance_name}.service" do
      source 'httpd.service.erb'
      variables(
-       :instance_name => instance_name
+       instance_name: instance_name
      )
      owner 'root'
      group 'root'
@@ -320,8 +318,8 @@ Use the **template** resource to configure httpd on the node based on the ``http
    template "/etc/httpd/conf/httpd-#{instance_name}.conf" do
      source 'httpd.conf.erb'
      variables(
-       :instance_name => instance_name,
-       :port => port
+       instance_name: instance_name,
+       port: port
      )
      owner 'root'
      group 'root'
@@ -431,7 +429,7 @@ Final Resource
 .. code-block:: ruby
 
    property :instance_name, String, name_property: true
-   property :port, Fixnum, required: true
+   property :port, Integer, required: true
 
    action :create do
      package 'httpd' do
@@ -441,7 +439,7 @@ Final Resource
      template "/lib/systemd/system/httpd-#{instance_name}.service" do
        source 'httpd.service.erb'
        variables(
-         :instance_name => instance_name
+         instance_name: instance_name
        )
        owner 'root'
        group 'root'
@@ -452,8 +450,8 @@ Final Resource
      template "/etc/httpd/conf/httpd-#{instance_name}.conf" do
        source 'httpd.conf.erb'
        variables(
-         :instance_name => instance_name,
-         :port => port
+         instance_name: instance_name,
+         port: port
        )
        owner 'root'
        group 'root'
@@ -540,6 +538,11 @@ Methods may be made available to the custom resource actions by using an ``actio
 
    property file, String
 
+   action :delete do
+     helper_method
+     FileUtils.rm(file) if file_ex
+   end
+ 
    action_class do
 
      def file_exist
@@ -554,11 +557,6 @@ Methods may be made available to the custom resource actions by using an ``actio
 
      include Sample::Helper
 
-   end
-
-   action :delete do
-     helper_method
-     FileUtils.rm(file) if file_ex
    end
 
 .. end_tag
@@ -733,7 +731,7 @@ Custom resources are designed to use core resources that are built into Chef. In
    property :cwd, String
    property :environment, Hash, default: {}
    property :user, [String, Integer]
-   property :sensitive, [TrueClass, FalseClass], default: false
+   property :sensitive, [true, false], default: false
 
    prefix = '/opt/languages/node'
 
@@ -776,7 +774,7 @@ To prevent this behavior, use ``new_resource.`` to tell the chef-client to proce
    property :cwd, String
    property :environment, Hash, default: {}
    property :user, [String, Integer]
-   property :sensitive, [TrueClass, FalseClass], default: false
+   property :sensitive, [true, false], default: false
 
    prefix = '/opt/languages/node'
 
@@ -815,7 +813,7 @@ Use the ``property`` method to define properties for the custom resource. The sy
 where
 
 * ``:name`` is the name of the property
-* ``ruby_type`` is the optional Ruby type or array of types, such as ``String``, ``Integer``, ``TrueClass``, or ``FalseClass``
+* ``ruby_type`` is the optional Ruby type or array of types, such as ``String``, ``Integer``, ``true``, or ``false``
 * ``default: 'value'`` is the optional default value loaded into the resource
 * ``parameter: 'value'`` optional parameters
 
@@ -832,7 +830,7 @@ ruby_type
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 .. tag dsl_custom_resource_method_property_ruby_type
 
-The property ruby_type is a positional parameter. Use to ensure a property value is of a particular ruby class, such as ``TrueClass``, ``FalseClass``, ``NilClass``, ``String``, ``Array``, ``Hash``. Use an array of ruby classes to allow a value to be of more than one type. For example:
+The property ruby_type is a positional parameter. Use to ensure a property value is of a particular ruby class, such as ``true``, ``false``, ``nil``, ``String``, ``Array``, ``Hash``, ``Integer``, ``Symbol``. Use an array of ruby classes to allow a value to be of more than one type. For example:
 
        .. code-block:: ruby
 
@@ -840,7 +838,7 @@ The property ruby_type is a positional parameter. Use to ensure a property value
 
        .. code-block:: ruby
 
-          property :name, Fixnum
+          property :name, Integer
 
        .. code-block:: ruby
 
@@ -848,11 +846,11 @@ The property ruby_type is a positional parameter. Use to ensure a property value
 
        .. code-block:: ruby
 
-          property :name, [TrueClass, FalseClass]
+          property :name, [true, false]
 
        .. code-block:: ruby
 
-          property :name, [String, NilClass]
+          property :name, [String, nil]
 
        .. code-block:: ruby
 
