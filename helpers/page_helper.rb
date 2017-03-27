@@ -154,4 +154,7 @@ module PageHelper
     "#{(average / 60).ceil} hours"
   end
 
+  def get_quiz_data(page)
+    page.data.quiz
+  end
 end

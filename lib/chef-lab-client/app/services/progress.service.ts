@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { BehaviorSubject } from 'rxjs'
+import { Observable, BehaviorSubject, AsyncSubject } from 'rxjs'
 import { ErrorHandlerService } from './error-handler.service'
 import { Angular2TokenService } from 'angular2-token'
 
@@ -18,21 +18,34 @@ export class ProgressService {
   }
 
   public trackCurrentPage() {
-    const win = (window as any)
-    return this.updateDateStamp(win.currentPage, 'started_at')
+    return this.updateDateStamp('modules', (window as any).currentPage.id, 'started_at')
   }
 
-  public complete(page: any) {
-    return this.updateDateStamp(page, 'completed_at')
+  public complete(pageId: string) {
+    const moduleId = this.getModuleRoot(pageId)
+    // TODO: Refactor this. Ideally the updateDateStamp observable would be the if operator's "then"
+    // argument, but this argument has to be an observable, and _tokenService.put is returning a hot
+    // observable so it's too late to prevent the API call.
+    return this.updateDateStamp('modules', pageId, 'completed_at')
+      .concat(Observable.if(() => {
+        if (!this.getNextPage(pageId)) {
+          if (this.getModuleProgress(pageId) >= 100) {
+            this.updateDateStamp('modules', moduleId, 'completed_at')
+            return true
+          }
+        }
+        return false
+      }, Observable.of(true)))
   }
 
-  public isComplete(section: 'modules' | 'tracks', item: string) {
-    const data = this.getUserProgressData(section, item)
+  public isComplete(section: 'modules' | 'tracks', pageId: string | void) {
+    if (!pageId) return false
+    const data = this.getUserProgressData(section, pageId)
     return data && data.completed_at
   }
 
-  public getLastAccessed(section: 'modules' | 'tracks', item: string) {
-    const data = this.getUserProgressData(section, item, true)
+  public getLastAccessed(section: 'modules' | 'tracks', pageId: string) {
+    const data = this.getUserProgressData(section, pageId, true)
     const sorted = Object.keys(data).sort((a, b) => {
       const dateA = [data[a].started_at, data[a].completed_at].sort().reverse()[0]
       const dateB = [data[b].started_at, data[b].completed_at].sort().reverse()[0]
@@ -42,7 +55,7 @@ export class ProgressService {
   }
 
   public getModuleProgress(pageId: string) {
-    const moduleData = (window as any).dataTree['modules']
+    const moduleData = (window as any).dataTree.modules
 
     // Determine the active item from which to generate time estimates
     // See if the item passed is the current path, or the module root
@@ -107,8 +120,8 @@ export class ProgressService {
     return (baseTimeAvg) ? Math.min(100, Math.max(0, Math.round(100 * userCompletedAvg / baseTimeAvg))) : 0
   }
 
-  private getActivePathIds(activeItemId) {
-    const moduleData = (window as any).dataTree['modules']
+  private getActivePathIds(activeItemId: string): Array<string> {
+    const moduleData = (window as any).dataTree.modules
     let ids = []
     if (!moduleData[activeItemId]) return ids
 
@@ -131,11 +144,11 @@ export class ProgressService {
     return ids
   }
 
-  private getChildPathIds(activeItemId) {
-    const moduleData = (window as any).dataTree['modules']
+  private getChildPathIds(pageId: string): Array<string> {
+    const moduleData = (window as any).dataTree.modules
     let ids = []
-    if (moduleData[activeItemId] && moduleData[activeItemId].children) {
-      moduleData[activeItemId].children.forEach((child) => {
+    if (moduleData[pageId] && moduleData[pageId].children) {
+      moduleData[pageId].children.forEach((child) => {
         ids.push(child)
         ids = ids.concat(this.getChildPathIds(child))
       })
@@ -143,8 +156,8 @@ export class ProgressService {
     return ids
   }
 
-  private getModuleRoot(pageId) {
-    const moduleData = (window as any).dataTree['modules']
+  public getModuleRoot(pageId: string): string {
+    const moduleData = (window as any).dataTree.modules
     let moduleRoot = moduleData[pageId]
     while (moduleRoot.parent && moduleRoot.parent !== 'modules') {
       pageId = moduleRoot.parent
@@ -153,10 +166,31 @@ export class ProgressService {
     return pageId
   }
 
-  private updateDateStamp(page: any, field: string) {
-    if (!page.section || !page.id) return
-    const section = page.section
-    const pageId = page.id
+  public getTrack(moduleId: string): string | void {
+    const tracksData = (window as any).dataTree.tracks
+    tracksData.tracks.children.forEach((trackId) => {
+      tracksData[trackId].modules.forEach((trackModuleId) => {
+        if (trackModuleId === moduleId) return trackId
+      })
+    })
+  }
+
+  // Should match the Ruby implementation: find_get_page() in page_helper.rb
+  public getNextPage(pageId: string): string | void {
+    const moduleData = (window as any).dataTree.modules
+    if (!moduleData[pageId]) return
+    if (moduleData[pageId].children) {
+      return moduleData[pageId].children[0]
+    } else if (moduleData[pageId].parent) {
+      const parentId = moduleData[pageId].parent
+      if (parentId === 'modules') return
+      const parent = moduleData[parentId]
+      const index = parent.children.indexOf(pageId)
+      return parent.children[index + 1]
+    }
+  }
+
+  private updateDateStamp(section: 'modules' | 'tracks', pageId: string, field: string) {
     const dataLocal = this.activeUserProgress.getValue()
 
     // Build full and partial data objects
@@ -172,7 +206,7 @@ export class ProgressService {
 
     // Update the server with a partial objects of changes
     const httpObservable = this._tokenService.put('api/v1/progress', dataChange)
-      .share()
+
     // Register all handlers to make RxJS catch exceptions, which other subscribers may need
     // See https://github.com/ReactiveX/rxjs/issues/2145
     httpObservable.subscribe(
@@ -187,21 +221,21 @@ export class ProgressService {
     return httpObservable
   }
 
-  private getUserProgressData(section?: 'modules' | 'tracks', item?: string, wildcard?: boolean) {
+  private getUserProgressData(section?: 'modules' | 'tracks', pageId?: string, wildcard?: boolean) {
     let data = this.activeUserProgress.getValue()
     if (section) {
       data = data[section] || {}
-      if (item) {
+      if (pageId) {
         if (wildcard) {
           const ret = {}
           Object.keys(data).forEach(key => {
-            if (key.match(new RegExp('^' + item + '(\/.+)?$'))) {
+            if (key.match(new RegExp('^' + pageId + '(\/.+)?$'))) {
               ret[key] = data[key]
             }
           })
           return ret
         } else {
-          return data[item]
+          return data[pageId]
         }
       }
     }

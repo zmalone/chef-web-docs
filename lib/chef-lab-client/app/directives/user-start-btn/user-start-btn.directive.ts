@@ -39,7 +39,7 @@ export class UserStartBtnDirective implements OnInit {
 
   getLastUrl() {
     const lastUnit = this.progressService.getLastAccessed('modules', this.module)
-    const moduleData = (window as any).dataTree['modules']
+    const moduleData = (window as any).dataTree.modules
     return (lastUnit && moduleData[lastUnit.id]) ? moduleData[lastUnit.id].url : ''
   }
 }

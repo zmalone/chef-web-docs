@@ -1,35 +1,35 @@
 import { Injectable } from '@angular/core'
-import { ReplaySubject, Observable } from 'rxjs'
+import { ReplaySubject, BehaviorSubject, Observable } from 'rxjs'
 import { Angular2TokenService } from 'angular2-token'
-import { Response } from '@angular/http'
 import { User } from '../model/user'
-
 
 @Injectable()
 export class UserProfileService {
-  public activeUserProfile: ReplaySubject<any> = new ReplaySubject(1)
+  public userProfile: ReplaySubject<any> = new ReplaySubject(1)
+  private isSignedIn: BehaviorSubject<boolean> = new BehaviorSubject(false)
 
-   constructor(private _tokenService: Angular2TokenService) {}
+  constructor(private _tokenService: Angular2TokenService) {}
 
-  public load(userId) {
-    // TODO: Implement API, remove simulated async mock data, and refactor as needed
-    // this.http.get('/user/' + userId).subscribe(res => this.activeUserProfile.next(res))
-    setInterval(() => {
-      this.activeUserProfile.next({
-        modules: {
-          'develop-locally': {
-              progress: 100,
-          },
-          'getting-started': {
-            progress: Math.floor(Math.random() * 100),
-          },
-          'learn-basics': {
-            progress: Math.floor(Math.random() * 100),
-          },
-        },
-      })
-    }, 3000)
-    return this.activeUserProfile
+  public isAuthenticated = function() {
+    this.isSignedIn.next(this._tokenService.userSignedIn())
+    return this.isSignedIn
+  }
+
+  public signInOAuth(serviceName: string) {
+    this._tokenService.signInOAuth(serviceName).subscribe(
+        () => this._tokenService.validateToken().subscribe(this.onSignIn.bind(this), console.error),
+        console.error,
+    )
+  }
+
+  public signOut() {
+    this.isSignedIn.next(false)
+    if (this._tokenService.signOut()) {
+      localStorage.clear()
+      return true
+    } else {
+      return false
+    }
   }
 
   public getUserProfile(): Observable<User> {
@@ -40,8 +40,7 @@ export class UserProfileService {
     return this._tokenService.put('api/v1/profile', user).map(res => <User> res.json())
   }
 
+  private onSignIn() {
+    this.isSignedIn.next(true)
+  }
 }
-
-
-
-
