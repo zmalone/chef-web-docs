@@ -23,6 +23,14 @@ import { LoginChefDirective } from './directives/login-chef/login-chef.directive
 import { ProgressService } from './services/progress.service'
 import { UserProfileComponent } from './components/user-profile/user-profile.component'
 import { MaterialModule } from '@angular/material'
+import { ModuleFilterService } from './services/module-filter.service'
+import { ModuleDisplayDirective } from './directives/module-display/module-display.directive'
+import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect'
+import { ModuleFilterComponent } from './components/module-filter/module-filter.component'
+import { LoadModuleBtnDirective } from './directives/load-module-btn/load-module-btn.directive'
+import { TrackDisplayService } from './services/track-display.service'
+import { TrackDisplayDirective } from './directives/track-display/track-display.directive'
+import { LoadTrackBtnDirective } from './directives/load-track-btn/load-track-btn.directive'
 
 
 const routerConfig: Routes = []
@@ -44,6 +52,11 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     LoginLinkedInDirective,
     LoginChefDirective,
     UserProfileComponent,
+    ModuleDisplayDirective,
+    ModuleFilterComponent,
+    LoadModuleBtnDirective,
+    TrackDisplayDirective,
+    LoadTrackBtnDirective,
   ],
   imports: [
     routes,
@@ -53,12 +66,15 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     ToastModule.forRoot(),
     A2tUiModule,
     MaterialModule,
+    MultiselectDropdownModule,
   ],
   providers: [
     ErrorHandlerService,
     Angular2TokenService,
     UserProfileService,
     ProgressService,
+    ModuleFilterService,
+    TrackDisplayService,
   ],
   bootstrap: [
     AppComponent,

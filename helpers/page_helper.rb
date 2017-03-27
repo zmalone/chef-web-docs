@@ -154,4 +154,9 @@ module PageHelper
     "#{(average / 60).ceil} hours"
   end
 
+  def get_tag_classes(tags_list)
+    return tags_list.join(' ') if tags_list
+  end
+
+
 end
