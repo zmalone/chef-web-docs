@@ -160,6 +160,7 @@ module ZurbFoundation
     content.gsub!('<p><p>', '<p>')
     content.gsub!('</p></p>', '</p>')
     content.gsub!('<p></', '</') # TODO: It is ever valid to open a paragraph right before closing another tag?
+    content.gsub!('<p><h', '<h') # A paragraph shouldn't be opened right before a heading tag
     in_paragraph = false
     content.gsub!(/<(\/)?(p|P)[^>]*>/) { |match|
       # Remove closing </p> tags if we're NOT in a paragraph, and opening <p> tags if we ARE in a paragraph
