@@ -20,12 +20,6 @@ export class QuizComponent implements OnInit {
   constructor(private progressService: ProgressService) {}
 
   ngOnInit() {
-    this.questions = (window as any).currentPage.quiz
-    if (!this.questions) return
-    this.correctAnswers = this.questions.map((question: any) => {
-      return question.answer
-    })
-
     this.progressService.activeUserProgress.subscribe(() => {
       const moduleId = this.progressService.getModuleRoot((window as any).currentPage.id)
       const trackId = this.progressService.getTrack(moduleId)
@@ -35,6 +29,12 @@ export class QuizComponent implements OnInit {
       this.showSpecialCoaster = this.progressService.getAchievements('grand-opening') && !localStorage.getItem('shownSpecialCoaster')
       if (this.showSpecialCoaster) localStorage.setItem('shownSpecialCoaster', 'true')
     }, console.error)
+
+    this.questions = (window as any).currentPage.quiz
+    if (!this.questions) return
+    this.correctAnswers = this.questions.map((question: any) => {
+      return question.answer
+    })
   }
 
   public onSubmit() {
