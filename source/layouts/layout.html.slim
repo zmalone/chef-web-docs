@@ -28,43 +28,47 @@ html lang="en"
     app-root
     noscript#app-content
       .contain-to-grid.fixed
-        nav.nav-main.top-bar data-options=("sticky_on: large") data-topbar="" role="navigation"
-          a name="top" href="#top"
-          .left
-            = link_to '/', class: 'logo-learn-chef' do
-              = image_tag('learn-chef-rally-logo.svg', onerror: 'learn-chef-rally-logo.png')
-          i#nav-icon.fa.fa-bars
-          ul.links
-            li= link_to 'Tracks', '/tracks/'
-            li= link_to 'Modules', '/modules/'
-          .right
-            ul.links
-              li.nav-link template="ngIf !isAuthenticated"
+        nav.nav-main.top-bar data-topbar="" role="navigation"
+          ul.title-area
+            li.name
+              = link_to '/', class: 'logo-learn-chef' do
+                = image_tag('learn-chef-rally-logo.svg', onerror: 'learn-chef-rally-logo.png')
+            /! Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone
+            li.toggle-topbar.menu-icon
+              a href="#"
+                span
+          section.top-bar-section
+            /! Right Nav Section
+            ul.right.links
+              li.nav-link template="ngIf !isAuthenticated()"
                 a href="#" data-reveal-id="loginModal" Log in
-              li.nav-link template="ngIf !isAuthenticated"
+              li.nav-link template="ngIf !isAuthenticated()"
                 a href="#" data-reveal-id="SignupModal" Sign up
-              li.nav-link template="ngIf isAuthenticated"
+              li.nav-link template="ngIf isAuthenticated()"
                 a href="#" {{getUserInfo() | display_name}}
-              li
+              li.has-dropdown
                 a.icon.ic-option data-dropdown="dropOptions" aria-controls="dropOptions" aria-expanded="false" data-options="align:left"
                 ul#dropOptions.f-dropdown.nav-dropdown aria-hidden="true" data-dropdown-content="" tabindex="-1"
-                  li template="ngIf isAuthenticated"
+                  li template="ngIf isAuthenticated()"
                     = link_to '/profile/'
                       i.icon-sprite.ic-profile
                       span Profile
-                  li template="ngIf isAuthenticated"
+                  li template="ngIf isAuthenticated()"
                     = link_to '/profile/'
                       i.icon-sprite.ic-progress
                       span Progress
-                  li template="ngIf isAuthenticated"
-                    a href="/somewhere/" on-click="logout($event)"
+                  li template="ngIf isAuthenticated()"
+                    a href="#" on-click="logout($event)"
                       i.icon-sprite.ic-log-out
                       span Log Out
                   li
                     a href="#"
                       i.icon-sprite.ic-about-chef
                       span About Chef
-
+            /! Left Nav Section
+            ul.left.links
+              li= link_to 'Tracks', '/tracks/'
+              li= link_to 'Modules', '/modules/'
       //Modal for login and Sign up
       #loginModal.reveal-modal.tiny.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
         .modal-title

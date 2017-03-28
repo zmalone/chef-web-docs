@@ -10,7 +10,7 @@ const pageTemplate = (window as any).mainTemplate || '<div>No template found for
   template: pageTemplate,
 })
 export class AppComponent implements OnInit {
-  public isAuthenticated = false
+  private isSignedIn = false
 
   constructor(
     private _tokenService: Angular2TokenService,
@@ -33,8 +33,12 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.userProfileService.isAuthenticated().subscribe((next) => {
-      this.isAuthenticated = next
+      this.isSignedIn = next
     })
+  }
+
+  public isAuthenticated = function() {
+    return this.isSignedIn
   }
 
   public logout = function(event) {
