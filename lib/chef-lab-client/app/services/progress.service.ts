@@ -1,50 +1,109 @@
 import { Injectable } from '@angular/core'
 import { Observable, BehaviorSubject, AsyncSubject } from 'rxjs'
-import { ErrorHandlerService } from './error-handler.service'
+import { UserProfileService } from './user-profile.service'
 import { Angular2TokenService } from 'angular2-token'
+type LearningType = 'achievements' | 'tracks' | 'modules' | 'units'
 
 @Injectable()
 export class ProgressService {
-  public activeUserProgress: BehaviorSubject<any> = new BehaviorSubject(1)
+  public activeUserProgress: BehaviorSubject<any> = new BehaviorSubject({})
+  private isAuthenticated = false
+  private wasAnonymous = false
 
   constructor(
-    private errHandlerService: ErrorHandlerService,
+    private userProfileService: UserProfileService,
     private _tokenService: Angular2TokenService,
   ) {
   }
 
   init() {
-    this.initUserProgressData()
+    this.userProfileService.isAuthenticated().subscribe((next) => {
+      this.isAuthenticated = next
+      if (!this.isAuthenticated) {
+        this.wasAnonymous = true
+      }
+      this.initUserProgressData()
+    })
   }
 
-  public trackCurrentPage() {
-    return this.updateDateStamp('modules', (window as any).currentPage.id, 'started_at')
+  public startCurrentPage() {
+    return this.updateField('units', (window as any).currentPage.id, { 'started_at': new Date().toISOString() })
   }
 
   public complete(pageId: string) {
-    const moduleId = this.getModuleRoot(pageId)
-    // TODO: Refactor this. Ideally the updateDateStamp observable would be the if operator's "then"
-    // argument, but this argument has to be an observable, and _tokenService.put is returning a hot
-    // observable so it's too late to prevent the API call.
-    return this.updateDateStamp('modules', pageId, 'completed_at')
-      .concat(Observable.if(() => {
-        if (!this.getNextPage(pageId)) {
-          if (this.getModuleProgress(pageId) >= 100) {
-            this.updateDateStamp('modules', moduleId, 'completed_at')
-            return true
-          }
-        }
-        return false
-      }, Observable.of(true)))
+    return this.updateField('units', pageId, { 'completed_at': new Date().toISOString() })
+      .concat(
+        this.completeModule(pageId),
+        this.completeTrack(pageId),
+        this.awardAchievements(),
+      )
   }
 
-  public isComplete(section: 'modules' | 'tracks', pageId: string | void) {
+  public getAchievements(id?: string) {
+    const data = this.getUserProgressData('achievements') || {}
+    if (id) return data[id]
+    return data
+  }
+
+  private completeModule(pageId: string) {
+    const moduleId = this.getModuleRoot(pageId)
+    const currentState = this.getUserProgressData('modules', moduleId) || {}
+    const newData = {}
+    if (!currentState.started_at) newData['started_at'] = new Date().toISOString()
+    if (!currentState.completed_at && !this.getNextPage(pageId)) {
+      if (this.getModuleProgress(pageId) >= 100) {
+        newData['completed_at'] = new Date().toISOString()
+      }
+    }
+    if (newData) return this.updateField('modules', moduleId, newData)
+    return Observable.from([])
+  }
+
+  private completeTrack(pageId: string) {
+    const moduleId = this.getModuleRoot(pageId)
+    const trackId = this.getTrack(moduleId)
+    if (trackId) {
+      const currentState = this.getUserProgressData('tracks', trackId) || {}
+      const newData = {}
+      if (!currentState.started_at) newData['started_at'] = new Date().toISOString()
+      if (!currentState.completed_at) {
+        const trackData = (window as any).dataTree.tracks[trackId]
+        const modules = trackData && trackData.modules || {}
+        const complete = Object.keys(modules).filter(module => {
+          return this.getUserProgressData('modules', module).completed_at
+        })
+        if (complete.length === Object.keys(modules).length) {
+          newData['completed_at'] = new Date().toISOString()
+        }
+      }
+      if (newData) return this.updateField('modules', moduleId, newData)
+    }
+    return Observable.from([])
+  }
+
+  private awardAchievements() {
+    const modulesData = this.getUserProgressData('modules')
+    const achievementsData = this.getUserProgressData('achievements')
+
+    // // If any modules have been completed, grant the special edition "grand opening" coaster
+    if (Object.keys(modulesData).filter((id) => { return modulesData[id].completed_at }).length > 0) {
+      if (Object.keys(achievementsData).filter((id) => { return id === 'grand-opening' }).length === 0) {
+        return this.updateField('achievements', 'grand-opening', {
+          'achievement_type': 'standard',
+          'earned_at': new Date().toISOString(),
+        })
+      }
+    }
+    return Observable.from([])
+  }
+
+  public isComplete(section: LearningType, pageId: string | void) {
     if (!pageId) return false
     const data = this.getUserProgressData(section, pageId)
     return data && data.completed_at
   }
 
-  public getLastAccessed(section: 'modules' | 'tracks', pageId: string) {
+  public getLastAccessed(section: LearningType, pageId: string) {
     const data = this.getUserProgressData(section, pageId, true)
     const sorted = Object.keys(data).sort((a, b) => {
       const dateA = [data[a].started_at, data[a].completed_at].sort().reverse()[0]
@@ -87,7 +146,7 @@ export class ProgressService {
     // Add parent path time
     if (moduleData[childRoot] && moduleData[childRoot].parent) {
       parent = moduleData[childRoot].parent
-      while (parent) {
+      while (parent && parent !== 'modules') {
         const parentData = moduleData[parent]
         if (parentData.minutes) {
           baseTimeRange[0] += parentData.minutes[0]
@@ -101,13 +160,14 @@ export class ProgressService {
 
     // Add up the the user's time completed for the current path
     const moduleId = this.getModuleRoot(pageId)
-    const userData = this.getUserProgressData('modules', moduleId, true)
+    const userData = this.getUserProgressData('units', moduleId, true)
     const complete = Object.keys(userData).filter(key => {
       return userData[key].completed_at
     })
     let userCompletedAvg = 0
-    complete.forEach(completeId => {
-      if (activePathIds.indexOf(completeId) > -1) {
+    const activePathIdsCompleted = complete.filter(completeId => {
+      const inPath = activePathIds.indexOf(completeId) > -1
+      if (inPath) {
         const completeItem = moduleData[completeId]
         if (completeItem) {
           const completedTimeRange = completeItem.minutes || [0, 0]
@@ -115,9 +175,15 @@ export class ProgressService {
           userCompletedAvg += completedTimeAvg
         }
       }
+      return inPath
     })
 
-    return (baseTimeAvg) ? Math.min(100, Math.max(0, Math.round(100 * userCompletedAvg / baseTimeAvg))) : 0
+    // If there isn't any base time, we'll figure progress by number of units completed
+    if (baseTimeAvg) {
+      return Math.min(100, Math.max(0, Math.round(100 * userCompletedAvg / baseTimeAvg)))
+    } else {
+      return Math.min(100, Math.max(0, Math.round(100 * activePathIdsCompleted.length / activePathIds.length)))
+    }
   }
 
   private getActivePathIds(activeItemId: string): Array<string> {
@@ -133,7 +199,7 @@ export class ProgressService {
     // Add parent path IDs
     if (moduleData[childRoot] && moduleData[childRoot].parent) {
       parent = moduleData[childRoot].parent
-      while (parent) {
+      while (parent && parent !== 'modules') {
         ids.unshift(parent)
         parent = moduleData[parent].parent
       }
@@ -190,7 +256,7 @@ export class ProgressService {
     }
   }
 
-  private updateDateStamp(section: 'modules' | 'tracks', pageId: string, field: string) {
+  private updateField(section: LearningType, pageId: string, fieldValues: object) {
     const dataLocal = this.activeUserProgress.getValue()
 
     // Build full and partial data objects
@@ -199,29 +265,42 @@ export class ProgressService {
     const dataChange = {}
     dataChange[section] = {}
     dataChange[section][pageId] = Object.assign({}, dataLocal[section][pageId])
-    dataLocal[section][pageId][field] = dataChange[section][pageId][field] = new Date().toISOString()
+    Object.assign(dataChange[section][pageId], fieldValues)
+    Object.assign(dataLocal[section][pageId], fieldValues)
 
     // Update local storage with the full data object
     localStorage.setItem('userProgressInfo', JSON.stringify(dataLocal))
 
+    // If not logged in, skip the API call
+    if (!this.isAuthenticated) {
+      this.activeUserProgress.next(dataLocal)
+      return Observable.from([])
+    }
+
     // Update the server with a partial objects of changes
-    const httpObservable = this._tokenService.put('api/v1/progress', dataChange)
+    const httpObservable = this._tokenService.put('api/v1/progress', dataChange).share()
 
     // Register all handlers to make RxJS catch exceptions, which other subscribers may need
     // See https://github.com/ReactiveX/rxjs/issues/2145
     httpObservable.subscribe(
       () => {},
-      () => {
+      res => {
+        // TODO: Revisit and refine this behavior, but ensure that a user who's logged out
+        // as far as the server is concerned doesn't stay "logged in" on the client.
+        if (res.status === 401) {
+          this.userProfileService.signOut()
+        }
         this.activeUserProgress.next(dataLocal)
       },
       () => {
         this.activeUserProgress.next(dataLocal)
       },
     )
+
     return httpObservable
   }
 
-  private getUserProgressData(section?: 'modules' | 'tracks', pageId?: string, wildcard?: boolean) {
+  private getUserProgressData(section?: LearningType, pageId?: string, wildcard?: boolean) {
     let data = this.activeUserProgress.getValue()
     if (section) {
       data = data[section] || {}
@@ -243,18 +322,35 @@ export class ProgressService {
   }
 
   private initUserProgressData() {
+    let existing = localStorage.getItem('userProgressInfo')
+    existing = (existing) ? JSON.parse(existing) : {}
+
+    if (!this.isAuthenticated) {
+      this.activeUserProgress.next(existing)
+      this.startCurrentPage()
+      return Observable.from([])
+    }
+
+    // Transfer all local progress to the server
+    if (this.wasAnonymous) {
+      Object.keys(existing).forEach(section => {
+        Object.keys(existing[section]).forEach(id => {
+          this.updateField(section as LearningType, id, existing[section][id])
+        })
+      })
+      this.wasAnonymous = false
+    }
+
     return this._tokenService.get('api/v1/progress').map(res => res.json()).subscribe(
       res => {
         localStorage.setItem('userProgressInfo', res)
         this.activeUserProgress.next(res)
-        this.trackCurrentPage()
+        this.startCurrentPage()
       },
       error => {
         console.log('Error getting user progress from the database', error)
-        const existing = localStorage.getItem('userProgressInfo')
-        const data = (existing) ? JSON.parse(existing) : {}
-        this.activeUserProgress.next(data)
-        this.trackCurrentPage()
+        this.activeUserProgress.next(existing)
+        this.startCurrentPage()
       },
     )
   }

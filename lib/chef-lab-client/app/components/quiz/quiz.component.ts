@@ -15,6 +15,7 @@ export class QuizComponent implements OnInit {
   public isUnitComplete = false
   public isModuleComplete = false
   public isTrackComplete = false
+  public showSpecialCoaster = false
 
   constructor(private progressService: ProgressService) {}
 
@@ -28,9 +29,11 @@ export class QuizComponent implements OnInit {
     this.progressService.activeUserProgress.subscribe(() => {
       const moduleId = this.progressService.getModuleRoot((window as any).currentPage.id)
       const trackId = this.progressService.getTrack(moduleId)
-      this.isUnitComplete = this.progressService.isComplete('modules', (window as any).currentPage.id)
+      this.isUnitComplete = this.progressService.isComplete('units', (window as any).currentPage.id)
       this.isModuleComplete = this.progressService.isComplete('modules', moduleId)
       this.isTrackComplete = this.progressService.isComplete('tracks', trackId)
+      this.showSpecialCoaster = this.progressService.getAchievements('grand-opening') && !localStorage.getItem('shownSpecialCoaster')
+      if (this.showSpecialCoaster) localStorage.setItem('shownSpecialCoaster', 'true')
     }, console.error)
   }
 

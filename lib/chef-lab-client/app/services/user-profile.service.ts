@@ -11,7 +11,8 @@ export class UserProfileService {
   constructor(private _tokenService: Angular2TokenService) {}
 
   public isAuthenticated = function() {
-    this.isSignedIn.next(this._tokenService.userSignedIn())
+    const isAuthenticated = this._tokenService.userSignedIn()
+    if (this.isSignedIn.getValue() !== isAuthenticated) this.isSignedIn.next(isAuthenticated)
     return this.isSignedIn
   }
 
