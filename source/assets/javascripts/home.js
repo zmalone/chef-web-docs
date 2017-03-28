@@ -1,7 +1,6 @@
 $(document).ready(function() {
   var $titles = $(".home--section--title");
   var $description = $(".home--descriptions");
-
   $titles.hover(
     function() {
       $titles.find(".home--section--icon").removeClass("fade-in");
@@ -64,7 +63,9 @@ $(document).ready(function() {
       });
     });
   });
-
+  if ($('#sideNav').length) {
+    $('#sideNav').scrollToFixed({ marginTop: 100, limit: $($('.module-next-btn')).offset().top });
+  }
 });
 $('.cls-modal').click(function(){
     $('#SignupModal').foundation('reveal','close')

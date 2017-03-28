@@ -4,20 +4,20 @@
 - else
   - @title = current_page.data.title
   - @multipage = false
-- @check_style = "fa fa-check-square-o"
-ul.side-nav.box style="border:none; background-color:transparent;"
+- @check_style = "ic-check check-box-selected"
+ul#sideNav.side-nav.box
   li style="font-weight:700;" == @title.upcase
   - if current_page.parent
     - current_page.parent.children.each do |child|
       - if child == current_page
-        li.side-nav-active style="display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;"
-          <i class="fa fa-chevron-right" aria-hidden="true"></i>
+        li.side-nav-active
+          <i class="ic-check check-box" aria-hidden="true"></i>
           | &nbsp;&nbsp;
           span == child.toc_title
-        = partial "layouts/scroll-navigation"
-        - @check_style = "fa fa-square-o"
+          = partial "layouts/scroll-navigation"
+        - @check_style = "ic-check check-box"
       - elsif @multipage
-        li = link_to child, style:"display:inline-block; border: border-radius:5px; padding: 6px; font-weight:400;" do
-          <i class="fa #{@check_style}" aria-hidden="true"></i>
+        li = link_to child, style:"" do
+          <i class="#{@check_style}" aria-hidden="true"></i>
           | &nbsp;&nbsp;
           span == child.toc_title
