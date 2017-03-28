@@ -30,8 +30,7 @@ export class QuizComponent implements OnInit {
       if (this.showSpecialCoaster) localStorage.setItem('shownSpecialCoaster', 'true')
     }, console.error)
 
-    this.questions = (window as any).currentPage.quiz
-    if (!this.questions) return
+    this.questions = (window as any).currentPage.quiz || []
     this.correctAnswers = this.questions.map((question: any) => {
       return question.answer
     })

@@ -50,10 +50,8 @@ export class ProgressService {
     const currentState = this.getUserProgressData('modules', moduleId) || {}
     const newData = {}
     if (!currentState.started_at) newData['started_at'] = new Date().toISOString()
-    if (!currentState.completed_at && !this.getNextPage(pageId)) {
-      if (this.getModuleProgress(pageId) >= 100) {
-        newData['completed_at'] = new Date().toISOString()
-      }
+    if (!currentState.completed_at && this.getModuleProgress(pageId) >= 100) {
+      newData['completed_at'] = new Date().toISOString()
     }
     if (newData) return this.updateField('modules', moduleId, newData)
     return Observable.from([])
