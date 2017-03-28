@@ -14,7 +14,7 @@ export class UserTrackProgressComponent implements OnInit {
   constructor(private progressService: ProgressService) {}
 
   ngOnInit() {
-    const trackData = (window as any).dataTree['tracks'][this.track]
+    const trackData = (window as any).dataTree.tracks[this.track]
     const modules = trackData && trackData.modules || []
     this.progressService.activeUserProgress.subscribe((active) => {
       this.modules = modules.map(module => {

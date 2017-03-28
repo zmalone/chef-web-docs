@@ -16,12 +16,14 @@ import { UserProfileService } from './services/user-profile.service'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
 import { UserModuleProgressComponent } from './components/user-module-progress/user-module-progress.component'
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
+import { QuizComponent } from './components/quiz/quiz.component'
 import { DisplayNamePipe } from './pipe/display_name.pipe'
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
 import { LoginLinkedInDirective } from './directives/login-linkedin/login-linkedin.directive'
 import { LoginChefDirective } from './directives/login-chef/login-chef.directive'
 import { ProgressService } from './services/progress.service'
 import { UserProfileComponent } from './components/user-profile/user-profile.component'
+import { UserProfileLinkComponent } from './components/user-profile-link/user-profile-link.component'
 import { MaterialModule } from '@angular/material'
 
 
@@ -39,11 +41,13 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     UserProgressBarComponent,
     UserModuleProgressComponent,
     UserTrackProgressComponent,
+    QuizComponent,
     DisplayNamePipe,
     LoginTwitterDirective,
     LoginLinkedInDirective,
     LoginChefDirective,
     UserProfileComponent,
+    UserProfileLinkComponent,
   ],
   imports: [
     routes,

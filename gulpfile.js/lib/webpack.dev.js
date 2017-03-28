@@ -17,7 +17,7 @@ for (var key in config.tasks.js.entries) {
 }
 
 module.exports = webpackMerge(commonConfig, {
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'source-map',
 
   entry: entries,
 
