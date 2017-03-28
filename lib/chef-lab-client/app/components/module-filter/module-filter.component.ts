@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core'
-import {IMultiSelectOption, IMultiSelectSettings} from 'angular-2-dropdown-multiselect'
+import {IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts} from 'angular-2-dropdown-multiselect'
 import {ModuleFilterService} from '../../services/module-filter.service'
 
 @Component({
@@ -21,6 +21,15 @@ export class ModuleFilterComponent implements OnInit {
     dynamicTitleMaxItems: 3,
     maxHeight: '300px',
   }
+
+  myTexts: IMultiSelectTexts = {
+    checkAll: 'Check all',
+    uncheckAll: 'Uncheck all',
+    checked: 'checked',
+    checkedPlural: 'checked',
+    searchPlaceholder: 'Search...',
+    defaultTitle: 'Filter By',
+  };
 
   constructor(private ModuleFilter?: ModuleFilterService) {
   }
