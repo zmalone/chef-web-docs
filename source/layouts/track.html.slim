@@ -11,6 +11,10 @@
     h3
       | Modules (#{get_track(current_page).modules.count})
   .track-modules
+    #videoModal.reveal-modal  aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+      h2#modalTitle
+      #videoContainer
+      a.close-video-modal aria-label="Close"  ×
     - get_track(current_page).modules.each_with_index do |module_id, index|
       - module_obj = get_module_by_id(module_id)
       .row
@@ -25,7 +29,8 @@
             .columns.large-8.medium-8.desc
               p
                 = module_obj.page.data.description
-              a href="" watch video
+              - if module_obj.page.data.video_url
+                a.video-url url="#{module_obj.page.data.video_url}"  Watch the intro video
             .columns.large-4.medium-4.btn-wrap
               a.button.btn-primary.user-start-btn href="#{module_obj.page.url}" module="#{module_id}" Start
               ul.links
