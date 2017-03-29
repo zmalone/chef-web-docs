@@ -158,5 +158,16 @@ module PageHelper
     return tags_list.join(' ') if tags_list
   end
 
+  def get_quiz_data(page)
+    page.data.quiz
+  end
+
+  def get_coasters
+    tracks.children.map { |track|
+      { id: track.id, image_url: track.page.data.image_url }
+    }.concat([
+      { id: 'grand-opening', image_url: '/assets/images/coasters/grand-opening.png' }
+    ])
+  end
 
 end

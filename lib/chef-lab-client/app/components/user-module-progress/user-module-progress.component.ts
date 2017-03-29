@@ -17,9 +17,8 @@ export class UserModuleProgressComponent implements OnInit {
 
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe((active) => {
-      this.completed = this.progressService.isComplete('modules', this.module)
+      this.completed = !!this.progressService.isComplete('modules', this.module)
       this.started = this.progressService.getLastAccessed('modules', this.module)
-      console.log(this.started)
       this.progress = this.progressService.getModuleProgress(this.module)
     })
   }

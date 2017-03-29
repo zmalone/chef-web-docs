@@ -14,8 +14,13 @@ export class ModuleNextBtnDirective {
   @HostListener('click', ['$event'])
   clicked(e) {
     e.preventDefault()
-    const win = (window as any)
-    this.progressService.complete(win.currentPage)
+    const page = (window as any).currentPage
+    // If there is a quiz, it will be the only way for the user to get credit for this page
+    if (page.quiz) {
+      window.location.href = this.href
+      return
+    }
+    this.progressService.completePage(page.id)
       .subscribe(
         () => {},
         err => {
