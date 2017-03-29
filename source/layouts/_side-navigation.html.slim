@@ -11,13 +11,12 @@ ul#sideNav.side-nav.box
     - current_page.parent.children.each do |child|
       - if child == current_page
         li.side-nav-active
-          <i class="ic-check check-box" aria-hidden="true"></i>
-          | &nbsp;&nbsp;
-          span == child.toc_title
+          span.current
+            i.ic-check.check-box page="#{child.id}" aria-hidden="true"
+            span == child.toc_title
           = partial "layouts/scroll-navigation"
         - @check_style = "ic-check check-box"
       - elsif @multipage
         li = link_to child, style:"" do
-          <i class="#{@check_style}" aria-hidden="true"></i>
-          | &nbsp;&nbsp;
+          i class="#{@check_style}" page="#{child.id}" aria-hidden="true"
           span == child.toc_title

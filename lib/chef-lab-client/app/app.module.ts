@@ -12,9 +12,10 @@ import { LoginGithubDirective } from './directives/login-github/login-github.dir
 import { LoginGoogleDirective } from './directives/login-google/login-google.directive'
 import { UserStartBtnDirective } from './directives/user-start-btn/user-start-btn.directive'
 import { ModuleNextBtnDirective } from './directives/module-next-btn/module-next-btn.directive'
+import { CheckBoxDirective } from './directives/check-box/check-box.directive'
 import { UserProfileService } from './services/user-profile.service'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
-import { UserModuleProgressComponent } from './components/user-module-progress/user-module-progress.component'
+import { UserProgressStampComponent } from './components/user-progress-stamp/user-progress-stamp.component'
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
 import { UserCoastersComponent } from './components/user-coasters/user-coasters.component'
 import { QuizComponent } from './components/quiz/quiz.component'
@@ -39,8 +40,9 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     LoginGoogleDirective,
     UserStartBtnDirective,
     ModuleNextBtnDirective,
+    CheckBoxDirective,
     UserProgressBarComponent,
-    UserModuleProgressComponent,
+    UserProgressStampComponent,
     UserTrackProgressComponent,
     UserCoastersComponent,
     QuizComponent,
