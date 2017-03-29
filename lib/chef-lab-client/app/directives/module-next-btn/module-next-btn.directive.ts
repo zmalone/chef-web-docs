@@ -20,7 +20,7 @@ export class ModuleNextBtnDirective {
       window.location.href = this.href
       return
     }
-    this.progressService.complete(page.id)
+    this.progressService.completePage(page.id)
       .subscribe(
         () => {},
         err => {

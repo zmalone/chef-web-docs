@@ -1,22 +1,22 @@
 <div class="quiz">
-  <form *ngIf="!isUnitComplete && questions.length > 0" (ngSubmit)="onSubmit()" #quizForm="ngForm">
+  <form *ngIf="hasQuiz" (ngSubmit)="onSubmit()" #quizForm="ngForm">
     <h3>Test your knowledge</h3>
     <div *ngFor="let question of questions; let q = index">
       <h5>{{question.question}}</h5>
       <ul>
-      <li *ngFor="let choice of question.choices; let c = index"
-          [class.right-ans]="submitted && submittedAnswers[q] == c && correctAnswers[q] == c"
-          [class.wrong-ans]="submitted && submittedAnswers[q] == c && correctAnswers[q] != c"
-      >
-        <input id="ans{{q}}Label{{c}}" type="radio" name="ans{{q}}" value="{{c}}" [(ngModel)]="answers[q]" />
-        <label for="ans{{q}}Label{{c}}" translate="">{{choice}}</label>
-      </li>
+        <li *ngFor="let choice of question.choices; let c = index"
+            [class.right-ans]="submitted && submittedAnswers[q] == c && correctAnswers[q] == c"
+            [class.wrong-ans]="submitted && submittedAnswers[q] == c && correctAnswers[q] != c"
+        >
+          <input id="ans{{q}}Label{{c}}" type="radio" name="ans{{q}}" value="{{c}}" [(ngModel)]="answers[q]" [disabled]="complete" />
+          <label for="ans{{q}}Label{{c}}" translate="">{{choice}}</label>
+        </li>
       </ul>
     </div>
-    <div class="result" *ngIf="submitted && numCorrect < questions.length">
+    <div class="result" *ngIf="submitted && !complete">
       <span>You got {{numCorrect}} out of {{questions.length}} answers right.</span>
     </div>
-    <div class="check" *ngIf="numCorrect < questions.length">
+    <div class="check" *ngIf="!complete">
       <button class="btn btn-secondary" [disabled]="!quizForm.form.valid">
         <span *ngIf="!submitted">Check your answers</span>
         <span *ngIf="submitted">Try again</span>
@@ -24,13 +24,19 @@
     </div>
   </form>
   <div class="success-result" *ngIf="isUnitComplete">
+    <div class="unit-complete" *ngIf="!showSpecialCoaster && !isModuleComplete && !isTrackComplete">
+      <div class="info">
+        <p *ngIf="hasQuiz">Way to go! You got {{numCorrect}} out of {{questions.length}} answers right.</p>
+        <p *ngIf="!hasQuiz">Way to go! You've completed this quiz.</p>
+      </div>
+    </div>
     <div class="coaster-award" *ngIf="showSpecialCoaster">
       <div class="coaster-img">
-        <img src="/assets/images/coasters/grand-opening.png" />
+        <img src="{{specialCoaster.image_url}}" />
       </div>
       <div class="info">
-        <p *ngIf="numCorrect && numCorrect >= questions.length">Way to go you got {{numCorrect}} out of {{questions.length}} answers right, completed your first module, and earned a special edition coaster.</p>
-        <p *ngIf="numCorrect === 0 || numCorrect < questions.length">Way to go you've completed your first module and earned a special edition coaster.</p>
+        <p *ngIf="hasQuiz">Way to go! You got {{numCorrect}} out of {{questions.length}} answers right, completed your first module, and earned a special edition coaster.</p>
+        <p *ngIf="!hasQuiz">Way to go! You've completed your first module and earned a special edition coaster.</p>
       </div>
     </div>
     <div class="module-complete" *ngIf="isModuleComplete && !isTrackComplete && !showSpecialCoaster">
@@ -38,17 +44,17 @@
         <img src="/assets/images/tracks/complete-stamp.png" />
       </div>
       <div class="info">
-        <p *ngIf="numCorrect && numCorrect >= questions.length">Way to go you got {{numCorrect}} out of {{questions.length}} answers right and completed the module.</p>
-        <p *ngIf="numCorrect === 0 || numCorrect < questions.length">Way to go you've completed the module.</p>
+        <p *ngIf="hasQuiz">Way to go! You got {{numCorrect}} out of {{questions.length}} answers right and completed the module.</p>
+        <p *ngIf="!hasQuiz">Way to go! You've completed the module.</p>
       </div>
     </div>
-    <div class="track-complete" *ngIf="isTrackComplete && !showSpecialCoaster">
+    <div class="track-complete" *ngIf="isTrackComplete">
       <div class="coaster-img">
-        <img src="/assets/images/coasters/infrastructure-automation.png" />
+        <img src="{{trackCoaster.image_url}}" />
       </div>
       <div class="info">
-        <p *ngIf="numCorrect && numCorrect >= questions.length">Way to go you got {{numCorrect}} out of {{questions.length}} answers right and completed the track.</p>
-        <p *ngIf="numCorrect === 0 || numCorrect < questions.length">Way to go you've completed the track.</p>
+        <p *ngIf="hasQuiz">Way to go! You got {{numCorrect}} out of {{questions.length}} answers right and completed the track.</p>
+        <p *ngIf="!hasQuiz">Way to go! You've completed the track.</p>
         <ul class="social-icons">
           <li><i class="fa fa-google"></i></li>
           <li><i class="fa fa-facebook"></i></li>
