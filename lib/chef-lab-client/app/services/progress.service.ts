@@ -108,7 +108,6 @@ export class ProgressService {
 
     // If any modules have been completed, grant the special edition "grand opening" coaster
     if (Object.keys(modulesData).filter((id) => { return modulesData[id].completed_at }).length > 0) {
-      // if (Object.keys(achievementsData).filter((id) => { return id === 'grand-opening' }).length === 0) {
       if (!achievementsData['grand-opening']) {
         observables.push(this.updateField('achievements', 'grand-opening', {
           'achievement_type': 'standard',
@@ -267,11 +266,11 @@ export class ProgressService {
     return pageId
   }
 
-  public getTrack(moduleId: string): string | void {
+  public getTracksByModule(moduleId: string): string | void {
     const tracksData = (window as any).dataTree.tracks
-    tracksData.tracks.children.forEach((trackId) => {
-      tracksData[trackId].modules.forEach((trackModuleId) => {
-        if (trackModuleId === moduleId) return trackId
+    return tracksData.tracks.children.filter(trackId => {
+      return tracksData[trackId].modules.some(trackModuleId => {
+        return (trackModuleId === moduleId)
       })
     })
   }
