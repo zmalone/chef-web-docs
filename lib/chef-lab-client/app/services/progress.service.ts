@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject, AsyncSubject } from 'rxjs'
 import { UserProfileService } from './user-profile.service'
 import { Angular2TokenService } from 'angular2-token'
 type LearningType = 'achievements' | 'tracks' | 'modules' | 'units'
-interface LearningObject { started_at?: string, completed_at?: string }
+interface Learning { started_at?: string, completed_at?: string }
 
 @Injectable()
 export class ProgressService {
@@ -62,7 +62,7 @@ export class ProgressService {
       )
   }
 
-  public getAchievements(id?: string) {
+  public getAchievements(id?: string): Object {
     const data = this.getUserProgressData('achievements')
     if (id) return data[id]
     return data
@@ -71,7 +71,7 @@ export class ProgressService {
   private completeModule(pageId: string) {
     const moduleId = this.getModuleRoot(pageId)
     const currentState = this.getUserProgressData('modules', moduleId)
-    const newData = <LearningObject> {}
+    const newData = <Learning> {}
     if (!currentState.started_at) newData.started_at = new Date().toISOString()
     if (!currentState.completed_at && this.getModuleProgress(pageId) >= 100) {
       newData.completed_at = new Date().toISOString()
@@ -90,7 +90,7 @@ export class ProgressService {
         })
         if (trackData[trackId].modules.length === modulesComplete.length) {
           const currentState = this.getUserProgressData('tracks', trackId)
-          const newData = <LearningObject> {}
+          const newData = <Learning> {}
           if (!currentState.started_at) newData.started_at = new Date().toISOString()
           if (!currentState.completed_at) newData.completed_at = new Date().toISOString()
           if (newData) observables.push(this.updateField('tracks', trackId, newData))
@@ -335,7 +335,7 @@ export class ProgressService {
     return httpObservable
   }
 
-  private getUserProgressData(learningType?: LearningType, pageId?: string, wildcard?: boolean): LearningObject {
+  private getUserProgressData(learningType?: LearningType, pageId?: string, wildcard?: boolean): Learning {
     let data = this.activeUserProgress.getValue()
     if (learningType) {
       data = data[learningType] || {}
@@ -357,8 +357,12 @@ export class ProgressService {
   }
 
   private initUserProgressData() {
-    let existing = localStorage.getItem('userProgressInfo')
-    existing = (existing) ? JSON.parse(existing) : {}
+    let existing: Object
+    try {
+      existing = JSON.parse(localStorage.getItem('userProgressInfo')) || {}
+    } catch (e) {
+      existing = {}
+    }
     const pageId = (window as any).currentPage.id
 
     if (!this.isAuthenticated) {
@@ -379,7 +383,7 @@ export class ProgressService {
 
     return this._tokenService.get('api/v1/progress').map(res => res.json()).subscribe(
       res => {
-        localStorage.setItem('userProgressInfo', res)
+        localStorage.setItem('userProgressInfo', JSON.stringify(res))
         this.activeUserProgress.next(res)
         this.startPage(pageId)
       },
