@@ -72,5 +72,14 @@ $('.cls-modal').click(function(){
     $('#loginModal').foundation('reveal','close')
 })
 
-
+$('.video-url').click(function(){
+  $('#videoContainer').append('<iframe width="100%" height="480" id="iframe" src="'+$(this).attr('url')+'" frameborder="0" allowfullscreen />')
+  $('#videoModal').foundation('reveal','open');
+  return false;
+})
+$('.close-video-modal').on('click', function() {
+  $('#videoContainer').html('')
+  $('#videoModal').foundation('reveal', 'close');
+  return false;
+});
 
