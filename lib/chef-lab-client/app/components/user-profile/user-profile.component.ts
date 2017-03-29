@@ -19,7 +19,7 @@ export class UserProfileComponent implements OnInit {
 
 
   constructor(private userProfileService: UserProfileService,
-              private errHandlerService: ErrorHandlerService,) {
+              private errHandlerService: ErrorHandlerService) {
   }
 
   ngOnInit() {
