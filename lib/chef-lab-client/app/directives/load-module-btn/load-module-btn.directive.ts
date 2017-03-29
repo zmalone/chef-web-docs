@@ -31,10 +31,6 @@ export class LoadModuleBtnDirective implements OnInit {
   }
 
   moduleLoadMoreBtn() {
-    const win = (window as any)
-    if (win.currentPage.id === 'profile') {
-      this.hideBtn()
-    }
     this.moduleFilter.getModuleLoadMoreBtnStatus().subscribe((status) => {
       if (!status) {
         this.hideBtn()
