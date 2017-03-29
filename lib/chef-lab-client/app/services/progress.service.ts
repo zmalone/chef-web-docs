@@ -3,6 +3,7 @@ import { Observable, BehaviorSubject, AsyncSubject } from 'rxjs'
 import { UserProfileService } from './user-profile.service'
 import { Angular2TokenService } from 'angular2-token'
 type LearningType = 'achievements' | 'tracks' | 'modules' | 'units'
+interface LearningObject { started_at?: string, completed_at?: string }
 
 @Injectable()
 export class ProgressService {
@@ -26,83 +27,118 @@ export class ProgressService {
     })
   }
 
-  public startCurrentPage() {
-    return this.updateField('units', (window as any).currentPage.id, { 'started_at': new Date().toISOString() })
+  public getLearningType(pageId: string): LearningType {
+    if (pageId === 'modules' || pageId === 'tracks') return
+    const moduleId = this.getModuleRoot(pageId)
+    if (pageId === moduleId) return 'modules'
+    if (moduleId) return 'units'
+    const trackData = (window as any).dataTree.tracks
+    if (trackData[pageId]) return 'tracks'
   }
 
-  public complete(pageId: string) {
+  public startPage(pageId) {
+    const observables = []
+    const learningType = this.getLearningType(pageId)
+    observables.push(this.updateField(learningType, pageId, { 'started_at': new Date().toISOString() }))
+    // Also track modules as unit pages; see details under completePage()
+    if (learningType === 'modules') {
+      observables.push(this.updateField('units', pageId, { 'started_at': new Date().toISOString() }))
+    }
+    return Observable.merge(...observables)
+  }
+
+  public completePage(pageId: string) {
+    const learningType = this.getLearningType(pageId)
+    // Modules are treated as both unit pages (i.e. the individual page at the module URL) and as
+    // groups of zero or more unit pages, typically known as modules.
+    // Only unit pages (and module pages being treated as unit pages) can be directly completed;
+    // other types are completed conditionally
+    if (learningType !== 'units' && learningType !== 'modules') return Observable.from([])
     return this.updateField('units', pageId, { 'completed_at': new Date().toISOString() })
       .concat(
         this.completeModule(pageId),
-        this.completeTrack(pageId),
+        this.completeTracks(),
         this.awardAchievements(),
       )
   }
 
   public getAchievements(id?: string) {
-    const data = this.getUserProgressData('achievements') || {}
+    const data = this.getUserProgressData('achievements')
     if (id) return data[id]
     return data
   }
 
   private completeModule(pageId: string) {
     const moduleId = this.getModuleRoot(pageId)
-    const currentState = this.getUserProgressData('modules', moduleId) || {}
-    const newData = {}
-    if (!currentState.started_at) newData['started_at'] = new Date().toISOString()
+    const currentState = this.getUserProgressData('modules', moduleId)
+    const newData = <LearningObject> {}
+    if (!currentState.started_at) newData.started_at = new Date().toISOString()
     if (!currentState.completed_at && this.getModuleProgress(pageId) >= 100) {
-      newData['completed_at'] = new Date().toISOString()
+      newData.completed_at = new Date().toISOString()
     }
     if (newData) return this.updateField('modules', moduleId, newData)
     return Observable.from([])
   }
 
-  private completeTrack(pageId: string) {
-    const moduleId = this.getModuleRoot(pageId)
-    const trackId = this.getTrack(moduleId)
-    if (trackId) {
-      const currentState = this.getUserProgressData('tracks', trackId) || {}
-      const newData = {}
-      if (!currentState.started_at) newData['started_at'] = new Date().toISOString()
-      if (!currentState.completed_at) {
-        const trackData = (window as any).dataTree.tracks[trackId]
-        const modules = trackData && trackData.modules || {}
-        const complete = Object.keys(modules).filter(module => {
-          return this.getUserProgressData('modules', module).completed_at
+  private completeTracks() {
+    const observables = []
+    const trackData = (window as any).dataTree.tracks
+    Object.keys(trackData).forEach(trackId => {
+      if (trackData[trackId].modules) {
+        const modulesComplete = trackData[trackId].modules.filter(moduleId => {
+          return this.getUserProgressData('modules', moduleId).completed_at
         })
-        if (complete.length === Object.keys(modules).length) {
-          newData['completed_at'] = new Date().toISOString()
+        if (trackData[trackId].modules.length === modulesComplete.length) {
+          const currentState = this.getUserProgressData('tracks', trackId)
+          const newData = <LearningObject> {}
+          if (!currentState.started_at) newData.started_at = new Date().toISOString()
+          if (!currentState.completed_at) newData.completed_at = new Date().toISOString()
+          if (newData) observables.push(this.updateField('tracks', trackId, newData))
         }
       }
-      if (newData) return this.updateField('modules', moduleId, newData)
-    }
-    return Observable.from([])
+    })
+    return Observable.merge(...observables)
   }
 
   private awardAchievements() {
     const modulesData = this.getUserProgressData('modules')
+    const tracksData = this.getUserProgressData('tracks')
     const achievementsData = this.getUserProgressData('achievements')
+    const observables = []
 
-    // // If any modules have been completed, grant the special edition "grand opening" coaster
+    // If any modules have been completed, grant the special edition "grand opening" coaster
     if (Object.keys(modulesData).filter((id) => { return modulesData[id].completed_at }).length > 0) {
-      if (Object.keys(achievementsData).filter((id) => { return id === 'grand-opening' }).length === 0) {
-        return this.updateField('achievements', 'grand-opening', {
+      // if (Object.keys(achievementsData).filter((id) => { return id === 'grand-opening' }).length === 0) {
+      if (!achievementsData['grand-opening']) {
+        observables.push(this.updateField('achievements', 'grand-opening', {
           'achievement_type': 'standard',
           'earned_at': new Date().toISOString(),
-        })
+        }))
       }
     }
-    return Observable.from([])
+
+    // If any tracks have been completed, grant the track coasters
+    const completedTracks = Object.keys(tracksData).filter((id) => { return tracksData[id].completed_at })
+    completedTracks.forEach(trackId => {
+      if (!achievementsData[trackId]) {
+        observables.push(this.updateField('achievements', trackId, {
+          'achievement_type': 'standard',
+          'earned_at': new Date().toISOString(),
+        }))
+      }
+    })
+
+    return Observable.merge(...observables)
   }
 
-  public isComplete(section: LearningType, pageId: string | void) {
+  public isComplete(learningType: LearningType, pageId: string | void) {
     if (!pageId) return false
-    const data = this.getUserProgressData(section, pageId)
+    const data = this.getUserProgressData(learningType, pageId)
     return data && data.completed_at
   }
 
-  public getLastAccessed(section: LearningType, pageId: string) {
-    const data = this.getUserProgressData(section, pageId, true)
+  public getLastAccessed(learningType: LearningType, pageId: string) {
+    const data = this.getUserProgressData(learningType, pageId, true)
     const sorted = Object.keys(data).sort((a, b) => {
       const dateA = [data[a].started_at, data[a].completed_at].sort().reverse()[0]
       const dateB = [data[b].started_at, data[b].completed_at].sort().reverse()[0]
@@ -111,7 +147,7 @@ export class ProgressService {
     return data[sorted[0]] && {...{ id: sorted[0] }, ...data[sorted[0]] }
   }
 
-  public getModuleProgress(pageId: string) {
+  public getModuleProgress(pageId: string): number {
     const moduleData = (window as any).dataTree.modules
 
     // Determine the active item from which to generate time estimates
@@ -223,6 +259,7 @@ export class ProgressService {
   public getModuleRoot(pageId: string): string {
     const moduleData = (window as any).dataTree.modules
     let moduleRoot = moduleData[pageId]
+    if (!moduleRoot) return
     while (moduleRoot.parent && moduleRoot.parent !== 'modules') {
       pageId = moduleRoot.parent
       moduleRoot = moduleData[pageId]
@@ -254,17 +291,17 @@ export class ProgressService {
     }
   }
 
-  private updateField(section: LearningType, pageId: string, fieldValues: object) {
+  private updateField(learningType: LearningType, pageId: string, fieldValues: object) {
     const dataLocal = this.activeUserProgress.getValue()
 
     // Build full and partial data objects
-    dataLocal[section] = dataLocal[section] || {}
-    dataLocal[section][pageId] = dataLocal[section][pageId] || {}
+    dataLocal[learningType] = dataLocal[learningType] || {}
+    dataLocal[learningType][pageId] = dataLocal[learningType][pageId] || {}
     const dataChange = {}
-    dataChange[section] = {}
-    dataChange[section][pageId] = Object.assign({}, dataLocal[section][pageId])
-    Object.assign(dataChange[section][pageId], fieldValues)
-    Object.assign(dataLocal[section][pageId], fieldValues)
+    dataChange[learningType] = {}
+    dataChange[learningType][pageId] = Object.assign({}, dataLocal[learningType][pageId])
+    Object.assign(dataChange[learningType][pageId], fieldValues)
+    Object.assign(dataLocal[learningType][pageId], fieldValues)
 
     // Update local storage with the full data object
     localStorage.setItem('userProgressInfo', JSON.stringify(dataLocal))
@@ -298,10 +335,10 @@ export class ProgressService {
     return httpObservable
   }
 
-  private getUserProgressData(section?: LearningType, pageId?: string, wildcard?: boolean) {
+  private getUserProgressData(learningType?: LearningType, pageId?: string, wildcard?: boolean): LearningObject {
     let data = this.activeUserProgress.getValue()
-    if (section) {
-      data = data[section] || {}
+    if (learningType) {
+      data = data[learningType] || {}
       if (pageId) {
         if (wildcard) {
           const ret = {}
@@ -312,7 +349,7 @@ export class ProgressService {
           })
           return ret
         } else {
-          return data[pageId]
+          return data[pageId] || {}
         }
       }
     }
@@ -322,18 +359,19 @@ export class ProgressService {
   private initUserProgressData() {
     let existing = localStorage.getItem('userProgressInfo')
     existing = (existing) ? JSON.parse(existing) : {}
+    const pageId = (window as any).currentPage.id
 
     if (!this.isAuthenticated) {
       this.activeUserProgress.next(existing)
-      this.startCurrentPage()
+      this.startPage(pageId)
       return Observable.from([])
     }
 
     // Transfer all local progress to the server
     if (this.wasAnonymous) {
-      Object.keys(existing).forEach(section => {
-        Object.keys(existing[section]).forEach(id => {
-          this.updateField(section as LearningType, id, existing[section][id])
+      Object.keys(existing).forEach(learningType => {
+        Object.keys(existing[learningType]).forEach(id => {
+          this.updateField(learningType as LearningType, id, existing[learningType][id])
         })
       })
       this.wasAnonymous = false
@@ -343,12 +381,12 @@ export class ProgressService {
       res => {
         localStorage.setItem('userProgressInfo', res)
         this.activeUserProgress.next(res)
-        this.startCurrentPage()
+        this.startPage(pageId)
       },
       error => {
         console.log('Error getting user progress from the database', error)
         this.activeUserProgress.next(existing)
-        this.startCurrentPage()
+        this.startPage(pageId)
       },
     )
   }
