@@ -16,7 +16,8 @@ export class AppComponent implements OnInit {
 
   constructor(private _tokenService: Angular2TokenService,
               private userProfileService: UserProfileService,
-              private progressService: ProgressService,) {
+              private progressService: ProgressService) {
+
     this._tokenService.init({
       apiBase: process.env.API_ENDPOINT,
       oAuthBase: process.env.API_ENDPOINT,

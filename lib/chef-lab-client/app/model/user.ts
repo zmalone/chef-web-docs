@@ -7,6 +7,7 @@ export class User {
     public nickname: string,
     public role: string,
     public company: string,
+    public created_at: string,
   ) {
   }
 }
