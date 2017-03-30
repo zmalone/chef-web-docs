@@ -7,11 +7,24 @@
 Target:  ssh://vagrant@127.0.0.1:2222
 
 
+  MySQL Config
+     ✔  entry [mysqld] port should eq "3306"
+     ✔  entry [mysqld] socket should eq "/run/mysql-default/mysqld.sock"
+  Port 3306
+     ✔  should be listening
+     ✔  protocols should include "tcp"
   Command mysql
-     ✔  -h 127.0.0.1 -uroot -pfakerootpassword -D 4thcoffee -e 'describe customers;' stdout should match /id/
+     ✔  -h 127.0.0.1 -uroot -pfakerootpassword -s -e 'show databases;' stdout should match /mysql/
+  System Package
+     ✔  apache2 should be installed
+  Service apache2-default
+     ✔  should be enabled
+     ✔  should be running
   Command wget
-     ✔  -qO- localhost stdout should match /Customers/
+     ✔  -qSO- --spider localhost stderr should match /HTTP\/1\.1 200 OK/
+  Port 80
+     ✔  should be listening
 
-Test Summary: 2 successful, 0 failures, 0 skipped
-       Finished verifying <default-ubuntu-1404> (0m0.68s).
------> Kitchen is finished. (0m1.58s)
+Test Summary: 10 successful, 0 failures, 0 skipped
+       Finished verifying <default-ubuntu-1404> (0m1.21s).
+-----> Kitchen is finished. (0m2.07s)
