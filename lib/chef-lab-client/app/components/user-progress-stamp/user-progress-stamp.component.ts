@@ -2,12 +2,10 @@ import { Component, OnInit, Input } from '@angular/core'
 import { ProgressService } from '../../services/progress.service'
 
 @Component({
-  selector: 'user-progress-bar',
-  templateUrl: './user-progress-bar.component.html',
+  selector: 'user-progress-stamp',
+  templateUrl: './user-progress-stamp.component.html',
 })
-export class UserProgressBarComponent implements OnInit {
-  public progress: number
-  public started: boolean
+export class UserProgressStampComponent implements OnInit {
   public completed: boolean
 
   @Input()
@@ -18,8 +16,6 @@ export class UserProgressBarComponent implements OnInit {
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe(() => {
       this.completed = !!this.progressService.isComplete('modules', this.module)
-      this.started = this.progressService.getLastAccessed('modules', this.module)
-      this.progress = this.progressService.getModuleProgress(this.module)
     })
   }
 }
