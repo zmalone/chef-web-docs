@@ -4,6 +4,8 @@ order: 5
 keywords: TODO
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 25 minutes
+snippet_path: create-a-web-app-cookbook/ubuntu/vagrant/configure-php-ubuntu-vagrant
+snippet_workstation: ubuntu
 ---
 In this part, you'll configure Apache to run PHP code. To configure PHP, you're going to install the `mod_php5` Apache module, which enables Apache to interpret PHP files. You'll also install the native `php5-mysql` package, which enables PHP code to connect to MySQL databases.
 
@@ -36,6 +38,8 @@ httpd_service 'default' do
 end
 ```
 
+<% code_snippet(page: current_page, path: 'install-php-ubuntu-vagrant/recipe-web-ubuntu-vagrant-3') %>
+
 The `httpd` cookbook defines the `httpd_module` resource, which installs Apache modules. In <% fp 'web.rb' %>, append this `httpd_module` resource to install the `mod_php5` Apache module.
 
 ```ruby
@@ -45,6 +49,8 @@ httpd_module 'php5' do
   instance 'default'
 end
 ```
+
+<% code_snippet(page: current_page, path: 'install-php-ubuntu-vagrant/recipe-web-ubuntu-vagrant-4') %>
 
 Now append a `package` resource to install `php5-mysql`.
 
@@ -56,6 +62,8 @@ package 'php5-mysql' do
   notifies :restart, 'httpd_service[default]'
 end
 ```
+
+<% code_snippet(page: current_page, path: 'install-php-ubuntu-vagrant/recipe-web-ubuntu-vagrant-5') %>
 
 The entire file looks like this.
 
@@ -89,6 +97,8 @@ package 'php5-mysql' do
   notifies :restart, 'httpd_service[default]'
 end
 ```
+
+<% code_snippet(page: current_page, path: 'install-php-ubuntu-vagrant/recipe-web-ubuntu-vagrant-6') %>
 
 Apache needs to be restarted to enable PHP to use the `php5-mysql` package. To do that, we use the [notifies](https://docs.chef.io/resource_common.html#notifications) attribute. The `notifies` attribute performs the `:restart` action on the `httpd-default` service. But it does so only when it needs to; that is, only when the `package` resource actually performs the `:install` action.
 
@@ -138,6 +148,8 @@ Run `kitchen converge` to apply the `lamp` cookbook.
 -----> Kitchen is finished. (0m30.20s)
 ```
 
+<% command_snippet(page: current_page, path: 'apply-the-php-configuration-ubuntu-vagrant/kitchen-converge-ubuntu-vagrant-4') %>
+
 You see that `chef-client` completed successfully. You haven't added any PHP content to the site yet, so navigating to your site will result in the same directory listing you saw earlier. You'll add content to your site in the next part.
 
 In practice, you might write additional InSpec tests to verify that Apache is configured to serve PHP content. For brevity, we'll skip those tests for now.
@@ -156,6 +168,8 @@ To do a complete Test Kitchen run, you can use the `kitchen test` command. This 
 # ~/learn-chef/cookbooks/lamp
 $ kitchen test
 ```
+
+<% command_snippet(page: current_page, path: 'apply-the-php-configuration-ubuntu-vagrant/kitchen-test-ubuntu-vagrant-1') %>
 
 In this example, it took just a few minutes to bring up a clean instance, apply the configuration, run the InSpec tests, and clean up.
 

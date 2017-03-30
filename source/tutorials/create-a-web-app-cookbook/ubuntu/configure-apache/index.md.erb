@@ -4,6 +4,8 @@ order: 3
 keywords: TODO
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 25 minutes
+snippet_path: create-a-web-app-cookbook/ubuntu/vagrant/configure-apache-ubuntu-vagrant
+snippet_workstation: ubuntu
 ---
 Now let's configure Apache. Here you set up an Apache configuration file and install the Apache package and start its service.
 
@@ -36,6 +38,8 @@ source_url 'https://github.com/learn-chef/lamp' if respond_to?(:source_url)
 depends 'httpd', '~> 0.4'
 ```
 
+<% code_snippet(page: current_page, path: 'reference-the-httpd-cookbook-ubuntu-vagrant/metadata-ubuntu-vagrant-1') %>
+
 Notice you specify the version of the `httpd` cookbook. Specifying, or _pinning_, the cookbook version helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production. That way, you can adopt the latest changes and functionality when you're ready.
 
 How did we know to specify version `0.4`? One way is by reading the latest version from the `httpd` cookbook's [page](https://supermarket.chef.io/cookbooks/httpd) on Supermarket.
@@ -49,6 +53,8 @@ Another way to get version information is through the `knife supermarket show` c
 $ knife supermarket show httpd | grep latest_version
 latest_version:     https://supermarket.chef.io/api/v1/cookbooks/httpd/versions/0.4.4
 ```
+
+<% command_snippet(page: current_page, path: 'reference-the-httpd-cookbook-ubuntu-vagrant/knife-supermarket-show-httpd-ubuntu-vagrant-1') %>
 
 There are [multiple ways to specify version constraints](http://docs.chef.io/cookbook_versions.html). The `~>` syntax, called the _pessimistic version constraint_, tells Chef that we want the latest version of the `apt` cookbook that is greater than or equal to `0.4` but less than `1.0`.
 
@@ -90,6 +96,8 @@ Recipe: code_generator::attribute
     (diff output suppressed by config)
 ```
 
+<% command_snippet(page: current_page, path: 'specify-the-document-root-ubuntu-vagrant/chef-generate-attribute-ubuntu-vagrant-1') %>
+
 This command adds the <% fp 'default.rb' %> attribute file to the <% fp '~/learn-chef/cookbooks/lamp/attributes' %> directory.
 
 Now add the following to your attributes file, <% fp 'default.rb' %>.
@@ -98,6 +106,8 @@ Now add the following to your attributes file, <% fp 'default.rb' %>.
 # ~/learn-chef/cookbooks/lamp/attributes/default.rb
 default['lamp']['web']['document_root'] = '/var/www/default/public_html'
 ```
+
+<% code_snippet(page: current_page, path: 'specify-the-document-root-ubuntu-vagrant/attribute-ubuntu-vagrant-1') %>
 
 In the next step, you'll use this node attribute to set up the Apache configuration file, which specifies the document root location.
 
@@ -127,11 +137,15 @@ Recipe: code_generator::template
     (diff output suppressed by config)
 ```
 
+<% command_snippet(page: current_page, path: 'create-apache-config-ubuntu-vagrant/chef-generate-template-ubuntu-vagrant-1') %>
+
 This command adds the template file <% fp 'default.conf.erb' %> to the <% fp '~/learn-chef/cookbooks/lamp/templates' %> directory. (The command appends the <% fp '.erb' %> extension for you.) Remember, the <% fp '.erb' %> extension means that the file can hold placeholders that are filled in when the recipe runs. That's what makes the file a template.
 
 Add this to <% fp 'default.conf.erb' %>.
 
 <%= partial 'customers-conf' %>
+
+<% code_snippet(page: current_page, path: 'create-apache-config-ubuntu-vagrant/template-default-conf-ubuntu-vagrant') %>
 
 The configuration file uses two node attributes &ndash; `node['hostname']` and `node['lamp']['web']['document_root']`.
 
@@ -171,6 +185,8 @@ Recipe: code_generator::recipe
     (diff output suppressed by config)
 ```
 
+<% command_snippet(page: current_page, path: 'create-web-recipe-ubuntu-vagrant/chef-generate-recipe-web-ubuntu-vagrant') %>
+
 The first thing you need to do in the `web` recipe is to ensure that the document root directory exists. To do that, add the following [directory]() resource to your `web` recipe, <% fp '~/learn-chef/cookbooks/lamp/recipes/web.rb' %>.
 
 ```ruby
@@ -180,6 +196,8 @@ directory node['lamp']['web']['document_root'] do
   recursive true
 end
 ```
+
+<% code_snippet(page: current_page, path: 'create-web-recipe-ubuntu-vagrant/recipe-web-ubuntu-vagrant-1') %>
 
 The `recursive` property ensures that any parent directories are also created.
 
@@ -210,6 +228,8 @@ httpd_service 'default' do
 end
 ```
 
+<% code_snippet(page: current_page, path: 'create-web-recipe-ubuntu-vagrant/recipe-web-ubuntu-vagrant-2') %>
+
 The `httpd_service` resource supports multiple simultaneous Apache instances that you can identify and manage. The name `default` will produce a service named `apache2-default`.
 
 PHP [must be run](http://www.php.net/manual/en/faq.installation.php#faq.installation.apache2) in a single-threaded [Multi-Processing Module](http://httpd.apache.org/docs/2.2/mpm.html), or MPM. Therefore, we set the `mpm` property to use the [prefork](http://httpd.apache.org/docs/2.2/mod/prefork.html) module.
@@ -231,6 +251,8 @@ end
 
 include_recipe 'lamp::web'
 ```
+
+<% code_snippet(page: current_page, path: 'run-web-recipe-ubuntu-vagrant/run-web-recipe-ubuntu-vagrant') %>
 
 [END_BOX]
 
@@ -302,6 +324,8 @@ $ kitchen converge
 -----> Kitchen is finished. (0m19.64s)
 ```
 
+<% command_snippet(page: current_page, path: 'apply-the-apache-configuration-ubuntu-vagrant/kitchen-converge-ubuntu-vagrant-2') %>
+
 You'll see from the output that:
 
 * the Apache package, `apache2` on Ubuntu, was installed.
@@ -339,6 +363,8 @@ suites:
     attributes:
 ```
 
+<% code_snippet(page: current_page, path: 'apply-the-apache-configuration-ubuntu-vagrant/review-kitchen-yml-ubuntu-vagrant-1') %>
+
 From a web browser on your workstation, navigate to http://192.168.34.34. You'll see something like this.
 
 ![](misc/manage_customers_placeholder_34.png)
@@ -361,6 +387,8 @@ $ kitchen exec -c 'wget -qO- localhost'
        <ul></ul>
        </body></html>
 ```
+
+<% command_snippet(page: current_page, path: 'apply-the-apache-configuration-ubuntu-vagrant/kitchen-exec-wget-ubuntu-vagrant-1') %>
 
 [END_BOX]
 
@@ -400,6 +428,8 @@ describe port 80 do
 end
 ```
 
+<% code_snippet(page: current_page, path: 'verify-the-apache-configuration-ubuntu-vagrant/inspec-web-ubuntu-vagrant-1') %>
+
 These tests verify that:
 
 1. the `apache2` package is installed.
@@ -420,6 +450,8 @@ We don't need the default tests, located in <% fp 'default_test.rb' %>, so remov
 # The Inspec reference, with examples and extensive documentation, can be
 # found at http://inspec.io/docs/reference/resources/
 ```
+
+<% code_snippet(page: current_page, path: 'verify-the-apache-configuration-ubuntu-vagrant/inspec-default-ubuntu-vagrant-1') %>
 
 Recall that your <% fp '.kitchen.yml' %> file looks like this.
 
@@ -452,6 +484,8 @@ suites:
     attributes:
 ```
 
+<% code_snippet(page: current_page, path: 'verify-the-apache-configuration-ubuntu-vagrant/review-kitchen-yml-ubuntu-vagrant-2') %>
+
 The `verifier` section specifies that the cookbook contains InSpec tests. The `inspec_tests` part specifies where the tests are located.
 
 Run `kitchen verify` to run the tests.
@@ -480,6 +514,8 @@ Test Summary: 5 successful, 0 failures, 0 skipped
        Finished verifying <default-ubuntu-1404> (0m0.39s).
 -----> Kitchen is finished. (0m2.85s)
 ```
+
+<% command_snippet(page: current_page, path: 'verify-the-apache-configuration-ubuntu-vagrant/kitchen-verify-apache-ubuntu-vagrant-1') %>
 
 You see that all tests pass. If any test fails, you would see the actual result. This gives you a starting point for investigating the failure.
 

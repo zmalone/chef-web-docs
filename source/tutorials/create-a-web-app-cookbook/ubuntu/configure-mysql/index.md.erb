@@ -4,6 +4,8 @@ order: 4
 keywords: TODO
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 60 minutes
+snippet_path: create-a-web-app-cookbook/ubuntu/vagrant/configure-mysql-ubuntu-vagrant
+snippet_workstation: ubuntu
 ---
 Now let's configure MySQL. You'll install the MySQL server and client packages and start the service. You'll also learn how to use _data bags_ to hold the MySQL administrator passwords.
 
@@ -33,6 +35,8 @@ depends 'httpd', '~> 0.4'
 depends 'mysql', '~> 8.0'
 ```
 
+<% code_snippet(page: current_page, path: 'reference-the-mysql-cookbook-ubuntu-vagrant/metadata-ubuntu-vagrant-2') %>
+
 [END_BOX]
 
 [START_BOX]
@@ -61,6 +65,8 @@ Recipe: code_generator::recipe
     - update content in file /private/tmp/lamp/recipes/database.rb from none to 4096a5
     (diff output suppressed by config)
 ```
+
+<% command_snippet(page: current_page, path: 'create-database-recipe-ubuntu-vagrant/chef-generate-recipe-database-ubuntu-vagrant') %>
 
 [END_BOX]
 
@@ -105,6 +111,8 @@ Start by creating the <% fp 'test/fixtures/default/data_bags/passwords' %> direc
 $ mkdir -p test/fixtures/default/data_bags/passwords
 ```
 
+<% command_snippet(page: current_page, path: 'create-a-data-bag-ubuntu-vagrant/mkdir-test-fixtures-ubuntu-vagrant', features: :stdin) %>
+
 Next, write the following to <% fp 'mysql.json' %> in your <% fp 'passwords' %> directory.
 
 ```ruby
@@ -114,6 +122,8 @@ Next, write the following to <% fp 'mysql.json' %> in your <% fp 'passwords' %> 
   "root_password": "fakerootpassword"
 }
 ```
+
+<% code_snippet(page: current_page, path: 'create-a-data-bag-ubuntu-vagrant/data-bag-item-ubuntu-vagrant-1') %>
 
 Here, <% fp 'mysql.json' %> defines what's called a _data bag item_, whose id is "mysql". The "root_password" key maps to the value "fakerootpassword", which is the test password you'll use to configure the MySQL service.
 
@@ -148,6 +158,8 @@ suites:
     attributes:
 ```
 
+<% code_snippet(page: current_page, path: 'create-a-data-bag-ubuntu-vagrant/kitchen-yml-ubuntu-vagrant-2') %>
+
 This location tells the in-memory Chef server where to locate data bags.
 
 
@@ -177,6 +189,8 @@ mysql_service 'default' do
   action [:create, :start]
 end
 ```
+
+<% code_snippet(page: current_page, path: 'configure-mysql-ubuntu-vagrant/recipe-database-ubuntu-vagrant-1') %>
 
 `data_bag_item` is a helper method that Chef provides. Here, this helper method loads the data bag item named "mysql" from the "passwords" data bag. Later, the `mysql_service` resource uses  `passwords['root_password']` to retrieve the MySQL root password from the data bag item, much like how you access node attribute values.
 
@@ -215,6 +229,8 @@ depends 'mysql', '~> 8.0'
 depends 'mysql2_chef_gem', '~> 1.1'
 depends 'database', '~> 6.1'
 ```
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/metadata-ubuntu-vagrant-3') %>
 
 The [documentation for the database cookbook](https://supermarket.chef.io/cookbooks/database) provides this example for creating a MySQL database instance.
 
@@ -260,6 +276,8 @@ default['lamp']['database']['dbname'] = 'my_company'
 default['lamp']['database']['admin_username'] = 'db_admin'
 ```
 
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/attribute-ubuntu-vagrant-2') %>
+
 The entire file looks like this.
 
 ```ruby
@@ -269,6 +287,8 @@ default['lamp']['web']['document_root'] = '/var/www/default/public_html'
 default['lamp']['database']['dbname'] = 'my_company'
 default['lamp']['database']['admin_username'] = 'db_admin'
 ```
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/attribute-ubuntu-vagrant-3') %>
 
 The `node['lamp']['database']['dbname']` node attribute defines the database name. The default value is "my_company".
 
@@ -296,6 +316,8 @@ Like you did for the MySQL root user, add an entry that defines the password for
 }
 ```
 
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/data-bag-item-ubuntu-vagrant-2') %>
+
 You now have everything you need to configure the database instance. Start by appending this `mysql2_chef_gem` resource to your `database` recipe to install the `mysql2` Ruby gem. The `mysql2_chef_gem` resource comes from the `mysql2_chef_gem` cookbook.
 
 ```ruby
@@ -305,6 +327,8 @@ mysql2_chef_gem 'default' do
   action :install
 end
 ```
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/recipe-database-ubuntu-vagrant-2') %>
 
 Next, use the `mysql_database` and `mysql_database_user` resources to create the MySQL database and an administrator user who has `CREATE` and `GRANT` permissions to the database.
 
@@ -331,6 +355,8 @@ mysql_database_user node['lamp']['database']['admin_username'] do
   action [:create, :grant]
 end
 ```
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/recipe-database-ubuntu-vagrant-3') %>
 
 This code:
 
@@ -383,6 +409,8 @@ mysql_database_user node['lamp']['database']['admin_username'] do
 end
 ```
 
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/recipe-database-ubuntu-vagrant-4') %>
+
 [END_BOX]
 
 [START_BOX]
@@ -400,6 +428,8 @@ end
 include_recipe 'lamp::web'
 include_recipe 'lamp::database'
 ```
+
+<% code_snippet(page: current_page, path: 'run-database-recipe-ubuntu-vagrant/run-database-recipe-ubuntu-vagrant') %>
 
 [END_BOX]
 
@@ -463,6 +493,8 @@ $ kitchen converge
 -----> Kitchen is finished. (0m52.11s)
 ```
 
+<% command_snippet(page: current_page, path: 'apply-the-mysql-configuration-ubuntu-vagrant/kitchen-converge-ubuntu-vagrant-3') %>
+
 You see that `chef-client` completed successfully.
 
 [END_BOX]
@@ -506,6 +538,8 @@ $ kitchen exec -c 'sudo cat /etc/mysql-default/my.cnf'
        socket                         = /run/mysql-default/mysqld.sock
 ```
 
+<% command_snippet(page: current_page, path: 'verify-the-mysql-configuration-ubuntu-vagrant/kitchen-exec-cat-config-ubuntu-vagrant') %>
+
 Next, run this `kitchen exec` command to run the [SHOW DATABASES](https://dev.mysql.com/doc/refman/5.7/en/show-databases.html) MySQL command.
 
 ```bash
@@ -518,6 +552,8 @@ $ kitchen exec -c "mysql -h 127.0.0.1 -uroot -pfakerootpassword -s -e 'show data
        mysql
        performance_schema
 ```
+
+<% command_snippet(page: current_page, path: 'verify-the-mysql-configuration-ubuntu-vagrant/kitchen-exec-show-databases-ubuntu-vagrant') %>
 
 The `-p` argument to the `mysql` command specifies the password. You know that "fakerootpassword" permits access because that's the password you specified in the data bag you use for testing.
 
@@ -545,6 +581,8 @@ describe command("mysql -h 127.0.0.1 -uroot -pfakerootpassword -s -e 'show datab
   its('stdout') { should match(/mysql/) }
 end
 ```
+
+<% code_snippet(page: current_page, path: 'verify-the-mysql-configuration-ubuntu-vagrant/inspec-database-ubuntu-vagrant-1') %>
 
 This code uses the InSpec [mysql_conf](http://inspec.io/docs/reference/resources/mysql_conf/), [port](http://inspec.io/docs/reference/resources/port/), and [command](http://inspec.io/docs/reference/resources/command/) resources.
 
@@ -582,6 +620,8 @@ Test Summary: 10 successful, 0 failures, 0 skipped
        Finished verifying <default-ubuntu-1404> (0m0.45s).
 -----> Kitchen is finished. (0m2.81s)
 ```
+
+<% command_snippet(page: current_page, path: 'verify-the-mysql-configuration-ubuntu-vagrant/kitchen-verify-database-ubuntu-vagrant-1') %>
 
 Success! Each of your tests for Apache and MySQL pass. You've now successfully set up the Linux, Apache, and MySQL portions of your LAMP stack.
 

@@ -4,6 +4,8 @@ order: 6
 keywords: TODO
 layout: tutorials/platforms/environments/overview/lesson/layout
 time_to_complete: 30 minutes
+snippet_path: create-a-web-app-cookbook/ubuntu/vagrant/create-the-customers-app-ubuntu-vagrant
+snippet_workstation: ubuntu
 ---
 So far, you have a cookbook named `lamp` which can configure a general-purpose LAMP stack. Let's summarize some of its features.
 
@@ -37,26 +39,42 @@ Here's what the Customers web app looks like.
 $ cd ~/learn-chef
 ```
 
+<% command_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/cd-learn-chef-ubuntu-vagrant-2', features: :stdin) %>
+
 ```bash
 # ~/learn-chef
 $ chef generate cookbook cookbooks/lamp_customers
 ```
+
+<% command_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/chef-generate-cookbook-lamp_customersubuntu-vagrant') %>
 
 ```bash
 # ~/learn-chef
 $ cd ~/learn-chef/cookbooks/lamp_customers
 ```
 
+<% command_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/cd-lamp_customers-ubuntu-vagrant', features: :stdin) %>
+
 Update Berksfile
+
+<% code_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/berkfile-ubuntu-vagrant') %>
 
 Update metadata.rb
 
+<% code_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/metadata-ubuntu-vagrant-4') %>
+
 In default.rb, include_recipe 'lamp::default'
+
+<% code_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/run-lamp-recipe-ubuntu-vagrant') %>
 
 * Update .kitchen.yml to point to `lamp`'s databag path (in practice, might have its own...)
   * (Maybe omit data bags path for now and add later before 2nd kitchen converge? Or, just say we add it now to prepare us for later... (I think I like the 1st option - need to add that!))
 
+<% code_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/kitchen-yml-ubuntu-vagrant-3') %>
+
 `kitchen converge`
+
+<% command_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/kitchen-converge-ubuntu-vagrant-5') %>
 
 [END_BOX]
 
@@ -65,7 +83,12 @@ In default.rb, include_recipe 'lamp::default'
 ## 2. Add a database table that contains sample customer records
 
 * `chef generate file create-tables.sql`
+
+<% command_snippet(page: current_page, path: 'add-database-table-ubuntu-vagrant/chef-generate-file-create-tables-ubuntu-vagrant') %>
+
 * Write `create-tables.sql`
+
+<% code_snippet(page: current_page, path: 'add-database-table-ubuntu-vagrant/create-tables-sql-ubuntu-vagrant') %>
 
 default.rb:
 
@@ -89,7 +112,7 @@ execute "initialize #{node['lamp']['database']['dbname']} database" do
 end
 ```
 
-
+<% code_snippet(page: current_page, path: 'add-database-table-ubuntu-vagrant/run-database-script-ubuntu-vagrant') %>
 
 [END_BOX]
 
@@ -98,7 +121,12 @@ end
 ## 3. Add a homepage that uses PHP code
 
 * `chef generate template index.php`
+
+<% command_snippet(page: current_page, path: 'add-homepage-ubuntu-vagrant/chef-generate-template-index-ubuntu-vagrant') %>
+
 * Write `index.php.erb`
+
+<% code_snippet(page: current_page, path: 'add-homepage-ubuntu-vagrant/index-php-ubuntu-vagrant') %>
 
 Update default.rb
 
@@ -130,6 +158,8 @@ template "#{node['lamp']['web']['document_root']}/index.php" do
 end
 ```
 
+<% code_snippet(page: current_page, path: 'add-homepage-ubuntu-vagrant/run-php-template-ubuntu-vagrant') %>
+
 [END_BOX]
 
 [START_BOX]
@@ -141,7 +171,11 @@ end
 $ chef generate attribute default
 ```
 
+<% command_snippet(page: current_page, path: 'add-node-attributes-ubuntu-vagrant/chef-generate-attribute-ubuntu-vagrant-2') %>
+
 Write default.rb
+
+<% code_snippet(page: current_page, path: 'add-node-attributes-ubuntu-vagrant/attribute-ubuntu-vagrant-4') %>
 
 [END_BOX]
 
@@ -151,6 +185,8 @@ Write default.rb
 ## 5. Apply the configuration
 
 `kitchen converge`
+
+<% command_snippet(page: current_page, path: 'apply-cookbook-ubuntu-vagrant/kitchen-converge-ubuntu-vagrant-6') %>
 
 ![the resulting web page](misc/manage_customers_node.png)
 
@@ -172,9 +208,16 @@ describe command 'wget -qO- localhost' do
 end
 ```
 
+<% code_snippet(page: current_page, path: 'verify-customers-configuration-ubuntu-vagrant/inspec-default-ubuntu-vagrant-2') %>
+
 `kitchen verify`
 
+<% command_snippet(page: current_page, path: 'verify-customers-configuration-ubuntu-vagrant/kitchen-verify-customers-ubuntu-vagrant-1') %>
+
+
 `kitchen test`
+
+<% command_snippet(page: current_page, path: 'verify-customers-configuration-ubuntu-vagrant/kitchen-test-ubuntu-vagrant-2') %>
 
 [END_BOX]
 
