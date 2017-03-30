@@ -1,8 +1,9 @@
 .modules-section
   .row
-    - modules.children.each do |item|
-      .large-3.medium-4.small-12.columns.module-hide
-        .module-card
+    - modules.children.each_with_index do |item, index|
+      - tags = item.page.data.tags.to_json.tr '"', "'"
+      div order= "#{index}" module="#{item.id}" class="module-tile large-3 medium-4 small-12 columns module-display #{get_tag_classes(item.page.data.tags)}" data-tags="#{tags}"
+        div class="module-card"
           a href="#{item.page.url}"
             .header
               span
@@ -12,11 +13,12 @@
             user-progress-bar module="#{item.id}"
             p
               = item.page.data.description
-            ul.links
-              li
-                a href="" Chef
-              li
-                a href="" Beginner
+            - if item.page.data.tags
+              ul.links
+               - item.page.data.tags.each do |tag|
+                  li
+                    a href=""
+                     = tag
             user-progress-stamp module="#{item.id}"
             .module-overlay
               a.button.btn.btn-secondary.user-start-btn href="#{item.page.url}" module="#{item.id}" Start
@@ -26,5 +28,6 @@
                 a.fa.fa-facebook
                 a.fa.fa-twitter
                 a.fa.fa-linkedin
-  .btn-container.load-module
-    button.btn.btn-primary.module-load-more Load more modules
+  - if defined?(load_more)
+    .btn-container.load-module
+      button.btn.btn-primary.module-load-more.load-module-btn  total="#{modules.children.size}"  Load more modules

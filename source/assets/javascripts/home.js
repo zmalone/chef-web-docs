@@ -32,44 +32,14 @@ $(document).ready(function() {
 
   });
 
-  var SHOW_MODULE = 16
-  var SHOW_TRACK = 10
-  var ANIMATION_DURATION = 685
-  var ANIMATION_OFFSET = 162
-
-  $("div.module-hide").slice(0, SHOW_MODULE).show();
-  $("div.track-hide").slice(0, SHOW_TRACK).show();
-  $(".module-load-more").on('click', function (e) {
-    e.preventDefault();
-    if (SHOW_MODULE >= $("div.module-hide:hidden").length) {
-      $(".load-module").fadeOut('slow');
-    }
-    $("div.module-hide:hidden").slice(0, SHOW_MODULE).each(function(index) {
-      $(this).delay(ANIMATION_OFFSET * index).fadeIn({
-        duration: ANIMATION_DURATION,
-        easing: 'linear'
-      });
-    });
-  });
-  $(".track-load-more").on('click', function (e) {
-    e.preventDefault();
-    if (SHOW_TRACK >= $("div.track-hide:hidden").length) {
-      $(".load-track").fadeOut('slow');
-    }
-    $("div.track-hide:hidden").slice(0, SHOW_TRACK).each(function(index) {
-      $(this).delay(ANIMATION_OFFSET * index).fadeIn({
-        duration: ANIMATION_DURATION,
-        easing: 'linear'
-      });
-    });
-  });
   // if ($('#sideNav').length) {
   //   $('#sideNav').scrollToFixed({ marginTop: 100, limit: $($('.module-next-btn')).offset().top });
   // }
 });
+
 $('.cls-modal').click(function(){
-    $('#SignupModal').foundation('reveal','close')
-    $('#loginModal').foundation('reveal','close')
+  $('#SignupModal').foundation('reveal','close')
+  $('#loginModal').foundation('reveal','close')
 })
 
 $('.video-url').click(function(){
@@ -82,4 +52,3 @@ $('.close-video-modal').on('click', function() {
   $('#videoModal').foundation('reveal', 'close');
   return false;
 });
-
