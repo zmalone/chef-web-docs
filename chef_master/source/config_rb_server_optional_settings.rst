@@ -5,7 +5,7 @@ chef-server.rb Optional Settings
 
 .. tag config_rb_server_summary
 
-The chef-server.rb file contains all of the non-default configuration settings used by the Chef server. (The default settings are built-in to the Chef server configuration and should only be added to the chef-server.rb file to apply non-default values.) These configuration settings are processed when the ``chef-server-ctl reconfigure`` command is run, such as immediately after setting up the Chef server or after making a change to the underlying configuration settings after the server has been deployed. The chef-server.rb file is a Ruby file, which means that conditional statements can be used in the configuration file.
+The chef-server.rb file contains all of the non-default configuration settings used by the Chef server. The default settings are built-in to the Chef server configuration and should only be added to the chef-server.rb file to apply non-default values. These configuration settings are processed when the ``chef-server-ctl reconfigure`` command is run, such as immediately after setting up the Chef server or after making a change to the underlying configuration settings after the server has been deployed. The chef-server.rb file is a Ruby file, which means that conditional statements can be used in the configuration file.
 
 .. end_tag
 
@@ -72,25 +72,7 @@ This configuration file has the following general settings:
 ``insecure_addon_compat``
    Set to ``true`` to keep Chef server compatible with older add-on versions by rendering secrets and credentials to ``/etc/opscode/chef-server-running.json`` and other files in ``/etc/opscode/`` (and ``/etc/opscode-analytics``). When set to ``false``, secrets are **only** written to ``/etc/opscode/private-chef-secrets.json`` and **not** to any other files. Default value: ``true``.
 
-   See this table for the minimum add-on versions supporting ``insecure_addon_compat false``:
-
-   .. list-table::
-      :widths: 1 1
-      :header-rows: 1
-
-      * - Add-on Name
-        - Minimum Version
-      * - Chef Backend
-        - *all*
-      * - Chef Manage
-        - 2.5.0
-      * - Push Jobs Server
-        - 2.2.0
-      * - Reporting
-        - 1.7.0
-      * - Analytics
-        - *none*
-
+   See `Add-on Compatibility </server_security.html#add-on-compatibility>`_ for the minimum add-on versions supporting ``insecure_addon_compat false``.
 
 ``install_path``
    The directory in which the Chef server is installed. Default value: ``'/opt/opscode'``.
@@ -223,6 +205,9 @@ This configuration file has the following settings for ``data_collector``:
    The fully qualified URL to the data collector server API. When present, it will enable the data collector in **opscode-erchef**. This also enables chef-server authenticated forwarding any properly signed requests arriving at ``/organizations/ORGNAME/data-collector`` to this URL with the data collector token appended. This is also target for requests authenticated and forwarded by the ``/organizations/ORGNAME/data-collector`` endpoint. For the forwarding to work correctly the ``data_collector['token']`` field must also be set.
    For example, if the data collector in Chef Automate is being used, the URI would look like:
    ``http://my_automate_server.example.org/data-collector/v0/``.
+
+``data_collector['proxy']``
+   If set to ``true``, Chef server will proxy all requests sent to ``/data-collector`` to the configured Chef Automate ``data_collector['root_url']``. Note that *this route* does not check the request signature and add the right data_collector token, but just proxies the Automate endpoint **as-is**. Default value: ``nil``.
 
 ``data_collector['token']``
    Legacy configuration for shared data collector security token. When configured, the token will be passed as an HTTP header named ``x-data-collector-token`` which the server can choose to accept or reject. As of Chef server 12.14, this is no longer the preferred command.
