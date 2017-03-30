@@ -1,0 +1,185 @@
+---
+title: 'Create the Customers web application'
+order: 6
+keywords: TODO
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 30 minutes
+---
+So far, you have a cookbook named `lamp` which can configure a general-purpose LAMP stack. Let's summarize some of its features.
+
+* The `lamp` cookbook runs on Ubuntu, and configures Apache, MySQL, and PHP.
+* The `lamp` cookbook uses node attributes to make the document root, database name, and database administrator configurable.
+* For testing purposes, the `lamp` cookbook includes a data bag which includes the MySQL root and administrator passwords.
+* The `lamp` cookbook includes InSpec tests that help you automatically verify the configuration behaves as you expect.
+
+Say you have the requirement to deliver a web application that displays customer records. How can you extend the `lamp` cookbook to configure a specific web application?
+
+You could create a duplicate, or _fork_, of the `lamp` cookbook and modify it to suit your needs. However, what happens when new features are added to the `lamp` cookbook? Integrating new features into your copy can become tedious.
+
+A more common pattern is to create what's commonly called a _wrapper cookbook_. A wrapper cookbook wraps another cookbook to extend or change its behavior without forking it.
+
+To wrap another cookbook, you typically follow the same pattern you used previously to take advantage of community cookbooks from Chef Supermarket. You start by referencing the base cookbook in your wrapper cookbook's <% fp 'metadata.rb' %> file. Then you include the specific recipes you want to run in your base cookbook from your wrapper cookbook's recipes. To change the way the base cookbook behaves, you can override node attributes from the base cookbook in your wrapper cookbook's attributes file.
+
+In this part, you'll create a cookbook called `lamp_customers` that configures the Customers web application. The Customers web application is basic to illustrate the concept of a wrapper cookbook. It includes these features:
+
+* It adds a table to the database that contains sample customer records.
+* It adds a homepage that uses PHP code to read from the database and display customer data to the user.
+
+Here's what the Customers web app looks like.
+
+![the resulting web page](misc/manage_customers_node.png)
+
+[START_BOX]
+
+## 1. Create the lamp_customers cookbook
+
+```bash
+$ cd ~/learn-chef
+```
+
+```bash
+# ~/learn-chef
+$ chef generate cookbook cookbooks/lamp_customers
+```
+
+```bash
+# ~/learn-chef
+$ cd ~/learn-chef/cookbooks/lamp_customers
+```
+
+Update Berksfile
+
+Update metadata.rb
+
+In default.rb, include_recipe 'lamp::default'
+
+* Update .kitchen.yml to point to `lamp`'s databag path (in practice, might have its own...)
+  * (Maybe omit data bags path for now and add later before 2nd kitchen converge? Or, just say we add it now to prepare us for later... (I think I like the 1st option - need to add that!))
+
+`kitchen converge`
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Add a database table that contains sample customer records
+
+* `chef generate file create-tables.sql`
+* Write `create-tables.sql`
+
+default.rb:
+
+```ruby
+include_recipe 'lamp::default'
+
+passwords = data_bag_item('passwords', 'mysql')
+
+# Create a path to the SQL file in the Chef cache.
+create_tables_script_path = File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
+
+# Write the SQL script to the filesystem.
+cookbook_file create_tables_script_path do
+  source 'create-tables.sql'
+end
+
+# Seed the database with a table and test data.
+execute "initialize #{node['lamp']['database']['dbname']} database" do
+  command "mysql -h #{node['lamp']['database']['host']} -u #{node['lamp']['database']['admin_username']} -p#{passwords['admin_password']} -D #{node['lamp']['database']['dbname']} < #{create_tables_script_path}"
+  not_if  "mysql -h #{node['lamp']['database']['host']} -u #{node['lamp']['database']['admin_username']} -p#{passwords['admin_password']} -D #{node['lamp']['database']['dbname']} -e 'describe customers;'"
+end
+```
+
+
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Add a homepage that uses PHP code
+
+* `chef generate template index.php`
+* Write `index.php.erb`
+
+Update default.rb
+
+```ruby
+include_recipe 'lamp::default'
+
+passwords = data_bag_item('passwords', 'mysql')
+
+# Create a path to the SQL file in the Chef cache.
+create_tables_script_path = File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
+
+# Write the SQL script to the filesystem.
+cookbook_file create_tables_script_path do
+  source 'create-tables.sql'
+end
+
+# Seed the database with a table and test data.
+execute "initialize #{node['lamp']['database']['dbname']} database" do
+  command "mysql -h #{node['lamp']['database']['host']} -u #{node['lamp']['database']['admin_username']} -p#{passwords['admin_password']} -D #{node['lamp']['database']['dbname']} < #{create_tables_script_path}"
+  not_if  "mysql -h #{node['lamp']['database']['host']} -u #{node['lamp']['database']['admin_username']} -p#{passwords['admin_password']} -D #{node['lamp']['database']['dbname']} -e 'describe customers;'"
+end
+
+# Write the home page.
+template "#{node['lamp']['web']['document_root']}/index.php" do
+  source 'index.php.erb'
+  variables(
+    admin_password: passwords['admin_password']
+  )
+end
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Specify the document root and database name
+
+```bash
+# ~/learn-chef/cookbooks/lamp_customers
+$ chef generate attribute default
+```
+
+Write default.rb
+
+[END_BOX]
+
+
+[START_BOX]
+
+## 5. Apply the configuration
+
+`kitchen converge`
+
+![the resulting web page](misc/manage_customers_node.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. WRITE UNIT TESTS
+
+Update default_test.rb
+
+```ruby
+describe command("mysql -h 127.0.0.1 -uroot -pfakerootpassword -D 4thcoffee -e 'describe customers;'") do
+  its('stdout') { should match(/id/) }
+end
+
+describe command 'wget -qO- localhost' do
+  its('stdout') { should match(/Customers/) }
+end
+```
+
+`kitchen verify`
+
+`kitchen test`
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+BLAH
+
+<% end %>

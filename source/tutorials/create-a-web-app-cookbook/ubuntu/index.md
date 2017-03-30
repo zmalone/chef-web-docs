@@ -1,0 +1,42 @@
+---
+title: 'Develop a web app cookbook for Ubuntu'
+layout: tutorials/platforms/environments/overview/layout
+platform: Ubuntu
+logo: ubuntu.svg
+order: 3
+---
+In this tutorial, you'll build a basic but complete web application called Customers that uses a web server, a database, and scripting. Such a configuration is commonly called a _LAMP stack_. LAMP stands for Linux, Apache, MySQL, and PHP.
+
+<img src="/assets/images/misc/lamp-stack-all.svg" style="width: 300px; box-shadow: none;"/>
+
+### What you'll create
+
+You'll write two cookbooks. The first cookbook, named `lamp`, defines a general-purpose LAMP stack configuration. The second cookbook, named `lamp_customers` builds on the `lamp` cookbook to define the Customers web app. Here's what the Customers web app looks like.
+
+![the resulting web page](misc/manage_customers_node.png)
+
+For learning purposes, these cookbooks run on Ubuntu. However, you can adapt these cookbooks to run on other Linux distributions.
+
+### The process you'll use
+
+Throughout this tutorial, you'll use an iterative process to build and verify each part of your web application. You'll do this by using Test Kitchen to bring up temporary instances that run on your workstation. You'll also write InSpec tests to help you automatically verify that your cookbooks behave as you expect.
+
+You'll use Test Kitchen's Vagrant driver to bring up temporary instances using Vagrant and VirtualBox. You can adapt what you see to use a different Test Kitchen driver, such as one that runs cloud instances.
+
+### What you'll learn
+
+In practice, your requirements may be more complex than what you'll see here. For example, you might require the web server and the database server to exist on separate systems. You may also have a load balancer that distributes traffic among multiple web servers.
+
+Here, you'll build a LAMP stack configuration as way to build your Chef skills, using off-the-shelf software that you're probably already familiar with. You don't need to understand all the details about how Apache and MySQL work to complete this tutorial. The goal is to learn skills and patterns that will help you apply Chef to your specific infrastructure challenges.
+
+After completing this tutorial, you should be able to:
+
+* use attributes to create reusable Chef cookbooks that enable you to build more complex systems.
+* use community cookbooks from Chef Supermarket to perform common tasks.
+* use Berkshelf to resolve dependencies among your cookbooks.
+* use data bags to protect sensitive information.
+* use InSpec to verify your configuration behaves as you expect.
+
+You'll get started by making sure your workstation is set up for local development with Test Kitchen, VirtualBox, and Vagrant.
+
+[COMMENT] If you have enough familiarity with Chef and just want to see the Customers web application in action, [follow this quickstart](/tutorials/create-a-web-app-cookbook/ubuntu/bring-up-the-web-app-using-test-kitchen/).

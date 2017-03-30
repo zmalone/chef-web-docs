@@ -1,0 +1,496 @@
+---
+title: 'Configure Apache'
+order: 3
+keywords: TODO
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 25 minutes
+---
+Now let's configure Apache. Here you set up an Apache configuration file and install the Apache package and start its service.
+
+<img src="/assets/images/misc/lamp-stack-a.svg" style="width: 300px; box-shadow: none;"/>
+
+In [Learn the basics](/tutorials/learn-the-basics/) and [Manage a node](/tutorials/manage-a-node/), you wrote a basic Apache cookbook from scratch. For this project, we want to leverage additional Apache features, which would take some effort to set up.
+
+That's where the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook on Chef Supermarket comes in. Chef Supermarket is a place for the community to share cookbooks. The `httpd` cookbook provides common functionality such as setting up virtual hosting so you don't have to reinvent the wheel.
+
+[START_BOX]
+
+## 1. Reference the httpd cookbook
+
+You don't need to manually download cookbooks from Chef Supermarket to use them. You'll learn how to automatically download cookbooks in a bit, but the first step is to reference the cookbooks you want to load.
+
+The way you load one cookbook from inside another is to reference it in your cookbook's metadata file, <% fp('~/learn-chef/cookbooks/lamp/metadata.rb') %>. To use the `httpd` cookbook, append the line `pends 'httpd', '~> 0.4'` to <% fp('metadata.rb') %> making the entire file look like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/metadata.rb
+name 'lamp'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures lamp'
+long_description 'Installs/Configures lamp'
+version '0.1.0'
+issues_url 'https://github.com/learn-chef/lamp/issues' if respond_to?(:issues_url)
+source_url 'https://github.com/learn-chef/lamp' if respond_to?(:source_url)
+
+depends 'httpd', '~> 0.4'
+```
+
+Notice you specify the version of the `httpd` cookbook. Specifying, or _pinning_, the cookbook version helps you lock down functionality to a certain point in time. When a newer version of a cookbook is released, you can first verify and test that version before you deploy it to production. That way, you can adopt the latest changes and functionality when you're ready.
+
+How did we know to specify version `0.4`? One way is by reading the latest version from the `httpd` cookbook's [page](https://supermarket.chef.io/cookbooks/httpd) on Supermarket.
+
+![The httpd cookbook version](misc/supermarket_httpd_version.png)
+
+Another way to get version information is through the `knife supermarket show` command. The following command retrieves information for the `apt` cookbook and searches the result for the latest version.
+
+```bash
+# ~/learn-chef
+$ knife supermarket show httpd | grep latest_version
+latest_version:     https://supermarket.chef.io/api/v1/cookbooks/httpd/versions/0.4.4
+```
+
+There are [multiple ways to specify version constraints](http://docs.chef.io/cookbook_versions.html). The `~>` syntax, called the _pessimistic version constraint_, tells Chef that we want the latest version of the `apt` cookbook that is greater than or equal to `0.4` but less than `1.0`.
+
+Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. Version numbers are typically written as MAJOR.MINOR.PATCH, where:
+
+* MAJOR specifies a change that's incompatible with previous versions.
+* MINOR specifies new functionality that's backwards-compatible with previous versions.
+* PATCH specifies backwards-compatible bug fixes.
+
+When you pin a cookbook, it's common to specify only the first two digits (omitting PATCH), for example, '0.4'. The second and third digits typically relate to changes that are compatible with prior versions. Therefore, we want the latest version that's less than the next MAJOR version, 1.0.
+
+[Learn more about Semantic Versioning and how it relates to Ruby code](http://guides.rubygems.org/patterns/)
+
+[COMMENT] For this tutorial, just to ensure that what you see matches the output that is shown, we recommend that you use the versions that we specify, even if a newer version is available. We'll periodically update this tutorial to match newer versions of the community cookbooks.
+
+[COMMENT] Keep in mind that for now your goal is to learn how Chef works. It's OK if you don't understand every detail of how the community cookbooks work because you're working in a safe environment. As you gain experience, you'll want to read and understand the code and documentation to ensure that the cookbooks you get from Chef Supermarket do exactly what you expect before you apply them to your production environment.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Specify the document root directory
+
+By default, Apache configures the default home page at <% fp '/var/www/html/index.html' %>. For our cookbook, let's say we want this location to be configurable.
+
+In [Manage a node](/tutorials/manage-a-node/), you learned about some of the built-in node attributes that Chef provides, such as the node's IP address. You can also define your own custom attributes that are specific to your policy. Let's create an attributes file that will define all of the custom attributes for your LAMP stack cookbook.
+
+Run the following from the <% fp('~/learn-chef') %> directory to create an attributes file named <% fp 'default.rb' %>.
+
+```bash
+# ~/learn-chef
+$ chef generate attribute cookbooks/lamp default
+Recipe: code_generator::attribute
+  * directory[/private/tmp/lamp/attributes] action create
+    - create new directory /private/tmp/lamp/attributes
+  * template[/private/tmp/lamp/attributes/default.rb] action create
+    - create new file /private/tmp/lamp/attributes/default.rb
+    - update content in file /private/tmp/lamp/attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+This command adds the <% fp 'default.rb' %> attribute file to the <% fp '~/learn-chef/cookbooks/lamp/attributes' %> directory.
+
+Now add the following to your attributes file, <% fp 'default.rb' %>.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/attributes/default.rb
+default['lamp']['web']['document_root'] = '/var/www/default/public_html'
+```
+
+In the next step, you'll use this node attribute to set up the Apache configuration file, which specifies the document root location.
+
+Later in this tutorial, you'll see how to overwrite this node attribute to specify a different location for your web content.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create the Apache configuration file
+
+Next, let's create the [Apache configuration file](https://httpd.apache.org/docs/2.4/configuring.html).
+
+The configuration file requires information that's specific to your node, so we'll create a template file that contains placeholders. Then we'll use the [template](https://docs.chef.io/resource_template.html) resource to dynamically fill in those placeholders when Chef runs.
+
+Start by generating a template file, <% fp 'default.conf.erb' %>, like this.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ chef generate template default.conf
+Recipe: code_generator::template
+  * directory[/private/tmp/lamp/templates/default] action create
+    - create new directory /private/tmp/lamp/templates/default
+  * template[/private/tmp/lamp/templates/default.conf.erb] action create
+    - create new file /private/tmp/lamp/templates/default.conf.erb
+    - update content in file /private/tmp/lamp/templates/default.conf.erb from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+This command adds the template file <% fp 'default.conf.erb' %> to the <% fp '~/learn-chef/cookbooks/lamp/templates' %> directory. (The command appends the <% fp '.erb' %> extension for you.) Remember, the <% fp '.erb' %> extension means that the file can hold placeholders that are filled in when the recipe runs. That's what makes the file a template.
+
+Add this to <% fp 'default.conf.erb' %>.
+
+<%= partial 'customers-conf' %>
+
+The configuration file uses two node attributes &ndash; `node['hostname']` and `node['lamp']['web']['document_root']`.
+
+* `node['hostname']` is one of many [built-in node attributes](https://docs.chef.io/ohai.html#automatic-attributes) that Chef provides for you. This attribute defines the node's hostname.
+* `node['lamp']['web']['document_root']` defines the site's document root, and is the node attribute that you used in the previous step to specify the home page.
+
+The `AddType` and `DirectoryIndex` directives help prepare us to serve PHP files.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Create the web recipe
+
+So far, the `lamp` cookbook contains the default recipe. For our LAMP configuration cookbook, we'll use what's called the _application cookbook pattern_. An application cookbook typically contains multiple recipes, where each recipe configures one part of the system. The default recipe, <% fp 'default.rb' %>, lists these recipes in the order needed to build your application or service.
+
+To configure Apache, create a recipe named `web`. Run this command to create it.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ chef generate recipe web
+Recipe: code_generator::recipe
+  * directory[/private/tmp/lamp/spec/unit/recipes] action create (up to date)
+  * cookbook_file[/private/tmp/lamp/spec/spec_helper.rb] action create_if_missing (up to date)
+  * template[/private/tmp/lamp/spec/unit/recipes/web_spec.rb] action create_if_missing
+    - create new file /private/tmp/lamp/spec/unit/recipes/web_spec.rb
+    - update content in file /private/tmp/lamp/spec/unit/recipes/web_spec.rb from none to 3ff56c
+    (diff output suppressed by config)
+  * directory[/private/tmp/lamp/test/smoke/default] action create (up to date)
+  * template[/private/tmp/lamp/test/smoke/default/web.rb] action create_if_missing
+    - create new file /private/tmp/lamp/test/smoke/default/web.rb
+    - update content in file /private/tmp/lamp/test/smoke/default/web.rb from none to d325eb
+    (diff output suppressed by config)
+  * template[/private/tmp/lamp/recipes/web.rb] action create
+    - create new file /private/tmp/lamp/recipes/web.rb
+    - update content in file /private/tmp/lamp/recipes/web.rb from none to 717261
+    (diff output suppressed by config)
+```
+
+The first thing you need to do in the `web` recipe is to ensure that the document root directory exists. To do that, add the following [directory]() resource to your `web` recipe, <% fp '~/learn-chef/cookbooks/lamp/recipes/web.rb' %>.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/web.rb
+# Create the document root directory.
+directory node['lamp']['web']['document_root'] do
+  recursive true
+end
+```
+
+The `recursive` property ensures that any parent directories are also created.
+
+Next, let's configure Apache. We'll use the `httpd` cookbook's `httpd_config` and `httpd_service` resources to do that.
+
+* The `httpd_config` resource copies the configuration file for the site to the appropriate location.
+* The `httpd_service` resource ensures that the Apache package is installed and gets the service up and running.
+
+Write out <% fp 'web.rb' %> like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/web.rb
+# Create the document root directory.
+directory node['lamp']['web']['document_root'] do
+  recursive true
+end
+
+# Add the site configuration.
+httpd_config 'default' do
+  source 'default.conf.erb'
+end
+
+# Install Apache and start the service.
+httpd_service 'default' do
+  mpm 'prefork'
+  action [:create, :start]
+  subscribes :restart, 'httpd_config[default]'
+end
+```
+
+The `httpd_service` resource supports multiple simultaneous Apache instances that you can identify and manage. The name `default` will produce a service named `apache2-default`.
+
+PHP [must be run](http://www.php.net/manual/en/faq.installation.php#faq.installation.apache2) in a single-threaded [Multi-Processing Module](http://httpd.apache.org/docs/2.2/mpm.html), or MPM. Therefore, we set the `mpm` property to use the [prefork](http://httpd.apache.org/docs/2.2/mod/prefork.html) module.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Set the web recipe to run
+
+To run the `web` recipe, append an `include_recipe` line to your cookbook's default recipe, making the entire file look like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/default.rb
+apt_update 'daily' do
+  frequency 86_400
+  action :periodic
+end
+
+include_recipe 'lamp::web'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Apply the configuration
+
+You are now ready to try out the configuration. Run `kitchen converge` to apply the `lamp` cookbook.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ kitchen converge
+-----> Starting Kitchen (v1.7.2)
+-----> Converging <default-ubuntu-1404>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Chef Omnibus installation detected (install only if missing)
+       Transferring files to <default-ubuntu-1404>
+       Starting Chef Client, version 12.9.38
+       resolving cookbooks for run list: ["lamp::default"]
+       Synchronizing Cookbooks:
+         - apt (2.9.2)
+         - firewall (2.4.0)
+         - lamp (0.1.0)
+         - chef-sugar (3.3.0)
+         - httpd (0.4.4)
+         - compat_resource (12.9.1)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+[...]
+          * apt_package[apache2] action install
+             - install version 2.4.7-1ubuntu4.9 of package apache2
+           * service[apache2] action stop
+             - stop service service[apache2]
+           * service[apache2] action disable
+             - disable service service[apache2]
+
+             - create new directory /var/cache/apache2-customers
+             - change mode from '' to '0755'
+             - change owner from '' to 'root'
+             - change group from '' to 'root'
+           * directory[/var/log/apache2-customers] action create
+             - create new directory /var/log/apache2-customers
+[...]
+           * service[apache2-customers] action start
+             - start service service[apache2-customers]
+           * service[apache2-customers] action enable
+             - enable service service[apache2-customers]
+[...]
+         * file[/var/www/customers/public_html/index.html] action create
+           - create new file /var/www/customers/public_html/index.html
+           - update content in file /var/www/customers/public_html/index.html from none to a02c68
+           --- /var/www/customers/public_html/index.html	2016-02-10 21:10:44.772087000 +0000
+           +++ /var/www/customers/public_html/.index.html20160210-5727-1lhm3n2	2016-02-10 21:10:44.772087000 +0000
+           @@ -1 +1,2 @@
+           +<html>This is a placeholder</html>
+           - change mode from '' to '0644'
+           - change owner from '' to 'web_admin'
+           - change group from '' to 'web_admin'
+[...]
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 94/186 resources updated in 16 seconds
+       Finished converging <default-ubuntu-1404> (0m19.06s).
+-----> Kitchen is finished. (0m19.64s)
+```
+
+You'll see from the output that:
+
+* the Apache package, `apache2` on Ubuntu, was installed.
+* the Apache configuration template was applied, replacing the specified node attributes with their values.
+* the `apache2-default` service was started and enabled.
+
+Now let's verify the web server configuration. Recall that your Test Kitchen configuration file specifies an IP address of 192.168.34.34 for the instance.
+
+```yaml
+# ~/learn-chef/cookbooks/lamp/.kitchen.yml
+---
+driver:
+  name: vagrant
+  network:
+    - ["private_network", {ip: "192.168.34.34"}]
+
+provisioner:
+  name: chef_zero
+  always_update_cookbooks: true
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-14.04
+
+suites:
+  - name: default
+    data_bags_path: test/fixtures/default/data_bags
+    run_list:
+      - recipe[lamp::default]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:
+```
+
+From a web browser on your workstation, navigate to http://192.168.34.34. You'll see something like this.
+
+![](misc/manage_customers_placeholder_34.png)
+
+You see that your web configuration lists the directory index. That's because we haven't yet added any site content.
+
+You can also run this `kitchen exec` command to run `wget` on your instance.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ kitchen exec -c 'wget -qO- localhost'
+-----> Execute command on default-ubuntu-1404.
+       <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+       <html>
+        <head>
+         <title>Index of /</title>
+        </head>
+        <body>
+       <h1>Index of /</h1>
+       <ul></ul>
+       </body></html>
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Write InSpec tests that verify the configuration
+
+So far, you've verified the configuration manually. It's completely reasonable to perform some sort of manual verification as you add new features. Manual testing should happen quickly, for example, verifying that your service is running or that the home page loads.
+
+However, say you make a change or add a new feature and your configuration no longer works as you expect. It would become tedious to manually track down how your change broke your configuration. Most Chef users incorporate some sort of automated testing to help ensure that new features don't break existing functionality, and to help pinpoint the source of failure when things do break.
+
+In [Verify with InSpec](/tutorials/inspec/), we propose a _test-driven_ approach to infrastructure testing, where you write your tests first before you write any Chef code. You can also write tests after you get your configuration working, once you have a more complete understanding of what end state to expect.
+
+If you're new to automated testing, you can later read [Getting started with automated testing](/skills/get-started-with-testing/) to get started. For now, let's write a few tests that help automatically verify the web configuration.
+
+When you run the `chef generate recipe` command, Chef creates a default test for you in the <% fp 'test/smoke/default' %> directory.
+
+Modify your copy of <% fp '~/learn-chef/cookbooks/lamp/test/smoke/default/web.rb' %> like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/test/smoke/default/web.rb
+describe package 'apache2' do
+  it { should be_installed }
+end
+
+describe service 'apache2-default' do
+  it { should be_enabled }
+  it { should be_running }
+end
+
+describe command 'wget -qSO- --spider localhost' do
+  its('stderr') { should match %r{HTTP/1\.1 200 OK} }
+end
+
+describe port 80 do
+  it { should be_listening }
+end
+```
+
+These tests verify that:
+
+1. the `apache2` package is installed.
+1. the `apache2-default` service is enabled and running.
+1. Apache returns a 200 OK response.
+1. port 80 is listening to external traffic.
+
+A complete implementation might contain more tests.
+
+We don't need the default tests, located in <% fp 'default_test.rb' %>, so remove them now.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/test/smoke/default/default_test.rb
+# # encoding: utf-8
+
+# Inspec test for recipe lamp::default
+
+# The Inspec reference, with examples and extensive documentation, can be
+# found at http://inspec.io/docs/reference/resources/
+```
+
+Recall that your <% fp '.kitchen.yml' %> file looks like this.
+
+```yaml
+# ~/learn-chef/cookbooks/lamp/.kitchen.yml
+---
+driver:
+  name: vagrant
+  network:
+    - ["private_network", {ip: "192.168.34.34"}]
+
+provisioner:
+  name: chef_zero
+  always_update_cookbooks: true
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-14.04
+
+suites:
+  - name: default
+    data_bags_path: test/fixtures/default/data_bags
+    run_list:
+      - recipe[lamp::default]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:
+```
+
+The `verifier` section specifies that the cookbook contains InSpec tests. The `inspec_tests` part specifies where the tests are located.
+
+Run `kitchen verify` to run the tests.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ kitchen verify
+-----> Starting Kitchen (v1.15.0)
+-----> Verifying <default-ubuntu-1404>...
+       Loaded
+
+Target:  ssh://vagrant@127.0.0.1:2206
+
+
+  System Package
+     ✔  apache2 should be installed
+  Service apache2-default
+     ✔  should be enabled
+     ✔  should be running
+  Command wget
+     ✔  -qSO- --spider localhost stderr should match /HTTP\/1\.1 200 OK/
+  Port 80
+     ✔  should be listening
+
+Test Summary: 5 successful, 0 failures, 0 skipped
+       Finished verifying <default-ubuntu-1404> (0m0.39s).
+-----> Kitchen is finished. (0m2.85s)
+```
+
+You see that all tests pass. If any test fails, you would see the actual result. This gives you a starting point for investigating the failure.
+
+You've now successfully set up the Linux and Apache portions of your LAMP stack.
+
+<img src="/assets/images/misc/lamp-stack-la.svg" style="width: 300px; box-shadow: none;"/>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Great work! You now have a working Apache configuration. Now that we have confidence that things are working, we can move on to setting up MySQL.
+
+<% end %>

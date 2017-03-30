@@ -1,0 +1,596 @@
+---
+title: 'Configure MySQL'
+order: 4
+keywords: TODO
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 60 minutes
+---
+Now let's configure MySQL. You'll install the MySQL server and client packages and start the service. You'll also learn how to use _data bags_ to hold the MySQL administrator passwords.
+
+<img src="/assets/images/misc/lamp-stack-m.svg" style="width: 300px; box-shadow: none;"/>
+
+For this part, you'll use the [mysql](https://supermarket.chef.io/cookbooks/mysql), [database](https://supermarket.chef.io/cookbooks/database), and [mysql2\_chef_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem) cookbooks from Chef Supermarket.
+
+[START_BOX]
+
+## 1. Reference the mysql cookbook
+
+We'll load the `mysql` cookbook just like we did the `httpd` cookbook. Append a `depends` statement to <% fp 'metadata.rb' %>, making the entire file look like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/metadata.rb
+name 'lamp'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures lamp'
+long_description 'Installs/Configures lamp'
+version '0.1.0'
+issues_url 'https://github.com/learn-chef/lamp/issues' if respond_to?(:issues_url)
+source_url 'https://github.com/learn-chef/lamp' if respond_to?(:source_url)
+
+depends 'httpd', '~> 0.4'
+depends 'mysql', '~> 8.0'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Create the database recipe
+
+From your <% fp('~/learn-chef/cookbooks/lamp') %> directory, create a recipe named `database` to hold your database configuration code.
+
+```bash
+# ~/learn-chef
+$ chef generate recipe database
+Recipe: code_generator::recipe
+  * directory[/private/tmp/lamp/spec/unit/recipes] action create (up to date)
+  * cookbook_file[/private/tmp/lamp/spec/spec_helper.rb] action create_if_missing (up to date)
+  * template[/private/tmp/lamp/spec/unit/recipes/database_spec.rb] action create_if_missing
+    - create new file /private/tmp/lamp/spec/unit/recipes/database_spec.rb
+    - update content in file /private/tmp/lamp/spec/unit/recipes/database_spec.rb from none to cb1d0b
+    (diff output suppressed by config)
+  * directory[/private/tmp/lamp/test/smoke/default] action create (up to date)
+  * template[/private/tmp/lamp/test/smoke/default/database.rb] action create_if_missing
+    - create new file /private/tmp/lamp/test/smoke/default/database.rb
+    - update content in file /private/tmp/lamp/test/smoke/default/database.rb from none to 8661fa
+    (diff output suppressed by config)
+  * template[/private/tmp/lamp/recipes/database.rb] action create
+    - create new file /private/tmp/lamp/recipes/database.rb
+    - update content in file /private/tmp/lamp/recipes/database.rb from none to 4096a5
+    (diff output suppressed by config)
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create a data bag to hold the MySQL passwords
+
+Before you use a community cookbook, you might typically review its documentation to learn how the cookbook works and how to use it.
+
+The [documentation for the mysql cookbook](https://supermarket.chef.io/cookbooks/mysql) provides this example for setting up the MySQL service.
+
+```ruby
+# some_recipe.rb
+mysql_service 'foo' do
+  port '3306'
+  version '5.5'
+  initial_root_password 'change me'
+  action [:create, :start]
+end
+```
+
+Notice that the `initial_root_password` property specifies the root MySQL password. You never want to hardcode sensitive information such as passwords because that will make that information available to everyone who reads your recipes.
+
+In practice, you would encrypt sensitive information so that information is available only to the nodes that require them. [Encrypted data bags](https://docs.chef.io/data_bags.html#encrypt-a-data-bag-item), [chef-vault](https://github.com/Nordstrom/chef-vault), and [HashiCorp's Vault](https://www.vaultproject.io) are a few ways Chef users protect their data.
+
+[COMMENT] Learn more about using HashiCorp's Vault with Chef in [this blog](https://www.hashicorp.com/blog/using-hashicorps-vault-with-chef/) and [this webinar](https://www.brighttalk.com/webcast/11349/232851/manage-secrets-with-chef-and-hashicorps-vault).
+
+Here, you'll use a [data bag](https://docs.chef.io/data_bags.html) to store the MySQL password. Much like node attributes, a data bag stores data as a series of key-value pairs. Values stored by data bag items can optionally be encrypted to protect confidential information such as certificates, API keys, and in our case, passwords.
+
+In a more production-like environment, data bags exist as objects on the Chef server. From a recipe, you can retrieve data from a data bag. If the data is encrypted, your node would require the appropriate key to decrypt that data.
+
+As you develop your cookbook locally, you can create a test data bag that stays with your cookbook (and does not exist on the Chef server). Your test data bag would include fictitious data, such as passwords, in plain text that can be used to validate your configuration. Because your test data bag contains fictitious data, it's safe to share with others.
+
+When you're ready to run your cookbook in production, you would [create a second data bag](https://docs.chef.io/data_bags.html#create-a-data-bag) on your Chef server, which contains real data, and optionally [encrypt that data](https://docs.chef.io/data_bags.html#encrypt-a-data-bag-item) using your [encryption key](https://docs.chef.io/data_bags.html#secret-keys).
+
+A local data bag item is a JSON file that you maintain with your cookbook. Data bag items typically exist in your cookbook's <% fp 'test/fixtures/default/data_bags' %> directory.
+
+Start by creating the <% fp 'test/fixtures/default/data_bags/passwords' %> directory to create a data bag named `passwords`.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ mkdir -p test/fixtures/default/data_bags/passwords
+```
+
+Next, write the following to <% fp 'mysql.json' %> in your <% fp 'passwords' %> directory.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/test/fixtures/default/data_bags/passwords/mysql.json
+{
+  "id": "mysql",
+  "root_password": "fakerootpassword"
+}
+```
+
+Here, <% fp 'mysql.json' %> defines what's called a _data bag item_, whose id is "mysql". The "root_password" key maps to the value "fakerootpassword", which is the test password you'll use to configure the MySQL service.
+
+Recall that Test Kitchen creates a temporary in-memory Chef server for you. Under the `suites` section of your <% fp '.kitchen.yml' %> file, add an entry named `data_bags_path` that contains the location of your test data bags, like this.
+
+```yaml
+# ~/learn-chef/cookbooks/lamp/.kitchen.yml
+---
+driver:
+  name: vagrant
+  network:
+    - ["private_network", {ip: "192.168.34.34"}]
+
+provisioner:
+  name: chef_zero
+  always_update_cookbooks: true
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-14.04
+
+suites:
+  - name: default
+    data_bags_path: test/fixtures/default/data_bags
+    run_list:
+      - recipe[lamp::default]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:
+```
+
+This location tells the in-memory Chef server where to locate data bags.
+
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Configure MySQL
+
+Now that you have a test bag that contains a fictitious MySQL root password, you're ready to install the MySQL client and service packages.
+
+Add the following to <% fp 'database.rb' %>.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/database.rb
+# Load MySQL passwords from the 'passwords' data bag.
+passwords = data_bag_item('passwords', 'mysql')
+
+# Configure the MySQL client.
+mysql_client 'default' do
+  action :create
+end
+
+# Configure the MySQL service.
+mysql_service 'default' do
+  initial_root_password passwords['root_password']
+  action [:create, :start]
+end
+```
+
+`data_bag_item` is a helper method that Chef provides. Here, this helper method loads the data bag item named "mysql" from the "passwords" data bag. Later, the `mysql_service` resource uses  `passwords['root_password']` to retrieve the MySQL root password from the data bag item, much like how you access node attribute values.
+
+[COMMENT] The same call to `data_bag_item` can also be used to decrypt the data bag item if it is encrypted. The [documentation](https://docs.chef.io/data_bags.html#load-with-recipe-dsl) explains this process in further detail.
+
+The `mysql_client` and `mysql_service` resources come from the `mysql` cookbook. The `mysql_client` resource installs the client software that connects to the MySQL server. The `mysql_service` resource installs the MySQL server package, applies a basic configuration, and starts the service. You can [customize the configuration](https://github.com/chef-cookbooks/mysql#usage) later if you need to.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Create a database instance and user
+
+At this point, your `database` recipe configures the MySQL client and service. But it does not set up a database instance. Let's create the database instance and a user to administer it now.
+
+Previously, you used the `mysql` cookbook to set up the MySQL installation. For this part, you'll use the [database](https://supermarket.chef.io/cookbooks/database) cookbook from Chef Supermarket, which enables you to configure MySQL database instances.
+
+The `database` cookbook uses the [mysql2](https://rubygems.org/gems/mysql2/versions/0.4.3) Ruby library (a Ruby library is often packaged as a [gem](http://guides.rubygems.org/what-is-a-gem/)) to connect to MySQL. To install this gem, we'll use the [mysql2\_chef_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem) cookbook.
+
+Start by adding two `depends` statements for the `mysql2_chef_gem` and `database` cookbooks to <% fp 'metadata.rb' %>, making the entire file look like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/metadata.rb
+name 'lamp'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures lamp'
+long_description 'Installs/Configures lamp'
+version '0.1.0'
+issues_url 'https://github.com/learn-chef/lamp/issues' if respond_to?(:issues_url)
+source_url 'https://github.com/learn-chef/lamp' if respond_to?(:source_url)
+
+depends 'httpd', '~> 0.4'
+depends 'mysql', '~> 8.0'
+depends 'mysql2_chef_gem', '~> 1.1'
+depends 'database', '~> 6.1'
+```
+
+The [documentation for the database cookbook](https://supermarket.chef.io/cookbooks/database) provides this example for creating a MySQL database instance.
+
+```ruby
+# some_recipe.rb
+# Create a mysql database
+mysql_database 'wordpress-cust01' do
+  connection(
+    :host     => '127.0.0.1',
+    :username => 'root',
+    :password => node['wordpress-cust01']['mysql']['initial_root_password']
+  )
+  action :create
+end
+```
+
+By default, the name you provide to the `mysql_database` resource defines the database name. In this example, the database is named "wordpress-cust01". The `connection` part defines how to connect to the database &ndash; here, its hostname and the credentials for the root MySQL account.
+
+Here's an example adapted from the documentation that creates a MySQL database user.
+
+```ruby
+# some_recipe.rb
+mysql_connection_info = {
+  :host     => '127.0.0.1',
+  :username => 'root',
+  :password => node['mysql']['server_root_password']
+}
+
+...
+
+mysql_database_user 'disenfranchised' do
+  connection mysql_connection_info
+  password   'super_secret'
+  action     :create
+end
+```
+
+To make the `lamp` cookbook more reusable, as you'll see later, you can create additional node attributes to describe the database instance. Start by adding these two node attributes to your default attributes file, <% fp '~/learn-chef/cookbooks/lamp/attributes/default.rb' %>.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/attributes/default.rb
+default['lamp']['database']['dbname'] = 'my_company'
+default['lamp']['database']['admin_username'] = 'db_admin'
+```
+
+The entire file looks like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/attributes/default.rb
+default['lamp']['web']['document_root'] = '/var/www/default/public_html'
+
+default['lamp']['database']['dbname'] = 'my_company'
+default['lamp']['database']['admin_username'] = 'db_admin'
+```
+
+The `node['lamp']['database']['dbname']` node attribute defines the database name. The default value is "my_company".
+
+The `node['lamp']['database']['admin_username']` node attribute defines the database administrator's name. The default value is "db_admin".
+
+Also notice that the `mysql_database_user` resource specifies the password for the administrator.
+
+```ruby
+# some_recipe.rb
+mysql_database_user 'disenfranchised' do
+  connection mysql_connection_info
+  password   'super_secret'
+  action     :create
+end
+```
+
+Like you did for the MySQL root user, add an entry that defines the password for the administrator to <% fp 'mysql.json' %>, like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/test/fixtures/default/data_bags/passwords/mysql.json
+{
+  "id": "mysql",
+  "root_password": "fakerootpassword",
+  "admin_password": "fakeadminpassword"
+}
+```
+
+You now have everything you need to configure the database instance. Start by appending this `mysql2_chef_gem` resource to your `database` recipe to install the `mysql2` Ruby gem. The `mysql2_chef_gem` resource comes from the `mysql2_chef_gem` cookbook.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/database.rb
+# Install the mysql2 Ruby gem.
+mysql2_chef_gem 'default' do
+  action :install
+end
+```
+
+Next, use the `mysql_database` and `mysql_database_user` resources to create the MySQL database and an administrator user who has `CREATE` and `GRANT` permissions to the database.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/database.rb
+mysql_connection_info = {
+  :host     => '127.0.0.1',
+  :username => 'root',
+  :password => passwords['root_password']
+}
+
+# Create the database instance.
+mysql_database node['lamp']['database']['dbname'] do
+  connection mysql_connection_info
+  action :create
+end
+
+# Add a database user.
+mysql_database_user node['lamp']['database']['admin_username'] do
+  connection mysql_connection_info
+  password passwords['admin_password']
+  database_name node['lamp']['database']['dbname']
+  host '127.0.0.1'
+  action [:create, :grant]
+end
+```
+
+This code:
+
+* uses the two node attributes you created to define the database name and administrator user's name.
+* loads the password for the administrator user from the "passwords" data bag.
+* uses a variable named `mysql_connection_info` to define the connection info. This code uses a variable because the connection info is used in two places.
+
+Your entire `database` recipe looks like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/database.rb
+# Load MySQL passwords from the 'passwords' data bag.
+passwords = data_bag_item('passwords', 'mysql')
+
+# Configure the MySQL client.
+mysql_client 'default' do
+  action :create
+end
+
+# Configure the MySQL service.
+mysql_service 'default' do
+  initial_root_password passwords['root_password']
+  action [:create, :start]
+end
+
+# Install the mysql2 Ruby gem.
+mysql2_chef_gem 'default' do
+  action :install
+end
+
+mysql_connection_info = {
+  :host     => '127.0.0.1',
+  :username => 'root',
+  :password => passwords['root_password']
+}
+
+# Create the database instance.
+mysql_database node['lamp']['database']['dbname'] do
+  connection mysql_connection_info
+  action :create
+end
+
+# Add a database user.
+mysql_database_user node['lamp']['database']['admin_username'] do
+  connection mysql_connection_info
+  password passwords['admin_password']
+  database_name node['lamp']['database']['dbname']
+  host '127.0.0.1'
+  action [:create, :grant]
+end
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Set the database recipe to run
+
+Next, to run the `database` recipe, append an `include_recipe` statement to your default recipe, <% fp 'default.rb' %>. The entire file looks like this.
+
+```ruby
+apt_update 'daily' do
+  frequency 86_400
+  action :periodic
+end
+
+include_recipe 'lamp::web'
+include_recipe 'lamp::database'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Apply the configuration
+
+Let's apply the configuration and verify that MySQL is properly configured. Run `kitchen converge` to apply the `lamp` cookbook.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ kitchen converge
+-----> Starting Kitchen (v1.7.2)
+-----> Converging <default-ubuntu-1404>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+-----> Chef Omnibus installation detected (install only if missing)
+       Transferring files to <default-ubuntu-1404>
+       Starting Chef Client, version 12.9.38
+       resolving cookbooks for run list: ["lamp::default"]
+       Synchronizing Cookbooks:
+         - lamp (0.1.0)
+         - firewall (2.4.0)
+         - apt (2.9.2)
+         - httpd (0.4.4)
+         - chef-sugar (3.3.0)
+         - compat_resource (12.9.1)
+         - mysql (7.0.0)
+         - yum-mysql-community (0.2.0)
+         - smf (2.2.8)
+         - yum (3.10.0)
+         - rbac (1.0.3)
+       Installing Cookbook Gems:
+       Compiling Cookbooks...
+[...]
+       Recipe: lamp::database
+         * mysql_client[default] action create
+           * apt_package[default :create mysql-client-5.5] action install
+             - install version 5.5.49-0ubuntu0.14.04.1 of package mysql-client-5.5
+           * apt_package[default :create libmysqlclient-dev] action install
+             - install version 5.5.49-0ubuntu0.14.04.1 of package libmysqlclient-dev
+
+         * mysql_service[default] action create
+           * apt_package[default :create mysql-server-5.5] action install
+             - install version 5.5.49-0ubuntu0.14.04.1 of package mysql-server-5.5
+           * apt_package[perl-Sys-Hostname-Long] action nothing (skipped due to action :nothing)
+           * execute[Initial DB setup script] action nothing (skipped due to action :nothing)
+           * service[default :create mysql] action stop
+             - stop service service[default :create mysql]
+           * service[default :create mysql] action disable
+             - disable service service[default :create mysql]
+[...]
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 28/217 resources updated in 43 seconds
+       Finished converging <default-ubuntu-1404> (0m51.11s).
+-----> Kitchen is finished. (0m52.11s)
+```
+
+You see that `chef-client` completed successfully.
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Write InSpec tests that verify the configuration
+
+To help ensure that your database configuration stays good as you add new features, let's write a few InSpec tests, similar to what you did for the Apache configuration.
+
+For a MySQL configuration, you might verify that the configuration file exists and contains the items you expect. You might also verify that you can connect to MySQL and list the available databases.
+
+Let's start by running a few commands to explore the state of the system.
+
+Start by running this `kitchen exec` command to print out the contents of the MySQL configuration file, <% fp '/etc/mysql-default/my.cnf' %>.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ kitchen exec -c 'sudo cat /etc/mysql-default/my.cnf'
+-----> Execute command on default-ubuntu-1404.
+       # Chef generated my.cnf for instance mysql-default
+
+       [client]
+       default-character-set          = utf8
+       port                           = 3306
+       socket                         = /run/mysql-default/mysqld.sock
+
+       [mysql]
+       default-character-set          = utf8
+
+       [mysqld]
+       user                           = mysql
+       pid-file                       = /run/mysql-default/mysqld.pid
+       socket                         = /run/mysql-default/mysqld.sock
+       port                           = 3306
+       datadir                        = /var/lib/mysql-default
+       log-error                      = /var/log/mysql-default/error.log
+       !includedir /etc/mysql-default/conf.d
+
+       [mysqld_safe]
+       socket                         = /run/mysql-default/mysqld.sock
+```
+
+Next, run this `kitchen exec` command to run the [SHOW DATABASES](https://dev.mysql.com/doc/refman/5.7/en/show-databases.html) MySQL command.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ kitchen exec -c "mysql -h 127.0.0.1 -uroot -pfakerootpassword -s -e 'show databases;'"
+-----> Execute command on default-ubuntu-1404.
+       Database
+       information_schema
+       my_company
+       mysql
+       performance_schema
+```
+
+The `-p` argument to the `mysql` command specifies the password. You know that "fakerootpassword" permits access because that's the password you specified in the data bag you use for testing.
+
+Now that we know a bit more about the desired configuration, let's write a few tests. Specifically, we'll verify that:
+
+* the MySQL configuration file specifies the expected port (3306) and socket file (<% fp '/run/mysql-default/mysqld.sock' %>).
+* port 3306 is listening with the TCP protocol.
+* the `SHOW DATABASES` command returns the "mysql" database.
+
+Replace the contents of <% fp '~/learn-chef/cookbooks/lamp/test/smoke/default/database.rb' %> with this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/test/smoke/default/database.rb
+describe mysql_conf('/etc/mysql-default/my.cnf').params('mysqld') do
+  its('port') { should eq '3306' }
+  its('socket') { should eq '/run/mysql-default/mysqld.sock' }
+end
+
+describe port 3306 do
+  it { should be_listening }
+  its('protocols') { should include('tcp') }
+end
+
+describe command("mysql -h 127.0.0.1 -uroot -pfakerootpassword -s -e 'show databases;'") do
+  its('stdout') { should match(/mysql/) }
+end
+```
+
+This code uses the InSpec [mysql_conf](http://inspec.io/docs/reference/resources/mysql_conf/), [port](http://inspec.io/docs/reference/resources/port/), and [command](http://inspec.io/docs/reference/resources/command/) resources.
+
+Run `kitchen verify` to run the InSpec tests.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ kitchen verify
+-----> Starting Kitchen (v1.15.0)
+-----> Verifying <default-ubuntu-1404>...
+       Loaded
+
+Target:  ssh://vagrant@127.0.0.1:2206
+
+
+  MySQL Config
+     ✔  entry [mysqld] port should eq "3306"
+     ✔  entry [mysqld] socket should eq "/run/mysql-default/mysqld.sock"
+  Port 3306
+     ✔  should be listening
+     ✔  protocols should include "tcp"
+  Command mysql
+     ✔  -h 127.0.0.1 -uroot -pfakerootpassword -s -e 'show databases;' stdout should match /mysql/
+  System Package
+     ✔  apache2 should be installed
+  Service apache2-default
+     ✔  should be enabled
+     ✔  should be running
+  Command wget
+     ✔  -qSO- --spider localhost stderr should match /HTTP\/1\.1 200 OK/
+  Port 80
+     ✔  should be listening
+
+Test Summary: 10 successful, 0 failures, 0 skipped
+       Finished verifying <default-ubuntu-1404> (0m0.45s).
+-----> Kitchen is finished. (0m2.81s)
+```
+
+Success! Each of your tests for Apache and MySQL pass. You've now successfully set up the Linux, Apache, and MySQL portions of your LAMP stack.
+
+<img src="/assets/images/misc/lamp-stack-lam.svg" style="width: 300px; box-shadow: none;"/>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Next, you'll configure Apache to run PHP code.
+
+<% end %>

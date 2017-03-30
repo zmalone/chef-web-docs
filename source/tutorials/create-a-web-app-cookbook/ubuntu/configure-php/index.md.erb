@@ -1,0 +1,174 @@
+---
+title: 'Configure PHP'
+order: 5
+keywords: TODO
+layout: tutorials/platforms/environments/overview/lesson/layout
+time_to_complete: 25 minutes
+---
+In this part, you'll configure Apache to run PHP code. To configure PHP, you're going to install the `mod_php5` Apache module, which enables Apache to interpret PHP files. You'll also install the native `php5-mysql` package, which enables PHP code to connect to MySQL databases.
+
+<img src="/assets/images/misc/lamp-stack-p.svg" style="width: 300px; box-shadow: none;"/>
+
+You've done most of the ground work already &ndash; you've already set up Apache using the `httpd` cookbook. The `httpd` cookbok contains the `httpd_module` as an easy way to install Apache modules.
+
+[START_BOX]
+
+## 1. Install PHP
+
+Recall that your `web` recipe looks like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/web.rb
+directory node['lamp']['web']['document_root'] do
+  recursive true
+end
+
+# Add the site configuration.
+httpd_config 'default' do
+  source 'default.conf.erb'
+end
+
+# Install Apache and start the service.
+httpd_service 'default' do
+  mpm 'prefork'
+  action [:create, :start]
+  subscribes :restart, 'httpd_config[default]'
+end
+```
+
+The `httpd` cookbook defines the `httpd_module` resource, which installs Apache modules. In <% fp 'web.rb' %>, append this `httpd_module` resource to install the `mod_php5` Apache module.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/web.rb
+# Install the mod_php5 Apache module.
+httpd_module 'php5' do
+  instance 'default'
+end
+```
+
+Now append a `package` resource to install `php5-mysql`.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/web.rb
+# Install php5-mysql.
+package 'php5-mysql' do
+  action :install
+  notifies :restart, 'httpd_service[default]'
+end
+```
+
+The entire file looks like this.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp/recipes/web.rb
+# Create the document root directory.
+directory node['lamp']['web']['document_root'] do
+  recursive true
+end
+
+# Add the site configuration.
+httpd_config 'default' do
+  source 'default.conf.erb'
+end
+
+# Install Apache and start the service.
+httpd_service 'default' do
+  mpm 'prefork'
+  action [:create, :start]
+  subscribes :restart, 'httpd_config[default]'
+end
+
+# Install the mod_php5 Apache module.
+httpd_module 'php5' do
+  instance 'default'
+end
+
+# Install php5-mysql.
+package 'php5-mysql' do
+  action :install
+  notifies :restart, 'httpd_service[default]'
+end
+```
+
+Apache needs to be restarted to enable PHP to use the `php5-mysql` package. To do that, we use the [notifies](https://docs.chef.io/resource_common.html#notifications) attribute. The `notifies` attribute performs the `:restart` action on the `httpd-default` service. But it does so only when it needs to; that is, only when the `package` resource actually performs the `:install` action.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Apply the configuration
+
+Let's apply the configuration and verify it.
+
+Run `kitchen converge` to apply the `lamp` cookbook.
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+-----> Starting Kitchen (v1.7.2)
+-----> Converging <default-ubuntu-1404>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+[...]
+           - update content in file /var/www/customers/public_html/index.php from none to 2d6d89
+           --- /var/www/customers/public_html/index.php	2016-02-11 03:42:30.072751575 +0000
+           +++ /var/www/customers/public_html/.index.php20160211-16379-82idh2	2016-02-11 03:42:30.072751575 +0000
+           @@ -1 +1,56 @@
+           +<!DOCTYPE html>
+           +<html lang="en">
+           +<head>
+           +    <title>Customers</title>
+           +    <style>
+           +      table, th, td {
+           +        border: 1px solid black;
+           +        border-collapse: collapse;
+           +        font-family: sans-serif;
+           +        padding: 5px;
+           +      }
+           +      table tr:nth-child(even) td {
+           +        background-color: #95c7ea;
+[...]
+       Running handlers:
+       Running handlers complete
+       Chef Client finished, 11/241 resources updated in 23 seconds
+       Finished converging <default-ubuntu-1404> (0m29.24s).
+-----> Kitchen is finished. (0m30.20s)
+```
+
+You see that `chef-client` completed successfully. You haven't added any PHP content to the site yet, so navigating to your site will result in the same directory listing you saw earlier. You'll add content to your site in the next part.
+
+In practice, you might write additional InSpec tests to verify that Apache is configured to serve PHP content. For brevity, we'll skip those tests for now.
+
+This completes the `lamp` cookbook, but there's one more step to perform. For good measure, it's recommended that you apply your final configuration on a clean instance. This will help ensure that your final configuration is good, and not the result of any experimentation or intermediate steps you performed along the way.
+
+To do a complete Test Kitchen run, you can use the `kitchen test` command. This command:
+
+1. destroys any existing instances (`kitchen destroy`).
+1. brings up a new instance (`kitchen create`).
+1. runs `chef-client` on your instance (`kitchen converge`).
+1. runs InSpec tests (`kitchen verify`).
+1. destroys the instance (`kitchen destroy`).
+
+```bash
+# ~/learn-chef/cookbooks/lamp
+$ kitchen test
+```
+
+In this example, it took just a few minutes to bring up a clean instance, apply the configuration, run the InSpec tests, and clean up.
+
+If you use an automation platform such as [Chef Automate](https://www.chef.io/automate/) to delivery changes to your infrastructure, running `kitchen test` is a great way to verify new features because it ensures that any compute resources are automatically cleaned up as your change moves through the pipeline.
+
+Congratulations. You've successfully set up a LAMP stack using Chef!
+
+<img src="/assets/images/misc/lamp-stack-all.svg" style="width: 300px; box-shadow: none;"/>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+BLAH
+
+<% end %>
