@@ -171,9 +171,13 @@ You're now ready to run `chef-client` on your node.
 
 ## 3. Run chef-client
 
+<% if current_page.parent.data.environment == 'virtualbox' %>
+As before, run `knife ssh` to trigger `chef-client` to run on your node.
+<% else %>
 As before, run `knife ssh` to trigger `chef-client` to run on your node. This time, replace the search query `'name:node1-ubuntu'` with `'role:web'`. If you had multiple nodes with the _web_ role, `chef-client` would run on each of them.
 
 This example shows key-based authentication. <%= link_to("Choose the method you used earlier", current_page.previous_page.previous_page, :anchor => 'step4') %>.
+<% end %>
 
 <% command_snippet(page: current_page, path: 'run-chef-client/knife-ccr-node1-ubuntu-4') %>
 
@@ -291,7 +295,7 @@ bootstrapped a node, and applied a basic web server configuration. You also prac
 
 To update your cookbook you used a _template_. A [template](https://docs.chef.io/templates.html) enables you to write a single, general recipe that's customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node.
 
-You also ran `knife ssh` to update your node. [knife ssh](https://docs.chef.io/knife_ssh.html) invokes the command you specify over an SSH connection on a node &ndash; in our case `sudo chef-client`. You didn't have to specify the run-list because you already set that up when you bootstrapped the node. [Search](https://docs.chef.io/chef_search.html) enables you to run `chef-client` on multiple nodes at once. A [role](https://docs.chef.io/roles.html) enables you define your node's behavior and attributes based on its function.
+You also ran `knife ssh` to update your node. [knife ssh](https://docs.chef.io/knife_ssh.html) invokes the command you specify over an SSH connection on a node &ndash; in our case `sudo chef-client`. You didn't have to specify the run-list because you already set that up when you bootstrapped the node. <% if current_page.parent.data.environment == 'virtualbox' %>[Search](https://docs.chef.io/chef_search.html) enables you to run `chef-client` on multiple nodes at once.<% end %> A [role](https://docs.chef.io/roles.html) enables you define your node's behavior and attributes based on its function.
 
 That's it for this tutorial. When you're done experimenting, be sure to [clean up your environment](#howtocleanupyourenvironment).
 
