@@ -29,7 +29,7 @@ export class ModuleFilterComponent implements OnInit {
     checkedPlural: 'checked',
     searchPlaceholder: 'Search...',
     defaultTitle: 'Filter By',
-  };
+  }
 
   constructor(private ModuleFilter?: ModuleFilterService) {
   }
@@ -44,26 +44,22 @@ export class ModuleFilterComponent implements OnInit {
 
   public getTagList() {
     const nodes = document.querySelectorAll('div.module-tile')
-    let tagList = []
-    let tagOption = []
+    const tagList = []
+    const tagOption = []
     if (nodes != null) {
-      for (let i = 0; i < nodes.length; i++) {
-        if (nodes[i].attributes.getNamedItem('data-tags').nodeValue != null) {
-          let tags = eval(nodes[i].attributes.getNamedItem('data-tags').nodeValue)
-          if (tags != null && tags.length > 0) {
-            for (let j = 0; j < tags.length; j++) {
-              if (tagList.indexOf(tags[j]) <= -1) {
-                tagList.push(tags[j])
-                tagOption.push({name: tags[j], id: tags[j]})
-              }
+      const nodeList = Array.prototype.slice.call(nodes, 0)
+      nodeList.map(function (node) {
+        const tags = JSON.parse(node.attributes.getNamedItem('data-tags').nodeValue.replace(/'/g, '"'))
+        if (tags !== null) {
+          tags.map(function (tag) {
+            if (tagList.indexOf(tag) <= -1) {
+              tagList.push(tag)
+              tagOption.push({name: tag, id: tag})
             }
-          }
+          })
         }
-      }
+      })
     }
     return tagOption
-
   }
-
-
 }
