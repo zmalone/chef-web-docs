@@ -33,6 +33,7 @@ import { ModuleFilterComponent } from './components/module-filter/module-filter.
 import { LoadModuleBtnDirective } from './directives/load-module-btn/load-module-btn.directive'
 import { TrackDisplayService } from './services/track-display.service'
 import { TrackDisplayDirective } from './directives/track-display/track-display.directive'
+import { TrackStartTextDirective } from './directives/track-start-text/track-start-text.directive'
 import { LoadTrackBtnDirective } from './directives/load-track-btn/load-track-btn.directive'
 
 
@@ -61,6 +62,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     ModuleFilterComponent,
     LoadModuleBtnDirective,
     TrackDisplayDirective,
+    TrackStartTextDirective,
     LoadTrackBtnDirective,
     UserProfileLinkComponent,
   ],

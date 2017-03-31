@@ -139,7 +139,10 @@ export class ProgressService {
   }
 
   public getLastAccessed(learningType: LearningType, pageId: string) {
-    const data = this.getUserProgressData('units', pageId, true)
+    // When requesting last access on a module, we're really looking for unit page access
+    // (which includes the initial module page)
+    const type = (learningType === 'modules') ? 'units' : learningType
+    const data = this.getUserProgressData(type, pageId, true)
     const sorted = Object.keys(data).sort((a, b) => {
       const dateA = [data[a].started_at, data[a].completed_at].sort().reverse()[0]
       const dateB = [data[b].started_at, data[b].completed_at].sort().reverse()[0]
