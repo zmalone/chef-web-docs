@@ -39,10 +39,12 @@ export class ProgressService {
   public startPage(pageId) {
     const observables = []
     const learningType = this.getLearningType(pageId)
-    observables.push(this.updateField(learningType, pageId, { 'started_at': new Date().toISOString() }))
-    // Also track modules as unit pages; see details under completePage()
-    if (learningType === 'modules') {
-      observables.push(this.updateField('units', pageId, { 'started_at': new Date().toISOString() }))
+    if (learningType) {
+      observables.push(this.updateField(learningType, pageId, { 'started_at': new Date().toISOString() }))
+      // Also track modules as unit pages; see details under completePage()
+      if (learningType === 'modules') {
+        observables.push(this.updateField('units', pageId, { 'started_at': new Date().toISOString() }))
+      }
     }
     return Observable.merge(...observables)
   }
@@ -137,7 +139,7 @@ export class ProgressService {
   }
 
   public getLastAccessed(learningType: LearningType, pageId: string) {
-    const data = this.getUserProgressData(learningType, pageId, true)
+    const data = this.getUserProgressData('units', pageId, true)
     const sorted = Object.keys(data).sort((a, b) => {
       const dateA = [data[a].started_at, data[a].completed_at].sort().reverse()[0]
       const dateB = [data[b].started_at, data[b].completed_at].sort().reverse()[0]
