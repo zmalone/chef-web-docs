@@ -1,3 +1,4 @@
+
 CREATE TABLE customers(
   id CHAR (36) NOT NULL,
   PRIMARY KEY(id),
