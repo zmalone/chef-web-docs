@@ -40,11 +40,11 @@ export class AppComponent implements OnInit {
     })
   }
 
-  public isAuthenticated = function () {
+  public isAuthenticated = function() {
     return this.isSignedIn
   }
 
-  public logout = function (event) {
+  public logout = function(event) {
     event.preventDefault()
     return this.userProfileService.signOut()
   }
