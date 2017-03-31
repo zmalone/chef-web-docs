@@ -17,42 +17,31 @@ export class UserProfileComponent implements OnInit {
 
   constructor(
     private userProfileService: UserProfileService,
-    private errHandlerService: ErrorHandlerService,
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
-    this.getUserProfile()
     this.countries = COUNTRY
     this.updateStatus = false
-    this.userProfileService.isAuthenticated().subscribe((next) => {
+    this.userProfileService.isAuthenticated().subscribe(next => {
       if (!next) window.location.href = '/'
     })
-  }
-
-  getUserProfile() {
-    this.userProfileService.getUserProfile()
-      .subscribe(
-        user => {
-          this.user = user
-          this.userInfo = Object.assign({}, this.user)
-        },
-        err => this.errHandlerService.handleError(err),
-      )
+    this.userProfileService.userProfile.subscribe(user => {
+      this.user = user
+      this.userInfo = Object.assign({}, this.user)
+    })
   }
 
   updateUserProfile() {
     this.userProfileService.updateUserProfile(this.userInfo)
       .subscribe(
-        res => {
-          this.getUserProfile()
-          window.scrollTo( 0, 0 )
+        () => {
+          window.scrollTo(0, 0)
           this.updateStatus = true
           return true
         },
-        err => this.errHandlerService.handleError(err),
       )
   }
+
   showForm() {
     this.frmStatus = true
   }
