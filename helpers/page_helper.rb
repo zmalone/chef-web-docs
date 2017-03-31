@@ -154,6 +154,10 @@ module PageHelper
     "#{(average / 60).ceil} hours"
   end
 
+  def get_tag_classes(tags_list)
+    return tags_list.join(' ') if tags_list
+  end
+
   def get_quiz_data(page)
     page.data.quiz
   end
@@ -165,4 +169,5 @@ module PageHelper
       { id: 'grand-opening', image_url: '/assets/images/coasters/grand-opening.png' }
     ])
   end
+
 end

@@ -1,11 +1,12 @@
 ---
 id: be-a-secure-chef
-title: 'How to be a secure Chef'
+title: 'How to be a secure Chef '
 description: 'Learn how a secure workflow can help you deliver your applications and services securely without losing speed.'
 order: 1
 category: 'planning-and-practices'
 sections: [1, 2]
 icon: security.png
+tags: [chef, beginner]
 ---
 This article has suggestions for securing the Chef server, the Chef client, and the workstation where you run Chef DK and `knife` commands. It includes best practices for you to follow and links to Chef documentation and to other sites where you can read about each topic in more detail.
 
