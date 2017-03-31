@@ -1,9 +1,8 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core'
-import {UserProfileService} from '../../services/user-profile.service'
-import {ErrorHandlerService} from '../../services/error-handler.service'
-import {User} from '../../model/user'
-import {COUNTRY} from './data/countries'
-
+import { Component, OnInit, Output, EventEmitter } from '@angular/core'
+import { UserProfileService } from '../../services/user-profile.service'
+import { ErrorHandlerService } from '../../services/error-handler.service'
+import { User } from '../../model/user'
+import { COUNTRY } from './data/countries'
 
 @Component({
   selector: 'user-profile',
@@ -16,7 +15,6 @@ export class UserProfileComponent implements OnInit {
   updateStatus: boolean
   countries: any
   @Output() updateProfile: EventEmitter<User> = new EventEmitter<User>()
-
 
   constructor(private userProfileService: UserProfileService,
               private errHandlerService: ErrorHandlerService) {

@@ -1,8 +1,8 @@
-import {Component, OnInit, ViewChild} from '@angular/core'
-import {Angular2TokenService} from 'angular2-token'
-import {UserProfileService} from './services/user-profile.service'
-import {ProgressService} from './services/progress.service'
-import {User} from './model/user'
+import { Component, OnInit } from '@angular/core'
+import { Angular2TokenService } from 'angular2-token'
+import { UserProfileService } from './services/user-profile.service'
+import { ProgressService } from './services/progress.service'
+import { User } from './model/user'
 
 const pageTemplate = (window as any).mainTemplate || '<div>No template found for app-root!</div>'
 
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.userProfileService.isAuthenticated().subscribe((next) => {
       this.isSignedIn = next
-      this.getUserInfo()
+      this.loadUserInfo()
     })
   }
 
@@ -49,8 +49,7 @@ export class AppComponent implements OnInit {
     return this.userProfileService.signOut()
   }
 
-  public getUserInfo = function () {
-
+  public loadUserInfo = function () {
     this.userProfileService.getUserProfile()
       .subscribe(
         user => {
@@ -58,8 +57,6 @@ export class AppComponent implements OnInit {
         },
         err => this.errHandlerService.handleError(err),
       )
-
-
   }
 
   public onProfileUpdate(userInfo) {
