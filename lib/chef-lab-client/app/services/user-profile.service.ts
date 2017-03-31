@@ -5,10 +5,15 @@ import { User } from '../model/user'
 
 @Injectable()
 export class UserProfileService {
-  public userProfile: ReplaySubject<any> = new ReplaySubject(1)
+  public userProfile: BehaviorSubject<User> = new BehaviorSubject(<User> {})
   private isSignedIn: BehaviorSubject<boolean> = new BehaviorSubject(false)
 
-  constructor(private _tokenService: Angular2TokenService) {}
+  constructor(private _tokenService: Angular2TokenService) {
+    this.isSignedIn.subscribe(isAuthenticated => {
+      if (isAuthenticated) this.loadUserProfile()
+      if (!isAuthenticated) this.userProfile.next(<User> {})
+    })
+  }
 
   public isAuthenticated = function() {
     const isAuthenticated = this._tokenService.userSignedIn()
@@ -33,12 +38,22 @@ export class UserProfileService {
     }
   }
 
-  public getUserProfile(): Observable<User> {
-    return this._tokenService.get('api/v1/profile').map(res => <User> res.json())
+  public loadUserProfile(): Observable<User> {
+    const observable = this._tokenService.get('api/v1/profile').map(res => <User> res.json())
+    observable.subscribe(
+      userInfo => { this.userProfile.next(userInfo) },
+      console.error,
+    )
+    return observable
   }
 
   public updateUserProfile(user): Observable<User> {
-    return this._tokenService.put('api/v1/profile', user).map(res => <User> res.json())
+    const observable = this._tokenService.put('api/v1/profile', user).map(res => <User> res.json())
+    observable.subscribe(
+      userInfo => { this.userProfile.next(userInfo) },
+      console.error,
+    )
+    return observable
   }
 
   private onSignIn() {

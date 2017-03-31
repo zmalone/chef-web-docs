@@ -19,7 +19,6 @@ import { UserProgressStampComponent } from './components/user-progress-stamp/use
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
 import { UserCoastersComponent } from './components/user-coasters/user-coasters.component'
 import { QuizComponent } from './components/quiz/quiz.component'
-import { DisplayNamePipe } from './pipe/display_name.pipe'
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
 import { LoginLinkedInDirective } from './directives/login-linkedin/login-linkedin.directive'
 import { LoginChefDirective } from './directives/login-chef/login-chef.directive'
@@ -54,7 +53,6 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     UserTrackProgressComponent,
     UserCoastersComponent,
     QuizComponent,
-    DisplayNamePipe,
     LoginTwitterDirective,
     LoginLinkedInDirective,
     LoginChefDirective,

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { UserProfileService } from '../../services/user-profile.service'
 import { ErrorHandlerService } from '../../services/error-handler.service'
 import { User } from '../../model/user'
@@ -14,43 +14,31 @@ export class UserProfileComponent implements OnInit {
   frmStatus: boolean
   updateStatus: boolean
   countries: any
-  @Output() updateProfile: EventEmitter<User> = new EventEmitter<User>()
 
-  constructor(private userProfileService: UserProfileService,
-              private errHandlerService: ErrorHandlerService) {
-  }
+  constructor(
+    private userProfileService: UserProfileService,
+  ) {}
 
   ngOnInit() {
-    this.getUserProfile()
     this.countries = COUNTRY
     this.updateStatus = false
-    this.userProfileService.isAuthenticated().subscribe((next) => {
+    this.userProfileService.isAuthenticated().subscribe(next => {
       if (!next) window.location.href = '/'
     })
-  }
-
-  getUserProfile() {
-    this.userProfileService.getUserProfile()
-      .subscribe(
-        user => {
-          this.user = user
-          this.userInfo = Object.assign({}, this.user)
-          this.updateProfile.emit(user)
-        },
-        err => this.errHandlerService.handleError(err),
-      )
+    this.userProfileService.userProfile.subscribe(user => {
+      this.user = user
+      this.userInfo = Object.assign({}, this.user)
+    })
   }
 
   updateUserProfile() {
     this.userProfileService.updateUserProfile(this.userInfo)
       .subscribe(
-        res => {
-          this.getUserProfile()
+        () => {
           window.scrollTo(0, 0)
           this.updateStatus = true
           return true
         },
-        err => this.errHandlerService.handleError(err),
       )
   }
 

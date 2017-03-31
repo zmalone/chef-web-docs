@@ -12,11 +12,13 @@ const pageTemplate = (window as any).mainTemplate || '<div>No template found for
 })
 export class AppComponent implements OnInit {
   private isSignedIn = false
-  private userInfo: User
+  public userInfo: User
 
-  constructor(private _tokenService: Angular2TokenService,
-              private userProfileService: UserProfileService,
-              private progressService: ProgressService) {
+  constructor(
+    private _tokenService: Angular2TokenService,
+    private userProfileService: UserProfileService,
+    private progressService: ProgressService,
+  ) {
 
     this._tokenService.init({
       apiBase: process.env.API_ENDPOINT,
@@ -34,33 +36,17 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userProfileService.isAuthenticated().subscribe((next) => {
+    this.userProfileService.isAuthenticated().subscribe(next => {
       this.isSignedIn = next
-      this.loadUserInfo()
     })
-  }
-
-  public isAuthenticated = function() {
-    return this.isSignedIn
+    this.userProfileService.userProfile.subscribe(user => {
+      this.userInfo = user
+    })
   }
 
   public logout = function(event) {
     event.preventDefault()
     return this.userProfileService.signOut()
-  }
-
-  public loadUserInfo = function () {
-    this.userProfileService.getUserProfile()
-      .subscribe(
-        user => {
-          this.userInfo = user
-        },
-        err => this.errHandlerService.handleError(err),
-      )
-  }
-
-  public onProfileUpdate(userInfo) {
-    this.userInfo = userInfo
   }
 
 }
