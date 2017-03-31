@@ -29,13 +29,10 @@ export class UserProfileService {
   }
 
   public signOut() {
+    // Clear local storage before firing the next method, as the progress service depends on this data
+    localStorage.clear()
     this.isSignedIn.next(false)
-    if (this._tokenService.signOut()) {
-      localStorage.clear()
-      return true
-    } else {
-      return false
-    }
+    return this._tokenService.signOut()
   }
 
   public loadUserProfile(): Observable<User> {
