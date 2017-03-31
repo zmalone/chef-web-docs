@@ -43,8 +43,8 @@ export class ModuleDisplayDirective implements OnInit {
     this.moduleFilter.getTagInfo().subscribe((tags) => {
       if (tags.length > 0) {
         this.moduleFilter.setModuleBtnStatus(false)
-        const found = this.el.nativeElement.attributes.class.nodeValue.indexOf(tags.join(' '))
-        if (found > -1) {
+        const moduleTags = this.el.nativeElement.attributes.class.nodeValue.split(' ')
+        if (this.commonTags([tags, moduleTags]).length > 0) {
           this.showModule()
         } else {
           this.hideModule()
@@ -77,4 +77,13 @@ export class ModuleDisplayDirective implements OnInit {
   showModule() {
     this.renderer.setElementStyle(this.el.nativeElement, 'display', '')
   }
+
+  commonTags(arg = []) {
+    return Array.from(arg).reduce((previous, current) => {
+      return previous.filter(element => {
+        return current.indexOf(element) > -1
+      })
+    })
+  }
+
 }
