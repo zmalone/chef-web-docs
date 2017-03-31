@@ -78,9 +78,9 @@ export class ModuleDisplayDirective implements OnInit {
     this.renderer.setElementStyle(this.el.nativeElement, 'display', '')
   }
 
-  commonTags(arg= []) {
-    return Array.from(arg).reduce(function (previous, current) {
-      return previous.filter(function (element) {
+  commonTags(arg = []) {
+    return Array.from(arg).reduce((previous, current) => {
+      return previous.filter(element => {
         return current.indexOf(element) > -1
       })
     })
