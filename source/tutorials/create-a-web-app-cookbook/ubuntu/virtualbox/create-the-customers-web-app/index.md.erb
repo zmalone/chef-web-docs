@@ -4,26 +4,29 @@ short_title: 'Create the Customers app'
 order: 6
 keywords: TODO
 layout: tutorials/platforms/environments/overview/lesson/layout
-time_to_complete: 30 minutes
+time_to_complete: 45 minutes
 snippet_path: create-a-web-app-cookbook/ubuntu/vagrant/create-the-customers-app-ubuntu-vagrant
 snippet_workstation: ubuntu
 ---
 So far, you have a cookbook named `lamp` which can configure a general-purpose LAMP stack. Let's summarize some of its features.
 
 * The `lamp` cookbook runs on Ubuntu, and configures Apache, MySQL, and PHP.
+    <img src="/assets/images/misc/lamp-stack-all.svg" style="width: 300px; box-shadow: none;"/>
 * The `lamp` cookbook uses node attributes to make the document root, database name, and database administrator configurable.
-* For testing purposes, the `lamp` cookbook includes a data bag which includes the MySQL root and administrator passwords.
+* The `lamp` cookbook includes a data bag which includes the MySQL root and administrator passwords. This data bag is for testing purposes only.
 * The `lamp` cookbook includes InSpec tests that help you automatically verify the configuration behaves as you expect.
 
-Say you have the requirement to deliver a web application that displays customer records. How can you extend the `lamp` cookbook to configure a specific web application?
+## The Customers web application
 
-You could create a duplicate, or _fork_, of the `lamp` cookbook and modify it to suit your needs. However, what happens when new features are added to the `lamp` cookbook? Integrating new features into your copy can become tedious.
+The `lamp` cookbook produces a general-purpose LAMP stack configuration. Say you want to create a web application that displays customer records. How can you extend the `lamp` cookbook to configure a specific web application?
+
+You could create a duplicate, or _fork_, of the `lamp` cookbook and modify it to suit your needs. However, what happens when new features are added to the `lamp` cookbook? Manually integrating new features into your copy can become tedious.
 
 A more common pattern is to create what's commonly called a _wrapper cookbook_. A wrapper cookbook wraps another cookbook to extend or change its behavior without forking it.
 
 To wrap another cookbook, you typically follow the same pattern you used previously to take advantage of community cookbooks from Chef Supermarket. You start by referencing the base cookbook in your wrapper cookbook's <% fp 'metadata.rb' %> file. Then you include the specific recipes you want to run in your base cookbook from your wrapper cookbook's recipes. To change the way the base cookbook behaves, you can override node attributes from the base cookbook in your wrapper cookbook's attributes file.
 
-In this part, you'll create a cookbook called `lamp_customers` that configures the Customers web application. The Customers web application is basic to illustrate the concept of a wrapper cookbook. It includes these features:
+In this part, you'll see the `lamp` cookbook in action by creating a second cookbook called `lamp_customers` that configures the Customers web application. The Customers web application is basic to illustrate the concept of a wrapper cookbook. It includes these features:
 
 * It adds a table to the database that contains sample customer records.
 * It adds a homepage that uses PHP code to read from the database and display customer data to the user.
@@ -36,44 +39,54 @@ Here's what the Customers web app looks like.
 
 ## 1. Create the lamp_customers cookbook
 
-```bash
-$ cd ~/learn-chef
-```
+Let's start by creating the `lamp_customers` cookbook. Move to the <% fp '~/learn-chef' %> directory.
 
 <% command_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/cd-learn-chef-ubuntu-vagrant-2', features: :stdin) %>
 
-```bash
-# ~/learn-chef
-$ chef generate cookbook cookbooks/lamp_customers
-```
+Run the following `chef generate cookbook` command to create the cookbook.
 
 <% command_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/chef-generate-cookbook-lamp_customersubuntu-vagrant') %>
 
-```bash
-# ~/learn-chef
-$ cd ~/learn-chef/cookbooks/lamp_customers
-```
+Now move to the <% fp '~/learn-chef/cookbooks/lamp' %> directory.
 
 <% command_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/cd-lamp_customers-ubuntu-vagrant', features: :stdin) %>
 
-Update Berksfile
+Recall from the [Manage a node](/tutorials/manage-a-node/ubuntu/hosted/run-chef-client-periodically#step1) tutorial that [Berkshelf](https://docs.chef.io/berkshelf.html) is a tool that helps you resolve cookbook dependencies. Berkshelf uses a file named [Berksfile](https://docs.chef.io/berkshelf.html#the-berksfile) to hold configuration settings. This file is generated for you when you run `chef generate cookbook` to create a cookbook.
+
+The default <% fp 'Berksfile' %> specifies Chef Supermarket, supermarket.chef.io, as the default source for cookbooks.
+
+```ruby
+# ~/learn-chef/cookbooks/lamp_customers/Berksfile
+source 'https://supermarket.chef.io'
+
+metadata
+```
+
+Because the `lamp` cookbook does not exist on Chef Supermarket, you need to specify in your <% fp 'Berksfile' %> where to locate the `lamp` cookbook. You can [reference cookbooks](https://docs.chef.io/berkshelf.html#cookbook-keyword) from an arbitrary Git repo, from GitHub, or locally from disk. Here, you'll reference the `lamp` cookbook from its relative location on disk.
+
+Modify your `lamp_customers` cookbook's <% fp 'Berksfile' %> like this.
 
 <% code_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/berkfile-ubuntu-vagrant') %>
 
-Update metadata.rb
+Next, update your `lamp_customers` metadata to reference the `lamp` cookbook.
 
 <% code_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/metadata-ubuntu-vagrant-4') %>
 
-In default.rb, include_recipe 'lamp::default'
+Previously, you used the `~>` version constraint to tell Chef which version of dependent cookbooks you want to use. For demonstration, here we omit the version constraint. This causes Chef to always use the latest version of the `lamp` cookbook.
+
+In your `lamp_customers` default recipe, add the following `include_recipe` line to include the `lamp` cookbook's default recipe.
 
 <% code_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/run-lamp-recipe-ubuntu-vagrant') %>
 
-* Update .kitchen.yml to point to `lamp`'s databag path (in practice, might have its own...)
-  * (Maybe omit data bags path for now and add later before 2nd kitchen converge? Or, just say we add it now to prepare us for later... (I think I like the 1st option - need to add that!))
+Next, modify the `lamp_customers` cookbook's <% fp '.kitchen.yml' %> file like this to use Ubuntu 14.04 and to point to the `lamp` cookbook's data bag.
 
 <% code_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/kitchen-yml-ubuntu-vagrant-3') %>
 
-`kitchen converge`
+This configuration assigns the IP address 192.168.35.35 to the instance.
+
+We point to the `lamp` cookbook's data bag for learning purposes. In practice, cookbooks you depend on aren't always located relative to your cookbook. Therefore, a wrapper cookbook such as `lamp_customers` might provide its own data bag.
+
+Next, run `kitchen converge`. This will ensure that `chef-client` runs successfully and produces the general-purpose LAMP stack configuration you've already built.
 
 <% command_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/kitchen-converge-ubuntu-vagrant-5') %>
 
@@ -83,37 +96,53 @@ In default.rb, include_recipe 'lamp::default'
 
 ## 2. Add a database table that contains sample customer records
 
-* `chef generate file create-tables.sql`
+Recall the Customers web app includes these features:
+
+* It adds a table to the database that contains sample customer records.
+* It adds a homepage that uses PHP code to read from the database and display customer data to the user.
+
+Let's start with the database table. For learning purposes, you'll include a SQL script that creates the table and adds sample customer data directly in your cookbook. In practice, you would need to consider the appropriate way to populate your database from real customer data.
+
+To create the SQL script, start by running the following `chef generate file` command.
 
 <% command_snippet(page: current_page, path: 'add-database-table-ubuntu-vagrant/chef-generate-file-create-tables-ubuntu-vagrant') %>
 
-* Write `create-tables.sql`
+This command creates a file named <% fp 'create-tables.sql' %> in the <% fp 'files' %> directory. A cookbook file is similar to a template, except that a file cannot contain placeholders.
+
+Next, add the following to <% fp 'create-tables.sql' %>.
 
 <% code_snippet(page: current_page, path: 'add-database-table-ubuntu-vagrant/create-tables-sql-ubuntu-vagrant') %>
 
-default.rb:
+This SQL script:
 
-```ruby
-include_recipe 'lamp::default'
+* Creates a table named "customers".
+* Adds two rows of sample data to the "customers" table.
 
-passwords = data_bag_item('passwords', 'mysql')
+The next step is to copy the SQL script from the cookbook to a temporary location on your node and then run the script.
 
-# Create a path to the SQL file in the Chef cache.
-create_tables_script_path = File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
+To copy the SQL script from the cookbook to another location, you'll use the [cookbook_file](https://docs.chef.io/resource_cookbook_file.html) resource. To run the script, you'll use the [execute](https://docs.chef.io/resource_execute.html) resource.
 
-# Write the SQL script to the filesystem.
-cookbook_file create_tables_script_path do
-  source 'create-tables.sql'
-end
+The _Chef cache_ is commonly used to hold temporary files, such as scripts. The [chef-client configuration file](https://docs.chef.io/config_rb_client.html) specifies the location of the Chef cache. The `Chef::Config` object is an easy way to retrive values from the `chef-client` configuration file, which you'll use in a moment.
 
-# Seed the database with a table and test data.
-execute "initialize #{node['lamp']['database']['dbname']} database" do
-  command "mysql -h #{node['lamp']['database']['host']} -u #{node['lamp']['database']['admin_username']} -p#{passwords['admin_password']} -D #{node['lamp']['database']['dbname']} < #{create_tables_script_path}"
-  not_if  "mysql -h #{node['lamp']['database']['host']} -u #{node['lamp']['database']['admin_username']} -p#{passwords['admin_password']} -D #{node['lamp']['database']['dbname']} -e 'describe customers;'"
-end
-```
+Although the location of the Chef cache can vary, it's typically located at <% fp '/var/chef/cache' %> on a Linux node. On a Linux Test Kitchen instance, this location is typically <% fp '/tmp/kitchen/cache/' %>.
+
+In practice, you might separate each part of the Customers configuration into separate recipes, as you did for the `lamp` cookbook. For simplicity, you'll specify the entire Customers configuration in the default recipe.
+
+Make your `lamp_customers` cookbook's default recipe look like this.
 
 <% code_snippet(page: current_page, path: 'add-database-table-ubuntu-vagrant/run-database-script-ubuntu-vagrant') %>
+
+Let's summarize what the default recipe does.
+
+* Line 1 includes the `lamp` cookbook's default recipe, which produces the baseline LAMP stack configuration.
+* Line 3 uses the `data_bag_item` method to retrieve the "mysql" data bag item from the "passwords" data bag, just as you did in the `lamp` cookbook.
+* Line 6 forms a path to the SQL script file in the Chef cache, for example, <% fp '/tmp/kitchen/cache/create-tables.sql' %>, and assigns that path to the  `create_tables_script_path` variable. We use a variable because this path is needed in multiple places.
+* Line 9 uses the `cookbook_file` resource to copy the SQL script from the cookbook to the Chef cache.
+* Line 14 uses the `execute` resource to run the SQL script. It does so by passing the contents of the SQL script from the Chef cache to the MySQL command-line tool, [mysql](https://dev.mysql.com/doc/refman/5.7/en/mysql.html).
+
+In Chef code, you'll often see the `::File` notation. The colon `::` notation specifies use of the core Ruby [File](https://ruby-doc.org/core-2.2.0/File.html) class. The  [Chef::Resource::File](http://www.rubydoc.info/gems/chef/Chef/Resource/File) class also exists to implement the `file` resource.
+
+The `execute` resource enables you to run arbitrary commands. Here, we use it to run the SQL script. To ensure that the script is run only when the "customers" table does not exist, we use the `not_if` [guard](https://docs.chef.io/resource_common.html#guards).
 
 [END_BOX]
 
@@ -121,45 +150,36 @@ end
 
 ## 3. Add a homepage that uses PHP code
 
-* `chef generate template index.php`
+Let's review the Customers web app features:
+
+* It adds a table to the database that contains sample customer records.
+* It adds a homepage that uses PHP code to read from the database and display customer data to the user.
+
+To implement the second feature, you'll first create a template that holds the homepage. Then you'll use the `template` resource in your default recipe to copy the file to the document root directory.
+
+Recall that when you [configured Apache](/tutorials/create-a-web-app-cookbook/ubuntu/virtualbox/configure-apache/), you set up the  Apache configuration file to serve PHP files. We'll name our homepage <% fp 'index.php' %>.
+
+Run the following command to create a template file named <% fp 'index.php.erb' %>.
 
 <% command_snippet(page: current_page, path: 'add-homepage-ubuntu-vagrant/chef-generate-template-index-ubuntu-vagrant') %>
 
-* Write `index.php.erb`
+Next, write out <% fp 'index.php.erb' %> like this.
 
 <% code_snippet(page: current_page, path: 'add-homepage-ubuntu-vagrant/index-php-ubuntu-vagrant') %>
 
-Update default.rb
+Notice that the PHP code contains these variables.
 
-```ruby
-include_recipe 'lamp::default'
+<% code_snippet(page: current_page, path: 'add-homepage-ubuntu-vagrant/index-php-excerpt-ubuntu-vagrant') %>
 
-passwords = data_bag_item('passwords', 'mysql')
+The `<%= "\<%= %\>" %>` notation indicates placeholders that are replaced when Chef applies the template. `node['lamp']['database']['admin_username']` and `node['lamp']['database']['dbname']` refer to node attributes that you set up previously in the `lamp` cookbook. You referenced node attributes directly from template files previously.
 
-# Create a path to the SQL file in the Chef cache.
-create_tables_script_path = File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
+The `@servername` and `@admin_password` parts may be unfamiliar to you. These are variables that you need to pass to the template.
 
-# Write the SQL script to the filesystem.
-cookbook_file create_tables_script_path do
-  source 'create-tables.sql'
-end
-
-# Seed the database with a table and test data.
-execute "initialize #{node['lamp']['database']['dbname']} database" do
-  command "mysql -h #{node['lamp']['database']['host']} -u #{node['lamp']['database']['admin_username']} -p#{passwords['admin_password']} -D #{node['lamp']['database']['dbname']} < #{create_tables_script_path}"
-  not_if  "mysql -h #{node['lamp']['database']['host']} -u #{node['lamp']['database']['admin_username']} -p#{passwords['admin_password']} -D #{node['lamp']['database']['dbname']} -e 'describe customers;'"
-end
-
-# Write the home page.
-template "#{node['lamp']['web']['document_root']}/index.php" do
-  source 'index.php.erb'
-  variables(
-    admin_password: passwords['admin_password']
-  )
-end
-```
+To illustrate how this works, add the following `template` resource to your `lamp_customers` cookbook's default recipe, making the entire file look like this.
 
 <% code_snippet(page: current_page, path: 'add-homepage-ubuntu-vagrant/run-php-template-ubuntu-vagrant') %>
+
+The `variables` property passes the server name and administrator password to the template as key-value pairs. You pass these values as variables because they do not exist as node attributes.
 
 [END_BOX]
 
@@ -167,70 +187,84 @@ end
 
 ## 4. Specify the document root and database name
 
-```bash
-# ~/learn-chef/cookbooks/lamp_customers
-$ chef generate attribute default
-```
+Let's say you want to customize the LAMP stack configuration in these ways:
+
+* Change the document root from <% fp '/var/www/default/public_html' %> to <% fp '/var/www/customers/public_html' %>.
+* Change the database name from `my_company` to your company's name, `4thcoffee`.
+
+Recall that the `lamp` cookbook provides these node attributes.
+
+<% code_snippet(page: current_page, path: 'add-node-attributes-ubuntu-vagrant/lamp-attributes-ubuntu-vagrant') %>
+
+You can override these node attributes by providing an attributes file in the `lamp_customers` cookbook.
+
+Start by running the following `chef generate attribute` command to create a defaults attributes file.
 
 <% command_snippet(page: current_page, path: 'add-node-attributes-ubuntu-vagrant/chef-generate-attribute-ubuntu-vagrant-2') %>
 
-Write default.rb
+Next, write out the default attributes file, <% fp 'default.rb' %>, like this.
 
 <% code_snippet(page: current_page, path: 'add-node-attributes-ubuntu-vagrant/attribute-ubuntu-vagrant-4') %>
 
-[END_BOX]
+Because Chef loads dependent cookbooks first, including the `lamp` cookbook, any values specified in the `lamp_customers` cookbook's attributes file will overwrite any existing attribute values.
 
+[END_BOX]
 
 [START_BOX]
 
 ## 5. Apply the configuration
 
-`kitchen converge`
+With everything in place, you're now ready to run the `lamp_customers` cookbook on an Ubuntu instance. Run `kitchen converge` to try things out.
 
 <% command_snippet(page: current_page, path: 'apply-cookbook-ubuntu-vagrant/kitchen-converge-ubuntu-vagrant-6') %>
 
-![the resulting web page](misc/manage_customers_node.png)
+From the output, you see that the SQL script is run and the homepage is set.
 
 [END_BOX]
 
 [START_BOX]
 
-## 6. WRITE UNIT TESTS
+## 6. Verify the configuration
 
-Update default_test.rb
+To see the Customers web app, open a web browser and navigate to http://192.168.35.35.
 
-```ruby
-describe command("mysql -h 127.0.0.1 -uroot -pfakerootpassword -D 4thcoffee -e 'describe customers;'") do
-  its('stdout') { should match(/id/) }
-end
+<img src="/assets/images/misc/manage_customers_final_35.png" style="height: 100%;"/>
 
-describe command 'wget -qO- localhost' do
-  its('stdout') { should match(/Customers/) }
-end
-```
+To help ensure that the configuration stays good as you add features, let's write a few InSpec tests.
+
+Change the default tests in <% fp 'default_test.rb' %> to this.
 
 <% code_snippet(page: current_page, path: 'verify-customers-configuration-ubuntu-vagrant/inspec-default-ubuntu-vagrant-2') %>
 
-`kitchen verify`
+The first test verifies that the "customers" table has a field named "id". The second test verifies that the homepage is accessible and contains the word "Customers".
+
+Run `kitchen verify` to run the tests.
 
 <% command_snippet(page: current_page, path: 'verify-customers-configuration-ubuntu-vagrant/kitchen-verify-customers-ubuntu-vagrant-1') %>
 
+You see that both tests pass.
 
-`kitchen test`
+As with the `lamp` cookbook, run `kitchen test` to apply the configuration and run the tests on a fresh instance.
 
 <% command_snippet(page: current_page, path: 'verify-customers-configuration-ubuntu-vagrant/kitchen-test-ubuntu-vagrant-2') %>
+
+Great work! You now have a cookbook that configures a general-purpose LAMP stack configuration. And, although it is basic, you have a second cookbook that applies the LAMP configuration to a working web application.
+
+Think of the `lamp` cookbook as a building block. With it, configuring additional web applications is easier because you don't have to reinvent the wheel each time. As your requirements grow, you can add additional functionality that's common to all web applications to your `lamp` cookbook. When you run your wrapper cookbooks, that new functionality is enabled automatically.
 
 [END_BOX]
 
 <% next_page(current_page) do %>
 
-In this tutorial, you set up a basic yet complete web application stack that includes a web server, database, and scripting. Through local development, you're able to iterate, experiment, and get fast feedback as you develop your configuration policy. It also gives you greater confidence that your cookbooks will behave as you expect before you upload them to Chef server and run them on a bootstrapped node.
+In this tutorial, you set up a basic yet complete web application stack that includes a web server, database, and scripting. Through local development, you're able to iterate, experiment, and get fast feedback as you develop your configuration policy. Having InSpec tests gives you greater confidence that your cookbooks will behave as you expect before you upload them to Chef server and run them on a bootstrapped node.
 
-You also learned a few new skills, such as how to use Berkshelf to manage cookbook dependencies and how to use node attributes to work with passwords and other sensitive data.
+You also learned a few new skills, such as how to use Berkshelf to manage cookbook dependencies, how to use node attributes to make your cookbooks configurable, and how to use data bags to work with passwords and other sensitive data.
 
-[GITHUB] Get the final version of the `awesome_customers_ubuntu` cookbook on [GitHub](https://github.com/learn-chef/awesome_customers_ubuntu).
+[GITHUB] Get the final versions of the [lamp](https://github.com/learn-chef/lamp) and [lamp_customers](https://github.com/learn-chef/lamp_customers) cookbooks on GitHub.
 
-Next, we recommend that you [learn about automated testing](/skills/get-started-with-testing/). You'll learn how to use tools such as InSpec, ChefSpec, RuboCop, and Foodcritic to speed up the feedback loop even more by writing test code that automatically verifies whether your policy behaves as you expect.
+[See the appendix](/tutorials/create-a-web-app-cookbook/ubuntu/virtualbox/run-the-web-app-on-a-node) if you're interested in running the Customers configuration on a node managed by a Chef server.
+
+A great next step is to [learn more about automated testing](/skills/get-started-with-testing/). You'll learn how to use tools such as InSpec, ChefSpec, RuboCop, and Foodcritic to speed up the feedback loop even more by writing test code that automatically verifies whether your policy behaves as you expect.
 
 [TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
 

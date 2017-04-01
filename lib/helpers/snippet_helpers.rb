@@ -65,7 +65,7 @@ module SnippetHelpers
     case language.chomp('-Win32')
     when 'conf', 'ruby', 'ini', 'yaml', 'powershell', 'bash', 'ps', 'shell', 'json'
       '# ' + path
-    when 'html'
+    when 'html', 'php'
       "<!-- #{path} -->"
     when 'sql'
       '-- ' + path

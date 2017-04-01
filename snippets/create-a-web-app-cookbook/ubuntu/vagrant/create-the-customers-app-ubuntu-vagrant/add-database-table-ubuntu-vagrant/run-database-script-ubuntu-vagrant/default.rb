@@ -3,7 +3,7 @@ include_recipe 'lamp::default'
 passwords = data_bag_item('passwords', 'mysql')
 
 # Create a path to the SQL file in the Chef cache.
-create_tables_script_path = File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
+create_tables_script_path = ::File.join(Chef::Config[:file_cache_path], 'create-tables.sql')
 
 # Write the SQL script to the filesystem.
 cookbook_file create_tables_script_path do
