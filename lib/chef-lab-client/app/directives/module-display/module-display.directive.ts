@@ -1,6 +1,7 @@
-import {Directive, ElementRef, OnInit, Input, Renderer} from '@angular/core'
-import {ModuleFilterService} from '../../services/module-filter.service'
-import {ProgressService} from '../../services/progress.service'
+import { Directive, ElementRef, OnInit, Input, Renderer } from '@angular/core'
+import { ModuleFilterService } from '../../services/module-filter.service'
+import { SiteDataService } from '../../services/site-data.service'
+import { ProgressService } from '../../services/progress.service'
 
 @Directive({
   selector: '.module-display',
@@ -12,15 +13,17 @@ export class ModuleDisplayDirective implements OnInit {
   @Input()
   order: number
 
-  constructor(private el?: ElementRef,
-              private moduleFilter?: ModuleFilterService,
-              private progressService?: ProgressService,
-              private renderer?: Renderer) {
+  constructor(
+    private el?: ElementRef,
+    private moduleFilter?: ModuleFilterService,
+    private siteDataService?: SiteDataService,
+    private progressService?: ProgressService,
+    private renderer?: Renderer,
+  ) {
   }
 
   ngOnInit() {
-    const win = (window as any)
-    if (win.currentPage.id !== 'profile') {
+    if (this.siteDataService.currentPage().id !== 'profile') {
       this.filterModulesByTags()
       this.showDefaultModules()
     } else {

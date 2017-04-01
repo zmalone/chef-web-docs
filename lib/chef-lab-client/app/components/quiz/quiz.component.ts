@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core'
+import { SiteDataService } from '../../services/site-data.service'
 import { ProgressService } from '../../services/progress.service'
 
 @Component({
@@ -21,10 +22,13 @@ export class QuizComponent implements OnInit {
   public specialCoaster: string
   public trackCoaster: string
 
-  constructor(private progressService: ProgressService) {}
+  constructor(
+    private siteDataService: SiteDataService,
+    private progressService: ProgressService,
+  ) {}
 
   ngOnInit() {
-    this.questions = (window as any).currentPage.quiz || []
+    this.questions = this.siteDataService.currentPage().quiz || []
     this.correctAnswers = this.questions.map((question: any) => {
       return String(question.answer)
     })
@@ -32,10 +36,10 @@ export class QuizComponent implements OnInit {
     const enableSpecialCoaster = !localStorage.getItem('shownSpecialCoaster')
 
     this.progressService.activeUserProgress.subscribe(() => {
-      const coasters = (window as any).coasters
-      const moduleId = this.progressService.getModuleRoot((window as any).currentPage.id)
+      const coasters = this.siteDataService.coasters()
+      const moduleId = this.progressService.getModuleRoot(this.siteDataService.currentPage().id)
       const trackId = this.progressService.getTracksByModule(moduleId)[0]
-      this.isUnitComplete = !!this.progressService.isComplete('units', (window as any).currentPage.id)
+      this.isUnitComplete = !!this.progressService.isComplete('units', this.siteDataService.currentPage().id)
       this.isModuleComplete = !!this.progressService.isComplete('modules', moduleId)
       this.isTrackComplete = !!this.progressService.isComplete('tracks', trackId)
       this.showSpecialCoaster = this.progressService.getAchievements('grand-opening') &&
@@ -57,7 +61,7 @@ export class QuizComponent implements OnInit {
 
   public onSubmit() {
     if (this.processSubmission()) {
-      this.progressService.completePage((window as any).currentPage.id).subscribe()
+      this.progressService.completePage(this.siteDataService.currentPage().id).subscribe()
     }
   }
 

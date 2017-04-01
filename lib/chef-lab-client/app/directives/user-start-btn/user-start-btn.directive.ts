@@ -1,4 +1,5 @@
 import { Directive, OnInit, ElementRef, HostListener, Host, Input } from '@angular/core'
+import { SiteDataService } from '../../services/site-data.service'
 import { ProgressService } from '../../services/progress.service'
 
 @Directive({
@@ -11,7 +12,11 @@ export class UserStartBtnDirective implements OnInit {
   @Input()
   module: string
 
-  constructor(private progressService?: ProgressService, private el?: ElementRef) {
+  constructor(
+    private siteDataService?: SiteDataService,
+    private progressService?: ProgressService,
+    private el?: ElementRef,
+  ) {
     this.el = el
   }
 
@@ -39,7 +44,7 @@ export class UserStartBtnDirective implements OnInit {
 
   getLastUrl() {
     const lastUnit = this.progressService.getLastAccessed('modules', this.module)
-    const moduleData = (window as any).dataTree.modules
+    const moduleData = this.siteDataService.dataTree().modules
     return (lastUnit && moduleData[lastUnit.id]) ? moduleData[lastUnit.id].url : ''
   }
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core'
+import { SiteDataService } from '../../services/site-data.service'
 import { ProgressService } from '../../services/progress.service'
 
 @Component({
@@ -11,10 +12,13 @@ export class UserTrackProgressComponent implements OnInit {
   @Input()
   track: string
 
-  constructor(private progressService: ProgressService) {}
+  constructor(
+    private siteDataService: SiteDataService,
+    private progressService: ProgressService,
+  ) {}
 
   ngOnInit() {
-    const trackData = (window as any).dataTree.tracks[this.track]
+    const trackData = this.siteDataService.dataTree().tracks[this.track]
     const modules = trackData && trackData.modules || []
     this.progressService.activeUserProgress.subscribe((active) => {
       this.modules = modules.map(module => {

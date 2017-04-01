@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { HttpModule } from '@angular/http'
 import { ToastModule } from 'ng2-toastr'
+import { SiteDataService } from './services/site-data.service'
 import { ErrorHandlerService } from './services/error-handler.service'
 import { RouterModule, Routes } from '@angular/router'
 import { Angular2TokenService, A2tUiModule } from 'angular2-token'
@@ -77,6 +78,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     MultiselectDropdownModule,
   ],
   providers: [
+    SiteDataService,
     ErrorHandlerService,
     Angular2TokenService,
     UserProfileService,
