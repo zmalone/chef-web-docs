@@ -51,7 +51,14 @@ module SnippetHelpers
       body = yield metadata
       body += "\n" unless body.end_with? "\n"
 
-      concat "#{"  " * indent_level}```#{language}\n#{path}\n#{body}```"
+
+      case language
+      when 'php'
+        concat "#{"  " * indent_level}```#{language}\n#{body}```".split("\n").insert(2, path).join("\n")
+        #sub("<?php\n", "<?php\n#{path}\n")
+      else
+        concat "#{"  " * indent_level}```#{language}\n#{path}\n#{body}```"
+      end
     rescue Exception => e
       if deploy?
         raise e
@@ -65,12 +72,14 @@ module SnippetHelpers
     case language.chomp('-Win32')
     when 'conf', 'ruby', 'ini', 'yaml', 'powershell', 'bash', 'ps', 'shell', 'json'
       '# ' + path
-    when 'html', 'php'
+    when 'html'
       "<!-- #{path} -->"
     when 'sql'
       '-- ' + path
     when 'plaintext'
       ''
+    when 'php'
+      '// ' + path
     end
   end
 
