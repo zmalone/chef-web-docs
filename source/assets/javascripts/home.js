@@ -32,9 +32,15 @@ $(document).ready(function() {
 
   });
 
-  // if ($('#sideNav').length) {
-  //   $('#sideNav').scrollToFixed({ marginTop: 100, limit: $($('.module-next-btn')).offset().top });
-  // }
+  if ($('#sideNav').length) {
+    $('#sideNav').scrollToFixed({
+      marginTop: 100,
+      limit: function() {
+        return $('.discussion').offset().top - $('#sideNav').outerHeight() - 20
+      },
+      removeOffsets: true
+    });
+  }
 });
 
 $('.cls-modal').click(function(){
