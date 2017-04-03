@@ -1,4 +1,8 @@
 export default class MockSiteDataService {
+  currentPage() {
+    return {}
+  }
+
   dataTree() {
     return {
       "tracks": {
