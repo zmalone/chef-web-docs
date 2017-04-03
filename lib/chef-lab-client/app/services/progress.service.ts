@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Observable, BehaviorSubject, AsyncSubject } from 'rxjs'
+import { SiteDataService } from './site-data.service'
 import { UserProfileService } from './user-profile.service'
 import { Angular2TokenService } from 'angular2-token'
 type LearningType = 'achievements' | 'tracks' | 'modules' | 'units'
@@ -12,6 +13,7 @@ export class ProgressService {
   private wasAnonymous = false
 
   constructor(
+    private siteDataService: SiteDataService,
     private userProfileService: UserProfileService,
     private _tokenService: Angular2TokenService,
   ) {
@@ -32,7 +34,7 @@ export class ProgressService {
     const moduleId = this.getModuleRoot(pageId)
     if (pageId === moduleId) return 'modules'
     if (moduleId) return 'units'
-    const trackData = (window as any).dataTree.tracks
+    const trackData = this.siteDataService.dataTree().tracks
     if (trackData[pageId]) return 'tracks'
   }
 
@@ -84,7 +86,7 @@ export class ProgressService {
 
   private completeTracks() {
     const observables = []
-    const trackData = (window as any).dataTree.tracks
+    const trackData = this.siteDataService.dataTree().tracks
     Object.keys(trackData).forEach(trackId => {
       if (trackData[trackId].modules) {
         const modulesComplete = trackData[trackId].modules.filter(moduleId => {
@@ -152,7 +154,7 @@ export class ProgressService {
   }
 
   public getModuleProgress(pageId: string): number {
-    const moduleData = (window as any).dataTree.modules
+    const moduleData = this.siteDataService.dataTree().modules
 
     // Determine the active item from which to generate time estimates
     // See if the item passed is the current path, or the module root
@@ -225,7 +227,7 @@ export class ProgressService {
   }
 
   private getActivePathIds(activeItemId: string): Array<string> {
-    const moduleData = (window as any).dataTree.modules
+    const moduleData = this.siteDataService.dataTree().modules
     let ids = []
     if (!moduleData[activeItemId]) return ids
 
@@ -249,7 +251,7 @@ export class ProgressService {
   }
 
   private getChildPathIds(pageId: string): Array<string> {
-    const moduleData = (window as any).dataTree.modules
+    const moduleData = this.siteDataService.dataTree().modules
     let ids = []
     if (moduleData[pageId] && moduleData[pageId].children) {
       moduleData[pageId].children.forEach((child) => {
@@ -261,7 +263,7 @@ export class ProgressService {
   }
 
   public getModuleRoot(pageId: string): string {
-    const moduleData = (window as any).dataTree.modules
+    const moduleData = this.siteDataService.dataTree().modules
     let moduleRoot = moduleData[pageId]
     if (!moduleRoot) return
     while (moduleRoot.parent && moduleRoot.parent !== 'modules') {
@@ -272,7 +274,7 @@ export class ProgressService {
   }
 
   public getTracksByModule(moduleId: string): string | void {
-    const tracksData = (window as any).dataTree.tracks
+    const tracksData = this.siteDataService.dataTree().tracks
     return tracksData.tracks.children.filter(trackId => {
       return tracksData[trackId].modules.some(trackModuleId => {
         return (trackModuleId === moduleId)
@@ -282,7 +284,7 @@ export class ProgressService {
 
   // Should match the Ruby implementation: find_get_page() in page_helper.rb
   public getNextPage(pageId: string): string | void {
-    const moduleData = (window as any).dataTree.modules
+    const moduleData = this.siteDataService.dataTree().modules
     if (!moduleData[pageId]) return
     if (moduleData[pageId].children) {
       return moduleData[pageId].children[0]
@@ -367,7 +369,7 @@ export class ProgressService {
     } catch (e) {
       existing = {}
     }
-    const pageId = (window as any).currentPage.id
+    const pageId = this.siteDataService.currentPage().id
 
     if (!this.isAuthenticated) {
       this.activeUserProgress.next(existing)
