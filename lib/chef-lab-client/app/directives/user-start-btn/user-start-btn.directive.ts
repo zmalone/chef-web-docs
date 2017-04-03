@@ -1,4 +1,5 @@
 import { Directive, OnInit, ElementRef, HostListener, Host, Input } from '@angular/core'
+import { SiteDataService } from '../../services/site-data.service'
 import { ProgressService } from '../../services/progress.service'
 
 @Directive({
@@ -11,15 +12,19 @@ export class UserStartBtnDirective implements OnInit {
   @Input()
   module: string
 
-  constructor(private progressService?: ProgressService, private el?: ElementRef) {
+  constructor(
+    private siteDataService?: SiteDataService,
+    private progressService?: ProgressService,
+    private el?: ElementRef,
+  ) {
     this.el = el
   }
 
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe((active) => {
-      const lastUnit = this.progressService.getLastStarted('modules', this.module)
-      // this.el.nativeElement.innerHTML = 'Revisit'
-      if (lastUnit.url) {
+      if (this.isComplete()) {
+        this.el.nativeElement.innerHTML = 'Revisit'
+      } else if (this.getLastUrl()) {
         this.el.nativeElement.innerHTML = 'Continue'
       } else {
         this.el.nativeElement.innerHTML = 'Start'
@@ -30,7 +35,16 @@ export class UserStartBtnDirective implements OnInit {
   @HostListener('click', ['$event'])
   clicked(e) {
     e.preventDefault()
-    const lastUnit = this.progressService.getLastStarted('modules', this.module)
-    window.location.href = lastUnit.url || this.href
+    window.location.href = (!this.isComplete() && this.getLastUrl()) || this.href
+  }
+
+  isComplete() {
+    return this.progressService.isComplete('modules', this.module)
+  }
+
+  getLastUrl() {
+    const lastUnit = this.progressService.getLastAccessed('modules', this.module)
+    const moduleData = this.siteDataService.dataTree().modules
+    return (lastUnit && moduleData[lastUnit.id]) ? moduleData[lastUnit.id].url : ''
   }
 }

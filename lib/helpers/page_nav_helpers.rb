@@ -45,10 +45,10 @@ module PageNavHelpers
 
         if next_page
           #output << link_to("#next", anchor: "next")
-          output << content_tag(:a, "", {"name"=>"next", "href"=>"#next"})
+          output << content_tag(:a, "", {"name"=>"next", "href"=>"#next", "class"=>"anchor"})
           heading = "Next:&nbsp;#{next_page.data.title}"
         else
-          output << content_tag(:a, "", {"name"=>"conclusion", "href"=>"#conclusion"})
+          output << content_tag(:a, "", {"name"=>"conclusion", "href"=>"#conclusion", "class"=>"anchor"})
           #output << link_to("#conclusion", anchor: "conclusion")
           heading = "Conclusion"
         end

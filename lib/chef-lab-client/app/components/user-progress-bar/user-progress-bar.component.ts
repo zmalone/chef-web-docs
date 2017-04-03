@@ -7,17 +7,22 @@ import { ProgressService } from '../../services/progress.service'
 })
 export class UserProgressBarComponent implements OnInit {
   public progress: number
+  public isVisible: boolean
 
   @Input()
   module: string
 
-  constructor(
-    private progressService: ProgressService,
-  ) {}
+  @Input()
+  visible: boolean
+
+  constructor(private progressService: ProgressService) {}
 
   ngOnInit() {
-    this.progressService.activeUserProgress.subscribe((data) => {
+    this.progressService.activeUserProgress.subscribe(() => {
+      const completed = !!this.progressService.isComplete('modules', this.module)
+      const started = this.progressService.getLastAccessed('modules', this.module)
       this.progress = this.progressService.getModuleProgress(this.module)
+      this.isVisible = this.visible || (started && !completed)
     })
   }
 }

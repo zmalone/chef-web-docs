@@ -1,7 +1,7 @@
 .tracks-section
   .row
-    - tracks.children.each do |item|
-      .large-6.medium-6.small-12.columns.track-hide
+    - tracks.children.each_with_index do |item, index|
+      .large-6.medium-6.small-12.columns.track-display order= "#{index}"
         .track-card class="#{item.page.data.track_class}"
           h3
             span
@@ -11,15 +11,17 @@
               |  hrs
           p.desc
             = item.page.data.description
-          = link_to "Keep learning", item.page
+          a.track-start-text href="#{item.page.url}" track="#{item.id}"
+            | Get Started
           .row
-            user-track-progress
-            ul.links
-              li
-                a href="" Chef
-              li
-                a href="" Beginner
+            user-track-progress track="#{item.id}"
+            - if item.page.data.tags
+              ul.links
+                - item.page.data.tags.each do |tag|
+                  li
+                    a href=""
+                      = tag
           .tag-img
             img src="#{item.page.data.image_url}"
     .btn-container.load-track
-      button.btn.btn-primary.track-load-more Load more tracks
+      button.btn.btn-primary.track-load-more.load-track-btn total="#{tracks.children.size}" Load more tracks

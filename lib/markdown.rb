@@ -125,7 +125,7 @@ module ZurbFoundation
       # if the title looks like a step, create an additional anchor, e.g. #step2
       m = /\A(?<step>\d+(?:\.\d)*)\./.match(flat)
       step = m.nil? ? nil : "step#{m['step']}"
-      s += "<a name=\"#{step}\" href=\"##{step}\"></a>" unless step.nil?
+      s += "<a class=\"anchor\" name=\"#{step}\" href=\"##{step}\"></a>" unless step.nil?
       # create a second anchor for the long form and link it to the step anchor if it exists; otherwise, link to the long form
       s += "<h#{size}>#{old}"
       s += "<span class=\"section-links\"><a class=\"section-link\" name=\"#{escaped}\" href=\"##{step || escaped}\"><i class=\"fa fa-paragraph\"></i></a><a class=\"section-link\" name=\"#top\" href=\"#top\"><i class=\"fa fa-long-arrow-up\"></i></a></span>" unless old.match /fa\-paragraph/
@@ -157,6 +157,19 @@ module ZurbFoundation
     content.gsub!(/<p><hr\s?\/?><\/p>/, '<hr>')
     content.gsub!(/<script[^>]*>[^<]*<\/script>/, '')
     content.gsub!('<p/>', '')
+    content.gsub!('<p><p>', '<p>')
+    content.gsub!('</p></p>', '</p>')
+    content.gsub!('<p></', '</') # TODO: It is ever valid to open a paragraph right before closing another tag?
+    content.gsub!('<p><h', '<h') # A paragraph shouldn't be opened right before a heading tag
+    content.gsub!('</div></p>', '</p></div>') # The page_nav_helpers.rb next_page helper results in invalid closing tag order
+    in_paragraph = false
+    content.gsub!(/<(\/)?(p|P)[^>]*>/) { |match|
+      # Remove closing </p> tags if we're NOT in a paragraph, and opening <p> tags if we ARE in a paragraph
+      next '' if in_paragraph ^ $1
+      in_paragraph = !$1
+      next $&
+    }
+    content << '</p>' if in_paragraph
   end
 
   def render(string)
