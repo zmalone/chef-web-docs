@@ -6,6 +6,7 @@ module PageHelper
     if module_obj.children && module_obj.children.first
       module_obj.children.first
     elsif module_obj.parent
+      return if module_obj.parent === 'modules'
       parent = get_module_by_id(module_obj.parent)
       index = parent.children.index(module_obj)
       parent.children[index + 1]
@@ -151,6 +152,22 @@ module PageHelper
     return if average == 0
     return "#{average.ceil} minutes" unless average > 120
     "#{(average / 60).ceil} hours"
+  end
+
+  def get_tag_classes(tags_list)
+    return tags_list.join(' ') if tags_list
+  end
+
+  def get_quiz_data(page)
+    page.data.quiz
+  end
+
+  def get_coasters
+    tracks.children.map { |track|
+      { id: track.id, image_url: track.page.data.image_url }
+    }.concat([
+      { id: 'grand-opening', image_url: '/assets/images/coasters/grand-opening.png' }
+    ])
   end
 
 end

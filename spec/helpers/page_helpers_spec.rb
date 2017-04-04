@@ -23,7 +23,7 @@ describe PageHelper do
       {
         url: '/tracks/infrastructure-automation',
         remaining: [235, 495],
-        modules: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node',  'local-development', 'be-a-secure-chef'],
+        modules: ['learn-the-basics', 'manage-a-node',  'local-development', 'beyond-essentials'],
         parent: 'tracks'
       }
     end
@@ -127,6 +127,7 @@ describe PageHelper do
   end
 
   describe '.find_next_page' do
+    let(:lone_module_page) { '/modules/be-a-secure-chef/index.html' }
     let(:module_path_overview) { '/modules/manage-a-node/index.html' }
     let(:module_path_multipage_1) { '/modules/manage-a-node/rhel/index.html' }
     let(:module_path_multipage_2) { '/modules/manage-a-node/rhel/hosted/index.html' }
@@ -155,6 +156,11 @@ describe PageHelper do
       page1 = helper.sitemap.find_resource_by_path(module_path_unitpage_1)
       page2 = helper.sitemap.find_resource_by_path(module_path_unitpage_2)
       expect(helper.find_next_page(page1).page.path).to eq page2.path
+    end
+
+    it 'does not return a next page for a lone top-level module page' do
+      page = helper.sitemap.find_resource_by_path(lone_module_page)
+      expect(helper.find_next_page(page)).to be_nil
     end
   end
 end

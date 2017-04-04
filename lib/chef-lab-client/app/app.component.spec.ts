@@ -2,12 +2,24 @@
 
 import { TestBed, async } from '@angular/core/testing'
 import { AppComponent} from './app.component'
+import { SiteDataService } from './services/site-data.service'
+import { ProgressService } from './services/progress.service'
+import { UserProfileService } from './services/user-profile.service'
+import { Angular2TokenService } from 'angular2-token'
+import MockAngular2TokenService from '../mock/MockAngular2TokenService'
+import MockSiteDataService from '../mock/MockSiteDataService'
 
 describe('AppComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent,
+      ],
+      providers: [
+        ProgressService,
+        UserProfileService,
+        { provide: Angular2TokenService, useClass: MockAngular2TokenService },
+        { provide: SiteDataService, useClass: MockSiteDataService },
       ],
     })
     TestBed.compileComponents()
@@ -19,16 +31,4 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy()
   }))
 
-  it(`should have as title 'app works!'`, async(() => {
-    const fixture = TestBed.createComponent(AppComponent)
-    const app = fixture.debugElement.componentInstance
-    expect(app.title).toEqual('app works!')
-  }))
-
-  it('should render title in a h1 tag', async(() => {
-    const fixture = TestBed.createComponent(AppComponent)
-    fixture.detectChanges()
-    const compiled = fixture.debugElement.nativeElement
-    expect(compiled.querySelector('h1').textContent).toContain('app works!')
-  }))
 })

@@ -10,10 +10,9 @@ track_class: card-green
 category: Admin
 order: -1
 modules:
-- how-to-learn-chef
 - learn-the-basics
 - manage-a-node
 - local-development
-- be-a-secure-chef
+- beyond-essentials
+video_url: 'https://player.vimeo.com/video/211382045'
 ---
-
