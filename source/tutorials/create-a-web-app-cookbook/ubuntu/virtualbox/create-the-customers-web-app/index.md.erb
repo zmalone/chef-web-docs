@@ -42,13 +42,15 @@ In this part, you'll see the `lamp` cookbook in action by creating a second cook
 
 Here's what the Customers web app looks like.
 
-![the resulting web page](misc/manage_customers_node.png)
+<img src="/assets/images/misc/manage_customers_final_35.png" style="height: 100%;"/>
+
+Let's start by creating the `lamp_customers` cookbook.
 
 [START_BOX]
 
 ## 1. Create the lamp_customers cookbook
 
-Let's start by creating the `lamp_customers` cookbook. Move to the <% fp '~/learn-chef' %> directory.
+First, move to the <% fp '~/learn-chef' %> directory.
 
 <% command_snippet(page: current_page, path: 'create-lamp_customers-cookbook-ubuntu-vagrant/cd-learn-chef-ubuntu-vagrant-2', features: :stdin) %>
 
@@ -116,7 +118,7 @@ To create the SQL script, start by running the following `chef generate file` co
 
 <% command_snippet(page: current_page, path: 'add-database-table-ubuntu-vagrant/chef-generate-file-create-tables-ubuntu-vagrant') %>
 
-This command creates a file named <% fp 'create-tables.sql' %> in the <% fp 'files' %> directory. A cookbook file is similar to a template, except that a file cannot contain placeholders.
+This command creates a file named <% fp 'create-tables.sql' %> in the <% fp 'files' %> directory. A cookbook file is similar to a template, except that a cookbook file cannot contain placeholders.
 
 Next, add the following to <% fp 'create-tables.sql' %>.
 
@@ -133,7 +135,7 @@ To copy the SQL script from the cookbook to another location, you'll use the [co
 
 The _Chef cache_ is commonly used to hold temporary files, such as scripts. The [chef-client configuration file](https://docs.chef.io/config_rb_client.html) specifies the location of the Chef cache. The `Chef::Config` object is an easy way to retrive values from the `chef-client` configuration file, which you'll use in a moment.
 
-Although the location of the Chef cache can vary, it's typically located at <% fp '/var/chef/cache' %> on a Linux node. On a Linux Test Kitchen instance, this location is typically <% fp '/tmp/kitchen/cache/' %>.
+Although the location of the Chef cache can vary, it's typically located at <% fp '/var/chef/cache' %> on a Linux node (that is, a system that's managed by a Chef server). On a Linux Test Kitchen instance, this location is typically <% fp '/tmp/kitchen/cache/' %>.
 
 In practice, you might separate each part of the Customers configuration into separate recipes, as you did for the `lamp` cookbook. For simplicity, you'll specify the entire Customers configuration in the default recipe.
 
@@ -215,7 +217,7 @@ Next, write out the default attributes file, <% fp 'default.rb' %>, like this.
 
 <% code_snippet(page: current_page, path: 'add-node-attributes-ubuntu-vagrant/attribute-ubuntu-vagrant-4') %>
 
-Because Chef loads dependent cookbooks first, including the `lamp` cookbook, any values specified in the `lamp_customers` cookbook's attributes file will overwrite any existing attribute values.
+Because Chef loads dependent cookbooks first, including the `lamp` cookbook, the values specified in the `lamp_customers` cookbook's attributes file will overwrite any existing attribute values.
 
 [END_BOX]
 
