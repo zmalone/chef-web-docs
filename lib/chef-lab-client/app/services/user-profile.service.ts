@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { ReplaySubject, BehaviorSubject, Observable } from 'rxjs'
 import { Angular2TokenService } from 'angular2-token'
-import { User } from '../model/user'
+import { User, UserInfo } from '../model'
 
 @Injectable()
 export class UserProfileService {
@@ -33,6 +33,10 @@ export class UserProfileService {
     localStorage.clear()
     this.isSignedIn.next(false)
     return this._tokenService.signOut()
+  }
+
+  public loadPublicProfile(userId): Observable<UserInfo> {
+    return this._tokenService.get('api/v1/users/' + userId).map(res => <UserInfo> res.json())
   }
 
   public loadUserProfile(): Observable<User> {

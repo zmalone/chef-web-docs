@@ -23,7 +23,7 @@ describe PageHelper do
       {
         url: '/tracks/infrastructure-automation',
         remaining: [235, 495],
-        modules: ['how-to-learn-chef', 'learn-the-basics', 'manage-a-node',  'local-development', 'be-a-secure-chef'],
+        modules: ['learn-the-basics', 'manage-a-node',  'local-development', 'beyond-essentials'],
         parent: 'tracks'
       }
     end

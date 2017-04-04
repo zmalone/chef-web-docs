@@ -1,3 +1,4 @@
+/* tslint:disable:trailing-comma quotemark */
 export default class MockSiteDataService {
   currentPage() {
     return {}

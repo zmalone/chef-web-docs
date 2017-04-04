@@ -14,4 +14,5 @@ modules:
 - manage-a-node
 - local-development
 - beyond-essentials
+video_url: 'https://player.vimeo.com/video/211382045'
 ---
