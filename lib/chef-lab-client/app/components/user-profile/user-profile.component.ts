@@ -44,7 +44,12 @@ export class UserProfileComponent implements OnInit {
           this.userProfileService.loadPublicProfile(userId).subscribe(userInfo => {
             this.user = userInfo.profile
             this.achievements = userInfo.progress.achievements
+          },
+          err => {
+            window.location.href = '/error.html'
           })
+        } else {
+          window.location.href = '/error.html'
         }
       }
     })
