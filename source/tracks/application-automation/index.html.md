@@ -9,8 +9,6 @@ level: Beginner
 track_class: card-brown
 category: Admin
 modules:
-- getting-started
-- develop-locally
+- how-to-learn-chef
 - learn-the-basics
-- manage-a-node
 ---
