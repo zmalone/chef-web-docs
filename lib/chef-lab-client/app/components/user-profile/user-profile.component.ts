@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
+import { Router, NavigationEnd } from '@angular/router'
 import { UserProfileService } from '../../services/user-profile.service'
-import { ErrorHandlerService } from '../../services/error-handler.service'
 import { User } from '../../model/user'
 import { COUNTRY } from './data/countries'
 
@@ -17,7 +17,17 @@ export class UserProfileComponent implements OnInit {
 
   constructor(
     private userProfileService: UserProfileService,
-  ) {}
+    private router: Router,
+  ) {
+    router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const userId = Number(event.url.substr(1))
+        if (!isNaN(userId)) {
+          console.log('Load user ID', userId)
+        }
+      }
+    })
+  }
 
   ngOnInit() {
     this.countries = COUNTRY

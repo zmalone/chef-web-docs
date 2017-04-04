@@ -38,7 +38,9 @@ import { TrackStartTextDirective } from './directives/track-start-text/track-sta
 import { LoadTrackBtnDirective } from './directives/load-track-btn/load-track-btn.directive'
 
 
-const routerConfig: Routes = []
+const routerConfig: Routes = [
+  { path: '**', component: UserProfileLinkComponent },
+]
 
 export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
 
