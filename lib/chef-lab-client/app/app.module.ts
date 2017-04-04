@@ -37,9 +37,17 @@ import { TrackDisplayDirective } from './directives/track-display/track-display.
 import { TrackStartTextDirective } from './directives/track-start-text/track-start-text.directive'
 import { LoadTrackBtnDirective } from './directives/load-track-btn/load-track-btn.directive'
 
+import { Component } from '@angular/core'
+
+const NoopComponent = Component({
+  template: '<div></div>',
+})(class {})
 
 const routerConfig: Routes = [
-  { path: '**', component: UserProfileLinkComponent },
+  {
+    path: '**',
+    component: NoopComponent,
+  },
 ]
 
 export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
@@ -47,6 +55,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
 @NgModule({
   declarations: [
     AppComponent,
+    NoopComponent,
     LoginGithubDirective,
     LoginGoogleDirective,
     UserStartBtnDirective,
