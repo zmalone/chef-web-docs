@@ -10,13 +10,16 @@ driver_config:
 provisioner:
   name: chef_zero
 
+verifier:
+  name: inspec
+
 platforms:
   - name: windows-2012r2
     driver_config:
       image_urn: MicrosoftWindowsServer:WindowsServer:2012-R2-Datacenter:latest
     transport:
       name: winrm
-      username: azure
+      username: chefuser
 
 suites:
   - name: default
@@ -24,5 +27,5 @@ suites:
       - recipe[learn_chef_iis::default]
     verifier:
       inspec_tests:
-        - test/recipes
+        - test/smoke/default
     attributes:
