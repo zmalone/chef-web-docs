@@ -49,7 +49,7 @@ $('.cls-modal').click(function(){
 })
 
 $('.video-url').click(function(){
-  $('#videoContainer').append('<iframe width="100%" height="480" id="iframe" src="'+$(this).attr('url')+'" frameborder="0" allowfullscreen />')
+  $('#videoContainer').empty().append('<iframe width="100%" height="480" id="iframe" src="'+$(this).attr('url')+'" frameborder="0" allowfullscreen />')
   $('#videoModal').foundation('reveal','open');
   return false;
 })
