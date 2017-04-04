@@ -1,6 +1,6 @@
 ---
 title: 'Develop a web app cookbook for Windows Server'
-layout: tutorials/platforms/environments/overview/lesson/layout-overview
+layout: tutorials/platforms/environments/layout
 platform: Windows Server
 logo: windows.svg
 order: 2
