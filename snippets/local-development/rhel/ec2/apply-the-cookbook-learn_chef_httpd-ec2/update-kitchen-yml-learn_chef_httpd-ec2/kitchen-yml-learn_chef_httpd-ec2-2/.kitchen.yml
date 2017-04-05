@@ -1,0 +1,32 @@
+---
+driver:
+  name: ec2
+  aws_ssh_key_id: learn-chef
+  region: us-east-1
+  availability_zone: b
+  subnet_id: subnet-3f22bd15
+  instance_type: t2.micro
+  image_id: ami-6d1c2007
+  security_group_ids: sg-0e08cf75
+  retryable_tries: 120
+
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: inspec
+
+transport:
+  ssh_key: /root/.ssh/learn-chef.pem
+
+platforms:
+  - name: centos-7.2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[learn_chef_httpd::default]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:

@@ -1,0 +1,532 @@
+---
+title: 'Configure the web application'
+order: 7
+keywords: TODO
+sections: []
+next: {heading: Next, partial: next}
+time_to_complete: 25 minutes
+---
+In this part, you'll configure the Customers web application. This application reads the records from your SQL Server database and displays them on the web page.
+
+IIS uses the concepts of _web sites_, _applications_, and _application pools_ to define how sites are configured.
+
+A _web site_ defines the site's security model, network configuration (such as the protocol and port number), and location on disk.
+
+An _application_ contains your site's content, which includes HTML and other static content, and code that runs on the server each time a page is accessed. The Customers web application consists of:
+
+* a configuration (.config) file, which includes the connection string to the `learnchef` database.
+* a .dll that contains the compiled ASP.NET code that runs when the page is accessed.
+* an .aspx file that contains the markup (HTML and CSS code) that defines the appearance of the web page and additional markup that calls into the .dll to retrieve the customer data from the database.
+
+Each time the page is accessed, the server _renders_, or generates, the result in the form of standard HTML and CSS and sends the result to the user.
+
+An _application pool_ runs one or more applications. It's an isolation model that helps make applications run more safely and securely. For example, applications in one application pool cannot access data from an application running in another application pool. If an application in one appliction pool crashes or must be restarted, applications in other pools can continue to run unaffected.
+
+In this part, you'll:
+
+1. [Disable the default IIS web site](#step1)
+1. [Download and extract a prebuilt version of the Customers web app](#step2)
+1. [Create an IIS application pool, web site, and application that runs the Customers application](#step3)
+1. [Grant the Customers application access to the customer data in the learnchef database](#step4)
+
+You'll be working in the <% fp 'web.rb' %> and <% fp 'database.rb' %> recipes that you created earlier.
+
+You've done most of the ground work &ndash; for example you've already set up IIS, ASP.NET, and a SQL Server database. We'll start by removing the default IIS site.
+
+[START_BOX]
+
+## 1. Disable the default IIS web site
+
+We don't need the default web site that comes with IIS, so let's remove it.
+
+An easy way to do so is to use the [iis](https://supermarket.chef.io/cookbooks/iis) cookbook from Chef Supermarket. The `iis` cookbook defines resources, some of which we'll use later, that help you manage IIS.
+
+We'll load the `iis` cookbook just like we did the `sql_server` cookbook. Append a `depends` statement to <% fp 'metadata.rb' %>, making the entire file look like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/metadata.rb
+name 'awesome_customers_windows'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures awesome_customers_windows'
+long_description 'Installs/Configures awesome_customers_windows'
+version '0.1.0'
+
+depends 'sql_server', '~> 2.5.0'
+depends 'iis', '~> 4.1.7'
+```
+
+Now let's remove the default site. The `iis` cookbook provides a recipe named `remove_default_site` that does this for us. All you need to do is include this recipe in your cookbook.
+
+Append the following code to <% fp 'web.rb' %>.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/web.rb
+# Remove the default web site.
+include_recipe 'iis::remove_default_site'
+```
+
+This recipe uses the `iis_site` and `iis_pool` resources that the `iis` cookbook defines to stop and delete the default web site and app pool. [Source code](https://github.com/chef-cookbooks/iis/blob/master/recipes/remove_default_site.rb#L21)
+
+```ruby
+# remove_default_site.rb
+iis_site 'Default Web Site' do
+  action [:stop, :delete]
+end
+
+iis_pool 'DefaultAppPool' do
+  action [:stop, :delete]
+end
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Download and extract a prebuilt version of the Customers web app
+
+Now let's write code to download the Customers web application and extract it to the <% fp 'C:\inetpub' %> directory, which is commonly used to store web applications.
+
+ASP.NET applications are often built into a _web deployment package_, which contains your site's static content &ndash; such as HTML, CSS, images, and other media &ndash; and server-side code. In practice, you might manually build the package and copy the result to a staging area. Or you might have an automated process that builds and stages the package when code is checked in to source control. You might then have a second process &ndash; either manual or automated &ndash; that runs your Chef cookbooks to deploy the updated application to your test or production environment when the build succeeds.
+
+For learning purposes, we've [provided a prebuilt version](https://github.com/learn-chef/customers-web-app-aspnet/releases/tag/v0.1.0) of the Customers web application on GitHub so you don't have to build it yourself.
+
+It's common to place IIS applications in the <% fp 'C:\inetpub\apps' %> directory and site configuration in the <% fp 'C:\inetpub\sites' %> directory. We're going to reference these directories multiple times, so let's create variables that we can reuse.
+
+Append the following to <% fp 'web.rb' %>.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/web.rb
+# Define the local app and site locations.
+app_directory = 'C:\inetpub\apps\Customers'
+site_directory = 'C:\inetpub\sites\Customers'
+```
+
+To download and extract the prebuilt application, we'll use the `windows_zipfile` resource that's provided by the [windows](https://supermarket.chef.io/cookbooks/windows) cookbook. We don't need to add the `windows` cookbook to our metadata file because the `sql_server` cookbook already depends on the `windows` cookbook and loads it for us.
+
+Append the following to <% fp 'web.rb' %>.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/web.rb
+# Download the built Customers application and unzip it to the app directory.
+windows_zipfile app_directory do
+  source 'https://github.com/learn-chef/manage-a-web-app-windows/releases/download/v0.1.0/Customers.zip'
+  action :unzip
+  not_if { ::File.exists?(app_directory) }
+end
+```
+
+The `not_if` part of the resource ensures that the zip file is extracted only when the destination directory doesn't exist. In practice, you might store the current version as a node attribute and update the application and the node attribute when the version changes.
+
+[COMMENT] You can find the source code for the Customers application on [GitHub](https://github.com/learn-chef/manage-a-web-app-windows/tree/master/app). If you want to experiment with it, you can use Visual Studio to [create a deployment package](https://msdn.microsoft.com/en-us/library/dd465323.aspx), copy the .zip file to a location on your network that your node can access, and update your recipe to download and extract that file.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create an IIS application pool, web site, and application
+
+The `web` recipe is set up to download and extract the Customers application. The next step is to add an IIS application pool, application, and web site to host it. Let's start with the application pool.
+
+### Create the application pool
+
+To create the application pool, we'll use the `iis_pool` resource that's provided by the `iis` cookbook.
+
+Append the following code to your `web` recipe to create an application pool named `Products`.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/web.rb
+# Create the Products app pool.
+iis_pool 'Products' do
+  runtime_version '4.0'
+  action :add
+end
+```
+
+The `runtime_version` attribute specifies that the application pool uses the .NET Framework 4 runtime.
+
+### Create the web site
+
+To add the web site, we'll use the `iis` cookbook's `iis_site` resource. By default, ASP.NET applications run under a user in the `IIS_IUSRS` group, so we also need to provide read rights to that group.
+
+We want the web site to be accessible over HTTP on port 80 and run in the `Products` application pool. The `iis_site` resource provides attributes that define those settings.
+
+Append the following code to your `web` recipe to create the <% fp 'C:\inetpub\sites' %> directory, assign access rights, and create a web site named `Customers`.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/web.rb
+# Create the site directory and give IIS_IUSRS read rights.
+directory site_directory do
+  rights :read, 'IIS_IUSRS'
+  recursive true
+  action :create
+end
+
+# Create the Customers site.
+iis_site 'Customers' do
+  protocol :http
+  port 80
+  path site_directory
+  application_pool 'Products'
+  action [:add, :start]
+end
+```
+
+### Create the application
+
+The final step is to create the IIS application. To do so, we'll use the `iis_app` resource.
+
+Append the following code to your `web` recipe to create an application named `Customers` that runs in the `Products` application pool.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/web.rb
+# Create the Customers app.
+iis_app 'Customers' do
+  application_pool 'Products'
+  path '/Products'
+  physical_path app_directory
+  action :add
+end
+```
+
+The `path` attribute defines the virtual path &ndash; the path you enter into your web browser. The `physical_path` attribute defines the location of the application on the server, in our case <% fp 'C:\inetpub\apps\Customers' %>.
+
+Your final `web` recipe looks like this.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/web.rb
+# Enable the IIS role.
+dsc_script 'Web-Server' do
+  code <<-EOH
+  WindowsFeature Installweb
+  {
+    Name = "Web-Server"
+    Ensure = "Present"
+  }
+  EOH
+end
+
+# Install ASP.NET 4.5.
+dsc_script 'Web-Asp-Net45' do
+  code <<-EOH
+  WindowsFeature InstallDotNet45
+  {
+    Name = "Web-Asp-Net45"
+    Ensure = "Present"
+  }
+  EOH
+end
+
+# Install the IIS Management Console.
+dsc_script 'Web-Mgmt-Console' do
+  code <<-EOH
+  WindowsFeature InstallIISConsole
+  {
+    Name = "Web-Mgmt-Console"
+    Ensure = "Present"
+  }
+  EOH
+end
+
+# Remove the default web site.
+include_recipe 'iis::remove_default_site'
+
+# Define the local app and site locations.
+app_directory = 'C:\inetpub\apps\Customers'
+site_directory = 'C:\inetpub\sites\Customers'
+
+# Download the built Customers application and unzip it to the app directory.
+windows_zipfile app_directory do
+  source 'https://github.com/learn-chef/manage-a-web-app-windows/releases/download/v0.1.0/Customers.zip'
+  action :unzip
+  not_if { ::File.exists?(app_directory) }
+end
+
+# Create the Products app pool.
+iis_pool 'Products' do
+  runtime_version '4.0'
+  action :add
+end
+
+# Create the site directory and give IIS_IUSRS read rights.
+directory site_directory do
+  rights :read, 'IIS_IUSRS'
+  recursive true
+  action :create
+end
+
+# Create the Customers site.
+iis_site 'Customers' do
+  protocol :http
+  port 80
+  path site_directory
+  application_pool 'Products'
+  action [:add, :start]
+end
+
+# Create the Customers app.
+iis_app 'Customers' do
+  application_pool 'Products'
+  path '/Products'
+  physical_path app_directory
+  action :add
+end
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Grant the Customers application access to the customer data
+
+Applications that run in the `Products` application pool run under `IIS APPPOOL\Products`. We need to grant this user query access to the `customers` table in the `learnchef` database.
+
+We'll follow the same process that we used to create the `learnchef` database and the `customers` table, and add sample data.
+
+1. [Create the grant-access.sql SQL script file](#createthegrantaccesssqlsqlscriptfile)
+1. [Add SQL commands to grant-access.sql](#addsqlcommandstograntaccesssql)
+1. [Copy grant-access.sql to the Chef cache and run the script](#copygrantaccesssqltothechefcacheandrunthescript)
+
+### Create the grant-access.sql SQL script file
+
+Let's start by creating a script file named <% fp 'grant-access.sql' %>.
+
+Run the following command to create an empty SQL script file in our cookbook.
+
+```bash
+# ~/learn-chef
+$ chef generate file cookbooks/awesome_customers_windows grant-access.sql
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Recipe: code_generator::cookbook_file
+  * directory[cookbooks/awesome_customers_windows/files/default] action create (up to date)
+  * template[cookbooks/awesome_customers_windows/files/default/grant-access.sql] action create
+    - create new file cookbooks/awesome_customers_windows/files/default/grant-access.sql
+    - update content in file cookbooks/awesome_customers_windows/files/default/grant-access.sql from none to e3b0c4
+    (diff output suppressed by config)
+```
+
+This command added the <% fp 'grant-access.sql' %> file to the<br><% fp '~/learn-chef/cookbooks/awesome\_customers_windows/files/default' %> directory.
+
+### Add SQL commands to grant-access.sql
+
+Add the following code to <% fp 'grant-access.sql' %> to grant query access to the `IIS APPPOOL\Products` user.
+
+```sql
+-- ~/learn-chef/cookbooks/awesome_customers_windows/files/default/grant-access.sql
+
+USE master;
+GO
+USE learnchef;
+GO
+-- Allow the Windows user 'IIS APPPOOL\Products' to login.
+CREATE LOGIN [IIS APPPOOL\Products] FROM WINDOWS
+GO
+-- Create the corresponding user.
+CREATE USER [IIS APPPOOL\Products]
+GO
+-- Grant query access to the user.
+GRANT SELECT ON customers TO [IIS APPPOOL\Products]
+GO
+```
+
+### Copy grant-access.sql to the Chef cache and run the script
+
+Append the following code to your `database` recipe, <% fp 'database.rb' %>.
+
+```ruby
+# ~/learn-chef/cookbooks/awesome_customers_windows/recipes/database.rb
+# Create a path to the SQL file in the Chef cache.
+grant_access_script_path = win_friendly_path(File.join(Chef::Config[:file_cache_path], 'grant-access.sql'))
+
+# Copy the SQL file from the cookbook to the Chef cache.
+cookbook_file grant_access_script_path do
+  source 'grant-access.sql'
+end
+
+# Run the SQL file only if IIS APPPOOL\Products does not have access.
+powershell_script 'Grant SQL access to IIS APPPOOL\Products' do
+  code <<-EOH
+    Import-Module "#{sqlps_module_path}"
+    Invoke-Sqlcmd -InputFile #{grant_access_script_path}
+  EOH
+  guard_interpreter :powershell_script
+  not_if <<-EOH
+    Import-Module "#{sqlps_module_path}"
+    $sp = Invoke-Sqlcmd -Database learnchef -Query "EXEC sp_helprotect @username = 'IIS APPPOOL\\Products', @name = 'customers'"
+    ($sp.ProtectType.Trim() -eq 'Grant') -and ($sp.Action.Trim() -eq 'Select')
+  EOH
+end
+```
+
+The `not_if` part of the `powershell_script` resource ensures that the SQL script is run only when `IIS APPPOOL\Products` does not have query access. It runs the built-in  [sp_helprotect](https://msdn.microsoft.com/en-us/library/ms190310\(v=sql.110\).aspx) stored procedure to list the permissions for the `IIS APPPOOL\Products` user for the `customers` table and checks whether the `ProtectType` field in the result set is `Grant` and whether the `Action` field is `Select`.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Apply and verify the configuration
+
+As before, let's apply and then verify the configuration. Run `kitchen converge` to apply the `awesome_customers_windows` cookbook.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_windows
+$ kitchen converge
+-----> Starting Kitchen (v1.8.0)
+-----> Converging <default-windows-2012r2>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 4.3.2...
+       Removing non-cookbook files before transfer
+       Preparing validation.pem
+       Preparing client.rb
+[...]
+       Recipe: iis::remove_default_site
+         * iis_site[Default Web Site] action stop
+
+         * iis_site[Default Web Site] action delete
+
+         * iis_pool[DefaultAppPool] action stop
+
+         * iis_pool[DefaultAppPool] action delete
+[...]
+         * iis_pool[Products] action add
+
+         * directory[C:\inetpub\sites\Customers] action create
+           - create new directory C:\inetpub\sites\Customers
+           - change dacl
+         * iis_site[Customers] action add
+
+         * iis_site[Customers] action start (up to date)
+         * iis_app[Customers] action add
+[...]
+       Chef Client finished, 13/28 resources updated in 01 minutes 04 seconds
+
+       Finished converging <default-windows-2012r2> (1m21.80s).
+-----> Kitchen is finished. (1m24.53s)
+[...]
+```
+
+You'll see from the output that:
+
+* the default IIS web site is disabled.
+* the IIS application pool, web site, and application are created.
+* the Customers web app is extracted to <% fp 'C:\inetpub\sites\Customers' %>.
+* `IIS APPPOOL\Products` is granted access to the `learnchef` database.
+
+You're probably excited to see the working Customers application. From a browser on your workstation, navigate to your site's /Products/Customers.aspx page, for example, http://192.168.35.35/Products/Customers.aspx. [Here's how to get your test instance's IP address](/modules/create-a-web-app-cookbook/windows/configure-iis#get-ip-address).
+
+You'll see this.
+
+![the resulting web page](/assets/images/misc/webapp_result_windows.png)
+
+Wonderful! You've successfully configured an entire application stack on Windows Server using Chef!
+
+To help you understand how your instance was configured, let's run a few additional commands. Running these commands can also help you diagnose any issues if you weren't able to access the Customers application from your workstation.
+
+Start by connecting to your Windows Server instance.
+
+### Verify that the IIS application pool, web site, and application exist
+
+Run this [Get-WebAppPoolState](https://technet.microsoft.com/en-us/library/Ee790588.aspx) cmdlet to get the state of the `Products` application pool.
+
+```ps
+$ Get-WebAppPoolState -Name Products
+
+Value
+-----
+Started
+```
+
+Now run the [Get-Website](https://technet.microsoft.com/en-us/library/ee807832.aspx) cmdlet to list the available sites.
+
+```ps
+$ Get-Website
+
+Name             ID   State      Physical Path                  Bindings
+----             --   -----      -------------                  --------
+Customers        1    Started    C:\inetpub\sites\Customers     http *:80:
+```
+
+You'll see that the `Customers` site is available, and that the `Default Web Site` is no longer available.
+
+Finally, run the [Get-WebApplication](https://technet.microsoft.com/en-us/library/ee790554.aspx) cmdlet to get the state of each web app.
+
+```ps
+$ Get-WebApplication
+
+Name             Application pool   Protocols    Physical Path
+----             ----------------   ---------    -------------
+Products         Products           http         C:\inetpub\apps\Customers
+```
+
+### Verify that SQL Server grants query access to the IIS APPPOOL\Products user
+
+Run this `Invoke-Sqlcmd` cmdlet to verify that SQL Server grants the `Select` action to the `IIS APPPOOL\Products` user.
+
+```ps
+$ Invoke-Sqlcmd -Database learnchef -Query "EXEC sp_helprotect @username = 'IIS APPPOOL\Products', @name = 'customers'"
+
+
+Owner       : dbo
+Object      : customers
+Grantee     : IIS APPPOOL\Products
+Grantor     : dbo
+ProtectType : Grant
+Action      : Select
+Column      : (All+New)
+```
+
+You can also verify the state of your node by browsing the <% fp 'C:\inetpub' %> directory and from the IIS Management Console. The <% fp 'C:\inetpub\apps' %> directory contains the web app and looks like this.
+
+```ps
+$ tree /F C:\inetpub\apps
+Folder PATH listing
+Volume serial number is EE57-417A
+C:\INETPUB\APPS
+└───Customers
+    │   Customers.aspx
+    │   Web.config
+    │
+    └───bin
+            Customers.dll
+```
+
+When you're done, you can minimize or close your connection.
+
+There's one more step to perform. For good measure, it's recommended that you apply your final configuration on a clean instance. This will help ensure that your final configuration is good, and not the result of any experimentation or intermediate steps you performed along the way.
+
+First, destroy the current instance.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_windows
+$ kitchen destroy
+-----> Starting Kitchen (v1.8.0)
+-----> Destroying <default-windows-2012r2>...
+       ==> default: Forcing shutdown of VM...
+       ==> default: Destroying VM and associated drives...
+       Vagrant instance <default-windows-2012r2> destroyed.
+       Finished destroying <default-windows-2012r2> (0m4.72s).
+-----> Kitchen is finished. (0m7.21s)
+```
+
+Now run `kitchen converge` to bring up a clean instance and apply your cookbook.
+
+```bash
+# ~/learn-chef/cookbooks/awesome_customers_windows
+$ kitchen converge
+-----> Starting Kitchen (v1.8.0)
+-----> Creating <default-windows-2012r2>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Importing base box 'windows-2012r2'...
+[...]
+       Chef Client finished, 22/28 resources updated in 07 minutes 44 seconds
+
+       Finished converging <default-windows-2012r2> (9m7.70s).
+-----> Kitchen is finished. (11m13.36s)
+```
+
+In this example, it took about 11 minutes to apply the entire configuration on a clean Windows Server instance. Refresh your web browser to confirm that the web application comes up on your new instance.
+
+[END_BOX]

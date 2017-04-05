@@ -50,7 +50,7 @@ module Middleman
           # process each line
           in_command = false
           lines.each do |line|
-            if line.length > 1 && line[0] == '$'
+            if line.length > 1 && line.start_with?('$ ')
               # begins with prompt, so push prompt character onto gutter and add the remaining
               # line to the lines of code
               gutters.push gutter(@prompt)
