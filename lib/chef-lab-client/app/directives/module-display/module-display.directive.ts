@@ -23,17 +23,18 @@ export class ModuleDisplayDirective implements OnInit {
   }
 
   ngOnInit() {
-    if (this.siteDataService.currentPage().id !== 'profile') {
+    if (['profile', 'profile/progress'].indexOf(this.siteDataService.currentPage().id) > -1) {
+      this.showUserModuleProgress()
+    } else {
       this.filterModulesByTags()
       this.showDefaultModules()
-    } else {
-      this.showUserModuleProgress()
     }
   }
 
   showUserModuleProgress() {
     this.progressService.activeUserProgress.subscribe((active) => {
       const obj = this.progressService.getLastAccessed('modules', this.module)
+      console.log(obj)
       if (obj !== undefined) {
         this.showModule()
       } else {
