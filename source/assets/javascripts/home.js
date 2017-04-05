@@ -1,6 +1,9 @@
 $(document).ready(function() {
   var $titles = $(".home--section--title");
   var $description = $(".home--descriptions");
+  if (window.location.href.match('progress')) {
+    $('#progressTab').trigger('click')
+  }
   $titles.hover(
     function() {
       $titles.find(".home--section--icon").removeClass("fade-in");
