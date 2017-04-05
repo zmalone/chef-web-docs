@@ -1,1 +1,0 @@
-Before we do anything else, let's configure the Local Configuration Manager to disable consistency checking.
