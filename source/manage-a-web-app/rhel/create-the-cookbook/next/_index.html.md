@@ -1,1 +1,0 @@
-Before we do anything else, let's configure the system's security policy.

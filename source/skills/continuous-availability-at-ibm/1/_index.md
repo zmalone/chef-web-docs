@@ -1,5 +1,0 @@
-##The IBM event cloud
-
-The IBM cloud that the events team uses is, in fact, a hybrid cloud. Some of their workloads run in the public cloud, on [SoftLayer](http://www.softlayer.com/), while others run in the private cloud, which is based on [OpenStack](http://www.openstack.org/). Currently, AIX makes up a large part of the infrastructure, along with SUSE Linux and Red Hat Linux. However, going forward, the team has decided to support a single platform, Red Hat Enterprise Linux (RHEL). They are gradually moving their systems over, and bringing them under Chef management as they do so. Their development workstations are a mix of Red Hat Linux, Ubuntu and OSX.
-
-The overall environment is complex. There is a test environment, a pre-production environment, which consists of two separate locations, and a production environment, which consists of seven locations. Each production location is treated separately. It's not unusual to take a cloud location down for a week or even two weeks at a time, or to keep it at an older version, while the web site itself is always available.

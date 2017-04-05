@@ -1,0 +1,27 @@
+.F
+
+Failures:
+
+  1) web_content::default On Windows 2012 R2 creates a directory with windows rights
+     Failure/Error:
+       expect(chef_run).to create_directory('c:\inetpub\wwwroot')
+         .with(
+           rights: [{ permissions: :read, principals: 'IIS_IUSRS' }],
+           recursive: true
+         )
+
+       expected "directory[c:\inetpub\wwwroot]" to have parameters:
+
+         rights [{:permissions=>:read, :principals=>"IIS_IUSRS"}], was [{:permissions=>:read, :principals=>"IIS_WPG"}]
+       Diff:
+       @@ -1,2 +1,2 @@
+       -[{:permissions=>:read, :principals=>"IIS_IUSRS"}]
+       +[{:permissions=>:read, :principals=>"IIS_WPG"}]
+     # ./spec/unit/recipes/default_spec.rb:17:in `block (3 levels) in <top (required)>'
+
+Finished in 0.37242 seconds (files took 1.48 seconds to load)
+2 examples, 1 failure
+
+Failed examples:
+
+rspec ./spec/unit/recipes/default_spec.rb:16 # web_content::default On Windows 2012 R2 creates a directory with windows rights

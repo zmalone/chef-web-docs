@@ -1,276 +1,529 @@
-172.31.54.179 Starting Chef Client, version 12.16.42
-172.31.54.179 resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_apache2::default"]
-172.31.54.179 Synchronizing Cookbooks:
-172.31.54.179   - chef-client (7.0.0)
-172.31.54.179   - cron (3.0.0)
-172.31.54.179   - logrotate (2.1.0)
-172.31.54.179   - compat_resource (12.16.2)
-172.31.54.179   - windows (2.1.1)
-172.31.54.179   - ohai (4.2.2)
-172.31.54.179   - learn_chef_apache2 (0.3.1)
-172.31.54.179 Installing Cookbook Gems:
-172.31.54.179 Compiling Cookbooks...
-172.31.54.179 Converging 15 resources
-172.31.54.179 Recipe: chef-client::init_service
-172.31.54.179   * directory[/var/run/chef] action create
-172.31.54.179     - create new directory /var/run/chef
-172.31.54.179     - change owner from '' to 'root'
-172.31.54.179     - change group from '' to 'root'
-172.31.54.179   * directory[/var/cache/chef] action create
-172.31.54.179     - create new directory /var/cache/chef
-172.31.54.179     - change owner from '' to 'root'
-172.31.54.179     - change group from '' to 'root'
-172.31.54.179   * directory[/var/lib/chef] action create
-172.31.54.179     - create new directory /var/lib/chef
-172.31.54.179     - change owner from '' to 'root'
-172.31.54.179     - change group from '' to 'root'
-172.31.54.179   * directory[/var/log/chef] action create
-172.31.54.179     - create new directory /var/log/chef
-172.31.54.179     - change mode from '' to '0755'
-172.31.54.179     - change owner from '' to 'root'
-172.31.54.179     - change group from '' to 'root'
-172.31.54.179   * directory[/etc/chef] action create (up to date)
-172.31.54.179   * template[/etc/init.d/chef-client] action create
-172.31.54.179     - create new file /etc/init.d/chef-client
-172.31.54.179     - update content in file /etc/init.d/chef-client from none to c4f9fe
-172.31.54.179     --- /etc/init.d/chef-client	2016-11-30 21:36:14.810536319 +0000
-172.31.54.179     +++ /etc/init.d/.chef-chef-client20161130-3980-t2mngs	2016-11-30 21:36:14.810536319 +0000
-172.31.54.179     @@ -1 +1,207 @@
-172.31.54.179     +#! /bin/sh
-172.31.54.179     +### BEGIN INIT INFO
-172.31.54.179     +# Provides:           chef-client
-172.31.54.179     +# Required-Start:     $remote_fs $network
-172.31.54.179     +# Required-Stop:      $remote_fs $network
-172.31.54.179     +# Default-Start:      2 3 4 5
-172.31.54.179     +# Default-Stop:       0 1 6
-172.31.54.179     +# Short-Description:  Start a chef-client.
-172.31.54.179     +### END INIT INFO
-172.31.54.179     +#
-172.31.54.179     +# Copyright (c) 2009-2010 Chef Software, Inc, <legal@chef.io>
-172.31.54.179     +#
-172.31.54.179     +# chef-client         Startup script for chef-client.
-172.31.54.179     +# chkconfig: - 99 02
-172.31.54.179     +# description: starts up chef-client in daemon mode.
-172.31.54.179     +
-172.31.54.179     +PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-172.31.54.179     +DAEMON=/usr/bin/chef-client
-172.31.54.179     +NAME=chef-client
-172.31.54.179     +DESC=chef-client
-172.31.54.179     +PIDFILE=/var/run/chef/client.pid
-172.31.54.179     +
-172.31.54.179     +test -x $DAEMON || exit 1
-172.31.54.179     +
-172.31.54.179     +. /lib/lsb/init-functions
-172.31.54.179     +
-172.31.54.179     +[ -r /etc/default/$NAME ] && . /etc/default/$NAME
-172.31.54.179     +
-172.31.54.179     +if [ ! -d /var/run/chef ]; then
-172.31.54.179     +  mkdir /var/run/chef
-172.31.54.179     +fi
-172.31.54.179     +
-172.31.54.179     +DAEMON_OPTS="-d -P $PIDFILE -c $CONFIG -i $INTERVAL -s $SPLAY "
-172.31.54.179     +
-172.31.54.179     +running_pid() {
-172.31.54.179     +  pid=$1
-172.31.54.179     +  name=$2
-172.31.54.179     +  [ -z "$pid" ] && return 1
-172.31.54.179     +  [ ! -d /proc/$pid ] &&  return 1
-172.31.54.179     +  cmd=`cat /proc/$pid/cmdline | tr '\000' '\n' | awk 'NR==2'`
-172.31.54.179     +  [ "$cmd" != "$name" ] &&  return 1
-172.31.54.179     +  return 0
-172.31.54.179     +}
-172.31.54.179     +
-172.31.54.179     +running() {
-172.31.54.179     +  [ ! -f "$PIDFILE" ] && return 1
-172.31.54.179     +  pid=`cat $PIDFILE`
-172.31.54.179     +  running_pid $pid $DAEMON || return 1
-172.31.54.179     +  return 0
-172.31.54.179     +}
-172.31.54.179     +
-172.31.54.179     +start_server() {
-172.31.54.179     +  if [ -z "$DAEMONUSER" ] ; then
-172.31.54.179     +    start_daemon -p $PIDFILE $DAEMON $DAEMON_OPTS
-172.31.54.179     +  errcode=$?
-172.31.54.179     +  else
-172.31.54.179     +    start-stop-daemon --start --quiet --pidfile $PIDFILE \
-172.31.54.179     +      --chuid $DAEMONUSER \
-172.31.54.179     +      --exec $DAEMON -- $DAEMON_OPTS
-172.31.54.179     +    errcode=$?
-172.31.54.179     +  fi
-172.31.54.179     +  return $errcode
-172.31.54.179     +}
-172.31.54.179     +
-172.31.54.179     +stop_server() {
-172.31.54.179     +   if [ -z "$DAEMONUSER" ] ; then
-172.31.54.179     +     killproc -p $PIDFILE $DAEMON
-172.31.54.179     +     errcode=$?
-172.31.54.179     +   else
-172.31.54.179     +     start-stop-daemon --stop --quiet --pidfile $PIDFILE \
-172.31.54.179     +       --user $DAEMONUSER \
-172.31.54.179     +       --exec $DAEMON
-172.31.54.179     +     errcode=$?
-172.31.54.179     +   fi
-172.31.54.179     +   return $errcode
-172.31.54.179     +}
-172.31.54.179     +
-172.31.54.179     +reload_server() {
-172.31.54.179     +  if [ -z "$DAEMONUSER" ] ; then
-172.31.54.179     +     killproc -p $PIDFILE $DAEMON -HUP
-172.31.54.179     +     errcode=$?
-172.31.54.179     +   else
-172.31.54.179     +     start-stop-daemon --stop --signal HUP --quiet --pidfile $PIDFILE \
-172.31.54.179     +       --user $DAEMONUSER \
-172.31.54.179     +       --exec $DAEMON
-172.31.54.179     +     errcode=$?
-172.31.54.179     +   fi
-172.31.54.179     +   return $errcode
-172.31.54.179     +}
-172.31.54.179     +
-172.31.54.179     +run_server() {
-172.31.54.179     +  if [ -z "$DAEMONUSER" ] ; then
-172.31.54.179     +     killproc -p $PIDFILE $DAEMON -USR1
-172.31.54.179     +     errcode=$?
-172.31.54.179     +   else
-172.31.54.179     +     start-stop-daemon --stop --signal USR1 --quiet --pidfile $PIDFILE \
-172.31.54.179     +       --user $DAEMONUSER \
-172.31.54.179     +       --exec $DAEMON
-172.31.54.179     +     errcode=$?
-172.31.54.179     +   fi
-172.31.54.179     +   return $errcode
-172.31.54.179     +}
-172.31.54.179     +
-172.31.54.179     +force_stop() {
-172.31.54.179     +  [ ! -e "$PIDFILE" ] && return
-172.31.54.179     +  if running ; then
-172.31.54.179     +    /bin/kill -15 $pid
-172.31.54.179     +    sleep "$DIETIME"s
-172.31.54.179     +    if running ; then
-172.31.54.179     +      /bin/kill -9 $pid
-172.31.54.179     +      sleep "$DIETIME"s
-172.31.54.179     +      if running ; then
-172.31.54.179     +        echo "Cannot kill $NAME (pid=$pid)!"
-172.31.54.179     +        exit 1
-172.31.54.179     +      fi
-172.31.54.179     +    fi
-172.31.54.179     +  fi
-172.31.54.179     +  rm -f $PIDFILE
-172.31.54.179     +}
-172.31.54.179     +
-172.31.54.179     +case "$1" in
-172.31.54.179     +  start)
-172.31.54.179     +    log_daemon_msg "Starting $DESC " "$NAME"
-172.31.54.179     +    if running ;  then
-172.31.54.179     +        log_progress_msg "apparently already running"
-172.31.54.179     +        log_end_msg 0
-172.31.54.179     +        exit 0
-172.31.54.179     +    fi
-172.31.54.179     +    if start_server ; then
-172.31.54.179     +        [ -n "$STARTTIME" ] && sleep $STARTTIME # Wait some time
-172.31.54.179     +        if  running ;  then
-172.31.54.179     +            log_end_msg 0
-172.31.54.179     +        else
-172.31.54.179     +            log_end_msg 1
-172.31.54.179     +        fi
-172.31.54.179     +    else
-172.31.54.179     +        log_end_msg 1
-172.31.54.179     +    fi
-172.31.54.179     +    ;;
-172.31.54.179     +  stop)
-172.31.54.179     +    log_daemon_msg "Stopping $DESC" "$NAME"
-172.31.54.179     +    if running ; then
-172.31.54.179     +      errcode=0
-172.31.54.179     +      stop_server || errcode=$?
-172.31.54.179     +      log_end_msg $errcode
-172.31.54.179     +    else
-172.31.54.179     +      log_progress_msg "apparently not running"
-172.31.54.179     +      log_end_msg 0
-172.31.54.179     +      exit 0
-172.31.54.179     +    fi
-172.31.54.179     +    ;;
-172.31.54.179     +  force-stop)
-172.31.54.179     +    $0 stop
-172.31.54.179     +    if running; then
-172.31.54.179     +      log_daemon_msg "Stopping (force) $DESC" "$NAME"
-172.31.54.179     +      errcode=0
-172.31.54.179     +      force_stop || errcode=$?
-172.31.54.179     +      log_end_msg $errcode
-172.31.54.179     +    fi
-172.31.54.179     +    ;;
-172.31.54.179     +  restart|force-reload)
-172.31.54.179     +    log_daemon_msg "Restarting $DESC" "$NAME"
-172.31.54.179     +    errcode=0
-172.31.54.179     +    stop_server || errcode=$?
-172.31.54.179     +    [ -n "$DIETIME" ] && sleep $DIETIME
-172.31.54.179     +    start_server || errcode=$?
-172.31.54.179     +    [ -n "$STARTTIME" ] && sleep $STARTTIME
-172.31.54.179     +    running || errcode=$?
-172.31.54.179     +    log_end_msg $errcode
-172.31.54.179     +    ;;
-172.31.54.179     +  status)
-172.31.54.179     +    log_daemon_msg "Checking status of $DESC" "$NAME"
-172.31.54.179     +    if running ;  then
-172.31.54.179     +      log_progress_msg "running"
-172.31.54.179     +      log_end_msg 0
-172.31.54.179     +    else
-172.31.54.179     +      log_progress_msg "apparently not running"
-172.31.54.179     +      log_end_msg 1
-172.31.54.179     +      exit 3
-172.31.54.179     +    fi
-172.31.54.179     +    ;;
-172.31.54.179     +  reload)
-172.31.54.179     +    if running; then
-172.31.54.179     +      log_daemon_msg "Reloading $DESC" "$NAME"
-172.31.54.179     +      errcode=0
-172.31.54.179     +      reload_server || errcode=$?
-172.31.54.179     +      log_end_msg $errcode
-172.31.54.179     +    fi
-172.31.54.179     +    ;;
-172.31.54.179     +  run)
-172.31.54.179     +    if running; then
-172.31.54.179     +      log_daemon_msg "Triggering run of $DESC" "$NAME"
-172.31.54.179     +      errcode=0
-172.31.54.179     +      run_server || errcode=$?
-172.31.54.179     +      log_end_msg $errcode
-172.31.54.179     +    fi
-172.31.54.179     +    ;;
-172.31.54.179     +  *)
-172.31.54.179     +    N=/etc/init.d/$NAME
-172.31.54.179     +    echo "Usage: $N {start|stop|force-stop|restart|force-reload|status|run}" >&2
-172.31.54.179     +    exit 1
-172.31.54.179     +    ;;
-172.31.54.179     +esac
-172.31.54.179     +
-172.31.54.179     +exit 0
-172.31.54.179     +
-172.31.54.179     - change mode from '' to '0755'
-172.31.54.179   * template[/etc/default/chef-client] action create
-172.31.54.179     - create new file /etc/default/chef-client
-172.31.54.179     - update content in file /etc/default/chef-client from none to d443f5
-172.31.54.179     --- /etc/default/chef-client	2016-11-30 21:36:14.830536319 +0000
-172.31.54.179     +++ /etc/default/.chef-chef-client20161130-3980-tilr5x	2016-11-30 21:36:14.830536319 +0000
-172.31.54.179     @@ -1 +1,4 @@
-172.31.54.179     +CONFIG=/etc/chef/client.rb
-172.31.54.179     +INTERVAL=300
-172.31.54.179     +SPLAY=60
-172.31.54.179     - change mode from '' to '0644'
-172.31.54.179   * service[chef-client] action enable
-172.31.54.179     - enable service service[chef-client]
-172.31.54.179   * service[chef-client] action start
-172.31.54.179     - start service service[chef-client]
-172.31.54.179 Recipe: chef-client::delete_validation
-172.31.54.179   * file[/etc/chef/validation.pem] action delete (up to date)
-172.31.54.179 Recipe: learn_chef_apache2::default
-172.31.54.179   * apt_update[Update the apt cache daily] action periodic (up to date)
-172.31.54.179   * apt_package[apache2] action install (up to date)
-172.31.54.179   * service[apache2] action enable (up to date)
-172.31.54.179   * service[apache2] action start (up to date)
-172.31.54.179   * group[web_admin] action create (up to date)
-172.31.54.179   * linux_user[web_admin] action create (up to date)
-172.31.54.179   * template[/var/www/html/index.html] action create (up to date)
-172.31.54.179 Recipe: chef-client::init_service
-172.31.54.179   * service[chef-client] action restart
-172.31.54.179     - restart service service[chef-client]
-172.31.54.179 
-172.31.54.179 Running handlers:
-172.31.54.179 Running handlers complete
-172.31.54.179 Chef Client finished, 9/18 resources updated in 04 seconds
+172.31.49.98 [2017-03-01T17:46:01+00:00] INFO: Forking chef instance to converge...
+172.31.49.98 Starting Chef Client, version 12.19.36
+172.31.49.98 [2017-03-01T17:46:01+00:00] INFO: *** Chef 12.19.36 ***
+172.31.49.98 [2017-03-01T17:46:01+00:00] INFO: Platform: x86_64-linux
+172.31.49.98 [2017-03-01T17:46:01+00:00] INFO: Chef-client pid: 4137
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Run List is [role[web]]
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Run List expands to [chef-client::default, chef-client::delete_validation, learn_chef_apache2::default]
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Starting Chef Run for node1-ubuntu
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Running start handlers
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Start handlers complete.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: HTTP Request Returned 404 Not Found: 
+172.31.49.98 resolving cookbooks for run list: ["chef-client::default", "chef-client::delete_validation", "learn_chef_apache2::default"]
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Loading cookbooks [chef-client@7.2.0, cron@3.0.0, logrotate@2.1.0, compat_resource@12.16.3, windows@2.1.1, ohai@5.0.0, learn_chef_apache2@0.3.1]
+172.31.49.98 Synchronizing Cookbooks:
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/src_service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/resources/scheduled_task.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/launchd_service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/_unit_test_cloning_resource.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/runit_service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/windows_service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/cron.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/task.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/init_service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/delete_validation.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/bsd_service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/config.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/default.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/systemd_service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/smf_service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/libraries/helpers.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/libraries/matchers.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/attributes/default.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/recipes/upstart_service.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/arch/chef/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/windows/client.service.rb.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/solaris/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/suse/sysconfig/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/solaris/manifest.xml.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/solaris/manifest-5.11.xml.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/redhat/init.d/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/suse/init.d/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/redhat/sysconfig/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/debian/init/chef-client.conf.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/fedora/sysconfig/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/debian/init.d/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/systemd/chef-client.service.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/debian/default/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/sv-chef-client-run.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/com.chef.chef-client.plist.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/sv-chef-client-log-run.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/default/client.rb.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/freebsd/chef-client.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/MAINTAINERS.md in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/templates/freebsd/chef.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/README.md in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/resources/d.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/.foodcritic in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/metadata.json in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/CONTRIBUTING.md in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/chef-client/CHANGELOG.md in the cache.
+172.31.49.98   - chef-client (7.2.0)
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/attributes/default.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/providers/d.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/recipes/default.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/libraries/matchers.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/templates/default/crontab.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/definitions/manage.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/templates/default/cron_manage.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/README.md in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/templates/default/cron.d.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/MAINTAINERS.md in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/.foodcritic in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/CHANGELOG.md in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/CONTRIBUTING.md in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/cron/metadata.json in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/resources/app.rb in the cache.
+172.31.49.98   [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/recipes/default.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/recipes/global.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/libraries/logrotate_config.rb in the cache.
+172.31.49.98 - cron (3.0.0)
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/templates/default/logrotate-global.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/libraries/matchers.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/Makefile in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/attributes/default.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/templates/default/logrotate.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/.kitchen.yml in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/.rubocop.yml in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/LICENSE in the cache.
+172.31.49.98 [2017-03-01T17:46:02+00:00] INFO: Storing updated cookbooks/logrotate/README.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/logrotate/.gitignore in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/logrotate/Berksfile in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/logrotate/CONTRIBUTING.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/logrotate/Gemfile.lock in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/logrotate/CHANGELOG.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/logrotate/Berksfile.lock in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/logrotate/.travis.yml in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/libraries/autoload.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/logrotate/Gemfile in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/logrotate/metadata.json in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/notifying_block.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/properties.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/params_validate.rb in the cache.
+172.31.49.98   - logrotate (2.1.0)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/mixin/properties.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/powershell_out.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/lazy_module_include.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/apt_repository.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/yum_repository.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/action_class.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/apt_update.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/systemd_unit.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/delayed_evaluator.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/constants.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/property.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource_builder.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/yum_repository.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/apt_update.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/systemd_unit.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/apt_repository.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/support/yum_repo.erb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/declare_resource.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/platform_introspection.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/recipe.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/core.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/property.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/recipe.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/noop.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/resource/lwrp_base.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/universal.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/recipe_hook.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/mixin/params_validate.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/log.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_collection.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/node.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_builder.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_collection/resource_set.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/property.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/run_context.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource/lwrp_base.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_collection/resource_list.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/provider.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/recipe.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/runner.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/exceptions.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_upstream_version.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/compat_resource.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/resource.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/README.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/MAINTAINERS.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/CONTRIBUTING.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/CHANGELOG.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/printer_port.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/compat_resource/metadata.json in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/pagefile.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/shortcut.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/zipfile.rb in the cache.
+172.31.49.98   [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/task.rb in the cache.
+172.31.49.98 - compat_resource (12.16.3)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/http_acl.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/auto_run.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/certificate_binding.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/path.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/certificate.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/printer.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/feature.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/resources/font.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/zipfile.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/printer_port.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/feature_dism.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/shortcut.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/task.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/pagefile.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/auto_run.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/certificate_binding.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/printer.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/path.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/feature_servermanagercmd.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/certificate.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/http_acl.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/font.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/providers/feature_powershell.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/windows_package.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/recipes/default.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/powershell_helper.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/windows_helper.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/version_helper.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/windows_privileged.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/feature_base.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/registry_helper.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/powershell_out.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/version.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/wmi_helper.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/libraries/matchers.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/files/default/dism_features.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/MAINTAINERS.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/README.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/CHANGELOG.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/attributes/default.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/.foodcritic in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/CONTRIBUTING.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/windows/metadata.json in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/resources/hint.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/recipes/default.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/libraries/matchers.rb in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/resources/plugin.rb in the cache.
+172.31.49.98   - windows (2.1.1)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/MAINTAINERS.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/CHANGELOG.md in the cache.
+172.31.49.98   - learn_chef_apache2 (0.3.1)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/.foodcritic in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/CONTRIBUTING.md in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/metadata.json in the cache.
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: Storing updated cookbooks/ohai/README.md in the cache.
+172.31.49.98   - ohai (5.0.0)
+172.31.49.98 Installing Cookbook Gems:
+172.31.49.98 Compiling Cookbooks...
+172.31.49.98 Converging 15 resources
+172.31.49.98 Recipe: chef-client::init_service
+172.31.49.98   * directory[/var/run/chef] action create[2017-03-01T17:46:03+00:00] INFO: Processing directory[/var/run/chef] action create (chef-client::init_service line 52)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: directory[/var/run/chef] created directory /var/run/chef
+172.31.49.98 
+172.31.49.98     - create new directory /var/run/chef[2017-03-01T17:46:03+00:00] INFO: directory[/var/run/chef] owner changed to 0
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: directory[/var/run/chef] group changed to 0
+172.31.49.98 
+172.31.49.98     - change owner from '' to 'root'
+172.31.49.98     - change group from '' to 'root'
+172.31.49.98   * directory[/var/cache/chef] action create[2017-03-01T17:46:03+00:00] INFO: Processing directory[/var/cache/chef] action create (chef-client::init_service line 52)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: directory[/var/cache/chef] created directory /var/cache/chef
+172.31.49.98 
+172.31.49.98     - create new directory /var/cache/chef[2017-03-01T17:46:03+00:00] INFO: directory[/var/cache/chef] owner changed to 0
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: directory[/var/cache/chef] group changed to 0
+172.31.49.98 
+172.31.49.98     - change owner from '' to 'root'
+172.31.49.98     - change group from '' to 'root'
+172.31.49.98   * directory[/var/lib/chef] action create[2017-03-01T17:46:03+00:00] INFO: Processing directory[/var/lib/chef] action create (chef-client::init_service line 52)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: directory[/var/lib/chef] created directory /var/lib/chef
+172.31.49.98 
+172.31.49.98     - create new directory /var/lib/chef[2017-03-01T17:46:03+00:00] INFO: directory[/var/lib/chef] owner changed to 0
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: directory[/var/lib/chef] group changed to 0
+172.31.49.98 
+172.31.49.98     - change owner from '' to 'root'
+172.31.49.98     - change group from '' to 'root'
+172.31.49.98   * directory[/var/log/chef] action create[2017-03-01T17:46:03+00:00] INFO: Processing directory[/var/log/chef] action create (chef-client::init_service line 52)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: directory[/var/log/chef] created directory /var/log/chef
+172.31.49.98 
+172.31.49.98     - create new directory /var/log/chef[2017-03-01T17:46:03+00:00] INFO: directory[/var/log/chef] owner changed to 0
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: directory[/var/log/chef] group changed to 0
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: directory[/var/log/chef] mode changed to 755
+172.31.49.98 
+172.31.49.98     - change mode from '' to '0755'
+172.31.49.98     - change owner from '' to 'root'
+172.31.49.98     - change group from '' to 'root'
+172.31.49.98   * directory[/etc/chef] action create[2017-03-01T17:46:03+00:00] INFO: Processing directory[/etc/chef] action create (chef-client::init_service line 52)
+172.31.49.98  (up to date)
+172.31.49.98   * template[/etc/init.d/chef-client] action create[2017-03-01T17:46:03+00:00] INFO: Processing template[/etc/init.d/chef-client] action create (chef-client::init_service line 19)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: template[/etc/init.d/chef-client] created file /etc/init.d/chef-client
+172.31.49.98 
+172.31.49.98     - create new file /etc/init.d/chef-client[2017-03-01T17:46:03+00:00] INFO: template[/etc/init.d/chef-client] updated file contents /etc/init.d/chef-client
+172.31.49.98 
+172.31.49.98     - update content in file /etc/init.d/chef-client from none to fee506
+172.31.49.98     --- /etc/init.d/chef-client	2017-03-01 17:46:03.591834000 +0000
+172.31.49.98     +++ /etc/init.d/.chef-chef-client20170301-4137-3owaj4	2017-03-01 17:46:03.591834000 +0000
+172.31.49.98     @@ -1 +1,204 @@
+172.31.49.98     +#! /bin/sh
+172.31.49.98     +### BEGIN INIT INFO
+172.31.49.98     +# Provides:           chef-client
+172.31.49.98     +# Required-Start:     $remote_fs $network
+172.31.49.98     +# Required-Stop:      $remote_fs $network
+172.31.49.98     +# Default-Start:      2 3 4 5
+172.31.49.98     +# Default-Stop:       0 1 6
+172.31.49.98     +# Short-Description:  Start a chef-client.
+172.31.49.98     +### END INIT INFO
+172.31.49.98     +#
+172.31.49.98     +# Copyright (c) 2009-2010 Chef Software, Inc, <legal@chef.io>
+172.31.49.98     +#
+172.31.49.98     +# chef-client         Startup script for chef-client.
+172.31.49.98     +# chkconfig: - 99 02
+172.31.49.98     +# description: starts up chef-client in daemon mode.
+172.31.49.98     +
+172.31.49.98     +PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+172.31.49.98     +DAEMON=/usr/bin/chef-client
+172.31.49.98     +NAME=chef-client
+172.31.49.98     +DESC=chef-client
+172.31.49.98     +PIDFILE=/var/run/chef/client.pid
+172.31.49.98     +
+172.31.49.98     +test -x $DAEMON || exit 1
+172.31.49.98     +
+172.31.49.98     +. /lib/lsb/init-functions
+172.31.49.98     +
+172.31.49.98     +[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+172.31.49.98     +
+172.31.49.98     +if [ ! -d /var/run/chef ]; then
+172.31.49.98     +  mkdir /var/run/chef
+172.31.49.98     +fi
+172.31.49.98     +
+172.31.49.98     +DAEMON_OPTS="-d -P $PIDFILE -c $CONFIG -i $INTERVAL -s $SPLAY "
+172.31.49.98     +
+172.31.49.98     +running_pid() {
+172.31.49.98     +  pid=$1
+172.31.49.98     +  name=$2
+172.31.49.98     +  [ -z "$pid" ] && return 1
+172.31.49.98     +  [ ! -d /proc/$pid ] &&  return 1
+172.31.49.98     +  cat /proc/$pid/cmdline | tr '\000' ' ' | grep -q "$name"
+172.31.49.98     +}
+172.31.49.98     +
+172.31.49.98     +running() {
+172.31.49.98     +  [ ! -f "$PIDFILE" ] && return 1
+172.31.49.98     +  pid=`cat $PIDFILE`
+172.31.49.98     +  running_pid $pid $DAEMON || return 1
+172.31.49.98     +  return 0
+172.31.49.98     +}
+172.31.49.98     +
+172.31.49.98     +start_server() {
+172.31.49.98     +  if [ -z "$DAEMONUSER" ] ; then
+172.31.49.98     +    start_daemon -p $PIDFILE $DAEMON $DAEMON_OPTS
+172.31.49.98     +  errcode=$?
+172.31.49.98     +  else
+172.31.49.98     +    start-stop-daemon --start --quiet --pidfile $PIDFILE \
+172.31.49.98     +      --chuid $DAEMONUSER \
+172.31.49.98     +      --exec $DAEMON -- $DAEMON_OPTS
+172.31.49.98     +    errcode=$?
+172.31.49.98     +  fi
+172.31.49.98     +  return $errcode
+172.31.49.98     +}
+172.31.49.98     +
+172.31.49.98     +stop_server() {
+172.31.49.98     +   if [ -z "$DAEMONUSER" ] ; then
+172.31.49.98     +     killproc -p $PIDFILE $DAEMON
+172.31.49.98     +     errcode=$?
+172.31.49.98     +   else
+172.31.49.98     +     start-stop-daemon --stop --quiet --pidfile $PIDFILE \
+172.31.49.98     +       --user $DAEMONUSER \
+172.31.49.98     +       --exec $DAEMON
+172.31.49.98     +     errcode=$?
+172.31.49.98     +   fi
+172.31.49.98     +   return $errcode
+172.31.49.98     +}
+172.31.49.98     +
+172.31.49.98     +reload_server() {
+172.31.49.98     +  if [ -z "$DAEMONUSER" ] ; then
+172.31.49.98     +     killproc -p $PIDFILE $DAEMON -HUP
+172.31.49.98     +     errcode=$?
+172.31.49.98     +   else
+172.31.49.98     +     start-stop-daemon --stop --signal HUP --quiet --pidfile $PIDFILE \
+172.31.49.98     +       --user $DAEMONUSER \
+172.31.49.98     +       --exec $DAEMON
+172.31.49.98     +     errcode=$?
+172.31.49.98     +   fi
+172.31.49.98     +   return $errcode
+172.31.49.98     +}
+172.31.49.98     +
+172.31.49.98     +run_server() {
+172.31.49.98     +  if [ -z "$DAEMONUSER" ] ; then
+172.31.49.98     +     killproc -p $PIDFILE $DAEMON -USR1
+172.31.49.98     +     errcode=$?
+172.31.49.98     +   else
+172.31.49.98     +     start-stop-daemon --stop --signal USR1 --quiet --pidfile $PIDFILE \
+172.31.49.98     +       --user $DAEMONUSER \
+172.31.49.98     +       --exec $DAEMON
+172.31.49.98     +     errcode=$?
+172.31.49.98     +   fi
+172.31.49.98     +   return $errcode
+172.31.49.98     +}
+172.31.49.98     +
+172.31.49.98     +force_stop() {
+172.31.49.98     +  [ ! -e "$PIDFILE" ] && return
+172.31.49.98     +  if running ; then
+172.31.49.98     +    /bin/kill -15 $pid
+172.31.49.98     +    sleep "$DIETIME"s
+172.31.49.98     +    if running ; then
+172.31.49.98     +      /bin/kill -9 $pid
+172.31.49.98     +      sleep "$DIETIME"s
+172.31.49.98     +      if running ; then
+172.31.49.98     +        echo "Cannot kill $NAME (pid=$pid)!"
+172.31.49.98     +        exit 1
+172.31.49.98     +      fi
+172.31.49.98     +    fi
+172.31.49.98     +  fi
+172.31.49.98     +  rm -f $PIDFILE
+172.31.49.98     +}
+172.31.49.98     +
+172.31.49.98     +case "$1" in
+172.31.49.98     +  start)
+172.31.49.98     +    log_daemon_msg "Starting $DESC " "$NAME"
+172.31.49.98     +    if running ;  then
+172.31.49.98     +        log_progress_msg "apparently already running"
+172.31.49.98     +        log_end_msg 0
+172.31.49.98     +        exit 0
+172.31.49.98     +    fi
+172.31.49.98     +    if start_server ; then
+172.31.49.98     +        [ -n "$STARTTIME" ] && sleep $STARTTIME # Wait some time
+172.31.49.98     +        if  running ;  then
+172.31.49.98     +            log_end_msg 0
+172.31.49.98     +        else
+172.31.49.98     +            log_end_msg 1
+172.31.49.98     +        fi
+172.31.49.98     +    else
+172.31.49.98     +        log_end_msg 1
+172.31.49.98     +    fi
+172.31.49.98     +    ;;
+172.31.49.98     +  stop)
+172.31.49.98     +    log_daemon_msg "Stopping $DESC" "$NAME"
+172.31.49.98     +    if running ; then
+172.31.49.98     +      errcode=0
+172.31.49.98     +      stop_server || errcode=$?
+172.31.49.98     +      log_end_msg $errcode
+172.31.49.98     +    else
+172.31.49.98     +      log_progress_msg "apparently not running"
+172.31.49.98     +      log_end_msg 0
+172.31.49.98     +      exit 0
+172.31.49.98     +    fi
+172.31.49.98     +    ;;
+172.31.49.98     +  force-stop)
+172.31.49.98     +    $0 stop
+172.31.49.98     +    if running; then
+172.31.49.98     +      log_daemon_msg "Stopping (force) $DESC" "$NAME"
+172.31.49.98     +      errcode=0
+172.31.49.98     +      force_stop || errcode=$?
+172.31.49.98     +      log_end_msg $errcode
+172.31.49.98     +    fi
+172.31.49.98     +    ;;
+172.31.49.98     +  restart|force-reload)
+172.31.49.98     +    log_daemon_msg "Restarting $DESC" "$NAME"
+172.31.49.98     +    errcode=0
+172.31.49.98     +    stop_server || errcode=$?
+172.31.49.98     +    [ -n "$DIETIME" ] && sleep $DIETIME
+172.31.49.98     +    start_server || errcode=$?
+172.31.49.98     +    [ -n "$STARTTIME" ] && sleep $STARTTIME
+172.31.49.98     +    running || errcode=$?
+172.31.49.98     +    log_end_msg $errcode
+172.31.49.98     +    ;;
+172.31.49.98     +  status)
+172.31.49.98     +    log_daemon_msg "Checking status of $DESC" "$NAME"
+172.31.49.98     +    if running ;  then
+172.31.49.98     +      log_progress_msg "running"
+172.31.49.98     +      log_end_msg 0
+172.31.49.98     +    else
+172.31.49.98     +      log_progress_msg "apparently not running"
+172.31.49.98     +      log_end_msg 1
+172.31.49.98     +      exit 3
+172.31.49.98     +    fi
+172.31.49.98     +    ;;
+172.31.49.98     +  reload)
+172.31.49.98     +    if running; then
+172.31.49.98     +      log_daemon_msg "Reloading $DESC" "$NAME"
+172.31.49.98     +      errcode=0
+172.31.49.98     +      reload_server || errcode=$?
+172.31.49.98     +      log_end_msg $errcode
+172.31.49.98     +    fi
+172.31.49.98     +    ;;
+172.31.49.98     +  run)
+172.31.49.98     +    if running; then
+172.31.49.98     +      log_daemon_msg "Triggering run of $DESC" "$NAME"
+172.31.49.98     +      errcode=0
+172.31.49.98     +      run_server || errcode=$?
+172.31.49.98     +      log_end_msg $errcode
+172.31.49.98     +    fi
+172.31.49.98     +    ;;
+172.31.49.98     +  *)
+172.31.49.98     +    N=/etc/init.d/$NAME
+172.31.49.98     +    echo "Usage: $N {start|stop|force-stop|restart|force-reload|status|run}" >&2
+172.31.49.98     +    exit 1
+172.31.49.98     +    ;;
+172.31.49.98     +esac
+172.31.49.98     +
+172.31.49.98     +exit 0[2017-03-01T17:46:03+00:00] INFO: template[/etc/init.d/chef-client] mode changed to 755
+172.31.49.98 
+172.31.49.98     - change mode from '' to '0755'
+172.31.49.98   * template[/etc/default/chef-client] action create[2017-03-01T17:46:03+00:00] INFO: Processing template[/etc/default/chef-client] action create (chef-client::init_service line 26)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: template[/etc/default/chef-client] created file /etc/default/chef-client
+172.31.49.98 
+172.31.49.98     - create new file /etc/default/chef-client[2017-03-01T17:46:03+00:00] INFO: template[/etc/default/chef-client] updated file contents /etc/default/chef-client
+172.31.49.98 
+172.31.49.98     - update content in file /etc/default/chef-client from none to d443f5
+172.31.49.98     --- /etc/default/chef-client	2017-03-01 17:46:03.611834000 +0000
+172.31.49.98     +++ /etc/default/.chef-chef-client20170301-4137-qhqtwh	2017-03-01 17:46:03.611834000 +0000
+172.31.49.98     @@ -1 +1,4 @@
+172.31.49.98     +CONFIG=/etc/chef/client.rb
+172.31.49.98     +INTERVAL=300
+172.31.49.98     +SPLAY=60[2017-03-01T17:46:03+00:00] INFO: template[/etc/default/chef-client] mode changed to 644
+172.31.49.98 
+172.31.49.98     - change mode from '' to '0644'
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: template[/etc/default/chef-client] not queuing delayed action restart on service[chef-client] (delayed), as it's already been queued
+172.31.49.98   * service[chef-client] action enable[2017-03-01T17:46:03+00:00] INFO: Processing service[chef-client] action enable (chef-client::init_service line 32)
+172.31.49.98 [2017-03-01T17:46:03+00:00] INFO: service[chef-client] enabled
+172.31.49.98 
+172.31.49.98     - enable service service[chef-client]
+172.31.49.98   * service[chef-client] action start[2017-03-01T17:46:03+00:00] INFO: Processing service[chef-client] action start (chef-client::init_service line 32)
+172.31.49.98 [2017-03-01T17:46:04+00:00] INFO: service[chef-client] started
+172.31.49.98 
+172.31.49.98     - start service service[chef-client]
+172.31.49.98 Recipe: chef-client::delete_validation
+172.31.49.98   * file[/etc/chef/validation.pem] action delete[2017-03-01T17:46:04+00:00] INFO: Processing file[/etc/chef/validation.pem] action delete (chef-client::delete_validation line 35)
+172.31.49.98  (up to date)
+172.31.49.98 Recipe: learn_chef_apache2::default
+172.31.49.98   * apt_update[Update the apt cache daily] action periodic[2017-03-01T17:46:04+00:00] INFO: Processing apt_update[Update the apt cache daily] action periodic (learn_chef_apache2::default line 6)
+172.31.49.98  (up to date)
+172.31.49.98   * apt_package[apache2] action install[2017-03-01T17:46:04+00:00] INFO: Processing apt_package[apache2] action install (learn_chef_apache2::default line 11)
+172.31.49.98  (up to date)
+172.31.49.98   * service[apache2] action enable[2017-03-01T17:46:04+00:00] INFO: Processing service[apache2] action enable (learn_chef_apache2::default line 13)
+172.31.49.98  (up to date)
+172.31.49.98   * service[apache2] action start[2017-03-01T17:46:04+00:00] INFO: Processing service[apache2] action start (learn_chef_apache2::default line 13)
+172.31.49.98  (up to date)
+172.31.49.98   * group[web_admin] action create[2017-03-01T17:46:04+00:00] INFO: Processing group[web_admin] action create (learn_chef_apache2::default line 18)
+172.31.49.98  (up to date)
+172.31.49.98   * linux_user[web_admin] action create[2017-03-01T17:46:04+00:00] INFO: Processing linux_user[web_admin] action create (learn_chef_apache2::default line 20)
+172.31.49.98  (up to date)
+172.31.49.98   * template[/var/www/html/index.html] action create[2017-03-01T17:46:04+00:00] INFO: Processing template[/var/www/html/index.html] action create (learn_chef_apache2::default line 26)
+172.31.49.98  (up to date)
+172.31.49.98 [2017-03-01T17:46:04+00:00] INFO: template[/etc/init.d/chef-client] sending restart action to service[chef-client] (delayed)
+172.31.49.98 Recipe: chef-client::init_service
+172.31.49.98   * service[chef-client] action restart[2017-03-01T17:46:04+00:00] INFO: Processing service[chef-client] action restart (chef-client::init_service line 32)
+172.31.49.98 [2017-03-01T17:46:05+00:00] INFO: service[chef-client] restarted
+172.31.49.98 
+172.31.49.98     - restart service service[chef-client]
+172.31.49.98 [2017-03-01T17:46:05+00:00] INFO: Chef Run complete in 3.345739534 seconds
+172.31.49.98 
+172.31.49.98 Running handlers:
+172.31.49.98 [2017-03-01T17:46:05+00:00] INFO: Running report handlers
+172.31.49.98 Running handlers complete
+172.31.49.98 [2017-03-01T17:46:05+00:00] INFO: Report handlers complete
+172.31.49.98 Chef Client finished, 9/18 resources updated in 04 seconds
