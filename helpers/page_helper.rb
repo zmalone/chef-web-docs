@@ -159,7 +159,14 @@ module PageHelper
   end
 
   def get_quiz_data(page)
-    page.data.quiz
+    # Look for quiz data in external file first.
+    if page.data.quiz_path
+      require 'yaml'
+      YAML.load_file(page.data.quiz_path)
+    # Otherwise, return inline quiz data.
+    else
+      page.data.quiz
+    end
   end
 
   def get_coasters
