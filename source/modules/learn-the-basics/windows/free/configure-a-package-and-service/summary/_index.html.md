@@ -4,7 +4,7 @@ You saw how to work with the package and service resources. You now know how to 
 
 You also saw how to apply multiple actions. But how does Chef know what order to apply resources and actions?
 
-### Chef works in the order you specify
+#### Chef works in the order you specify
 
 Let's take another quick look at our web server recipe.
 

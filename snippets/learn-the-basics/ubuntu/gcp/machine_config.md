@@ -1,4 +1,4 @@
-This tutorial was last tested using this configuration:
+This module  was last tested using this configuration:
 
 * Ubuntu 14.04 on Google Cloud Platform
   * **Zone:** us-east1-b

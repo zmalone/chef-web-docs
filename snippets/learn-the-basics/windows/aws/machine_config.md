@@ -1,4 +1,4 @@
-This tutorial was last tested using this configuration:
+This module  was last tested using this configuration:
 
 * Microsoft Windows Server 2012 R2 Base on Amazon Web Services
   * **Region:** us-east-1
