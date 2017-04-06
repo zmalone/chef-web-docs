@@ -1,34 +1,42 @@
-import { Directive, ElementRef, OnInit, Input, Renderer } from '@angular/core'
+import { Directive, ElementRef, OnInit, Input, Renderer, AfterViewInit } from '@angular/core'
 import { ModuleFilterService } from '../../services/module-filter.service'
 import { SiteDataService } from '../../services/site-data.service'
 import { ProgressService } from '../../services/progress.service'
+import { Router, NavigationEnd } from '@angular/router'
 
 @Directive({
   selector: '.module-display',
 })
-export class ModuleDisplayDirective implements OnInit {
+export class ModuleDisplayDirective implements OnInit, AfterViewInit {
   @Input()
   module: string
 
   @Input()
   order: number
 
+  @Input()
+  moduleProgressStatus: boolean
+
   constructor(
     private el?: ElementRef,
     private moduleFilter?: ModuleFilterService,
-    private siteDataService?: SiteDataService,
     private progressService?: ProgressService,
     private renderer?: Renderer,
+    private router?: Router,
   ) {
   }
 
   ngOnInit() {
-    if (['profile', 'profile/progress'].indexOf(this.siteDataService.currentPage().id) > -1) {
+    if (this.moduleProgressStatus) {
       this.showUserModuleProgress()
     } else {
       this.filterModulesByTags()
       this.showDefaultModules()
     }
+  }
+
+  ngAfterViewInit(){
+    this.switchProgressTab()
   }
 
   showUserModuleProgress() {
@@ -89,4 +97,15 @@ export class ModuleDisplayDirective implements OnInit {
     })
   }
 
+  switchProgressTab() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        if (event.url.match('progress')) {
+          window.setTimeout(() => {
+            document.getElementById('progressTab').click()
+          }, 1500)
+        }
+      }
+    })
+  }
 }

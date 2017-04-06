@@ -170,4 +170,8 @@ module PageHelper
     ])
   end
 
+  def get_module_progress_status(page)
+    return true if page.url.match('profile')
+  end
+
 end
