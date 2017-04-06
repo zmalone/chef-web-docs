@@ -12,14 +12,14 @@ module SnippetHelpers
     end
   end
 
-  def command_snippet(page: nil, path:, workstation: nil, replace_prompt: nil, features: [:stdin, :stdout], indent_level: 0)
+  def command_snippet(page: nil, path:, workstation: nil, replace_prompt: nil, features: [:stdin, :stdout], indent_level: 0, shell: nil)
     workstation ||= page.data.snippet_workstation if page
     if page
       path = File.join(page.data.snippet_path, path + "-#{workstation}")
     else
       path = path + "-#{workstation}"
     end
-    render_snippet(path, indent_level) do |_metadata|
+    render_snippet(path, indent_level, shell) do |_metadata|
       [*features].map do |feature|
         content = IO.read(File.join('snippets', path, feature.to_s))
         if [:stdin, :exitstatus].include?(feature) && (replace_prompt || (page && page.data.replace_prompt))
@@ -31,27 +31,34 @@ module SnippetHelpers
     end
   end
 
-  def code_snippet(page: nil, path:, indent_level: 0)
+  def code_snippet(page: nil, path:, indent_level: 0, language: nil)
     path = File.join(page.data.snippet_path, path) if page
 
-    render_snippet(path, indent_level) do |metadata|
+    render_snippet(path, indent_level, language) do |metadata|
       IO.read(File.join('snippets', path, metadata[:file]))
     end
   end
 
   private
 
-  def render_snippet(path, indent_level, &block)
+  def render_snippet(path, indent_level, override_language, &block)
     begin
       snippet_path = File.join('snippets', path)
       metadata = load_metadata(snippet_path)
 
-      language = metadata[:language]
+      language = override_language || metadata[:language]
       path = commentize_path(metadata[:display_path], language)
       body = yield metadata
       body += "\n" unless body.end_with? "\n"
 
-      concat "#{"  " * indent_level}```#{language}\n#{path}\n#{body}```"
+
+      case language
+      when 'php'
+        concat "#{"  " * indent_level}```#{language}\n#{body}```".split("\n").insert(2, path).join("\n")
+        #sub("<?php\n", "<?php\n#{path}\n")
+      else
+        concat "#{"  " * indent_level}```#{language}\n#{path}\n#{body}```"
+      end
     rescue Exception => e
       if deploy?
         raise e
@@ -71,6 +78,8 @@ module SnippetHelpers
       '-- ' + path
     when 'plaintext'
       ''
+    when 'php'
+      '// ' + path
     end
   end
 

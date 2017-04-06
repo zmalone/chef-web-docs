@@ -1,0 +1,95 @@
+---
+title: 'Configure PHP'
+order: 5
+keywords: TODO
+time_to_complete: 25 minutes
+snippet_path: create-a-web-app-cookbook/ubuntu/vagrant/configure-php-ubuntu-vagrant
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Install PHP', href: '#step1' },
+  { label: '2. Apply the configuration', href: '#step2' }
+]
+---
+In this part, you'll configure Apache to run PHP code. To configure PHP, you're going to install the `mod_php5` Apache module, which enables Apache to interpret PHP files. You'll also install the native `php5-mysql` package, which enables PHP code to connect to MySQL databases.
+
+<img src="/assets/images/misc/lamp-stack-p.svg" style="width: 300px; box-shadow: none;"/>
+
+You've done most of the ground work already &ndash; you've already set up Apache using the `httpd` cookbook. The `httpd` cookbok contains the `httpd_module` as an easy way to install `mod_php5` and other Apache modules.
+
+[START_BOX]
+
+## 1. Install PHP
+
+Recall that your `web` recipe looks like this.
+
+
+
+<% code_snippet(page: current_page, path: 'install-php-ubuntu-vagrant/recipe-web-ubuntu-vagrant-3') %>
+
+The `httpd` cookbook defines the `httpd_module` resource, which installs Apache modules. In <% fp 'web.rb' %>, append this `httpd_module` resource to install the `mod_php5` Apache module.
+
+
+
+<% code_snippet(page: current_page, path: 'install-php-ubuntu-vagrant/recipe-web-ubuntu-vagrant-4') %>
+
+Now append a `package` resource to install `php5-mysql`.
+
+
+
+<% code_snippet(page: current_page, path: 'install-php-ubuntu-vagrant/recipe-web-ubuntu-vagrant-5') %>
+
+The entire file looks like this.
+
+
+
+<% code_snippet(page: current_page, path: 'install-php-ubuntu-vagrant/recipe-web-ubuntu-vagrant-6') %>
+
+Apache needs to be restarted to enable PHP to use the `php5-mysql` package. To do that, we use the [notifies](https://docs.chef.io/resource_common.html#notifications) attribute. The `notifies` attribute performs the `:restart` action on the `httpd-default` service. But it does so only when it needs to; that is, only when the `package` resource actually performs the `:install` action.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Apply the configuration
+
+Let's apply the configuration and verify it.
+
+Run `kitchen converge` to apply the `lamp` cookbook.
+
+
+
+<% command_snippet(page: current_page, path: 'apply-the-php-configuration-ubuntu-vagrant/kitchen-converge-ubuntu-vagrant-4') %>
+
+You see that `chef-client` completed successfully. You haven't added any PHP content to the site yet, so navigating to your site will result in the same directory listing you saw earlier. You'll add content to your site in the next part.
+
+In practice, you might write additional InSpec tests to verify that Apache is configured to serve PHP content. For brevity, we'll skip those tests for now.
+
+This completes the `lamp` cookbook, but there's one more step to perform. For good measure, it's recommended that you apply your final configuration on a clean instance. This will help ensure that your final configuration is good, and not the result of any experimentation or intermediate steps you performed along the way.
+
+To do a complete Test Kitchen run, you can use the `kitchen test` command. This command:
+
+1. destroys any existing instances (`kitchen destroy`).
+1. brings up a new instance (`kitchen create`).
+1. runs `chef-client` on your instance (`kitchen converge`).
+1. runs InSpec tests (`kitchen verify`).
+1. destroys the instance (`kitchen destroy`).
+
+
+
+<% command_snippet(page: current_page, path: 'apply-the-php-configuration-ubuntu-vagrant/kitchen-test-ubuntu-vagrant-1') %>
+
+In this example, it took just a few minutes to bring up a clean instance, apply the configuration, run the InSpec tests, and clean up.
+
+If you use an automation platform such as [Chef Automate](https://www.chef.io/automate/) to deliver changes to your infrastructure, running `kitchen test` is a great way to verify new features because it ensures that any compute resources are automatically cleaned up as your change moves through the pipeline.
+
+Congratulations. You've successfully set up a LAMP stack using Chef!
+
+<img src="/assets/images/misc/lamp-stack-all.svg" style="width: 300px; box-shadow: none;"/>
+
+[END_BOX]
+
+<% next_page(current_page) do %>
+
+Next, you'll see the `lamp` cookbook in action by creating a second cookbook called `lamp_customers` that configures the Customers web application.
+
+<% end %>

@@ -1,1 +1,0 @@
-Now that you're all set up, let's get a hang for how Test Kitchen works by writing a cookbook that creates a basic settings file and then using Test Kitchen to apply that cookbook to a Windows Server 2012 R2 virtual machine.
