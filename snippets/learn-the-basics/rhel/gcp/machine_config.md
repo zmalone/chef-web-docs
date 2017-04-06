@@ -1,4 +1,4 @@
-This tutorial was last tested using this configuration:
+This module  was last tested using this configuration:
 
 * CentOS 7 on Google Compute Engine
   * **Zone:** us-east1-b

@@ -1,4 +1,4 @@
-This tutorial was last tested using this configuration:
+This module  was last tested using this configuration:
 
 * CentOS 7 on Amazon Web Services
   * Region: us-east-1

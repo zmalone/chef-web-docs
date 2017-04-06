@@ -1,4 +1,4 @@
-This tutorial was last tested using this configuration:
+This module  was last tested using this configuration:
 
 * Chef Automate 0.6.136 on Ubuntu 14.04 on Amazon Web Services
   * **Region:** us-east-1

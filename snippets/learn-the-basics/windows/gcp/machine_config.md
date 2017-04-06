@@ -1,4 +1,4 @@
-This tutorial was last tested using this configuration:
+This module  was last tested using this configuration:
 
 * Windows Server 2012 R2 on Google Compute Engine
   * **Zone:** us-east1-b

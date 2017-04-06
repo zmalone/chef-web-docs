@@ -1,4 +1,4 @@
-This tutorial was last tested using this configuration:
+This module  was last tested using this configuration:
 
 * AWS OpsWorks for Chef Automate  12.11.1
   * **Region:** us-east-1
