@@ -170,30 +170,34 @@ module PageHelper
     ])
   end
 
-  def social_twitter_share(url, key)
+  def social_twitter_share(key)
     social_data = data['social_share']['twitter']
     sharer_url = social_data['sharer_url']
-    content = social_data[key].chomp
-    "#{sharer_url}?text=#{content}&url=#{canonical_url(url)}"
+    content = social_data.try(key).try('post').try(&:chomp)
+    "#{sharer_url}?text=#{content}&url=#{canonical_url(key)}"
   end
 
-  def social_facebook_share(url, key)
+  def social_facebook_share(key)
     social_data = data['social_share']['facebook']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?&u=#{canonical_url(url)}"
+    "#{sharer_url}?&u=#{canonical_url(key)}"
   end
 
-  def social_google_plus_share(url)
+  def social_google_plus_share(key)
     social_data = data['social_share']['google_plus']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?url=#{canonical_url(url)}"
+    "#{sharer_url}?url=#{canonical_url(key)}"
   end
 
-  def social_linkedin_share(url, key)
+  def social_linkedin_share(key)
     social_data = data['social_share']['linkedin']
     sharer_url = social_data['sharer_url']
-    title = social_data["#{key}_title"].chomp
-    summary = social_data[key].chomp
-    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(url)}"
+    title = social_data.try(key).try('title').try(&:chomp)
+    summary = social_data.try(key).try('post').try(&:chomp)
+    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(key)}"
+  end
+
+  def meta_og(key, type)
+    data['social_share']['facebook'].try(key).try(type)
   end
 end
