@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core'
 import { Angular2TokenService } from 'angular2-token'
 import { UserProfileService } from './services/user-profile.service'
 import { ProgressService } from './services/progress.service'
 import { User } from './model/user'
+import { Router, NavigationEnd } from '@angular/router'
 
 const pageTemplate = (window as any).mainTemplate || '<div>No template found for app-root!</div>'
 
@@ -10,7 +11,7 @@ const pageTemplate = (window as any).mainTemplate || '<div>No template found for
   selector: 'app-root',
   template: pageTemplate,
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   private isSignedIn = false
   public userInfo: User
 
@@ -18,6 +19,8 @@ export class AppComponent implements OnInit {
     private _tokenService: Angular2TokenService,
     private userProfileService: UserProfileService,
     private progressService: ProgressService,
+    private router: Router,
+    private el: ElementRef,
   ) {
 
     this._tokenService.init({
@@ -41,6 +44,18 @@ export class AppComponent implements OnInit {
     })
     this.userProfileService.userProfile.subscribe(user => {
       this.userInfo = user
+    })
+  }
+
+  ngAfterViewInit() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        if (event.url.match('progress')) {
+            setTimeout(() => {
+              this.el.nativeElement.querySelector('#progressTab').click()
+            }, 0)
+        }
+      }
     })
   }
 

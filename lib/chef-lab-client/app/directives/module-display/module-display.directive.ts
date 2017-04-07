@@ -1,13 +1,11 @@
-import { Directive, ElementRef, OnInit, Input, Renderer, AfterViewInit } from '@angular/core'
+import { Directive, ElementRef, OnInit, Input, Renderer } from '@angular/core'
 import { ModuleFilterService } from '../../services/module-filter.service'
-import { SiteDataService } from '../../services/site-data.service'
 import { ProgressService } from '../../services/progress.service'
-import { Router, NavigationEnd } from '@angular/router'
 
 @Directive({
   selector: '.module-display',
 })
-export class ModuleDisplayDirective implements OnInit, AfterViewInit {
+export class ModuleDisplayDirective implements OnInit {
   @Input()
   module: string
 
@@ -22,7 +20,6 @@ export class ModuleDisplayDirective implements OnInit, AfterViewInit {
     private moduleFilter?: ModuleFilterService,
     private progressService?: ProgressService,
     private renderer?: Renderer,
-    private router?: Router,
   ) {
   }
 
@@ -33,10 +30,6 @@ export class ModuleDisplayDirective implements OnInit, AfterViewInit {
       this.filterModulesByTags()
       this.showDefaultModules()
     }
-  }
-
-  ngAfterViewInit(){
-    this.switchProgressTab()
   }
 
   showUserModuleProgress() {
@@ -97,15 +90,4 @@ export class ModuleDisplayDirective implements OnInit, AfterViewInit {
     })
   }
 
-  switchProgressTab() {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        if (event.url.match('progress')) {
-          window.setTimeout(() => {
-            document.getElementById('progressTab').click()
-          }, 1500)
-        }
-      }
-    })
-  }
 }
