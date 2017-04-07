@@ -36,6 +36,7 @@ import { TrackDisplayService } from './services/track-display.service'
 import { TrackDisplayDirective } from './directives/track-display/track-display.directive'
 import { TrackStartTextDirective } from './directives/track-start-text/track-start-text.directive'
 import { LoadTrackBtnDirective } from './directives/load-track-btn/load-track-btn.directive'
+import { ChefLabProvisionerDirective } from './directives/chef-lab-provisioner/chef-lab-provisioner.directive'
 
 import { Component } from '@angular/core'
 
@@ -76,6 +77,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     TrackDisplayDirective,
     TrackStartTextDirective,
     LoadTrackBtnDirective,
+    ChefLabProvisionerDirective,
     UserProfileLinkComponent,
   ],
   imports: [
