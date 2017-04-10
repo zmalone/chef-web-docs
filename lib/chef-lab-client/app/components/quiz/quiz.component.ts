@@ -39,7 +39,6 @@ export class QuizComponent implements OnInit {
     const enableSpecialCoaster = !localStorage.getItem('shownSpecialCoaster')
 
     this.userProfileService.isAuthenticated().subscribe(isSignedIn => {
-      console.log('isSignedIn', isSignedIn)
       // this.progressService.activeUserProgress.unsubscribe()
       this.progressService.activeUserProgress.subscribe(() => {
         const moduleId = this.progressService.getModuleRoot(this.siteDataService.currentPage().id)

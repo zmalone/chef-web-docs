@@ -18,6 +18,7 @@ import { UserProfileService } from './services/user-profile.service'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
 import { UserProgressStampComponent } from './components/user-progress-stamp/user-progress-stamp.component'
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
+import { UserProgressCountsComponent } from './components/user-progress-counts/user-progress-counts.component'
 import { UserCoastersComponent } from './components/user-coasters/user-coasters.component'
 import { QuizComponent } from './components/quiz/quiz.component'
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
@@ -36,6 +37,7 @@ import { TrackDisplayService } from './services/track-display.service'
 import { TrackDisplayDirective } from './directives/track-display/track-display.directive'
 import { TrackStartTextDirective } from './directives/track-start-text/track-start-text.directive'
 import { LoadTrackBtnDirective } from './directives/load-track-btn/load-track-btn.directive'
+import { ChefLabProvisionerDirective } from './directives/chef-lab-provisioner/chef-lab-provisioner.directive'
 
 import { Component } from '@angular/core'
 
@@ -64,6 +66,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     UserProgressBarComponent,
     UserProgressStampComponent,
     UserTrackProgressComponent,
+    UserProgressCountsComponent,
     UserCoastersComponent,
     QuizComponent,
     LoginTwitterDirective,
@@ -76,6 +79,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     TrackDisplayDirective,
     TrackStartTextDirective,
     LoadTrackBtnDirective,
+    ChefLabProvisionerDirective,
     UserProfileLinkComponent,
   ],
   imports: [

@@ -297,6 +297,18 @@ export class ProgressService {
     }
   }
 
+  public getProgressCounts() {
+    const userData = this.getUserProgressData('modules')
+    return Object.keys(userData).reduce((previous, key) => {
+      if (userData[key].completed_at) {
+        previous.numCompleted += 1
+      } else if (userData[key].started_at) {
+        previous.numStarted += 1
+      }
+      return previous
+    }, { numStarted: 0, numCompleted: 0 })
+  }
+
   private updateField(learningType: LearningType, pageId: string, fieldValues: object) {
     const dataLocal = this.activeUserProgress.getValue()
 
