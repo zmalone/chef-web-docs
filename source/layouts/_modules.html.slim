@@ -1,12 +1,14 @@
 .modules-section
   .row
+    - if defined?(showUserCounts)
+      user-progress-counts
     - modules.children.each_with_index do |item, index|
       - tags = item.page.data.tags.to_json.tr '"', "'"
       div moduleProgressStatus= "#{get_module_progress_status(current_page)}" order= "#{index}" module="#{item.id}" class="module-tile large-3 medium-4 small-12 columns module-display #{get_tag_classes(item.page.data.tags)}" data-tags="#{tags}"
         div class="module-card"
           a href="#{item.page.url}"
             .header
-              span
+              span.title
                 = item.page.data.title
               span.time
                 = format_time(item.remaining)
@@ -15,10 +17,10 @@
               = item.page.data.description
             - if item.page.data.tags
               ul.links
-               - item.page.data.tags.each do |tag|
+                - item.page.data.tags.each do |tag|
                   li
                     a href=""
-                     = tag
+                      = tag
             user-progress-stamp module="#{item.id}"
             .module-overlay
               a.button.btn.btn-secondary.user-start-btn href="#{item.page.url}" module="#{item.id}" Start
