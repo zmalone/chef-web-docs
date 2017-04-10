@@ -163,7 +163,7 @@ module ZurbFoundation
     content.gsub!('<p><h', '<h') # A paragraph shouldn't be opened right before a heading tag
     content.gsub!('</div></p>', '</p></div>') # The page_nav_helpers.rb next_page helper results in invalid closing tag order
     in_paragraph = false
-    content.gsub!(/<(\/)?(p|P)[^>]*>/) { |match|
+    content.gsub!(/<(\/)?(p|P)([\s]+[^>]*)*>/) { |match|
       # Remove closing </p> tags if we're NOT in a paragraph, and opening <p> tags if we ARE in a paragraph
       next '' if in_paragraph ^ $1
       in_paragraph = !$1
