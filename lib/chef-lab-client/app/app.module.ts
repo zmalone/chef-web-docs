@@ -18,6 +18,7 @@ import { UserProfileService } from './services/user-profile.service'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
 import { UserProgressStampComponent } from './components/user-progress-stamp/user-progress-stamp.component'
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
+import { UserProgressCountsComponent } from './components/user-progress-counts/user-progress-counts.component'
 import { UserCoastersComponent } from './components/user-coasters/user-coasters.component'
 import { QuizComponent } from './components/quiz/quiz.component'
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
@@ -65,6 +66,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     UserProgressBarComponent,
     UserProgressStampComponent,
     UserTrackProgressComponent,
+    UserProgressCountsComponent,
     UserCoastersComponent,
     QuizComponent,
     LoginTwitterDirective,
