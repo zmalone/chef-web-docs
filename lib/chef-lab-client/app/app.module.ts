@@ -14,6 +14,7 @@ import { LoginGoogleDirective } from './directives/login-google/login-google.dir
 import { UserStartBtnDirective } from './directives/user-start-btn/user-start-btn.directive'
 import { ModuleNextBtnDirective } from './directives/module-next-btn/module-next-btn.directive'
 import { CheckBoxDirective } from './directives/check-box/check-box.directive'
+import { TabsDirective } from './directives/tabs/tabs.directive'
 import { UserProfileService } from './services/user-profile.service'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
 import { UserProgressStampComponent } from './components/user-progress-stamp/user-progress-stamp.component'
@@ -63,6 +64,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     UserStartBtnDirective,
     ModuleNextBtnDirective,
     CheckBoxDirective,
+    TabsDirective,
     UserProgressBarComponent,
     UserProgressStampComponent,
     UserTrackProgressComponent,

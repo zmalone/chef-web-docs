@@ -170,6 +170,10 @@ module PageHelper
     ])
   end
 
+  def get_module_progress_status(page)
+    return true if page.url.match('profile')
+  end
+
   def social_twitter_share(key)
     social_data = data['social_share']['twitter']
     sharer_url = social_data['sharer_url']

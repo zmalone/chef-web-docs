@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, ElementRef } from '@angular/core'
 import { Angular2TokenService } from 'angular2-token'
 import { UserProfileService } from './services/user-profile.service'
 import { ProgressService } from './services/progress.service'
@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
     private _tokenService: Angular2TokenService,
     private userProfileService: UserProfileService,
     private progressService: ProgressService,
+    private el: ElementRef,
   ) {
 
     this._tokenService.init({
