@@ -177,4 +177,38 @@ module PageHelper
     ])
   end
 
+  def get_module_progress_status(page)
+    return true if page.url.match('profile')
+  end
+
+  def social_twitter_share(key)
+    social_data = data['social_share']['twitter']
+    sharer_url = social_data['sharer_url']
+    content = social_data.try(key).try('post').try(&:chomp)
+    "#{sharer_url}?text=#{content}&url=#{canonical_url(key)}"
+  end
+
+  def social_facebook_share(key)
+    social_data = data['social_share']['facebook']
+    sharer_url = social_data['sharer_url']
+    "#{sharer_url}?&u=#{canonical_url(key)}"
+  end
+
+  def social_google_plus_share(key)
+    social_data = data['social_share']['google_plus']
+    sharer_url = social_data['sharer_url']
+    "#{sharer_url}?url=#{canonical_url(key)}"
+  end
+
+  def social_linkedin_share(key)
+    social_data = data['social_share']['linkedin']
+    sharer_url = social_data['sharer_url']
+    title = social_data.try(key).try('title').try(&:chomp)
+    summary = social_data.try(key).try('post').try(&:chomp)
+    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(key)}"
+  end
+
+  def meta_og(key, type)
+    data['social_share']['facebook'].try(key).try(type)
+  end
 end

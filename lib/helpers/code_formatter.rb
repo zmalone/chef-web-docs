@@ -10,7 +10,7 @@ module Middleman
         def render(lexed_code, highlighter_options, style_options = {})
           highlighter_options.merge!(:line_numbers => true)
           lexed_code, filepath, has_filepath = extract_filepath_if_present(@token_offset, lexed_code)
-          formatter = Rouge::Formatters::HTML.new(highlighter_options)
+          formatter = Rouge::Formatters::HTMLLegacy.new(highlighter_options)
           inner_content = pygments_wrap formatter.format(has_filepath ? lexed_code[@strip_offset..-1] : lexed_code).strip, highlighter_options[:css_class]
           source_window inner_content, 'Editor: ' + filepath, style_options[:window_style]
         end
