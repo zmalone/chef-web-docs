@@ -153,7 +153,7 @@ module ZurbFoundation
     # TODO: Review this and determine if additional rules are necessary, or if there is an alternative to this.
     content.gsub!('{', "[OPENINGCURLY]")
     content.gsub!('}', "{{ '}' }}")
-    content.gsub!('[OPENINGCURLY]', "{{ '{' }})")
+    content.gsub!('[OPENINGCURLY]', "{{ '{' }}")
     content.gsub!(/<p><hr\s?\/?><\/p>/, '<hr>')
     content.gsub!(/<script[^>]*>[^<]*<\/script>/, '')
     content.gsub!('<p/>', '')
