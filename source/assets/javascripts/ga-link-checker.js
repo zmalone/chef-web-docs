@@ -28,7 +28,7 @@ var addOutboundLinkTracking = function() {
     }
 
     if (isOutboundLink(linkURL)) {
-      $link.attr("onclick", "trackOutboundLink('" + linkURL + "'); return false;");
+      $link.attr("onclick", "trackOutboundLink('" + linkURL + "', true);");
     }
   });
 };
