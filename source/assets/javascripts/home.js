@@ -58,4 +58,20 @@ $('.close-video-modal').on('click', function() {
   $('#videoContainer').html('')
   $('#videoModal').foundation('reveal', 'close');
   return false;
+})
+
+$('a.ic-share').click(function() {
+  var social_sharers = {
+    google: 'https://plus.google.com/share?url=',
+    facebook: 'https://www.facebook.com/sharer/sharer.php?u=',
+    twitter: 'https://twitter.com/intent/tweet?text=&url=',
+    linkedin: 'https://www.linkedin.com/shareArticle?mini=true&title=&summary=&url='
+  }
+  var page_key = $(this).attr('href');
+
+  $.each( social_sharers, function( key, value ) {
+    $('#socialShare .modal-body p.social').append('<a class="fa fa-'+
+      key+'" href="'+value+page_key+'" target="_blank" />');
+  });
+  $('#socialShare').foundation('reveal', 'open');
 });
