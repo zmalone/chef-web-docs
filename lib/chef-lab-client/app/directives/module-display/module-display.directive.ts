@@ -1,6 +1,5 @@
 import { Directive, ElementRef, OnInit, Input, Renderer } from '@angular/core'
 import { ModuleFilterService } from '../../services/module-filter.service'
-import { SiteDataService } from '../../services/site-data.service'
 import { ProgressService } from '../../services/progress.service'
 
 @Directive({
@@ -13,21 +12,23 @@ export class ModuleDisplayDirective implements OnInit {
   @Input()
   order: number
 
+  @Input()
+  moduleProgressStatus: boolean
+
   constructor(
     private el?: ElementRef,
     private moduleFilter?: ModuleFilterService,
-    private siteDataService?: SiteDataService,
     private progressService?: ProgressService,
     private renderer?: Renderer,
   ) {
   }
 
   ngOnInit() {
-    if (this.siteDataService.currentPage().id !== 'profile') {
+    if (this.moduleProgressStatus) {
+      this.showUserModuleProgress()
+    } else {
       this.filterModulesByTags()
       this.showDefaultModules()
-    } else {
-      this.showUserModuleProgress()
     }
   }
 
