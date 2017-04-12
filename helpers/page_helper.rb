@@ -184,7 +184,7 @@ module PageHelper
   def social_facebook_share(key)
     social_data = data['social_share']['facebook']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?&u=#{canonical_url(key)}"
+    "#{sharer_url}?u=#{canonical_url(key)}"
   end
 
   def social_google_plus_share(key)
