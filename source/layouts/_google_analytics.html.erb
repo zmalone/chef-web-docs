@@ -10,12 +10,17 @@
   ga('require', 'displayfeatures');
   ga('send', 'pageview');
 
-  var trackOutboundLink = function(url) {
-     ga('send', 'event', 'outbound', 'click', url, {'hitCallback':
-       function () {
-       document.location = url;
-       }
-     });
+  var trackOutboundLink = function(url, isExternal) {
+    var params = {};
+
+    if (!isExternal) {
+      params.hitCallback = function () {
+        document.location = url;
+      }
+    }
+    ga('send', 'event', 'outbound', 'click', url, params);
+
+    return isExternal;
   };
 </script>
 <!-- End Google Analytics -->
