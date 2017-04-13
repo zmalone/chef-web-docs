@@ -123,7 +123,7 @@ module PageHelper
   def flatten_tree(tree)
     data = {}
     data[tree.id] = {}
-    data[tree.id][:url] = tree.page.url
+    data[tree.id][:url] = tree.page.url if tree.page
 
     # Copy over most of the keys, except the certain keys, i.e. the page object, or the children
     tree.keys.reject { |key|
