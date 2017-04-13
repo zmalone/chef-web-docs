@@ -11,7 +11,7 @@ category: Admin
 order: -1
 modules:
 - learn-the-basics
-- manage-a-node
+- manage-a-node-chef-server
 - local-development
 - beyond-essentials
 video_url: 'https://player.vimeo.com/video/211382045'
