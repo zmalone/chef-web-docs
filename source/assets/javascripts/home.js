@@ -61,17 +61,15 @@ $('.close-video-modal').on('click', function() {
 })
 
 $('a.ic-share').click(function() {
-  var social_sharers = {
-    google: 'https://plus.google.com/share?url=',
-    facebook: 'https://www.facebook.com/sharer/sharer.php?u=',
-    twitter: 'https://twitter.com/intent/tweet?text=&url=',
-    linkedin: 'https://www.linkedin.com/shareArticle?mini=true&title=&summary=&url='
-  }
-  var page_key = $(this).attr('href');
-
+  var social_sharers = ['google', 'facebook', 'twitter', 'linkedin'];
+  $('#socialShare .modal-body p.social').empty(); //clear modal body contents
+  var event_obj = $(this);
   $.each( social_sharers, function( key, value ) {
+    var page_key = event_obj.data(value);
+    $(this).attr("#data-id")
+
     $('#socialShare .modal-body p.social').append('<a class="fa fa-'+
-      key+'" href="'+value+page_key+'" target="_blank" />');
+      value+'" href="'+page_key+'" target="_blank" />');
   });
   $('#socialShare').foundation('reveal', 'open');
 });
