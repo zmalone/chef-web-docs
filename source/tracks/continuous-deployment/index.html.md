@@ -12,5 +12,5 @@ modules:
 - getting-started
 - develop-locally
 - learn-the-basics
-- manage-a-node
+- manage-a-node-chef-automate
 ---
