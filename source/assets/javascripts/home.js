@@ -61,15 +61,14 @@ $('.close-video-modal').on('click', function() {
 })
 
 $('a.ic-share').click(function() {
-  var social_sharers = ['google', 'facebook', 'twitter', 'linkedin'];
-  $('#socialShare .modal-body p.social').empty(); //clear modal body contents
-  var event_obj = $(this);
-  $.each( social_sharers, function( key, value ) {
-    var page_key = event_obj.data(value);
-    $(this).attr("#data-id")
+  var social_sharers = $(this).data();
+  delete social_sharers['revealId'];
 
+  $('#socialShare .modal-body p.social').empty();
+
+  $.each( social_sharers, function( key, value ) {
     $('#socialShare .modal-body p.social').append('<a class="fa fa-'+
-      value+'" href="'+page_key+'" target="_blank" />');
+      key+'" href="'+value+'" target="_blank" />');
   });
   $('#socialShare').foundation('reveal', 'open');
 });
