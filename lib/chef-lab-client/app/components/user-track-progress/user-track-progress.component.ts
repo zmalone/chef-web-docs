@@ -8,7 +8,6 @@ import { ProgressService } from '../../services/progress.service'
 })
 export class UserTrackProgressComponent implements OnInit {
   public modules: Array<Boolean>
-  public trackData
 
   @Input()
   track: string
@@ -19,8 +18,8 @@ export class UserTrackProgressComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.trackData = this.siteDataService.dataTree().tracks[this.track]
-    const modules = this.trackData && this.trackData.modules || []
+    const trackData = this.siteDataService.dataTree().tracks[this.track]
+    const modules = trackData && trackData.modules || []
     this.progressService.activeUserProgress.subscribe((active) => {
       this.modules = modules.map(module => {
         return this.progressService.isComplete('modules', module)
