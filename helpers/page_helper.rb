@@ -70,6 +70,7 @@ module PageHelper
         parent = get_module_by_id(module_obj.parent)
         if parent && parent.parent && parent.is_fork
           breadcrumbs.unshift(Hashie::Mash.new({
+            page: module_obj.page,
             title: module_obj.page.data.short_title || module_obj.page.data.title,
             options: parent.children.map { |child| child.page }
           }))
@@ -84,14 +85,18 @@ module PageHelper
       get_module_by_id(module_id).page
     end
     breadcrumbs.unshift(Hashie::Mash.new({
+      page: track.page,
       title: module_obj ? module_obj.page.data.short_title || module_obj.page.data.title : 'Select One',
       options: options
     }))
 
     # Label the breadcrumbs, in forward order
-    labels = ['Modules', 'Server Environment', 'Chef Server Environment']
-    breadcrumbs.each do |breadcrumb|
-      breadcrumb.label = labels.shift
+    default_labels = ['Modules', 'Server Platform', 'Chef Server Environment']
+    breadcrumbs.each_with_index do |breadcrumb, index|
+      if breadcrumbs[index - 1] && breadcrumbs[index - 1].page && breadcrumbs[index - 1].page.data
+        breadcrumb.label = breadcrumbs[index - 1].page.data.breadcrumb_label
+      end
+      breadcrumb.label = default_labels.shift unless breadcrumb.label
     end
 
     breadcrumbs
@@ -122,7 +127,7 @@ module PageHelper
   def flatten_tree(tree)
     data = {}
     data[tree.id] = {}
-    data[tree.id][:url] = tree.page.url
+    data[tree.id][:url] = tree.page.url if tree.page
 
     # Copy over most of the keys, except the certain keys, i.e. the page object, or the children
     tree.keys.reject { |key|

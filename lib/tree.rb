@@ -40,7 +40,7 @@ class Tree < ::Middleman::Extension
     FileUtils.mkdir_p(app.config[:data_dir])
 
     # Build a hash of our directory information
-    @tree_hash = scan_directory(app.config[:source], options)
+    @tree_hash = scan_directory(app.source_dir, options)
     write_yml('tree.yml', @tree_hash)
   end
 
@@ -84,6 +84,7 @@ class Tree < ::Middleman::Extension
   end
 
   def process_tree(file_tree, parent = nil)
+    file_tree ||= {}
     data = Hashie::Mash.new
     file_and_folders = file_tree.keys
     folders = file_and_folders.reject { |key| key =~ /\./ }
@@ -91,11 +92,11 @@ class Tree < ::Middleman::Extension
 
     if file
       # Make sure the extension path ends with .html
-      filename = @app.sitemap.extensionless_path(file_tree[file])
+      filename = app.sitemap.extensionless_path(file_tree[file])
       unless filename.end_with? ".html"
         filename << ".html"
       end
-      page = @app.sitemap.find_resource_by_path(filename)
+      page = app.sitemap.find_resource_by_path(filename)
       page_id = page.id
       data.id = page_id
       data.page = page
@@ -185,7 +186,7 @@ class Tree < ::Middleman::Extension
           next unless options.ext_whitelist.include? File.extname(filename)
         end
 
-        original_path = path.sub(/^#{app.config[:source]}/, '') + '/' + filename
+        original_path = path.to_s.sub(/^#{app.source_dir}/, '') + '/' + filename
         data.store(filename.gsub(' ', '%20'), original_path.gsub(' ', '%20'))
       end
     end
