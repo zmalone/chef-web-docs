@@ -1,5 +1,9 @@
 module PageHelper
 
+  def home_page
+    sitemap.find_resource_by_path("index.html")
+  end
+
   def find_next_page(page)
     module_obj = get_module_by_id(page.id)
     return unless module_obj
@@ -179,34 +183,37 @@ module PageHelper
     return true if page.url.match('profile')
   end
 
-  def social_twitter_share(key)
+  def social_twitter_share(page)
     social_data = data['social_share']['twitter']
     sharer_url = social_data['sharer_url']
-    content = social_data.try(key).try('post').try(&:chomp)
-    "#{sharer_url}?text=#{content}&url=#{canonical_url(key)}"
+    content = page.data.social_share.try(&:twitter).try(&:post) ||
+              page.data.social_share.try(&:post) ||
+              truncate(page.data.description, length: 140)
+    "#{sharer_url}?text=#{content}&url=#{canonical_url(page.url)}"
   end
 
-  def social_facebook_share(key)
+  def social_facebook_share(page)
     social_data = data['social_share']['facebook']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?u=#{canonical_url(key)}"
+    "#{sharer_url}?u=#{canonical_url(page.url)}"
   end
 
-  def social_google_plus_share(key)
+  def social_google_plus_share(page)
     social_data = data['social_share']['google_plus']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?url=#{canonical_url(key)}"
+    "#{sharer_url}?url=#{canonical_url(page.url)}"
   end
 
-  def social_linkedin_share(key)
+  def social_linkedin_share(page)
     social_data = data['social_share']['linkedin']
     sharer_url = social_data['sharer_url']
-    title = social_data.try(key).try('title').try(&:chomp)
-    summary = social_data.try(key).try('post').try(&:chomp)
-    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(key)}"
+    title = page.data.social_share.try(&:linkedin).try(&:title) || page.data.title
+    summary = page.data.social_share.try(&:linkedin).try(&:post) || page.data.description
+    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(page.url)}"
   end
 
-  def meta_og(key, type)
-    data['social_share']['facebook'].try(key).try(type)
+  def meta_og(page, type)
+    page.data.try(&:social_share).try(&:facebook).try(type) ||
+    page.data.try(&:social_share).try(&:shared).try("#{type}")
   end
 end

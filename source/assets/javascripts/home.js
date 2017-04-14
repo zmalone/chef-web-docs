@@ -58,4 +58,17 @@ $('.close-video-modal').on('click', function() {
   $('#videoContainer').html('')
   $('#videoModal').foundation('reveal', 'close');
   return false;
+})
+
+$('a.ic-share').click(function() {
+  var social_sharers = $(this).data();
+  delete social_sharers['revealId'];
+
+  $('#socialShare .modal-body p.social').empty();
+
+  $.each( social_sharers, function( key, value ) {
+    $('#socialShare .modal-body p.social').append('<a class="fa fa-'+
+      key+'" href="'+value+'" target="_blank" />');
+  });
+  $('#socialShare').foundation('reveal', 'open');
 });
