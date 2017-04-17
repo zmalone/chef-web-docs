@@ -14,5 +14,10 @@ modules:
 - manage-a-node
 - local-development
 - beyond-essentials
+related_tracks:
+- application-automation
+- devops-transformation
+- ecosystem-essentials
+- developer-essentials
 video_url: 'https://player.vimeo.com/video/211382045'
 ---
