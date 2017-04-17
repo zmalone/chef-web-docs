@@ -88,4 +88,11 @@ export class UserProfileComponent implements OnInit {
     this.frmStatus = false
   }
 
+  getProfileImageUrl() {
+    let url = this.user.profile_image_url
+    const loc = window.location
+    const baseUrl = (loc.origin) ? loc.origin : loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '')
+    if (url) url = url.replace(/d=mm/, 'd=' + encodeURIComponent(`${baseUrl}/assets/images/profile/avatar.png`))
+    return url
+  }
 }
