@@ -18,11 +18,11 @@ Recall that there are several ways to work with a Chef server.
 
 1. Install an instance on your own infrastructure.
 1. Sign up for hosted Chef, a Chef server that we manage for you.
-1. Use AWS OpsWorks for Chef Automate, a managed service that includes a Chef server and Chef Automate.
+1. Use [Chef Automate](https://www.chef.io/automate/), which includes Chef server.
 
 In terms of the first option, using a local machine environment to bring up a Chef server is a great way to learn how the server works. Here you'll bring up Chef server and <%= article %> <%= os %> node to manage using Vagrant and VirtualBox.
 
-For production, you'll want to set up a dedicated Chef server for your team to use. After you complete this tutorial, consider [working through one of the other options](/modules/<%= current_page.parent.parent.parent.data.id %>/rhel/) to set up Chef server in an environment that more closely matches your team's requirements.
+For production, you'll want to set up a dedicated Chef server for your team to use. After you complete this module, consider [working through one of the other options](/modules/<%= current_page.parent.parent.parent.data.id %>/rhel/) to set up Chef server in an environment that more closely matches your team's requirements.
 
 [COMMENT] Although you can use Vagrant and VirtualBox to run Chef cookbooks directly on test instances, the idea here is to set up a node that you manage through a Chef server. You'll learn about Chef's recommended local development workflow using a tool called Test Kitchen in a future module.
 
@@ -38,7 +38,7 @@ Running local virtual machines requires relatively powerful hardware. Before you
 * your workstation has at least 8GB of available memory.
 * nested virtualization, available through a program such as VMware Fusion, is enabled if you're using another virtual machine as your workstation.
 
-If you're new to Vagrant and VirtualBox, [the previous Learn Chef tutorial](/modules/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage/) can help you get set up. You can follow the steps that have you bring up <%= article %> <%= os %>  instance to verify the installation. However, you don't need to connect to or install the Chef DK on your <%= os %>  instance.
+If you're new to Vagrant and VirtualBox, the [Learn the Chef basics](/modules/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage/) module can help you get set up. You can follow the steps that have you bring up <%= article %> <%= os %>  instance to verify the installation. However, you don't need to connect to or install the Chef DK on your <%= os %>  instance.
 
 [END_BOX]
 
@@ -77,7 +77,7 @@ A Chef server and a node are provisioned with these characteristics:
 | Chef server | Ubuntu 14.04      | 2    | 4GB                 | chef-server.test | 10.1.1.33  |
 | node        | <%= os_version %> | 1    | 512MB (the default) | node1.test       | 10.1.1.34  |
 
-Chef server can run on [multiple Linux distributions](https://docs.chef.io/install_server_pre.html#platforms). In this tutorial, you use Ubuntu.
+Chef server can run on [multiple Linux distributions](https://docs.chef.io/install_server_pre.html#platforms). In this module, you use Ubuntu.
 
 The Vagrant [base boxes](https://www.vagrantup.com/docs/boxes.html) come from [HashiCorp Atlas](https://atlas.hashicorp.com/bento/boxes). The `bento` part refers to [Bento](http://chef.github.io/bento/), a Chef project that provides Vagrant boxes for many common platforms.
 
@@ -112,7 +112,7 @@ Next, copy the RSA private key for the `admin` user from your Chef server. Recal
 
 <% command_snippet(page: current_page, path: "generate-knife-config/copy-admin-key-#{current_page.parent.data.platform_id}", features: :stdin) %>
 
-[The other versions of this tutorial](/modules/<%= current_page.parent.parent.parent.data.id %>/rhel/) walk you though how you would set up these files in a more production-like environment.
+[The other versions of this module](/modules/<%= current_page.parent.parent.parent.data.id %>/rhel/) walk you though how you would set up these files in a more production-like environment.
 
 Your RSA private key should resemble this one.
 
@@ -173,14 +173,8 @@ Finally, run these commands to fetch and verify the SSL certificate from your Ch
 
 The certificate is added to your <% fp '~/learn-chef/.chef/trusted_certs' %> directory.
 
-[END_BOX]
-
-<% next_page(current_page) do %>
-
 At this point, you have each of the three parts of a typical Chef setup &ndash; your workstation, a Chef server, and a node to manage.
 
 Chef server gives you a persistent location to store your cookbooks and information about your nodes. The `knife` command enables you to communicate with the Chef server.
 
-Next, you'll get a copy of the web server cookbook that you wrote in the previous tutorial and upload it to your Chef server.
-
-<% end %>
+[END_BOX]
