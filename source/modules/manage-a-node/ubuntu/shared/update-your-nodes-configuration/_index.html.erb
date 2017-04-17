@@ -1,4 +1,7 @@
-[HEADLINE] You ran `knife bootstrap` to associate your node with the Chef server and do an initial check-in. Bootstrapping is a one-time process.<br>The `knife ssh` command enables you to update your node's configuration when your cookbook changes.
+<% key_points([
+  "You ran `knife bootstrap` to associate your node with the Chef server and do an initial check-in. Bootstrapping is a one-time process.",
+  "The `knife ssh` command enables you to update your node's configuration when your cookbook changes."
+]) %>
 
 During the bootstrap process, your node downloaded and installed `chef-client`, downloaded the latest cookbooks, and executed the run-list.
 
@@ -16,7 +19,7 @@ For our home page, we want to display the server's fully qualified domain name (
 
 <% code_snippet(page: current_page, path: 'add-template-code-to-your-html/index-html-erb-node1-ubuntu') %>
 
-The <code>&lt;%= %&gt;</code> syntax enables you to provide placeholders in your template file. Placeholders are replaced with their values when `chef-client` runs. You'll work more with templates in later tutorials, but you can [read more](https://docs.chef.io/templates.html) now in the Chef documentation.
+The <code>&lt;%= %&gt;</code> syntax enables you to provide placeholders in your template file. Placeholders are replaced with their values when `chef-client` runs. You'll work more with templates in future modules, but you can [read more](https://docs.chef.io/templates.html) now in the Chef documentation.
 
 [COMMENT] Keep in mind that this example is for illustrative purposes. In practice, you might modify your web server's configuration file to specify the server's hostname or other info instead of its web page content.
 
@@ -76,7 +79,7 @@ Recall that the Chef server stores information about your nodes. This informatio
 
 <% if current_page.parent.data.environment == 'virtualbox' %>
 
-As with `knife bootstrap`, the options you provide to `knife ssh` depend on how you would normally connect to your node over SSH. [The other versions of this tutorial](/modules/manage-a-node/ubuntu/) describe the process more generally. But because your Ubuntu node is managed by Vagrant and VirtualBox, you connect to it by providing its SSH forwarded port.
+As with `knife bootstrap`, the options you provide to `knife ssh` depend on how you would normally connect to your node over SSH. [The other versions of this tutorial](/modules/<%= current_page.parent.parent.parent.data.id %>/ubuntu/) describe the process more generally. But because your Ubuntu node is managed by Vagrant and VirtualBox, you connect to it by providing its SSH forwarded port.
 
 Run the following command to run `chef-client` on your node.
 
@@ -121,7 +124,7 @@ The `--attribute` part tells `knife` which node attribute to use when opening an
 
 ### Update your node using password authentication
 
-Replace <code class="placeholder">USER</code> and <code class="placeholder">PASSWORD</code> with your values. Replace `ipaddress` with `cloud.public_hostname` if your node is running on a cloud service such as Amazon EC2.
+Replace <code class="placeholder">USER</code> and <code class="placeholder">PASSWORD</code> with your values. Replace `ipaddress` with the appropriate attribute name from the table above if your node is running on a cloud service such as Amazon EC2.
 
 ```bash
 # ~/learn-chef
@@ -193,16 +196,8 @@ From the **Nodes** tab in the Chef Automate dashboard, you'll also see that the 
 
 <% end %>
 
-[END_BOX]
-
-<% next_page(current_page) do %>
-
-In this part you updated your cookbook, uploaded it to the Chef server, and saw the changes appear on your node.
-
-To update your cookbook you used a _template_. A [template](https://docs.chef.io/templates.html) enables you to write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node.
+To summarize, to update your cookbook you used a _template_. A [template](https://docs.chef.io/templates.html) enables you to write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node.
 
 You also ran `knife ssh` to update your node. [knife ssh](https://docs.chef.io/knife_ssh.html) invokes the command you specify over an SSH connection on a node &ndash; in our case `sudo chef-client`. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
 
-In the next part, you'll make a second modification to your `learn_chef_apache2` cookbook that, although it might appear correct, will actually fail on your node. You'll then remedy the failure and verify that `chef-client` succeeds.
-
-<% end %>
+[END_BOX]

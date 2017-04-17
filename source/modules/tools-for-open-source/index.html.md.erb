@@ -218,7 +218,7 @@ This sets up a tracking branch and force pushes the edit of the history. In this
 
 ##Examining an Issue
 
-Let’s take a look at a reported issue, [Issue 118](https://github.com/chef-cookbooks/users/issues/118). In this issue, [Chris Gianelloni](https://twitter.com/wolf31o2) reported a problem with the `users` cookbook on Mac OS X.
+Let’s take a look at a reported issue, [Issue 118](https://github.com/chef-cookbooks/users/issues/118). In this issue, [Chris Gianelloni](https://twitter.com/wolf31o2) reported a problem with the `users` cookbook on macOS.
 
 There is no PR in this case, so I create a branch with ```git checkout -b```.
 
@@ -226,7 +226,7 @@ There is no PR in this case, so I create a branch with ```git checkout -b```.
 $ git checkout -b issues_118
 ```
 <br>
-In the earlier example, I skipped over how to validate that the code actually worked on the system. We can manually test the code if we have a Mac OS X laptop and use the [chef-apply](https://docs.chef.io/ctl_chef_apply.html) command, an executable that runs a single recipe from the command line.
+In the earlier example, I skipped over how to validate that the code actually worked on the system. We can manually test the code if we have a macOS laptop and use the [chef-apply](https://docs.chef.io/ctl_chef_apply.html) command, an executable that runs a single recipe from the command line.
 
 Examining the cookbook structure shows that there are [ChefSpec tests](https://github.com/chef-cookbooks/users/tree/master/spec), but no other tests. Inside the <code class="file-path">test</code> directory, there is only a <code class="file-path">fixtures</code> directory that includes sample cookbooks. The lack of test coverage exposes the risk of making changes to code in this project.
 
@@ -240,9 +240,9 @@ In the December 21, 2014 [Sysadvent](http://sysadvent.blogspot.com/), I had an a
 
 Inside the `users` cookbook, there is a <code class="file-path">.kitchen.yml</code> file that has a [Vagrant driver](https://www.vagrantup.com/) and the `chef_zero` driver, along with a number of platforms. These entries allow us to test any of the platforms listed with Vagrant and [VirtualBox](https://www.virtualbox.org/).
 
-Apple’s EULA has implications for Mac OS X image availability. While there are some images available on the Internet, organizations (and individuals) have to consider how they will meet Apple’s legal requirements. Within Chef, we use [Atlas](https://www.hashicorp.com/atlas.html) to store private images for employees to use.
+Apple’s EULA has implications for macOS image availability. While there are some images available on the Internet, organizations (and individuals) have to consider how they will meet Apple’s legal requirements. Within Chef, we use [Atlas](https://www.hashicorp.com/atlas.html) to store private images for employees to use.
 
-To test the Mac OS X platform, I created a new file <code class="file-path">.kitchen.vmware.yml</code> with the following configuration:
+To test the macOS platform, I created a new file <code class="file-path">.kitchen.vmware.yml</code> with the following configuration:
 
 ```yaml
 # .kitchen.vmware.yml
@@ -270,7 +270,7 @@ $ ln -s .kitchen.vmware.yml .kitchen.local.yml
 
 [COMMENT] It’s also possible to define the environment variable `KITCHEN_LOCAL_YAML` rather than create a symlink.
 
-I can list my instances and see the Mac OS X 10.11 images.
+I can list my instances and see the macOS 10.11 images.
 
 ```bash
 users git:(issues_118) $ kitchen list
@@ -299,9 +299,9 @@ $ dscl . list /Users | grep test_user
 test_user
 ```
 <br>
-After digging a little further, and with some pair code review with [Nathen Harvey](https://twitter.com/nathenharvey), we discovered that the issue was that the directory resource wanted a UID rather than a username when declaring the owner on Mac OS X.
+After digging a little further, and with some pair code review with [Nathen Harvey](https://twitter.com/nathenharvey), we discovered that the issue was that the directory resource wanted a UID rather than a username when declaring the owner on macOS.
 
-Switching from username to UID resolved the errors, but the fix was only tested against Mac OS X. We needed to do some tests against other operating systems to make sure we hadn’t broken the provider.
+Switching from username to UID resolved the errors, but the fix was only tested against macOS. We needed to do some tests against other operating systems to make sure we hadn’t broken the provider.
 
 To speed up the tests, I use Docker rather than trying to spin up that many VMs with Virtual Box or VMware. I already had docker-machine installed. If you don’t, check out this [getting started guide](https://docs.docker.com/machine/get-started/).
 
@@ -370,7 +370,7 @@ The lightweight formats of Markdown and AsciiDoc can be collaborative if you use
 
 Using Test Kitchen allows me to quickly change which set of tools I want to use - Docker, Vagrant with Virtual Box, or Vagrant with VMware - depending on what I want to do. The Test Kitchen configuration files can be saved along with the project, so that anyone can quickly set up the correctly configured environment and begin to collaborate.
 
-Combined with the flexibility of Test Kitchen, Vagrant allows me to combine private and publicly available resources so if you are in a situation where you are working on something internal to your company while also contributing to an open source project, you can manage that complexity. In the Mac OS X example I used in this article, I can tell my team how to replicate my testing strategy without adding initial complexity to the base <code class="file-path">.kitchen.yml</code> file. I can be transparent about my process without blocking people who don’t have access to Chef’s internal images or VMware Fusion.
+Combined with the flexibility of Test Kitchen, Vagrant allows me to combine private and publicly available resources so if you are in a situation where you are working on something internal to your company while also contributing to an open source project, you can manage that complexity. In the macOS example I used in this article, I can tell my team how to replicate my testing strategy without adding initial complexity to the base <code class="file-path">.kitchen.yml</code> file. I can be transparent about my process without blocking people who don’t have access to Chef’s internal images or VMware Fusion.
 
 Additionally, local git configurations or tools like hub can simplify the collaboration process by allowing us to cherry pick our commits. Talk to your team, peers in the industry, or review a project’s <code class="file-path">CONTRIBUTING.md</code> file to discover other mechanisms that individuals use when working together.
 
