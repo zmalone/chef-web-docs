@@ -7,7 +7,7 @@ Before viewing this video you should [watch the first episode:  Overview of Chef
 The following operating systems have been tested as workstation systems with the hands on exercises:
 
 - Windows 7+
-- Mac OS X 10.7.3+
+- macOS 10.7.3+
 - Ubuntu 10.04+
 
 Other platforms and platform versions may work without modification.
@@ -17,7 +17,7 @@ Other platforms and platform versions may work without modification.
 An application that will allow participants to create an SSH connection to a remote server and SCP files to a remote server.  Recommended applications:
 
 - Windows - [puTTY][puTTY]
-- Mac OS X - the built-in Terminal application or [iTerm2][iTerm2]
+- macOS - the built-in Terminal application or [iTerm2][iTerm2]
 - Ubuntu - the built in Terminal application
 
 A programmer's text editor that allows the participants to have multiple files open at one time and includes syntax highlighting.  Recommended applications, **pick one**:

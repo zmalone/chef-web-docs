@@ -1,4 +1,4 @@
-Later in this tutorial, you'll use Chef's ability to search node metadata to run `chef-client` a second time on your node. That step will require your node to have an attribute that contains its public hostname or IP address.
+Later in this module, you'll use Chef's ability to search node metadata to run `chef-client` a second time on your node. That step will require your node to have an attribute that contains its public hostname or IP address.
 
 Because Azure does not provide metadata about an instance's public hostname or IP address, you need to set it manually during the bootstrap process.
 

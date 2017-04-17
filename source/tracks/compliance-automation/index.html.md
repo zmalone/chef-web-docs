@@ -8,6 +8,7 @@ hours: 6
 level: Beginner
 track_class: card-light-brown
 category: Admin
+order: 100
 modules:
 - getting-started
 - develop-locally

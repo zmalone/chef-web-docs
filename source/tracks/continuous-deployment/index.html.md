@@ -8,9 +8,10 @@ hours: 7
 level: Beginner
 track_class: card-light-orange
 category: Admin
+order: 100
 modules:
 - getting-started
 - develop-locally
 - learn-the-basics
-- manage-a-node
+- manage-a-node-chef-automate
 ---
