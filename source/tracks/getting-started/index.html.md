@@ -18,7 +18,7 @@ social_share:
     <<: *shared
   twitter:
     post: "Learning about Chef educational resources and roadmaps to proficiency via 'Getting Started' learning module. You can, too!"
-hours: 5
+hours: 0.25
 level: Beginner
 track_class: card-red
 category: Admin
