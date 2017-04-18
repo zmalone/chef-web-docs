@@ -1,4 +1,4 @@
-This tutorial was last tested using this configuration:
+This module  was last tested using this configuration:
 
 * Ubuntu Server 14.04 LTS (HVM) on Amazon Web Services
   * **Region:** us-east-1

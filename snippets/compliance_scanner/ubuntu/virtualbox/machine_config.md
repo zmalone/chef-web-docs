@@ -1,4 +1,4 @@
-This tutorial was last tested with this configuration:
+This module  was last tested with this configuration:
 
 * An Ubuntu 14.04 workstation on VMware Fusion.
   * **Software:** Chef Development Kit 1.2.22, Vagrant 1.9.1, VirtualBox 5.1

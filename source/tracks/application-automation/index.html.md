@@ -8,6 +8,7 @@ hours: 5
 level: Beginner
 track_class: card-brown
 category: Admin
+order: 100
 modules:
 - how-to-learn-chef
 - learn-the-basics
