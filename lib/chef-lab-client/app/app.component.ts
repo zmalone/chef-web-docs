@@ -4,7 +4,10 @@ import { UserProfileService } from './services/user-profile.service'
 import { ProgressService } from './services/progress.service'
 import { User } from './model/user'
 
-const pageTemplate = (window as any).mainTemplate || '<div>No template found for app-root!</div>'
+let pageTemplate = (window as any).mainTemplate || '<div>No template found for app-root!</div>'
+pageTemplate = pageTemplate.replace(/\{/g, '[OPENINGCURLY]')
+pageTemplate = pageTemplate.replace(/\}/g, "{{ '}' }}") // tslint:disable-line:quotemark
+pageTemplate = pageTemplate.replace(/\[OPENINGCURLY\]/g, "{{ '{' }}") // tslint:disable-line:quotemark
 
 @Component({
   selector: 'app-root',
