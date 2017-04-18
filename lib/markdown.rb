@@ -121,12 +121,14 @@ module ZurbFoundation
       old = $2
       flat = old.downcase.delete(' ')
       escaped = flat.gsub(/\W/, "")
-      step = "step#{escaped}"
-      # create a second anchor for the long form and create a link to navigate to it
+      # if the title looks like a step, create the anchor as the step number, e.g. #step2
+      m = /\A(?<step>\d+(?:\.\d)*)\./.match(flat)
+      step = m.nil? ? nil : "step#{m['step']}"
       s = ''
-      s += "<a class=\"anchor\" name=\"#{step}\" href=\"##{step}\"></a>"
+      s += "<a class=\"anchor\" name=\"#{step}\"></a>" unless step.nil?
+      s += "<a class=\"anchor\" name=\"#{escaped}\"></a>" if step.nil?
       s += "<h#{size}>#{old}"
-      s += "<span class=\"section-links\"><a class=\"section-link\" href=\"##{step}\"><i class=\"fa fa-paragraph\"></i></a><a class=\"section-link\" name=\"#top\" href=\"#top\"><i class=\"fa fa-long-arrow-up\"></i></a></span>" unless old.match /fa\-paragraph/
+      s += "<span class=\"section-links\"><a class=\"section-link\" href=\"##{step || escaped}\"><i class=\"fa fa-paragraph\"></i></a><a class=\"section-link\" name=\"#top\" href=\"#top\"><i class=\"fa fa-long-arrow-up\"></i></a></span>" unless old.match /fa\-paragraph/
       s += "</h#{size}>"
       s
     end
