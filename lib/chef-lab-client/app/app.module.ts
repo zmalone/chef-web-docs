@@ -27,6 +27,7 @@ import { LoginLinkedInDirective } from './directives/login-linkedin/login-linked
 import { LoginChefDirective } from './directives/login-chef/login-chef.directive'
 import { ProgressService } from './services/progress.service'
 import { UserProfileComponent } from './components/user-profile/user-profile.component'
+import { UserDisplayNameComponent } from './components/user-display-name/user-display-name.component'
 import { UserProfileLinkComponent } from './components/user-profile-link/user-profile-link.component'
 import { MaterialModule } from '@angular/material'
 import { ModuleFilterService } from './services/module-filter.service'
@@ -82,6 +83,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     TrackStartTextDirective,
     LoadTrackBtnDirective,
     ChefLabProvisionerDirective,
+    UserDisplayNameComponent,
     UserProfileLinkComponent,
   ],
   imports: [

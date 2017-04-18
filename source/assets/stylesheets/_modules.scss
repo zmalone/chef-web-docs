@@ -5,7 +5,6 @@
 }
 
 .module-hero {
-  padding: 0 20px;
   background: url("../images/tracks/track-banner.png") no-repeat center center;
   background-size: cover;
   position: relative;
@@ -29,15 +28,50 @@
 }
 
 .module-content {
-  .row {
-    padding: 0 20px;
+  .module {
+    margin: 0 (-$grid-gutter / 2);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 
     @include desktop {
-      padding: 0 40px;
+      flex-wrap: nowrap;
+    }
+  }
+
+  .main {
+    flex: 1 1 auto;
+    padding: 5px ($grid-gutter / 2) 0;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    flex: 1 0 (300px + $grid-gutter);
+    padding: 0 ($grid-gutter / 2);
+    position: relative;
+
+    > ul {
+      padding-left: 0;
+      padding-right: 0;
+      margin-bottom: 0;
+
+      @media #{$large-down} {
+        // For small screens, disable the fixed positioning from the scrollToFixed plugin. We're not
+        // using the plugin's minWidth option because it uses px, while the @media queries use ems.
+        position: relative !important;
+        width: 100% !important;
+        top: 0 !important;
+        left: 0 !important;
+      }
     }
 
-    @include large-desktop {
-      padding: 0;
+    div {
+      // When the ul position is relative (for small screens), the scrollToFixed plugin adds an unwanted div with fixed height
+      display: none !important;
+    }
+
+    @include desktop {
+      flex-grow: 0;
     }
   }
 
@@ -173,9 +207,9 @@
 
   .time {
     position: absolute;
-    top: 5px;
+    bottom: 5px;
     right: 15px;
-    color: white;
+    color: $font-gray;
     font-size: 12px;
   }
 
@@ -197,6 +231,10 @@
 
   ul.links {
     list-style-type: none;
+    position: absolute;
+    bottom: 5px;
+    margin: 0 15px;
+    width: 60%;
 
     li {
       display: inline-block;
@@ -353,6 +391,10 @@
 .multi-page {
   .module-content {
     background-color: $light-gray;
+
+    .main {
+      padding-top: ($grid-gutter / 2);
+    }
   }
 }
 

@@ -16,6 +16,7 @@ export class QuizComponent implements OnInit {
   public correctAnswers: Array<string> = []
   public submittedAnswers: Array<string> = []
   public numCorrect = 0
+  public isSignedIn = false
   public isUnitComplete = false
   public isModuleComplete = false
   public isTrackComplete = false
@@ -39,6 +40,7 @@ export class QuizComponent implements OnInit {
     const enableSpecialCoaster = !localStorage.getItem('shownSpecialCoaster')
 
     this.userProfileService.isAuthenticated().subscribe(isSignedIn => {
+      this.isSignedIn = isSignedIn
       // this.progressService.activeUserProgress.unsubscribe()
       this.progressService.activeUserProgress.subscribe(() => {
         const moduleId = this.progressService.getModuleRoot(this.siteDataService.currentPage().id)

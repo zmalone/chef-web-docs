@@ -1,5 +1,9 @@
 module PageHelper
 
+  def home_page
+    sitemap.find_resource_by_path("index.html")
+  end
+
   def find_next_page(page)
     module_obj = get_module_by_id(page.id)
     return unless module_obj
@@ -66,6 +70,7 @@ module PageHelper
         parent = get_module_by_id(module_obj.parent)
         if parent && parent.parent && parent.is_fork
           breadcrumbs.unshift(Hashie::Mash.new({
+            page: module_obj.page,
             title: module_obj.page.data.short_title || module_obj.page.data.title,
             options: parent.children.map { |child| child.page }
           }))
@@ -80,14 +85,18 @@ module PageHelper
       get_module_by_id(module_id).page
     end
     breadcrumbs.unshift(Hashie::Mash.new({
+      page: track.page,
       title: module_obj ? module_obj.page.data.short_title || module_obj.page.data.title : 'Select One',
       options: options
     }))
 
     # Label the breadcrumbs, in forward order
-    labels = ['Modules', 'Server Environment', 'Chef Server Environment']
-    breadcrumbs.each do |breadcrumb|
-      breadcrumb.label = labels.shift
+    default_labels = ['Modules', 'Server Platform', 'Chef Server Environment']
+    breadcrumbs.each_with_index do |breadcrumb, index|
+      if breadcrumbs[index - 1] && breadcrumbs[index - 1].page && breadcrumbs[index - 1].page.data
+        breadcrumb.label = breadcrumbs[index - 1].page.data.breadcrumb_label
+      end
+      breadcrumb.label = default_labels.shift unless breadcrumb.label
     end
 
     breadcrumbs
@@ -118,7 +127,7 @@ module PageHelper
   def flatten_tree(tree)
     data = {}
     data[tree.id] = {}
-    data[tree.id][:url] = tree.page.url
+    data[tree.id][:url] = tree.page.url if tree.page
 
     # Copy over most of the keys, except the certain keys, i.e. the page object, or the children
     tree.keys.reject { |key|
@@ -181,34 +190,41 @@ module PageHelper
     return true if page.url.match('profile')
   end
 
-  def social_twitter_share(key)
+  def social_twitter_share(page)
+    return '#' if ENV['DISABLE_SOCIAL']
     social_data = data['social_share']['twitter']
     sharer_url = social_data['sharer_url']
-    content = social_data.try(key).try('post').try(&:chomp)
-    "#{sharer_url}?text=#{content}&url=#{canonical_url(key)}"
+    content = page.data.social_share.try(&:twitter).try(&:post) ||
+              page.data.social_share.try(&:post) ||
+              truncate(page.data.description, length: 140)
+    "#{sharer_url}?text=#{content}&url=#{canonical_url(page.url)}"
   end
 
-  def social_facebook_share(key)
+  def social_facebook_share(page)
+    return '#' if ENV['DISABLE_SOCIAL']
     social_data = data['social_share']['facebook']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?&u=#{canonical_url(key)}"
+    "#{sharer_url}?u=#{canonical_url(page.url)}"
   end
 
-  def social_google_plus_share(key)
+  def social_google_plus_share(page)
+    return '#' if ENV['DISABLE_SOCIAL']
     social_data = data['social_share']['google_plus']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?url=#{canonical_url(key)}"
+    "#{sharer_url}?url=#{canonical_url(page.url)}"
   end
 
-  def social_linkedin_share(key)
+  def social_linkedin_share(page)
+    return '#' if ENV['DISABLE_SOCIAL']
     social_data = data['social_share']['linkedin']
     sharer_url = social_data['sharer_url']
-    title = social_data.try(key).try('title').try(&:chomp)
-    summary = social_data.try(key).try('post').try(&:chomp)
-    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(key)}"
+    title = page.data.social_share.try(&:linkedin).try(&:title) || page.data.title
+    summary = page.data.social_share.try(&:linkedin).try(&:post) || page.data.description
+    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(page.url)}"
   end
 
-  def meta_og(key, type)
-    data['social_share']['facebook'].try(key).try(type)
+  def meta_og(page, type)
+    page.data.try(&:social_share).try(&:facebook).try(type) ||
+    page.data.try(&:social_share).try(&:shared).try("#{type}")
   end
 end
