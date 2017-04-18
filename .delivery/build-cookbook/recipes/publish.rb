@@ -7,6 +7,7 @@ execute 'build the site' do
   environment(
     'PATH' => '/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games',
     'HOME' => node['delivery']['workspace']['cache'],
+    'DISABLE_SOCIAL' => true,
     'CHEF_LAB_URL' => 'https://lab.chef.io'
   )
   cwd node['delivery']['workspace']['repo']
