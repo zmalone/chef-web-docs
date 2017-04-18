@@ -1,5 +1,7 @@
 [HEADLINE] A Chef _resource_ describes one part of the system, such as a file, a template, or a package. A Chef _recipe_ is a file that groups related resources, such as everything needed to configure a web server, database server, or a load balancer.
 
+Now that you have your virtual machine with the Chef DK and a text editor set up, let's use Chef to configure a file, a kind of _resource_, on it.
+
 To get started, let's look at a basic configuration management project. You'll learn how to manage the INI configuration file for your org's latest application. A file is an example of a _resource_.
 
 [START_BOX]
@@ -14,7 +16,7 @@ Now `cd` there.
 
 <% command_snippet(page: current_page, path: 'set-up-your-working-directory/cd-chef-repo', features: :stdin) %>
 
-[TIP] We believe typing in the code and commands is the best way to learn. If you prefer to copy and paste things and are using our free trial VM, you may find it easier to continue this tutorial by opening this page in a browser from your VM. You can also copy and paste the text into your remote session. Use the **Clipboard** <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/skytap/clipboard.png"/> command in the menu bar to copy text to your session's clipboard.
+[TIP] We believe typing in the code and commands is the best way to learn. If you prefer to copy and paste things and are using our free trial VM, you may find it easier to continue this module by opening this page in a browser from your VM. You can also copy and paste the text into your remote session. Use the **Clipboard** <img style="box-shadow:none; margin:0; display:inline;" src="/assets/images/skytap/clipboard.png"/> command in the menu bar to copy text to your session's clipboard.
 
 [END_BOX]
 
@@ -24,7 +26,7 @@ Now `cd` there.
 
 In this step, you'll first create the INI file and set its initial contents. To keep things basic, you'll configure the file in the working directory.
 
-Next, you'll write what's called a _recipe_ to describe the desired state of the INI file. Then you'll run [chef-client](https://docs.chef.io/ctl_chef_client.html), the program that applies your Chef code to place your system in the desired state. Typically, `chef-client` downloads and runs the latest Chef code from the Chef server, but in this lesson, you'll run `chef-client` in what's called _local mode_ to apply Chef code that exists locally on your virtual machine.
+Next, you'll write what's called a _recipe_ to describe the desired state of the INI file. Then you'll run [chef-client](https://docs.chef.io/ctl_chef_client.html), the program that applies your Chef code to place your system in the desired state. Typically, `chef-client` downloads and runs the latest Chef code from the Chef server, but in this module, you'll run `chef-client` in what's called _local mode_ to apply Chef code that exists locally on your virtual machine.
 
 From your <code class="file-path">~\chef-repo</code> directory, create a file named <code class="file-path">hello.rb</code>, add these contents, and then save the file.
 
@@ -40,7 +42,7 @@ Run the `Get-Content` PowerShell cmdlet to verify that the file was written.
 
 <% command_snippet(page: current_page, path: 'create-the-ini-file/get-content-settings-ini') %>
 
-[COMMENT] Systems managed by Chef typically interact with a Chef server. So in practice, you typically omit the `--local-mode` argument when you run `chef-client` to have your node check in with the Chef server to retrieve the latest cookbooks and system metadata. For learning purposes, in this tutorial you use the `--local-mode` argument to apply a cookbook directly to see how Chef works. In the next tutorial, [Manage a node](/modules/manage-a-node/), you'll get a Chef server and configure a node to work with it.
+[COMMENT] Systems managed by Chef typically interact with a Chef server. So in practice, you typically omit the `--local-mode` argument when you run `chef-client` to have your node check in with the Chef server to retrieve the latest cookbooks and system metadata. For learning purposes, in this module you use the `--local-mode` argument to apply a cookbook directly to see how Chef works. In the next module, [Manage a node](/modules/manage-a-node/), you'll get a Chef server and configure a node to work with it.
 
 ### Run the command a second time
 
@@ -88,7 +90,7 @@ Now run `chef-client` using the options as shown below.
 
 Chef restored the original configuration. This is actually a really good thing because Chef ensures that the actual state of your resource matches what you specify, even if it is altered by some outside process. Chef enables you to both apply a new configuration state as well as ensure that the current state stays how you want it.
 
-[COMMENT] In practice, it's common to configure `chef-client` to act as a scheduled task that runs periodically or as part of a continuous delivery system such as [Chef Automate](/modules/deploy-infrastructure/). Running Chef through automation helps to ensure that your servers remain configured as you expect and also enables them to be reconfigured when you need them to be.
+[COMMENT] In practice, it's common to configure `chef-client` to act as a scheduled task that runs periodically or as part of a continuous automation system such as [Chef Automate](/modules/deploy-infrastructure/). Running Chef through automation helps to ensure that your servers remain configured as you expect and also enables them to be reconfigured when you need them to be.
 
 [END_BOX]
 
@@ -116,13 +118,13 @@ The output shows that <code class="file-path">settings.ini</code> is now gone, b
 
 You ran a few basic Chef commands and got a flavor of what Chef can do. You learned that a resource describes one part of the system and its desired state. You worked with a [file][file], which is one kind of resource.
 
-### Resources describe the what, not the how
+#### Resources describe the what, not the how
 
 A recipe is a file that holds one or more resources. Each resource declares _what_ state a part of the system should be in, but not _how_ to get there. Chef handles these complexities for you.
 
-In this lesson, you declared that the file <code class="file-path">settings.ini</code> must exist and what its contents are, but you didn't specify how to create or write to the file. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
+In this module, you declared that the file <code class="file-path">settings.ini</code> must exist and what its contents are, but you didn't specify how to create or write to the file. This layer of abstraction can not only make you more productive, but it can also make your work more portable across platforms.
 
-### Resources have actions
+#### Resources have actions
 
 When you deleted the file, you saw the `:delete` action.
 
@@ -132,25 +134,13 @@ When we created the file we didn't specify the `:create` action because `:create
 
 The documentation for each resource type, [file][file] for example, explains the type's default action.
 
-### Recipes organize resources
+#### Recipes organize resources
 
 In Chef, <code class="file-path">hello.rb</code> is an example of a [recipe][recipe], or an ordered series of configuration states. A recipe typically contains related states, such as everything needed to configure a web server, database server, or a load balancer.
 
 Our recipe states everything we need to manage the INI file. You used `chef-client` in local mode to apply that recipe from the command line.
 
 [END_BOX]
-
-[START_BOX]
-
-<%= partial('modules/learn-the-basics/windows/shared/configure-a-resource/exercises/index') %>
-
-[END_BOX]
-
-<% next_page(current_page) do %>
-
-Of course, your job is about more than just setting up files. Next you'll apply what you've learned to install and configure a package and service.
-
-<% end %>
 
 [file]: https://docs.chef.io/resource_file.html
 [recipe]: https://docs.chef.io/recipes.html

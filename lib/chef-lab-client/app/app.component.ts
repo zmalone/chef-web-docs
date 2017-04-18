@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, ElementRef } from '@angular/core'
 import { Angular2TokenService } from 'angular2-token'
 import { UserProfileService } from './services/user-profile.service'
 import { ProgressService } from './services/progress.service'
 import { User } from './model/user'
 
-const pageTemplate = (window as any).mainTemplate || '<div>No template found for app-root!</div>'
+let pageTemplate = (window as any).mainTemplate || '<div>No template found for app-root!</div>'
+pageTemplate = pageTemplate.replace(/\{/g, '[OPENINGCURLY]')
+pageTemplate = pageTemplate.replace(/\}/g, "{{ '}' }}") // tslint:disable-line:quotemark
+pageTemplate = pageTemplate.replace(/\[OPENINGCURLY\]/g, "{{ '{' }}") // tslint:disable-line:quotemark
 
 @Component({
   selector: 'app-root',
@@ -18,6 +21,7 @@ export class AppComponent implements OnInit {
     private _tokenService: Angular2TokenService,
     private userProfileService: UserProfileService,
     private progressService: ProgressService,
+    private el: ElementRef,
   ) {
 
     this._tokenService.init({

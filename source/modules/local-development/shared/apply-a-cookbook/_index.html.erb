@@ -63,21 +63,21 @@
 %>
 <% key_point "Test Kitchen enables you to run your cookbooks in a temporary environment that resembles production. With Test Kitchen, you confirm that things are working before you deploy your code to a test, preproduction, or production environment. Many users incorporate this kind of local development as part of their overall Chef workflow." %>
 
-In this part, you'll run through the Test Kitchen workflow to get the hang of things.
+In this part, you'll run through the Test Kitchen workflow to get the hang of things. You'll apply the web server cookbook you wrote in the _Manage a node with Chef server_ module on a local test instance.
 
 <img src="/assets/images/misc/local_dev_workflow.png" style="box-shadow: none;" alt=""/>
 
 <table class="icon-description">
   <tr>
-    <td><img src="/assets/images/misc/local_dev_create.png" style="display: inline; width: 125px; box-shadow: none;" alt=""/></td>
+    <td><img src="/assets/images/misc/local_dev_create.png" style="display: inline; width: 120px; box-shadow: none;" alt=""/></td>
     <td>In this step, Test Kitchen creates an instance of your virtual environment, for example, <%= platform[:article] %> <%= platform[:name] %> virtual machine.</td>
   </tr>
   <tr>
-    <td><img src="/assets/images/misc/local_dev_converge.png" style="display: inline; width: 125px; box-shadow: none;" alt=""/></td>
+    <td><img src="/assets/images/misc/local_dev_converge.png" style="display: inline; width: 120px; box-shadow: none;" alt=""/></td>
     <td>In this step, Test Kitchen applies your cookbook to the virtual environment.</td>
   </tr>
   <tr>
-    <td><img src="/assets/images/misc/local_dev_login.png" style="display: inline; width: 125px; box-shadow: none;" alt=""/></td>
+    <td><img src="/assets/images/misc/local_dev_login.png" style="display: inline; width: 120px; box-shadow: none;" alt=""/></td>
     <td>
       <% if windows? %>
       In this step, you connect to your virtual environment, typically over Remote Desktop or WinRM.
@@ -87,28 +87,28 @@ In this part, you'll run through the Test Kitchen workflow to get the hang of th
     </td>
   </tr>
   <tr>
-    <td><img src="/assets/images/misc/local_dev_verify.png" style="display: inline; width: 125px; box-shadow: none;" alt=""/></td>
+    <td><img src="/assets/images/misc/local_dev_verify.png" style="display: inline; width: 120px; box-shadow: none;" alt=""/></td>
     <td>In this step, you manually verify that your virtual environment is configured as you expect.</td>
   </tr>
   <tr>
-    <td><img src="/assets/images/misc/local_dev_destroy.png" style="display: inline; width: 125px; box-shadow: none;" alt=""/></td>
+    <td><img src="/assets/images/misc/local_dev_destroy.png" style="display: inline; width: 120px; box-shadow: none;" alt=""/></td>
     <td>In this step, Test Kitchen shuts down and destroys your virtual environment.</td>
   </tr>
 </table>
 
-In this tutorial, you perform the **verify** step manually. In practice, you typically write tests that automatically verify whether your configuration works as you expect. You'll learn about local testing in a future tutorial.
+In this module, you perform the **verify** step manually. In practice, you typically write tests that automatically verify whether your configuration works as you expect. You'll learn about local testing in a future module.
 
-Here, you'll get a copy of the web server cookbook that you created in the earlier tutorials. Then you'll apply that cookbook on <%= platform[:article] %> <%= platform[:name] %> virtual machine. Then you'll verify that everything's working. Finally, you'll destroy the instance.
+Here, you'll get a copy of the web server cookbook that you created in the earlier modules. Then you'll apply that cookbook on <%= platform[:article] %> <%= platform[:name] %> virtual machine. Then you'll verify that everything's working. Finally, you'll destroy the instance.
 
 [START_BOX]
 
 ## 1. Get the <%= cookbook_escaped %> cookbook from GitHub
 
-In the previous tutorials, [Learn the Chef basics](/modules/learn-the-basics/<%= platform[:id] %>/) and [Manage a node](/modules/manage-a-node/<%= platform[:id] %>/), you wrote a cookbook named `<%= cookbook %>` that configures <%= platform[:webserver] %> web server. You'll run that cookbook on your test instance.
+In the [Learn the Chef basics](/modules/learn-the-basics/<%= platform[:id] %>/) and [Manage a node with Chef server](/modules/manage-a-node-chef-server/<%= platform[:id] %>/) modules, you wrote a cookbook named `<%= cookbook %>` that configures <%= platform[:webserver] %> web server. You'll run that cookbook on your test instance.
 
 If you still have the `<%= cookbook %>` cookbook on your system, you're all set up. Otherwise, follow these steps to get it.
 
-Start by creating the <% fp '~/learn-chef/cookbooks' %> directory.
+Start by creating the <% fp '~/learn-chef/cookbooks' %> directory if it does not already exist.
 
 <% command_snippet(workstation: 'ubuntu', path: "local-development/rhel/vagrant/set-up-your-workstation/set-up-your-working-directory/mkdir-learn-chef-cookbooks", features: :stdin, shell: shell) %>
 
@@ -124,9 +124,9 @@ Now `cd` there.
 
 <% command_snippet(page: current_page, path: "get-the-#{cookbook}-cookbook-#{environment}/cd-cookbooks-#{cookbook}-#{environment}", features: :stdin) %>
 
-The contents of <% fp "~/learn-chef/cookbooks/#{cookbook}" %> is the same as what you built in the previous tutorials. You can examine this directory to familiarize yourself with its contents.
+The contents of <% fp "~/learn-chef/cookbooks/#{cookbook}" %> is the same as what you built in the _Manage a node with Chef server_ module. You can examine this directory to familiarize yourself with its contents.
 
-[COMMENT] Remember that [Chef Supermarket](https://supermarket.chef.io/) is also a place for the community to share cookbooks. You'll learn more about community cookbooks in later tutorials.
+[COMMENT] Remember that [Chef Supermarket](https://supermarket.chef.io/) is also a place for the community to share cookbooks. You'll learn more about community cookbooks in later modules.
 
 [END_BOX]
 
@@ -150,12 +150,12 @@ Here's what the initial <% fp '.kitchen.yml' %> file looks like.
 
 <% unless environment == 'hyper-v' %>
 
-[COMMENT] On Linux and Mac OS, <% fp '.kitchen.yml' %> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
+[COMMENT] On Linux and macOS, <% fp '.kitchen.yml' %> is a hidden file. Run `ls -a` if you want to see it from your terminal window.
 
 <% end %>
 
 <% if environment != 'vagrant' %>
-We provide this configuration for the [Vagrant and VirtualBox version](/modules/local-development/<%= platform[:id] %>/virtualbox/) of this tutorial. To configure Test Kitchen to create <%= platform[:name] %> instances on <%= environment_name %>, start by modifying <% fp '.kitchen.yml' %> like this.
+We provide this configuration for the [Vagrant and VirtualBox version](/modules/local-development/<%= platform[:id] %>/virtualbox/) of this module. To configure Test Kitchen to create <%= platform[:name] %> instances on <%= environment_name %>, start by modifying <% fp '.kitchen.yml' %> like this.
 
 <% code_snippet(page: current_page, path: "update-kitchen-yml-#{cookbook}-#{environment}/kitchen-yml-#{cookbook}-#{environment}-2") %>
 
@@ -197,7 +197,7 @@ Next, replace these values:
 * `ssh_key` with the full path to your SSH private key.
 <% end %>
 
-This example uses the **<%= platform[:azure_instance_size] %>** [VM size](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/), which we recommend for this tutorial. In practice, you would choose a VM size that fits your requirements.
+This example uses the **<%= platform[:azure_instance_size] %>** [VM size](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/), which we recommend for this module. In practice, you would choose a VM size that fits your requirements.
 
 <% elsif environment == 'gcp' %>
 Next, replace these values:
@@ -235,7 +235,7 @@ Here's how the <% fp '.kitchen.yml' %> file breaks down.
 <% end %>
 * **provisioner** specifies how to run Chef. We use `chef_zero` because it enables you to mimic a Chef server environment on your local machine. This allows us to work with node attributes and other Chef server features.
 * **transport** specifies how to execute commands remotely on the test instance. WinRM is the default transport on Windows; SSH is the default on all other operating systems. <% if cloud? && !windows? %> When working with cloud instances, this is where you specify your SSH key pair. <% end %>
-* **verifier** specifies which application to use when running automated tests.  You'll learn more about automated testing in a future tutorial.
+* **verifier** specifies which application to use when running automated tests.  You'll learn more about automated testing in a future module.
 * **platforms** specifies the target operating systems. We're targeting just one &ndash; <%= platform[:name] %> <%= platform[:version] %>.
 * **suites** specifies what we want to apply to the virtual environment. You can have more than one suite. We define just one, named `default`. This is where we provide the run-list, which defines which recipes to run and in the order to run them. Your run-list contains one recipe &ndash; the `<%= cookbook %>` cookbook's default recipe.
 
@@ -267,7 +267,7 @@ Create the instance now by running `kitchen create`.
 
 <% command_snippet(page: current_page, path: "create-#{cookbook}-#{environment}/kitchen-create-#{cookbook}-#{environment}-1") %>
 
-[COMMENT] If you need to destroy your instance before you complete this tutorial, run `kitchen destroy`. You can later run `kitchen create` to pick back up where you left off on a fresh instance.
+[COMMENT] If you need to destroy your instance before you complete this module, run `kitchen destroy`. You can later run `kitchen create` to pick back up where you left off on a fresh instance.
 
 <% if environment == 'vagrant' %>
 
@@ -328,7 +328,7 @@ The next step in the Test Kitchen workflow is to verify the configuration.
 
 In practice, you typically write automated tests that verify whether your instance is configured as you expect. Having automated tests enables you to quickly verify that your configuration works as you add features to your cookbook. In fact, many Chef users take a _test-driven_ approach, where you write your tests first before you write any Chef code.
 
-You'll learn more about automated testing in a future tutorial. For now, let's verify the configuration manually. Recall that the `<%= cookbook %>` cookbook configures <%= platform[:webserver] %> and sets the home page to display "hello world". An easy way to verify this is to log into your test instance and run ``<%= platform[:verify_command] %>``.
+You'll learn more about automated testing in a future module. For now, let's verify the configuration manually. Recall that the `<%= cookbook %>` cookbook configures <%= platform[:webserver] %> and sets the home page to display "hello world". An easy way to verify this is to log into your test instance and run ``<%= platform[:verify_command] %>``.
 
 The [kitchen login](https://docs.chef.io/ctl_kitchen.html#kitchen-login) command is the most common way to access your test instance. This command creates <%= platform[:transport] %> connection into your instance and enables you to explore your test instance and verify its configuration.
 
@@ -342,7 +342,7 @@ You see that the web page contains "hello world" as expected.
 
 <% if environment == 'vagrant' %>
 
-[COMMENT] When you use the Vagrant driver, you can also assign a static IP address to your instance. This enables you to verify the configuration externally, such as from your workstation's web browser. You'll do so in the next tutorial.
+[COMMENT] When you use the Vagrant driver, you can also assign a static IP address to your instance. This enables you to verify the configuration externally, such as from your workstation's web browser. You'll do so in the next module.
 
 <% end %>
 
@@ -491,9 +491,3 @@ Run `kitchen list` and you'll see that the `Last Action` column shows that the v
 <% command_snippet(page: current_page, path: "delete-#{cookbook}-#{environment}/kitchen-list-#{cookbook}-#{environment}-4") %>
 
 [END_BOX]
-
-<% next_page(current_page) do %>
-
-Next, you'll see how Test Kitchen can help you diagnose and resolve failures _before_ your changes reach production.
-
-<% end %>

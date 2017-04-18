@@ -14,10 +14,12 @@ import { LoginGoogleDirective } from './directives/login-google/login-google.dir
 import { UserStartBtnDirective } from './directives/user-start-btn/user-start-btn.directive'
 import { ModuleNextBtnDirective } from './directives/module-next-btn/module-next-btn.directive'
 import { CheckBoxDirective } from './directives/check-box/check-box.directive'
+import { TabsDirective } from './directives/tabs/tabs.directive'
 import { UserProfileService } from './services/user-profile.service'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
 import { UserProgressStampComponent } from './components/user-progress-stamp/user-progress-stamp.component'
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
+import { UserProgressCountsComponent } from './components/user-progress-counts/user-progress-counts.component'
 import { UserCoastersComponent } from './components/user-coasters/user-coasters.component'
 import { QuizComponent } from './components/quiz/quiz.component'
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
@@ -25,6 +27,7 @@ import { LoginLinkedInDirective } from './directives/login-linkedin/login-linked
 import { LoginChefDirective } from './directives/login-chef/login-chef.directive'
 import { ProgressService } from './services/progress.service'
 import { UserProfileComponent } from './components/user-profile/user-profile.component'
+import { UserDisplayNameComponent } from './components/user-display-name/user-display-name.component'
 import { UserProfileLinkComponent } from './components/user-profile-link/user-profile-link.component'
 import { MaterialModule } from '@angular/material'
 import { ModuleFilterService } from './services/module-filter.service'
@@ -36,6 +39,7 @@ import { TrackDisplayService } from './services/track-display.service'
 import { TrackDisplayDirective } from './directives/track-display/track-display.directive'
 import { TrackStartTextDirective } from './directives/track-start-text/track-start-text.directive'
 import { LoadTrackBtnDirective } from './directives/load-track-btn/load-track-btn.directive'
+import { ChefLabProvisionerDirective } from './directives/chef-lab-provisioner/chef-lab-provisioner.directive'
 
 import { Component } from '@angular/core'
 
@@ -61,9 +65,11 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     UserStartBtnDirective,
     ModuleNextBtnDirective,
     CheckBoxDirective,
+    TabsDirective,
     UserProgressBarComponent,
     UserProgressStampComponent,
     UserTrackProgressComponent,
+    UserProgressCountsComponent,
     UserCoastersComponent,
     QuizComponent,
     LoginTwitterDirective,
@@ -76,6 +82,8 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     TrackDisplayDirective,
     TrackStartTextDirective,
     LoadTrackBtnDirective,
+    ChefLabProvisionerDirective,
+    UserDisplayNameComponent,
     UserProfileLinkComponent,
   ],
   imports: [

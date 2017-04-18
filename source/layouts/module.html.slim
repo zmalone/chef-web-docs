@@ -8,27 +8,30 @@
     = partial 'layouts/_breadcrumbs'
   .module-content
     .row
-      - if current_page.children.count > 0
-        = yield
-      - else
-        .medium-9.columns
+      .module
+        .main
           a.anchor href="#top" name="top"
           = yield
-        .medium-3.columns.sidebar
-          = partial "layouts/side-navigation"
-  div
-    - unless is_fork?(current_page)
-      .row
-        quiz
-        .btn-container
-          - next_page = find_next_page(current_page)
-          - if next_page
-            a.button.btn-primary.module-next-btn href="#{next_page.page.url}" Go to next step
+          - unless is_fork?(current_page)
+            quiz
+        - if current_page.children.count == 0
+          .sidebar
+            = partial "layouts/side-navigation"
+  - unless is_fork?(current_page)
+    .row
+      .btn-container
+        - next_page = find_next_page(current_page)
+        - if next_page
+          - if next_page.page.data.appendix?
+            a.button.btn-primary.module-next-btn href="#{next_page.page.url}" Review the appendix
           - else
-            a.button.btn-primary.module-next-btn href="/" Continue learning
-
-  .discussion.gray-bg
-    a.anchor href="#disqus" name="disqus"
-    h3 Need clarification or stuck on a step?<br> We’re here to help.
-    .btn-container
-      button.btn.btn-primary join discussion
+            a.button.btn-primary.module-next-btn href="#{next_page.page.url}" Go to next step
+        - else
+          a.button.btn-primary.module-next-btn href="/" Continue learning
+    - unless current_page.data.show_disqus == false
+      .discussion.gray-bg
+        a.anchor href="#disqus" name="disqus"
+        h3 Need clarification or stuck on a step?<br> We’re here to help.
+        .btn-container
+          button.btn.btn-primary join discussion
+      .row#disqus_thread

@@ -16,6 +16,7 @@ execute 'build the site' do
   environment(
     'PATH' => '/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games',
     'HOME' => node['delivery']['workspace']['cache'],
+    'DISABLE_SOCIAL' => true,
     'CHEF_LAB_URL' => 'https://lab.chef.io',
     'NODE_ENV' => 'production',
     'API_ENDPOINT' => 'https://learnchef-backend-acceptance.chef.io'

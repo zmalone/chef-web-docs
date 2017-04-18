@@ -1,4 +1,4 @@
-This tutorial was last tested using this configuration:
+This module  was last tested using this configuration:
 
 * Ubuntu Server 14.04 LTS on Microsoft Azure
   * **Location:** East US

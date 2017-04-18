@@ -8,7 +8,8 @@ export class User {
     public role: string,
     public company: string,
     public created_at: string,
-    public share_profile: boolean
+    public share_profile: boolean,
+    public profile_image_url: string,
   ) {
   }
 }

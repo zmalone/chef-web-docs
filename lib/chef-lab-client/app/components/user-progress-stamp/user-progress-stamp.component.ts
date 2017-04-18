@@ -11,11 +11,18 @@ export class UserProgressStampComponent implements OnInit {
   @Input()
   module: string
 
+  @Input()
+  track: string
+
   constructor(private progressService: ProgressService) {}
 
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe(() => {
-      this.completed = !!this.progressService.isComplete('modules', this.module)
+      if (this.module) {
+        this.completed = !!this.progressService.isComplete('modules', this.module)
+      } else if (this.track) {
+        this.completed = !!this.progressService.isComplete('tracks', this.track)
+      }
     })
   }
 }

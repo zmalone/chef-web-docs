@@ -37,54 +37,26 @@
                 li
                   a href=""
                     = module_obj.page.data.level
-  .related-tracks
-    .row
-      h3 Related Tracks
-      .large-3.medium-3.small-12.columns
-        .track-card
-          h4.blue-head
-            span Application automation
-          p 5 hrs
-          p 5 modules
-          p.desc Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras facilisis mollis magna risus eget.
-          ul.links
-            li
-              a href="" Chef
-            li
-              a href="" Beginner
-      .large-3.medium-3.small-12.columns
-        .track-card
-          h4.brown-head
-            span DevOps Transformation
-          p 5 hrs
-          p 5 modules
-          p.desc Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras facilisis mollis magna risus eget.
-          ul.links
-            li
-              a href="" Chef
-            li
-              a href="" Beginner
-      .large-3.medium-3.small-12.columns
-        .track-card
-          h4.purple-head
-            span Ecosystem Essentials
-          p 5 hrs
-          p 5 modules
-          p.desc Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras facilisis mollis magna risus eget.
-          ul.links
-            li
-              a href="" Chef
-            li
-              a href="" Beginner
-      .large-3.medium-3.small-12.columns
-        .track-card
-          h4.light-green-head
-            span Developer Essentials
-          p 5 hrs
-          p 5 modules
-          p.desc Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras facilisis mollis magna risus eget.
-          ul.links
-            li
-              a href="" Chef
-            li
-              a href="" Beginner
+  - if current_page.data.related_tracks
+    .related-tracks
+      .row
+        h3 Related Tracks
+        .grid
+          - current_page.data.related_tracks.each do |related_track_id|
+            - related_track = get_track_by_id(related_track_id)
+            a.track-card href="#{related_track.page.url}" class="#{related_track.page.data.track_class}"
+              h4
+                span
+                  = related_track.page.data.title
+              p
+                = related_track.page.data.hours
+                |  hrs
+              p #{related_track.page.data.modules.count} modules
+              p.desc
+                = related_track.page.data.description
+              - if related_track.page.data.tags
+                ul.links
+                  - related_track.page.data.tags.each do |tag|
+                    li
+                      a
+                        = tag

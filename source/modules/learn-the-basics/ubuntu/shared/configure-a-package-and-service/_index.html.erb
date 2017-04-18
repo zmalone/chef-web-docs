@@ -1,6 +1,8 @@
 [HEADLINE] Like files, packages and services are also types of resources. Chef applies resources in the order you specify.
 
-Let's extend what you learned about file management in the previous lesson to manage the Apache HTTP Server package and its service.
+Your job is about more than just setting up files. Next you'll apply what you've learned to install and configure a package and service.
+
+Let's extend what you learned about file management in the previous part to manage the Apache HTTP Server package and its service.
 
 Of course, you can set up one web server manually. But with Chef it'll be easier to manage your infrastructure as you scale, add complexity, and roll out new configuration policies.
 
@@ -96,7 +98,7 @@ Run the `curl` command to confirm that your web page is available.
 
 Normally, you could also access your web server from a browser on another machine. However, the free trial virtual machine does not have a public IP address.
 
-<% else %>
+<% elsif !current_page.data.page_variants&.virtualbox %>
 
 Assuming your server's firewall is open for inbound access on port 80, you can access your web server from a browser on another machine. You'll see something like this.
 
@@ -114,7 +116,7 @@ You saw how to work with the package and service resources. You now know how to 
 
 You also saw how to apply multiple actions. But how does Chef know what order to apply resources and actions?
 
-### Chef works in the order you specify
+#### Chef works in the order you specify
 
 Let's take another quick look at our web server recipe.
 
@@ -129,19 +131,3 @@ It's important to always think about how you order things. For example, the reci
 A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't be enabled on boot then we don't want to start it.
 
 [END_BOX]
-
-[START_BOX]
-
-## Exercises
-
-<%= partial "/layouts/exercises", locals: { path: '/modules/learn-the-basics/ubuntu/shared/configure-a-package-and-service/exercises', questions: [1,2,3,4] } %>
-
-[END_BOX]
-
-<% next_page(current_page) do %>
-
-You may notice one big problem with our recipe &ndash; the HTML code lives inside it, so there is no clear separation between our web site code and our recipe to manage it. It's a good incremental step because it helps you get things working, but this of course would never scale to a full web site.
-
-Next you'll learn how to create a _cookbook_ to make your Chef recipes more manageable.
-
-<% end %>
