@@ -7,8 +7,12 @@
             span
               = item.page.data.title
             span.time
-              = item.page.data.hours
-              |  hrs
+              - if item.page.data.hours < 1
+                = (60 * item.page.data.hours).to_i
+                |  minutes
+              - else
+                = item.page.data.hours
+                |  hrs
           p.desc
             = item.page.data.description
             - if item.page.data.video_url
