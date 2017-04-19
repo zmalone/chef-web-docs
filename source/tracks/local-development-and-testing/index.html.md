@@ -14,6 +14,6 @@ modules:
 - local-development
 - get-started-with-testing
 - tdd-with-inspec
-- chefspec
+- unit-test-with-chefspec
 - verify-style
 ---
