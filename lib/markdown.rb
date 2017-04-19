@@ -60,7 +60,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[WINDOWS\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-windows blueiconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[LINUX\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-linux\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[ERROR\] (.+)<\/p>/)  { "<div class=\"alert-box error\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[RUBY\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><img class=\"alert-box-icon-small\" src=\"/assets/images/partner/ruby.svg\"></img>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[RUBY\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><img class=\"alert-box-icon-small\" src=\"/assets/images/partner/ruby.svg\">&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[TIP\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-info-circle tip-icon\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[GITHUB\] (.+)<\/p>/)  { "<div class=\"alert-box github\"><i class=\"fa fa-2x fa-github\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[FEEDBACK\] (.+)<\/p>/)  { "<div class=\"alert-box feedback\"><i class=\"fa fa-2x fa-comment-o\"></i>&nbsp; #{$1}</div>" }
