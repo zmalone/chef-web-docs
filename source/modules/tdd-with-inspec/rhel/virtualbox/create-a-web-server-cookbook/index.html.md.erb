@@ -1,18 +1,13 @@
 ---
-title: 'Use InSpec to verify your server configuration'
-short_title: 'Verify with InSpec'
-platform: Red Hat Enterprise Linux
-platform_id: rhel
-category: local-development
-logo: tests.svg
-order: 3
+title: 'Use TDD to create a web server cookbook'
+short_title: 'Create a web server cookbook'
+order: 2
 time_to_complete: 60 minutes
 snippet_path: test-your-infrastructure-code/rhel/virtualbox/verify-desired-state
 snippet_workstation: ubuntu
-machine_config: snippets/test-your-infrastructure-code/rhel/virtualbox/machine_config.md
 environment: virtualbox
+quiz_path: quizzes/tdd-with-inspec.yml
 headings: [
-  { label: 'Prerequisites', href: '#prerequisites' },
   { label: '1. Create a cookbook', href: '#step1' },
   { label: '2. Write the first test', href: '#step2' },
   { label: '3. Run the test', href: '#step3' },
@@ -23,33 +18,18 @@ headings: [
   { label: '8. Make the remaining tests pass', href: '#step8' },
   { label: '9. Verify the updated configuration', href: '#step9' },
   { label: '10. Verify on a clean instance', href: '#step10' },
+  { label: 'Conclusion', href: '#conclusion' }
 ]
 ---
 [HEADLINE] Running InSpec tests through Test Kitchen lets you automatically verify your configuration on temporary instances, giving you added confidence that your changes will work as you expect in production. You can also use InSpec to test your production servers.
 
-In this tutorial, you'll learn how to use [InSpec](http://inspec.io/) to automatically verify a basic web server configuration. You'll run InSpec from Test Kitchen on a virtual machine running on your workstation.
-
-[COMMENT] If you're new to automated testing, consider reading [Getting started with automated testing](/modules/get-started-with-testing/) before you start this tutorial.
-
-InSpec provides a kind of [integration testing](https://en.wikipedia.org/wiki/Integration_testing), where you verify that multiple components function correctly together. With InSpec, you write code that describes the desired state of the server. InSpec translates this code into SSH commands that it runs on the server.
-
-It's common to write InSpec tests after you write your configuration code. But another way is to take a _test-driven_ approach, where you write your tests first before you write any Chef code.
-
-The idea behind test-driven development is to use tests, also called _specifications_ or _specs_, to clearly document your requirements. You run your tests on the server and watch them each fail. Then you write just enough Chef code to make at least one failing test pass. You then repeat the process until all of your tests pass.
-
-Here's a 60-minute webcast that discusses the test-driven process in greater depth and shows working examples. You can watch the video before or after you complete this tutorial.
-
-<script type="text/javascript" src="https://www.brighttalk.com/clients/js/embed/embed.js"></script> <object class="BrightTALKEmbed" width="705" height="660">     <param name="player" value="channel_player"/>     <param name="domain" value="https://www.brighttalk.com"/>     <param name="channelid" value="11349"/>     <param name="communicationid" value="191263"/>     <param name="autoStart" value="false"/>     <param name="theme" value=""/> </object>
-
-An important benefit of test-driven development is that it helps limit scope. You know you're done when all tests pass. And because the tests are code, they're versionable through source control. When a requirement changes, you capture that change by updating the tests. This gives you the complete history of your requirements and better insight into when and how your requirements changed.
-
-Here you'll create a basic cookbook that resembles the Apache web server configuration that you wrote [previously](/modules/learn-the-basics/rhel/free/configure-a-package-and-service/). Let's begin by defining clear goals for the web server configuration.
+Here you'll create a basic cookbook that resembles the Apache web server configuration that you wrote in the [Learn the Chef basics](/modules/learn-the-basics/rhel/free/configure-a-package-and-service/) module. Let's begin by defining clear goals for the web server configuration.
 
 Here's the criteria for the web server configuration:
 
 <% unstyled_list do %>
   <% icon_list_item('square-o') do %>
-    Install the Apache package, <code>httpd</code>, on Red Hat Enterprise Linux systems.
+    Install the Apache package, <code>httpd</code>, on CentOS systems.
   <% end %>
   <% icon_list_item('square-o') do %>
     Start and enable the <code>httpd</code> service.
@@ -63,47 +43,10 @@ Here's the criteria for the web server configuration:
 <% end %>
 
 <p>
-You'll follow the test-driven approach by first writing a test, watching it fail, and then writing just enough code to make it pass.
+You'll follow the test-driven development (TDD) approach by first writing a test, watching it fail, and then writing just enough code to make it pass.
 
 Let's start by making sure you're set up for local development.
 </p>
-
-<% accordion('test-configuration', 'Test configuration') do %>
-
-<% markdown do %>
-
-<% render_machine_config(current_page.data.machine_config) %>
-
-<% end %>
-
-<% end %>
-
-
-[START_BOX]
-
-## Prerequisites
-
-### Understand hardware requirements
-
-To successfully complete this tutorial, you'll need a Windows, MacOS, or Linux workstation that has relatively powerful hardware. We recommend that your workstation have at least 15GB of free disk space and at least 4GB of available memory so that you can download the base image and run a few virtual machine instances.
-
-### Set up your workstation for local development
-
-This tutorial builds on top off knowledge gained in [Get started with Test Kitchen](/modules/local-development/rhel/) and [Create a web app cookbook](/modules/create-a-web-app-cookbook/rhel/).
-
-First, you'll need to have the latest version of the Chef Development Kit on your workstation. You'll also need a programmer's text editor that you're comfortable working with and a directory to work from &ndash; the tutorials use <% fp '~/learn-chef' %>. [Follow these steps](/modules/manage-a-node/rhel/hosted/set-up-your-workstation/) to get set up.
-
-You'll also need the virtualization software [VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/). If you don't have VirtualBox and Vagrant installed, [follow steps 1&mdash;3](/modules/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage) to get set up. Optionally, you can follow steps 4&mdash;7 to verify you can successfully bring up a local virtual machine.
-
-### Build local development skills using Test Kitchen
-
-This tutorial requires familiarity with local development using Test Kitchen.
-
-If you're not familiar with Test Kitchen, work through [Get started with Test Kitchen](/modules/local-development/rhel/) before you start this tutorial. This tutorial teaches you the basics of how to apply cookbooks on local test instances, all on your workstation.
-
-The [Create a web app cookbook](/modules/create-a-web-app-cookbook/rhel/) tutorial provides additional hands-on practice with local development. Working through this tutorial is optional. Here, you configure a basic but complete web application using Test Kitchen. The [quickstart](/modules/create-a-web-app-cookbook/rhel/bring-up-the-web-app-using-test-kitchen/) brings up the final configuration on a local test instance in just a few minutes.
-
-[END_BOX]
 
 [START_BOX]
 
@@ -117,7 +60,7 @@ Next, run the following `chef generate cookbook` command to create a cookbook na
 
 <% command_snippet(page: current_page, path: 'create-the-web-server-cookbook/chef-generate-cookbook') %>
 
-The "test" part of the cookbook's name is simply to distinguish this cookbook from those used in other Learn Chef tutorials. In practice, you might simply name the cookbook `webserver`.
+The "test" part of the cookbook's name is simply to distinguish this cookbook from those used in other Learn Chef modules. In practice, you might simply name the cookbook `webserver`.
 
 [END_BOX]
 
@@ -129,7 +72,7 @@ Before writing any configuration code, let's write a test that verifies the firs
 
 <% unstyled_list do %>
   <% icon_list_item('arrow-right') do %>
-    <b>Install the Apache package, <code>httpd</code>, on Red Hat Enterprise Linux systems.</b>
+    <b>Install the Apache package, <code>httpd</code>, on CentOS systems.</b>
   <% end %>
   <% icon_list_item('square-o') do %>
     Start and enable the <code>httpd</code> service.
@@ -142,7 +85,7 @@ Before writing any configuration code, let's write a test that verifies the firs
   <% end %>
 <% end %>
 
-The file <% fp 'test/smoke/default/default_test.rb' %> will hold our tests. You typically have one test file for each recipe in your cookbooks. Here, <% fp 'default_test.rb' %> contains tests for the default recipe, <% fp 'default.rb' %>. For this tutorial, you'll add all configuration code to the default recipe.
+The file <% fp 'test/smoke/default/default_test.rb' %> will hold our tests. You typically have one test file for each recipe in your cookbooks. Here, <% fp 'default_test.rb' %> contains tests for the default recipe, <% fp 'default.rb' %>. For this module, you'll add all configuration code to the default recipe.
 
 As with many test frameworks, InSpec code resembles natural language. Here's the format of an InSpec test.
 
@@ -155,7 +98,7 @@ end
 
 An InSpec test has two main components: the _subject to examine_ and the subject's _expected state_. Here, `<entity>` is the subject you want to examine, for example, a package name, service, file, or network port. The `<expectation>` part specifies the desired result or expected state, for example, that a port should be open (or perhaps _should not_ be open.)
 
-[COMMENT] In this tutorial, you use RSpec's "should" syntax. You can also use the [expect syntax](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/).
+[COMMENT] In this module, you use RSpec's "should" syntax. You can also use the [expect syntax](http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/).
 
 Replace the contents of <% fp 'default_test.rb' %> with this code. This code tests whether the `httpd` package is installed.
 
@@ -187,7 +130,7 @@ Run `kitchen list` to verify that the instance has not yet been created.
 
 <% command_snippet(page: current_page, path: 'run-the-first-test/kitchen-list-1') %>
 
-In the previous tutorials, you ran `kitchen converge` to bring up your virtual machine and apply your Chef code. This time, run `kitchen verify` to bring up the virtual machine and run just your tests.
+In other modules, you ran `kitchen converge` to bring up your virtual machine and apply your Chef code. This time, run `kitchen verify` to bring up the virtual machine and run just your tests.
 
 <% command_snippet(page: current_page, path: 'run-the-first-test/kitchen-verify-1', features: [:stdin, :stdout, :stderr]) %>
 
@@ -212,7 +155,7 @@ To make the test pass, you need to install the `httpd` package. To do that, you 
 
 <% code_snippet(page: current_page, path: 'make-first-test-pass/default-1-rhel') %>
 
-[COMMENT] For learning purposes, you use the built-in `package` resource to install Apache. A more robust solution might use the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket. You use the `httpd` cookbook in the [Create a web app cookbook](/modules/create-a-web-app-cookbook/rhel/configure-apache/) tutorial.
+[COMMENT] For learning purposes, you use the built-in `package` resource to install Apache. A more robust solution might use the [httpd](https://supermarket.chef.io/cookbooks/httpd) cookbook from Chef Supermarket. You use the `httpd` cookbook in the [Create a web app cookbook](/modules/create-a-web-app-cookbook/rhel/configure-apache/) module.
 
 [END_BOX]
 
@@ -248,7 +191,7 @@ So far, you've validated the first requirement for your web server configuration
 
 <% unstyled_list do %>
   <% icon_list_item('check-square-o') do %>
-    Install the Apache package, <code>httpd</code>, on Red Hat Enterprise Linux systems.
+    Install the Apache package, <code>httpd</code>, on CentOS systems.
   <% end %>
   <% icon_list_item('square-o') do %>
     Start and enable the <code>httpd</code> service.
@@ -295,7 +238,7 @@ To keep things moving, let's resolve the remaining failures all at once. Modify 
 
 <% code_snippet(page: current_page, path: 'make-remaining-tests-pass/default-2-rhel') %>
 
-This code uses the `service` and `file` resources that you've used in previous tutorials.
+This code uses the `service` and `file` resources that you've seen in other modules.
 
 This code does not explicitly configure Apache to run on port 80. We'll see in the next step whether we need to write additional code to address that requirement.
 
@@ -323,7 +266,7 @@ Congratulations. You've successfully satisfied the basic requirements for your w
 
 <% unstyled_list do %>
   <% icon_list_item('check-square-o') do %>
-    Install the Apache package, <code>httpd</code>, on Red Hat Enterprise Linux systems.
+    Install the Apache package, <code>httpd</code>, on CentOS systems.
   <% end %>
   <% icon_list_item('check-square-o') do %>
     Start and enable the <code>httpd</code> service.
@@ -370,7 +313,7 @@ You see from the output that the tests pass and the configuration is repeatable.
 
 [COMMENT] The `kitchen test` command is also commonly used in automated pipelines because it ensures that the instance is destroyed immediately after `chef-client` completes and all tests are run. When you use a [cloud driver](https://docs.chef.io/kitchen.html#drivers) with Test Kitchen, `kitchen test` can help minimize cost.
 
-[GITHUB] [Get the code for this lesson](https://github.com/learn-chef/webserver_test/tree/lesson1_rhel) on GitHub.
+[GITHUB] [Get the code for this module](https://github.com/learn-chef/webserver_test/tree/lesson1_rhel) on GitHub.
 
 [END_BOX]
 
@@ -378,24 +321,10 @@ You see from the output that the tests pass and the configuration is repeatable.
 
 ## Conclusion
 
-In this tutorial, you used InSpec to verify the correctness of a basic web server cookbook. An increasingly popular way to write cookbooks is to write your tests before you write your Chef code. This _test-driven_ approach helps document your requirements and goals, and the scope of your project. Once all your tests pass, you've satisfied the requirements for your project and can move it to the next phase.
+In this module, you used InSpec to verify the correctness of a basic web server cookbook. An increasingly popular way to write cookbooks is to write your tests before you write your Chef code. This _test-driven_ approach helps document your requirements and goals, and the scope of your project. Once all your tests pass, you've satisfied the requirements for your project and can move it to the next phase.
 
 As with any kind of software testing, there's a time trade-off. It can take some time to write your initial tests and incorporate them into your workflow &ndash; arguably, it can take more time to set up your test process than it would take to test your initial configuration manually. Writing test code is also new to many people, and it can take time to ramp up your skills.
 
 But once you have automated testing in place and the skills to start writing tests, verifying changes becomes significantly faster. What once took days or weeks to manually verify can now take hours or even minutes. And because automated testing enables you to more quickly and easily build confidence in your changes, you'll be better able to tackle those small but important changes that you were once hesitant to commit to.
-
-### Next steps
-
-If you're new to Ruby programming or testing with InSpec, one of the best ways to improve your skills is to adapt other examples that you see. The [InSpec documentation](http://inspec.io/docs/reference/resources/) provides the full list of available resource types, and has many good examples. Learn more about writing great tests and see practical examples at [betterspecs.org](http://betterspecs.org).
-
-Although InSpec is a great way to get fast feedback on whether your cookbook behaves as you expect on a real instance, there are ways to verify your work even faster. Next, we recommend the [Unit test with ChefSpec](/modules/chefspec/) tutorial. Here you'll learn how to use ChefSpec to speed up the feedback cycle even more by simulating the execution of your resources in memory without the need to create test instances.
-
-Learn more about how to test and debug your Chef code in our [Joy of Automating](/modules/) video series, hosted by Franklin Webber.
-
-If you're involved in your company's compliance and audit process, you may be interested in the [Chef compliance scanner](/modules/compliance-assess/rhel/), which uses InSpec as its auditing and testing framework.
-
-You may also be interested in [Chef Automate](https://www.chef.io/automate/), which gives your operations and development teams a common platform for developing, building, testing, and deploying cookbooks, applications, and more. Chef Automate reinforces the Chef workflow, where you begin by developing and testing your configuration from your local workstation. Then, you submit your change to Chef Automate's pipeline, where your change goes through sets of automated tests before going out into production. If you have many different teams, each delivering software in its own way, you can use Chef Automate to bring a standard, proven approach to all of your organization's deployments.
-
-[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
 
 [END_BOX]

@@ -9,10 +9,11 @@ level: Beginner
 track_class: card-yellow
 category: Admin
 order: 100
+order: 3
 modules:
 - local-development
 - get-started-with-testing
-- inspec
+- tdd-with-inspec
 - chefspec
 - verify-style
 ---
