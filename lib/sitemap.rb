@@ -20,8 +20,17 @@ end
 
 class Middleman::Sitemap::Resource
   def id
-    return self.data.id if self.data.id
-    self.url.sub(/\/(modules\/|tracks\/)?/, '')
+    ids = []
+    page = self
+    loop do
+      break unless page
+      fragment = (page.data.id ? page.data.id : page.normalized_path.split('/')[-2])
+      break unless fragment
+      break if ids.count > 0 && (fragment === 'modules' || fragment === 'tracks')
+      ids.unshift(fragment)
+      page = page.parent
+    end
+    ids.join('/')
   end
 
   def title
