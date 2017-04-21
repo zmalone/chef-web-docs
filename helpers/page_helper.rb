@@ -47,6 +47,14 @@ module PageHelper
     track
   end
 
+  def get_parent_multipage(page)
+    current_fork = page
+    while current_fork.parent && !is_fork?(current_fork.parent)
+      current_fork = current_fork.parent
+    end
+    get_module_by_id(current_fork.id)
+  end
+
   def get_current_breadcrumbs(page)
     breadcrumbs = []
     module_root = get_module(page)

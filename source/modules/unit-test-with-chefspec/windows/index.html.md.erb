@@ -1,0 +1,51 @@
+---
+title: 'Use ChefSpec to verify the correctness of your Windows Server resources'
+short_title: 'Windows Server'
+platform: Windows Server
+platform_id: windows
+category: local-development
+order: 2
+time_to_complete: 5 minutes
+machine_config: snippets/chefspec/windows/local/machine_config.md
+---
+In the [Test driven development with InSpec](/modules/tdd-with-inspec/) module, you learned how to use InSpec to automatically verify a basic web server configuration on a virtual machine running on your workstation. Although automated testing is faster than manual testing, it can still take some time for the instance to come up, run `chef-client`, and run the tests.
+
+You'll want to verify your work on a virtual instance before you run your cookbook in production, but as you develop your cookbook, you can use [ChefSpec](https://docs.chef.io/chefspec.html) to speed up the feedback cycle even more. ChefSpec _simulates_ the execution of your resources in memory, and does not involve the creation of a virtual instance. It's the fastest way to test your resources and is a great way to validate the correctness of your work, even before you set up a virtual instance to test on.
+
+ChefSpec testing is also helpful when you use [continuous delivery](https://en.wikipedia.org/wiki/Continuous_delivery) (CD) systems such as [Chef Automate](https://www.chef.io/automate/) because ChefSpec enables you to verify your code without the need to bring up additional test systems.
+
+ChefSpec provides a kind of _unit_ testing, where you verify that a single component, such as a Chef resource, functions correctly. Unlike integration testing, unit testing does not focus on how multiple components work together.
+
+ChefSpec testing is most useful when a component's behavior varies based on the environment or other variable input. For example, say you define this `directory` resource to ensure that the <% fp 'C:\Temp' %> directory exists.
+
+```ruby
+# default.rb
+directory 'C:\Temp' do
+  action :create
+end
+```
+
+You don't necessarily need to write a unit test here because this `directory` resource can do only one thing &ndash; create the <% fp 'C:\Temp' %> directory if it does not exist. However, say your `directory` resource reads from a node attribute to determine which directory to create.
+
+```ruby
+# default.rb
+directory node['temp_path'] do
+  action :create
+end
+```
+
+In this case, you might want to validate that when the `node['temp_path']` attribute is set, that the appropriate directory would be created.
+
+In this module, you'll create a basic cookbook that manages web content. You'll write ChefSpec tests that verify that your web content directory would be created with the required properties &ndash; without the need to run your cookbook on a test instance.
+
+[COMMENT] [Watch this 60-minute webcast](/modules/writing-great-unit-tests-with-chefspec/) to learn more about using ChefSpec effectively. You can watch the video before or after you complete this module.
+
+<% accordion('test-configuration', 'Test configuration') do %>
+
+<% markdown do %>
+
+<% render_machine_config(current_page.data.machine_config) %>
+
+<% end %>
+
+<% end %>

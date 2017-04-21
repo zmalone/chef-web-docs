@@ -31,7 +31,7 @@ describe PageHelper do
     let(:module_name) { 'manage-a-node' }
     let(:module_json) do
       {
-        url: '/modules/manage-a-node',
+        url: '/modules/manage-a-node-chef-server',
         remaining: [130, 310],
         is_fork: true,
         parent: 'modules',
@@ -42,7 +42,7 @@ describe PageHelper do
     let(:page_name) { 'manage-a-node/rhel/automate/bootstrap-your-node' }
     let(:page_json) do
       {
-        url: '/modules/manage-a-node/rhel/automate/bootstrap-your-node',
+        url: '/modules/manage-a-node-chef-server/rhel/automate/bootstrap-your-node',
         remaining: [20, 20],
         minutes: [20, 20],
         parent: 'manage-a-node/rhel/automate'
@@ -73,7 +73,7 @@ describe PageHelper do
   end
 
   let(:module_id) { 'manage-a-node' }
-  let(:module_path) { '/modules/manage-a-node/rhel/automate/index.html' }
+  let(:module_path) { '/modules/manage-a-node-chef-server/rhel/automate/index.html' }
   let(:module_page) { helper.sitemap.find_resource_by_path(module_path) }
 
   let(:module_sans_track) { double('test-module', id: 'test-module-not-in-a-track') }
@@ -128,11 +128,11 @@ describe PageHelper do
 
   describe '.find_next_page' do
     let(:lone_module_page) { '/modules/be-a-secure-chef/index.html' }
-    let(:module_path_overview) { '/modules/manage-a-node/index.html' }
-    let(:module_path_multipage_1) { '/modules/manage-a-node/rhel/index.html' }
-    let(:module_path_multipage_2) { '/modules/manage-a-node/rhel/hosted/index.html' }
-    let(:module_path_unitpage_1) { '/modules/manage-a-node/rhel/hosted/set-up-your-workstation/index.html' }
-    let(:module_path_unitpage_2) { '/modules/manage-a-node/rhel/hosted/set-up-your-chef-server/index.html' }
+    let(:module_path_overview) { '/modules/manage-a-node-chef-server/index.html' }
+    let(:module_path_multipage_1) { '/modules/manage-a-node-chef-server/rhel/index.html' }
+    let(:module_path_multipage_2) { '/modules/manage-a-node-chef-server/rhel/hosted/index.html' }
+    let(:module_path_unitpage_1) { '/modules/manage-a-node-chef-server/rhel/hosted/set-up-your-workstation/index.html' }
+    let(:module_path_unitpage_2) { '/modules/manage-a-node-chef-server/rhel/hosted/set-up-your-chef-server/index.html' }
 
     it 'returns the first multipage from the module overview' do
       page1 = helper.sitemap.find_resource_by_path(module_path_overview)
