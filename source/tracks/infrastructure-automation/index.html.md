@@ -3,7 +3,7 @@ title: Infrastructure Automation
 track_id: 1
 track_hero: /assets/images/tracks/infrastructure-automation.jpg
 image_url: /assets/images/coasters/infrastructure-automation.png
-description: "Discover how Chef's test and repair approach enables you to turn infrastructure into code. You'll learn what Chef does during a run and how to configure a system using a mix of resources, recipes and cookbooks."
+description: "Discover how Chef's test and repair approach enables you to turn infrastructure into code. You'll learn what Chef does during a run and how to configure a system using a mix of resources, recipes, and cookbooks."
 hours: 8
 level: Beginner
 track_class: card-green
