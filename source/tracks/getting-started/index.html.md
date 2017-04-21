@@ -23,5 +23,5 @@ track_class: card-red
 category: Admin
 order: 0
 modules:
-- getting-started
+- getting-started-with-lcr
 ---
