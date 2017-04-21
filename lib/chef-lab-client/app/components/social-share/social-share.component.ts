@@ -6,7 +6,7 @@ import { SiteDataService } from '../../services/site-data.service'
   templateUrl: './social-share.component.html',
 })
 export class SocialShareComponent implements OnChanges {
-  private sharer_url = {
+  private sharerUrls = {
     facebook: 'https://www.facebook.com/sharer/sharer.php?',
     twitter: 'https://twitter.com/intent/tweet?',
     google: 'https://plus.google.com/share?',
@@ -28,18 +28,13 @@ export class SocialShareComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    const social_data = this.socialData || this.siteDataService.currentPage().socialShare
-    this.facebookURL = this.sharer_url['facebook'] + 'u=' + this.baseURL() + this.url
-    this.googleURL = this.sharer_url['google'] + 'url=' + this.baseURL() + this.url
-    this.twitterURL = this.sharer_url['twitter'] + 'text=' +
-      social_data['tweet_text'] + '&url=' + this.baseURL() + this.url
-    this.linkedinURL = this.sharer_url['linkedin'] + '&title=' + social_data['linkedin_title'] +
-      '&summary=' + social_data['linkedin_summary'] + '&url=' + this.baseURL() + this.url
-  }
-
-  private baseURL() {
-    const loc = window.location
-    const baseUrl = (loc.origin) ? loc.origin : loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '')
-    return baseUrl
+    const socialData = this.socialData || this.siteDataService.currentPage().socialShare
+    const url = encodeURIComponent(this.siteDataService.baseUrl() + this.url)
+    this.facebookURL = this.sharerUrls['facebook'] + 'u=' + url
+    this.googleURL = this.sharerUrls['google'] + 'url=' + url
+    this.twitterURL = this.sharerUrls['twitter'] + 'text=' +
+      socialData['tweet_text'] + '&url=' + url
+    this.linkedinURL = this.sharerUrls['linkedin'] + '&title=' + socialData['linkedin_title'] +
+      '&summary=' + socialData['linkedin_summary'] + '&url=' + url
   }
 }
