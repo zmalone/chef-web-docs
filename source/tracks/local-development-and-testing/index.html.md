@@ -15,5 +15,5 @@ modules:
 - get-started-with-testing
 - tdd-with-inspec
 - unit-test-with-chefspec
-- verify-style
+- verify-code-style
 ---
