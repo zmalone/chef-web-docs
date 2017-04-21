@@ -1,5 +1,5 @@
 ---
-title: Developer essentials
+title: Developer Essentials
 track_id: 8
 track_hero: /assets/images/tracks/compliance-automation.jpg
 image_url: /assets/images/coasters/developer-essentials.png

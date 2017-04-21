@@ -16,4 +16,5 @@ modules:
 - tdd-with-inspec
 - unit-test-with-chefspec
 - verify-code-style
+- best-practices-for-testing
 ---
