@@ -22,7 +22,7 @@ export class UserCoastersComponent implements OnChanges {
     this.coasters = []
     Object.keys(this.achievements).forEach(achievement => {
       const coasters = allCoasters.filter(item => item.id === achievement)
-      if (coasters) this.coasters.push(coasters[0])
+      if (coasters.length) this.coasters.push(coasters[0])
     })
   }
 }

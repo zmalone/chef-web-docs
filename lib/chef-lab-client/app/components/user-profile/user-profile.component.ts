@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core'
 import { Router, NavigationEnd } from '@angular/router'
 import { UserProfileService } from '../../services/user-profile.service'
 import { ProgressService } from '../../services/progress.service'
+import { SiteDataService } from '../../services/site-data.service'
 import { User } from '../../model'
 import { COUNTRY } from './data/countries'
 
@@ -23,6 +24,7 @@ export class UserProfileComponent implements OnInit {
   constructor(
     private userProfileService: UserProfileService,
     private progressService: ProgressService,
+    private siteDataService: SiteDataService,
     private router: Router,
   ) {}
 
@@ -90,8 +92,7 @@ export class UserProfileComponent implements OnInit {
 
   getProfileImageUrl() {
     let url = this.user.profile_image_url
-    const loc = window.location
-    const baseUrl = (loc.origin) ? loc.origin : loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '')
+    const baseUrl = this.siteDataService.baseUrl()
     if (url) url = url.replace(/d=mm/, 'd=' + encodeURIComponent(`${baseUrl}/assets/images/profile/avatar.png`))
     return url
   }
