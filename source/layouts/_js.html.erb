@@ -6,7 +6,20 @@
     url: <%= current_page.url.to_json %>,
     id: <%= current_page.id.to_json %>,
     section: <%= get_page_section(current_page)[0].to_json %>,
-    quiz: <%= get_quiz_data(current_page).to_json %>
+    quiz: <%= get_quiz_data(current_page).to_json %>,
+    trackSocialShare: {
+      <% if get_track(current_page) %>
+        url: '<%= get_track(current_page).page.url %>',
+        tweet_text: <%= tweet_text( get_track(current_page).page).to_json %>,
+        linkedin_title: <%= social_share_linkedin_title(get_track(current_page).page).to_json %>,
+        linkedin_summary: <%= social_share_linkedin_summary(get_track(current_page).page).to_json %>
+      <% end %>
+    },
+    socialShare: {
+        tweet_text: <%= tweet_text(current_page).to_json %>,
+        linkedin_title: <%= social_share_linkedin_title(current_page).to_json %>,
+        linkedin_summary: <%= social_share_linkedin_summary(current_page).to_json %>
+    }
   };
 </script>
 <%= javascript_include_tag 'data/tree' %>

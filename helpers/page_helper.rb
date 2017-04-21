@@ -223,6 +223,20 @@ module PageHelper
     "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(page.url)}"
   end
 
+  def tweet_text(page)
+    page.data.try(&:social_share).try(&:twitter).try(&:post) ||
+      page.data.try(&:social_share).try(&:post) ||
+      truncate(page.data.description, length: 140)
+  end
+
+  def social_share_linkedin_title(page)
+    page.data.try(&:social_share).try(&:linkedin).try(&:title) || page.data.title
+  end
+
+  def social_share_linkedin_summary(page)
+    page.data.try(&:social_share).try(&:linkedin).try(&:post) || page.data.description
+  end
+
   def meta_og(page, type)
     page.data.try(&:social_share).try(&:facebook).try(type) ||
     page.data.try(&:social_share).try(&:shared).try("#{type}")

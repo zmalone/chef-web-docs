@@ -22,6 +22,7 @@ import { UserTrackProgressComponent } from './components/user-track-progress/use
 import { UserProgressCountsComponent } from './components/user-progress-counts/user-progress-counts.component'
 import { UserCoastersComponent } from './components/user-coasters/user-coasters.component'
 import { QuizComponent } from './components/quiz/quiz.component'
+import { SocialShareComponent} from './components/social-share/social-share.component'
 import { LoginTwitterDirective } from './directives/login-twitter/login-twitter.directive'
 import { LoginLinkedInDirective } from './directives/login-linkedin/login-linkedin.directive'
 import { LoginChefDirective } from './directives/login-chef/login-chef.directive'
@@ -72,6 +73,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     UserProgressCountsComponent,
     UserCoastersComponent,
     QuizComponent,
+    SocialShareComponent,
     LoginTwitterDirective,
     LoginLinkedInDirective,
     LoginChefDirective,

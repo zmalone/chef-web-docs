@@ -18,4 +18,9 @@ export class SiteDataService {
     return (window as any).coasters
   }
 
+  public baseUrl(): string {
+    const loc = window.location
+    const baseUrl = (loc.origin) ? loc.origin : loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '')
+    return baseUrl
+  }
 }
