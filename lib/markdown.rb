@@ -153,6 +153,7 @@ module ZurbFoundation
     # TODO: Review this and determine if additional rules are necessary, or if there is an alternative to this.
     content.gsub!(/<p><hr\s?\/?><\/p>/, '<hr>')
     content.gsub!(/<script[^>]*>[^<]*<\/script>/, '')
+    content.gsub!('</img>', '')
     content.gsub!('<p/>', '')
     content.gsub!('<p><p>', '<p>')
     content.gsub!('</p></p>', '</p>')
