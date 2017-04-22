@@ -3,7 +3,7 @@ title: Getting Started
 track_id: 15
 track_hero: /assets/images/tracks/compliance-automation.jpg
 image_url: /assets/images/coasters/getting-started.png
-description: "Start your Chef journey here. We’ll talk about how to get started, what to do first and where to go next."
+description: "Ready to dig in? Start your Chef journey here. We’ll talk about how to get started, what to do first and where to go next."
 social_share:
   shared: &shared
     title: "See what it takes to get started with Chef"
