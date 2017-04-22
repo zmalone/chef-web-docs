@@ -8,8 +8,7 @@ hours: 8
 level: Beginner
 track_class: card-yellow
 category: Admin
-order: 100
-order: 3
+order: 2
 modules:
 - local-development
 - get-started-with-testing
