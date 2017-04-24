@@ -15,9 +15,9 @@ modules:
 - local-development
 - beyond-essentials
 related_tracks:
-- application-automation
-- devops-transformation
-- ecosystem-essentials
+- getting-started
 - developer-essentials
+- local-development-and-testing
+- devops-transformation
 video_url: 'https://player.vimeo.com/video/211382045'
 ---
