@@ -10,8 +10,5 @@ track_class: card-blue
 category: Admin
 order: 5
 modules:
-- getting-started
-- develop-locally
-- learn-the-basics
-- manage-a-node
+- introduction-to-the-devops-journey
 ---
