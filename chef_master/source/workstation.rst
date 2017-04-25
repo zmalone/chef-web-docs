@@ -32,11 +32,9 @@ Some important components of workstations include:
 
        * Nodes
        * Cookbooks and recipes
-       * Roles
-       * Stores of JSON data (data bags), including encrypted data
-       * Environments
-       * Cloud resources, including provisioning
-       * The installation of the chef-client on management workstations
+       * Roles, Environments, and Data Bags
+       * Resources within various cloud environments
+       * The installation of the chef-client onto nodes
        * Searching of indexed data on the Chef server
 
        .. end_tag
@@ -60,7 +58,7 @@ Some important components of workstations include:
    * - :doc:`knife.rb </config_rb_knife>`
      - .. tag config_rb_knife_summary
 
-       A knife.rb file is used to specify the chef-repo-specific configuration details for knife.
+       A knife.rb file is used to specify configuration details for knife.
 
        .. end_tag
 
