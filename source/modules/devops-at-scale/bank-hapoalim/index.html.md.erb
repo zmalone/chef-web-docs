@@ -7,11 +7,24 @@ category: 'example-workflows'
 icon: devops-diverse-skills.png
 time_to_complete: 10 minutes
 quiz_path: quizzes/devops-at-scale/bank-hapolim.yml
+headings: [
+  { label: 'Why automate?', href: '#whyautomate' },
+  { label: 'The beginning', href: '#thebeginning' },
+  { label: 'Creating a secure environment', href: '#creatingasecureenvironmentwithchef' },
+  { label: 'Using Chef as a repository', href: '#usingchefasarepository' },
+  { label: 'Securing the servers', href: '#securingtheservers' },
+  { label: 'The workflow for cookbooks', href: '#theworkflowforcookbooks' },
+  { label: 'Adopting Chef', href: '#adoptingchef' },
+  { label: 'The DevOps community', href: '#thedevopscommunity' },
+  { label: "What's in the works?", href: '#what39sintheworks' },
+  { label: 'Current projects', href: '#currentprojects' },
+  { label: 'Future projects', href: '#futureprojects' },
+  { label: 'Summing up', href: '#summingup' }
+]
 ---
 [Bank Hapoalim](https://en.wikipedia.org/wiki/Bank_Hapoalim) is Israel's largest bank and was named by [The Banker](http://www.thebanker.com/) magazine as _Bank of the Year in Israel_ for 2015. The bank’s Unix and Linux team has been using Chef for only about five months and they have made enormous progress automating their infrastructure in a highly secure environment. The team uses Chef for configuration management and, less conventionally, they are also using their Chef server as a package and proxy package repository. The Chef server deploys and installs the application packages on production servers.
 
 The bank has heterogeneous infrastructure that includes various flavors of Linux and Unix as well as Windows. Currently, the team is using Chef to manage hundreds of Linux nodes, with plans to start managing hundreds more Windows nodes and, of course, new Linux/Unix servers as they are added.
-
 
 [START_BOX]
 
@@ -29,7 +42,7 @@ Not only have they significantly reduced the number of human errors but they can
 ##The beginning
 The team first heard about Chef when a developer saw IBM demonstrate how to use it to install a [Websphere Application Server](http://www-03.ibm.com/software/products/en/appserv-was). The team initially thought they could use Chef to replace IBM's Tivoli Provisioning Manager (TPM), which was going out of support. They quickly realized that Chef could also solve the problems that Oz outlined.
 They did a small proof-of-concept to demonstrate to stakeholders that Chef could install all the prerequisites for one of the bank's applications. They then used Chef to deploy the application itself. Once the stakeholders were on board, the team presented the plans for how they would deploy Chef, which needed approval from the security group. After that, they installed the production Chef server.
-[END_BOX][START_BOX]##Creating a secure environment with ChefPavel Jeloudovski is the team's senior systems administrator. He was largely responsible for the design of the network topology around the Chef server and also for its installation. He says that one of the things that made Chef appealing is that the server is accessible over a single, well-known port (443). He says, "We have a lot of security constraints and the fact that Chef runs on only one port means that we are able to create secure tunnels using [F5](https://f5.com/). We installed an [NGINX](https://www.nginx.com/) proxy in every segment. It forwards requests to F5, which analyzes them and then forwards them to the Chef server. Our security people love that they can use industry-standard tools like F5." Everything is installed and configured with Chef.Here's an example of the topology.![](images/f5-security.png)There are three organizations, and each project has several environments. The environments are for integration, pre-production and production.
+[END_BOX][START_BOX]##Creating a secure environment with ChefPavel Jeloudovski is the team's senior systems administrator. He was largely responsible for the design of the network topology around the Chef server and also for its installation. He says that one of the things that made Chef appealing is that the server is accessible over a single, well-known port (443). He says, "We have a lot of security constraints and the fact that Chef runs on only one port means that we are able to create secure tunnels using [F5](https://f5.com/). We installed an [NGINX](https://www.nginx.com/) proxy in every segment. It forwards requests to F5, which analyzes them and then forwards them to the Chef server. Our security people love that they can use industry-standard tools like F5." Everything is installed and configured with Chef.Here's an example of the topology.![](./images/f5-security.png)There are three organizations, and each project has several environments. The environments are for integration, pre-production and production.
 [END_BOX][START_BOX]##Using Chef as a repositoryChef's single point of access gave the team an innovative idea. Pavel says, "Because of our environment, opening even a single firewall port requires a security review. We're using, or possibly abusing, Chef by making it our first central management system. We've never had anything that all the networks in the bank could access. Without a central repository, we were always making copies and mounting ISO images manually.
 "Now, we use the Chef server as a file server and, because everyone is using the same code and not their own homebrewed scripts, as our central [yum](http://yum.baseurl.org/) repository. We also use it as a proxy for other services that use HTTP, such as our [Artifactory](https://www.jfrog.com/artifactory/) repository."
 [END_BOX][START_BOX]##Securing the serversWhen thinking about the most important security issue that Chef has helped address, Pavel immediately mentions hardening. "Our most critical job is to button down the security requirements. For every piece of technology that we have, the security people give us a manual on how to harden it: how to harden Apache, how to harden WebSphere. Before Chef, we did everything manually. There might be some scripts but they weren't consistent across the organization."
