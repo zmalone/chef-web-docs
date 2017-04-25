@@ -15,3 +15,17 @@ For example:
 # ~/learn-chef
 --json-attributes '{"cloud": {"public_ip": "13.82.139.157"}}'
 ```
+
+If your workstation is running Windows, you may need to run the bootstrap command differently. First, create a variable to hold the string as a JSON object.
+
+```ps
+# ~\learn-chef
+$ $public_ip = '{"cloud": {"public_ip": "13.82.139.157"}}' | ConvertTo-Json
+```
+
+When you run the bootstrap command, pass the `--json-attributes` argument like this.
+
+```ps
+# ~\learn-chef
+--json-attributes $public_ip
+```

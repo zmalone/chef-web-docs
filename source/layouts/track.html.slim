@@ -49,8 +49,12 @@
                 span
                   = related_track.page.data.title
               p
-                = related_track.page.data.hours
-                |  hrs
+                - if related_track.page.data.hours < 1
+                  = (60 * related_track.page.data.hours).to_i
+                  |  minutes
+                - else
+                  = related_track.page.data.hours
+                  |  hrs
               p #{related_track.page.data.modules.count} modules
               p.desc
                 = related_track.page.data.description
