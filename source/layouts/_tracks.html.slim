@@ -3,23 +3,26 @@
     - tracks.children.each_with_index do |item, index|
       .large-6.medium-6.small-12.columns.track-display order= "#{index}"
         .track-card class="#{item.page.data.track_class}"
-          h3
-            span
-              = item.page.data.title
-            span.time
-              - if item.page.data.hours < 1
-                = (60 * item.page.data.hours).to_i
-                |  minutes
-              - else
-                = item.page.data.hours
-                |  hrs
+          header
+            h3
+              span
+                = item.page.data.title
+              span.time
+                - if item.page.data.hours < 1
+                  = (60 * item.page.data.hours).to_i
+                  |  minutes
+                - else
+                  = item.page.data.hours
+                  |  hrs
+            .tag-img
+              img src="#{item.page.data.image_url}"
           p.desc
             = item.page.data.description
             - if item.page.data.video_url
               a.video-url url="#{item.page.data.video_url}"  Watch the intro video.
           a.track-start-text href="#{item.page.url}" track="#{item.id}"
             | Get Started
-          .row
+          .progress-and-social-share
             user-track-progress track="#{item.id}"
             .social-share
               a.ic-share{ href="#" data-reveal-id="socialShare"
@@ -33,8 +36,6 @@
                   li
                     a
                       = tag
-          .tag-img
-            img src="#{item.page.data.image_url}"
           .track-record
             user-progress-stamp track="#{item.id}"
     .btn-container.load-track
