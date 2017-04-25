@@ -11,4 +11,5 @@ category: Admin
 order: 5
 modules:
 - introduction-to-the-devops-journey
+- devops-at-scale
 ---
