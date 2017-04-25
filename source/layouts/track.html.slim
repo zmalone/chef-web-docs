@@ -2,14 +2,16 @@
   = yield
   .track-hero style="background-image: url('#{current_page.data.track_hero}')"
     .row
-      h1.head
-        = current_page.data.title
+      .large-12.columns
+        h1.head
+          = current_page.data.title
       .tag-img
         img src="#{current_page.data.image_url}"
   .row
-    = partial 'layouts/_breadcrumbs'
-    h3
-      | Modules (#{get_track(current_page).modules.count})
+    .large-12.columns
+      = partial 'layouts/_breadcrumbs'
+      h3
+        | Modules (#{get_track(current_page).modules.count})
   .track-modules
     #videoModal.reveal-modal  aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
       h2#modalTitle
@@ -18,25 +20,26 @@
     - get_track(current_page).modules.each_with_index do |module_id, index|
       - module_obj = get_module_by_id(module_id)
       .row
-        .large-card.large-12.medium-12.small-12.large-centered.medium-centered.columns
-          .head class="#{current_page.data.track_class}"
-            = index + 1
-            | &nbsp;
-            = module_obj.page.data.title
-            user-progress-stamp module="#{module_id}"
-            user-progress-bar module="#{module_id}"
-          .row
-            .columns.large-8.medium-8.desc
-              p
-                = module_obj.page.data.description
-              - if module_obj.page.data.video_url
-                a.video-url url="#{module_obj.page.data.video_url}"  Watch the intro video
-            .columns.large-4.medium-4.btn-wrap
-              a.button.btn-primary.user-start-btn href="#{module_obj.page.url}" module="#{module_id}" Start
-              ul.links
-                li
-                  a href=""
-                    = module_obj.page.data.level
+        .large-12.columns
+          .large-card.large-12.medium-12.small-12.large-centered.medium-centered.columns
+            .head class="#{current_page.data.track_class}"
+              = index + 1
+              | &nbsp;
+              = module_obj.page.data.title
+              user-progress-stamp module="#{module_id}"
+              user-progress-bar module="#{module_id}"
+            .row
+              .columns.large-8.medium-8.desc
+                p
+                  = module_obj.page.data.description
+                - if module_obj.page.data.video_url
+                  a.video-url url="#{module_obj.page.data.video_url}"  Watch the intro video
+              .columns.large-4.medium-4.btn-wrap
+                a.button.btn-primary.user-start-btn href="#{module_obj.page.url}" module="#{module_id}" Start
+                ul.links
+                  li
+                    a href=""
+                      = module_obj.page.data.level
   - if current_page.data.related_tracks
     .related-tracks
       .row
