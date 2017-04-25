@@ -14,9 +14,13 @@
         .main
           a.anchor href="#top" name="top"
           = yield
+          - if current_page.data.sections
+            - current_page.data.sections.each do |section|
+              div.box
+                = partial "#{section}/index"
           - unless is_fork?(current_page)
             quiz
-        - if current_page.children.count == 0
+        - if current_page.data.breadcrumb_label.nil? || current_page.children.count == 0
           .sidebar
             = partial "layouts/side-navigation"
   - unless is_fork?(current_page)
@@ -24,7 +28,10 @@
       .btn-container
         - next_page = find_next_page(current_page)
         - if next_page
-          a.button.btn-primary.module-next-btn href="#{next_page.page.url}" Go to next step
+          - if next_page.page.data.appendix?
+            a.button.btn-primary.module-next-btn href="#{next_page.page.url}" Review the appendix
+          - else
+            a.button.btn-primary.module-next-btn href="#{next_page.page.url}" Go to next step
         - else
           a.button.btn-primary.module-next-btn href="/" Continue learning
     - unless current_page.data.show_disqus == false

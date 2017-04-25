@@ -10,9 +10,7 @@
 
 # Install our chosen version of Ruby
 include_recipe 'cia_infra::ruby'
-
-# Install Python for the aws cli
-include_recipe 'python::default'
+include_recipe 'cia_infra::aws_prereq'
 
 # We include chef-sugar because it gives us easy ways to interact with encrypted
 # data bags. It may go away in the future.
@@ -35,7 +33,9 @@ include_recipe 'route53::default'
 include_recipe 'fastly::default'
 
 # We need the toolchain from node to deal with the javascripts... pull in node.
+#node.default['nodejs']['install_method'] = 'source'
 include_recipe 'nodejs::default'
+include_recipe 'nodejs::npm'
 
 # We need to ensure we have a full toolchain
 include_recipe 'build-essential::default'
@@ -45,32 +45,4 @@ package 'libxml2-dev'
 execute 'install linkchecker' do
   command 'pip install linkchecker'
   not_if { File::exists?('/usr/local/bin/linkchecker') }
-end
-
-load_delivery_chef_config
-
-# We need aws creds so we get them here.
-aws_creds = encrypted_data_bag_item_for_environment('cia-creds', 'chef-cia')
-
-execute 'install awscli' do
-  command 'pip install awscli'
-  not_if { File::exists?('/usr/local/bin/aws') }
-end
-
-# chef-provisioning requires an aws config file. This generates the content for
-# that file.
-aws_config_contents = <<EOF
-[default]
-region = us-east-1
-aws_access_key_id = #{aws_creds['access_key_id']}
-aws_secret_access_key = #{aws_creds['secret_access_key']}
-EOF
-
-# This figures out where we are going to put the config file.
-aws_config_filename = File.join(node['delivery']['workspace']['root'], 'aws_config')
-
-# And here we write it out.
-file aws_config_filename do
-  sensitive true
-  content aws_config_contents
 end

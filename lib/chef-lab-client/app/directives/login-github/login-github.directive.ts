@@ -11,6 +11,6 @@ export class LoginGithubDirective {
 
   @HostListener('click')
   clicked() {
-    this.userProfileService.signInOAuth('github')
+    this.userProfileService.signInOAuth('github').subscribe()
   }
 }

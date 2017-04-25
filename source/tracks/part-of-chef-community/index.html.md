@@ -1,5 +1,5 @@
 ---
-title: Becoming a part of the Chef Community
+title: Becoming a Part of the Chef Community
 track_id: 9
 track_hero: /assets/images/tracks/infrastructure-automation.jpg
 image_url: /assets/images/coasters/chef-community.png
@@ -8,7 +8,7 @@ hours: 3
 level: Beginner
 track_class: card-light-yellow
 category: Admin
-order: 100
+order: 4
 modules:
 - getting-started
 - develop-locally
