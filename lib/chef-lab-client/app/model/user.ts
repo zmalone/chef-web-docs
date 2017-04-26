@@ -11,6 +11,7 @@ export class User {
     public created_at: string,
     public share_profile: boolean,
     public profile_image_url: string,
+    public shared_profile_token: string,
   ) {
   }
 }
