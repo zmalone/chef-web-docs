@@ -3,6 +3,7 @@ import { Observable, BehaviorSubject, AsyncSubject } from 'rxjs'
 import { SiteDataService } from './site-data.service'
 import { UserProfileService } from './user-profile.service'
 import { Angular2TokenService } from 'angular2-token'
+import { SegmentService } from './segment.service'
 type LearningType = 'achievements' | 'tracks' | 'modules' | 'units'
 interface Learning { started_at?: string, completed_at?: string }
 
@@ -15,6 +16,7 @@ export class ProgressService {
   constructor(
     private siteDataService: SiteDataService,
     private userProfileService: UserProfileService,
+    private segmentService: SegmentService,
     private _tokenService: Angular2TokenService,
   ) {
   }
@@ -80,8 +82,8 @@ export class ProgressService {
     if (!currentState.completed_at && this.getModuleProgress(pageId) >= 100) {
       newData.completed_at = new Date().toISOString()
     }
-    if (newData) return this.updateField('modules', moduleId, newData)
-    return Observable.from([])
+    if (!Object.keys(newData).length) return Observable.from([])
+    return this.updateField('modules', moduleId, newData)
   }
 
   private completeTracks() {
@@ -323,6 +325,9 @@ export class ProgressService {
 
     // Update local storage with the full data object
     localStorage.setItem('userProgressInfo', JSON.stringify(dataLocal))
+
+    // Handle Marketo/Segment tracking
+    this.segmentService.track(learningType, { pageId: pageId, ...fieldValues}).subscribe()
 
     // If not logged in, skip the API call
     if (!this.isAuthenticated) {

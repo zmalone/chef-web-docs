@@ -4,22 +4,33 @@
 - @title = module_root.page.data.short_title || module_root.page.data.title
 - if multipage_root
   ul#sideNav.side-nav.box
-    li style="font-weight:700;" == @title.upcase
-    - multipage_root.children.each do |child|
-      - time_to_complete = child.page.data.time_to_complete
-      - if child.page.id == current_page.id
-        li.side-nav-active
-          span.current
+    - if multipage_root.children && multipage_root.children.count > 0
+      li style="font-weight:700;" == @title.upcase
+      - multipage_root.children.each do |child|
+        - time_to_complete = child.page.data.time_to_complete
+        - if child.page.id == current_page.id
+          li.side-nav-active
+            span.current
+              i.ic-check.check-box page="#{child.id}" aria-hidden="true"
+              span == child.page.toc_title
+              - if time_to_complete
+                br
+                span style="font-size: 12px; font-weight: 600;" == time_to_complete
+            = partial "layouts/scroll-navigation"
+        - else
+          li = link_to child.page, style:"" do
             i.ic-check.check-box page="#{child.id}" aria-hidden="true"
             span == child.page.toc_title
             - if time_to_complete
               br
-              span style="font-size: 12px; font-weight: 600;" == time_to_complete
-          = partial "layouts/scroll-navigation"
-      - else
-        li = link_to child.page, style:"" do
-          i.ic-check.check-box page="#{child.id}" aria-hidden="true"
-          span == child.page.toc_title
+              span style="font-size: 12px; font-weight: 300;" == time_to_complete
+    - else
+      li.side-nav-active
+        span.current
+          i.ic-check.check-box page="#{current_page.id}" aria-hidden="true"
+          span == current_page.toc_title
+          - time_to_complete = current_page.data.time_to_complete
           - if time_to_complete
             br
-            span style="font-size: 12px; font-weight: 300;" == time_to_complete
+            span style="font-size: 12px; font-weight: 600;" == time_to_complete
+        = partial "layouts/scroll-navigation"

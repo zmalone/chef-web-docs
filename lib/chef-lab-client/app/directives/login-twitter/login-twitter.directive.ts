@@ -11,6 +11,6 @@ export class LoginTwitterDirective {
 
   @HostListener('click')
   clicked() {
-    this.userProfileService.signInOAuth('twitter')
+    this.userProfileService.signInOAuth('twitter').subscribe()
   }
 }
