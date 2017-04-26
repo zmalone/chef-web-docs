@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core'
 import { ReplaySubject, BehaviorSubject, Observable } from 'rxjs'
+import { SegmentService } from './segment.service'
 import { Angular2TokenService } from 'angular2-token'
 import { User, UserInfo } from '../model'
 
@@ -8,11 +9,16 @@ export class UserProfileService {
   public userProfile: BehaviorSubject<User> = new BehaviorSubject(<User> {})
   private isSignedIn: BehaviorSubject<boolean> = new BehaviorSubject(false)
 
-  constructor(private _tokenService: Angular2TokenService) {
-    this.isSignedIn.subscribe(isAuthenticated => {
-      if (isAuthenticated) this.loadUserProfile()
-      if (!isAuthenticated) this.userProfile.next(<User> {})
-    })
+  constructor(
+    private segmentService: SegmentService,
+    private _tokenService: Angular2TokenService,
+  ) {
+    const [login, logout] = this.isSignedIn.partition(isAuthenticated => isAuthenticated)
+    login
+      .switchMap(this.loadUserProfile.bind(this))
+      .switchMap(this.identifyNewUser.bind(this))
+      .subscribe()
+    logout.subscribe(() => { this.userProfile.next(<User> {}) })
   }
 
   public isAuthenticated = function() {
@@ -22,16 +28,24 @@ export class UserProfileService {
   }
 
   public signInOAuth(serviceName: string) {
-    this._tokenService.signInOAuth(serviceName).subscribe(
-        () => this._tokenService.validateToken().subscribe(this.onSignIn.bind(this), console.error),
-        console.error,
-    )
+    const observable = this._tokenService.signInOAuth(serviceName)
+    // For sameWindow oAuth, observable is undefined here
+    if (!observable) return Observable.never()
+    return observable
+      .concat(this._tokenService.validateToken)
+      .concat(this.loadUserProfile.bind(this))
+      .switchMap(this.identifyUser.bind(this))
+      .switchMap(() => {
+        this.isSignedIn.next(true)
+        return this.isSignedIn
+      })
   }
 
   public signOut() {
     // Clear local storage before firing the next method, as the progress service depends on this data
     localStorage.clear()
     this.isSignedIn.next(false)
+    this.segmentService.reset()
     return this._tokenService.signOut()
   }
 
@@ -39,25 +53,40 @@ export class UserProfileService {
     return this._tokenService.get('api/v1/users/' + userId).map(res => <UserInfo> res.json())
   }
 
-  public loadUserProfile(): Observable<User> {
-    const observable = this._tokenService.get('api/v1/profile').map(res => <User> res.json())
-    observable.subscribe(
-      userInfo => { this.userProfile.next(userInfo) },
-      console.error,
-    )
-    return observable
-  }
-
   public updateUserProfile(user): Observable<User> {
-    const observable = this._tokenService.put('api/v1/profile', user).map(res => <User> res.json())
-    observable.subscribe(
-      userInfo => { this.userProfile.next(userInfo) },
-      console.error,
-    )
-    return observable
+    return this._tokenService.put('api/v1/profile', user)
+    .map(res => <User> res.json())
+    .switchMap(userInfo => {
+      this.userProfile.next(userInfo)
+      return this.userProfile
+    })
   }
 
-  private onSignIn() {
-    this.isSignedIn.next(true)
+  private loadUserProfile(): Observable<User> {
+    return this._tokenService.get('api/v1/profile')
+      .map(res => <User> res.json() )
+      .switchMap(userInfo => {
+        this.userProfile.next(userInfo)
+        return this.userProfile
+      })
+  }
+
+  private identifyNewUser(userInfo) {
+    if (localStorage.getItem('newLogin')) {
+      localStorage.removeItem('newLogin')
+      return this.identifyUser(userInfo)
+    } else {
+      return Observable.of(userInfo)
+    }
+  }
+
+  private identifyUser(userInfo) {
+    return this.segmentService.identify(userInfo.id, {
+      email: userInfo.email,
+      createdAt: userInfo.created_at,
+      firstName: userInfo.first_name,
+      lastName: userInfo.last_name,
+      username: userInfo.display_name,
+    })
   }
 }

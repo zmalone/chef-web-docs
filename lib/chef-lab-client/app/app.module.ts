@@ -3,11 +3,12 @@ import { NgModule } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { HttpModule } from '@angular/http'
 import { ToastModule } from 'ng2-toastr'
+import { Ng2DeviceDetector } from 'ng2-device-detector'
 import { SiteDataService } from './services/site-data.service'
 import { ErrorHandlerService } from './services/error-handler.service'
 import { RouterModule, Routes } from '@angular/router'
 import { Angular2TokenService, A2tUiModule } from 'angular2-token'
-
+import { SegmentService } from './services/segment.service'
 import { AppComponent } from './app.component'
 import { LoginGithubDirective } from './directives/login-github/login-github.directive'
 import { LoginGoogleDirective } from './directives/login-google/login-google.directive'
@@ -94,6 +95,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     FormsModule,
     RouterModule,
     ToastModule.forRoot(),
+    Ng2DeviceDetector,
     A2tUiModule,
     MaterialModule,
     MultiselectDropdownModule,
@@ -106,6 +108,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     ProgressService,
     ModuleFilterService,
     TrackDisplayService,
+    SegmentService,
   ],
   bootstrap: [
     AppComponent,

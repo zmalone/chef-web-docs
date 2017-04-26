@@ -1,20 +1,25 @@
-- if current_page.parent && current_page.parent.parent && current_page.parent.parent.parent && current_page.parent.parent.parent.parent && current_page.parent.parent.parent.data
-  - @title = current_page.parent.parent.parent.data.short_title || current_page.parent.parent.parent.data.title
-  - @multipage = true
-- else
-  - @title = current_page.data.title
-  - @multipage = false
-ul#sideNav.side-nav.box
-  li style="font-weight:700;" == @title.upcase
-  - if current_page.parent
-    - current_page.parent.children.each do |child|
-      - if child == current_page
-        li.side-nav-active
-          span.current
+- module_obj = get_module_by_id(current_page.id)
+- module_root = get_module(module_obj.page)
+- multipage_root = get_parent_multipage(module_obj.page)
+- @title = module_root.page.data.short_title || module_root.page.data.title
+- if multipage_root
+  ul#sideNav.side-nav.box
+    - if multipage_root.children && multipage_root.children.count > 0
+      li style="font-weight:700;" == @title.upcase
+      - multipage_root.children.each do |child|
+        - if child.page.id == current_page.id
+          li.side-nav-active
+            span.current
+              i.ic-check.check-box page="#{child.id}" aria-hidden="true"
+              span == child.page.toc_title
+            = partial "layouts/scroll-navigation"
+        - else
+          li = link_to child.page, style:"" do
             i.ic-check.check-box page="#{child.id}" aria-hidden="true"
-            span == child.toc_title
-          = partial "layouts/scroll-navigation"
-      - elsif @multipage
-        li = link_to child, style:"" do
-          i.ic-check.check-box page="#{child.id}" aria-hidden="true"
-          span == child.toc_title
+            span == child.page.toc_title
+    - else
+      li.side-nav-active
+        span.current
+          i.ic-check.check-box page="#{current_page.id}" aria-hidden="true"
+          span == current_page.toc_title
+        = partial "layouts/scroll-navigation"
