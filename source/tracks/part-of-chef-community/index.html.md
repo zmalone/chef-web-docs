@@ -10,8 +10,6 @@ track_class: card-light-yellow
 category: Admin
 order: 4
 modules:
-- getting-started
-- develop-locally
-- learn-the-basics
-- manage-a-node
+- awesome-community-chefs
+- forging-connections
 ---
