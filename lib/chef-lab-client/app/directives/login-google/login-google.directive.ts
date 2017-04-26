@@ -11,6 +11,6 @@ export class LoginGoogleDirective {
 
   @HostListener('click')
   clicked() {
-    this.userProfileService.signInOAuth('google')
+    this.userProfileService.signInOAuth('google').subscribe()
   }
 }
