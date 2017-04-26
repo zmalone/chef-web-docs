@@ -1,3 +1,22 @@
+---
+id: be-a-secure-chef
+title: 'How to be a secure Chef'
+description: 'Learn how a secure workflow can help you deliver your applications and services securely without losing speed.'
+order: 1
+time_to_complete: 10 minutes
+quiz_path: quizzes/securing-chef/be-a-secure-chef.yml
+tags: [chef, beginner]
+headings: [
+  { label: 'Securing Chef', href: '#securingchef' },
+  { label: 'Suggestions for controlling the Chef workflow', href: '#suggestionsforcontrollingthechefworkflow' }
+]
+---
+This article has suggestions for securing the Chef server, the Chef client, and the workstation where you run Chef DK and `knife` commands. It includes best practices for you to follow and links to Chef documentation and to other sites where you can read about each topic in more detail.
+
+The last part of the article discusses several ways to control the promotion of cookbooks within a Chef workflow.  It is common for people to say they want a _secure_ workflow, which generally means they want to limit access and safeguard the stages that take a cookbook from development to production. Techniques such as Chef organizations, RBAC and LDAP, which are discussed in this document, can help you to set up security boundaries.
+
+However, security boundaries are only part of the story. DevOps advocates transparency and communication rather than opacity and silos and these qualities will make your workflow efficient and fast. Instead of focusing on restricting people's access to the workflow, there are also some techniques you can use to control how cookbooks move through a rapid deployment pipeline. These techniques include using environments, pinning specific cookbooks to specific environments, and using policy files. You can learn more about them in the section [Suggestions for controlling the Chef workflow](#suggestionsforcontrollingthechefworkflow).
+
 ##Securing Chef
 
 This section describes how to secure the Chef server and the Chef client.
@@ -108,6 +127,55 @@ The Chef workstation is where you develop Chef cookbooks and run `knife` command
 
 In addition:
 
-
 * Place user keys should be placed in a location accessible only to the user.
 * Do not store passwords as plain text (for example, do not store passwords in configuration files.)
+
+##Suggestions for controlling the Chef workflow
+
+The DevOps workflow is an orderly process with safeguards against disrupting production and other environments. DevOps uses testing, quality gates and code review to control changes as they move from the development environment to the production environment. The DevOps focus is on safely enabling change with open communication and transparency rather than on restricting access for individuals.
+
+A safe, high-velocity workflow is possible because all changes are tracked by version control. For example, the DevOps approach to change management involves approval of GitHub pull requests instead of manual handoffs or service tickets. The revision control system, such as Git or GitHub, becomes the central location for collaboration and communication across the entire team, regardless of their technical specialties.
+
+Chef is built for DevOps. As a result, the Chef workflow includes creating and changing Chef cookbooks, and safely moving them through a series of stages so that, once they reach production, there are no disruptions. Each stage of the pipeline can be thought of as a quality gate that further ensures the correctness of the proposed change.  Risk decreases as you progress through each stage.
+A well-managed workflow should use either Chef environments or policy files to distinguish each stage of the pipeline.
+
+###Environments
+Chef environments group together servers that perform related functions. Environments often map to stages in the workflow. Chef environments are often established for development, testing, staging, and production.
+
+For example, suppose you have an environment called _testing_ and another called _production_. Because you don't want any code that is still being tested on your production machines, each machine can only be in one environment. You can then have one configuration for machines in your testing environment, and a completely different configuration for computers in production. For example, you could specify that, in the testing environment, the web and database server roles are on a single machine. In the production environment, each of these roles is handled by individual servers. For more information about roles, see <https://docs.chef.io/roles.html>.
+
+
+Environments also can have attributes associated with them. These attributes are usually common to every node within that environment and override the node's default settings.  An environment gives you a single place to control the configuration of all the servers in the environment. The configuration settings for NTP servers, DNS servers, subdomain naming, and package repositories are examples of settings that are often controlled by environment attributes.  For more information about environments in Chef, see: <https://docs.chef.io/environments.html>.
+
+####Cookbook pinning
+You can associate (or pin) specific cookbook versions to specific environments. Pinning prevents newer versions of cookbooks from being prematurely promoted to more stable environments. For example, you could constrain the production environment to only use a known, thoroughly tested version of a cookbook.
+
+Each environment should be associated with specific cookbook versions. In general, the earlier in the workflow, the less constrained the use of cookbooks will be. In development, you might want to work with many versions of a cookbook. As you progress through the pipeline, the acceptable versions become fewer until, in production, you might only allow a single version. Here is an example of pinning a cookbook version to a production environment.
+
+```ruby
+# production.rb
+name "production"
+description "Production Servers"
+cookbook "tomcat", "=0.7.0"
+```
+
+All nodes in the production environment with _tomcat_ in their run list must use the 0.7.0 version of the tomcat cookbook. If the cookbook is updated on the Chef server, these nodes will not use it until the environment definition is updated. Servers that do not have _tomcat_ in their run list are unaffected.
+
+####Policy files
+
+Policy files are an alternative to using Chef roles and environments. They are available with Chef server 12.1 and above. Like environments, you can specify a run list, include attributes and constrain cookbook versions. You can also list sources for cookbooks. Unlike environments, policy files can be versioned using your revision control system.
+Here is an example of a policy file.
+
+```ruby
+# Policyfile.rb
+name "jenkins-master"
+run_list "java", "jenkins::master", "recipe[policyfile_demo]"
+default_source :community
+cookbook "policyfile_demo", path: "cookbooks/policyfile_demo"
+cookbook "jenkins", "~> 2.1"
+cookbook "mysql", github: "opscode-cookbooks/mysql", branch: "master"
+```
+
+The name of the policy is _jenkins-master_. There is a run list, sources for the cookbooks and a constraint to use version 2.1 of the Jenkins cookbook. For more information about policy files, see: <https://docs.chef.io/config_rb_policyfile.html> and <https://github.com/chef/chef-dk/blob/master/POLICYFILE_README.md>.
+
+Be aware that policy files override any run list entries set on the node.
