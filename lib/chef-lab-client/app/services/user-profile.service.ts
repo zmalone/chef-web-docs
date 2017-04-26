@@ -13,10 +13,12 @@ export class UserProfileService {
     private segmentService: SegmentService,
     private _tokenService: Angular2TokenService,
   ) {
-    this.isSignedIn.subscribe(isAuthenticated => {
-      if (isAuthenticated) this.loadUserProfile().subscribe()
-      if (!isAuthenticated) this.userProfile.next(<User> {})
-    })
+    const [login, logout] = this.isSignedIn.partition(isAuthenticated => isAuthenticated)
+    login
+      .switchMap(this.loadUserProfile.bind(this))
+      .switchMap(this.identifyNewUser.bind(this))
+      .subscribe()
+    logout.subscribe(() => { this.userProfile.next(<User> {}) })
   }
 
   public isAuthenticated = function() {
@@ -26,11 +28,14 @@ export class UserProfileService {
   }
 
   public signInOAuth(serviceName: string) {
-    return this._tokenService.signInOAuth(serviceName)
+    const observable = this._tokenService.signInOAuth(serviceName)
+    // For sameWindow oAuth, observable is undefined here
+    if (!observable) return Observable.never()
+    return observable
       .concat(this._tokenService.validateToken)
       .concat(this.loadUserProfile.bind(this))
-      .mergeMap(this.identifyUser.bind(this))
-      .mergeMap(() => {
+      .switchMap(this.identifyUser.bind(this))
+      .switchMap(() => {
         this.isSignedIn.next(true)
         return this.isSignedIn
       })
@@ -51,7 +56,7 @@ export class UserProfileService {
   public updateUserProfile(user): Observable<User> {
     return this._tokenService.put('api/v1/profile', user)
     .map(res => <User> res.json())
-    .mergeMap(userInfo => {
+    .switchMap(userInfo => {
       this.userProfile.next(userInfo)
       return this.userProfile
     })
@@ -60,10 +65,19 @@ export class UserProfileService {
   private loadUserProfile(): Observable<User> {
     return this._tokenService.get('api/v1/profile')
       .map(res => <User> res.json() )
-      .mergeMap(userInfo => {
+      .switchMap(userInfo => {
         this.userProfile.next(userInfo)
         return this.userProfile
       })
+  }
+
+  private identifyNewUser(userInfo) {
+    if (localStorage.getItem('newLogin')) {
+      localStorage.removeItem('newLogin')
+      return this.identifyUser(userInfo)
+    } else {
+      return Observable.of(userInfo)
+    }
   }
 
   private identifyUser(userInfo) {

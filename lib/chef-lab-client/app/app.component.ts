@@ -1,5 +1,6 @@
 import { Component, OnInit, ElementRef } from '@angular/core'
 import { Angular2TokenService } from 'angular2-token'
+import { Device } from 'ng2-device-detector'
 import { UserProfileService } from './services/user-profile.service'
 import { ProgressService } from './services/progress.service'
 import { User } from './model/user'
@@ -18,6 +19,7 @@ export class AppComponent implements OnInit {
   public userInfo: User
 
   constructor(
+    private device: Device,
     private _tokenService: Angular2TokenService,
     private userProfileService: UserProfileService,
     private progressService: ProgressService,
@@ -34,6 +36,7 @@ export class AppComponent implements OnInit {
         linkedin: '/auth/linkedin',
         chef: '/auth/chef_oauth2',
       },
+      oAuthWindowType: (this.device.browser === 'ie') ? 'sameWindow' : 'newWindow',
     })
     this.progressService.init()
 
