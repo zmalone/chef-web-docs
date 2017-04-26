@@ -26,7 +26,9 @@ export class UserProfileComponent implements OnInit {
     private progressService: ProgressService,
     private siteDataService: SiteDataService,
     private router: Router,
-  ) {}
+  ) {
+    this.userInfo = {}
+  }
 
   ngOnInit() {
     this.countries = COUNTRY
