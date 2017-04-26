@@ -16,7 +16,7 @@ describe Middleman::Sitemap do
   end
 
   describe 'sitemap resource helper methods' do
-    let(:module_path) { '/modules/manage-a-node/index.html' }
+    let(:module_path) { '/modules/manage-a-node-chef-server/index.html' }
     let(:module_id) { 'manage-a-node' }
     let(:module_page) { app.sitemap.find_resource_by_path(module_path) }
 

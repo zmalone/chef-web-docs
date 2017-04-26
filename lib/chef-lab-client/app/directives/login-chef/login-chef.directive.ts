@@ -11,6 +11,6 @@ export class LoginChefDirective {
 
   @HostListener('click')
   clicked() {
-    this.userProfileService.signInOAuth('chef')
+    this.userProfileService.signInOAuth('chef').subscribe()
   }
 }

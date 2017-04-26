@@ -18,7 +18,7 @@ headings: [
 ---
 In this tutorial, you'll walk through the creation of a [custom Chef resource](https://docs.chef.io/custom_resources.html) that configures Apache web server on multiple Linux platforms. You'll get starter code from GitHub, see the custom resource in action, and run automated tests that verify the resource's behavior.
 
-Consider the recipe from the [Unit test with ChefSpec](/modules/chefspec/) tutorial that configures Apache on CentOS and Ubuntu.
+Consider the recipe from the [Unit test with ChefSpec](/modules/unit-test-with-chefspec/) tutorial that configures Apache on CentOS and Ubuntu.
 
 <% code_snippet(path: "test-your-infrastructure-code/rhel/virtualbox/verify-resources-properly-defined/revise-cookbook-for-ubuntu/default-3-rhel") %>
 
@@ -70,7 +70,7 @@ end
 
 Chef includes built-in resources to manage files, packages, templates, and services, but it does not include a resource that manages web sites. However, you can create a _custom resource_ to accomplish this.
 
-In fact, you've probably used custom resources already. For example, if you've gone through the [Develop a web app cookbook](/manage-a-web-app/rhel/) tutorial, you used the the `httpd_service`, `httpd_config`, and `httpd_module` resources from the [httpd](https://supermarket.chef.io/cookbooks/httpd) community cookbook on [Chef Supermarket](https://supermarket.chef.io). Here's an example:
+In fact, you've probably used custom resources already. For example, if you've gone through the [Create a web app cookbook](/modules/create-a-web-app-cookbook/rhel/) tutorial, you used the the `httpd_service`, `httpd_config`, and `httpd_module` resources from the [httpd](https://supermarket.chef.io/cookbooks/httpd) community cookbook on [Chef Supermarket](https://supermarket.chef.io). Here's an example:
 
 ```ruby
 # web.rb
@@ -119,9 +119,9 @@ To successfully complete this tutorial, you'll need the following:
 
 You should also be familiar with Test Kitchen and some of the common Chef testing tools. Although not required, you can work through the [Get started with Test Kitchen](/modules/local-development/) tutorial to get started using Test Kitchen. These tutorials can help you get started with some of the common Chef testing tools:
 
-* [Verify with InSpec](/modules/inspec/)
-* [Unit test with ChefSpec](/modules/chefspec/)
-* [Verify code style](/modules/verify-style/)
+* [Test driven development with InSpec](/modules/tdd-with-inspec/)
+* [Unit test with ChefSpec](/modules/unit-test-with-chefspec/)
+* [Verify code style](/modules/verify-code-style/)
 
 [END_BOX]
 
@@ -241,11 +241,11 @@ The ChefSpec test, located at <% fp 'cookbooks/custom_web/spec/unit/recipes/hell
 
 <% code_snippet(page: current_page, path: 'testing-the-custom_web_site-resource/hello_world_test-default-spec-rb') %>
 
-This test follows the shared examples pattern that you learned about in the [Unit test with ChefSpec](/modules/chefspec/) tutorial.
+This test follows the shared examples pattern that you learned about in the [Unit test with ChefSpec](/modules/unit-test-with-chefspec/) tutorial.
 
 In this example, `create_custom_web_site` is a [custom matcher](https://github.com/sethvargo/chefspec#packaging-custom-matchers). A matcher helps you build expectations around how a resource behaves. ChefSpec provides matchers for the built-in Chef resource types; you need to provide your own matchers for custom types you define. You'll find the definition of the `create_custom_web_site` matcher in <% fp 'libraries/matchers.rb' %>.
 
-The corresponding InSpec tests for the `hello_world_test` test cookbook are located at <% fp 'test/smoke/default/default_test.rb' %>. These tests resemble the InSpec tests you wrote in the [Verify with InSpec](/modules/inspec/) tutorial. However, this version also verifies the configuration on CentOS and Ubuntu.
+The corresponding InSpec tests for the `hello_world_test` test cookbook are located at <% fp 'test/smoke/default/default_test.rb' %>. These tests resemble the InSpec tests you wrote in the [Test driven development with InSpec](/modules/tdd-with-inspec/) tutorial. However, this version also verifies the configuration on CentOS and Ubuntu.
 
 <% code_snippet(page: current_page, path: 'testing-the-custom_web_site-resource/hello_world_test-default-test-rb') %>
 

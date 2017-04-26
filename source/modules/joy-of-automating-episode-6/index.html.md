@@ -25,7 +25,7 @@ In this episode we focus on the test suite defined for an earlier version of the
 * [Atom commands](http://flight-manual.atom.io/): [Select next matching word](http://flight-manual.atom.io/using-atom/sections/editing-and-deleting-text/)
 * [Chef Resources](https://docs.chef.io/resources.html): [common functionality](https://docs.chef.io/resource_common.html); [package](https://docs.chef.io/resource_package.html); [execute](https://docs.chef.io/resource_execute.html); and [service](https://docs.chef.io/resource_service.html)
 * [ChefSpec](https://github.com/sethvargo/chefspec): [notify](https://github.com/sethvargo/chefspec#notify); [custom resource matchers](https://github.com/sethvargo/chefspec#packaging-custom-matchers); [testing custom resources](https://github.com/sethvargo/chefspec#testing-lwrps)
-* [Rspec](https://relishapp.com/rspec/): [let](https://relishapp.com/rspec/rspec-core/v/3-4/docs/helper-methods/let-and-let)
+* [RSpec](https://relishapp.com/rspec/): [let](https://relishapp.com/rspec/rspec-core/v/3-4/docs/helper-methods/let-and-let)
 * [guard](https://github.com/guard) : [guard-rspec](https://github.com/guard/guard-rspec)
 * [Ruby](http://ruby-doc.org/core-2.2.0/) : [Regexp](http://ruby-doc.org/core-2.2.0/Regexp.html)
 * [Bundler](http://bundler.io/) : [Gemfile](http://bundler.io/gemfile.html) and [bundle install](http://bundler.io/bundle_install.html)
