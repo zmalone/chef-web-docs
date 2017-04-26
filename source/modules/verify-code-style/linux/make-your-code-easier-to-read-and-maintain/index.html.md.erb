@@ -1,0 +1,122 @@
+---
+title: 'Use RuboCop to make your code easier to read and maintain'
+short_title: 'Make your code easier to read and maintain'
+platform: Linux
+platform_id: rhel
+category: local-development
+order: 1
+time_to_complete: 30 minutes
+snippet_path: test-your-infrastructure-code/rhel/virtualbox/verify-your-code-adheres-to-the-style-guide
+snippet_workstation: ubuntu
+quiz_path: quizzes/verify-code-style/shared/make-your-code-easier-to-read-and-maintain.yml
+headings: [
+  { label: '1. Check for violations', href: '#step1' },
+  { label: '2. Fix the violations', href: '#step2' },
+  { label: '3. Configure RuboCop', href: '#step3' }
+]
+---
+[HEADLINE] Lint testing can help you identify potential defects in your code early and also makes your code easier to read and maintain.
+
+Let's see how [RuboCop](http://batsov.com/rubocop/), a Ruby static code analyzer that's based on the community [Ruby style guide](https://github.com/bbatsov/ruby-style-guide#the-ruby-style-guide), can help identify inconsistent code formatting.
+
+## 1. Check for violations
+
+Start by modifying your `webserver_test` cookbook's default recipe like this. Be sure to copy the code exactly as it appears.
+
+<% code_snippet(page: current_page, path: 'use-rubocop/default-4-rhel') %>
+
+Note how the code is formatted.
+
+* It uses four spaces for indentation.
+* The `action` attribute is broken into multiple lines.
+* The `file` resource uses two spaces to indent the `end` keyword.
+
+When you run the `rubocop` command with no arguments, RuboCop checks all Ruby source files in the current directory and its subdirectories.
+
+Start by moving to your <% fp 'webserver_test' %> cookbook's directory.
+
+<% command_snippet(page: current_page, path: 'use-rubocop/cd-webserver_test-3', features: :stdin) %>
+
+Run `rubocop` from your <code class="file-path">recipes</code> directory to run RuboCop's rules against your default recipe.
+
+<% command_snippet(page: current_page, path: 'use-rubocop/rubocop-recipes-1') %>
+
+For each file, RuboCop prints to the console a character that indicates the status of that file.
+
+Common statuses include:
+
+| Code | Name       | Description                                                                                                                                                                                                 |
+|------|------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `.`  |            | RuboCop found no potential issues.                                                                                                                                                                          |
+| `C`    | Convention | RuboCop found code that potentially violates standard convention, for example, inconsistent use of indentation.                                                                                             |
+| `W`    | Warning    | RuboCop found code that's valid, but potentially isn't what the programmer intended, such as comparing a variable to itself or defining [unreachable code](https://en.wikipedia.org/wiki/Unreachable_code). |
+| `E`    | Error      | RuboCop found a potential error, such as using an invalid character in a variable name.                                                                                                                     |
+| `F`    | Fatal      | RuboCop found a potential unrecoverable error that would cause the program to crash, such as an [exception](http://ruby-doc.org/core-2.2.0/Exception.html) that is not handled.                             |
+
+When RuboCop finds multiple potential issues, it reports the most severe as the file's status. In this example, RuboCop found both a convention violation and a warning, so our recipe's overall status is `W` (Warning).
+
+## 2. Fix the violations
+
+Let's fix the reported violations. To summarize them:
+
+* Line 6 uses 4 spaces for indentation.
+* Line 7 does not properly align the array elements.
+* Line 17 indents the `end` keyword.
+
+Modify <code class="file-path">default.rb</code> like this to fix the violations.
+
+<% code_snippet(page: current_page, path: 'use-rubocop/default-5-rhel') %>
+
+Run `rubocop` a second time to check whether the violations are fixed.
+
+<% command_snippet(page: current_page, path: 'use-rubocop/rubocop-recipes-2') %>
+
+This time a new violation is discovered. This violation was not reported originally because the use of indentation was consistent with the indented `end` keyword.
+
+Correct the indentation, making your default recipe look like this.
+
+<% code_snippet(page: current_page, path: 'use-rubocop/default-6-rhel') %>
+
+Run `rubocop` to verify the correction.
+
+<% command_snippet(page: current_page, path: 'use-rubocop/rubocop-recipes-3') %>
+
+Congratulations. RuboCop reported no additional violations.
+
+## 3. Configure RuboCop to follow your preferred style
+
+A RuboCop rule is also called a _cop_. You can modify the behavior of RuboCop's predefined cops or disable one or more cops altogether.
+
+One reason you may want to customize RuboCop's predefined behavior is when your team or organization defines style guidelines that differ from the community standard.
+
+Another reason might be when you have many RuboCop violations in your existing code, and you want to resolve them gradually.
+
+For example, say your existing code uses 4 spaces for indentation and you want to temporarily configure RuboCop to accept this indentation so that you can focus on potentially more severe issues.
+
+Start by modifying your default recipe to look like this. It uses 4 spaces for indentation.
+
+<% code_snippet(page: current_page, path: 'use-rubocop/default-7-rhel') %>
+
+Run `rubocop` to observe the violations.
+
+<% command_snippet(page: current_page, path: 'use-rubocop/rubocop-recipes-4') %>
+
+You customize RuboCop's behavior through a file named <code class="file-path">.rubocop.yml</code>. When RuboCop runs, it loads all predefined rules and then overrides any rules that you specify.
+
+Create a file named <code class="file-path">.rubocop.yml</code> in your cookbook directory, <code class="file-path">~/learn-chef/cookbooks/webserver_test</code>, and add this code to it.
+
+<% code_snippet(page: current_page, path: 'use-rubocop/rubocop-yml') %>
+
+RuboCop searches for a file named <code class="file-path">.rubocop.yml</code> by traversing up the directory tree. So in practice you might add your <code class="file-path">.rubocop.yml</code> file to a directory that's higher in the tree if you want your modified rules to apply to multiple cookbooks.
+
+[TIP] You can use RuboCop's [default rules](https://github.com/bbatsov/rubocop/blob/master/config/default.yml) as a guide. Just copy the rules that you want to modify or disable to your <code class="file-path">.rubocop.yml</code> file and modify its parameters. To disable a rule, add `Enabled: false` to the rule.
+
+Now run `rubocop` to verify that your custom behavior is used.
+
+<% command_snippet(page: current_page, path: 'use-rubocop/rubocop-recipes-5') %>
+
+After you address any other violations, you can remove your custom rule from <code class="file-path">.rubocop.yml</code> and then focus on the indentation violations.
+
+[TIP] If your code produces a large number of violations, you can run RuboCop to [automatically generate a configuration file](https://github.com/bbatsov/rubocop#automatically-generated-configuration) that excludes the violations from a `rubocop` run. As you work through the violations, you can remove each entry from the generated configuration file.<br/>You can also [disable cops directly in your source code](https://github.com/bbatsov/rubocop#disabling-cops-within-source-code) if you have a special case that you want RuboCop to ignore.
+
+[COMMENT] There's also [cookstyle](https://docs.chef.io/release/devkit/cookstyle.html), which limits RuboCop tests to those that are most appropriate for cookbook development.

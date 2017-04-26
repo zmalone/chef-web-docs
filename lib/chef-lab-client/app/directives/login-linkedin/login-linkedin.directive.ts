@@ -11,6 +11,6 @@ export class LoginLinkedInDirective {
 
   @HostListener('click')
   clicked() {
-    this.userProfileService.signInOAuth('linkedin')
+    this.userProfileService.signInOAuth('linkedin').subscribe()
   }
 }

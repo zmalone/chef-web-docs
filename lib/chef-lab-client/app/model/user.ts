@@ -12,6 +12,7 @@ export class User {
     public share_profile: boolean,
     public profile_image_url: string,
     public shared_profile_token: string,
+    public bio: string,
   ) {
   }
 }

@@ -23,7 +23,6 @@ html lang="en"
     meta property='fb:app_id' content=''
     = stylesheet_link_tag gulp_css_path('application.css')
     = yield_content :head
-    = partial 'layouts/google_analytics'
     = partial 'layouts/demandbase'
     = partial 'layouts/segment'
     = javascript_include_tag '//cdn.optimizely.com/js/128576591.js'
@@ -45,13 +44,17 @@ html lang="en"
               a href="#"
                 span
           section.top-bar-section
+            /! Left Nav Section
+            ul.left.links
+              li= link_to 'Tracks', '/tracks/'
+              li= link_to 'Modules', '/modules/'
             /! Right Nav Section
             ul.right.links
               li.nav-link template="ngIf !isSignedIn"
                 a href="#" data-reveal-id="loginModal" Log in
               li.nav-link template="ngIf !isSignedIn"
                 a href="#" data-reveal-id="SignupModal" Sign up
-              li.nav-link template="ngIf isSignedIn"
+              li.nav-link.user-display-name template="ngIf isSignedIn"
                 a href="/profile"
                   user-display-name
               li.has-dropdown
@@ -73,10 +76,6 @@ html lang="en"
                     a href="https://www.chef.io/" target="_blank"
                       i.icon-sprite.ic-about-chef
                       span About Chef
-            /! Left Nav Section
-            ul.left.links
-              li= link_to 'Tracks', '/tracks/'
-              li= link_to 'Modules', '/modules/'
       //Modal for login and Sign up
       #loginModal.reveal-modal.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
         .modal-title
@@ -163,6 +162,8 @@ html lang="en"
                   a href="https://www.chef.io/contact-us/" target="_blank" Contact Chef
                 li
                   a href="https://www.chef.io/privacy-policy" target="_blank" Privacy Policy
+                li
+                  a href=" https://www.chef.io/cookie-policy/" target="_blank" Cookie Policy
               .head
                 | Subscribe to updates
               button.btn.btn-primary Keep me updated

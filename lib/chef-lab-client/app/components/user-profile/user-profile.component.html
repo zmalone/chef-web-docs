@@ -1,6 +1,6 @@
 <div class="profile-hero">
   <div class="row">
-    <div class="large-5 medium-10 small-12 columns profile-card">
+    <div class="large-6 medium-8 small-12 columns profile-card">
       <a *ngIf="!publicProfile" class="settings" (click)="showForm()"><i class="fa fa-cog"></i></a>
       <div class="user-info" *ngIf="user">
         <div class="user">
@@ -8,19 +8,19 @@
             <img src="{{getProfileImageUrl()}}" />
             <a *ngIf="!publicProfile" class="link" href="https://www.gravatar.com/" target="_blank"></a>
           </div>
-          <div class="name">
-            {{user.first_name}} {{user.last_name}}
-          </div>
         </div>
         <div class="display-name">
           {{user.display_name}}<span *ngIf="user.role">{{user.role}}</span><span *ngIf="user.company">{{user.company}}</span>
         </div>
       </div>
-      <div class="rally-info">
-        <img src="/assets/images/learn-chef-rally-logo.png"><span *ngIf="user">Rallygoer since {{user.created_at|date:'MMM, yyyy'}}</span>
+      <div class="bio-and-rally-info">
+        <div class="bio">{{user.bio}}</div>
+        <div class="rally-info">
+          <span *ngIf="user">Rallygoer since {{user.created_at|date:'MMM, yyyy'}}</span>
+        </div>
       </div>
     </div>
-    <div class="large-7 medium-10 small-12 columns" ng-hide="true" *ngIf="frmStatus">
+    <div class="large-6 medium-10 small-12 columns" ng-hide="true" *ngIf="frmStatus">
       <form class="edit-profile ng-untouched ng-pristine ng-valid" (ngSubmit)="updateUserProfile()">
         <a class="close-btn" (click)="hideForm()">×</a>
         <div class="large-12 columns custom-form">
@@ -56,11 +56,17 @@
           </div>
           <div class="input-control">
             <select id="country" name="country" placeholder="Country" [(ngModel)]="userInfo.country">
-              <option value="">Select</option>o
+              <option value="">Select</option>
               <option *ngFor="let country of countries" value= {{country.code}}>
                 {{country.name}}
               </option>
             </select>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+              <textarea mdInput id="bio" placeholder="About you ( 200 characters max )" name="bio" type="text"
+                        [(ngModel)]="userInfo.bio" #bio="ngModel" maxlength="200"></textarea>
+            </md-input-container>
           </div>
         </div>
         <div class="large-6 columns">
@@ -77,7 +83,9 @@
   </div>
 </div>
 <div class="row achievements">
-  <h2>Achievements</h2>
-  <social-share url="/lc-rally/#/{{userInfo.shared_profile_token}}"></social-share>
+  <div class="large-12 columns">
+    <h2>Achievements</h2>
+    <social-share url="/lc-rally/#/{{userInfo.shared_profile_token}}"></social-share>
+  </div>
 </div>
 <user-coasters [achievements]="achievements"></user-coasters>
