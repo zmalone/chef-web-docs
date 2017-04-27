@@ -13,4 +13,5 @@ modules:
 - custom-resources-in-chef-client
 - build-a-custom-resource
 - build-a-custom-ohai-plugin
+- build-an-ohai-plugin
 ---
