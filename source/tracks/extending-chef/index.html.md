@@ -10,8 +10,5 @@ track_class: card-light-brown
 category: Admin
 order: 7
 modules:
-- getting-started
-- develop-locally
-- learn-the-basics
-- manage-a-node
+- custom-resources-in-chef-client
 ---
