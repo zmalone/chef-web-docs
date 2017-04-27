@@ -49,7 +49,7 @@ For learning purposes, we recommend that you use EC2 instances. The number of se
 
 [COMMENT] Although we recommend that you bring up fresh instances for this tutorial, you can use the node that you brought up for the _Manage a node_ tutorial. Also, although Chef [supports multiple versions of Windows Server](https://docs.chef.io/platforms.html#chef-client-ohai-foundational-platforms), we recommend that you use Windows Server 2012 R2 to ensure the results you see match what's shown in this tutorial.
 
-Bring up the number of Windows Server 2012 R2 systems you want to use now. This tutorial was tested using Amazon EC2 **t2.xlarge** instances. As you did in the _Manage a node_ tutorial, ensure each system's security group provides [inbound network access](/modules/manage-a-node/windows/opsworks/get-a-node-to-bootstrap#step1) on ports 80 (HTTP), and 443 (HTTPS), 3389 (RDP), and 5985 (WinRM).
+Bring up the number of Windows Server 2012 R2 systems you want to use now. This tutorial was tested using Amazon EC2 **t2.xlarge** instances. As you did in the _Manage a node_ tutorial, ensure each system's security group provides [inbound network access](/modules/manage-a-node-chef-automate/windows/opsworks/get-a-node-to-bootstrap#step1) on ports 80 (HTTP), and 443 (HTTPS), 3389 (RDP), and 5985 (WinRM).
 
 Here are resources if you need a refresher on how to launch an instance.
 
@@ -83,9 +83,9 @@ From the **Description** tab, note the public IP address for each of your infras
 
 Here's a refresher on how to connect to your instance, configure the firewall, and verify that your Windows Server node can receive network traffic on port 5985 and through the firewall.
 
-* [Connect to your node](/modules/manage-a-node/windows/opsworks/get-a-node-to-bootstrap#step3)
-* [Configure the firewall to accept remote WinRM connections](/modules/manage-a-node/windows/opsworks/get-a-node-to-bootstrap#step4)
-* [Verify the configuration](/modules/manage-a-node/windows/opsworks/get-a-node-to-bootstrap#step5)
+* [Connect to your node](/modules/manage-a-node-chef-automate/windows/opsworks/get-a-node-to-bootstrap#step3)
+* [Configure the firewall to accept remote WinRM connections](/modules/manage-a-node-chef-automate/windows/opsworks/get-a-node-to-bootstrap#step4)
+* [Verify the configuration](/modules/manage-a-node-chef-automate/windows/opsworks/get-a-node-to-bootstrap#step5)
 
 After you verify each server, you can close your RDP connection.
 
@@ -97,7 +97,7 @@ After you verify each server, you can close your RDP connection.
 
 ## 2. Understand the role of push jobs
 
-In the _Manage a node_ tutorial, you used `knife winrm` to [run chef-client on your node](/modules/manage-a-node/windows/opsworks/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
+In the _Manage a node_ tutorial, you used `knife winrm` to [run chef-client on your node](/modules/manage-a-node-chef-automate/windows/opsworks/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
 
 ```bash
 # ~/learn-chef
@@ -106,7 +106,7 @@ $ knife winrm 'name:node1-windows' chef-client --winrm-user Administrator --winr
 
 The command uses a search query to specify which node to run `chef-client` on. Here, the search query specifies the node's name, **node1-windows**.
 
-There are other ways to run `chef-client` on a node. You can log in directly or over RDP and run `chef-client`. Or you can run `chef-client` at a regular interval as a scheduled task, [as you did previously](/modules/manage-a-node/windows/opsworks/run-chef-client-periodically).
+There are other ways to run `chef-client` on a node. You can log in directly or over RDP and run `chef-client`. Or you can run `chef-client` at a regular interval as a scheduled task, [as you did previously](/modules/manage-a-node-chef-automate/windows/opsworks/run-chef-client-periodically).
 
 You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. A push job is a way to submit a task to a node, such as running `chef-client`. The push jobs client runs on a node and listens for job requests.
 
@@ -400,7 +400,7 @@ union
 
 Now that you have the required environments set up and the `delivery-base` cookbook on your Chef server, you're ready to bootstrap your infrastructure nodes.
 
-The process is similar to the one you did in the [Manage a node](/modules/manage-a-node/windows/opsworks/bootstrap-your-node) tutorial with two minor variations.
+The process is similar to the one you did in the [Manage a node](/modules/manage-a-node-chef-automate/windows/opsworks/bootstrap-your-node) tutorial with two minor variations.
 
 * Each node's run-list contains two recipes &ndash; the `delivery-base` cookbook's default recipe and the `learn_chef_iis` cookbook's default recipe.
 * Each node is associated with a Chef environment that you created in the previous step.
@@ -489,7 +489,7 @@ Tags:
 
 The **Recipes** part contains the node's expanded run-list. For example, the `delivery-base` cookbook's default recipe includes the `push-jobs` cookbook's default recipe ([source code](https://github.com/chef-cookbooks/delivery-base/blob/master/recipes/default.rb)), which in turn includes other recipes ([source code](https://github.com/chef-cookbooks/push-jobs/blob/master/recipes/default.rb)).
 
-In the _Manage a node_ tutorial, you used Chef Automate's visibility feature to [view your node from the dashboard](/modules/manage-a-node/windows/opsworks/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
+In the _Manage a node_ tutorial, you used Chef Automate's visibility feature to [view your node from the dashboard](/modules/manage-a-node-chef-automate/windows/opsworks/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
 
 From the Chef Automate web interface, select **Nodes**. From the search box at the top of the page, enter **node_name: *-node** to display only the nodes whose names end with "-node", then click the search button.
 
