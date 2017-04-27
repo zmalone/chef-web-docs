@@ -29,7 +29,7 @@ export class SocialShareComponent implements OnChanges {
 
   ngOnChanges() {
     const socialData = this.socialData || this.siteDataService.currentPage().socialShare
-    const url = encodeURIComponent(this.siteDataService.baseUrl() + this.url)
+    const url = decodeURIComponent(this.siteDataService.baseUrl() + this.url)
     this.facebookURL = this.sharerUrls['facebook'] + 'u=' + url
     this.googleURL = this.sharerUrls['google'] + 'url=' + url
     this.twitterURL = this.sharerUrls['twitter'] + 'text=' +
