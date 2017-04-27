@@ -3,13 +3,13 @@ title: 'Refactoring - test suite: ChefSpec and RSpec'
 short_title: 'Refactoring a test suite'
 description: 'Learn ways to remove duplication from the test suite. In this episode we refactor ChefSpec and learn the powerful features of RSpec.'
 order: 1
-keywords: video
+keywords: chefspec, rspec, refactoring
 time_to_complete: 70 minutes
 quiz_path: quizzes/best-practices-for-testing/joy-of-automating-episode-5.yml
 headings: [
   { label: 'Resources', href: '#resources' },
   { label: 'Further activities', href: '#furtheractivities' }
-  ]
+]
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

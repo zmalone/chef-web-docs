@@ -26,7 +26,10 @@ export class UserProfileComponent implements OnInit {
     private progressService: ProgressService,
     private siteDataService: SiteDataService,
     private router: Router,
-  ) {}
+  ) {
+    this.user = <User> {}
+    this.userInfo = <User> {}
+  }
 
   ngOnInit() {
     this.countries = COUNTRY
@@ -41,8 +44,8 @@ export class UserProfileComponent implements OnInit {
   bindToPublicProfile() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        const userId = Number(event.url.substr(1))
-        if (!isNaN(userId)) {
+        const userId = event.url.substr(1)
+        if (userId) {
           this.userProfileService.loadPublicProfile(userId).subscribe(userInfo => {
             this.user = userInfo.profile
             this.achievements = userInfo.progress.achievements
@@ -63,7 +66,7 @@ export class UserProfileComponent implements OnInit {
     })
     this.userProfileService.userProfile.subscribe(user => {
       this.user = user
-      this.userInfo = Object.assign({}, this.user, { share_profile: !this.user.share_profile })
+      this.userInfo = Object.assign({}, this.user)
     })
     this.progressService.activeUserProgress.subscribe(() => {
       this.achievements = this.progressService.getAchievements()
@@ -71,7 +74,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   updateUserProfile() {
-    this.userProfileService.updateUserProfile(Object.assign({}, this.userInfo, { share_profile: !this.userInfo.share_profile }))
+    this.userProfileService.updateUserProfile(Object.assign({}, this.userInfo))
       .subscribe(
         () => {
           window.scrollTo(0, 0)

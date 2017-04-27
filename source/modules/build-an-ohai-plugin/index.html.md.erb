@@ -1,14 +1,12 @@
 ---
 id: build-an-ohai-plugin
 title: 'Build an Ohai plugin'
-description: 'Creating an Ohai plugin'
-order: 2
-keywords: training, tutorials, chef
+description: 'Learn how to create, test, and deploy an Ohai plugin.'
+keywords: ohai, plugin, custom
 type: topic
 category: extending-chef
-sections: []
-logo: ohai.svg
-progress_bar: false
+quiz_path: quizzes/build-an-ohai-plugin.yml
+time_to_complete: 60 minutes
 headings: [
   { label: 'Prerequisites', href: '#prerequisites' },
   { label: '1. Creating the Ohai Plugin', href: '#step1' },
@@ -20,7 +18,7 @@ headings: [
   { label: 'Additional resources', href: '#additionalresources' }
 ]
 ---
-In this tutorial, you'll learn how to create, test, and deploy an Ohai plugin that will be able to execute a system command and collect data about an installed application on a node.
+In this module, you'll learn how to create, test, and deploy an Ohai plugin that will be able to execute a system command and collect data about an installed application on a node.
 
 [Ohai](https://docs.chef.io/ohai.html) collects data about your system. This data can be used to make your recipes more dynamic or provide better reporting. Each piece of data is captured through various plugins that are defined and shipped with Ohai. These plugins are defined with a domain-specific language (DSL) that is written in Ruby (similar to defining a recipe or a custom resource).
 
@@ -28,35 +26,25 @@ You can create your own Ohai plugins. These plugins can collect important data a
 
 [COMMENT] This example is specific to Apache running on CentOS 6.7 but nearly all the practices are easily extendable to other applications and platforms.
 
-Here's a 30 minute video that explains how to build an Ohai plugin in detail that you can watch before or after you complete this tutorial.
-<br />
-<br />
-<iframe width="635" height="350" src="https://www.youtube.com/embed/5rrER1Abmas" frameborder="0" allowfullscreen></iframe>
-<br />
-
 [START_BOX]
 
 ## Prerequisites
 
 ### Understand hardware requirements
 
-To successfully complete this tutorial, you'll need a Windows, MacOS, or Linux workstation that has relatively powerful hardware. We recommend that your workstation have at least 15GB of free disk space and at least 4GB of available memory so that you can download the base image and run a few virtual machine instances.
+To successfully complete this module, you'll need a Windows, macOS, or Linux workstation that has relatively powerful hardware. We recommend that your workstation have at least 15GB of free disk space and at least 4GB of available memory so that you can download the base image and run a few virtual machine instances.
 
 ### Set up your workstation for local development
 
-This tutorial builds on top off knowledge gained in [Get started with Test Kitchen](/modules/local-development/rhel/) and [Create a web app cookbook](/modules/create-a-web-app-cookbook/rhel/).
-
-First, you'll need to have the latest version of the Chef Development Kit on your workstation. You'll also need a programmer's text editor that you're comfortable working with and a directory to work from &ndash; the tutorials use <% fp '~/learn-chef' %>. [Follow these steps](/modules/manage-a-node/rhel/hosted/set-up-your-workstation/) to get set up.
+First, you'll need to have the latest version of the Chef Development Kit on your workstation. You'll also need a programmer's text editor that you're comfortable working with and a directory to work from &ndash; the interactive modules use <% fp '~/learn-chef' %>. [Follow these steps](/modules/manage-a-node-chef-server/rhel/hosted/set-up-your-workstation/) to get set up.
 
 You'll also need the virtualization software [VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/). If you don't have VirtualBox and Vagrant installed, [follow steps 1&mdash;3](/modules/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage) to get set up. Optionally, you can follow steps 4&mdash;7 to verify you can successfully bring up a local virtual machine.
 
 ### Build local development skills using Test Kitchen
 
-This tutorial requires familiarity with local development using Test Kitchen.
+This module requires familiarity with local development using Test Kitchen.
 
-If you're not familiar with Test Kitchen, work through [Get started with Test Kitchen](/modules/local-development/rhel/) before you start this tutorial. This tutorial teaches you the basics of how to apply cookbooks on local test instances, all on your workstation.
-
-The [Create a web app cookbook](/modules/create-a-web-app-cookbook/rhel/) tutorial provides additional hands-on practice with local development. Working through this tutorial is optional. Here, you configure a basic but complete web application using Test Kitchen. The [quickstart](/modules/create-a-web-app-cookbook/rhel/bring-up-the-web-app-using-test-kitchen/) brings up the final configuration on a local test instance in just a few minutes.
+If you're not familiar with Test Kitchen, work through [Get started with Test Kitchen](/modules/local-development/rhel/) before you start this module. This module teaches you the basics of how to apply cookbooks on local test instances, all on your workstation.
 
 [END_BOX]
 
@@ -159,9 +147,8 @@ To ensure our plugin works would require us to deliver it to our target node and
 
 When an Ohai plugin fails it does so silently so that it does not effect the remainder of the `ohai` execution and the `chef-client` run. If you were to make a mistake while creating or changing the plugin it would take a long time to troubleshoot the issue.
 
-[COMMENT] On **success**, we would be able to see the data that our `collect_data` block has captured about our node.
-
-[COMMENT] On **failure**, no data will be captured and no output will tell us what went wrong.
+* On **success**, we would be able to see the data that our `collect_data` block has captured about our node.
+* On **failure**, no data will be captured and no output will tell us what went wrong.
 
 Before we deploy this plugin we will test it locally. This can be done first through ChefSpec with the help of the [chefspec-ohai](https://rubygems.org/gems/chefspec-ohai) gem.
 
@@ -431,7 +418,6 @@ The warning informs us that the `ohai_plugin` resource reloads Ohai during the `
 
 * Ohai's [Domain Specific Language](https://docs.chef.io/ohai_custom.html)
 * The [chefspec-ohai](https://rubygems.org/gems/chefspec-ohai) gem
-* Video: Joy of Automating - [Creating an Ohai Plugin](https://learn.chef.io/modules/joy-of-automating-episode-7/)
 
 [END_BOX]
 
