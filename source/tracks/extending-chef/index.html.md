@@ -12,4 +12,5 @@ order: 7
 modules:
 - custom-resources-in-chef-client
 - build-a-custom-resource
+- build-a-custom-ohai-plugin
 ---
