@@ -1,23 +1,22 @@
 ---
 id: joy-of-automating-episode-10
-title: 'Episode 10: Helper Methods - NTP Cookbook'
+title: 'Helper methods - NTP cookbook'
+short_title: 'Helper methods'
 description: 'Learn how to refactor a recipe to define helper methods.'
-order: 10
-keywords: training, videos, screencasts
-category: 'joy-of-automating'
-sections: []
-icon: video.png
+keywords: helper methods, ntp, pry, attributes
+time_to_complete: 60 minutes
+quiz_path: quizzes/joy-of-automating-episode-10.yml
+headings: [
+  { label: 'Resources', href: '#resources' }
+]
 ---
+This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
+
+In this episode we focus on refactoring a community cookbook for readability. [Eric Maxwell](https://twitter.com/iamericmaxwell) and I review the community cookbook NTP for clarity. We refactor some of the recipe using `include_recipe` and then proceed to define helper methods to clean up the logic in the recipe. We write some tests and stumble into a few key moments where we learn about attribute precedence levels, Ruby's modules, and employing Pry to understand what is happening at execution.
+
+In this episode we work with the community cookbook [ntp](https://supermarket.chef.io/cookbooks/ntp).
 
 <iframe width="877" height="493" src="https://www.youtube.com/embed/EttIaEybNX8" frameborder="0" allowfullscreen></iframe>
-
-## Description
-
-In this episode we focus on refactoring a community cookbook for readability. Eric Maxwell and I review the community cookbook NTP for clarity. We refactor some of the recipe using `include_recipe` and then proceed to define helper methods to clean up the logic in the recipe. We write some tests and stumble into a few key moments where we learn about attribute precedence levels, Ruby's modules, and employing Pry to understand what is happening at execution.
-
-## Activity
-
-In this episode we work with a community cookbook [ntp](https://supermarket.chef.io/cookbooks/ntp).
 
 ## Resources
 
