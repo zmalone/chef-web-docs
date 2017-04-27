@@ -1,7 +1,7 @@
 ---
-title: 'Build a custom resource'
-short_title: 'Build a custom resource'
-platform: Red Hat Enterprise Linux
+title: 'Configure Apache web server on Linux'
+short_title: 'Configure Apache on Linux'
+platform: Linux
 platform_id: rhel
 category: local-development
 time_to_complete: 60 minutes
@@ -9,6 +9,7 @@ snippet_path: test-your-infrastructure-code/rhel/virtualbox/create-a-custom-reso
 snippet_workstation: ubuntu
 machine_config: snippets/test-your-infrastructure-code/rhel/virtualbox/machine_config.md
 environment: virtualbox
+quiz_path: quizzes/build-a-custom-resource.yml
 headings: [
   { label: 'Prerequisites', href: '#prerequisites' },
   { label: 'Quickstart', href: '#quickstartgetthecustom_webcookbook' },
@@ -16,9 +17,9 @@ headings: [
   { label: 'Testing the custom resource', href: '#testingthecustom_web_siteresource' }
 ]
 ---
-In this tutorial, you'll walk through the creation of a [custom Chef resource](https://docs.chef.io/custom_resources.html) that configures Apache web server on multiple Linux platforms. You'll get starter code from GitHub, see the custom resource in action, and run automated tests that verify the resource's behavior.
+In this module, you'll walk through the creation of a [custom Chef resource](https://docs.chef.io/custom_resources.html) that configures Apache web server on multiple Linux platforms. You'll get starter code from GitHub, see the custom resource in action, and run automated tests that verify the resource's behavior.
 
-Consider the recipe from the [Unit test with ChefSpec](/modules/unit-test-with-chefspec/) tutorial that configures Apache on CentOS and Ubuntu.
+Consider the recipe from the [Unit test with ChefSpec](/modules/unit-test-with-chefspec/) module that configures Apache on CentOS and Ubuntu.
 
 <% code_snippet(path: "test-your-infrastructure-code/rhel/virtualbox/verify-resources-properly-defined/revise-cookbook-for-ubuntu/default-3-rhel") %>
 
@@ -70,7 +71,7 @@ end
 
 Chef includes built-in resources to manage files, packages, templates, and services, but it does not include a resource that manages web sites. However, you can create a _custom resource_ to accomplish this.
 
-In fact, you've probably used custom resources already. For example, if you've gone through the [Create a web app cookbook](/modules/create-a-web-app-cookbook/rhel/) tutorial, you used the the `httpd_service`, `httpd_config`, and `httpd_module` resources from the [httpd](https://supermarket.chef.io/cookbooks/httpd) community cookbook on [Chef Supermarket](https://supermarket.chef.io). Here's an example:
+In fact, you've probably used custom resources already. For example, if you've gone through the [Create a web app cookbook](/modules/create-a-web-app-cookbook/rhel/) module, you used the the `httpd_service`, `httpd_config`, and `httpd_module` resources from the [httpd](https://supermarket.chef.io/cookbooks/httpd) community cookbook on [Chef Supermarket](https://supermarket.chef.io). Here's an example:
 
 ```ruby
 # web.rb
@@ -95,7 +96,7 @@ end
 
 These resource types handle platform variations and other common details, enabling you to specify only the details that make your web site unique.
 
-The Chef documentation [describes custom resources in detail](https://docs.chef.io/custom_resources.html) and provides a good example. In this tutorial, you'll download and run a similar example that also includes ChefSpec and InSpec tests.
+The Chef documentation [describes custom resources in detail](https://docs.chef.io/custom_resources.html) and provides a good example. In this module, you'll download and run a similar example that also includes ChefSpec and InSpec tests.
 
 <% accordion('test-configuration', 'Test configuration') do %>
 
@@ -112,12 +113,12 @@ The Chef documentation [describes custom resources in detail](https://docs.chef.
 
 ## Prerequisites
 
-To successfully complete this tutorial, you'll need the following:
+To successfully complete this module, you'll need the following:
 
-1. Your workstation set up for Chef development. [Follow these steps](/modules/manage-a-node/rhel/hosted/set-up-your-workstation/) to get set up.
+1. Your workstation set up for Chef development. [Follow these steps](/modules/manage-a-node-chef-server/rhel/hosted/set-up-your-workstation/) to get set up.
 1. The virtualization software [VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/). [Follow steps 1&mdash;3](/modules/learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage) to get set up. Optionally, you can follow steps 4&mdash;7 to verify you can successfully bring up a local virtual machine.
 
-You should also be familiar with Test Kitchen and some of the common Chef testing tools. Although not required, you can work through the [Get started with Test Kitchen](/modules/local-development/) tutorial to get started using Test Kitchen. These tutorials can help you get started with some of the common Chef testing tools:
+You should also be familiar with Test Kitchen and some of the common Chef testing tools. Although not required, you can work through the [Get started with Test Kitchen](/modules/local-development/) module to get started using Test Kitchen. These modules can help you get started with some of the common Chef testing tools:
 
 * [Test driven development with InSpec](/modules/tdd-with-inspec/)
 * [Unit test with ChefSpec](/modules/unit-test-with-chefspec/)
@@ -141,7 +142,7 @@ Next, clone the cookbook from GitHub.
 
 <% command_snippet(page: current_page, path: 'quickstart-custom_web/git-clone-custom_web', features: [:stdin, :stderr]) %>
 
-The "custom" part of the cookbook's name is simply to distinguish it from other Learn Chef tutorials. In practice, you might name the cookbook simply `web`.
+The "custom" part of the cookbook's name is simply to distinguish it from other Learn Chef modules. In practice, you might name the cookbook simply `web`.
 
 Next, move to the <% fp 'custom_web' %> directory.
 
@@ -191,7 +192,7 @@ Test Kitchen matches partial names, so `kitchen login centos` is shorthand for `
 
 You can browse the source code to get a sense of how the custom resource is built and how the ChefSpec and InSpec tests work. In the next part, you'll walk through some of these details.
 
-When you're done with this tutorial, you can destroy your test instances like this.
+When you're done with this module, you can destroy your test instances like this.
 
 <% command_snippet(page: current_page, path: 'quickstart-custom_web/kitchen-destroy-custom_web') %>
 
@@ -205,7 +206,7 @@ There are [several ways to write a custom resource](https://docs.chef.io/custom_
 
 <% code_snippet(page: current_page, path: 'writing-the-custom_web_site-resource/site-rb') %>
 
-Chef appends the name of your Ruby file to your cookbook's name. Therefore, this custom resource is named `custom_web_site`.
+Chef appends the name of your Ruby file, minus the .rb extension (`site`) to your cookbook's name (`custom_web`). Therefore, this custom resource is named `custom_web_site`.
 
 This example resembles the one [shown in the documentation](https://docs.chef.io/custom_resources.html#example). You can read the description to get a sense of how the resource works.
 
@@ -241,11 +242,11 @@ The ChefSpec test, located at <% fp 'cookbooks/custom_web/spec/unit/recipes/hell
 
 <% code_snippet(page: current_page, path: 'testing-the-custom_web_site-resource/hello_world_test-default-spec-rb') %>
 
-This test follows the shared examples pattern that you learned about in the [Unit test with ChefSpec](/modules/unit-test-with-chefspec/) tutorial.
+This test follows the shared examples pattern that you learned about in the [Unit test with ChefSpec](/modules/unit-test-with-chefspec/) module.
 
 In this example, `create_custom_web_site` is a [custom matcher](https://github.com/sethvargo/chefspec#packaging-custom-matchers). A matcher helps you build expectations around how a resource behaves. ChefSpec provides matchers for the built-in Chef resource types; you need to provide your own matchers for custom types you define. You'll find the definition of the `create_custom_web_site` matcher in <% fp 'libraries/matchers.rb' %>.
 
-The corresponding InSpec tests for the `hello_world_test` test cookbook are located at <% fp 'test/smoke/default/default_test.rb' %>. These tests resemble the InSpec tests you wrote in the [Test driven development with InSpec](/modules/tdd-with-inspec/) tutorial. However, this version also verifies the configuration on CentOS and Ubuntu.
+The corresponding InSpec tests for the `hello_world_test` test cookbook are located at <% fp 'test/smoke/default/default_test.rb' %>. These tests resemble the InSpec tests you wrote in the [Test driven development with InSpec](/modules/tdd-with-inspec/) module. However, this version also verifies the configuration on CentOS and Ubuntu.
 
 <% code_snippet(page: current_page, path: 'testing-the-custom_web_site-resource/hello_world_test-default-test-rb') %>
 
@@ -292,8 +293,6 @@ source 'https://supermarket.chef.io'
 metadata
 ```
 
-[Learn more about custom resources in this webcast](https://www.chef.io/blog/2015/11/06/custom-resources-in-chef-client-12-5/)
-
-[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/custom_web) on GitHub.
+[GITHUB] [Get the code for this module](https://github.com/learn-chef/custom_web) on GitHub.
 
 [END_BOX]
