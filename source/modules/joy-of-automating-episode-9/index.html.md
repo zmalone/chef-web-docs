@@ -1,23 +1,22 @@
 ---
 id: joy-of-automating-episode-9
-title: 'Episode 9: Refactoring Templates - chef-client cookbook'
-description: 'Learn how to work with community cookbooks and refactor a template with complicated logic to make it clear'
-order: 9
-keywords: training, videos, screencasts
-category: 'joy-of-automating'
-sections: []
-icon: video.png
+title: 'Refactoring templates - chef-client cookbook'
+short_title: 'Refactoring templates'
+description: 'Learn how to work with community cookbooks and refactor a template with complicated logic to make it clearer.'
+keywords: refactoring, templates, community cookbooks, chef supermarket, chef-client cookbook, helper methods
+quiz_path: quizzes/joy-of-automating-episode-9.yml
+time_to_complete: 70 minutes
+headings: [
+  { label: 'Resources', href: '#resources' }
+]
 ---
+This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 
-<iframe width="877" height="493" src="https://www.youtube.com/embed/4d6btJTVF-o" frameborder="0" allowfullscreen></iframe>
-
-## Description
-
-In this episode we focus on refactoring and submitting pull requests for a community cookbook. Nathen Harvey and I fork the community cookbook, clone it, and then configure it for easiest management. Then we spend time understanding the template, making changes, committing the changes and opening a pull request. We continue to work further on cleaning up the logic that exists within the template, moving it back to the recipe, and then finally to a helper method.
-
-## Activity
+In this episode we focus on refactoring and submitting pull requests for a community cookbook. [Nathen Harvey](https://twitter.com/nathenharvey) and I fork the community cookbook, clone it, and then configure it for easiest management. Then we spend time understanding the template, making changes, committing the changes and opening a pull request. We continue to work further on cleaning up the logic that exists within the template, moving it back to the recipe, and then finally to a helper method.
 
 In this episode we work with the community cookbook [chef-client](https://supermarket.chef.io/cookbooks/chef-client).
+
+<iframe width="877" height="493" src="https://www.youtube.com/embed/4d6btJTVF-o" frameborder="0" allowfullscreen></iframe>
 
 ## Resources
 

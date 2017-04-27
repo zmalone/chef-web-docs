@@ -1,23 +1,22 @@
 ---
 id: joy-of-automating-episode-8
-title: 'Episode 8: Managing Configuration - ssh_config on Linux'
-description: 'Learn how to use Chef to manage a configuration file'
-order: 8
-keywords: training, videos, screencasts
-category: 'joy-of-automating'
-sections: []
-icon: video.png
+title: 'Managing configuration - ssh_config on Linux'
+short_title: 'Managing configuration'
+description: 'Learn how to use Chef to manage the SSH configuration file.'
+keywords: custom resource, refactoring, ssh
+quiz_path: quizzes/joy-of-automating-episode-8.yml
+time_to_complete: 90 minutes
+headings: [
+  { label: 'Resources', href: '#resources' }
+]
 ---
+This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
+
+In this episode we focus managing the configuration of the SSH configuration file. [Matt Stratton](https://twitter.com/mattstratton) and I first implement a solution with a `file` resource, refactor it to use a `template` resource, then use template variables, and then finally start an implementation that uses a custom resource.
+
+In this episode we create a cookbook that takes a simple [ssh](https://github.com/chef-training/ssh-joy_of_automating-ep8) configuration and make it more powerful.
 
 <iframe width="877" height="493" src="https://www.youtube.com/embed/WxODJo67nfQ" frameborder="0" allowfullscreen></iframe>
-
-## Description
-
-In this episode we focus managing the configuration of the ssh config file. Matt Stratton and I first implement a solution with a file resource, refactor it to use a template, then use template variables, and then finally start an implementation that uses a custom resource.
-
-## Activity
-
-In this episode we create a cookbook that takes a simple [ssh ](https://github.com/chef-training/ssh-joy_of_automating-ep8) configuration writing cookbook and make it more powerful.
 
 ## Resources
 

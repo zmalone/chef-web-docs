@@ -10,8 +10,11 @@ track_class: card-light-brown
 category: Admin
 order: 7
 modules:
-- getting-started
-- develop-locally
-- learn-the-basics
-- manage-a-node
+- custom-resources-in-chef-client
+- build-a-custom-resource
+- build-a-custom-ohai-plugin
+- build-an-ohai-plugin
+- joy-of-automating-episode-8
+- joy-of-automating-episode-9
+- joy-of-automating-episode-10
 ---
