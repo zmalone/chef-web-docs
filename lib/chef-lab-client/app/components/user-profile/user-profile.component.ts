@@ -27,7 +27,8 @@ export class UserProfileComponent implements OnInit {
     private siteDataService: SiteDataService,
     private router: Router,
   ) {
-    this.userInfo = {}
+    this.user = <User> {}
+    this.userInfo = <User> {}
   }
 
   ngOnInit() {
@@ -65,7 +66,7 @@ export class UserProfileComponent implements OnInit {
     })
     this.userProfileService.userProfile.subscribe(user => {
       this.user = user
-      this.userInfo = Object.assign({}, this.user, { share_profile: !this.user.share_profile })
+      this.userInfo = Object.assign({}, this.user)
     })
     this.progressService.activeUserProgress.subscribe(() => {
       this.achievements = this.progressService.getAchievements()
@@ -73,7 +74,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   updateUserProfile() {
-    this.userProfileService.updateUserProfile(Object.assign({}, this.userInfo, { share_profile: !this.userInfo.share_profile }))
+    this.userProfileService.updateUserProfile(Object.assign({}, this.userInfo))
       .subscribe(
         () => {
           window.scrollTo(0, 0)
