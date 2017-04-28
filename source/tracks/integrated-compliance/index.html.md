@@ -10,8 +10,5 @@ track_class: card-pink
 category: Admin
 order: 9
 modules:
-- getting-started
-- develop-locally
-- learn-the-basics
-- manage-a-node
+- using-chef-compliance-to-secure-your-servers
 ---
