@@ -12,4 +12,6 @@ order: 9
 modules:
 - using-chef-compliance-to-secure-your-servers
 - tdd-with-inspec
+- compliance-assess
+- compliance-remediate
 ---
