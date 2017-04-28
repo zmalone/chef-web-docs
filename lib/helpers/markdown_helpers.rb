@@ -6,8 +6,12 @@ module MarkdownHelpers
   def render_markdown(&block)
     return '' unless block_given?
     content = capture_html(&block)
+    render_markdown_string(content)
+  end
+
+  def render_markdown_string(content)
     renderer = Redcarpet::Render::HTML.new
     markdown = Redcarpet::Markdown.new(renderer)
-    markdown.render(content)#.to_s.strip).gsub(/<\/?p>/, '').strip
+    markdown.render(content)
   end
 end
