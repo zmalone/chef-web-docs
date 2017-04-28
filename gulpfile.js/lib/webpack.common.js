@@ -62,7 +62,9 @@ module.exports = {
 
     new webpack.EnvironmentPlugin([
       'NODE_ENV',
-      'API_ENDPOINT'
+      'API_ENDPOINT',
+      'SEGMENT_API_KEY',
+      'CHEF_LAB_URL'
     ])
   ]
 };
