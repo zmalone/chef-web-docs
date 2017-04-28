@@ -10,8 +10,9 @@ track_class: card-red
 category: Admin
 order: 6
 modules:
-- how-to-learn-chef
-- learn-the-basics
-- manage-a-node
-- develop-locally
+- create-a-web-app-cookbook
+- joy-of-automating-episode-1
+- joy-of-automating-episode-2
+- joy-of-automating-episode-3
+- joy-of-automating-episode-4
 ---
