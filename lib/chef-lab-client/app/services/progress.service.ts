@@ -221,11 +221,13 @@ export class ProgressService {
     })
 
     // If there isn't any base time, we'll figure progress by number of units completed
-    if (baseTimeAvg) {
-      return Math.min(100, Math.max(0, Math.round(100 * userCompletedAvg / baseTimeAvg)))
-    } else {
-      return Math.min(100, Math.max(0, Math.round(100 * activePathIdsCompleted.length / activePathIds.length)))
-    }
+    const percentage = (baseTimeAvg) ?
+      Math.min(100, Math.max(0, Math.round(100 * userCompletedAvg / baseTimeAvg))) :
+      Math.min(100, Math.max(0, Math.round(100 * activePathIdsCompleted.length / activePathIds.length)))
+    // If progress is not yet started, stay at 0%, don't round up.
+    // If progress has started, but not yet complete, ensure we don't round up to 100%.
+    // Otherwise return nearest 10 up to 90.
+    return (percentage === 0) ? 0 : (percentage === 100) ? 100 : Math.min(90, 10 * Math.ceil(percentage / 10))
   }
 
   private getActivePathIds(activeItemId: string): Array<string> {
