@@ -1,37 +1,64 @@
 ---
 id: joy-of-automating-episode-3
-title: 'Episode 3: Working with Legacy Code - Redis'
-description: 'Starting with an existing cookbook we fix it, add tests, and then refactor.'
-order: 3
-keywords: training, videos, screencasts
-category: 'joy-of-automating'
-sections: []
-icon: video.png
+title: 'Working with legacy code - Redis'
+short_title: 'Working with legacy code'
+description: 'Learn how to convert legacy code into tested recipes, using Redis as an example.'
+keywords: legacy code, redis, refactoring
+quiz_path: quizzes/joy-of-automating-episode-3.yml
+time_to_complete: 60 minutes
+headings: [
+  { label: 'Reference', href: '#reference' },
+  { label: 'Further activities', href: '#furtheractivities' }
+]
 ---
+This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 
-<iframe width="877" height="493" src="https://www.youtube.com/embed/Td1MMyvwaF8?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
-
-## Description
-
-In this episode we focused on working with legacy code. Legacy code is everywhere. Learning the steps to tackle this kind of work essential. This is a cookbook that deploys Redis on Ubuntu. We wrote an integration test that exposed some issues in the recipe. Then proceeded to write unit tests to capture the current state. The resources used a lot of notifications to generate a chain of events that were important to test. Near the end we refactored out the version into a node attribute and then started to refactor the resource names to make the specifications less brittle. We finished with starting to apply the same refactoring techniques to our test suite
-
-## Activity
+In this episode we focus on working with legacy code. Legacy code is everywhere. Learning the steps to tackle this kind of work essential. This is a cookbook that deploys Redis on Ubuntu. We write an integration test that exposes some issues in the recipe. Then proceeded to write unit tests to capture the current state. The resources used a lot of notifications to generate a chain of events that are important to test. Near the end we refactor out the version into a node attribute and then start to refactor the resource names to make the specifications less brittle. We finish by starting to apply the same refactoring techniques to our test suite.
 
 In this episode we focus on taking an [existing cookbook](https://github.com/chef-training/redis).
 
-## Resources
+<iframe width="877" height="493" src="https://www.youtube.com/embed/Td1MMyvwaF8?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
 
-* [chef (executable)](https://docs.chef.io/ctl_chef.html): [generate attribute](https://docs.chef.io/ctl_chef.html#chef-generate-attribute); and [exec](https://docs.chef.io/ctl_chef.html#chef-exec)
-* [kitchen (executable)](https://docs.chef.io/ctl_kitchen.html): [list](https://docs.chef.io/ctl_kitchen.html#kitchen-list);  [create](https://docs.chef.io/ctl_kitchen.html#kitchen-create);
-[converge](https://docs.chef.io/ctl_kitchen.html#kitchen-converge); and [verify](https://docs.chef.io/ctl_kitchen.html#kitchen-verify)
-* [Atom commands](http://flight-manual.atom.io/): [Fuzzy Find](http://flight-manual.atom.io/getting-started/sections/atom-basics/); [Toggle Tree View](http://flight-manual.atom.io/getting-started/sections/atom-basics/); and [Panes / Split Window](http://flight-manual.atom.io/using-atom/sections/panes/)
+## Reference
+
+* [chef (executable)](https://docs.chef.io/ctl_chef.html)
+  * [generate cookbook](https://docs.chef.io/ctl_chef.html#chef-generate-cookbook)
+  * [generate recipe](https://docs.chef.io/ctl_chef.html#chef-generate-recipe)
+  * [exec](https://docs.chef.io/ctl_chef.html#chef-exec)
+* [kitchen (executable)](https://docs.chef.io/ctl_kitchen.html)
+  * [list](https://docs.chef.io/ctl_kitchen.html#kitchen-list)
+  * [destroy](https://docs.chef.io/ctl_kitchen.html#kitchen-destroy)
+  * [create](https://docs.chef.io/ctl_kitchen.html#kitchen-create)
+  * [verify](https://docs.chef.io/ctl_kitchen.html#kitchen-verify)
+* [Atom commands](http://flight-manual.atom.io/)
+  * [Fuzzy Find](http://flight-manual.atom.io/getting-started/sections/atom-basics/)
+  * [Toggle Tree View](http://flight-manual.atom.io/getting-started/sections/atom-basics/)
+  * [Panes / Split Window](http://flight-manual.atom.io/using-atom/sections/panes/)
 * [Test Kitchen Configuration File](https://docs.chef.io/config_yml_kitchen.html)
-* [git](https://git-scm.com): [status](https://git-scm.com/docs/git-status); [add](https://git-scm.com/docs/git-add); [commit](https://git-scm.com/docs/git-commit); [checkout](https://git-scm.com/docs/git-checkout); [branch](https://git-scm.com/docs/git-branch); [merge](https://git-scm.com/docs/git-merge); [diff](https://git-scm.com/docs/git-diff); and [push](https://git-scm.com/docs/git-push)
-* [Chef Resources](https://docs.chef.io/resources.html): [remote_file](https://docs.chef.io/resource_remote_file.html); and [execute](https://docs.chef.io/resource_execute.html)
-* [Recipe DSL](https://docs.chef.io/dsl_recipe.html): notifications
-* [ServerSpec](http://serverspec.org/): [service](http://serverspec.org/resource_types.html#service).
-* [ChefSpec](https://github.com/sethvargo/chefspec): [install_package](https://github.com/sethvargo/chefspec/tree/master/examples/package); [run_execute](https://github.com/sethvargo/chefspec/tree/master/examples/execute); [start_service](https://github.com/sethvargo/chefspec/tree/master/examples/service); and [notifications](https://github.com/sethvargo/chefspec/tree/master/examples/notifications).
-* [RSpec](https://relishapp.com/rspec): [it](https://relishapp.com/rspec/rspec-core/v/3-4/docs/example-groups/basic-structure-describe-it); [pending examples](https://relishapp.com/rspec/rspec-core/v/3-4/docs/pending-and-skipped-examples/pending-examples); [let](https://relishapp.com/rspec/rspec-core/v/3-4/docs/helper-methods/let-and-let); and [--init](https://relishapp.com/rspec/rspec-core/v/3-4/docs/command-line/init-option)
+* [git](https://git-scm.com)
+  * [status](https://git-scm.com/docs/git-status)
+  * [add](https://git-scm.com/docs/git-add)
+  * [commit](https://git-scm.com/docs/git-commit)
+  * [checkout](https://git-scm.com/docs/git-checkout)
+  * [clean](https://git-scm.com/docs/git-clean)
+  * [reset](https://git-scm.com/docs/git-reset)
+  * [branch](https://git-scm.com/docs/git-branch)
+  * [merge](https://git-scm.com/docs/git-merge)
+  * [diff](https://git-scm.com/docs/git-diff)
+  * [push](https://git-scm.com/docs/git-push)
+* [Chef Resources](https://docs.chef.io/resources.html)
+  * [remote_file](https://docs.chef.io/resource_remote_file.html)
+  * [execute](https://docs.chef.io/resource_execute.html)
+* [Recipe DSL](https://docs.chef.io/dsl_recipe.html)
+* [ChefSpec](https://github.com/sethvargo/chefspec)
+  * [install_package](https://github.com/sethvargo/chefspec/tree/master/examples/package)
+  * [run_execute](https://github.com/sethvargo/chefspec/tree/master/examples/execute)
+* [RSpec](https://relishapp.com/rspec)
+  * [it](https://relishapp.com/rspec/rspec-core/v/3-4/docs/example-groups/basic-structure-describe-it)
+  * [pending examples](https://relishapp.com/rspec/rspec-core/v/3-4/docs/pending-and-skipped-examples/pending-examples)
+  * [--init](https://relishapp.com/rspec/rspec-core/v/3-4/docs/command-line/init-option)
+  * [let](https://relishapp.com/rspec/rspec-core/v/3-4/docs/helper-methods/let-and-let)
+  * [--init](https://relishapp.com/rspec/rspec-core/v/3-4/docs/command-line/init-option)
 
 ## Further activities
 

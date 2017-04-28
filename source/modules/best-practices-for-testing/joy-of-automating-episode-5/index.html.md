@@ -7,7 +7,7 @@ keywords: chefspec, rspec, refactoring
 time_to_complete: 70 minutes
 quiz_path: quizzes/best-practices-for-testing/joy-of-automating-episode-5.yml
 headings: [
-  { label: 'Resources', href: '#resources' },
+  { label: 'Reference', href: '#reference' },
   { label: 'Further activities', href: '#furtheractivities' }
 ]
 ---
@@ -19,7 +19,7 @@ We focus on the test suite defined for an earlier version of the [Ark cookbook](
 
 <iframe width="877" height="493" src="https://www.youtube.com/embed/ucd4v9R-XNA?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
 
-## Resources
+## Reference
 
 * [chef (executable)](https://docs.chef.io/ctl_chef.html): [exec](https://docs.chef.io/ctl_chef.html#chef-exec)
 * [Atom commands](http://flight-manual.atom.io/): [Select next matching word](http://flight-manual.atom.io/using-atom/sections/editing-and-deleting-text/)
