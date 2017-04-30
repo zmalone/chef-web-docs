@@ -1,16 +1,18 @@
 ---
 title: 'Remediate the compliance failure on your node'
+short_title: 'Remediate on your node'
 order: 3
 keywords: TODO
 time_to_complete: 30 minutes
 snippet_path: compliance_scanner/rhel/virtualbox/remediate-the-compliance-failure-on-your-node
 snippet_workstation: ubuntu
+quiz_path: quizzes/compliance-remediate/shared/remediate-the-compliance-failure-on-your-node.yml
 headings: [
   { label: '1. Upload the ssh cookbook', href: '#step1' },
   { label: '2. Bootstrap your node', href: '#step2' },
   { label: '3. Rerun the scan', href: '#step3' },
-  { label: 'Exercises', href: '#exercises' },
-  { label: 'Clean up your environment', href: '#howtocleanupyourenvironment' }
+  { label: 'Clean up your environment', href: '#howtocleanupyourenvironment' },
+  { label: 'Conclusion', href: '#conclusion' }
 ]
 ---
 In this part, you'll apply the SSH configuration to your CentOS node and then rerun the compliance scan to verify the fix.
@@ -35,7 +37,7 @@ Run this comand from your <% fp '~/learn-chef' %> directory.
 
 ## 2. Bootstrap your node
 
-Next, bootstrap your CentOS 7 node. In the _Manage a node_ tutorial, you chose whether to bootstrap [using a password or key-based authentication](/modules/manage-a-node-chef-server/rhel/hosted/bootstrap-your-node/). Here, you'll use the second apprach with the SSH private key that you created in the previous tutorial.
+Next, bootstrap your CentOS 7 node. In the _Manage a node_ module, you chose whether to bootstrap [using a password or key-based authentication](/modules/manage-a-node-chef-server/rhel/hosted/bootstrap-your-node/). Here, you'll use the second apprach with the SSH private key that you created in the previous module.
 
 Run this `knife bootstrap` command. Replace the IP address and the values of `--ssh-user` and `--identify-file` as needed.
 
@@ -79,15 +81,9 @@ Congratulations. You're one step closer to meeting your compliance goals.
 
 [START_BOX]
 
-<%= partial 'exercises/index' %>
-
-[END_BOX]
-
-[START_BOX]
-
 ### How to clean up your environment
 
-[Follow these steps](/modules/manage-a-node-chef-server/rhel/hosted/run-chef-client-periodically/#howtocleanupyourenvironment) from the _Manage a node_ tutorial if you want to clean up your Chef server after you complete this tutorial or you want to repeat the tutorial from the beginning.
+[Follow these steps](/modules/manage-a-node-chef-server/rhel/hosted/run-chef-client-periodically/#howtocleanupyourenvironment) from the _Manage a node_ module if you want to clean up your Chef server after you complete this module or you want to repeat the module from the beginning.
 
 To remove the `ssh` cookbook from your Chef server, run `knife cookbook delete ssh`.
 
@@ -99,15 +95,15 @@ To remove the node from your Chef compliance scanner, select the node from the d
 
 [END_BOX]
 
-<% next_page(current_page) do %>
+## Conclusion
 
-In this tutorial, you used Chef to remediate a failure of one of the predefined rules in the CIS Security Benchmarks.
+In this module, you used Chef to remediate a failure of one of the predefined rules in the CIS Security Benchmarks.
 
 You started with local development using Test Kitchen. Developing your code on local instances helps you to experiment and iterate more quickly.
 
 After verifying that your cookbook properly remediates the compliance failure on a test instance, you uploaded your cookbook to the Chef server and applied the configuration to your node. You then repeated the compliance scan to verify that the SSH configuration satisfies the compliance rule.
 
-At the [start of the previous tutorial](/modules/compliance-assess/rhel/bring-your-own-system/), we proposed 5 stages that, together, will let you meet your compliance challenges:
+At the [start of the previous module](/modules/compliance-assess/rhel/bring-your-own-system/), we proposed 5 stages that, together, will let you meet your compliance challenges:
 
 * **Analyze**
 * **Specify**
@@ -117,8 +113,6 @@ At the [start of the previous tutorial](/modules/compliance-assess/rhel/bring-yo
 
 With remediation in place, you've successfully completed 4 of these 5 stages. The final stage, **Certify**, depends on your compliance process. The Chef compliance scanner provides automated tests and reports that prove the state of your infrastructure. This independent evidence can greatly decrease the time it takes to receive a final human sign off. Also, when nodes are managed by Chef, you can use automation to repair compliance failures and ensure that the nodes remain within compliance guidelines.
 
-The built-in compliance profiles are a great start, but they may not cover your organization's unique requirements. We're working on a tutorial that teaches you how to write custom compliance profiles. [Follow us on Twitter](https://twitter.com/learnchef) to get the latest updates.
+The built-in compliance profiles are a great start, but they may not cover your organization's unique requirements. We're working on a module that teaches you how to write custom compliance profiles. [Follow us on Twitter](https://twitter.com/learnchef) to get the latest updates.
 
-[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/ssh) on GitHub.
-
-<% end %>
+[GITHUB] [Get the code for this module](https://github.com/learn-chef/ssh) on GitHub.
