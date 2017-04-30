@@ -1,0 +1,161 @@
+---
+id: version-control
+title: 'Version control'
+description: 'Software as infrastrcture requires us to adopt version control to maintain a history and collaborate with others on our team.'
+time_to_complete: 15 minutes
+quiz_path: quizzes/version-control.yml
+headings: [
+  { label: 'Git', href: '#git' },
+  { label: 'Merging with Git', href: '#mergingwithgit' },
+  { label: 'Branching with Git', href: '#branchingwithgit' }
+]
+---
+We all realize at some point when working with important information that we need to maintain a copy of that information as a back up. These back up could be stored right along side the the original but often it becomes important to transfer them to another secure location.
+
+The move towards representing your infrastructure as code places a new burden on you to create and mantain that code.
+
+Imagine that you have an application that you are working on with your team. Developing and deploying the first release of the application is only the beginning. Shortly after the release you and the team begin development on the next version. During that time issues are discovered with the currently deployed version. Repairing these issues requires you to pause development on this new release and return this older release.
+
+Maintaining the artifacts that you deploy and how they are deployed is the first start to maintaining versions of your application. However, maintaining the artifacts does not necessarily mean you are storing the original source code that was used to create that artifact.
+
+Maintaining an entire history of changes aids you by:
+
+* providing a way to return to a previous version
+* knowing who made each change
+* describing why the change was made
+
+When developing changes you start with a local copy of code. As you make changes you will come to various points where you haven't completed an entire feature or fix but have reached an important milestone. For instance, you may find a fix to bug but find your solution is not performant or does not adhere to standards defined by the team. A distributed version control system allows you to capture the current state. However, this change is not yet shared with the central repository that others. When you complete all the changes that deliver the feature or fix you are free to send those to the central version control repository to allow others to inspect it, test it, and merge it.
+
+Distributed version control systems are powerful because they allow you to commit your changes locally as you work towards completing a feature or fix. This enables you to find an immediate solution, commit those changes, and then explore refinements. Or complete a features through a series of small changes and refinements.
+
+## Git
+
+The Chef community predominately uses git as our version control system. Using git is not required to use any of tools; only if you want to join us in developing these tools.
+
+In this next section we are going to explore the core concepts and common commands to help you get started with it as a version control system.
+
+> This document only explores a subset of the concepts and commands. To learn more, we encourage you to learn more about git from the following the documentation that you can find at https://git-scm.com/doc
+
+The first step to using git for version control requires that your current projects is a git repository; often called 'git repo' for short.
+
+Within the parent directory of your project you can run the `git init` to initialize it as a git repository. This adds a `.git` directory in that parent directory. This directory stores the history of the files and their changes that you commit.
+
+> If a project is already a git repository then git will ignore this init command.
+
+Within a git repository you will often want to know the current status of the repository. Running `git status` will give you a report that shows you the files that are not currently being stored in the repository; untracked. Initially all the files in a repository are untracked.
+
+To start tracking a file it must be added to a staging area. Running `git add FILEPATH` will add the specified file or files to the staging area. This staging area is temporary location that allows you to collect all the changes before you are ready to commit the work.
+
+When you ask again for the current state of the repository (`git status`). The output will show the untracked files alongside the files currently in that staging area. To save the changes in the staging area you want to issue the `git commit` command. This will launch your default text editor which allows you to write a [commit message](https://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message) associated with those changes.
+
+Upon saving the commmit message and exiting your editor the changed files found in the staging area will be copied locally to the `.git` directory.
+
+You can review the history of commit you just made by running the `git log` command. Each commit in the log will show you a commit ID, the author, date and message.
+
+When you return to make changes to files that you have previously committed you will notice that these files will be reported as modified. You can compare the current state of the files and the previously saved state by running the `git diff` command. Every new, deleted, or modified line will be displayed.
+
+When you are satisfied with these new changes you again add these files to the staging area (`git add FILEPATH`) and then commit them (`git commit`). A new entry will appear in the history that you can view (`git log`).
+
+All the changes that you have committed are stored locally on your current workstation. To share this repository and all the changes that you have made requires you to setup a remote repository. A local repository at first has no remote repositories which you can see by executing the `git remote` command.
+
+There are many ways to create a remote repository. A common way is to [create a new repository in GitHub](https://github.com/new). A name for this repository is the only thing that is required.
+
+Now from within your local git repository you need to setup the remote repository through the `git remote add REMOTE_NAME CONNECTION_INFORMATION` command. You must provide the name of the remote and the connection information. The typical name for a the primary remote location is called 'origin' but you are free to use whatever name that makes the most sense to you. The connection information describes how you are going to connect to this git repository.
+
+After the remote repository is setup you can verify that remote repository by running the `git remote` command. This command will show you the remote location you have setup.
+
+With a remote repository established and configured it is time to send all those changes to this repository. You can push all the committed changes to the remote location with `git push REMOTE_NAME BRANCH_NAME`. The name of the remote is the same name you used when configuring the remote. The default branch for a repository is called 'master'. Assuming that everything is default the command you would execute is `git push origin master`.
+
+> Discussion about branches and branching will be discussed in the next section.
+
+When pushing to GitHub you may be prompted to enter your GitHub username and password. This will ensure that you are the owner of the repository and have the rights to push to it. If you would prefer that it does not prompt you for credentials on every push you can give GitHub the public part of your SSH keypair. The git command-line tool will use the private part of your SSH keypair to negotiate your identity.
+
+In this section you were initialized a git repository, adding files to the staging area, committed them, viewed your history of commits, created a remote repository, and then pushed these changes to a remote repository. These few commands make up the core of the git workflow but it is important for us to talk about how changes are merged with one another.
+
+## Merging with Git
+
+It's powerful that you can work with git locally with only yourself. As we left the introduction to git you were able to do that and then push your changes to a remote to maintain a copy of that work. But working solo is not the workflow for most projects.
+
+In this section lets focus on how to merge our work with the work of others using git.
+
+Pushing your changes to a remote repository is an easy way to maintain a backup and provide a way for others to collaborate with you.
+
+### Merging new commits from a remote repository
+
+Returning to work on a project a day later, your teammate informs you that she made some changes and pushed them up to the remote repository. When you sit down to your computer you are eager to see these new changes.
+
+You open your terminal, navigate to project directory, and look at your local commit history `git log`. The log only shows commits made by you. This is because your local copy of the git repository is in the same state that you left it the day before. Your teammate made the changes and pushed them to the remote repository. To get those changes you are going to have to fetch them from that remote repository and then merge them.
+
+Within your repository you ensure that you have the the correct remote origin setup `git remote -v`. The additional `-v` flag, telling to show the name and where it fetches and pushes commits. To retrieve all the changes from a remote repository you execute the `git fetch REMOTE_NAME BRANCH_NAME`. With the usual default names for the remote repository and the name of the branch the command you execute is `git fetch origin master`. Fetching from the remote repository will retrieve the work and story it locally within the `.git` directory namespaced by the remote repository name.
+
+These changes have not yet been merged into your local repository. Merging the changes means that the history of the changes from your commit history is going to merge with the history of the remote branch. This is usually straight-forward when the changes in the remote repository have happened after the changes that you committed and pushed to a remote repository.
+
+To merge the changes you execute the command `git merge BRANCH_NAME`. The name of your local branch is 'master' and the name of the remote branch is 'master'. To differentiate between them you preface the name of the branch with the repository name. In this case, you want to merge the 'origin/master' branch into your 'master' branch. So the command to execute is `git merge origin/master`.
+
+If the merge completes successfully the commit history will have been updated `git log`; showing you new commits.
+
+Fetching and merging are two steps that often happen together. These commands can be run in a single command: `git push REMOTE_NAME BRANCH_NAME`.
+
+### Merging commits from a remote repository after making local commits
+
+You push commits to the remote repository, inform your teammates, and then head off your international flight. During the flight, your teammates develop a few new features and fix a issues they find. They push their changes up to remote repository. Meanwhile, you continue building some of the core features. As you finish those features you commit those changes locally and patiently wait until you have the chance again to connect to that remote repository.
+
+When you finally get a chance to connect to the internet you immediately push your commits to the remote repository. Instead of accepting them you are presented with an error messages that informs you that it cannot accept these commits because it currently has commits.
+
+This interaction is fairly common when working on a team. The history of commits on the remote repository are not currently in the history of commits on your local repository. Pusing your differences up to remote repository may cause issues or conflicts because the remote repository does not know how to correctly merge those changes for you. So it becomes your responsibility and git provides two ways to solve this problem.
+
+The first is to use the same merge process that we used in the previous example. Within your local repository you would fetch and merge these changes (or pull). However, when you do this git has to correctly weave together the history of commits that you wrote with those of your teammates. This usually means that git will prompt you to write a new commit that describes the merging of these two histories of these branches.
+
+The second is to use a different merge process that is often called rebasing. Rebasing means that your local commits, that differ from the remote commits, are taken out of your local commit history, the remote commits are merged and then your local commits are re-applied to your local history. When you review the commit history you will see that all of your commits most recently, above the previous commits made by your teammate.
+
+> When should you choose merge over rebase? Merging maintains the history and uses a commit to merge the existing commits with your commits. Using a merge means that you want to ensure that the commits remain in a specific order in the commit history.
+
+> When should you choose rebase over merge? Rebasing moves your commits and re-creates these commits. This means that code will be the same if you merged but it saves you that additional commit that comes sometimes when working with merging.
+
+During any merge a conflict may occur. These merges will represent themselves in the conflicting files.
+
+```bash
+Here are lines that are either unchanged from the common
+ ancestor, or cleanly resolved because only one side changed.
+ <<<<<<< yours:sample.txt
+ Conflict resolution is hard;
+ let's go shopping.
+ =======
+ Git makes conflict resolution easy.
+ >>>>>>> theirs:sample.txt
+ And here is another line that is cleanly resolved or unmodified.
+```
+
+Your local changes are proposing are contained between the '<<<<<<<' and the '======='. The changes that are being merged are presented from the '=======' until the '>>>>>>>'. To resolve the conflict you need to the choose the result that is correct. By correct that could mean:
+
+1. Choose all of your changes
+2. Choose all of their changes
+3. Choose both sets of changes together
+
+This usually happens when two commits add text to a file on a particular line, like appending a new entry in a list.
+
+4. A combination of the two changes
+
+This could happen when you return to refactor a solution for clarity while someone else has refactored the solution for efficiency. When it comes time to merge both commits are so different it make it hard to resolve.
+
+## Branching with Git
+
+Up until this point we have spent time writing a single commit history into a single branch. This branch's default branch name is typically called 'master'. This 'master' branch is where we practiced merging and rebasing changes.
+
+Working with your teammates on the same branch, like 'master', means that you would have to fetch and merge/rebase commits often. This is because this one branch maintains an entire commit history.
+
+This can also be problematic if during your development you push your commits throughtout the day to the same shared branch. The feature may not yet be complete but you want to ensure that you have a copy of those changes on the remote repository.
+
+Git enables you to create additional branches to allow team members to develop their solutions in an isolated commit histories. These branches can be merged, as we learned in the last section, whenever the branch is ready to be merged.
+
+By default you start with a branch called 'master'. You see the name of this branch when you request the status through the command `git status`. To create a new branch you run the command `git branch BRANCH_NAME`. This is the name of the local branch you are creating.
+
+You can see the branch, and all local branches, by running the command `git branch`. To switch over to that branch, you execute the command `git checkout BRANCH_NAME`. A branch shares the commit history of whenever you ran the command to create the branch.
+
+Files you create, change, and delete can be committed as you have done before. These new commits will appear in this commit history of this new branch. When you want to push these changes with the remote repository you execute the command `git push REMOTE_NAME BRANCH_NAME`. The branch name is the same name as your local branch. This will automatically create a new branch on the remote repository and push all these new commits.
+
+When you complete this work you will want to eventually merge these changes back to the shared branch; often 'master'. First, you checkout this original branch `git checkout master`. From this branch you merge the changes `git merge BRANCH_NAME`.
+
+With websites like GitHub it has become even more popular to work with branches because they allow you to create a pull request from one branch to another. To setup a pull request through GitHub you must first create the new branch, append to the commit history, and the push this branch to the repository on GitHub. Through the interface you want to initiate a pull request from this new branch to the shared branch.
+
+There within the pull request you provide a summary of the changes, notes, and other thoughts. Your teammates can then review the differences, comment, and merge the changes.

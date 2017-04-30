@@ -1,0 +1,217 @@
+---
+id: text-editors
+title: 'Text editors'
+description: 'A powerful text editor is an important asset when it comes to working Chef. Learn why and how to get the most out of some suggested editors.'
+time_to_complete: 10 minutes
+quiz_path: quizzes/text-editors.yml
+headings: [
+  { label: 'Examining a typical workflow', href: '#examiningatypicalworkflow' },
+  { label: 'Atom', href: '#atom' },
+  { label: 'Visual Studio Code', href: '#visualstudiocode' }
+]
+---
+The move towards representing your infrastructure as code places a new burden on you to create and mantain that code. Code is maintain in text and the tool you have to work with it is a text editor.
+
+All text editors provide a set of features and it is difficult to know if the editor you have chosen or will chose will do the right work for you without thinking about your goals.
+
+Lets evaluate a typical workflow, examining the various steps one might take to accomplish a task. While doing that we will identify how it is we can aid ourselves in completing those tasks faster, while reducing complexity, and increased accuracy.
+
+## Examining a typical workflow
+
+Let me describe my typical workflow:
+
+> I navigate to a directory that contains my cookbook. I check to see if there are any changes that have been commited. I request the latest changes from a central source repository and merge them. I checkout my branch and merge any necessary changes. I execute the test suite to ensure all tests pass.
+
+The following steps here ensure that I have the right environment before I start my intended work. These steps can be solved in a number of ways:
+
+1. Terminal/Prompt and Source Control Command-Line Tools
+
+A terminal or command prompt is incredibly versatile tool that would allow you to navigate to the directory and visualize the contents. Most every source control tool provides a command-line interface. However, this approach places more requirements on the operator to remember text commands to perform all these operations.
+
+> SEE: Module - Sys Admin Essentials
+> SEE: Module - Version Control
+
+2. Graphical File Explorer and Source Control Tools
+
+Most of us are working on computers with a windowing environment that can represent directories and files. Most every source control has had a graphical interface over it.
+
+* [git](https://git-scm.com/downloads/guis/)
+
+3. Integrated Development Environment (IDE)
+
+An IDE allows for directory and file browsing and often times has automatic source control integration or provide the same support through plugins
+
+* [RubyMine](https://www.jetbrains.com/ruby/)
+* [Aptana](http://www.aptana.com/products/studio3.html)
+
+> I open a specification file and write some InSpec expectations. I execute the test suite to see the new tests fail. I open a recipe file and write Chef resources. I execute the test suite to see the new tests succeed. I run linting tools and address any issues found. I save and commit the changes to source control.
+
+* The editor should have a project / folder view
+
+A helpful editor well enable you to open a parent directory and be able to visualize the entire project structure. This will allow you to move quickly between the tests you write in one file and the resources that express the state about the system in another.
+
+* The editor should highlight the syntax of your development language.
+
+The complexity that comes from writing code is knowing how to use the syntax. A mistake can easily go undetected and make it difficult to troubleshoot the code until it is tested or executed. It may also simply make it difficult to read.
+
+An editor that understands the syntax of the language you are writing in can colorize different components to make it easier to identify keywords, constants, comments, and expressions.
+
+The editor should display line numbers next to each line of code.
+
+When executing your tests you will receive feedback when your tests pass or fail. When they fail you are often presented with a stacktrace. This stacktrace shows the final unit of code that was execute before the error occured. Accompanying that error is often the file name and the line number. Having line numbers will make it easier to identify this issue in the code.
+
+* The editor should enable you to express concepts that you often repeat very quickly.
+
+When writing your expectations in your tests or the resources that match those expectations it starts to become clear that you are going to start repeating yourself. While the exact details of a resource or a test will differ between projects, you will find yourself repeating these similar structures over and over again.
+
+Editors usually provide a system that allows you to define shortcuts or code snippets. A snippet allows you to define a shorter expression that can be expanded out to entire expression.
+
+This can also assist you when you are new to the language as a snippet can also include common properties and default values.
+
+* The editor should enable you to integrate external tools for faster feedback.
+
+Linting tools will perform a static evaluation on the code provide you feedback on your code to ensure that it has no errors and meets the conventions defined by the community that support the tool. When executed, the code is evaluated against that standard, and the displayed results are often here there is a violation of that standard.
+
+A linting tool could evaluate the code after every line of code you complete providing feedback faster and doing a better job teaching you the standards that it attempts to inforce. An editor could integrate this execution and feedback into the editor itself. Allowing you to immediately see issues and address them instantly.
+
+> I repeat this process of opening and editing files, running tests, linting code, and commiting when complete.
+
+* The editor should make it easy and fast for you to perform routine operations.
+
+Repeating this workflow shows that it is imporant to find quick ways to find and open a file, jump to a particular line number, search for a bit of text, and compare files side-by-side.
+
+An editor should provide support for these and other common operations that you want to perform. The most essential operations should be available through keyboard shortcuts as they will save you the most time in your daily work.
+
+In the next section we will introduce you to a few editors. You will learn how to customize them to work better for you by adding plugins/packages and being introduced to core keyboard shortcuts.
+
+## Atom
+
+Atom is a text editor that satisfies a lot of the requirements identified in workflow we examined in the previous section.
+
+It has the ability to open an entire directory as a project. This can be done through the graphical user interface or through the shell commands that it allows you to install. It represents the files and directories along the left-hand side of the code window in a tree view which can be toggled into and out of view.
+
+By default each text file will display line numbers along the right-hand side and there is syntax language support for a number of programming languages. It does not be default provide support for Chef, InSpec and Habitat. However, Atom is built on platform that supports the ability to install packages.
+
+### Packages
+
+A package in Atom can add syntax highlighting, commands, and code snippets. The following packages are useful ones developed by the Chef community to enhance the experience of using the Atom text editor.
+
+* [Chef Language Package](https://atom.io/packages/language-chef)
+
+With Chef you are composing in the Ruby language. This plugin will identify files within a cookbook as a Chef file. Automatically applying additional grammar rules for syntax highlighting and code snippet support for defining resources.
+
+> After package installation, you may have to change an opened file's language to Chef.
+
+* [RSpec Language Package](https://atom.io/packages/language-rspec)
+
+When composing your tests in ChefSpec or InSpec you are doing so in a Domain Specific Language (DSL) called RSpec. RSpec is built on top of Ruby. This plugin provides grammar rules for syntax highlighting and code snippets for defining example groups, examples, and expectations.
+
+> After package installation, you may have to change an opened file's language to RSpec.
+
+* [InSpec Language Package](https://atom.io/packages/language-inspec)
+
+With InSpec you are composing in the Ruby language on top of the RSpec DSL. This plugin provides additional grammar rules for syntax highlighting and code snippets for defining controls and resource examples.
+
+> After package installation, you must change the opened file's language to InSpec.
+
+* [Habitat Language Package](https://atom.io/packages/language-habitat)
+
+With Habitat you are composing your plans in shell scripts. This package provides additional grammar rules for syntax highlighting and code snippets for callback functions and defining variables.
+
+> After package installation, you must change the opened file's language to Habitat.
+
+* [Linter](https://atom.io/packages/linter)
+
+This package is a prerequisite for the Foodcritic and Rubocop linters. This package will install visual elements in Atom to display lint violations immediately as they are discovered.
+
+* [Foodcritic Linter](https://atom.io/packages/linter-foodcritic)
+
+Foodcritic will evaluate your Chef cookbooks for errors and convention violations. This package provides the linter interface with the issues it discovers.
+
+> This package requires the Linter package to be installed.
+
+* [Rubocop Linter](https://atom.io/packages/linter-rubocop)
+
+Rubocop will evaluate your Chef cookbooks for errors and convention violations. This package provides the linter interface with the issues it discovers.
+
+> This package requires the Linter package to be installed.
+
+### Keyboard Shortcuts
+
+During development you are going to repeat some of the same operations. Evaluating your workflow to learn how you can perform these operations faster can increase your accuracy and efficiency. Lets talk about a few scenarios and the useful shortcuts that will support you.
+
+> To help describe shortcut keys in a platform agnostic way we will use `META` to represent either the `CTRL` on Linux/Windows and `CMD` on Mac OSX.
+
+* Opening a directory or file - `$ atom FILEPATH`
+
+Within the editor you can use `META`+`O`. However, Atom provides a much easier way to open a file or directory with `atom FILEPATH` when you install the shell commands.
+
+* Saving a file - `META`+`S`
+
+Saving a file before executing tests or committing code happens often enough that it is important.
+
+* Finding a file - `META`+`T` or `META`+`P`
+
+This will launch a search experience that immediately allows you type the name of the file. This fuzzy search allows you to type a few letters to identify the file you are after. This can be difficult when several files share similar names. With the fuzzy find you want to specify the letters that identify it that are unique to it like portions of the file path.
+
+* Splitting the Window - `META` + `K` followed by one of `left`, `right`, `up`, or `down`
+
+Quite often you will want to display the contents of several files side-by-side. Atom allows considers the current file as being displayed in a pane. This pane can be split multiple times to allow you to display exactly what you in your editor window.
+
+* Command Palette - `META` + `SHIFT` + `P`
+
+Atom implements all actions through commands. These commands are added to palette that stores all of them. Not all the commands are available through the graphical menus or shortcut keys. Invoking this shortcut will launch this palette and allow you to search for any command you may want to execute.
+
+> If you find yourself invoking the same command through the command palette it may be more efficient to add a keybinding to this command.
+
+## Visual Studio Code
+
+VS Code is a text editor that satisfies a lot of the requirements identified in workflow we examined in the previous section.
+
+It has the ability to open an entire directory as a project. This can be done through the graphical user interface or through the shell commands that it allows you to install. It represents the files and directories along the left-hand side of the code window in a tree view which can be toggled between the project, search, version control, debugging tools, and extension manager.
+
+By default each text file will display line numbers along the right-hand side and there is syntax language support for a number of programming languages. It does not be default provide support for Chef, InSpec and Habitat. However, VS Code is built on platform that supports the ability to install extensions.
+
+### Extensions
+
+An extension in VS Code can add syntax highlighting, commands, and code snippets. The following packages are useful ones developed by the Chef community to enhance the experience of using the VS Code text editor.
+
+* [Chef Extension](https://marketplace.visualstudio.com/items?itemName=Pendrica.Chef)
+
+With Chef you are composing in the Ruby language. This plugin will identify files within a cookbook as a Chef file. Automatically applying additional grammar rules for syntax highlighting and code snippet support for defining resources. It additionally will provides support for Foodcritic and Rubocop linting.
+
+> After extension installation, you may have to change an opened file's language to Chef.
+
+* [InSpec Language Package](https://marketplace.visualstudio.com/items?itemName=burtlo.inspec)
+
+With InSpec you are composing in the Ruby language on top of the RSpec DSL. This plugin provides additional grammar rules for syntax highlighting and code snippets for defining controls and resource examples.
+
+> After package installation, you must change the opened file's language to InSpec.
+
+### Keyboard Shortcuts
+
+During development you are going to repeat some of the same operations. Evaluating your workflow to learn how you can perform these operations faster can increase your accuracy and efficiency. Lets talk about a few scenarios and the useful shortcuts that will support you.
+
+> To help describe shortcut keys in a platform agnostic way we will use `META` to represent either the `CTRL` on Linux/Windows and `CMD` on Mac OSX.
+
+* Opening a directory or file - `$ code FILEPATH`
+
+Within the editor you can use `META`+`O`. However, VS Code provides a much easier way to open a file or directory with `code FILEPATH` when you install the shell commands.
+
+* Saving a file - `META`+`S`
+
+Saving a file before executing tests or committing code happens often enough that it is important.
+
+* Finding a file - `META`+`P`
+
+This will launch a search experience that immediately allows you type the name of the file. This fuzzy search allows you to type a few letters to identify the file you are after. This can be difficult when several files share similar names. With the fuzzy find you want to specify the letters that identify it that are unique to it like portions of the file path.
+
+* Splitting the Window - `META` + `\`
+
+Quite often you will want to display the contents of several files side-by-side. VS Code allows considers the current file as being displayed in a pane. This pane can be split multiple times to allow you to display exactly what you in your editor window.
+
+* Command Palette - `META` + `SHIFT` + `P`
+
+VS Code implements all actions through commands. These commands are added to palette that stores all of them. Not all the commands are available through the graphical menus or shortcut keys. Invoking this shortcut will launch this palette and allow you to search for any command you may want to execute.
+
+> If you find yourself invoking the same command through the command palette it may be more efficient to add a keybinding (`META`+`K` followed by `META`+`S`) to this command.
