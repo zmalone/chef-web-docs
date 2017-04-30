@@ -13,4 +13,5 @@ modules:
 - web-operations-essentials
 - sys-admin-essentials
 - text-editors
+- version-control
 ---
