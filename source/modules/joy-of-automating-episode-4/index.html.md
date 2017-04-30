@@ -1,25 +1,24 @@
 ---
 id: joy-of-automating-episode-4
-title: 'Episode 4: Using Community Cookbooks - Jenkins on Ubuntu'
-description: 'Learn to convert application installation and configuration instructions into tested recipes. In this episode we install Jenkins onto ubuntu.'
-order: 4
-keywords: training, videos, screencasts
-category: 'joy-of-automating'
-sections: []
-icon: video.png
+title: 'Using community cookbooks - Jenkins'
+description: 'Learn to use community cookbooks to convert a configuration script to a recipe, using Jenkins as an example.'
+keywords: community cookbooks, supermarket, scripts, recipes, jenkins
+quiz_path: quizzes/joy-of-automating-episode-4.yml
+time_to_complete: 60 minutes
+headings: [
+  { label: 'Reference', href: '#reference' },
+  { label: 'Further activities', href: '#furtheractivities' }
+]
 ---
-
-<iframe width="877" height="493" src="https://www.youtube.com/embed/B9zhtyIazzM?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
-
-## Description
+This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 
 In this episode we focus on working with converting a script to a recipe using Chef community cookbooks. Community cookbooks are powerful. Learning how to leverage them will help increase the speed at which you work. We will create a cookbook that deploys Jenkins.
 
-## Activity
-
 In this episode we focus on taking the manual installation instructions found in [this tutorial](https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu) and create a recipe that does the work for us.
 
-## Resources
+<iframe width="877" height="493" src="https://www.youtube.com/embed/B9zhtyIazzM?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
+
+## Reference
 
 * [chef (executable)](https://docs.chef.io/ctl_chef.html): [generate cookbook](https://docs.chef.io/ctl_chef.html#chef-generate-cookbook)
 * [Atom commands](http://flight-manual.atom.io/): [Fuzzy Find](http://flight-manual.atom.io/getting-started/sections/atom-basics/); [Toggle Tree View](http://flight-manual.atom.io/getting-started/sections/atom-basics/); and [Panes / Split Window](http://flight-manual.atom.io/using-atom/sections/panes/)

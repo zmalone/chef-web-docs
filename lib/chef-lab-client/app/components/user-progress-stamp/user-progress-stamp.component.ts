@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core'
+import { Component, OnInit, Input, HostBinding } from '@angular/core'
 import { ProgressService } from '../../services/progress.service'
 
 @Component({
@@ -6,7 +6,9 @@ import { ProgressService } from '../../services/progress.service'
   templateUrl: './user-progress-stamp.component.html',
 })
 export class UserProgressStampComponent implements OnInit {
-  public completed: boolean
+
+  @HostBinding('class.hidden')
+  isHidden: boolean
 
   @Input()
   module: string
@@ -19,9 +21,9 @@ export class UserProgressStampComponent implements OnInit {
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe(() => {
       if (this.module) {
-        this.completed = !!this.progressService.isComplete('modules', this.module)
+        this.isHidden = !this.progressService.isComplete('modules', this.module)
       } else if (this.track) {
-        this.completed = !!this.progressService.isComplete('tracks', this.track)
+        this.isHidden = !this.progressService.isComplete('tracks', this.track)
       }
     })
   }

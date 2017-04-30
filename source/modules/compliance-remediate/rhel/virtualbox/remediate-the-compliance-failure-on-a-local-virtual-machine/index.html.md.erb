@@ -1,11 +1,12 @@
 ---
 title: 'Remediate the compliance failure on a local virtual machine'
+short_title: 'Remediate on a local VM'
 order: 2
 keywords: TODO
-sections: []
 time_to_complete: 60 minutes
 snippet_path: compliance_scanner/rhel/virtualbox/remediate-the-compliance-failure-locally
 snippet_workstation: ubuntu
+quiz_path: quizzes/compliance-remediate/shared/remediate-the-compliance-failure-on-a-local-virtual-machine.yml
 headings: [
   { label: '1. Understand the failure', href: '#step1' },
   { label: '2. Login through the CLI', href: '#step2' },
@@ -15,7 +16,7 @@ headings: [
   { label: '6. Remediate the failure', href: '#step6' }
 ]
 ---
-Recall that in the previous tutorial you ran the **cis-centos7-level1** compliance profile and that it failed the **Set SSH Protocol to 2** rule.
+Recall that in the previous module you ran the **cis-centos7-level1** compliance profile and that it failed the **Set SSH Protocol to 2** rule.
 
 ![](compliance/scan_report_issues_sshv2_centos7.png)
 
@@ -53,7 +54,7 @@ This means that the `Protocol` setting is not provided. The recommendation is to
 
 Let's connect to your node and compare the contents of <% fp '/etc/ssh/sshd_conf' %> to the rule.
 
-You can connect using the private key you created in the previous tutorial. Here's an example.
+You can connect using the private key you created in the previous module. Here's an example.
 
 ```bash
 $ ssh -i ~/.ssh/node1 root@10.1.1.35
@@ -148,7 +149,7 @@ Now you'll verify that the empty cookbook runs successfully on a CentOS 7 test i
 
 This configuration uses the Vagrant driver and brings up a CentOS 7.2 instance. The `verifier` section tells Test Kitchen to look for InSpec tests. More on that later.
 
-[COMMENT] In this tutorial, you use Vagrant and VirtualBox to work with a standard CentOS 7 virtual machine. In practice, you might use a different [Test Kitchen driver](https://docs.chef.io/kitchen.html#drivers) to bring up your instance using your preferred virtualization or cloud provider. For instance, you might use the `kitchen-ec2` driver to bring up a custom, preconfigured AMI in Amazon EC2.
+[COMMENT] In this module, you use Vagrant and VirtualBox to work with a standard CentOS 7 virtual machine. In practice, you might use a different [Test Kitchen driver](https://docs.chef.io/kitchen.html#drivers) to bring up your instance using your preferred virtualization or cloud provider. For instance, you might use the `kitchen-ec2` driver to bring up a custom, preconfigured AMI in Amazon EC2.
 
 Next, from your terminal, move to the <% fp('~/learn-chef/cookbooks/ssh') %> directory.
 
@@ -170,7 +171,7 @@ As expected, 0 resources were applied because the cookbook is empty. But it's a 
 
 ## 5. Replicate the failure on your Test Kitchen instance
 
-In the previous tutorial, you saw the SSH-2 rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
+In the previous module, you saw the SSH-2 rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
 
 Recall that the InSpec code for the rule looks like this. This rule comes from the **cis/cis-centos7-level1** profile.
 
@@ -269,9 +270,3 @@ When you're finished, run `kitchen destroy` to tear down your test instance.
 <% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-destroy') %>
 
 [END_BOX]
-
-<% next_page(current_page) do %>
-
-Now that you've verified the remediation on a test instance, you'll upload your `ssh` cookbook to your Chef server and apply the configuration to your CentOS node. After that, you'll rerun the compliance scan on your node to verify the fix.
-
-<% end %>

@@ -179,11 +179,19 @@ module PageHelper
     # Look for quiz data in external file first.
     if page.data.quiz_path
       require 'yaml'
-      YAML.load_file(page.data.quiz_path)
+      data = YAML.load_file(page.data.quiz_path)
     # Otherwise, return inline quiz data.
     else
-      page.data.quiz
+      data = page.data.quiz
     end
+    return unless data
+    data.each do |question|
+      question['question'] = render_markdown_string(question['question']).gsub!(/<\/?p>/, '')
+      question['choices'].each_with_index do |choice, index|
+        question['choices'][index] = render_markdown_string(choice).gsub!(/<\/?p>/, '')
+      end
+    end
+    data
   end
 
   def get_coasters

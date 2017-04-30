@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core'
+import { Component, OnInit, Input, HostBinding } from '@angular/core'
 import { ProgressService } from '../../services/progress.service'
 
 @Component({
@@ -7,7 +7,9 @@ import { ProgressService } from '../../services/progress.service'
 })
 export class UserProgressBarComponent implements OnInit {
   public progress: number
-  public isVisible: boolean
+
+  @HostBinding('class.hidden')
+  isHidden: boolean
 
   @Input()
   module: string
@@ -22,7 +24,7 @@ export class UserProgressBarComponent implements OnInit {
       const completed = !!this.progressService.isComplete('modules', this.module)
       const started = this.progressService.getLastAccessed('modules', this.module)
       this.progress = this.progressService.getModuleProgress(this.module)
-      this.isVisible = this.visible || (started && !completed)
+      this.isHidden = !this.visible && (!started || completed)
     })
   }
 }

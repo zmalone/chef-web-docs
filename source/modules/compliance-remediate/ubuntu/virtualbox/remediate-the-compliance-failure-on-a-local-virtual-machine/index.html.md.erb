@@ -1,11 +1,12 @@
 ---
 title: 'Remediate the compliance failure on a local virtual machine'
+short_title: 'Remediate on a local VM'
 order: 2
 keywords: TODO
-sections: []
 time_to_complete: 60 minutes
 snippet_path: compliance_scanner/ubuntu/virtualbox/remediate-the-compliance-failure-locally
 snippet_workstation: ubuntu
+quiz_path: quizzes/compliance-remediate/shared/remediate-the-compliance-failure-on-a-local-virtual-machine.yml
 headings: [
   { label: '1. Understand the failure', href: '#step1' },
   { label: '2. Login through the CLI', href: '#step2' },
@@ -15,7 +16,7 @@ headings: [
   { label: '6. Remediate the failure', href: '#step6' }
 ]
 ---
-Recall that in the previous tutorial you ran the **cis-ubuntu14.04lts-level1** compliance profile and that it failed the **Ensure Firewall is active** rule.
+Recall that in the previous module you ran the **cis-ubuntu14.04lts-level1** compliance profile and that it failed the **Ensure Firewall is active** rule.
 
 ![](compliance/scan_report_issues_firewall_ubuntu1404.png)
 
@@ -49,7 +50,7 @@ When you scanned your Ubuntu node, you saw that the rule failed.
 
 Let's connect to your node and verify that UFW is not enabled.
 
-You can connect using the private key you created in the previous tutorial. Here's an example.
+You can connect using the private key you created in the previous module. Here's an example.
 
 ```bash
 $ ssh -i ~/.ssh/node1 root@10.1.1.37
@@ -161,7 +162,7 @@ As expected, 0 resources were applied because the cookbook is empty. But it's a 
 
 ## 5. Replicate the failure on your Test Kitchen instance
 
-In the previous tutorial, you saw the firewall rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
+In the previous module, you saw the firewall rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
 
 Recall that the InSpec code for the firewall rule looks like this. This rule comes from the **cis/cis-ubuntu14.04lts-level1** profile.
 
@@ -209,7 +210,7 @@ Write your default recipe, <% fp '~/learn-chef/cookbooks/ufw/recipes/default.rb'
 
 This code uses the [execute](https://docs.chef.io/resource_execute.html) resource to both enable SSH access and to enable the firewall. Each resource uses a `not_if` [guard](https://docs.chef.io/resource_common.html#guards) to ensure that the command is run only when needed.
 
-[COMMENT] In practice, you might use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook from Chef Supermarket, which provides a more robust set of resources to manage the firewall. The [Create a web app cookbook tutorial shows how](/modules/create-a-web-app-cookbook/ubuntu/configure-the-firewall/).
+[COMMENT] In practice, you might use the [firewall](https://supermarket.chef.io/cookbooks/firewall) cookbook from Chef Supermarket, which provides a more robust set of resources to manage the firewall. The [Create a web app cookbook module shows how](/modules/create-a-web-app-cookbook/ubuntu/configure-the-firewall/).
 
 Next, from your <% fp '~/learn-chef/cookbooks/ufw' %> directory, run `kitchen converge` to apply the configuration.
 
@@ -256,9 +257,3 @@ When you're finished, run `kitchen destroy` to tear down your test instance.
 <% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-destroy') %>
 
 [END_BOX]
-
-<% next_page(current_page) do %>
-
-Now that you've verified the remediation on a test instance, you'll upload your `ufw` cookbook to your Chef server and apply the configuration to your Ubuntu node. After that, you'll rerun the compliance scan on your node to verify the fix.
-
-<% end %>

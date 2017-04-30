@@ -17,9 +17,16 @@ html lang="en"
     - if current_page.data.keywords
       meta name='keywords' content=current_page.data.keywords
     meta property='og:title' content="#{meta_og(current_page, 'title')}"
-    meta property='og:image' content="#{learn_chef_url}#{meta_og(current_page, 'image')}"
-    meta name='thumbnail' content="#{learn_chef_url}#{meta_og(current_page, 'thumbnail')}"
-    meta name='description' property='og:description' content="#{meta_og(current_page, 'post')}"
+    meta property='og:headline' content="#{meta_og(current_page, 'title')}"
+    meta property='og:description' name='description'  content="#{meta_og(current_page, 'post')}"
+    - og_image = meta_og(current_page, 'image')
+    - if og_image
+      meta property='og:image' content="#{learn_chef_url}#{asset_url og_image}"
+    meta property='og:type' content='website'
+    meta property='og:url' content="#{learn_chef_url}"
+    - og_thumbnail = meta_og(current_page, 'image')
+    - if og_thumbnail
+      meta name='thumbnail' content="#{learn_chef_url}#{asset_url og_thumbnail}"
     meta property='fb:app_id' content=''
     = stylesheet_link_tag gulp_css_path('application.css')
     = yield_content :head

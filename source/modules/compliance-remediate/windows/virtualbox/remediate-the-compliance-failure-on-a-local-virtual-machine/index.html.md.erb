@@ -1,11 +1,12 @@
 ---
 title: 'Remediate the compliance failure on a local virtual machine'
+short_title: 'Remediate on a local VM'
 order: 2
 keywords: TODO
-sections: []
 time_to_complete: 60 minutes
 snippet_path: compliance_scanner/windows/virtualbox/remediate-the-compliance-failure-locally
 snippet_workstation: ubuntu
+quiz_path: quizzes/compliance-remediate/shared/remediate-the-compliance-failure-on-a-local-virtual-machine.yml
 headings: [
   { label: '1. Understand the failure', href: '#step1' },
   { label: '2. Login through the CLI', href: '#step2' },
@@ -15,7 +16,7 @@ headings: [
   { label: '6. Remediate the failure', href: '#step6' }
 ]
 ---
-Recall that in the previous tutorial you ran the **cis-windows2012r2-level1-memberserver** compliance profile and that it failed the password complexity rule.
+Recall that in the previous module you ran the **cis-windows2012r2-level1-memberserver** compliance profile and that it failed the password complexity rule.
 
 ![](compliance/scan_report_issues_admpwd_windows2012.png)
 
@@ -142,7 +143,7 @@ Now you'll verify that the empty cookbook runs successfully on a Windows Server 
 
 <% code_snippet(page: current_page, path: 'apply-the-admpwd-cookbook/kitchen-1-yml') %>
 
-This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance. It resembles the configuration you used in the [Get started with Test Kitchen](/modules/local-development/windows/virtualbox/apply-a-cookbook#step2) tutorial. `windows-2012r2` is the name you provided for your base Windows Server 2012 R2 Vagrant box that you built from the Packer template.
+This configuration uses the Vagrant driver and brings up a Windows Server 2012 R2 instance. It resembles the configuration you used in the [Get started with Test Kitchen](/modules/local-development/windows/virtualbox/apply-a-cookbook#step2) module. `windows-2012r2` is the name you provided for your base Windows Server 2012 R2 Vagrant box that you built from the Packer template.
 
 The `verifier` section tells Test Kitchen to look for InSpec tests. More on that later.
 
@@ -166,7 +167,7 @@ As expected, 0 resources were applied because the cookbook is empty. But it's a 
 
 ## 5. Replicate the failure on your Test Kitchen instance
 
-In the previous tutorial, you saw the password complexity rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
+In the previous module, you saw the password complexity rule fail on your node. It's a good idea to verify that the rule also fails on your Test Kitchen instance before you write remediation code.
 
 Recall that the InSpec code for the password complexity rule looks like this. This rule comes from the **cis/cis-windows2012r2-level1-memberserver** profile.
 
@@ -241,9 +242,3 @@ When you're finished, run `kitchen destroy` to tear down your test instance.
 <% command_snippet(page: current_page, path: 'remediate-the-failure/kitchen-destroy') %>
 
 [END_BOX]
-
-<% next_page(current_page) do %>
-
-Now that you've verified the remediation on a test instance, you'll upload your `admpwd` cookbook to your Chef server and apply the configuration to your Windows Server  node. After that, you'll rerun the compliance scan on your node to verify the fix.
-
-<% end %>
