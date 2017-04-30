@@ -11,4 +11,5 @@ category: Admin
 order: 3
 modules:
 - web-operations-essentials
+- sys-admin-essentials
 ---

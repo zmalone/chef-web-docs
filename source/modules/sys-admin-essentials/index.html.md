@@ -1,18 +1,19 @@
 ---
 id: sys-admin-essentials
-title: 'System Administrator Essentials'
-description: 'Learn about the tools, commands, and protocols that are core to administering systems'
-order: 6
-category: 'devops'
-layout: skills-topic
-icon: devops-foundations.png
+title: 'Systems administrator essentials'
+description: 'Learn about the tools, commands, and protocols that are core to administering systems.'
+quiz_path: quizzes/sys-admin-essentials.yml
+headings: [
+  { label: 'Communication tools', href: '#communicationtoolsandprotocols' },
+  { label: 'Linux/Unix/OSX Shell', href: '#linuxunixmacosshell' },
+  { label: 'Windows PowerShell', href: '#windowspowershell' }
+]
 ---
-
 Administering computer systems these days require a core understanding about how to connect to those machines and some core commands that allow you to query and change the state of a system. If you cannot do it manually then you can't automate it.
 
 In this module we will focus on how these systems are reachable by other systems and some of the core commands necessary to be proficient maintainer of a system.
 
-### Communication Tools and Protocols
+## Communication tools and protocols
 
 Every system within a functioning web application communicates with one another. They communicate through various client applications running on their system with other server applications running on other systems. They may form peer-to-peer arrangements that discover themselves through a mutually agreed upon broadcast message on the network. They may check in with a central server to grab the information required to understand the state of the network.
 
@@ -39,7 +40,7 @@ Where all the previous protocols focused on commands and scripts through a text-
 For RDP to work the target system needs to run the RDP server. The client needs to run the RDP client. For Windows systems the application "Remote Desktop Connection" is often pre-installed. For Mac you can download "Microsoft Remote Desktop". For Linux there is "Remmina Remote Desktop Client".
 
 
-### Linux/Unix/OSX Shell
+### Linux/Unix/macOS shell
 
 While operating systems have continued to improve over the years and provide a more complete graphical experience it is still not the typical way that a system administrator manages linux operating systems. This is instead accomplished through a shell which provides a text-based user experience that allows interaction through keyboard input. On your own system you can launch a terminal application that launches a shell. When you login to a remote system through SSH, Secure Shell, a shell application is launched and you are given control of it.
 
@@ -51,7 +52,7 @@ Characters pressed on the keyboard they will appear as you type them into the sc
 
 The prompt will often provide you with your current location within the file system. A directory is a special file that can contain references to other files and directories. To see all the files within this current directory you can execute the `ls` command.
 
-```
+```bash
 $ ls
 Applications			source
 Desktop			habitat
@@ -61,7 +62,7 @@ Downloads			chef-dk
 
 The currently directory likely contains a number of files. If any of those file are directories you can view the contents of those directories using the same command with a single parameter, the name of the directory.
 
-```
+```bash
 $ ls habitat
 bash-completions.sh   core-plans            results
 bin                   habitat               wordpress
@@ -70,14 +71,14 @@ clap-rs               habitat-example-plans
 
 If any of the files are text, you can view the contents with the `cat` command with the path to the file. For particularly large text files you can use the `more` command to view the contents in a way that allows you to scroll up `k`/`up-arrow` or scroll down `j`/`down-arrow`. You can quit scrolling with pressing the `q` key.
 
-```
+```bash
 $ cat habitat/bash_completions.sh
 $ more habitat/bash_completions.sh
 ```
 
 This file exists within the habitat directory so it is required to specify that part of that path first, use a forward-slash as a path separator, and then specify the name of the file. If you wanted to work with these files without having to specify the directory path before the file name you can change into this directory to make these files local. This can be done by executing the `cd` command with the path of the directory you want to change into.
 
-```
+```bash
 $ cd habitat
 $ ls
 bash-completions.sh   core-plans            results
@@ -88,7 +89,7 @@ $ cat bash-completions.sh
 
 All the commands are now executed locally within this directory. To return to the previous directory, the one that contains this directory you can execute the `cd` command with the parameter `..`.
 
-```
+```bash
 $ cd ..
 $ ls
 Applications			source
@@ -99,15 +100,16 @@ Downloads			chef-dk
 
 All files are contained on the file system in a hierarchy that start at the root. The prompt will display your current directory but not entire path from the root of the filesystem. You can learn the full path of your current working directory by executing the `pwd` command.
 
-```
+```bash
 $ pwd
 /Users/chef
 ```
+
 A path can be broken up into components. The root of the file system is represented by the initial forward-slash `/`. The root directory contains a 'Users' directory and within the 'Users' directory is a 'chef' directory.
 
 You can use any of the commands we have seen already using a full file path. For instance, you can execute the `ls` command to view the contents of any directory given its full path from wherever you on the file system.
 
-```
+```bash
 $ ls /
 $ ls /Users
 $ ls /Users/chef
@@ -115,7 +117,7 @@ $ ls /Users/chef
 
 When you launched the shell you were most likely in an directory that was important to your specific user. This is usually referred to as your home directory and has a shortcut way to describe the path with the tilde character `~`.
 
-```
+```bash
 $ cd ~/habitat
 $ pwd
 /Users/chef/habitat
@@ -126,7 +128,7 @@ $ pwd
 
 We have been exploring a few common commands that allow us to navigate and visualize all the files on the file system. Let's pause for a moment to talk about the basic structure of commands.
 
-```
+```bash
 $ command FLAGS/OPTIONS/SUBCOMMANDS/ARGUMENTS
 ```
 
@@ -142,7 +144,7 @@ Finally some commands may allow for optional arguments or require them to be spe
 
 With all that said, nearly every command-line tool created was built and is maintained by different people. This means that sometimes they do not always adhere to structure defined above. For each command you will want to look at the help, usually through the `-h` or `--help` flag, or look at the manual written for the command, through the `man COMMAND`.
 
-```
+```bash
 $ man ls
 $ chef --help
 ```
@@ -161,8 +163,8 @@ Characters pressed on the keyboard they will appear as you type them into the sc
 
 The prompt will often provide you with your current location within the file system. A directory can contain references to other files and directories. To see all the files within this current directory you can execute the `dir` command.
 
-```
-> dir
+```ps
+$ dir
 
     Directory: C:\Users\chef
 
@@ -174,32 +176,32 @@ d-----       2/24/2016 2:52 PM              .atom
 
 The currently directory likely contains a number of files. If any of those file are directories you can view the contents of those directories using the same command with a single parameter, the name of the directory.
 
-```
-> dir habitat
+```ps
+$ dir habitat
 ```
 
 If any of the files are text, you can view the contents with the `cat` command with the path to the file.
 
-```
-> cat habitat/bash_completions.sh
+```ps
+$ cat habitat/bash_completions.sh
 ```
 
 This file exists within the habitat directory so it is required to specify that part of that path first, use a back-slash as a path separator, and then specify the name of the file. If you wanted to work with these files without having to specify the directory path before the file name you can change into this directory to make these files local. This can be done by executing the `cd` command with the path of the directory you want to change into.
 
-```
-> cd habitat
-> dir
+```ps
+$ cd habitat
+$ dir
 bash-completions.sh   core-plans            results
 bin                   habitat               wordpress
 clap-rs               habitat-example-plans
-> cat bash-completions.sh
+$ cat bash-completions.sh
 ```
 
 All the commands are now executed locally within this directory. To return to the previous directory, the one that contains this directory you can execute the `cd` command with the parameter `..`.
 
-```
-> cd ..
-> dir
+```ps
+$ cd ..
+$ dir
 Applications			source
 Desktop			habitat
 Documents				inspec
@@ -210,29 +212,29 @@ All files are contained on the file system in a hierarchy that start at the root
 
 You can use any of the commands we have seen already using a full file path. For instance, you can execute the `dir` command to view the contents of any directory given its full path from wherever you on the file system.
 
-```
-> dir C:\
-> dir C:\Users
-> dir C:\Users\chef
+```ps
+$ dir C:\
+$ dir C:\Users
+$ dir C:\Users\chef
 ```
 
 When you launched PowerShell you were most likely in an directory that was important to your specific user. This is usually referred to as your home directory and has a shortcut way to describe the path with the tilde character `~`.
 
-```
-> cd ~
-> dir
+```ps
+$ cd ~
+$ dir
 ```
 
 We have been exploring a few common commands that allow us to navigate and visualize all the files on the file system. These commands are shortcuts, or aliases, of PowerShell cmdlets to have a common structure. Let's pause for a moment to talk about the basic structure of PowerShell cmdlets.
 
-```
-> Verb-Noun Parameters
+```ps
+$ Verb-Noun Parameters
 ```
 
 Cmdlets start with a verb to describe the desired action to take with the given noun. Sometimes these verbs do not map to verbs one might use in an English sentence. The noun describes the thing the verb is acting on. The mentioned before the commands that we have issued up to now are really aliases of cmdlets that we can see by executing the Powershell cmdlet `Get-Alias ALIAS_NAME`.
 
-```
-> Get-Alias dir
+```ps
+$ Get-Alias dir
 CommandType     Name                            Definition
 -----------     ----                            ----------
 Alias           dir                             Get-ChildItem
@@ -240,8 +242,8 @@ Alias           dir                             Get-ChildItem
 
 The verb in the command is `Get` and the noun is `ChildItem`. The `dir` alias has been provided to allow DOS users the ability to navigate PowerShell without having to learn an entirely new syntax for even the most basic operations and in most cases it is faster to express than the following:
 
-```
-> Get-ChildItem C:\
+```ps
+$ Get-ChildItem C:\
 ```
 
 The path to view is presented here as the first parameter. Cmdlets can support no parameter, one, or multiple parameters. These parameters can be required or optional. While the most important parameters are positioned closest to the cmdlet.
