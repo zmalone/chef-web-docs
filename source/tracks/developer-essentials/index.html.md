@@ -10,8 +10,5 @@ track_class: card-red
 category: Admin
 order: 3
 modules:
-- getting-started
-- develop-locally
-- learn-the-basics
-- manage-a-node
+- web-operations-essentials
 ---
