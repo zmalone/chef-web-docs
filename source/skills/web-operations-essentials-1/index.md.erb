@@ -1,0 +1,59 @@
+---
+title: 'Understanding the complexity of an application'
+description: 'Understanding and valuing Chef as a solution requires that you first understand the complexity of a software application or service.'
+order: 1
+category: 'web-operations-essentials'
+layout: skills-topic
+icon: devops-diverse-skills.png
+---
+
+## Learning objectives
+
+After completing this unit, you'll be able to:
+
+* understand the complexity of a web application.
+* explain a few common roles within this web application.
+* explain the value of Chef when it comes to managing web applications.
+
+## Story
+
+Understanding and valuing Chef as a solution requires that you first understand the complexity of a software application or service. Before we get started, let's grab a bite to eat from a local food truck.
+
+Imagine that you were a food truck owner and you were thinking about setting up a restaurant. Obviously, as a food truck owner you would be familiar with nearly every aspect of the business from start to finish. For a restaurant, you wrote down the following:
+
+* Greet customers and seat them at an available table.
+* Provide them a menu of food and beverages and capture their orders.
+* Translate these orders into correctly prepared meals and beverages.
+* Calculate the total cost and present it to the customers.
+* Resolve the customers' payments.
+
+Inside your food truck you handled a similar list of tasks all by yourself. That is, until you got too busy and had to bring in someone else to handle the greeting, taking orders, and processing payments; for a restaurant you would hire even more people.
+
+To help make sense of this, you draw a diagram of your new restaurant and all the people you imagine for your team.
+
+![Restaurant Diagram](assets/images/developer-essentials/01-restaurant-diagram.png)
+
+A single greeter brings customers into the restaurant and seats them at a table. You think that four food servers and a kitchen with three chefs should be able to handle your typical lunch traffic. A traditional point-of-sale (POS) will handle getting your orders from the servers to the kitchen and handle the billing.
+
+Web applications often share a similar story. A web application might start off small, with a single system to handle many different responsibilities. To achieve scale, more systems typically need to be brought in and assigned various roles.
+
+Generally, a web application needs to accomplish the following:
+
+* Receive a request from a user's browser.
+* Process their request and return a response.
+* Create, retrieve, update, and delete user specific data in shared storage.
+* Create and report on the completion of long running jobs.
+
+This looks something like this:
+
+![Web Application Diagram](assets/images/developer-essentials/02-web_application-diagram.png)
+
+A user makes a request to your website. This request is first handled by a load balancer. This load balancer selects an application server to forward the user's request. The application server processes the request, transmits information to a shared data storage, receives information from a shared data storage, and then assembles a response that it delivers back to the user.
+
+Occasionally, users will request a response that requires more computational power and time to complete. These request are added to a job queue. Each job in the queue is processed by a worker system which dedicates the necessary resources to complete the requested task. When a job finishes, it often inserts information into a shared data storage where the application server is able to retrieve it and present it to the user.
+
+A large application is actually the coordinated effort of a large number of roles. Each role could contain one or more systems. For instance, application servers are the first to scale to handle more traffic load. Shared data storages often have backups. A job queue is often supported by many worker systems.
+
+In restaurant terms, you usually have a single greeter seating customers for multiple food servers. Your point-of-sale system, in the event of system failure, could fall back to a paper ticket system. Within the kitchen you hire more chefs to perform the culinary load caused by all the orders brought in by your food servers.
+
+Chef enables you to define the responsibilities of a system and apply them to one or millions of your systems.
