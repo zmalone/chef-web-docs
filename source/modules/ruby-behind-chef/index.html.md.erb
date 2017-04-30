@@ -1,18 +1,29 @@
 ---
 id: ruby-behind-chef
 title: 'The Ruby behind Chef'
-description: 'Learn Ruby within the context of Chef'
-order: 1
-category: 'ruby-behind-chef'
-layout: skills-topic
-icon: chef-icon.svg
+description: 'Learn Ruby within the context of Chef.'
+time_to_complete: 60 minutes
+quiz_path: quizzes/ruby-behind-chef.yml
+headings: [
+  { label: 'Variables just happen', href: '#variablesjusthappen' },
+  { label: 'Strings', href: '#strings' },
+  { label: 'Numbers', href: '#numbers' },
+  { label: 'Symbols', href: '#symbols' },
+  { label: 'Arrays', href: '#arrays' },
+  { label: 'Hashes', href: '#hashes' },
+  { label: 'Nil', href: '#nil' },
+  { label: 'Flow of control', href: '#truefalseandflowofcontrol' },
+  { label: 'Lambdas, blocks and procs', href: '#lambdasblocksandprocs' },
+  { label: 'Defining a method', href: '#definingamethod' },
+  { label: 'Classes', href: '#classes' },
+  { label: 'Modules', href: '#modules' }
+]
 ---
-
 Chef is built upon a powerful programming language called Ruby. When you write recipes, define attributes, create custom resources, express your expectations in your tests you are writing in Ruby. It does not always feel or look like Ruby because within each context there are specific helpers automatically loaded to make it easier to express what is needed to get work done. This can make it hard to understand what is core to Ruby
 
 This track and series of modules focuses on explaining some of Ruby's core concpets and data structures with Chef and Inspec in mind.
 
-### Variables Just Happen
+## Variables just happen
 
 Ruby allows you to define variables whenever you need them to store nearly any kind of data you want to store.
 
@@ -46,7 +57,7 @@ end
 
 When you create a variable within Ruby you do not have to specify a type and it never has to remain that same type for its lifetime. This flexibility puts a lot of emphasis on giving the variable a descriptive name that helps you and others understand what they can expect.
 
-### Strings
+## Strings
 
 Strings are those things cats play with or attached to deals that are too good to be true. In Ruby they refer to the way that we represent text within our source code.
 
@@ -134,7 +145,7 @@ There are even ways to replace specific text within a String with a different se
 
 > When reading Ruby documentation you may see two methods with the same name. For instance, #gsub and #gsub!, which both will look for a pattern and replace it with the text provided. The first method, #gsub, will create a new copy of the String, perform the substitution, and return that new String while leaving the original String intact. The second method, #gsub!, will modify the original String.
 
-### Numbers
+## Numbers
 
 Numbers allow us to present values that we can use in mathematical equations. We can add (+), subtract (-), multiply (*), divide and keep the quotient (/) and divide and keep the remainder (%).
 
@@ -186,7 +197,7 @@ Strings can be converted to either an integer or float.
 "2".to_f / 2  # => 1.0
 ```
 
-### Symbols
+## Symbols
 
 When working with Ruby you may come in contact with a Ruby Symbol. It is often a single word that starts with a colon, like `:start`. Actually this example of a Symbol is probably one you have seen if you have spent time working with Chef resources.
 
@@ -200,7 +211,7 @@ end
 
 Symbols are kind of like Strings. You can even convert a Symbol to a String `:start.to_s` and a String to a Symbol `'start'.to_sym`. A symbol is often used within code, instead of a String, when a particular function or thing supports only a supported subset of values. This is definitely the case when we look at the actions of a Chef resources. While each resource may have unique actions, the list of actions avialable for a particular resource is a small list.
 
-### Arrays
+## Arrays
 
 When you need to represent more than a single value it is time to talk about Arrays. An Array is a list of zero of more objects. We used one as an example when we talked about Symbols. The action method of every resource supports multiple actions as long as you combine these actions in an Array.
 
@@ -327,7 +338,7 @@ things.each do |thing|
 end
 ```
 
-### Hashes
+## Hashes
 
 Storing data by position works well in some circumstances (e.g. list of package names or file paths) but sometimes there is a collection of data that often requires each element to be represented with a key or name.
 
@@ -363,7 +374,7 @@ Both ways are valid and perform the same but this way is prefered if your Hash c
 
 Hashes can contain zero or more objects. We can access those elements by specifying the same key in square brackets placed next to the Hash object.
 
-```
+```ruby
 # recipes/default.rb
 
 connection_info = {
@@ -383,7 +394,7 @@ New key-value pairs can be added to a Hash by specifying the a new key in square
 
 > Symbol keys and String keys are NOT interchangeable.
 
-```
+```ruby
 # recipes/default.rb
 
 connection_info = {
@@ -443,7 +454,7 @@ connection_info.each_value do |value|
 end
 ```
 
-### Nil
+## Nil
 
 An interesting thing happens when you attempt to retrieve a value from an Array using an index that exceeds the bounds or retrieve a value from a Hash using a key that does not have a value. No error will be raised and a `nil` object is returned.
 
@@ -455,7 +466,7 @@ With Arrays, ensure you are using indexes that are within the bounds of the Arra
 
 With Hashes, ensure you are using consistent types (Symbols or Strings but not both) and that your keys are spelled correctly.
 
-### True, False and Flow of Control
+## True, False and flow of control
 
 At various points within your code you will want to create decisions. If a value, calculation, or situation meets a particular criteria you will want to follow one path. If it does not you may even want to follow a different path. Sometimes you may even want to follow multiple different paths.
 
@@ -610,7 +621,8 @@ Sometimes the `unless` makes it easier to comprehend the conditional expression;
 
 The extra encumbrance writing conditional expressions within your code can be alleviated by using the inline form:
 
-```
+```ruby
+# recipes/default.rb
 file '/usr/local/database/database.config' do
   if connection_info[:username]
     owner connection_info[:username]
@@ -621,7 +633,7 @@ end
 
 Here we only are setting the owner and group properties for the file resource if those values are present within `connection_info` Hash (Keys with no values will return a nil). When the code you want to execute is one line you can use this alterate syntax. Use whichever makes it easier for you to understand the code.
 
-### Lambdas, Blocks and Procs
+## Lambdas, blocks and procs
 
 Besides storing data we can also store code in our variables, as elements in an Array, or the values associated with keys in a Hash.
 
@@ -661,7 +673,7 @@ end
 
 The `do` and the `end` are replaced with `{` and `}` respectively.
 
-### Defining a Method
+## Defining a method
 
 Code that you write may require you to repeat an operation more than once and maybe even a lot of times. We saw that we can define code block with the `lambda` method to create a unit of code that we could invoke over-and-over again.
 
@@ -756,7 +768,7 @@ end
 
 The `each` method iterates through each key-value pair, executing the code within the block for each key-value pair. This block displays the key-value pair in the debug output and then formats the value and reassigns back into the Hash with the same key.
 
-### Class
+## Classes
 
 Ruby allows you to define classes. A class enables you to encapsulate data and the methods associated with that data. When defining a class you are creating something like a blueprint that describes how an instance of the class, an object, will behave.
 
@@ -922,7 +934,7 @@ config.check!
 
 Now, when we send the `new` method we pass along the configuration Hash. The `new` method will then send the `initialize` method with that same Hash which sends it to the `load` method. Using a method named `new` to create an instance and defining a method called `initialize` does not seem very intuitive but is how it is done.
 
-### Modules
+## Modules
 
 Modules provide a way to organize similar methods. However, Ruby does not allow you to create an instance of a module. Instead, Ruby provides you a way to share these module methods with other objects.
 
