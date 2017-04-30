@@ -14,4 +14,5 @@ modules:
 - tdd-with-inspec
 - compliance-assess
 - compliance-remediate
+- compliance-in-action
 ---
