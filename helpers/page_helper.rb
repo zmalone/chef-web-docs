@@ -37,12 +37,7 @@ module PageHelper
   def sort_modules(modules)
     # Visit each track, in order, adding the module ID to an array. There is no need to reduce
     # duplicates as the order in which modules first appear in a track is all that matters.
-    module_order = []
-    tracks.children.each do |track|
-      track.modules.each do |module_id|
-        module_order << module_id
-      end
-    end
+    module_order = tracks.children.map { |track| track.modules }.flatten
 
     # Sort the modules by the order of first appearance in a track, followed by page title
     # in alphabetical order for any remaining modules not associated with a track.
