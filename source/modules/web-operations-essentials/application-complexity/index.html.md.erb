@@ -2,7 +2,7 @@
 id: application-complexity
 title: 'Understanding the complexity of an application'
 short_title: 'Understanding the complexity of an application'
-description: 'Understanding and valuing Chef as a solution requires that you first understand the complexity of a software application or service.'
+description: 'Understanding the value of Chef requires that you first understand the complexity of a software application.'
 order: 1
 time_to_complete: 5 minutes
 quiz_path: quizzes/web-operations-essentials/application-complexity.yml
@@ -14,47 +14,45 @@ After completing this unit, you'll be able to:
 
 * understand the complexity of a web application.
 * explain a few common roles within this web application.
-* explain the value of Chef when it comes to managing web applications.
+* explain the value of Chef for managing web applications.
 
 ## Story
 
-Understanding and valuing Chef as a solution requires that you first understand the complexity of a software application or service. Before we get started, let's grab a bite to eat from a local food truck.
+Understanding the value of Chef requires that you first understand the complexity of a software application. But before we get to software, let's talk about something a litle more concrete.
 
-Imagine that you were a food truck owner and you were thinking about setting up a restaurant. Obviously, as a food truck owner you would be familiar with nearly every aspect of the business from start to finish. For a restaurant, you wrote down the following:
+Imagine that you're a food truck owner and you're thinking about setting up a restaurant. Obviously, you're already familiar with nearly every aspect of the food service business. As you make plans, you write down what you think happens, in a general way, in a restaurant:
 
-* Greet customers and seat them at an available table.
-* Provide them a menu of food and beverages and capture their orders.
-* Translate these orders into correctly prepared meals and beverages.
-* Calculate the total cost and present it to the customers.
-* Resolve the customers' payments.
+* Someone greets customers and seats them at a table.
+* Someone gives the customers a menu and takes their orders.
+* The chefs take the orders and turn them into correctly prepared meals and beverages.
+* Someone calculates the total cost of the meal and presents it to the customers.
+* Someone takes the customers' payments.
 
-Inside your food truck you handled a similar list of tasks all by yourself. That is, until you got too busy and had to bring in someone else to handle the greeting, taking orders, and processing payments; for a restaurant you would hire even more people.
+With your food truck you handle a similar list of tasks all by yourself. For a restaurant, you would need to hire more people.
 
-To help make sense of this, you draw a diagram of your new restaurant and all the people you imagine for your team.
+To help make sense of this, you draw a diagram of your new restaurant and include all the people you imagine you'll need.
 
 ![Restaurant Diagram](assets/images/developer-essentials/01-restaurant-diagram.png)
 
-A single greeter brings customers into the restaurant and seats them at a table. You think that four food servers and a kitchen with three chefs should be able to handle your typical lunch traffic. A traditional point-of-sale (POS) will handle getting your orders from the servers to the kitchen and handle the billing.
+A single greeter brings customers into the restaurant and seats them at a table. For lunch, you think that three food servers and a kitchen with four chefs should be enough. A traditional point-of-sale (POS) will send orders to the kitchen and handle the billing.
 
-Web applications often share a similar story. A web application might start off small, with a single system to handle many different responsibilities. To achieve scale, more systems typically need to be brought in and assigned various roles.
+Web applications often have a similar story. A web application might start off small, with a single system to handle many different responsibilities. But as the application becomes more popular, more systems need to be added and assigned various roles.
 
-Generally, a web application needs to accomplish the following:
+Generally, a web application needs to:
 
-* Receive a request from a user's browser.
-* Process their request and return a response.
-* Create, retrieve, update, and delete user specific data in shared storage.
-* Create and report on the completion of long running jobs.
+* receive a request from a user's browser.
+* process the request and return a response.
+* create, retrieve, update, and delete user specific data in a shared store.
+* create and report on the completion of long running jobs.
 
-This looks something like this:
+The worfklow looks something like this:
 
 ![Web Application Diagram](assets/images/developer-essentials/02-web_application-diagram.png)
 
-A user makes a request to your website. This request is first handled by a load balancer. This load balancer selects an application server to forward the user's request. The application server processes the request, transmits information to a shared data storage, receives information from a shared data storage, and then assembles a response that it delivers back to the user.
+A user makes a request to the web site. This request is first handled by a load balancer. The load balancer selects an application server and forwards the user's request to it. The application server processes the request, transmits information to a shared data store, receives information from the shared data store, and then assembles a response that it delivers back to the user.
 
-Occasionally, users will request a response that requires more computational power and time to complete. These request are added to a job queue. Each job in the queue is processed by a worker system which dedicates the necessary resources to complete the requested task. When a job finishes, it often inserts information into a shared data storage where the application server is able to retrieve it and present it to the user.
+Sometimes, a user's request requires more computational power and time to complete than normal. This request is added to a job queue. Each job in the queue is processed by a worker system that allocates the resources required to complete the request. When a job finishes, the job server often inserts information into a shared data store where the application server can retrieve it and present it to the user.
 
-A large application is actually the coordinated effort of a large number of roles. Each role could contain one or more systems. For instance, application servers are the first to scale to handle more traffic load. Shared data storages often have backups. A job queue is often supported by many worker systems.
+A large application is actually made up of the coordinated efforts of a large number of roles. Each role can contain one or more systems. How many systems take on a particular role depends on the amount of traffic. Application servers are the first to scale up as traffic increases. Shared data stores often have backups. A job queue can be supported by many worker systems.
 
-In restaurant terms, you usually have a single greeter seating customers for multiple food servers. Your point-of-sale system, in the event of system failure, could fall back to a paper ticket system. Within the kitchen you hire more chefs to perform the culinary load caused by all the orders brought in by your food servers.
-
-Chef enables you to define the responsibilities of a system and apply them to one or millions of your systems.
+How does Chef fit in? With Chef, you can define all the roles that make up your application and apply them to as many systems as you need, whether you have one machine or thousands.
