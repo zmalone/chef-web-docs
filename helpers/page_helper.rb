@@ -33,6 +33,20 @@ module PageHelper
     get_module_by_id(root.id)
   end
 
+  # Sorts modules by the order they should appear on the Modules tab.
+  def sort_modules(modules)
+    # Visit each track, in order, adding the module ID to an array. There is no need to reduce
+    # duplicates as the order in which modules first appear in a track is all that matters.
+    module_order = tracks.children.map { |track| track.modules }.flatten
+
+    # Sort the modules by the order of first appearance in a track, followed by page title
+    # in alphabetical order for any remaining modules not associated with a track.
+    modules
+      .map { |mod| [ module_order.index(mod.id) || module_order.count, mod.page.data.title, mod ] }
+      .sort
+      .map(&:last)
+  end
+
   def get_track(page)
     section, id = get_page_section(page)
     return get_track_by_id(page.id) if section === 'tracks' && id
