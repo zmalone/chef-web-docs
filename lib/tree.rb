@@ -117,9 +117,8 @@ class Tree < ::Middleman::Extension
         end
       end
 
-      # A page is also forking (AKA multipage) if it has just one child page. It is assumed that
-      # when there are multiple child pages, each will have it's own landing page with children.
-      data.is_fork = true if data.children.count === 1
+      # A page can also be set to look and act as a multipage in the front-matter.
+      data.is_fork = true if page.data.multipage
 
       data.children.sort_by! do |a|
         a.order
