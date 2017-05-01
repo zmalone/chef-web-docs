@@ -33,6 +33,35 @@ module PageHelper
     get_module_by_id(root.id)
   end
 
+  # Sorts modules by the order they should appear on the Modules tab.
+  def sort_modules(modules)
+    sorted = [] # the result set
+
+    # Collect all module IDs. We use this list to determine which module
+    # have been added to the result set.
+    module_ids = []
+    modules.each do |mod|
+      module_ids << mod.id
+    end
+
+    # Visit each track, in order.
+    # As we visit each track, add the module to the result set if we haven't yet already.
+    tracks.children.each do |track|
+      track.modules.each do |module_id|
+        # Removing the module ID from the ID list tells us whether the module's
+        # already been included, since a module can belong to multiple tracks.
+        sorted << get_module_by_id(module_id) if module_ids.delete(module_id)
+      end
+    end
+
+    # Collect the remaining modules not associated with any track, sorted in alphabetical order.
+    remaining = module_ids.map { |module_id| get_module_by_id(module_id) }
+    remaining.sort_by! { |mod| mod.page.data.title }
+
+    # Return the sorted modules.
+    sorted.push(*remaining)
+  end
+
   def get_track(page)
     section, id = get_page_section(page)
     return get_track_by_id(page.id) if section === 'tracks' && id
