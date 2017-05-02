@@ -276,6 +276,6 @@ module PageHelper
   end
 
   def meta_og(page, type)
-    page.data.try(&:social_share).try(&:shared).try("#{type}")
+    page.data.try(&:social_share).try(&:shared).try(type)
   end
 end
