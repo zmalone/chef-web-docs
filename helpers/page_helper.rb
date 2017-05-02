@@ -271,8 +271,11 @@ module PageHelper
     page.data.try(&:social_share).try(&:linkedin).try(&:post) || page.data.description
   end
 
+  def social_share_facebook_app_id
+    ENV['SOCIAL_SHARE_FACEBOOK_APP_ID']
+  end
+
   def meta_og(page, type)
-    page.data.try(&:social_share).try(&:facebook).try(type) ||
     page.data.try(&:social_share).try(&:shared).try("#{type}")
   end
 end
