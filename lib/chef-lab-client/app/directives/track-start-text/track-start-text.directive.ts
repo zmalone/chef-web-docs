@@ -16,7 +16,7 @@ export class TrackStartTextDirective implements OnInit {
 
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe(() => {
-      if (this.progressService.getLastAccessed('tracks', this.track)) {
+      if (this.progressService.isStarted('tracks', this.track)) {
         this.el.nativeElement.innerHTML = 'Keep Learning'
       } else {
         this.el.nativeElement.innerHTML = 'Get Started'

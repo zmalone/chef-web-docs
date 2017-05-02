@@ -34,8 +34,7 @@ export class ModuleDisplayDirective implements OnInit {
 
   showUserModuleProgress() {
     this.progressService.activeUserProgress.subscribe((active) => {
-      const obj = this.progressService.getLastAccessed('modules', this.module)
-      if (obj !== undefined) {
+      if (this.progressService.isStarted('modules', this.module)) {
         this.showModule()
       } else {
         this.hideModule()

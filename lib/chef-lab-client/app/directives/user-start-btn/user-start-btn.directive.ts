@@ -24,7 +24,7 @@ export class UserStartBtnDirective implements OnInit {
     this.progressService.activeUserProgress.subscribe((active) => {
       if (this.isComplete()) {
         this.el.nativeElement.innerHTML = 'Revisit'
-      } else if (this.getLastUrl()) {
+      } else if (this.isStarted()) {
         this.el.nativeElement.innerHTML = 'Continue'
       } else {
         this.el.nativeElement.innerHTML = 'Start'
@@ -35,7 +35,11 @@ export class UserStartBtnDirective implements OnInit {
   @HostListener('click', ['$event'])
   clicked(e) {
     e.preventDefault()
-    window.location.href = (!this.isComplete() && this.getLastUrl()) || this.href
+    window.location.href = (!this.isComplete() && this.isStarted() && this.getLastUrl()) || this.href
+  }
+
+  isStarted() {
+    return this.progressService.isStarted('modules', this.module)
   }
 
   isComplete() {
