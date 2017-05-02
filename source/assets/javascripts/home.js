@@ -42,6 +42,11 @@ $(document).ready(function() {
       removeOffsets: true
     });
   }
+
+  // Close Foundation dropdowns on click
+  $('.f-dropdown').click(function() {
+    $(this).removeClass('open');
+  });
 });
 
 $('.cls-modal').click(function(){
