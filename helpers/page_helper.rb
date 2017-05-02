@@ -227,21 +227,21 @@ module PageHelper
     content = page.data.social_share.try(&:twitter).try(&:post) ||
               page.data.social_share.try(&:post) ||
               truncate(page.data.description, length: 140)
-    "#{sharer_url}?text=#{content}&url=#{canonical_url(page.url)}"
+    "#{sharer_url}?text=#{content}&url=#{encoded_canonical_url(page.url)}"
   end
 
   def social_facebook_share(page)
     return '#' if ENV['DISABLE_SOCIAL']
     social_data = data['social_share']['facebook']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?u=#{canonical_url(page.url)}"
+    "#{sharer_url}?u=#{encoded_canonical_url(page.url)}"
   end
 
   def social_google_plus_share(page)
     return '#' if ENV['DISABLE_SOCIAL']
     social_data = data['social_share']['google_plus']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?url=#{canonical_url(page.url)}"
+    "#{sharer_url}?url=#{encoded_canonical_url(page.url)}"
   end
 
   def social_linkedin_share(page)
@@ -250,7 +250,11 @@ module PageHelper
     sharer_url = social_data['sharer_url']
     title = page.data.social_share.try(&:linkedin).try(&:title) || page.data.title
     summary = page.data.social_share.try(&:linkedin).try(&:post) || page.data.description
-    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(page.url)}"
+    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{encoded_canonical_url(page.url)}"
+  end
+
+  def encoded_canonical_url(url)
+    URI.encode(canonical_url(url))
   end
 
   def tweet_text(page)
@@ -267,8 +271,11 @@ module PageHelper
     page.data.try(&:social_share).try(&:linkedin).try(&:post) || page.data.description
   end
 
+  def social_share_facebook_app_id
+    ENV['SOCIAL_SHARE_FACEBOOK_APP_ID']
+  end
+
   def meta_og(page, type)
-    page.data.try(&:social_share).try(&:facebook).try(type) ||
-    page.data.try(&:social_share).try(&:shared).try("#{type}")
+    page.data.try(&:social_share).try(&:shared).try(type)
   end
 end

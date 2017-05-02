@@ -7,27 +7,25 @@ html lang="en"
     base href="#{current_page.url}"
     meta charset='utf-8'
     meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'
+
     meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'
+    meta property='og:type' content='article'
+    meta property='og:url' content="#{URI.join(canonical_url(current_page.url), '/')}"
+    meta property='og:title' content="#{meta_og(current_page, 'title')}"
+    meta property='og:description' content="#{meta_og(current_page, 'post')}"
+    - og_image = meta_og(current_page, 'image')
+    - if og_image
+      meta property='og:image' content="#{canonical_url asset_url(og_image)}"
+    meta property='fb:app_id' content="#{social_share_facebook_app_id}"
+
     - @meta_tags = current_page.data.meta_tags || []
     - @meta_tags.each do |meta_tag|
       meta name=meta_tag.name content=meta_tag.content
-
     - if current_page.data.description
       meta name='description' content=current_page.data.description
     - if current_page.data.keywords
       meta name='keywords' content=current_page.data.keywords
-    meta property='og:title' content="#{meta_og(current_page, 'title')}"
-    meta property='og:headline' content="#{meta_og(current_page, 'title')}"
-    meta property='og:description' name='description'  content="#{meta_og(current_page, 'post')}"
-    - og_image = meta_og(current_page, 'image')
-    - if og_image
-      meta property='og:image' content="#{learn_chef_url}#{asset_url og_image}"
-    meta property='og:type' content='website'
-    meta property='og:url' content="#{learn_chef_url}"
-    - og_thumbnail = meta_og(current_page, 'image')
-    - if og_thumbnail
-      meta name='thumbnail' content="#{learn_chef_url}#{asset_url og_thumbnail}"
-    meta property='fb:app_id' content=''
+
     = stylesheet_link_tag gulp_css_path('application.css')
     = yield_content :head
     = partial 'layouts/demandbase'
