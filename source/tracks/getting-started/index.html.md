@@ -10,7 +10,6 @@ social_share:
     post: "Develop and practice basic skills, learn more advanced techniques,
           pick up new tips and tricks, and connect with other Chef users. Get Rallygoing today by visiting: "
     image: /assets/images/social/FB_Track-infraAutoTrack.png
-    thumbnail: /assets/images/social/Google_Track-infraAutoTrack.png
   facebook:
     <<: *shared
   linkedin:
