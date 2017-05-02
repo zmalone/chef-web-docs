@@ -44,6 +44,17 @@
 <%= javascript_include_tag 'jquery-scrolltofixed-min.js' %>
 <%= javascript_include_tag '//www.brighttalk.com/clients/js/embed/embed.js' if current_page.data.brighttalk %>
 <%= javascript_include_tag '//platform.twitter.com/widgets.js' if current_page.data.twitter %>
+<% if current_page.data.marketo_form_id %>
+<script src="//app-sj05.marketo.com/js/forms2/js/forms2.min.js"></script>
+<script>
+MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", <%= current_page.data.marketo_form_id %>, function(form) {
+  form.onSuccess(function(values, followUpUrl) {
+    $('a.close-reveal-modal').trigger('click'); // close modal.
+    return false; // don't navigate to follow-up URL.
+  });
+});
+</script>
+<% end %>
 <script>
 $(document).foundation();
 </script>
