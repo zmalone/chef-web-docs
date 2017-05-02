@@ -23,7 +23,7 @@ Recall that infrastructure can receive build artifacts produced from Chef Automa
 
 <img src="/assets/images/automate/automate-scenario-architecture-opsworks.svg" style="width: 100%; alt="An example Chef Automate installation" />
 
-For this tutorial, your build artifact is the `learn_chef_iis` cookbook. Because the `learn_chef_iis` cookbook targets Windows Server, you'll bring up Windows Server systems.
+For this module, your build artifact is the `learn_chef_iis` cookbook. Because the `learn_chef_iis` cookbook targets Windows Server, you'll bring up Windows Server systems.
 
 Recall that your project uses the `delivery-truck` cookbook to perform many common tasks that are needed to deliver Chef cookbooks. Using the `delivery-truck` cookbook requires coordination between the Chef server and the infrastructure environments, or _nodes_.
 
@@ -47,9 +47,9 @@ Like your runner, each infrastructure node can be any system that's reachable by
 
 For learning purposes, we recommend that you use EC2 instances. The number of servers you bring up is up to you. At a minimum, you can bring up one node that represents your Acceptance environment. A complete setup involves creating 4 servers &ndash; one each for the Acceptance, Union, Rehearsal, and Delivered environments.
 
-[COMMENT] Although we recommend that you bring up fresh instances for this tutorial, you can use the node that you brought up for the _Manage a node_ tutorial. Also, although Chef [supports multiple versions of Windows Server](https://docs.chef.io/platforms.html#chef-client-ohai-foundational-platforms), we recommend that you use Windows Server 2012 R2 to ensure the results you see match what's shown in this tutorial.
+[COMMENT] Although we recommend that you bring up fresh instances for this module, you can use the node that you brought up for the _Manage a node with Chef Automate_ module. Also, although Chef [supports multiple versions of Windows Server](https://docs.chef.io/platforms.html#chef-client-ohai-foundational-platforms), we recommend that you use Windows Server 2012 R2 to ensure the results you see match what's shown in this module.
 
-Bring up the number of Windows Server 2012 R2 systems you want to use now. This tutorial was tested using Amazon EC2 **t2.xlarge** instances. As you did in the _Manage a node_ tutorial, ensure each system's security group provides [inbound network access](/modules/manage-a-node-chef-automate/windows/opsworks/get-a-node-to-bootstrap#step1) on ports 80 (HTTP), and 443 (HTTPS), 3389 (RDP), and 5985 (WinRM).
+Bring up the number of Windows Server 2012 R2 systems you want to use now. this module was tested using Amazon EC2 **t2.xlarge** instances. As you did in the _Manage a node with Chef Automate_ module, ensure each system's security group provides [inbound network access](/modules/manage-a-node-chef-automate/windows/opsworks/get-a-node-to-bootstrap#step1) on ports 80 (HTTP), and 443 (HTTPS), 3389 (RDP), and 5985 (WinRM).
 
 Here are resources if you need a refresher on how to launch an instance.
 
@@ -69,7 +69,7 @@ Your EC2 instances will look like this.
 
 ![](automate/ec2-infra-nodes-windows.png)
 
-[COMMENT] For this tutorial, you bring up infrastructure manually. Later, you might be interested in using the [knife-ec2](https://github.com/chef/knife-ec2) plugin to provision servers on EC2.
+[COMMENT] For this module, you bring up infrastructure manually. Later, you might be interested in using the [knife-ec2](https://github.com/chef/knife-ec2) plugin to provision servers on EC2.
 
 Here's an example of what a complete setup looks like from the EC2 management console. This setup includes an AWS OpsWorks for Chef Automate instance, one runner, and infrastructure nodes for the Acceptance, Union, Rehearsal, and Delivered stages.
 
@@ -97,7 +97,7 @@ After you verify each server, you can close your RDP connection.
 
 ## 2. Understand the role of push jobs
 
-In the _Manage a node_ tutorial, you used `knife winrm` to [run chef-client on your node](/modules/manage-a-node-chef-automate/windows/opsworks/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
+In the _Manage a node with Chef Automate_ module, you used `knife winrm` to [run chef-client on your node](/modules/manage-a-node-chef-automate/windows/opsworks/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
 
 ```bash
 # ~/learn-chef
@@ -400,7 +400,7 @@ union
 
 Now that you have the required environments set up and the `delivery-base` cookbook on your Chef server, you're ready to bootstrap your infrastructure nodes.
 
-The process is similar to the one you did in the [Manage a node](/modules/manage-a-node-chef-automate/windows/opsworks/bootstrap-your-node) tutorial with two minor variations.
+The process is similar to the one you did in the [Manage a node with Chef Automate](/modules/manage-a-node-chef-automate/windows/opsworks/bootstrap-your-node) module with two minor variations.
 
 * Each node's run-list contains two recipes &ndash; the `delivery-base` cookbook's default recipe and the `learn_chef_iis` cookbook's default recipe.
 * Each node is associated with a Chef environment that you created in the previous step.
@@ -489,7 +489,7 @@ Tags:
 
 The **Recipes** part contains the node's expanded run-list. For example, the `delivery-base` cookbook's default recipe includes the `push-jobs` cookbook's default recipe ([source code](https://github.com/chef-cookbooks/delivery-base/blob/master/recipes/default.rb)), which in turn includes other recipes ([source code](https://github.com/chef-cookbooks/push-jobs/blob/master/recipes/default.rb)).
 
-In the _Manage a node_ tutorial, you used Chef Automate's visibility feature to [view your node from the dashboard](/modules/manage-a-node-chef-automate/windows/opsworks/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
+In the _Manage a node with Chef Automate_ module, you used Chef Automate's visibility feature to [view your node from the dashboard](/modules/manage-a-node-chef-automate/windows/opsworks/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
 
 From the Chef Automate web interface, select **Nodes**. From the search box at the top of the page, enter **node_name: *-node** to display only the nodes whose names end with "-node", then click the search button.
 
@@ -505,11 +505,11 @@ As an optional exercise, you can select one of your nodes to view its run histor
 
 <% markdown do %>
 
-In this tutorial, we use the terms _stages_ and _environments_ quite frequently. For example, there's the Acceptance stage and there's the Acceptance environment. Both are related, but it's important to distinguish between the two.
+In this module, we use the terms _stages_ and _environments_ quite frequently. For example, there's the Acceptance stage and there's the Acceptance environment. Both are related, but it's important to distinguish between the two.
 
-For example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this tutorial, the Acceptance environment is an Windows Server  server that applies the `learn_chef_iis` cookbook to configure the web configuration. The Acceptance stage deploys the web configuration by triggering `chef-client` to run on the Windows Server system.
+For example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this module, the Acceptance environment is an Windows Server  server that applies the `learn_chef_iis` cookbook to configure the web configuration. The Acceptance stage deploys the web configuration by triggering `chef-client` to run on the Windows Server system.
 
-You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this tutorial your Chef Automate project is a Chef cookbook, a project can be an application or some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
+You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this module your Chef Automate project is a Chef cookbook, a project can be an application or some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
 
 <% end %>
 
@@ -521,7 +521,7 @@ You can set up a distinct runtime environment for each of the Acceptance, Union,
 
 ## 9. Use push jobs to run chef-client a second time
 
-The bootstrap process performed an initial `chef-client` run on your nodes. In previous tutorials, such as _Manage a node_, you ran `knife winrm` from your workstation to trigger `chef-client` remotely on your node.
+The bootstrap process performed an initial `chef-client` run on your nodes. In previous modules, such as _Manage a node with Chef Automate_, you ran `knife winrm` from your workstation to trigger `chef-client` remotely on your node.
 
 Recall that your runner performs build tasks as changes move through Chef Automate's pipeline. During the Acceptance, Union, Rehearsal, and Delivered stages, the runner uses push jobs to initiate the `chef-client` run on your infrastructure nodes.
 
@@ -614,9 +614,3 @@ Everything checks out. You can now close your SSH connection.
 [COMMENT] Unlike your runner, if you stop your EC2 instances when you're done for the day, you do not need to take any special actions when you restart your infrastructure nodes. Push jobs heartbeat messages are sent from the client (your nodes) to the Chef server. Therefore, your nodes' IP addresses and domain names do not need to be fixed.
 
 [END_BOX]
-
-<% next_page(current_page) do %>
-
-Now that you have infrastructure that can run the `learn_chef_iis` cookbook and can receive updates through push jobs, you're ready to push a change through the pipeline and validate that change on your nodes.
-
-<% end %>

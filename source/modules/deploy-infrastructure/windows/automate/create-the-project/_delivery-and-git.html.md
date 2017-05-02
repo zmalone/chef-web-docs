@@ -30,6 +30,6 @@ $ git remote show delivery
     master pushes to master (up to date)
 ```
 
-In practice, you might have just one remote &ndash; `delivery`. In this tutorial, the `origin` remote exists only as a way for you to obtain starter code that we provide for you.
+In practice, you might have just one remote &ndash; `delivery`. In this module, the `origin` remote exists only as a way for you to obtain starter code that we provide for you.
 
 Also remember that you don't have to use Chef Automate's Git server. We do so for learning purposes and because using the Git server that Chef Automate already provides is the easiest way to get started.
