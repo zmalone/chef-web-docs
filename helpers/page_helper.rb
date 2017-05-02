@@ -118,7 +118,7 @@ module PageHelper
       if breadcrumbs[index - 1] && breadcrumbs[index - 1].page && breadcrumbs[index - 1].page.data
         breadcrumb.label = breadcrumbs[index - 1].page.data.breadcrumb_label
       end
-      breadcrumb.label = default_labels.shift unless breadcrumb.label
+      breadcrumb.label = default_labels[index] unless breadcrumb.label
     end
 
     breadcrumbs
