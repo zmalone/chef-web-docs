@@ -9,7 +9,7 @@ social_share:
     title: "See what it takes to get started with Chef"
     post: "Develop and practice basic skills, learn more advanced techniques,
           pick up new tips and tricks, and connect with other Chef users. Get Rallygoing today by visiting: "
-    image: /assets/images/social/FB_Track-infraAutoTrack.png
+    image: /assets/images/social/track-infrastructure-automation.png
   facebook:
     <<: *shared
   linkedin:
