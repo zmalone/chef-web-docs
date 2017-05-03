@@ -1,0 +1,199 @@
+---
+title: 'Using community compliance profiles on Ubuntu'
+short_title: 'Ubuntu'
+platform: Ubuntu
+platform_id: ubuntu
+category: local-development
+layout: lesson
+time_to_complete: 60 minutes
+headings: [
+  { label: 'Prerequisites', href: '#prerequisites' },
+  { label: '1. Run a community profile', href: '#step1' },
+  { label: '2. Skip the sshd-48 control', href: '#step2' },
+]
+---
+
+INTRODUCTION
+
+[PRODNOTE] We can make this module span multiple pages if needed. Let's consider that after we get some content filled in.
+
+[START_BOX]
+
+## Prerequisites
+
+(Either point to other resources or spell them out explicitly. Pointing to what we have would likely lessen our maintence burden. We can talk about this.)
+
+* Chef DK
+* Vagrant
+* VirtualBox
+* Have the user move to the learn-chef directory: `cd ~/learn-chef`
+
+[END_BOX]
+
+[START_BOX]
+
+## 1. Run the ssh-baseline community profile
+
+This module introduces the use of inspec and community compliance profiles.
+
+Test Kitchen is a tool for testing code in a variety of different testing frameworks --including InSpec-- in a variety of cloud and virtual environments. Test Kitchen brings a repeatable testing process to coding infrastructure.  Test kitchen also makes it possible to incorporate testing infrastructure into your continuous integration workflow, shortening the time needed for performing testing, giving feedback, and remediating problems.
+
+In this lesson you will use first use Test Kitchen to add the ssh-baseline community profile and learn about Test Kitchen. Later, you will use InSpec to alter the way that the community profile works.
+
+We will follow the familiar pattern:
+   1. Write a test, see it fail
+   1. Add code to make the test pass
+   1. Rerun the test
+
+1. Navigate to your learn-chef directory
+1. run 'gem install test-kitchen'
+1. verify the installation with 'kitchen version'
+1. Generate a Chef cookbook with 'chef generate cookbook learning_inspec'
+1. The output shows that the cookbook is generated.  [For more information, see the Test Kitchen module on Learn Chef]
+1. Navigate to the learning_inspec directory that you just created 'cd learning_inspec'.  You will see that an active git repo has been created for this project.
+1. Open '.kitchen.yml' in your editor.
+   1."driver" is how you will set up a virtual machine for your testing environment. The default is Vagrant.
+   1. "provisioner": the directions for running Chef. The default is chef_solo.
+   1. "verifier": You will see that inspec is the default for verifying your tests.
+   1. "platforms": the list of operating systems that you will use for running your tests.
+   1. "suites": Defines what we will test.  The run-list and node attributes that will be put onto the platforms.
+1. remove the centos-7.2 platform from 'kitchen.yml'
+1. change the ubuntu instance to 14.04
+1. run "kitchen create" to spin up this instance of the ubuntu-14.04.
+
+NOTE:  I GET THIS ERROR--W, [2017-04-16T19:45:12.080027 #9699]  WARN -- : You are setting a key that conflicts with a built-in method VariaModel::Attributes#default defined in Hash. This can cause unexpected behavior when accessing the key via as a property. You can still access the key via the #[] method.
+IT APPEARS WITH EVERY COMMAND
+IF YOU GET THIS ERROR RUN 'chef gem install berkshelf'
+
+LEFT WITH :
+WARN: Unresolved specs during Gem::Specification.reset:
+      winrm (~> 2.0)
+      logging (< 3.0, >= 1.6.1)
+      docker-api (~> 1.26)
+WARN: Clearing out unresolved specs.
+Please report a bug if this causes problems.
+
+I think the answer is to run Chef DK 1.1.16?
+
+1. "kitchen list" to view the machines that Test Kitchen has set up. Notice that it has a running instance, default-ubuntu-1404
+
+1. make a file that we will use to log our output, "touch verify.txt"
+1. Run 'kitchen verify < verify.txt'
+1. Find information about running a profile
+inspec help
+inspec supermarket help
+inspec supermarket profiles
+inspec supermarket info ssh-baseline
+
+1. Open the .kitchen.yml file in your editor.  It should look like:
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+  always_update_cookbooks: true
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-16.04
+
+suites:
+  - name: default
+    run_list:
+      - recipe[learning_inspec::default]
+    verifier:
+      inspec_tests:
+    attributes:
+
+1. Add another line to the .kitchen.yml to pull in the community profile for ssh-baseline,
+suites:
+---
+driver:
+name: vagrant
+
+provisioner:
+name: chef_zero
+always_update_cookbooks: true
+
+verifier:
+name: inspec
+
+platforms:
+- name: ubuntu-14.04
+
+suites:
+- name: default
+  run_list:
+    - recipe[learning_inspec::default]
+  verifier:
+    inspec_tests:
+      - name: ssh-baseline
+      - url: https://github.com/dev-sec/ssh-baseline
+  attributes:
+
+* In the command line, enter`kitchen verify` and see the original profile created by the user and the community profile are now included
+* Have the user note a specific control. For example, remember we did `kitchen verify < verify.txt` so that we could examine the output. If you wished to look for a particular control,  “sshd-48” for example, you might run `cat verify.txt | grep sshd-48`
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Skip the sshd-48 control
+
+* You can also modify the communitiy profiles to preform additional--or to skip--specific tests. In this exercise, we will modify your local version of the ssh-baseline community profile to specifically skip the sshd-48 control that you looked at in the previous step.
+* Say you want to omit certain controls from running, for example, the sshd-48 control you saw in the previous step.
+* Words about how forking just to make a change sucks (the need to integrate upstream changes, etc. In other words, it can be difficult to keep up with changes to the original profile.) [While true, it is also irrelevant. We aren't using GIT in the inspec demos]
+* Remove the ssh-baseline profile from .kitchen.yml
+  * [Reference](https://www.google.com/url?q=https://gist.github.com/tpetchel/58f3d7e2a5427ac493ded74ce5f2abae%23file-kitchen-2-yml&sa=D&ust=1489193496187000&usg=AFQjCNGqIi8P74AhIm02zW0VSayN6hg2Ig)
+* Create a custom profile
+  * `inspec init profile profiles/test`
+* Modify original cookbook profile to depend on the ssh-baseline profile
+
+name: profiles/test
+title: InSpec Profile
+maintainer: The Authors
+copyright: The Authors
+copyright_email: you@example.com
+license: All Rights Reserved
+summary: An InSpec Compliance Profile
+version: 0.1.0
+
+depends:
+  - name: ssh-baseline
+    git: https://github.com/dev-sec/ssh-baseline
+
+  * In other words, modify profiles/test/inspec.yml like this:
+    * [Link](https://gist.github.com/tpetchel/58f3d7e2a5427ac493ded74ce5f2abae#file-inspec-yml)
+* Modify profile to skip_control sshd-48, for example
+  * In other words, modify profiles/test/controls/example.rb like this:
+
+  # encoding: utf-8
+  # copyright: 2015, The Authors
+  # license: All rights reserved
+
+  title 'sample section'
+
+  include_controls 'ssh-baseline' do
+    skip_control 'sshd-48'
+  end
+
+     [Link](https://gist.github.com/tpetchel/58f3d7e2a5427ac493ded74ce5f2abae#file-example-rb)
+* `kitchen verify` should now not show that control being run
+  * To illustrate you can `kitchen verify > verify.txt` and then `cat verify.txt | grep sshd-48`. It should not return any output. You can also examine the text file manually.
+* Add words on how that control can then be copied into your profile with a new name, modified to your liking, etc.
+  * Not sure what was meant here. We can follow up. Essentially, I think the key point is that you can now further modify the custom profile by skipping additional controls or by adding more.
+
+[END_BOX]
+
+[START_BOX]
+
+## Conclusion
+
+In this tutorial, ...
+
+[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
+
+[END_BOX]
