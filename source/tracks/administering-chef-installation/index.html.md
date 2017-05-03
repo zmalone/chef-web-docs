@@ -8,7 +8,7 @@ hours: 3
 level: Beginner
 track_class: card-orange
 category: Admin
-order: 11
+order: 12
 modules:
 - understanding-the-chef-server
 - securing-chef
