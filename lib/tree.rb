@@ -111,9 +111,14 @@ class Tree < ::Middleman::Extension
         child = process_tree(file_tree[folder], data)
         unless child.empty?
           data.children << child
+          # A page is forking (AKA multipage) if the page's children also have children, i.e. each
+          # choice goes to a landing page with children.
           data.is_fork = true if child.children.count > 0
         end
       end
+
+      # A page can also be set to look and act as a multipage in the front-matter.
+      data.is_fork = true if page.data.multipage
 
       data.children.sort_by! do |a|
         a.order

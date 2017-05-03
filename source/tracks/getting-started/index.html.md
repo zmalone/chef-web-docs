@@ -8,9 +8,8 @@ social_share:
   shared: &shared
     title: "See what it takes to get started with Chef"
     post: "Develop and practice basic skills, learn more advanced techniques,
-          pick up new tips and tricks, and connect with other Chef users. Get Rallygoing today by visiting: "
-    image: /assets/images/social/FB_Track-infraAutoTrack.png
-    thumbnail: /assets/images/social/Google_Track-infraAutoTrack.png
+          pick up new tips and tricks, and connect with other Chef users. Get Rallygoing today."
+    image: /assets/images/social/track-share-infrastructure-automation.png
   facebook:
     <<: *shared
   linkedin:
