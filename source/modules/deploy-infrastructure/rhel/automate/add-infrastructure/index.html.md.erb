@@ -5,6 +5,7 @@ order: 5
 time_to_complete: 60 minutes
 snippet_path: deploy-infrastructure/rhel/automate/set-up-your-chef-server
 snippet_workstation: ubuntu
+quiz_path: quizzes/deploy-infrastructure/shared/add-infrastructure.yml
 headings: [
   { label: '1. Bring up infrastructure', href: '#step1' },
   { label: '2. Understand push jobs', href: '#step2' },
@@ -13,8 +14,8 @@ headings: [
   { label: '5. Understand Chef environments', href: '#step5' },
   { label: '6. Create environments', href: '#step6' },
   { label: '7. Bootstrap your nodes', href: '#step7' },
-  { label: '8. Run chef-client a second time', href: '#step8' },
-  ]
+  { label: '8. Run chef-client a second time', href: '#step8' }
+]
 ---
 So far, you've created a project, configured your build cookbook to publish the `learn_chef_httpd` cookbook to the Chef server, and watched the initial change move through the pipeline. The next step is to create infrastructure environments that can run your cookbook.
 
@@ -22,7 +23,7 @@ Recall that infrastructure can receive build artifacts produced from Chef Automa
 
 <img src="/assets/images/automate/automate-scenario-architecture.svg" style="width: 100%; alt="An example Chef Automate installation" />
 
-For this tutorial, your build artifact is the `learn_chef_httpd` cookbook. Because the `learn_chef_httpd` cookbook targets Red Hat Enterprise Linux, you'll bring up Red Hat Enterprise Linux (or CentOS) systems.
+For this module, your build artifact is the `learn_chef_httpd` cookbook. Because the `learn_chef_httpd` cookbook targets Red Hat Enterprise Linux, you'll bring up Red Hat Enterprise Linux (or CentOS) systems.
 
 Recall that your project uses the `delivery-truck` cookbook to perform many common tasks that are needed to deliver Chef cookbooks. Using the `delivery-truck` cookbook requires coordination between the Chef server and the infrastructure environments, or _nodes_.
 
@@ -46,9 +47,9 @@ Like your runner, each infrastructure node can be any system that's reachable by
 
 For learning purposes, you may find it easiest to bring up infrastructure in the same environment as your Chef Automate installation. The number of servers you bring up is up to you. At a minimum, you can bring up one node that represents your Acceptance environment. A complete setup involves creating 4 servers &ndash; one each for the Acceptance, Union, Rehearsal, and Delivered environments.
 
-[COMMENT] Although we recommend that you bring up fresh instances for this tutorial, you can use the node that you brought up for the _Manage a node_ tutorial. Also, although Chef [supports multiple versions of Red Hat Enterprise Linux](https://docs.chef.io/platforms.html#chef-client-ohai-foundational-platforms), we recommend that you use Red Hat Enterprise Linux 7 or CentOS 7 to ensure the results you see match what's shown in this tutorial.
+[COMMENT] Although we recommend that you bring up fresh instances for this module, you can use the node that you brought up for the _Manage a node with Chef Automate_ module. Also, although Chef [supports multiple versions of Red Hat Enterprise Linux](https://docs.chef.io/platforms.html#chef-client-ohai-foundational-platforms), we recommend that you use Red Hat Enterprise Linux 7 or CentOS 7 to ensure the results you see match what's shown in this module.
 
-Bring up the number of Red Hat Enterprise Linux 7 or CentOS 7 systems you want to use now. If you're using cloud instances, you can use the smallest instance size that's available, for instance, an Amazon EC2 **t2.micro** instance. As you did in the _Manage a node_ tutorial, ensure each system's firewall or security group provides inbound network access on ports 22, 80, and 443.
+Bring up the number of Red Hat Enterprise Linux 7 or CentOS 7 systems you want to use now. If you're using cloud instances, you can use the smallest instance size that's available, for instance, an Amazon EC2 **t2.micro** instance. As you did in the _Manage a node with Chef Automate_ module, ensure each system's firewall or security group provides inbound network access on ports 22, 80, and 443.
 
 Note the public IP address for each of your infrastructure nodes.
 
@@ -60,7 +61,7 @@ While your servers come up, you can move on to the next step.
 
 ## 2. Understand the role of push jobs
 
-In the _Manage a node_ tutorial, you used `knife ssh` to [run chef-client on your node](/modules/manage-a-node-chef-automate/rhel/automate/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
+In the _Manage a node with Chef Automate_ module, you used `knife ssh` to [run chef-client on your node](/modules/manage-a-node-chef-automate/rhel/automate/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
 
 ```bash
 # ~/learn-chef
@@ -297,7 +298,7 @@ union
 
 Now that you have the required environments set up and the `delivery-base` cookbook on your Chef server, you're ready to bootstrap your infrastructure nodes.
 
-The process is similar to the one you did in the [Manage a node](/modules/manage-a-node-chef-automate/rhel/automate/bootstrap-your-node) tutorial with two minor variations.
+The process is similar to the one you did in the [Manage a node with Chef Automate](/modules/manage-a-node-chef-automate/rhel/automate/bootstrap-your-node) module with two minor variations.
 
 * Each node's run-list contains two recipes &ndash; the `delivery-base` cookbook's default recipe and the `learn_chef_httpd` cookbook's default recipe.
 * Each node is associated with a Chef environment that you created in the previous step.
@@ -533,7 +534,7 @@ Tags:
 
 The **Recipes** part contains the node's expanded run-list. For example, the `delivery-base` cookbook's default recipe includes the `push-jobs` cookbook's default recipe ([source code](https://github.com/chef-cookbooks/delivery-base/blob/master/recipes/default.rb)), which in turn includes other recipes ([source code](https://github.com/chef-cookbooks/push-jobs/blob/master/recipes/default.rb)).
 
-In the _Manage a node_ tutorial, you used Chef Automate's visibility feature to [view your node from the dashboard](/modules/manage-a-node-chef-automate/rhel/automate/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
+In the _Manage a node with Chef Automate_ module, you used Chef Automate's visibility feature to [view your node from the dashboard](/modules/manage-a-node-chef-automate/rhel/automate/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
 
 From the Chef Automate web interface, select **Nodes**. From the search box at the top of the page, enter **node_name: *-node** to display only the nodes whose names end with "-node", then click the search button.
 
@@ -549,11 +550,11 @@ As an optional exercise, you can select one of your nodes to view its run histor
 
 <% markdown do %>
 
-In this tutorial, we use the terms _stages_ and _environments_ quite frequently. For example, there's the Acceptance stage and there's the Acceptance environment. Both are related, but it's important to distinguish between the two.
+In this module, we use the terms _stages_ and _environments_ quite frequently. For example, there's the Acceptance stage and there's the Acceptance environment. Both are related, but it's important to distinguish between the two.
 
-For example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this tutorial, the Acceptance environment is a Red Hat Enterprise Linux or CentOS server that applies the `learn_chef_httpd` cookbook to configure the web configuration. The Acceptance stage deploys the web configuration by triggering `chef-client` to run on the Red Hat Enterprise Linux or CentOS  server.
+For example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this module, the Acceptance environment is a Red Hat Enterprise Linux or CentOS server that applies the `learn_chef_httpd` cookbook to configure the web configuration. The Acceptance stage deploys the web configuration by triggering `chef-client` to run on the Red Hat Enterprise Linux or CentOS  server.
 
-You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this tutorial your Chef Automate project is a Chef cookbook, a project can be an application or some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
+You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this module your Chef Automate project is a Chef cookbook, a project can be an application or some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
 
 <% end %>
 
@@ -565,7 +566,7 @@ You can set up a distinct runtime environment for each of the Acceptance, Union,
 
 ## 8. Use push jobs to run chef-client a second time
 
-The bootstrap process performed an initial `chef-client` run on your nodes. In previous tutorials, such as _Manage a node_, you ran `knife ssh` from your workstation to trigger `chef-client` remotely on your node.
+The bootstrap process performed an initial `chef-client` run on your nodes. In previous modules, such as _Manage a node with Chef Automate_, you ran `knife ssh` from your workstation to trigger `chef-client` remotely on your node.
 
 Recall that your runner performs build tasks as changes move through Chef Automate's pipeline. During the Acceptance, Union, Rehearsal, and Delivered stages, the runner uses push jobs to initiate the `chef-client` run on your infrastructure nodes.
 
@@ -656,9 +657,3 @@ This time, `chef-client` ran only on the node named `acceptance-node`, as expect
 Everything checks out. You can now close your SSH connection.
 
 [END_BOX]
-
-<% next_page(current_page) do %>
-
-Now that you have infrastructure that can run the `learn_chef_httpd` cookbook and can receive updates through push jobs, you're ready to push a change through the pipeline and validate that change on your nodes.
-
-<% end %>
