@@ -20,4 +20,15 @@ related_tracks:
 - local-development-and-testing
 - devops-transformation
 video_url: 'https://player.vimeo.com/video/211382045'
+social_share:
+  shared: &shared
+    title: "Gain A Solid Foundation In The Basics Of Infrastructure Automation."
+    post: "Currently working through the `Infrastructure Automation Basics` track at Learn Chef Rally. Start building your own learning foundation now."
+    image: /assets/images/social/track-share-infrastructure-automation.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Working through `Infrastructure Automation Basics` track at Learn Chef. Start building your own knowledge base."
 ---

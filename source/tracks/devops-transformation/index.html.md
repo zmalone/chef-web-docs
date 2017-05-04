@@ -14,4 +14,15 @@ modules:
 - devops-at-scale
 - devops-culture-and-process
 - tooling-for-devops
+social_share:
+  shared: &shared
+    title: "Discover How To Make The DevOps Transformation journey"
+    post: "Starting the DevOps journey with Learn Chef Rally's `DevOps Transformation` track. Want to adopt DevOps principles in your own org? The trip starts here."
+    image: /assets/images/social/track-share-devops-transformation.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Learn Chef's `DevOps Transformation` track is helping me transform my org with proven DevOps principles: "
 ---

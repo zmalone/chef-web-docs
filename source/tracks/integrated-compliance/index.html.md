@@ -15,4 +15,16 @@ modules:
 - compliance-assess
 - compliance-remediate
 - compliance-in-action
+social_share:
+  shared: &shared
+    title: "Learn The How-To's Of Integrated Compliance"
+    post: "`Integrated Compliance` track at Learn Chef Rally is showing how to use continuous automation to remediate compliance failures
+      in Chef cookbooks. Get learning now."
+    image: /assets/images/social/track-share-integrated-compliance.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Using continuous automation to fix cookbook compliance issues, thanks to Learn Chef's `Integrated Compliance` track."
 ---
