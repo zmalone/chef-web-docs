@@ -22,7 +22,6 @@ describe('AppComponent', () => {
       providers: [
         ProgressService,
         UserProfileService,
-        SegmentService,
         { provide: Angular2TokenService, useClass: MockAngular2TokenService },
         { provide: SiteDataService, useClass: MockSiteDataService },
         { provide: Device, useClass: MockDeviceService },
