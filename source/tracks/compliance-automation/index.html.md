@@ -10,8 +10,6 @@ track_class: card-light-brown
 category: Admin
 order: 9
 modules:
-- getting-started
-- develop-locally
-- learn-the-basics
-- manage-a-node
+- compliance-as-code-using-inspec
+- using-community-profiles
 ---
