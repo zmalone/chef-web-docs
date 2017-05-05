@@ -1,5 +1,5 @@
-<p style="font-size: 2.40625rem;">
-Page not found
-</p>
-
-Sorry, we couldn't find the page you were looking for.
+<div id="page-not-found">
+  <p class="show-for-sr">
+  Wut happened? ERROR 404 Page not found.
+  </p>
+</div>
