@@ -1,7 +1,7 @@
 ---
 id: chef-fundamentals-series
 title: 'Chef fundamentals series'
-description: 'Chef fundamentals series'
+description: 'This webinar series helps prepare you to use Chef to write infrastructure.'
 keywords: 'chef, fundamentals, overview, webinar'
 tags: [video]
 ---
