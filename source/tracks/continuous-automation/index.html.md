@@ -14,4 +14,16 @@ modules:
 - manage-a-node-chef-automate
 - deploy-infrastructure
 tags: [infrastructure,intermediate]
+video_url: 'https://player.vimeo.com/video/215934498'
+social_share:
+  shared: &shared
+    title: "Learn To Improve Workflows With Continuous Automation"
+    post: "Working through `Continuous Automation` track learning how to gain infrastructure visibility using Chef Automate, and how to deploy cookbooks using Chef Automate pipeline. Take a closer look now."
+    image: /assets/images/social/track-share-continuous-deployment.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "`Compliance Automation` putting me on track to spec reqs as code using InSpec, detect problems, & more. You on track?."
 ---

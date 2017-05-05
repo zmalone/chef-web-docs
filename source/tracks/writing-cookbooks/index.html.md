@@ -16,4 +16,15 @@ modules:
 - joy-of-automating-episode-3
 - joy-of-automating-episode-4
 tags: [infrastructure,intermediate]
+social_share:
+  shared: &shared
+    title: "Gain A Better Understanding Of Writing Cookbooks"
+    post: "`Writing Cookbooks` track at Learn Chef Rally is showing me how to turn scripts into recipes, recognize common cookbooks patterns, and more. Write your own ticket today."
+    image: /assets/images/social/footer-share.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "`Writing Cookbooks` showing me how to turn scripts into recipes, recognize cookbook patterns, & more: "
 ---
