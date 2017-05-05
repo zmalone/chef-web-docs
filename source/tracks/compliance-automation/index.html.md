@@ -14,4 +14,5 @@ modules:
 - develop-locally
 - learn-the-basics
 - manage-a-node
+video_url: 'https://player.vimeo.com/video/215914828'
 ---

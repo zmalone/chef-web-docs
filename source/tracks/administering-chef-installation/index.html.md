@@ -12,4 +12,5 @@ order: 12
 modules:
 - understanding-the-chef-server
 - securing-chef
+video_url: 'https://player.vimeo.com/video/215936836'
 ---

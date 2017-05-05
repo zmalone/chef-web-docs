@@ -14,4 +14,5 @@ modules:
 - devops-at-scale
 - devops-culture-and-process
 - tooling-for-devops
+video_url: 'https://player.vimeo.com/video/215585380'
 ---
