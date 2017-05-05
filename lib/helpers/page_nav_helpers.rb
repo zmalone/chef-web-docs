@@ -10,8 +10,8 @@ module PageNavHelpers
         :display => 'Develop and test locally'.upcase,
         :topics => []
       },
-      {:category => 'continuous-deployment',
-        :display => 'Continuous deployment'.upcase,
+      {:category => 'continuous-automation',
+        :display => 'Continuous automation'.upcase,
         :topics => []
       },
       {:category => 'integrated-compliance',
