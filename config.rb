@@ -231,11 +231,11 @@ before_build do
 end
 
 # Write out a REVISION file that shows which revision we're running
-# after_build do
-#   open("#{root_path.join('build', 'REVISION')}", 'w').write(
-#     ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
-#   )
-# end
+after_build do
+  open("#{File.join(File.dirname(__FILE__), 'build', 'REVISION')}", 'w').write(
+    ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
+  )
+end
 
 # Enable localization (i18n)
 activate :i18n
