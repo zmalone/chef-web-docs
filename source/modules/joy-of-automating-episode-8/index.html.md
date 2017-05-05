@@ -9,6 +9,7 @@ time_to_complete: 90 minutes
 headings: [
   { label: 'Reference', href: '#reference' }
 ]
+tags: [video]
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

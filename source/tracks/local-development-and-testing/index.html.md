@@ -16,4 +16,17 @@ modules:
 - unit-test-with-chefspec
 - verify-code-style
 - best-practices-for-testing
+tags: [infrastructure,beginner]
+video_url: 'https://player.vimeo.com/video/215908778'
+social_share:
+  shared: &shared
+    title: "Learn About Local Development And Testing."
+    post: "Taking in the `Local Development and Testing` track at Learn Chef Rally. Hop onto the learning fast track today."
+    image: /assets/images/social/track-share-local-dev-testing.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Taking in the `Local Development and Testing` track at Learn Chef Rally. Start developing your own skills at: ."
 ---

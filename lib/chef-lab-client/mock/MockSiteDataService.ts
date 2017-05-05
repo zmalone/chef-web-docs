@@ -17,7 +17,7 @@ export default class MockSiteDataService {
             "infrastructure-automation",
             "application-automation",
             "compliance-automation",
-            "continuous-deployment",
+            "continuous-automation",
             "developer-essentials",
             "devops-transformation",
             "ecosystem-essentials",
@@ -68,8 +68,8 @@ export default class MockSiteDataService {
           ],
           "parent": "tracks"
         },
-        "continuous-deployment": {
-          "url": "/tracks/continuous-deployment",
+        "continuous-automation": {
+          "url": "/tracks/continuous-automation",
           "remaining": [
             185,
             415
@@ -5421,8 +5421,8 @@ export default class MockSiteDataService {
       "id": "compliance-automation",
       "image_url": "/assets/images/coasters/compliance-automation.png"
     }, {
-      "id": "continuous-deployment",
-      "image_url": "/assets/images/coasters/continuous-deployment.png"
+      "id": "continuous-automation",
+      "image_url": "/assets/images/coasters/continuous-automation.png"
     }, {
       "id": "developer-essentials",
       "image_url": "/assets/images/coasters/developer-essentials.png"

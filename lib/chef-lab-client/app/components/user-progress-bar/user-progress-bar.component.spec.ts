@@ -7,9 +7,11 @@ import { UserProgressBarComponent } from './user-progress-bar.component'
 import { SiteDataService } from '../../services/site-data.service'
 import { ProgressService } from '../../services/progress.service'
 import { UserProfileService } from '../../services/user-profile.service'
+import { SegmentService } from '../../services/segment.service'
 import { Angular2TokenService } from 'angular2-token'
 import MockAngular2TokenService from '../../../mock/MockAngular2TokenService'
 import MockSiteDataService from '../../../mock/MockSiteDataService'
+import MockSegmentService from '../../../mock/MockSegmentService'
 
 describe('UserProgressBarComponent', () => {
 
@@ -24,6 +26,7 @@ describe('UserProgressBarComponent', () => {
         UserProfileService,
         { provide: Angular2TokenService, useClass: MockAngular2TokenService },
         { provide: SiteDataService, useClass: MockSiteDataService },
+        { provide: SegmentService, useClass: MockSegmentService },
       ],
     })
       .compileComponents()

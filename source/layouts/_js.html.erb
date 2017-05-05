@@ -29,25 +29,23 @@
 <%= javascript_include_tag gulp_js_path('polyfills.js') %>
 <%= javascript_include_tag gulp_js_path('vendor.js') %>
 <%= javascript_include_tag gulp_js_path('main.js') %>
-<!--TODO: Determine if any/all of these legacy JavaScripts are still necessary-->
 <%= javascript_include_tag 'os-tabs' %>
 <%= javascript_include_tag 'platform-window' %>
-<!--<%= javascript_include_tag 'nav' %>-->
 <%= javascript_include_tag 'home' %>
 <%= javascript_include_tag 'disqus' %>
 <%= javascript_include_tag 'ga-link-checker' %>
 <%= javascript_include_tag 'section-links' %>
 <%= javascript_include_tag 'clipboard' %>
-<!--<%= javascript_include_tag 'progress-bar' %>-->
-<!--<%= javascript_include_tag 'platform-tabs' %>-->
 <%= javascript_include_tag 'nav-scroll' %>
 <%= javascript_include_tag 'jquery-scrolltofixed-min.js' %>
 <%= javascript_include_tag '//www.brighttalk.com/clients/js/embed/embed.js' if current_page.data.brighttalk %>
 <%= javascript_include_tag '//platform.twitter.com/widgets.js' if current_page.data.twitter %>
-<% if current_page.data.marketo_form_id %>
-<script src="//app-sj05.marketo.com/js/forms2/js/forms2.min.js"></script>
+<%= javascript_include_tag '//app-sj05.marketo.com/js/forms2/js/forms2.min.js' %>
+<% marketo_form_ids = [2297, 2298] # Marketo contact form and subscription forms %>
+<% marketo_form_ids << current_page.data.marketo_form_id if current_page.data.marketo_form_id %>
+<% marketo_form_ids.each do |marketo_form_id| %>
 <script>
-MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", <%= current_page.data.marketo_form_id %>, function(form) {
+MktoForms2.loadForm("//app-sj05.marketo.com", "255-VFB-268", <%= marketo_form_id %>, function(form) {
   form.onSuccess(function(values, followUpUrl) {
     $('a.close-reveal-modal').trigger('click'); // close modal.
     return false; // don't navigate to follow-up URL.

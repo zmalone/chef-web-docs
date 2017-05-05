@@ -10,8 +10,18 @@ track_class: card-light-brown
 category: Admin
 order: 9
 modules:
-- getting-started
-- develop-locally
-- learn-the-basics
-- manage-a-node
+- hp-compliance
+tags: [compliance,beginner]
+video_url: 'https://player.vimeo.com/video/215914828'
+social_share:
+  shared: &shared
+    title: "Sharpen Your Skills In Compliance Automation"
+    post: "`Compliance Automation` at Learn Chef Rally is putting me on track to specify compliance and security requirements as code using InSpec, proactively detect problems, and more. Fast-track your own learning now"
+    image: /assets/images/social/track-share-compliance-automation.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "`Compliance Automation` putting me on track to spec reqs as code using InSpec, detect problems, & more. You on track?."
 ---
