@@ -13,6 +13,7 @@ modules:
 - scale-your-use-of-automation
 - manage-a-node-chef-automate
 - deploy-infrastructure
+tags: [infrastructure,intermediate]
 video_url: 'https://player.vimeo.com/video/215934498'
 social_share:
   shared: &shared

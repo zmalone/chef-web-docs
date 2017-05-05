@@ -15,6 +15,7 @@ modules:
 - joy-of-automating-episode-2
 - joy-of-automating-episode-3
 - joy-of-automating-episode-4
+tags: [infrastructure,intermediate]
 social_share:
   shared: &shared
     title: "Gain A Better Understanding Of Writing Cookbooks"

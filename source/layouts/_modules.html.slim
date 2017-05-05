@@ -3,8 +3,10 @@
     - if defined?(showUserCounts)
       user-progress-counts
     - sort_modules(modules.children).each_with_index do |item, index|
-      - tags = item.page.data.tags.to_json.tr '"', "'"
-      div moduleProgressStatus= "#{get_module_progress_status(current_page)}" order= "#{index}" module="#{item.id}" class="module-tile large-3 medium-4 small-12 columns module-display #{get_tag_classes(item.page.data.tags)}" data-tags="#{tags}"
+      - tags = [item.page.data.tags, get_track(item.page)&.page&.data&.tags].compact.reduce([], :|)
+      - expanded_tags = expand_tags(tags)
+      - skills_tags = expand_tags get_skill_level_tags(tags)
+      div moduleProgressStatus= "#{get_module_progress_status(current_page)}" order= "#{index}" module="#{item.id}" class="module-tile large-3 medium-4 small-12 columns module-display #{get_tag_classes(expanded_tags)}" data-tags="#{expanded_tags.to_json.tr '"', "'"}"
         div class="module-card"
           a href="#{item.page.url}"
             .header
@@ -15,9 +17,9 @@
               = item.page.data.description
             span.time
               = format_time(item.remaining)
-            - if item.page.data.tags
+            - if skills_tags
               ul.links.tags
-                - item.page.data.tags.each do |tag|
+                - skills_tags.each do |tag|
                   li
                     a
                       = tag

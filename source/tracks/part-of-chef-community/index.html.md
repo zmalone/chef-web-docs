@@ -13,6 +13,7 @@ modules:
 - awesome-community-chefs
 - forging-connections
 - tools-for-open-source
+tags: [beginner,culture]
 video_url: 'https://player.vimeo.com/video/215926019'
 social_share:
   shared: &shared

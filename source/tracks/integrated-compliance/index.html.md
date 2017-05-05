@@ -15,6 +15,7 @@ modules:
 - compliance-assess
 - compliance-remediate
 - compliance-in-action
+tags: [compliance,intermediate]
 video_url: 'https://player.vimeo.com/video/215931739'
 social_share:
   shared: &shared

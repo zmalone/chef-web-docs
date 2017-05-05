@@ -9,6 +9,7 @@ headings: [
   { label: 'Reference', href: '#reference' },
   { label: 'Further activities', href: '#furtheractivities' }
 ]
+tags: [video]
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

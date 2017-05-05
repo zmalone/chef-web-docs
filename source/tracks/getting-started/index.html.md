@@ -23,4 +23,12 @@ social_share:
     <<: *shared
   twitter:
     post: "Learning about Chef educational resources and roadmaps to proficiency via 'Getting Started' learning module. You can, too!"
+hours: 0.16666666666667
+level: Beginner
+track_class: card-red
+category: Admin
+order: 0
+modules:
+- getting-started-with-lcr
+tags: [beginner]
 ---

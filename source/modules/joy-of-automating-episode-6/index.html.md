@@ -4,9 +4,7 @@ title: 'Episode 6: Refactoring - Custom Resource - Redis'
 description: 'Learn ways build a custom resource in a test-driven approach.'
 order: 6
 keywords: training, videos, screencasts
-category: 'joy-of-automating'
-sections: []
-icon: video.png
+tags: [video]
 ---
 
 <iframe width="877" height="493" src="https://www.youtube.com/embed/I2JVMm2KNbo?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>

@@ -7,7 +7,7 @@ description: "In this lesson you'll learn how to use data bags to create data-dr
 keywords: training, videos, screencasts
 category: 'fundamentals-series'
 sections: [1, 2, 3]
-icon: video.png
+tags: [video]
 ---
 After viewing this video you will be able to:
 

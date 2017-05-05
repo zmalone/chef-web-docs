@@ -15,6 +15,7 @@ modules:
 - text-editors
 - version-control
 - ruby-behind-chef
+tags: [beginner]
 video_url: 'https://player.vimeo.com/video/215924054'
 social_share:
   shared: &shared

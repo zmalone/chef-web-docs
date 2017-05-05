@@ -20,6 +20,7 @@ related_tracks:
 - local-development-and-testing
 - devops-transformation
 video_url: 'https://player.vimeo.com/video/211382045'
+tags: [infrastructure,beginner]
 social_share:
   shared: &shared
     title: "Gain A Solid Foundation In The Basics Of Infrastructure Automation."
