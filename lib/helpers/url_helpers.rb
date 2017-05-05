@@ -3,11 +3,15 @@ require 'uri'
 # Helpers for URL shortcuts
 module URLHelpers
   def canonical_link_tag(path)
-    tag :link, :rel => 'canonical', :href => canonical_url(path)
+    tag :link, rel: 'canonical', href: canonical_url_with_trailing_slash(path)
   end
 
   def canonical_url(path)
     URI.join(learn_chef_url, path).to_s
+  end
+
+  def canonical_url_with_trailing_slash(path)
+    File.join(canonical_url(path), '/')
   end
 
   def chef_lab_url
