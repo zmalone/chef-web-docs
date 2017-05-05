@@ -1,0 +1,189 @@
+---
+title: 'Using the InSpec shell on Ubuntu'
+short_title: 'Ubuntu'
+platform: Ubuntu
+platform_id: ubuntu
+category: local-development
+layout: lesson
+time_to_complete: 60 minutes
+headings: [
+  { label: 'Prerequisites', href: '#prerequisites' },
+  { label: '1. Explore InSpec resources', href: '#step1' },
+  { label: '2. Examine a remote system', href: '#step2' },
+]
+---
+
+INTRODUCTION
+
+[PRODNOTE] We can make this module span multiple pages if needed. Let's consider that after we get some content filled in.
+
+[START_BOX]
+
+## Prerequisites
+
+(Note this is a follow-on to [Compliance as code using InSpec](/tutorials/compliance-as-code-using-inspec/). The user might continue working with the same system if they still have it around. Perhaps link to this guy from the previous so the reader understands that they can continue working on the same system.)
+
+* Bring up an Ubuntu 14.04 system.
+* Connect to that system over SSH.
+* [Install InSpec](https://downloads.chef.io/inspec/1.16.1)
+
+[END_BOX]
+
+[START_BOX]
+In this tutorial, we will explore the InSpec language and uses of the InSpec shell. InSpec is its own domain specific language (DSL) that is based on the Ruby DSL.  The InSpec language focuses its vocabulary and syntax, which removes ambiguity in desiging test and increases the ease of writing code through elegant and formulaic expressions.
+
+ Syntax: The design of an InSpec control and its tests follow a consistent pattern. In the simplest form, a control may be described as:
+
+```ruby
+describe <RESOURCE> do
+    it/its(<SERVICE/SETTING>)
+        { should <MATCHER>(<STATE>) }
+    end
+end
+```
+  Resources, generally speaking, are software, configurations, and sometimes data that are created when software is installed.  InSpec supports auditing of both services and settings.
+
+  InSpec supports testing the following resources without customization:
+
+    apache_conf apt audit_policy auditd_conf auditd_rules bash  bond  bridge bsd_service command  crontab csv directory etc_group etc_passwd  etc_shadow  file  gem group grub_conf host  http  iis_site  inetd_conf  ini interface iptables  json  kernel_module kernel_parameter  launchd_service limits_conf login_def mount mysql_conf  mysql_session npm ntp_conf  oneget  os  os_env  package parse_config  parse_config_file pip port  postgres_conf postgres_session  powershell  processes rabbitmq_config registry_key runit_service  security_policy service ssh_config  sshd_config ssl sys_info  systemd_service sysv_service  upstart_service user  users vbscript  windows_feature windows_task  wmi xinetd_conf yaml  yum zfs_dataset zfs_pool
+
+For more detail on working with individual resources, find them on:   http://inspec.io/docs/reference/resources/.  You can also find out more about resources in the InSpec shell with `help RESOURCE`.
+
+ InSpec uses "should + MATCHER" to define manner of assessment in a test.  These are:
+
+ `be` is used for comparing numerical values:
+```
+   its('size') { should be = 10 }
+   its('size') { should be > 10 }
+   its('size') { should be >= 10 }
+   its('size') { should be < 10 }
+   its('size') { should be <= 10 }
+ for negation, use should_not
+   its('size') { should be_not be > 10 }
+```
+
+ `cmp` is used to compare two values, such as strings to numbers, or a single value to an array. This allows for more flexibility than matchers such as `be` or `eq`.  `cmp` can allow for comparing different values while also ignoring case sensitivity.
+```
+   its('Protocol') { should cmp '2' }
+   its('Protocol') { should cmp 2 }
+```
+
+ `eq` is used to test the equality of two values. The compared value must be the desired value, meaning that values passed as strings will only match strings and values passed as numbers will only match numbers.
+```
+   its('Protocol') { should eq 2 }
+   its('name') { should eq 'foo' }
+```
+
+ `include` is used to verify that a string is included in a list.
+```
+   its('list') { should include 'bar' }
+```
+
+ `match` is used to check if a string matches a regular expression.
+```
+   its('string') { should match /regex/ }
+   its('string') { should_not match /regex/ }
+```
+
+ `name` is a special case among matchers. `name` specifically compares the value of `name` as it is read from `ssh_config` against the value declared in the test.
+```
+   its(`name`) { should eq 'foo' }
+   its(`name`) { should include('bar') }
+```
+
+##Use the shell to explore InSpec resources
+
+On either your workstation or your Ubuntu system enter:
+* `inspec help shell` for commands and options about the shell.
+* `inspec shell` to launch the shell
+* `help` for help within the shell
+* `help resources` for a list of resources
+
+Try exploring the `file` resource, to understand more about how you can use the shell.
+
+Enter `help file` to see options on how to use the 'file' resource. The parts of the help entry are:
+Name: the resource's name
+Description: Why to use the resource
+Example: The syntax for tests on the resource.
+Web Reference: The URL for the github repository entry for this resource
+
+You can write controls directly in the InSpec shell, which is useful for both troubleshooting and developing tests.
+Try testing for the existence of a file by writing a control directly in the InSpec shell command line, enter:
+```
+describe file('hello.txt') do
+    it { should exist }
+end
+```
+This test may also be written as:
+`describe file('hello.txt') do it { should exist } end `
+
+If the test fails, it is because the file does not exist on your system. Type 'exit' to leave the InSpec shell, and from your system command line, type `echo "hello world" >hello.txt`. Type `inspec shell` to return to the InSpec command line.  Retype the control, `describe file('hello.txt') do it { should exist } end`, and watch the controls pass the test.
+
+* Example using the `passwd` resource
+
+For this part of the tutorial, you will need to log onto one of your Ubuntu 14.04 virtual machines.  Once you're on your vm, enter 'cat /etc/passwd' to view all of the users--which includes services--allowed on the system.
+The `passwd` audit resource tests the contents of `/etc/passwd`. A `passwd` entry looks like:
+
+`root:x:1234:5678:additional_info:/home/dir/:/bin/bash`
+
+which contains:
+A user name ('users'): 'root' (from the above example)
+The password (`passwords`) for that user 'x'
+The user identifier (`uid`) assigned to the user  '1234'
+The group identifier (`gid`) assigned to the user '5678'
+Additional user information   'additional_info'
+The user's home directory (`home`)  '/home/dir/'
+The user's default command shell (`shell`)   '/bin/bash'
+
+You can retrieve summaries of all the passwd users with `passwd.entries` with home, gids, passwords, shells, uids, and users, all of which are valid accessors for passwd.
+You can list all the entries with `passwd.entries`. Another way to view all of the users in passwd is to use `passwd.lines`.  Not all of the keys in a passwd.entries are filterable, but `gids`, `homes`, `passwords`, `shells`, `uids`, and `users` may all be used as filtering criteria. To view the output of all of the user elements, try:
+
+`passwd.gids`     `passwd.where{ gid == "1" }.entries`
+`passwd.homes`    `passwd.where{ user = "sbin" }.entries`
+`passwd.passwords` (if it shows 'x' they are stored in the shadow directory) `{passwd.where{ password == "x" }.entries`
+`passwd.shells`    `passwd.where{ shell = "bash"}.entries`
+`passwd.uids`      `passwd.where{ uid == "1"}.entries`
+`passwd.users`     `passwd.where{ users == "root"}.entries`
+
+`params` may also be used instead of `entries` to view the results of filtering entire records. 'params' outputs a map of all the key/value pairs from the user information. However, you may sometimes need only one of the keys from a filtered user entr y, sometimes you may only need one key from the filtered list. For example, to retrieve all of the user ids of users with bash shells, try:
+
+`passwd.where{ shell == "/bin/bash" }.uids`
+
+Other resources that allow querying are `crontab`, `groups`, `packages`, `port`, `processes`, `ssl`, `users`, `xinetd`, and `docker`.  See the documentation for querying strategies.
+
+To manually enter a single test in the InSpec Shell command line:
+describe passwd do its('users') { should_not include 'forbidden_user' } end
+
+Use ';' to chain multple tests in a single shell line:
+describe passwd.uids(0) do its('users') { should cmp 'root' } ;
+ its('entries.length') { should eq 1 } end
+
+ Use && for a conditional test, run the second test only of the first passes.
+
+
+[END_BOX]
+
+[START_BOX]
+
+## Use the shell to examine a remote system
+
+* `inspec shell` with a remote target
+--target ssh://user:pass@host:port
+* Use `sshd_config` to look at the config
+`sshd_config`
+
+describe sshd_config do ; its('Protocol') { should cmp 2 } ; end
+
+* Manually type in a control and show out the output is the same as if you were `inspec exec` a profile
+
+[END_BOX]
+
+[START_BOX]
+
+## Conclusion
+
+In this tutorial, ...
+
+[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
+
+[END_BOX]
