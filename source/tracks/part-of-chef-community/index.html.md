@@ -19,7 +19,7 @@ social_share:
   shared: &shared
     title: "Learn How To Become Part Of The Chef Community"
     post: "`Become Part of the Chef Community` track is inspiring me to build a community within my own org, as well as connect with the Chef community at large. Inspire yourself today."
-    image: /assets/images/social/footer-share.png
+    image: /assets/images/social/track-share-chef-community.png
   facebook:
     <<: *shared
   linkedin:

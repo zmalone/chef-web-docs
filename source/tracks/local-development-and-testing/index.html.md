@@ -22,7 +22,7 @@ social_share:
   shared: &shared
     title: "Learn About Local Development And Testing."
     post: "Taking in the `Local Development and Testing` track at Learn Chef Rally. Hop onto the learning fast track today."
-    image: /assets/images/social/footer-share.png
+    image: /assets/images/social/track-share-local-dev-testing.png
   facebook:
     <<: *shared
   linkedin:
