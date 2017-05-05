@@ -14,6 +14,7 @@ modules:
 - develop-locally
 - learn-the-basics
 - manage-a-node
+video_url: 'https://player.vimeo.com/video/215914828'
 social_share:
   shared: &shared
     title: "Sharpen Your Skills In Compliance Automation"

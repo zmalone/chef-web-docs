@@ -17,6 +17,7 @@ modules:
 - joy-of-automating-episode-8
 - joy-of-automating-episode-9
 - joy-of-automating-episode-10
+video_url: 'https://player.vimeo.com/video/215936849'
 social_share:
   shared: &shared
     title: "Gain A Better Understanding Of Writing Cookbooks"

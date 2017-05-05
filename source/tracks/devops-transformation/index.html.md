@@ -14,6 +14,7 @@ modules:
 - devops-at-scale
 - devops-culture-and-process
 - tooling-for-devops
+video_url: 'https://player.vimeo.com/video/215585380'
 social_share:
   shared: &shared
     title: "Discover How To Make The DevOps Transformation journey"

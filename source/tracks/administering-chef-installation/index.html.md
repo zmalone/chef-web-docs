@@ -12,6 +12,7 @@ order: 12
 modules:
 - understanding-the-chef-server
 - securing-chef
+video_url: 'https://player.vimeo.com/video/215936836'
 social_share:
   shared: &shared
     title: "Go Behind The Scenes Of Administering A Chef Installation"

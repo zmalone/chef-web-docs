@@ -16,6 +16,7 @@ modules:
 - unit-test-with-chefspec
 - verify-code-style
 - best-practices-for-testing
+video_url: 'https://player.vimeo.com/video/215908778'
 social_share:
   shared: &shared
     title: "Learn About Local Development And Testing."
