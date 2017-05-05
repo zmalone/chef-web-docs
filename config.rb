@@ -37,8 +37,6 @@ Slim::Engine.set_options pretty: true, disable_escape: true
 # activate :chef_yml_to_json
 activate :directory_indexes
 set :trailing_slash, false
-# TODO: Re-enable autoprefixing with Middleman v4
-# activate :autoprefixer
 
 # Per-page layout changes:
 page '/robots.txt', layout: false
