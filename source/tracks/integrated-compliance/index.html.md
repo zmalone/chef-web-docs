@@ -15,4 +15,5 @@ modules:
 - compliance-assess
 - compliance-remediate
 - compliance-in-action
+video_url: 'https://player.vimeo.com/video/215931739'
 ---

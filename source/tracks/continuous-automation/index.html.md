@@ -13,4 +13,5 @@ modules:
 - scale-your-use-of-automation
 - manage-a-node-chef-automate
 - deploy-infrastructure
+video_url: 'https://player.vimeo.com/video/215934498'
 ---

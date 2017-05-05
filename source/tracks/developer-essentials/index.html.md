@@ -15,4 +15,5 @@ modules:
 - text-editors
 - version-control
 - ruby-behind-chef
+video_url: 'https://player.vimeo.com/video/215924054'
 ---
