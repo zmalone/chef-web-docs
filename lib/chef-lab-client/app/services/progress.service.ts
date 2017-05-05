@@ -170,7 +170,6 @@ export class ProgressService {
     let activeItemId = pageId
     if (moduleData[pageId].parent === 'modules') {
       // Get the user's current path through this module or track
-      // TODO: Consider validating the last started item to ensure it follows the last completed
       const lastAccessed = this.getLastAccessed('modules', pageId)
       if (lastAccessed) activeItemId = lastAccessed.id
     }
@@ -353,8 +352,7 @@ export class ProgressService {
     httpObservable.subscribe(
       () => {},
       res => {
-        // TODO: Revisit and refine this behavior, but ensure that a user who's logged out
-        // as far as the server is concerned doesn't stay "logged in" on the client.
+        // Ensure that a user who's logged out doesn't stay "logged in" on the client.
         if (res.status === 401) {
           this.userProfileService.signOut()
         }
