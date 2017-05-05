@@ -13,4 +13,5 @@ modules:
 - awesome-community-chefs
 - forging-connections
 - tools-for-open-source
+tags: [beginner,culture]
 ---

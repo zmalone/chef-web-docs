@@ -23,4 +23,5 @@ category: Admin
 order: 0
 modules:
 - getting-started-with-lcr
+tags: [beginner]
 ---

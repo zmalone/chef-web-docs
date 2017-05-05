@@ -12,4 +12,5 @@ order: 12
 modules:
 - understanding-the-chef-server
 - securing-chef
+tags: [administration,intermediate]
 ---

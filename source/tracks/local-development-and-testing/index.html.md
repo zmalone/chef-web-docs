@@ -16,4 +16,5 @@ modules:
 - unit-test-with-chefspec
 - verify-code-style
 - best-practices-for-testing
+tags: [infrastructure,beginner]
 ---

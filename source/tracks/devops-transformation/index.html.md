@@ -14,4 +14,5 @@ modules:
 - devops-at-scale
 - devops-culture-and-process
 - tooling-for-devops
+tags: [devops,culture]
 ---

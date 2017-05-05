@@ -15,4 +15,5 @@ modules:
 - compliance-assess
 - compliance-remediate
 - compliance-in-action
+tags: [compliance,intermediate]
 ---

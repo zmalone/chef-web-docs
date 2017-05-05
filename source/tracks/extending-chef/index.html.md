@@ -17,4 +17,5 @@ modules:
 - joy-of-automating-episode-8
 - joy-of-automating-episode-9
 - joy-of-automating-episode-10
+tags: [infrastructure,intermediate]
 ---

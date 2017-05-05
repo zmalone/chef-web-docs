@@ -9,6 +9,7 @@ headings: [
   { label: 'Linux/Unix/OSX Shell', href: '#linuxunixmacosshell' },
   { label: 'Windows PowerShell', href: '#windowspowershell' }
 ]
+tags: [article]
 ---
 Administering computer systems these days require a core understanding about how to connect to those machines and some core commands that allow you to query and change the state of a system. If you cannot do it manually then you can't automate it.
 

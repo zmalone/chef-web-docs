@@ -14,4 +14,5 @@ modules:
 - develop-locally
 - learn-the-basics
 - manage-a-node
+tags: [compliance,beginner]
 ---

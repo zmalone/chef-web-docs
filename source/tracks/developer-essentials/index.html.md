@@ -15,4 +15,5 @@ modules:
 - text-editors
 - version-control
 - ruby-behind-chef
+tags: [beginner]
 ---
