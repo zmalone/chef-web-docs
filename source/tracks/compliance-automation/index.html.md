@@ -10,10 +10,7 @@ track_class: card-light-brown
 category: Admin
 order: 9
 modules:
-- getting-started
-- develop-locally
-- learn-the-basics
-- manage-a-node
+- hp-compliance
 tags: [compliance,beginner]
 video_url: 'https://player.vimeo.com/video/215914828'
 social_share:
