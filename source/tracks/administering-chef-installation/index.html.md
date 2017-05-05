@@ -18,7 +18,7 @@ social_share:
   shared: &shared
     title: "Go Behind The Scenes Of Administering A Chef Installation"
     post: "Polishing off the `Administering a Chef Installation` track at Learn Chef Rally. Discovering how Chef server components work together, plus best practices for securing the server. Indulge yourself."
-    image: /assets/images/social/footer-share.png
+    image: /assets/images/social/track-share-administering-chef-installation.png
   facebook:
     <<: *shared
   linkedin:
