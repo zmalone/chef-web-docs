@@ -9,6 +9,7 @@ quiz_path: quizzes/joy-of-automating-episode-10.yml
 headings: [
   { label: 'Resources', href: '#resources' }
 ]
+tags: [video]
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

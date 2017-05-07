@@ -1,23 +1,22 @@
 ---
 id: joy-of-automating-episode-6
-title: 'Episode 6: Refactoring - Custom Resource - Redis'
-description: 'Learn ways build a custom resource in a test-driven approach.'
-order: 6
-keywords: training, videos, screencasts
-category: 'joy-of-automating'
-sections: []
-icon: video.png
+title: 'Refactoring a custom resource - Redis'
+description: 'Learn ways build a custom resource using a test-driven approach.'
+keywords: custom resource, video refactoring, redis
+quiz_path: quizzes/joy-of-automating-episode-6.yml
+time_to_complete: 60 minutes
+headings: [
+  { label: 'Reference', href: '#reference' }
+]
+tags: [video]
 ---
-
-<iframe width="877" height="493" src="https://www.youtube.com/embed/I2JVMm2KNbo?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
-
-## Description
+This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 
 In this episode we focus on refactoring a cookbook to use a custom resource. We start with completing the test suite to ensure we have the proper test coverage. Then move into defining our custom resource usage and work our way from the usage to the implementation.
 
-## Activity
-
 In this episode we focus on the test suite defined for an earlier version of the [Redis cookbook](https://github.com/chef-training/redis-with-test_suite).
+
+<iframe width="877" height="493" src="https://www.youtube.com/embed/I2JVMm2KNbo?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
 
 ## Reference
 

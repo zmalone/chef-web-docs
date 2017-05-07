@@ -34,10 +34,10 @@ export class ProgressService {
   public getLearningType(pageId: string): LearningType {
     if (pageId === 'modules' || pageId === 'tracks') return
     const moduleId = this.getModuleRoot(pageId)
-    if (pageId === moduleId) return 'modules'
-    if (moduleId) return 'units'
+    if (pageId === moduleId) return <LearningType> 'modules'
+    if (moduleId) return <LearningType> 'units'
     const trackData = this.siteDataService.dataTree().tracks
-    if (trackData[pageId]) return 'tracks'
+    if (trackData[pageId]) return <LearningType> 'tracks'
   }
 
   public startPage(pageId) {
@@ -136,6 +136,12 @@ export class ProgressService {
     return Observable.merge(...observables)
   }
 
+  public isStarted(learningType: LearningType, pageId: string | void) {
+    if (!pageId) return false
+    const data = this.getUserProgressData(learningType, pageId)
+    return data && data.started_at
+  }
+
   public isComplete(learningType: LearningType, pageId: string | void) {
     if (!pageId) return false
     const data = this.getUserProgressData(learningType, pageId)
@@ -145,7 +151,7 @@ export class ProgressService {
   public getLastAccessed(learningType: LearningType, pageId: string) {
     // When requesting last access on a module, we're really looking for unit page access
     // (which includes the initial module page)
-    const type = (learningType === 'modules') ? 'units' : learningType
+    const type = (learningType === 'modules') ? <LearningType> 'units' : learningType
     const data = this.getUserProgressData(type, pageId, true)
     const sorted = Object.keys(data).sort((a, b) => {
       const dateA = [data[a].started_at, data[a].completed_at].sort().reverse()[0]
@@ -164,7 +170,6 @@ export class ProgressService {
     let activeItemId = pageId
     if (moduleData[pageId].parent === 'modules') {
       // Get the user's current path through this module or track
-      // TODO: Consider validating the last started item to ensure it follows the last completed
       const lastAccessed = this.getLastAccessed('modules', pageId)
       if (lastAccessed) activeItemId = lastAccessed.id
     }
@@ -303,7 +308,9 @@ export class ProgressService {
 
   public getProgressCounts() {
     const userData = this.getUserProgressData('modules')
-    return Object.keys(userData).reduce((previous, key) => {
+    const moduleData = this.siteDataService.dataTree().modules
+    // Filter the user data by the canonical list of current modules, then count the items with progress.
+    return Object.keys(userData).filter(moduleId => moduleData[moduleId]).reduce((previous, key) => {
       if (userData[key].completed_at) {
         previous.numCompleted += 1
       } else if (userData[key].started_at) {
@@ -345,8 +352,7 @@ export class ProgressService {
     httpObservable.subscribe(
       () => {},
       res => {
-        // TODO: Revisit and refine this behavior, but ensure that a user who's logged out
-        // as far as the server is concerned doesn't stay "logged in" on the client.
+        // Ensure that a user who's logged out doesn't stay "logged in" on the client.
         if (res.status === 401) {
           this.userProfileService.signOut()
         }
@@ -360,7 +366,7 @@ export class ProgressService {
     return httpObservable
   }
 
-  private getUserProgressData(learningType?: LearningType, pageId?: string, wildcard?: boolean): Learning {
+  private getUserProgressData(learningType?: LearningType, pageId?: string | void, wildcard?: boolean): Learning {
     let data = this.activeUserProgress.getValue()
     if (learningType) {
       data = data[learningType] || {}

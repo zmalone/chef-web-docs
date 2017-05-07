@@ -37,8 +37,6 @@ Slim::Engine.set_options pretty: true, disable_escape: true
 # activate :chef_yml_to_json
 activate :directory_indexes
 set :trailing_slash, false
-# TODO: Re-enable autoprefixing with Middleman v4
-# activate :autoprefixer
 
 # Per-page layout changes:
 page '/robots.txt', layout: false
@@ -231,11 +229,11 @@ before_build do
 end
 
 # Write out a REVISION file that shows which revision we're running
-# after_build do
-#   open("#{root_path.join('build', 'REVISION')}", 'w').write(
-#     ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
-#   )
-# end
+after_build do
+  open("#{File.join(File.dirname(__FILE__), 'build', 'REVISION')}", 'w').write(
+    ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
+  )
+end
 
 # Enable localization (i18n)
 activate :i18n

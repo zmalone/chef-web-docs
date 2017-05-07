@@ -22,7 +22,7 @@ export class UserProgressBarComponent implements OnInit {
   ngOnInit() {
     this.progressService.activeUserProgress.subscribe(() => {
       const completed = !!this.progressService.isComplete('modules', this.module)
-      const started = this.progressService.getLastAccessed('modules', this.module)
+      const started = !!this.progressService.isStarted('modules', this.module)
       this.progress = this.progressService.getModuleProgress(this.module)
       this.isHidden = !this.visible && (!started || completed)
     })

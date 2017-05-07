@@ -10,7 +10,7 @@
               span.time
                 - if item.page.data.hours < 1
                   = (60 * item.page.data.hours).to_i
-                  |  minutes
+                  |  mins
                 - else
                   = item.page.data.hours
                   |  hrs
@@ -35,16 +35,11 @@
                 - item.page.data.tags.each do |tag|
                   li
                     a
-                      = tag
+                      = expand_tag(tag)
           .track-record
             user-progress-stamp track="#{item.id}"
     .btn-container.load-track
       button.btn.btn-primary.track-load-more.load-track-btn total="#{tracks.children.size}" Load more tracks
   //Modal pop up for social sharing
-  #socialShare.reveal-modal.tiny.login-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
-    .modal-title
-      = image_tag('login/learn-chef-login.png')
-    .modal-body
-      p#socialContents.social.top-margin
-      a.close-reveal-modal aria-label="Close"
-        i.icon.ic-close
+  = partial "layouts/modal", locals: {id: 'socialShare', classes: 'tiny' } do
+    p#socialContents.social.top-margin

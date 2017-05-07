@@ -5,7 +5,6 @@ description: 'Learn how a secure workflow can help you deliver your applications
 order: 1
 time_to_complete: 10 minutes
 quiz_path: quizzes/securing-chef/be-a-secure-chef.yml
-tags: [chef, beginner]
 headings: [
   { label: 'Securing Chef', href: '#securingchef' },
   { label: 'Suggestions for controlling the Chef workflow', href: '#suggestionsforcontrollingthechefworkflow' }

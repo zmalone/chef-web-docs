@@ -33,6 +33,20 @@ module PageHelper
     get_module_by_id(root.id)
   end
 
+  # Sorts modules by the order they should appear on the Modules tab.
+  def sort_modules(modules)
+    # Visit each track, in order, adding the module ID to an array. There is no need to reduce
+    # duplicates as the order in which modules first appear in a track is all that matters.
+    module_order = tracks.children.map { |track| track.modules }.flatten
+
+    # Sort the modules by the order of first appearance in a track, followed by page title
+    # in alphabetical order for any remaining modules not associated with a track.
+    modules
+      .map { |mod| [ module_order.index(mod.id) || module_order.count, mod.page.data.title, mod ] }
+      .sort
+      .map(&:last)
+  end
+
   def get_track(page)
     section, id = get_page_section(page)
     return get_track_by_id(page.id) if section === 'tracks' && id
@@ -104,7 +118,7 @@ module PageHelper
       if breadcrumbs[index - 1] && breadcrumbs[index - 1].page && breadcrumbs[index - 1].page.data
         breadcrumb.label = breadcrumbs[index - 1].page.data.breadcrumb_label
       end
-      breadcrumb.label = default_labels.shift unless breadcrumb.label
+      breadcrumb.label = default_labels[index] unless breadcrumb.label
     end
 
     breadcrumbs
@@ -213,21 +227,21 @@ module PageHelper
     content = page.data.social_share.try(&:twitter).try(&:post) ||
               page.data.social_share.try(&:post) ||
               truncate(page.data.description, length: 140)
-    "#{sharer_url}?text=#{content}&url=#{canonical_url(page.url)}"
+    "#{sharer_url}?text=#{content}&url=#{encoded_canonical_url(page.url)}"
   end
 
   def social_facebook_share(page)
     return '#' if ENV['DISABLE_SOCIAL']
     social_data = data['social_share']['facebook']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?u=#{canonical_url(page.url)}"
+    "#{sharer_url}?u=#{encoded_canonical_url(page.url)}"
   end
 
   def social_google_plus_share(page)
     return '#' if ENV['DISABLE_SOCIAL']
     social_data = data['social_share']['google_plus']
     sharer_url = social_data['sharer_url']
-    "#{sharer_url}?url=#{canonical_url(page.url)}"
+    "#{sharer_url}?url=#{encoded_canonical_url(page.url)}"
   end
 
   def social_linkedin_share(page)
@@ -236,7 +250,11 @@ module PageHelper
     sharer_url = social_data['sharer_url']
     title = page.data.social_share.try(&:linkedin).try(&:title) || page.data.title
     summary = page.data.social_share.try(&:linkedin).try(&:post) || page.data.description
-    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{canonical_url(page.url)}"
+    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{encoded_canonical_url(page.url)}"
+  end
+
+  def encoded_canonical_url(url)
+    URI.encode(canonical_url(url))
   end
 
   def tweet_text(page)
@@ -253,8 +271,11 @@ module PageHelper
     page.data.try(&:social_share).try(&:linkedin).try(&:post) || page.data.description
   end
 
+  def social_share_facebook_app_id
+    ENV['SOCIAL_SHARE_FACEBOOK_APP_ID']
+  end
+
   def meta_og(page, type)
-    page.data.try(&:social_share).try(&:facebook).try(type) ||
-    page.data.try(&:social_share).try(&:shared).try("#{type}")
+    page.data.try(&:social_share).try(&:shared).try(type)
   end
 end
