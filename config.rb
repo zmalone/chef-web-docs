@@ -217,9 +217,6 @@ configure :build do
   # Use relative URLs
   activate :relative_assets
 
-  # Compress PNGs after build
-  # TODO: Figure out how to re-enable smusher with Middleman v4
-  # activate :smusher
 end
 
 before_build do
@@ -233,6 +230,8 @@ after_build do
   open("#{File.join(File.dirname(__FILE__), 'build', 'REVISION')}", 'w').write(
     ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
   )
+
+  system 'npm run images' or exit($?.exitstatus)
 end
 
 # Enable localization (i18n)
