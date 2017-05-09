@@ -32,7 +32,8 @@ export class WelcomeRibbonComponent implements OnInit {
     })
   }
 
-  public hideRibbon() {
+  public hideRibbon(event?: Event) {
+    if (event) event.preventDefault()
     this.isHidden = true
     localStorage.setItem('hideWelcome', 'true')
     document.getElementsByTagName('body')[0].classList.remove('has-welcome')
