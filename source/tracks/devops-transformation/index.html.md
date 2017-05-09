@@ -15,7 +15,7 @@ modules:
 - devops-culture-and-process
 - tooling-for-devops
 tags: [devops,culture]
-video_url: 'https://player.vimeo.com/video/215585380'
+video_url: 'https://player.vimeo.com/video/215925431'
 social_share:
   shared: &shared
     title: "Discover How To Make The DevOps Transformation journey"
