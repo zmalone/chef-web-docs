@@ -22,71 +22,19 @@ INTRODUCTION
 
 [TIP] This tutorial follows [Compliance as code using InSpec](/tutorials/compliance-as-code-using-inspec/). You may wish to continue working with the same system from the previous tutorial, if it is still availible. You will also have the material you will need to start a new system.
 
+Prerequisites:
+
+In this tutorial, you will use Test Kitchen and Inspec with virtual machines using VirtualBox and Vagrant.
+
+1. **VirtualBox** is a [hypervisor](https://en.wikipedia.org/wiki/Hypervisor) used to running virtual machine instances.
+1. **Vagrant** help you configure virtual machines using a [Vagrantfile](https://www.vagrantup.com/docs/vagrantfile/), that makes specifying and loading virtual machines consistent and reproducible.
+1. **ChefDK** If you do not already have the Chef Development Kit installed, you will need to install it.  You can find directions in the [Get started with Test Kitchen](/tutorials/local-development) tutorial. You can also jump right in and [download the ChefDK](https://downloads.chef.io/chefdk).
+
 [END_BOX]
 
 [START_BOX]
-In this tutorial, we will explore the InSpec language and uses of the InSpec shell. InSpec is its own domain specific language (DSL) that is based on the Ruby DSL.  The InSpec language focuses its vocabulary and syntax, which removes ambiguity in desiging test and increases the ease of writing code through elegant and formulaic expressions.
 
- Syntax: The design of an InSpec control and its tests follow a consistent pattern. In the simplest form, a control may be described as:
-
-```ruby
-describe <RESOURCE> do
-    it/its(<SERVICE/SETTING>)
-        { should <MATCHER>(<STATE>) }
-    end
-end
-```
-  Resources, generally speaking, are software, configurations, and sometimes data that are created when software is installed.  InSpec supports auditing of both services and settings.
-
-  InSpec supports testing the following resources without customization:
-
-    apache_conf apt audit_policy auditd_conf auditd_rules bash  bond  bridge bsd_service command  crontab csv directory etc_group etc_passwd  etc_shadow  file  gem group grub_conf host  http  iis_site  inetd_conf  ini interface iptables  json  kernel_module kernel_parameter  launchd_service limits_conf login_def mount mysql_conf  mysql_session npm ntp_conf  oneget  os  os_env  package parse_config  parse_config_file pip port  postgres_conf postgres_session  powershell  processes rabbitmq_config registry_key runit_service  security_policy service ssh_config  sshd_config ssl sys_info  systemd_service sysv_service  upstart_service user  users vbscript  windows_feature windows_task  wmi xinetd_conf yaml  yum zfs_dataset zfs_pool
-
-For more detail on working with individual resources, find them on:   http://inspec.io/docs/reference/resources/.  You can also find out more about resources in the InSpec shell with `help RESOURCE`.
-
- InSpec uses "should + MATCHER" to define manner of assessment in a test.  These are:
-
- `be` is used for comparing numerical values:
-```
-   its('size') { should be = 10 }
-   its('size') { should be > 10 }
-   its('size') { should be >= 10 }
-   its('size') { should be < 10 }
-   its('size') { should be <= 10 }
- for negation, use should_not
-   its('size') { should be_not be > 10 }
-```
-
- `cmp` is used to compare two values, such as strings to numbers, or a single value to an array. This allows for more flexibility than matchers such as `be` or `eq`.  `cmp` can allow for comparing different values while also ignoring case sensitivity.
-```
-   its('Protocol') { should cmp '2' }
-   its('Protocol') { should cmp 2 }
-```
-
- `eq` is used to test the equality of two values. The compared value must be the desired value, meaning that values passed as strings will only match strings and values passed as numbers will only match numbers.
-```
-   its('Protocol') { should eq 2 }
-   its('name') { should eq 'foo' }
-```
-
- `include` is used to verify that a string is included in a list.
-```
-   its('list') { should include 'bar' }
-```
-
- `match` is used to check if a string matches a regular expression.
-```
-   its('string') { should match /regex/ }
-   its('string') { should_not match /regex/ }
-```
-
- `name` is a special case among matchers. `name` specifically compares the value of `name` as it is read from `ssh_config` against the value declared in the test.
-```
-   its(`name`) { should eq 'foo' }
-   its(`name`) { should include('bar') }
-```
-
-##Use the shell to explore InSpec resources
+In this tutorial, we will explore the InSpec language and uses of the InSpec shell. InSpec is its own domain specific language (DSL) that is based on the Ruby DSL.  The InSpec language has a strongly controlled vocabulary and syntax, which simplifies test design and increases the ease of writing code through elegant and formulaic expressions.
 
 On either your workstation or your Ubuntu system enter:
 * `inspec help shell` for commands and options about the shell.
@@ -94,41 +42,373 @@ On either your workstation or your Ubuntu system enter:
 * `help` for help within the shell
 * `help resources` for a list of resources
 
-Try exploring the `file` resource, to understand more about how you can use the shell.
+```bash
+# ~/learn-inspec
+$ inspec help shell
+Usage:
+  inspec shell
 
-Enter `help file` to see options on how to use the 'file' resource. The parts of the help entry are:
+Options:
+  t, [--target=TARGET]                     # Simple targeting option using URIs, e.g. ssh://user:pass@host:port
+  b, [--backend=BACKEND]                   # Choose a backend: local, ssh, winrm, docker.
+      [--host=HOST]                        # Specify a remote host which is tested.
+  p, [--port=N]                            # Specify the login port for a remote scan.
+      [--user=USER]                        # The login user for a remote scan.
+      [--password=PASSWORD]                # Login password for a remote scan, if required.
+  i, [--key-files=one two three]           # Login key or certificate file for a remote scan.
+      [--path=PATH]                        # Login path to use when connecting to the target (WinRM).
+      [--sudo], [--no-sudo]                # Run scans with sudo. Only activates on Unix and non-root user.
+      [--sudo-password=SUDO_PASSWORD]      # Specify a sudo password, if it is required.
+      [--sudo-options=SUDO_OPTIONS]        # Additional sudo options for a remote scan.
+      [--sudo-command=SUDO_COMMAND]        # Alternate command for sudo.
+      [--shell], [--no-shell]              # Run scans in a subshell. Only activates on Unix.
+      [--shell-options=SHELL_OPTIONS]      # Additional shell options.
+      [--shell-command=SHELL_COMMAND]      # Specify a particular shell to use.
+      [--ssl], [--no-ssl]                  # Use SSL for transport layer encryption (WinRM).
+      [--self-signed], [--no-self-signed]  # Allow remote scans with self-signed certificates (WinRM).
+      [--json-config=JSON_CONFIG]          # Read configuration from JSON file (`-` reads from stdin).
+  c, [--command=COMMAND]                   # A single command string to run instead of launching the shell
+  l, [--log-level=LOG_LEVEL]               # Set the log level: info (default), debug, warn, error
+      [--log-location=LOG_LOCATION]        # Location to send diagnostic log messages to. (default: STDOUT or STDERR)
+      [--diagnose], [--no-diagnose]        # Show diagnostics (versions, configurations)
+
+open an interactive debugging shell
+```
+
+```bash
+~/learn-inspec
+$ inspec shell
+
+Welcome to the interactive InSpec Shell
+To find out how to use it, type: help
+```
+
+```bash
+# InSpec Shell
+$ inspec> help
+
+Available commands:
+
+    `[resource]` - run resource on target machine
+    `help resources` - show all available resources that can be used as commands
+    `help [resource]` - information about a specific resource
+    `exit` - exit the InSpec shell
+
+You can use resources in this environment to test the target machine. For example:
+
+    command('uname -a').stdout
+    file('/proc/cpuinfo').content => "value",
+
+You are currently running on:
+
+    OS platform:  mac_os_x
+    OS family:  darwin
+    OS release: 10.12.4
+```
+
+```bash
+# InSpec Shell
+$ inspec> help resources
+
+apache apache_conf apt ppa audit_policy auditd_conf auditd_rules command bash file bond bridge directory etc_group gem groups group grub_conf host http iis_site iis_website inetd_conf interface iptables json kernel_module kernel_parameter linux_kernel_parameter limits_conf login_defs mount mssql_session mysql mysql_conf mysql_session npm ntp_conf oneget os os_env package parse_config parse_config_file passwd pip port postgres postgres_conf postgres_session powershell script processes registry_key windows_registry_key security_policy service systemd_service upstart_service sysv_service bsd_service launchd_service runit_service shadow ssl ssh_config sshd_config sys_info users user vbscript windows_feature windows_task xinetd_conf wmi yum yumrepo yaml csv ini
+
+```
+
+ Syntax: The design of an InSpec control and its tests follow a consistent pattern. In the simplest form, a control may be described as:
+
+```ruby
+# Snspec Example Syntax
+describe <RESOURCE> do
+    it/its(<SERVICE/SETTING>)
+        { should <MATCHER>(<STATE>) }
+    end
+end
+```
+  Resources, generally speaking, are software, configurations, and sometimes data that are created when software is installed.  InSpec supports auditing of services, settings, and information.
+
+  InSpec has a large number of resources availible for your use.  For more information about using these resources, see the [Inspec Resources Reference](https://www.inspec.io/docs/reference/resources/) page:
+
+
+ You can also find out more about resources in the InSpec shell with `help RESOURCE`.
+
+
+##Matchers
+ InSpec uses `should + MATCHER` to define manner of assessment in a test.  These are:
+
+ <h4>be</h4>
+ `be` is used for comparing numerical values:
+
+```ruby
+# Matcher "be" Examples
+describe file('hello.txt') do
+   its('size') { should be = 10 } # The file should be 10.
+   its('size') { should be > 10 } # The file should be greater than 10.
+   its('size') { should be >= 10 } # The file should be greater than or equal to 10.
+   its('size') { should be < 10 } # The file should be less than 10.
+   its('size') { should be <= 10 } # The file should be less than 10.
+for negation, use should_not
+   its('size') { should be_not be > 10 } # The file should not be greater than 10.
+end
+```
+
+<h4>cmp</h4>
+ `cmp` is used to compare two values, such as strings to numbers, or a single value to an array. This allows for more flexibility than matchers such as `be` or `eq`.  `cmp` can allow for comparing different values while also ignoring case sensitivity.
+
+```ruby
+# Matcher "cmp" Example
+describe ssh_config do
+   its('Protocol') { should cmp '2' } # This example compares strings to numbers
+   its('Protocol') { should cmp 2 }
+end
+```
+
+<h4>eq</h4>
+ `eq` is used to test the equality of two values. The compared value must be the desired value, meaning that values passed as strings will only match strings and values passed as numbers will only match numbers.
+
+```ruby
+# Matcher "eq" examples
+describe ssh_config
+   its('Protocol') { should eq 2 } # The protocol should only equal 2.
+end
+
+describe file('hello.txt') do
+   its('name') { should eq 'foo.txt' } # The file name should equal 'foo.txt'.  This test will fail.
+end
+```
+
+<h4>include</h4>
+ `include` is used to verify that a string is included in a list.
+
+```ruby
+# Matcher "include" Examples
+describe passwd do
+   its('users') { should include 'myuser' } # 'myuser' should be in the list of users.
+end
+
+describe passwd do
+   its('users') { should_not include 'useruser' } # 'useruser' should not be in the list of users.
+end
+```
+
+<h4>match</h4>
+ `match` is used to check if a string matches a regular expression.
+
+```ruby
+# Matcher "match" examples
+describe file('hello.txt') do
+   its('name') { should match /hello/ } # The name should match for the regex /hello/.
+end
+
+describe file('hello.txt') do
+   its('name') { should_not match /world/ } # The name should be anything other than the regex /world/.
+end
+```
+
+<h4>name</h4>
+ `name` is a special case among matchers. `name` specifically compares the value of `name` as it is read from `ssh_config` against the value declared in the test.
+
+```ruby
+# Matcher "name" Example
+describe ssh_config do
+   its(`name`) { should eq 'foo' }  # Looks for 'foo' in ssh_config.name.
+end
+
+describe ssh_config do
+   its(`name`) { should include('bar') } # Looks for 'bar' in the ssh_config.name list.
+end
+```
+##Use the shell to explore InSpec resources
+
+To understand resources, try out using the `file` resource.  First, use the `help file` command to find out about the resource.
+
+```bash
+# ~/learn-inspec
+learn-inspec $ inspec shell
+$ inspec> help file
+
+Name: file
+
+Description:
+
+Use the file InSpec audit resource to test all system file types, including files, directories, symbolic links, named pipes, sockets, character devices, block devices, and doors.
+
+Example:
+
+describe file('path') do
+  it { should exist }
+  it { should be_file }
+  it { should be_readable }
+  it { should be_writable }
+  it { should be_executable.by_user('root') }
+  it { should be_owned_by 'root' }
+  its('mode') { should cmp '0644' }
+end
+
+
+Web Reference:
+
+https://github.com/chef/inspec/blob/master/docs/resources.rst#file
+
+```
+
+You'll see that the
+The parts of the help entry are:
 Name: the resource's name
 Description: Why to use the resource
 Example: The syntax for tests on the resource.
 Web Reference: The URL for the github repository entry for this resource
 
-You can write controls directly in the InSpec shell, which is useful for both troubleshooting and developing tests.
+You can write controls directly in the InSpec shell, which is useful for both troubleshooting and developing tests. If you write a control that tests for the existence of the 'hello.txt' line-for-line into the shell, InSpec will search the current directory for that file. The output of is similar to  the output of a control run with the "inspec exec" command.
+
 Try testing for the existence of a file by writing a control directly in the InSpec shell command line, enter:
+
+```ruby
+# InSpec shell
+$ inspec> describe file('hello.txt') do
+$ inspec> it { should exist }
+$ inspec> end
+
+Profile: inspec-shell
+Version: unknown
+
+  File hello.txt
+     ✔  should exist
+
+Test Summary: 1 successful, 0 failures, 0 skipped
 ```
-describe file('hello.txt') do
-    it { should exist }
-end
+
+This test may also be written as in one line, as:
+
+```ruby
+# InSpec Shell
+describe file('hello.txt') do it { should exist } end
 ```
-This test may also be written as:
-`describe file('hello.txt') do it { should exist } end `
 
-If the test fails, it is because the file does not exist on your system. Type 'exit' to leave the InSpec shell, and from your system command line, type `echo "hello world" >hello.txt`. Type `inspec shell` to return to the InSpec command line.  Retype the control, `describe file('hello.txt') do it { should exist } end`, and watch the controls pass the test.
+If the test fails, it is because the file does not exist on your system. Use `exit` to leave the InSpec shell, then, from your workstations command line, type `echo "hello world" > hello.txt`. After creating the file with the echo command, enter `inspec shell` to return to the InSpec command line.  Finally, enter the control again (you can use the up arrow key), `describe file('hello.txt') do it { should exist } end`, and watch the controls pass the test.
 
-* Example using the `passwd` resource
+```ruby
+$ inspec> exit
+learn-inspec$ echo "hello world" > hello.txt
+learn-inspec$ inspec shell
 
-For this part of the tutorial, you will need to log onto one of your Ubuntu 14.04 virtual machines.  Once you're on your vm, enter 'cat /etc/passwd' to view all of the users--which includes services--allowed on the system.
+Welcome to the interactive InSpec Shell
+To find out how to use it, type: help
+
+$ inspec> describe file('hello.txt') do it { should exist } end
+
+Profile: inspec-shell
+Version: unknown
+
+  File hello.txt
+     ✔  should exist
+
+Test Summary: 1 successful, 0 failures, 0 skipped
+```
+
+If your control contains more than one test, you can concatenate them using ";".  For example:
+
+```ruby
+#InSpec Shell
+$ inspec> describe file('hello.txt') do it { should exist }; its('content') { should match /hello/ } end
+
+Profile: inspec-shell
+Version: unknown
+
+  File hello.txt
+     ✔  should exist
+     ✔  content should match /hello/
+
+Test Summary: 2 successful, 0 failures, 0 skipped
+```
+
+##Example using the passwd resource
+
+For this part of the tutorial, you will need to log onto one of your Ubuntu 14.04 virtual machines.
+
+```bash
+# ~/learn-inspec
+$ vagrant init bento/ubuntu-14.04
+```
+
+Open the Vagrantfile, which will be found in ~/learn-inspec/Vagrantfile, in your editor.  Delete the contents of the Vagrantfile and replace it with the following code:
+
+```ruby
+   # learn-inspec/Vagrantfile
+   # This is the first Vagrantfile ubuntu server needed in the tutorial.
+
+   # encoding: utf-8
+   # -*- mode: ruby -*-
+   # vi: set ft=ruby :
+
+   $script == <<SCRIPT
+   sudo apt-get update
+   sudo apt-get install -y curl
+   curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P chefdk
+   sudo apt-get install tree --yes
+   >>SCRIPT
+
+   Vagrant.configure(2) do |config|
+
+     config.vm.define "server" do |cs|
+       cs.vm.box = "bento/ubuntu-14.04"
+       cs.vm.hostname = "server.test"
+       cs.vm.provision "shell", inline: $script
+     end
+   end
+```
+
+Restart the machine using the new Vagrantfile:
+
+```bash
+# ~/learn-inspec
+$ vagrant up --provision
+$ vagrant ssh server
+
+Welcome to Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-112-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+  System information as of Wed May 10 23:00:59 UTC 2017
+
+  System load:  0.07              Processes:           89
+  Usage of /:   3.0% of 38.02GB   Users logged in:     0
+  Memory usage: 7%                IP address for eth0: 10.0.2.15
+  Swap usage:   0%
+
+  Graph this data and manage this system at:
+    https://landscape.canonical.com/
+
+```
+
+Once you're on your vm, examine the 'passwd' entries using 'cat /etc/passwd'.  This will allow you to view all of the users--which includes services--allowed on the system.
 The `passwd` audit resource tests the contents of `/etc/passwd`. A `passwd` entry looks like:
+
+```bash
+# vagrant@server
+vagrant@server: ~$ cat /etc/passwd
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+...
+```
+A generic example of a `passwd` entry might be:
 
 `root:x:1234:5678:additional_info:/home/dir/:/bin/bash`
 
-which contains:
-A user name ('users'): 'root' (from the above example)
-The password (`passwords`) for that user 'x'
-The user identifier (`uid`) assigned to the user  '1234'
-The group identifier (`gid`) assigned to the user '5678'
-Additional user information   'additional_info'
-The user's home directory (`home`)  '/home/dir/'
-The user's default command shell (`shell`)   '/bin/bash'
+The parts of this `passwd` entry are:
+
+- A user name ('users'): 'root' (from the above example)
+- The password (`passwords`) for that user 'x'
+- The user identifier (`uid`) assigned to the user  '1234'
+- The group identifier (`gid`) assigned to the user '5678'
+- Additional user information   'additional_info'
+- The user's home directory (`home`)  '/home/dir/'
+- The user's default command shell (`shell`)   '/bin/bash'
 
 You can retrieve summaries of all the passwd users with `passwd.entries` with home, gids, passwords, shells, uids, and users, all of which are valid accessors for passwd.
 You can list all the entries with `passwd.entries`. Another way to view all of the users in passwd is to use `passwd.lines`.  Not all of the keys in a passwd.entries are filterable, but `gids`, `homes`, `passwords`, `shells`, `uids`, and `users` may all be used as filtering criteria. To view the output of all of the user elements, try:
