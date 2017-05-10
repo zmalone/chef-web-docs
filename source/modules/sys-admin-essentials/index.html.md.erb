@@ -1,0 +1,249 @@
+---
+id: sys-admin-essentials
+title: 'Systems administrator essentials'
+description: 'Learn about the tools, commands, and protocols that are core to administering systems.'
+time_to_complete: 15 minutes
+quiz_path: quizzes/sys-admin-essentials.yml
+headings: [
+  { label: 'Communication tools', href: '#communicationtoolsandprotocols' },
+  { label: 'Linux/Unix/macOS shell', href: '#linuxunixmacosshell' },
+  { label: 'Windows PowerShell', href: '#windowspowershell' }
+]
+---
+Administering computer systems requires a basic understanding of how to connect to those machines as well as knowing some core commands that allow you to query and change their state. As you begin to transform your infrastructure into code, it's important to remember that if you don't know how to do something manually then you won't know how to automate it.
+
+In this module we focus on understanding how one system can be reached by another system and on some basic commands you'll need to know to be proficient at maintaining those systems.
+
+## Communication tools and protocols
+
+Every system within a functioning web application communicates with other systems. One system might use client applications to talk to server applications running on other systems. Systems may form peer-to-peer arrangements that allow them to discover each other through a mutually agreed upon broadcast message on the network. Alternatively, they may check in with a central server to grab the information required to understand the state of the network.
+
+Whatever the relationship between two systems, it's important to first think about the manner in which they communicate with one another over the network. Each system talks to another system in an agreed upon manner over a shared network.
+
+The medium these systems use to communicate is the physical network. Then, each of the systems connected to that network must know about the other systems they want to talk to. One system must be able to contact another by sending a message. People can send messages to each other in many ways. We can, for example, use spoken words, sign language, written words, pictures, and moving pictures. You can broadcast information by walking outside and yelling or by posting on a social network. You can chat with someone on the street or in a chat room. Each of these methods (hopefully) suits the information we have, our personality, and our intended effect on the recipient.
+
+The same could be said for computer systems. They can reach out to each other in a variety of ways, but how they do it should best suit the information they have and their requirements. Generally, systems agree on a protocol by which they communicate. A protocol defines what can be said, how it is said, and sometimes the medium in which it is said. Protocols usually define acknowledgement and error responses. They ensure that the two systems communicate with one another correctly.
+
+A very common protocol that most people are familiar with is the Hypertext Transfer Protocol (HTTP). HTTP defines the conversation between a client system that requests information and a server system. The client forms a request with a particular shape and the server responds to that request with a message that fits that particular shape. The HTTP protocol allows us to do many things, such as visiting websites and submitting data to fill out forms.
+
+As useful as HTTP is, when we talk about administering systems we need to focus on these three  protocols: SSH, WinRM and RDP.
+
+SSH stands for Secure Shell. This protocol allows you to create a connection from one system to another. This connection can appear like an interactive session where you type system commands on your local machine and see them executed on the remote machine. SSH has no graphical interface so you are limited to shell related commands and tools. SSH generally connects to another system on port 22. The connection is secure so that  malicious actors cannot understand the commands sent from your system to the target system. You can connect either with a username and password or with an agreed upon encrypted key.
+
+As well as being the name of the protocol, SSH is also the name of the application that initiates a connection from the source system to the target system. The target system needs to be running an SSH server that listens on the correct port.
+
+PuTTY is a common Windows application that allows Windows systems to connect to remote systems that are running an SSH server.
+
+Windows Remote Management (WinRM) is a Windows specific protocol that is similar to SSH. It executes commands and scripts and does not have a graphical interface. WinRM is the preferred way for a Windows system to communicate with other Windows systems. It only requires the correct flags and settings to enable the service rather than the installation, configuration and execution of an SSH server service.
+
+While SSH and WinRM use a text-based interface, the Remote Desktop Protocol (RDP) displays a graphical representation of the remote system on the local system. RDP is the most common way to administer Windows systems. With RDP, you have access to many tools as well as the convenience of multi-tasking. The drawback is that RDP has to deliver much more data than its text-based counterparts. The operating system needs to respond to mouse and keyboard events and the windowing system needs to update and adapt as input comes in and calculations are performed.
+
+For RDP to work, the target system must run the RDP server. The client needs to run the RDP client. For Windows systems, the Remote Desktop Connection application is often pre-installed. For Macs, you can download the Microsoft Remote Desktop. For Linux machines, there is the Remmina Remote Desktop Client.
+
+
+### Linux/Unix/macOS shell
+
+While graphical interfaces have improved over the years, they are still not the typical way that a system administrator manages Linux machines. Administrators use a text-based shell and communicate to the remote machine through the keyboard. If you want to experiment, you can start a terminal application on your own machine. When you log in to a remote system through SSH, a shell application that you control launches.
+
+Bash is often the default shell on Linux systems. In this section, you'll learn how to navigate bash and about its core tenets. You'll also learn a few essential shell commands.
+
+When you first launch the terminal application, the default shell runs and presents you with a prompt. Each prompt is different but the default prompt usually shows the user who is currently logged in with a separator character and the name of the system itself. Additionally, the current location of where you are in the file system often appears. The prompt usually ends with a dollar sign ($) character and is followed by a cursor that may be simply a line or a box that may blink.
+
+As you type, your input appears on the screen. When you are finished typing, you can press the `Enter` or `Return` key to execute the text. Pressing `Ctrl-C` ends the current task and takes you to a fresh prompt.
+
+Bash and your operating system provide a number of useful built-in commands. Let's explore a few of them.
+
+The prompt often shows your current location within the file system. A directory is a special file that  contains references to other files and directories. To see all the files within the current directory,  use the `ls` command.
+
+```bash
+$ ls
+Applications    source
+Desktop         habitat
+Documents       inspec
+Downloads       chef-dk
+```
+
+The current directory probably contains a number of files. If any of those files are directories, you can view the contents of those directories by using the same command with a single parameter, the name of the directory.
+
+```bash
+$ ls habitat
+bash-completions.sh    core-plans            results
+bin                    habitat               wordpress
+clap-rs                habitat-example-plans
+```
+
+If any of the files are text, you can view their contents with the `cat` command along with the path to the file. For particularly large text files, you can use the `more` command so that you can scroll up (`K`/`up-arrow`) or scroll down (`J`/`down-arrow`). You can quit scrolling by pressing the `Q` key.
+
+```bash
+$ cat habitat/bash_completions.sh
+$ more habitat/bash_completions.sh
+```
+
+In this example, the <% fp 'bash_completions' %> file exists within the <% fp 'habitat' %> directory so you need to specify the directory first, use a forward slash as a path separator, and then specify the name of the file. If you wanted to work with these files without having to specify the directory path, you can change into this directory to make these files local. Type the `cd` command with the path of the directory you want to change into.
+
+```bash
+$ cd habitat
+$ ls
+bash-completions.sh   core-plans            results
+bin                   habitat               wordpress
+clap-rs               habitat-example-plans
+$ cat bash-completions.sh
+```
+
+All the commands are now executed locally within the habitat directory. To return to the previous directory, the one that contains this directory, you can execute the `cd` command with the parameter `..`.
+
+```bash
+$ cd ..
+$ ls
+Applications    source
+Desktop         habitat
+Documents       inspec
+Downloads       chef-dk
+```
+
+All files are contained in the file system in a hierarchy that starts at the root. The prompt will display your current directory but not the entire path that starts from the root of the file system. You can learn the full path of your current working directory with the `pwd` command.
+
+```bash
+$ pwd
+/Users/chef
+```
+
+A path can be broken up into components. The root of the file system is represented by the initial forward slash, `/`. The root directory contains a <% fp 'Users' %> directory and within the <% fp 'Users' %> directory is a <% fp 'chef' %> directory.
+
+You can use any of the commands we have seen already using a full file path. For instance, you can execute the `ls` command to view the contents of any directory by giving its full path from wherever you are on the file system.
+
+```bash
+$ ls /
+$ ls /Users
+$ ls /Users/chef
+```
+
+When you launched the shell you were most likely in your home directory. You can use the tilde character, `~`, as a shortcut to describe the home directory path.
+
+```bash
+$ cd ~/habitat
+$ pwd
+/Users/chef/habitat
+$ cd ~
+$ pwd
+/Users/chef
+```
+
+We've been exploring a few common commands that allow us to navigate and see all the files on the file system. Let's pause for a moment to talk about the basic structure of commands.
+
+```bash
+$ command FLAGS/OPTIONS/SUBCOMMANDS/ARGUMENTS
+```
+
+A command starts with its name. What follows after the command are a number of arguments that take the form of flags, options, subcommands and arguments.
+
+Flags start with a single dash and are followed by a single letter. For example, if you want to view the contents of a directory in long format you can use `ls -l`. Quite often, a command also supports a longer form of the same flag. The longer form starts with two dashes and is then followed by an entire word. For example, asking for the Chef command-line tool help information can be done either with `chef -h` or with `chef --help`. The longer form is often easier to understand than the single letter form. Flags are almost always optional and can be specified in any order.
+
+Options are like flags but require a value to follow them. An example is the user name or password you provide when you bootstrap a Chef node with the `knife` command, `knife bootstrap ipaddress --user USERNAME --ssh-password PASSWORD`. Options are almost always optional and can be specified in any order.
+
+Some commands require additional commands, called subcommands, that refine the focus of the original command. One example is `git status`, which uses the `git` command and the `status` subcommand to ask for status. Commands may require multiple subcommands to increasingly refine their scope. These subcommands must be provided in a specific order.
+
+Finally, some commands may allow for optional arguments or require them to be specified. An example is the `ls` command that, when used without any arguments, shows the contents of the current directory `ls`. When a valid path is provided as an argument, such as `ls ~`, the files within that directory are displayed. These arguments are often required and must be provided in a specific order.
+
+With all that said, nearly every command line tool created was built and is maintained by different people. This means that sometimes they do not conform to the structure we've outlined here. For each command, you will want to look at the help, usually through the `-h` or `--help` flag, or look at the manual written for the command, with `man COMMAND`.
+
+```bash
+$ man ls
+$ chef --help
+```
+
+### Windows PowerShell
+
+Managing Windows servers is traditionally done through a graphical interface. As the need to manage more and more systems has arisen, tools that can scale to handle large numbers of systems have been created. PowerShell provides an incredibly powerful command line interface that is similar to other command line tools. The benefit of PowerShell is that it is both a command line shell and a scripting language that can interact with a large number of technologies. PowerShell has a strong emphasis on consistency in the structure of commands and the object-based results that it returns. PowerShell is launched locally through a PowerShell prompt and remotely through the WinRM protocol.
+
+PowerShell is now a standard interface for all Microsoft software products. In this section you'll learn how to navigate the PowerShell interface and understand its core tenets. You'll also learn a few essential PowerShell commands.
+
+When you first launch Windows PowerShell it presents you with a prompt. Generally, the prompt displays the letters "PS" and the full directory path of where you are on the file system. The prompt is completed with a greater-than sign '>' and then followed by a cursor that is a blinking underscore character.
+
+Characters appear as you type them on the the screen, in the prompt. When you are finished typing you can press the `Enter` or `Return` key to execute the text. Pressing `Ctrl`-`C` ends the current task and takes you a fresh prompt. PowerShell provides a number of built-in commands. Let's explore the structure of its commands and learn a few important commands and their aliases, or shortcuts.
+
+The prompt often provides you with your current location within the file system. A directory can contain references to other files and directories. To see all the files within the current directory, use the `dir` command.
+
+```ps
+$ dir
+
+    Directory: C:\Users\chef
+
+Mode             LastWriteTime       Length Name
+----             -------------       ------ ----
+d-----       2/24/2016 2:52 PM              .atom
+...
+```
+
+The current directory probably contains a number of files. If any of those file are directories you can view their contents by using the same command with a single parameter, the name of the directory.
+
+```ps
+$ dir habitat
+```
+
+If any of the files are text, you can view the contents with the `cat` command along with the path to the file.
+
+```ps
+$ cat habitat\bash_completions.sh
+```
+This file exists within the habitat directory so you need to specify the directory first, use a back slash as a path separator, and then specify the name of the file. If you want to work with these files without having to specify the directory path, you can change into the directory to make these files local. This can be done by executing the `cd` command with the path of the directory you want to change into.
+
+```ps
+$ cd habitat
+$ dir
+bash-completions.sh   core-plans            results
+bin                   habitat               wordpress
+clap-rs               habitat-example-plans
+$ cat bash-completions.sh
+```
+
+All the commands now execute locally. To return to the previous directory, the one that contains this directory, you can execute the `cd` command with the parameter `..`.
+
+```ps
+$ cd ..
+$ dir
+Applications			source
+Desktop			habitat
+Documents				inspec
+Downloads			chef-dk
+```
+
+All files are contained on the file system in a hierarchy that starts at the root of the drive. A path can be broken up into components. The root of the drive is represented by a letter.
+
+You can use any of the commands we've shown here by using a full file path. For instance, you can execute the `dir` command to view the contents of any directory by giving its full path from wherever you are on the file system.
+
+```ps
+$ dir C:\
+$ dir C:\Users
+$ dir C:\Users\chef
+```
+
+When you launched PowerShell you were most likely in your home directory. You can use the tilde character, `~`, as a shortcut to describe the home directory path.
+
+```ps
+$ cd ~
+$ dir
+```
+
+We've been exploring a few common commands that allow us to navigate and see all the files on the file system. These commands are shortcuts, or aliases, of PowerShell _cmdlets_. Let's pause for a moment to talk about the basic structure of a cmdlet.
+
+```ps
+$ Verb-Noun Parameters
+```
+
+Cmdlets start with a verb to describe the desired action to take with the given noun. Sometimes these verbs do not map to verbs one might use in an English sentence. The noun describes the thing the verb is acting on. As we said before, the commands we've been using are really aliases of cmdlets. You can see the actual PowerShell comdlet with the PowerShell cmdlet `Get-Alias ALIAS_NAME`. Here's an example.
+
+```ps
+$ Get-Alias dir
+CommandType     Name                            Definition
+-----------     ----                            ----------
+Alias           dir                             Get-ChildItem
+```
+
+The verb in the command is `Get` and the noun is `ChildItem`. The `dir` alias allows DOS users to navigate PowerShell without having to learn an entirely new syntax for even the most basic operations. Also, in most cases, it's faster to type the alias than the cmdlet. For example, its faster to type `dir` than:
+
+```ps
+$ Get-ChildItem C:\
+```
+
+The path to view is presented here as the first parameter. Cmdlets can support no parameter, one parameter, or multiple parameters. These parameters can be required or optional. The most important parameters are positioned closest to the cmdlet.
