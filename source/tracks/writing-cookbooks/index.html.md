@@ -27,4 +27,9 @@ social_share:
     <<: *shared
   twitter:
     post: "`Writing Cookbooks` showing me how to turn scripts into recipes, recognize cookbook patterns, & more: "
+related_tracks:
+- infrastructure-automation
+- local-development-and-testing
+- extending-chef
+- part-of-chef-community
 ---
