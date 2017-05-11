@@ -1,3 +1,4 @@
+require 'csv'
 require 'chef/web/core/url_helpers'
 require 'slim'
 require 'lib/gulp'
@@ -108,6 +109,47 @@ end
 before_build do
   if File.exist?(REV_MANIFEST_PATH)
     REV_MANIFEST.merge!(JSON.parse(File.read(REV_MANIFEST_PATH)))
+  end
+
+  app.extensions.add_exposed_to_context(self)
+
+  build_tests_dir = File.join(app.root_path, 'build-tests')
+  Dir.mkdir(build_tests_dir) unless Dir.exist?(build_tests_dir)
+
+  logger.info 'Validating track metadata...'
+  filepath = File.join(build_tests_dir, 'tracks.csv')
+  CSV.open(filepath, "wb") do |csv|
+    csv << ['module', 'path', 'tags', 'video', 'facebook', 'linkedin', 'twitter']
+    tracks.children.each do |mod|
+      row_data = []
+      mod_data = mod.page.data
+      row_data << mod_data.title
+      row_data << mod.page.path.gsub('/index.html', '')
+      row_data << mod_data.fetch('tags', []).join(',')
+      row_data << mod_data.fetch('video_url', '')
+      row_data << (mod_data.dig('social_share', 'facebook') ? 'Y' : 'N')
+      row_data << (mod_data.dig('social_share', 'linkedin') ? 'Y' : 'N')
+      row_data << (mod_data.dig('social_share', 'twitter') ? 'Y' : 'N')
+      csv << row_data
+    end
+  end
+
+  logger.info 'Validating module metadata...'
+  filepath = File.join(build_tests_dir, 'modules.csv')
+  CSV.open(filepath, "wb") do |csv|
+    csv << ['module', 'path', 'tags', 'video', 'facebook', 'linkedin', 'twitter']
+    modules.children.each do |mod|
+      row_data = []
+      mod_data = mod.page.data
+      row_data << mod_data.title
+      row_data << mod.page.path.gsub('/index.html', '')
+      row_data << mod_data.fetch('tags', []).join(',')
+      row_data << mod_data.fetch('video_url', '')
+      row_data << (mod_data.dig('social_share', 'facebook') ? 'Y' : 'N')
+      row_data << (mod_data.dig('social_share', 'linkedin') ? 'Y' : 'N')
+      row_data << (mod_data.dig('social_share', 'twitter') ? 'Y' : 'N')
+      csv << row_data
+    end
   end
 end
 
