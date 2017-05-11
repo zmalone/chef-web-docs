@@ -220,8 +220,18 @@ module PageHelper
     return true if page.url.match('profile')
   end
 
+  def has_social_share?(page)
+    page.data.dig('social_share', 'facebook') &&
+      page.data.dig('social_share', 'twitter') &&
+      page.data.dig('social_share', 'linkedin')
+  end
+
+  def social_sharing_enabled?
+    ENV['DISABLE_SOCIAL'].blank? || ENV['DISABLE_SOCIAL'] === 'false'
+  end
+
   def social_twitter_share(page)
-    return '#' if ENV['DISABLE_SOCIAL']
+    return '#' unless social_sharing_enabled?
     social_data = data['social_share']['twitter']
     sharer_url = social_data['sharer_url']
     content = page.data.social_share.try(&:twitter).try(&:post) ||
@@ -231,21 +241,21 @@ module PageHelper
   end
 
   def social_facebook_share(page)
-    return '#' if ENV['DISABLE_SOCIAL']
+    return '#' unless social_sharing_enabled?
     social_data = data['social_share']['facebook']
     sharer_url = social_data['sharer_url']
     "#{sharer_url}?u=#{encoded_canonical_url(page.url)}"
   end
 
   def social_google_plus_share(page)
-    return '#' if ENV['DISABLE_SOCIAL']
+    return '#' unless social_sharing_enabled?
     social_data = data['social_share']['google_plus']
     sharer_url = social_data['sharer_url']
     "#{sharer_url}?url=#{encoded_canonical_url(page.url)}"
   end
 
   def social_linkedin_share(page)
-    return '#' if ENV['DISABLE_SOCIAL']
+    return '#' unless social_sharing_enabled?
     social_data = data['social_share']['linkedin']
     sharer_url = social_data['sharer_url']
     title = page.data.social_share.try(&:linkedin).try(&:title) || page.data.title
