@@ -1,3 +1,4 @@
+require 'csv'
 require 'chef/web/core/url_helpers'
 require 'slim'
 require 'lib/gulp'
@@ -108,6 +109,54 @@ end
 before_build do
   if File.exist?(REV_MANIFEST_PATH)
     REV_MANIFEST.merge!(JSON.parse(File.read(REV_MANIFEST_PATH)))
+  end
+
+  app.extensions.add_exposed_to_context(self)
+
+  #
+  # Validate track and module metadata and write reports to the build-tests directory.
+  #
+
+  # Create build-tests directory if needed.
+  build_tests_dir = File.join(app.root_path, 'build-tests')
+  Dir.mkdir(build_tests_dir) unless Dir.exist?(build_tests_dir)
+
+  # Validate track metadata.
+  logger.info 'Validating track metadata...'
+  filepath = File.join(build_tests_dir, 'tracks.csv')
+  CSV.open(filepath, "wb") do |csv|
+    csv << ['track', 'path', 'tags', 'video', 'facebook', 'linkedin', 'twitter']
+    tracks.children.each do |track|
+      row_data = []
+      track_data = track.page.data
+      row_data << track_data.title
+      row_data << track.page.path.gsub('/index.html', '')
+      row_data << track_data.fetch('tags', []).join(',')
+      row_data << track_data.fetch('video_url', '')
+      row_data << (track_data.dig('social_share', 'facebook') ? 'Y' : 'N')
+      row_data << (track_data.dig('social_share', 'linkedin') ? 'Y' : 'N')
+      row_data << (track_data.dig('social_share', 'twitter') ? 'Y' : 'N')
+      csv << row_data
+    end
+  end
+
+  # Validate module metadata.
+  logger.info 'Validating module metadata...'
+  filepath = File.join(build_tests_dir, 'modules.csv')
+  CSV.open(filepath, "wb") do |csv|
+    csv << ['module', 'path', 'tags', 'video', 'facebook', 'linkedin', 'twitter']
+    modules.children.each do |mod|
+      row_data = []
+      mod_data = mod.page.data
+      row_data << mod_data.title
+      row_data << mod.page.path.gsub('/index.html', '')
+      row_data << mod_data.fetch('tags', []).join(',')
+      row_data << mod_data.fetch('video_url', '')
+      row_data << (mod_data.dig('social_share', 'facebook') ? 'Y' : 'N')
+      row_data << (mod_data.dig('social_share', 'linkedin') ? 'Y' : 'N')
+      row_data << (mod_data.dig('social_share', 'twitter') ? 'Y' : 'N')
+      csv << row_data
+    end
   end
 end
 
