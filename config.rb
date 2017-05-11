@@ -119,17 +119,17 @@ before_build do
   logger.info 'Validating track metadata...'
   filepath = File.join(build_tests_dir, 'tracks.csv')
   CSV.open(filepath, "wb") do |csv|
-    csv << ['module', 'path', 'tags', 'video', 'facebook', 'linkedin', 'twitter']
-    tracks.children.each do |mod|
+    csv << ['track', 'path', 'tags', 'video', 'facebook', 'linkedin', 'twitter']
+    tracks.children.each do |track|
       row_data = []
-      mod_data = mod.page.data
-      row_data << mod_data.title
-      row_data << mod.page.path.gsub('/index.html', '')
-      row_data << mod_data.fetch('tags', []).join(',')
-      row_data << mod_data.fetch('video_url', '')
-      row_data << (mod_data.dig('social_share', 'facebook') ? 'Y' : 'N')
-      row_data << (mod_data.dig('social_share', 'linkedin') ? 'Y' : 'N')
-      row_data << (mod_data.dig('social_share', 'twitter') ? 'Y' : 'N')
+      track_data = track.page.data
+      row_data << track_data.title
+      row_data << track.page.path.gsub('/index.html', '')
+      row_data << track_data.fetch('tags', []).join(',')
+      row_data << track_data.fetch('video_url', '')
+      row_data << (track_data.dig('social_share', 'facebook') ? 'Y' : 'N')
+      row_data << (track_data.dig('social_share', 'linkedin') ? 'Y' : 'N')
+      row_data << (track_data.dig('social_share', 'twitter') ? 'Y' : 'N')
       csv << row_data
     end
   end
