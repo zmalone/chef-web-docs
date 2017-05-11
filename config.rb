@@ -113,9 +113,15 @@ before_build do
 
   app.extensions.add_exposed_to_context(self)
 
+  #
+  # Validate track and module metadata and write reports to the build-tests directory.
+  #
+
+  # Create build-tests directory if needed.
   build_tests_dir = File.join(app.root_path, 'build-tests')
   Dir.mkdir(build_tests_dir) unless Dir.exist?(build_tests_dir)
 
+  # Validate track metadata.
   logger.info 'Validating track metadata...'
   filepath = File.join(build_tests_dir, 'tracks.csv')
   CSV.open(filepath, "wb") do |csv|
@@ -134,6 +140,7 @@ before_build do
     end
   end
 
+  # Validate module metadata.
   logger.info 'Validating module metadata...'
   filepath = File.join(build_tests_dir, 'modules.csv')
   CSV.open(filepath, "wb") do |csv|
