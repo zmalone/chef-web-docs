@@ -27,4 +27,8 @@ social_share:
     <<: *shared
   twitter:
     post: "Learn Chef's `DevOps Transformation` track is helping me transform my org with proven DevOps principles: "
+related_tracks:
+- getting-started
+- infrastructure-automation
+- part-of-chef-community
 ---

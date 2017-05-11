@@ -29,4 +29,9 @@ social_share:
     <<: *shared
   twitter:
     post: "Taking in the `Local Development and Testing` track at Learn Chef Rally. Start developing your own skills at: ."
+related_tracks:
+- infrastructure-automation
+- writing-cookbooks
+- extending-chef
+- compliance-automation
 ---

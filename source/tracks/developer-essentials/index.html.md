@@ -28,4 +28,9 @@ social_share:
     <<: *shared
   twitter:
     post: "Getting the tools to write, store & test code in a DevOps environment with Learn Chef's `Developer Essentials` track: "
+related_tracks:
+- infrastructure-automation
+- local-development-and-testing
+- writing-cookbooks
+- extending-chef
 ---
