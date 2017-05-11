@@ -35,6 +35,7 @@ export class UserProfileService {
       .concat(this._tokenService.validateToken)
       .concat(this.loadUserProfile.bind(this))
       .switchMap(this.identifyUser.bind(this))
+      .switchMap(this.syncMarketo.bind(this))
       .switchMap(() => {
         this.isSignedIn.next(true)
         return this.isSignedIn
@@ -88,5 +89,10 @@ export class UserProfileService {
       lastName: userInfo.last_name,
       username: userInfo.display_name,
     })
+  }
+
+  private syncMarketo(userInfo) {
+    this._tokenService.put('api/v1/profile_sync_marketo', {})
+    return Observable.of(userInfo)
   }
 }
