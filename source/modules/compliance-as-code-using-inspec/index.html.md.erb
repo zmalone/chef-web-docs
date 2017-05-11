@@ -26,25 +26,24 @@ INTRODUCTION
 
 Compliance is an emerging and exciting area of automation. Compliance means that your systems conform to the standards or regulations that you need to follow in your work. Fortunately, you can use a great Chef product--InSpec--to ensure that your infrastructure operates and follows the rules and regulations of your company and industry. Compliance as code automates auditing processes, saving money, time, and most importantly, your relationships with customers and stakeholders.
 
-InSpec is short for "infrastructure specification," which is exactly what InSpec allows you to do.  InSpec allows you to _specify_, or define and automate infrastructure, integration, and compliance testing, ensuring that your systems and processes adhere to government, industry,  and company standards.
+InSpec is short for "infrastructure specification", which is exactly what InSpec allows you to do. InSpec allows you to _specify_, or define and automate infrastructure, integration, and compliance testing, ensuring that your systems and processes adhere to government, industry,  and company standards.
 
 ###Prerequisites
 
 Before starting this tutorial, you need to have the following installed on your workstation:
 
-1. VirtualBox <https://www.virtualbox.org/> is a "hypervisor" program, which means that it manages virtual machine installations.  Each running virtual machine is called an "instance".
-1. Vagrant <https://www.vagrantup.com/downloads.html> makes woriking with hypervisor programs easier by using a configuration file, called a "Vagrantfile"  that defines a the structure of a virtual machine, such as available memory, host name, and network setting using a sort of template. This template can be re-used for launching as many copies of a vm instance as you need, as many times as you need.
+1. VirtualBox <https://www.virtualbox.org/> is a "hypervisor" program, which means that it manages virtual machine installations. Each running virtual machine is called an "instance".
+1. Vagrant <https://www.vagrantup.com/downloads.html> makes woriking with hypervisor programs easier by using a configuration file, called a `Vagrantfile`  that defines a the structure of a virtual machine, such as available memory, host name, and network setting using a sort of template. This template can be re-used for launching as many copies of a vm instance as you need, as many times as you need.
 Vagrant also provides access to base virtual machine images, called _boxes_. [HashiCorp's Atlas](https://www.hashicorp.com/atlas.html) is a place where you can access prebuilt boxes or upload new boxes for others to use. [Bento](http://chef.github.io/bento/) is a Chef project that provides ready-to-use Vagrant boxes for many common platforms, including Ubuntu.
-1. ChefDK (includes InSpec) <https://downloads.chef.io/chefdk>
+1. ChefDK (includes InSpec) <https://downloads.chef.io/chefdk>.
 
-This tutorial is written for a MacOS or Linux workstation and an Ubuntu 14.04 virtual machine running on Vagrant and Virtualbox.  However, it can be adapted to most systems running the ChefDK and connecting to a second machine that also runs the ChefDK
-
-###Concepts:
+This tutorial is written for a MacOS or Linux workstation and an Ubuntu 14.04 virtual machine running on Vagrant and Virtualbox. However, it can be adapted to most systems running the ChefDK and connecting to a second machine that also runs the ChefDK.
+###Concepts
 
 These are the concepts that you will learn about in this tutorial:
 
 * Audit - Comprehensive review of an organizations adherence to regulator guidelines. Some of the areas that an audit examines security policies, user access controls and risk management procedures.
-* Compliance - When a system runs according to a defined set of rules it is in compliance.  'Compliance' can be used to describe technological processes as well as organizations that run in accordance with government, industry, or company policies.
+* Compliance - When a system runs according to a defined set of rules it is in compliance. 'Compliance' can be used to describe technological processes as well as organizations that run in accordance with government, industry, or company policies.
 * Policy - A policy is the purpose of a set compliance tests as well as the outline of the tests themselves.
 * Control - The expression of practices for auditing settings and processes in code, which are stored within a control file in and InSpec profile.
 * Scanning and remote scanning - Running compliance tests against a local or remote computer.
@@ -56,7 +55,7 @@ These are the concepts that you will learn about in this tutorial:
 
 ## Write a basic InSpec test
 
-Now that you have the ChefDK, VirtualBox, and Vagrant installed, it is time to write your first control.  First, make a directory named "learn-inspec" and navigate into that directory. Your first task will be to write an InSpec control file that contains a single control, testing the existence of a file. You will follow the behavior-driven-development practice of writing a test that fails, and then writing just enough code to make it pass.
+Now that you have the ChefDK, VirtualBox, and Vagrant installed, it is time to write your first control. First, make a directory named `learn-inspec` and navigate into that directory. Your first task will be to write an InSpec control file that contains a single control, testing the existence of a file. You will follow the behavior-driven-development practice of writing a test that fails, and then writing just enough code to make it pass.
 
 ```bash
 mkdir learn-inspec
@@ -67,7 +66,7 @@ cd learn-inspec
 
 [START_BOX]
 ## Scenario: our “hello world” example
-- From the "learn-inspec" directory on your workstation you will write your first inspec control file, which sill contains a single control that tests for the existence of a file.  Use the "touch" command to create the "hello_spec.rb" file.
+- From the `learn-inspec` directory on your workstation you will write your first inspec control file, which sill contains a single control that tests for the existence of a file. Use the `touch` command to create the `hello_spec.rb` file. Then save the file.
 
    ```bash
    touch 'hello_spec.rb'
@@ -85,15 +84,15 @@ cd learn-inspec
      it { should exist }
    end
    ```
-- Save the file.
 
-###What are the elements of a control file?
+
+### What are the elements of a control file?
 
 The control file contains a remarkable amount of information in a very brief format. Let's break it down:
 
 * control - control "world-1.0" - the declaration that this is a control object and a brief, easily identifiable about what it handles.
 * impact - impact 1.0 - On a scale of 1 to 10, the severity of consequences should the control fail.
-* title - A longer title for the control
+* title - title "hello world" A longer title for the control.
 * desc - A short description what the test should do
 * describe (file)- The code for the location of file or setting that will be tested, followed by the test.
 
@@ -106,7 +105,7 @@ from the learn-inspec directory command line prompt, run the control that you ju
 inspec exec hello_spec.rb
 ```
 
-The test will fail.  Let's look at the results to understand what happened:
+The test will fail. Let's look at the results to understand what happened:
 
 ```bash
 $ inspec exec hello_spec.rb
@@ -122,9 +121,9 @@ $ inspec exec hello_spec.rb
 ```
 
 
-The output shows us the name of the control and what the test expected to see happen, citing the specific control that failed. The 'profile summary' shows a tally of all the controls in the profile, based on their status as successful, failures, or skipped tests.  A failing test will appear in red letters.  This particular failing result shows you both that the test ran as it should have and that the "hello.txt" file does not exist in the directory.
+The output shows us the name of the control and what the test expected to see happen, citing the specific control that failed. The 'profile summary' shows a tally of all the controls in the profile, based on their status as successful, failures, or skipped tests. A failing test will appear in red letters. This particular failing result shows you both that the test ran as it should have and that the `hello.txt` file does not exist in the directory.
 
-To make the test pass, you will create a "hello.txt" file in this directory and then use 'inspec exec' to run the test. The output should show the test passing.
+To make the test pass, you will create a `hello.txt` file in this directory and then use 'inspec exec' to run the test. The output should show the test passing.
 
 <ol start="1">
    <li>Touch the file in order to create it:</li>
@@ -134,7 +133,7 @@ $ touch hello.txt
 $ inspec exec hello_spec.rb
 ```
 <ol start="2">
- <li>Run the control file test again, using "inspec exec".</li>
+ <li>Run the control file test again, using `inspec exec`.</li>
 </ol>
 
 ```bash
@@ -153,9 +152,11 @@ $ inspec exec hello_spec.rb
 
 ## Add a second test
 
-An InSpec control may contain more than one test. However, it is advisable that all of the tests in a single control connect to the subject of the control. Likewise, a profile can have more than one control, but all of these controls should relate directly to the purpose of the profile. In this excercise, you will edit the control file to include a second test that will look at the contents of a file. You will run the control file tests using "inspec exec" and see the new test fail. Then, you will write just enough code to make the both tests in the control file pass.
+An InSpec control may contain more than one test. However, it is advisable that all of the tests in a single control connect to the subject of the control. Likewise, a profile can have more than one control, but all of these controls should relate directly to the purpose of the profile. In this excercise, you will edit the control file to include a second test that will look at the contents of a file. You will run the control file tests using `inspec exec` and see the new test fail. Then, you will write just enough code to make the both tests in the control file pass.
 
-* Edit the first control, adding a second test that expects for the file.txt content to be "hello world"
+<ol start="1">
+   <li> Edit the first control, adding a second test that expects for the file.txt content to be "hello world"</li>
+</ol>
 
    ```ruby
    control "world-1.0" do
@@ -173,7 +174,9 @@ An InSpec control may contain more than one test. However, it is advisable that 
      end
    end
    ```
-* From the command line, run the test using "inspec exec", which should show the second test failing because the hello.txt file is currently empty.
+<ol start="2">
+   <li> From the command line, run the test using `inspec exec`, which should show the second test failing because the hello.txt file is currently empty.</li>
+</ol>
 
 ```bash
 $ inspec exec hello_spec.rb
@@ -189,7 +192,9 @@ $ inspec exec hello_spec.rb
    Test Summary: 1 successful, 1 failures, 0 skipped
 ```
 
-* Add the expected phrase "hello world" into the file and re-run the tests using "inspec exec".  This time, you should see both tests pass.
+<ol start="3">
+   <li>Add the expected phrase "hello world" into the file and re-run the tests using `inspec exec`. This time, you should see both tests pass.</li>
+</ol>
 
 ```bash
 $ echo "hello world" > hello.text
@@ -211,17 +216,24 @@ $ inspec exec hello_spec.rb
 
 ##Scan a remote system
 
-While InSpec can be used to verify that your local system conforms to your specifications, you can also use it to test your remote systems.  In this exercise, you will create a virtual machine and scan it with your hello_spec.rb control, writing just enough code to make the tests pass on the remote virtual machine.
+While InSpec can be used to verify that your local system conforms to your specifications, you can also use it to test your remote systems. In this exercise, you will create a virtual machine and scan it with your hello_spec.rb control, writing just enough code to make the tests pass on the remote virtual machine.
 
-If you have not already done so, download and install both VirtualBox and Vagrant.  VirtualBox is software for creating virtual machines.  Vagrant is software for configuring virtual machines.
+If you have not already done so, download and install both VirtualBox and Vagrant. VirtualBox is software for creating virtual machines. Vagrant is software for configuring virtual machines.
 
-Once you have VirtualBox and Vagrant installed, you will move to your learn-inspec command line prompt and initalize a virtual machine using vagrant.  To do this, enter "vagrant init bento/ubuntu-14.04" into the command line, which will initialize a virtual machine and place a configuration file, called a "Vagrantfile", into the directory. Once the virtual machine is up and running, you will change the Vagrantfile file and restart the virtual machine using "vagrant up --provision". To run the virtual machine, run "vagrant up". "vagrant halt" will stop the virtual machine, and "vagrant destroy" will stop and remove a virtual machine from your system.
+Once you have VirtualBox and Vagrant installed, you will move to your learn-inspec command line prompt and initalize a virtual machine using vagrant. The workflow is to, enter `vagrant init bento/ubuntu-14.04` into the command line, which will initialize a virtual machine and place a configuration file, called a `Vagrantfile`, into the directory. Once the virtual machine is up and running, you will change the Vagrantfile file and restart the virtual machine using `vagrant up --provision`. To run the virtual machine, run `vagrant up`. `vagrant halt` will stop the virtual machine, and `vagrant destroy` will stop and remove a virtual machine from your system.
+
+<ol start="1">
+   <li>The workflow is to, enter `vagrant init bento/ubuntu-14.04` into the command line</li>
+</ol>
 
 ```bash
-  vagrant init bento/ubuntu-14.04
+# ~/learn-inspec
+$ vagrant init bento/ubuntu-14.04
 ```
-
-Open the Vagrantfile, which will be found in ~/learn-inspec/Vagrantfile, in your editor.  Delete the contents of the Vagrantfile and replace it with the following code:
+ <ol start="2">
+   <li>Open the Vagrantfile, which will be found in `~/learn-inspec/Vagrantfile`, in your editor. Delete the contents of the Vagrantfile and replace it with the following code:
+   </li>
+</ol>
 
 ```ruby
    # learn-inspec/Vagrantfile
@@ -248,16 +260,22 @@ Open the Vagrantfile, which will be found in ~/learn-inspec/Vagrantfile, in your
    end
 ```
 
-Restart the machine using the new Vagrantfile:
+<ol start="3">
+   <li>Restart the machine using the new Vagrantfile:</li>
+</ol>
 
 ```bash
 #~/learn-inspec
 $ vagrant up --provision
 ```
 
-Let's take a minute to explore your new virtual machine. By using, `vagrant global-status`, you are able to see all of virtual machines that are running on your system. This command provides the a uniqe id, assigned name, provider(hypervisor), state, and directory for each machine:
+<ol start="4">
+   <li>Let's take a minute to explore your new virtual machine. By using, `vagrant global-status`, you are able to see all of virtual machines that are running on your system. This command provides the a uniqe id, assigned name, provider(hypervisor), state, and directory for each machine:
+   </li>
+</ol>
 
 ```bash
+# ~/learn-inspec
 $ vagrant global-status
 
 id       name   provider   state   directory
@@ -266,23 +284,27 @@ b8548e4  server    virtualbox running /Users/yourname/learn-inspec
 
 ```
 
-The virtual machine that you just created should be named "server".  Next, look up the forwarded port information and make note of it, because you will need this number later in this exercise. Your port information will look like this, but perhaps with different guest and host numbers. Please make note of the four digit host number:
+The virtual machine that you just created should be named "server".
+<ol start="5">
+   <li>Next, look up the forwarded port information and make note of it, because you will need this number later in this exercise. Your port information will look like this, but perhaps with different guest and host numbers. Please make note of the four digit host number:</li>
+</ol>
 
 ```bash
+# ~/learn-inspec
 $ vagrant port server
 
-The forwarded ports for the machine are listed below. Please note that
-these values may differ from values configured in the Vagrantfile if the
-provider supports automatic port collision detection and resolution.
+The forwarded ports for the machine are listed below. Please note that these values may differ from values configured in the Vagrantfile if the provider supports automatic port collision detection and resolution.
 
     22 (guest) => 2222 (host)
 
 ```
 
-To enter your virtual machine, you will use the "vagrant ssh NAME" command, in this case,
-"vagrant ssh server".  To close the virtual machine, just type `exit`.
+<ol start="6">
+   <li>To enter your virtual machine, you will use the `vagrant ssh NAME` command, in this case, `vagrant ssh server`. To close the virtual machine, just type `exit`.</li>
+</ol>
 
 ```bash
+# ~/learn-inspec
 $ vagrant ssh server
 Welcome to Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-112-generic x86_64)
 
@@ -299,11 +321,15 @@ Welcome to Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-112-generic x86_64)
     https://landscape.canonical.com/
 
 Last login: Mon May  8 17:21:37 2017 from 10.0.2.2
-$ existence
+
 ```
-Now that you have confirmed that your virtual machine is up and running, try testing it with the control that you wrote earlier in this module. You will run the control using "inspec exec" and passing a "target" option, in this case, it will be **"--target=ssh://vagrant:vagrant@localhost:YOUR-PORT-NUM"**.
+
+<ol start="7">
+   <li>Now that you have confirmed that your virtual machine is up and running, try testing it with the control that you wrote earlier in this module. You will run the control using `inspec exec` and passing a `target` option, in this case, it will be `--target=ssh://vagrant:vagrant@localhost:YOUR-PORT-NUM`. After running the control, you should see both tests failing. The control failed because neither the "hello.text" file nor its contents exist on the virtual machine.</li>
+</ol>
 
 ```bash
+# ~/learn-inspec
 $ inspec exec hello_spec.rb --target=ssh://vagrant:vagrant@localhost:2222
 
   Target:  ssh://vagrant@localhost:2222
@@ -315,14 +341,14 @@ $ inspec exec hello_spec.rb --target=ssh://vagrant:vagrant@localhost:2222
        expected nil to include "hello world", but it does not respond to `include?`
 ```
 
-Oh, no!  Both controls failed!
 
-The controls failed because neither the "hello.text" file nor its contents exist on the virtual machine.
-To remedy this, open up your virtual machine and create both the file and its contents. Exit your virtual machine and, in your learn-inspec command line, re-run the control targeting your virtual machine with "inspec exec hello_spec.rb --target=ssh://vagrant:vagrant@localhost:YOUR-PORT-NUM."
-
-You should see both of controls succeeding, meaning that the control both found the file specified in the first test and the file contents specified in the second test.
+<ol start="8">
+   <li>To remediate the failing tests, open up your virtual machine and create both the file and its contents. Then, exit your virtual machine.
+   </li>
+</ol>
 
 ```bash
+# ~/learn-inspec
 $ vagrant ssh server
 
 Welcome to Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-112-generic x86_64)
@@ -341,6 +367,14 @@ Welcome to Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-112-generic x86_64)
 
 $ vagrant@server echo "hello world" > hello.txt
 $ vagrant@server exit
+```
+
+<ol start ="9">
+   <li>in your learn-inspec command line, re-run the control targeting your virtual machine with `inspec exec hello_spec.rb --target=ssh://vagrant:vagrant@localhost:YOUR-PORT-NUM.`You should see both of controls succeeding, meaning that the control both found the file specified in the first test and the file contents specified in the second test.</li>
+</ol>
+
+```ruby
+# ~/learn-inspec
 $ inspec exec hello_spec.rb --target=ssh://vagrant:vagrant@localhost:2222
 
   Target:  ssh://vagrant@localhost:2222
@@ -353,9 +387,11 @@ $ inspec exec hello_spec.rb --target=ssh://vagrant:vagrant@localhost:2222
   Test Summary: 2 successful, 0 failures, 0 skipped
 ```
 
-InSpec offers you the ability to run your tests in a variety of environments,  can not only test local machines and remote vagrant machines, but also other sorts of remote machines, such as with SSH or WinRM.  Here are a few examples of how to test different remote environments:
+## Testing in Different Environments
 
-**Test a machine locally:**
+InSpec offers you the ability to run your tests in a variety of environments,  can not only test local machines and remote vagrant machines, but also other sorts of remote machines, such as with SSH or WinRM. Here are a few examples of how to test different remote environments:
+
+**Test Locally:**
 
 ```bash
 inspec exec test.rb

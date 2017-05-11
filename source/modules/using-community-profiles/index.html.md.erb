@@ -13,12 +13,9 @@ headings: [
   { label: '2. Skip the sshd-48 control', href: '#step2' },
 ]
 ---
-
 INTRODUCTION
 
 [START_BOX]
-
-
 
 Prerequisites:
 
@@ -61,9 +58,11 @@ Test Kitchen is a tool for testing code by simulating different environments. Te
 
 In this lesson you will use first use Test Kitchen to write a test for the ssh-baseline community profile, watch it fail, and then write just enough code to make it pass. You will learn about using communities profiles community profile, Test Kitchen, and testing with InSpec. Later, you will use InSpec to alter the way that the community profile works.
 
-To get Test Kitchen up and running on your workstation, first navigate to your `learn-chef` directory, install Test Kitchen with `gem install test-kitchen` and verify the installation with `kitchen version`.
+Chef cookbooks are the fundamental unit of configuration and policy distribution in Chef.  A cookbook defines a scenario and contains everything that is required to support that scenario. Learn more [about cookbooks](https://docs.chef.io/cookbooks.html).  In this scenario, you will quickly generate a cookbook and make a few changes to it before moving on to InSpec and Chef Supermarket community profiles.
 
-```shell
+1. To get Test Kitchen up and running on your workstation, first navigate to your `learn-chef` directory, install Test Kitchen with `gem install test-kitchen` and verify the installation with `kitchen version`.
+
+```bash
 $ cd learn-chef
 learn-chef$ gem install test-kitchen
   Successfully installed test-kitchen-1.16.0
@@ -72,14 +71,12 @@ learn-chef$ kitchen version
   Test Kitchen version 1.15.0
 ```
 
-Chef cookbooks are the fundamental unit of configuration and policy distribution in Chef.  A cookbook defines a scenario and contains everything that is required to support that scenario. Learn more [about cookbooks](https://docs.chef.io/cookbooks.html).
+2. Next, generate a Chef cookbook with `chef generate cookbook kitchen\_inspec`.
 
-In this scenario, you will quickly generate a cookbook and make a few changes to it before moving on to InSpec and Chef Supermarket community profiles.  You will generate a Chef cookbook with `chef generate cookbook kitchen-inspec`.
-
-```shell
-chef generate cookbook kitchen-inspec
+```bash
+chef generate cookbook kitchen_inspec
 Hyphens are discouraged in cookbook names as they may cause problems with custom resources. See https://docs.chef.io/ctl_chef.html#chef-generate-cookbook for more information.
-Generating cookbook kitchen-inspec
+Generating cookbook kitchen_inspec
 - Ensuring correct cookbook file content
 - Committing cookbook files to git
 - Ensuring delivery configuration
@@ -88,7 +85,7 @@ Generating cookbook kitchen-inspec
 - Adding build cookbook to feature branch
 - Merging delivery content feature branch to master
 
-Your cookbook is ready. Type `cd kitchen-inspec` to enter it.
+Your cookbook is ready. Type `cd kitchen_inspec` to enter it.
 
 There are several commands you can run to get started locally developing and testing your cookbook.
 Type `delivery local --help` to see a full list.
@@ -102,16 +99,16 @@ If you'd prefer to dive right in, the default recipe can be found at:
 recipes/default.rb
 ```
 
-Next, navigate to the kitchen-inspec directory that you just created `cd kitchen-inspec`.  You will see that an active git repo has been created for this project.
+3. Navigate to the kitchen\_inspec directory that you just created `cd kitchen\_inspec`.  You will see that an active git repo has been created for this project.
 
-```shell
-learn-inspec$ cd kitchen-inspec
-kitchen-inspec git:(master)$
+```bash
+learn-inspec$ cd kitchen_inspec
+kitchen_inspec git:(master)$
 ```
 
-As part of generating a cookbook, a `.kitchen.yml` is created in the `kitchen-inspec` directory. You will use this file to define what programs are required for running Test Kitchen. Open the `.kitchen.yml` in your editor.
+4. As part of generating a cookbook, a `.kitchen.yml` is created in the `kitchen\_inspec` directory. You will use this file to define what programs are required for running Test Kitchen. Open the `.kitchen.yml` in your editor.
 
-```shell
+```bash
 driver:
   name: vagrant
 
@@ -132,7 +129,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[kitchen-inspec::default]
+      - recipe[kitchen_inspec::default]
     verifier:
       inspec_tests:
         - test/smoke/default
@@ -147,9 +144,9 @@ You will see a short metadata list.  The elements of the `.kitchen.yml` file are
    1. "platforms": the list of operating systems that you will use for running your tests.
    1. "suites": Defines what we will test.  The run-list and node attributes that will be put onto the platforms.
 
-To familiarize yourself with the `.kitchen.yml` file, make a few changes to remove the centos-7.2 platform and change the ubuntu instance to 14.04.
+5. To familiarize yourself with the `.kitchen.yml` file, make a few changes to remove the centos-7.2 platform and change the ubuntu instance to 14.04.
 
-    ```shell
+    ```bash
     driver:
       name: vagrant
 
@@ -169,17 +166,16 @@ To familiarize yourself with the `.kitchen.yml` file, make a few changes to remo
     suites:
       - name: default
         run_list:
-          - recipe[kitchen-inspec::default]
+          - recipe[kitchen_inspec::default]
         verifier:
           inspec_tests:
             - test/smoke/default
         attributes:
     ```
-Great!  Now it is time to get the virtual machine up and running.  You will implement your changes by running `kitchen create` to spin up this instance of the ubuntu-14.04. Then you should enter `kitchen list` to view the machines that Test Kitchen has set up. Notice that it has a running instance, default-ubuntu-1404. From the command line make a file that we will use to log our output, `touch verify.txt` and direct the log information to this file with,  `kitchen verify > verify.txt`.
 
-Finally, look at contents of the verify.txt file using `cat verify.txt`. You will notice that Test Kitchen uses InSpec tests and targets a vagrant instance at forwarded port 2201. These default integration tests are located at `~/kitchen-inspec/test/smoke/default/default_test.rb`.
+7. Now it is time to get the virtual machine up and running.  You will implement your changes by running `kitchen create` to spin up this instance of the ubuntu-14.04.
 
-```shell
+```bash
 kitchen create
 -----> Starting Kitchen (v1.15.0)
 -----> Creating <default-ubuntu-1404>...
@@ -187,14 +183,27 @@ kitchen create
        ==> default: Importing base box 'bento/ubuntu-14.04'.....
        [...]
        [...]
-kitchen-inspec git:(master)$ ✗ kitchen list
+```
+
+8. Then you should enter `kitchen list` to view the machines that Test Kitchen has set up. Notice that it has a running instance, default-ubuntu-1404.
+
+```bash
+kitchen_inspec git:(master)$ ✗ kitchen list
 
    Instance             Driver   Provisioner  Verifier  Transport  Last Action  Last Error
    default-ubuntu-1404  Vagrant  ChefZero     Inspec    Ssh        Created      <None>
+```
 
-kitchen-inspec git:(master)$ ✗ touch verify.text
-kitchen-inspec git:(master)$ ✗ kitchen verify > verify.txt
-kitchen-inspec git:(master)$ ✗ cat verify.txt
+9. From the command line make a file that we will use to log our output, `touch verify.txt`. Then direct the log information to this file with,  `kitchen verify > verify.txt`.
+
+```bash
+kitchen_inspec git:(master)$ ✗ touch verify.text
+kitchen_inspec git:(master)$ ✗ kitchen verify > verify.txt
+```
+11. Finally, look at contents of the verify.txt file using `cat verify.txt`. You will notice that Test Kitchen uses InSpec tests and targets a vagrant instance at forwarded port 2201. These default integration tests are located at `~/kitchen\_inspec/test/smoke/default/default_test.rb`.
+
+```bash
+kitchen_inspec git:(master)$ ✗ cat verify.txt
 -----> Starting Kitchen (v1.15.0)
 -----> Setting up <default-ubuntu-1404>...
          [...]
@@ -234,8 +243,8 @@ InSpec allows you to make your own test and compliance profiles, but it also sup
 Now that you have all of the information that you need for implementing a community compliance profile. Including a community profile in your cookbook takes two steps, opening your `.kitchen.yml` file and including the ssh-baseline test as a recipe in your suites.
 
 * Open the `.kitchen.yml` file in your editor.  It should look like:
----
-[PRODNOTE Should be rendered as it looks on a workstation.]
+
+```bash
 driver:
   name: vagrant
 
@@ -256,6 +265,8 @@ suites:
     verifier:
       inspec_tests:
     attributes:
+
+```
 
 1. Add another line to the .kitchen.yml to pull in the community profile for ssh-baseline, which should look like:
 ----

@@ -321,7 +321,7 @@ Version: unknown
 Test Summary: 2 successful, 0 failures, 0 skipped
 ```
 
-##Example using the passwd resource
+## Using InSpec Shell on a Remote System
 
 For this part of the tutorial, you will need to log onto one of your Ubuntu 14.04 virtual machines.
 
@@ -410,15 +410,57 @@ The parts of this `passwd` entry are:
 - The user's home directory (`home`)  '/home/dir/'
 - The user's default command shell (`shell`)   '/bin/bash'
 
-You can retrieve summaries of all the passwd users with `passwd.entries` with home, gids, passwords, shells, uids, and users, all of which are valid accessors for passwd.
-You can list all the entries with `passwd.entries`. Another way to view all of the users in passwd is to use `passwd.lines`.  Not all of the keys in a passwd.entries are filterable, but `gids`, `homes`, `passwords`, `shells`, `uids`, and `users` may all be used as filtering criteria. To view the output of all of the user elements, try:
+Using the InSpec shell, you can retrieve summaries of all the passwd users with `passwd.entries`. Another way to view all of the users in passwd is to use `passwd.lines`. You can also search for specific components of an entry with home, gids, passwords, shells, uids, and users, all of which are valid accessors for passwd. Not all of the keys in a passwd.entries are filterable, but `gids`, `homes`, `passwords`, `shells`, `uids`, and `users` may all be used as filtering criteria. To view the output of all of the user elements, try:
 
-`passwd.gids`     `passwd.where{ gid == "1" }.entries`
-`passwd.homes`    `passwd.where{ user = "sbin" }.entries`
-`passwd.passwords` (if it shows 'x' they are stored in the shadow directory) `{passwd.where{ password == "x" }.entries`
-`passwd.shells`    `passwd.where{ shell = "bash"}.entries`
-`passwd.uids`      `passwd.where{ uid == "1"}.entries`
-`passwd.users`     `passwd.where{ users == "root"}.entries`
+```bash
+$ inspec> passwd.entries
+=> [#<struct
+  user="root",
+  password="x",
+  uid="0",
+  gid="0",
+  desc="root",
+  home="/root",
+  shell="/bin/bash",
+  count=nil,
+  usernames=nil,
+  username=nil,
+  content=nil>,
+:q
+```
+At the `:` enter return to continue examining the output and enter `q` to quit.
+
+```ruby
+# InSpec Shell
+passwd.gids
+passwd.where{ gid == "1" }.entries
+```
+
+```ruby
+# InSpec Shell
+passwd.homes
+passwd.where{ user = "sbin" }.entries
+```
+```ruby
+# InSpec Shell
+passwd.passwords # (if it shows 'x' they are stored in the shadow directory)
+{passwd.where{ password == "x" }.entries
+```
+```ruby
+# InSpec Shell
+passwd.shells
+passwd.where{ shell = "bash"}.entries
+```
+```ruby
+# InSpec Shell
+passwd.uids
+passwd.where{ uid == "1"}.entries
+```
+```ruby
+# InSpec Shell
+passwd.users
+passwd.where{ users == "root"}.entries
+```
 
 `params` may also be used instead of `entries` to view the results of filtering entire records. 'params' outputs a map of all the key/value pairs from the user information. However, you may sometimes need only one of the keys from a filtered user entr y, sometimes you may only need one key from the filtered list. For example, to retrieve all of the user ids of users with bash shells, try:
 
@@ -426,30 +468,18 @@ You can list all the entries with `passwd.entries`. Another way to view all of t
 
 Other resources that allow querying are `crontab`, `groups`, `packages`, `port`, `processes`, `ssl`, `users`, `xinetd`, and `docker`.  See the documentation for querying strategies.
 
-To manually enter a single test in the InSpec Shell command line:
-describe passwd do its('users') { should_not include 'forbidden_user' } end
+You can use InSpec Shell to manually enter a single test from the command line:
+```bash
+# InSpec Shell
+$ inspec> describe passwd do its('users') { should_not include 'forbidden_user' } end
+```
 
 Use ';' to chain multple tests in a single shell line:
-describe passwd.uids(0) do its('users') { should cmp 'root' } ;
+```bash
+# InSpec Shell
+$ inspec> describe passwd.uids(0) do its('users') { should cmp 'root' } ;
  its('entries.length') { should eq 1 } end
-
- Use && for a conditional test, run the second test only of the first passes.
-
-
-[END_BOX]
-
-[START_BOX]
-
-## Use the shell to examine a remote system
-
-* `inspec shell` with a remote target
---target ssh://user:pass@host:port
-* Use `sshd_config` to look at the config
-`sshd_config`
-
-describe sshd_config do ; its('Protocol') { should cmp 2 } ; end
-
-* Manually type in a control and show out the output is the same as if you were `inspec exec` a profile
+```
 
 [END_BOX]
 
