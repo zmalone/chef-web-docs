@@ -10,6 +10,7 @@ track_class: card-light-brown
 category: Admin
 order: 9
 modules:
+- compliance-as-code-inspec-1-0
 - hp-compliance
 tags: [compliance,beginner]
 video_url: 'https://player.vimeo.com/video/215914828'
