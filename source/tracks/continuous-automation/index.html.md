@@ -26,4 +26,9 @@ social_share:
     <<: *shared
   twitter:
     post: "`Compliance Automation` putting me on track to spec reqs as code using InSpec, detect problems, & more. You on track?."
+related_tracks:
+- infrastructure-automation
+- integrated-compliance
+- local-development-and-testing
+- writing-cookbooks
 ---

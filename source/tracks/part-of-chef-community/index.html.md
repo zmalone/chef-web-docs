@@ -26,4 +26,8 @@ social_share:
     <<: *shared
   twitter:
     post: "Creating a Chef community in my org & connecting with other Chefs. `Become Part of Chef Community` track showing how: "
+related_tracks:
+- getting-started
+- infrastructure-automation
+- devops-transformation
 ---

@@ -64,7 +64,8 @@ module.exports = {
       'NODE_ENV',
       'API_ENDPOINT',
       'SEGMENT_API_KEY',
-      'CHEF_LAB_URL'
+      'CHEF_LAB_URL',
+      'DISABLE_SOCIAL'
     ])
   ]
 };

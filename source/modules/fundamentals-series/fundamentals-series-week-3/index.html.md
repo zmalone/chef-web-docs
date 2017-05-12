@@ -27,7 +27,7 @@ After viewing this video you will be able to:
 
 ## Video
 
-<iframe width="560" height="315" src="//www.youtube.com/embed/nQogf89hgnM" frameborder="0" allowfullscreen></iframe>
+<iframe width="877" height="493" src="//www.youtube.com/embed/nQogf89hgnM" frameborder="0" allowfullscreen></iframe>
 
 ## Slides
 

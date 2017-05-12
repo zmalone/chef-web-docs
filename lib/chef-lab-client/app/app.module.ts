@@ -31,6 +31,7 @@ import { ProgressService } from './services/progress.service'
 import { UserProfileComponent } from './components/user-profile/user-profile.component'
 import { UserDisplayNameComponent } from './components/user-display-name/user-display-name.component'
 import { UserProfileLinkComponent } from './components/user-profile-link/user-profile-link.component'
+import { WelcomeRibbonComponent } from './components/welcome-ribbon/welcome-ribbon.component'
 import { MaterialModule } from '@angular/material'
 import { ModuleFilterService } from './services/module-filter.service'
 import { ModuleDisplayDirective } from './directives/module-display/module-display.directive'
@@ -88,6 +89,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     ChefLabProvisionerDirective,
     UserDisplayNameComponent,
     UserProfileLinkComponent,
+    WelcomeRibbonComponent,
   ],
   imports: [
     routes,

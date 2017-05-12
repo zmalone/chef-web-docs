@@ -28,7 +28,7 @@ After viewing this video you will be able to:
 
 ## Video
 
-<iframe width="560" height="315" src="//www.youtube.com/embed/KQEj9rZwLb8" frameborder="0" allowfullscreen></iframe>
+<iframe width="877" height="493" src="//www.youtube.com/embed/KQEj9rZwLb8" frameborder="0" allowfullscreen></iframe>
 
 ## Slides
 
@@ -42,4 +42,4 @@ Before moving on to the next part, you may want to get a little more information
 * explain the basic security model of Chef.
 * explain the concepts of the resource collection.
 
-<iframe width="560" height="315" src="//www.youtube.com/embed/grvlVNvCU9w" frameborder="0" allowfullscreen></iframe>
+<iframe width="877" height="493" src="//www.youtube.com/embed/grvlVNvCU9w" frameborder="0" allowfullscreen></iframe>

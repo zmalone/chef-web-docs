@@ -25,4 +25,8 @@ social_share:
     <<: *shared
   twitter:
     post: "Wrapping up `Administering a Chef Installation` track showing how Chef server components work together. Dig in at: "
+related_tracks:
+- infrastructure-automation
+- continuous-automation
+- integrated-compliance
 ---

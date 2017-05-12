@@ -31,4 +31,9 @@ social_share:
     <<: *shared
   twitter:
     post: "Viewing `Extending Chef` track to learn its out-of-box capabilities: Ohai plugins, multiplatform cookbooks, more: "
+related_tracks:
+- infrastructure-automation
+- local-development-and-testing
+- writing-cookbooks
+- part-of-chef-community
 ---
