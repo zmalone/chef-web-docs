@@ -33,5 +33,5 @@ related_tracks:
 - infrastructure-automation
 - writing-cookbooks
 - extending-chef
-- compliance-automation
+# - compliance-automation
 ---

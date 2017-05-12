@@ -31,7 +31,7 @@ social_share:
     post: "Using continuous automation to fix cookbook compliance issues, thanks to Learn Chef's `Integrated Compliance` track."
 related_tracks:
 - infrastructure-automation
-- compliance-automation
+# - compliance-automation
 - local-development-and-testing
 - continuous-automation
 ---
