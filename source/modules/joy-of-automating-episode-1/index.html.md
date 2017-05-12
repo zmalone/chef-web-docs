@@ -14,7 +14,7 @@ tags: [video]
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 
-In this episode we focus on taking the manual installation instructions found in [this tutorial](https://www.digitalocean.com/community/modules/how-to-install-apache-tomcat-8-on-centos-7) and create a recipe that does the work for us.
+In this episode we focus on taking the manual installation instructions found in [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-centos-7) and create a recipe that does the work for us.
 
 <iframe width="877" height="493" src="https://www.youtube.com/embed/FOYc_SGWE-0?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq" frameborder="0" allowfullscreen></iframe>
 
