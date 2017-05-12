@@ -61,93 +61,100 @@ In this lesson you will use first use Test Kitchen to write a test for the ssh-b
 
 Chef cookbooks are the fundamental unit of configuration and policy distribution in Chef.  A cookbook defines a scenario and contains everything that is required to support that scenario. Learn more [about cookbooks](https://docs.chef.io/cookbooks.html).  In this scenario, you will quickly generate a cookbook and make a few changes to it before moving on to InSpec and Chef Supermarket community profiles.
 
-1. To get Test Kitchen up and running on your workstation, first navigate to your `learn-chef` directory, install Test Kitchen with `gem install test-kitchen` and verify the installation with `kitchen version`.
+1. Get Test Kitchen up and running on your workstation.
 
-```bash
-$ cd learn-chef
-learn-chef$ gem install test-kitchen
-  Successfully installed test-kitchen-1.16.0
-  1 gem installed
-learn-chef$ kitchen version
-  Test Kitchen version 1.15.0
-```
-
-2. Next, generate a Chef cookbook with `chef generate cookbook kitchen\_inspec`.
-
-```bash
-chef generate cookbook kitchen_inspec
-Hyphens are discouraged in cookbook names as they may cause problems with custom resources. See https://docs.chef.io/ctl_chef.html#chef-generate-cookbook for more information.
-Generating cookbook kitchen_inspec
-- Ensuring correct cookbook file content
-- Committing cookbook files to git
-- Ensuring delivery configuration
-- Ensuring correct delivery build cookbook content
-- Adding delivery configuration to feature branch
-- Adding build cookbook to feature branch
-- Merging delivery content feature branch to master
-
-Your cookbook is ready. Type `cd kitchen_inspec` to enter it.
-
-There are several commands you can run to get started locally developing and testing your cookbook.
-Type `delivery local --help` to see a full list.
-
-Why not start by writing a test? Tests for the default recipe are stored at:
-
-test/smoke/default/default_test.rb
-
-If you'd prefer to dive right in, the default recipe can be found at:
-
-recipes/default.rb
-```
-
-3. Navigate to the kitchen\_inspec directory that you just created `cd kitchen\_inspec`.  You will see that an active git repo has been created for this project.
-
-```bash
-learn-inspec$ cd kitchen_inspec
-kitchen_inspec git:(master)$
-```
-
-4. As part of generating a cookbook, a `.kitchen.yml` is created in the `kitchen\_inspec` directory. You will use this file to define what programs are required for running Test Kitchen. Open the `.kitchen.yml` in your editor.
-
-```bash
-driver:
-  name: vagrant
-
-provisioner:
-  name: chef_zero
-  # You may wish to disable always updating cookbooks in CI or other testing environments.
-  # For example:
-  #   always_update_cookbooks: <%= !ENV['CI'] %>
-  always_update_cookbooks: true
-
-verifier:
-  name: inspec
-
-platforms:
-  - name: ubuntu-16.04
-  - name: centos-7.2
-
-suites:
-  - name: default
-    run_list:
-      - recipe[kitchen_inspec::default]
-    verifier:
-      inspec_tests:
-        - test/smoke/default
-    attributes:
-```
-
-You will see a short metadata list.  The elements of the `.kitchen.yml` file are:
-
-   1. "driver" is how you will set up a virtual machine instance for your testing environment. The default is Vagrant.
-   1. "provisioner": the directions for running Chef. The default is chef_solo.
-   1. "verifier": You will see that "inspec" is the default program for verifying your tests.
-   1. "platforms": the list of operating systems that you will use for running your tests.
-   1. "suites": Defines what we will test.  The run-list and node attributes that will be put onto the platforms.
-
-5. To familiarize yourself with the `.kitchen.yml` file, make a few changes to remove the centos-7.2 platform and change the ubuntu instance to 14.04.
+    Navigate to your `learn-chef` directory, install Test Kitchen with `gem install test-kitchen` and verify the installation with `kitchen version`.
 
     ```bash
+    $ cd learn-chef
+    learn-chef$ gem install test-kitchen
+    Successfully installed test-kitchen-1.16.0
+    1 gem installed
+    learn-chef$ kitchen version
+    Test Kitchen version 1.15.0
+    ```
+1. Generate a Chef cookbook.
+
+    Use the command `chef generate cookbook kitchen_inspec`.
+
+    ```bash
+    $ chef generate cookbook kitchen_inspec
+    Generating cookbook kitchen_inspec
+    - Ensuring correct cookbook file content
+    - Committing cookbook files to git
+    - Ensuring delivery configuration
+    - Ensuring correct delivery build cookbook content
+    - Adding delivery configuration to feature branch
+    - Adding build cookbook to feature branch
+    - Merging delivery content feature branch to master
+
+    Your cookbook is ready. Type `cd kitchen_inspec` to enter it.
+
+    There are several commands you can run to get started locally developing and testing your cookbook.
+    Type `delivery local --help` to see a full list.
+
+    Why not start by writing a test? Tests for the default recipe are stored at:
+
+    test/smoke/default/default_test.rb
+
+    If you'd prefer to dive right in, the default recipe can be found at:
+
+    recipes/default.rb
+    ```
+
+1. Navigate to the `kitchen_inspec` directory that you just created `cd kitchen_inspec`.
+
+    You will see that an active git repo has been created for this project.
+
+    ```bash
+    learn-inspec$ cd kitchen_inspec
+    kitchen_inspec git:(master)$
+    ```
+
+1. As part of generating a cookbook, a `.kitchen.yml` is created in the `kitchen_inspec` directory.
+
+    You will use this file to define what programs are required for running Test Kitchen. Open the `.kitchen.yml` in an editor of your choice.
+
+    ```bash
+    driver:
+     name: vagrant
+
+    provisioner:
+     name: chef_zero
+     # You may wish to disable always updating cookbooks in CI or other testing environments.
+     # For example:
+     #   always_update_cookbooks: <%= !ENV['CI'] %>
+     always_update_cookbooks: true
+
+    verifier:
+     name: inspec
+
+    platforms:
+     - name: ubuntu-16.04
+     - name: centos-7.2
+
+    suites:
+     - name: default
+       run_list:
+         - recipe[kitchen_inspec::default]
+       verifier:
+         inspec_tests:
+           - test/smoke/default
+       attributes:
+    ```
+       You will see a short metadata list.  The elements of the `.kitchen.yml` file are:
+       1. "driver" is how you will set up a virtual machine instance for your testing environment. The default is Vagrant.
+       1. "provisioner": the directions for running Chef. The default is chef_solo.
+       1. "verifier": You will see that "inspec" is the default program for verifying your tests.
+       1. "platforms": the list of operating systems that you will use for running your tests.
+       1. "suites": Defines what we will test.  The run-list and node attributes that will be put onto the platforms.
+
+1. Familiarize yourself with the `.kitchen.yml` file.
+
+    Then, try making a few changes to remove the centos-7.2 platform and change the ubuntu instance to 14.04.
+
+    ```bash
+    #/kitchen_inspec/.kitchen.yml
     driver:
       name: vagrant
 
@@ -174,165 +181,348 @@ You will see a short metadata list.  The elements of the `.kitchen.yml` file are
         attributes:
     ```
 
-7. Now it is time to get the virtual machine up and running.  You will implement your changes by running `kitchen create` to spin up this instance of the ubuntu-14.04.
+1. Now get the virtual machine up and running with `kitchen create`.
 
-```bash
-kitchen create
------> Starting Kitchen (v1.15.0)
------> Creating <default-ubuntu-1404>...
-       Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'bento/ubuntu-14.04'.....
-       [...]
-       [...]
-```
+    Running `kitchen create` spins up an instance of the ubuntu-14.04.
 
-8. Then you should enter `kitchen list` to view the machines that Test Kitchen has set up. Notice that it has a running instance, default-ubuntu-1404.
+    ```bash
+    kitchen create
+    -----> Starting Kitchen (v1.15.0)
+    -----> Creating <default-ubuntu-1404>...
+          Bringing machine 'default' up with 'virtualbox' provider...
+          ==> default: Importing base box 'bento/ubuntu-14.04'.....
+          [...]
+          [...]
+    ```
 
-```bash
-kitchen_inspec git:(master)$ ✗ kitchen list
+1. Then you should enter `kitchen list` to view the machines that Test Kitchen has set up.
 
-   Instance             Driver   Provisioner  Verifier  Transport  Last Action  Last Error
-   default-ubuntu-1404  Vagrant  ChefZero     Inspec    Ssh        Created      <None>
-```
+    Notice that Test Kitchen already has a running instance, default-ubuntu-1404.
 
-9. From the command line make a file that we will use to log our output, `touch verify.txt`. Then direct the log information to this file with,  `kitchen verify > verify.txt`.
+    ```bash
+    kitchen_inspec git:(master)$ ✗ kitchen list
 
-```bash
-kitchen_inspec git:(master)$ ✗ touch verify.text
-kitchen_inspec git:(master)$ ✗ kitchen verify > verify.txt
-```
-11. Finally, look at contents of the verify.txt file using `cat verify.txt`. You will notice that Test Kitchen uses InSpec tests and targets a vagrant instance at forwarded port 2201. These default integration tests are located at `~/kitchen\_inspec/test/smoke/default/default_test.rb`.
+      Instance             Driver   Provisioner  Verifier  Transport  Last Action  Last Error
+      default-ubuntu-1404  Vagrant  ChefZero     Inspec    Ssh        Created      <None>
+    ```
 
-```bash
-kitchen_inspec git:(master)$ ✗ cat verify.txt
------> Starting Kitchen (v1.15.0)
------> Setting up <default-ubuntu-1404>...
+1. From the command line make a file that we will use to log our output, `touch verify.txt`.
+
+    You can direct the log information into this file with, `kitchen verify > verify.txt`.
+
+    ```bash
+    kitchen_inspec git:(master)$ ✗ touch verify.text
+    kitchen_inspec git:(master)$ ✗ kitchen verify > verify.txt
+    ```
+
+1. Finally, look at contents of the verify.txt file using `cat verify.txt`.
+
+    You will notice that Test Kitchen uses InSpec tests and targets a vagrant instance at forwarded port 2201. These default integration tests are located at `~/kitchen_inspec/test/smoke/default/default_test.rb`.
+
+    ```bash
+    kitchen_spec git:(master)$ ✗ cat verify.txt
+    -----> Starting Kitchen (v1.15.0)
+    -----> Setting up <default-ubuntu-1404>...
          [...]
-       Finished setting up <default-ubuntu-1404> (0m0.00s).
------> Verifying <default-ubuntu-1404>...
-       Loaded
+   Finished setting up <default-ubuntu-1404> (0m0.00s).
+    -----> Verifying <default-ubuntu-1404>...
+   Loaded
 
-Target:  ssh://vagrant@127.0.0.1:2201
+    Target:  ssh://vagrant@127.0.0.1:2201
 
 
-  User root
-     ✔  should exist
-     ↺  This is an example test, replace with your own test.
-  Port 80
-     ✔  should not be listening
-     ↺  This is an example test, replace with your own test.
+      User root
+        ✔  should exist
+        ↺  This is an example test, replace with your own test.
+      Port 80
+        ✔  should not be listening
+        ↺  This is an example test, replace with your own test.
 
-Test Summary: 2 successful, 0 failures, 2 skipped
-       Finished verifying <default-ubuntu-1404> (0m0.44s).
------> Kitchen is finished. (0m15.86s)
-
+      Test Summary: 2 successful, 0 failures, 2 skipped
+          Finished verifying <default-ubuntu-1404> (0m0.44s).
+      -----> Kitchen is finished. (0m15.86s)
 ```
 
-##Add a Chef Supermarket Community Profile
+## Add a Chef Supermarket Community Profile
 
-InSpec allows you to make your own test and compliance profiles, but it also supports the use of test and compliance profiles created by Chef community members. These are found on the [Chef Supermarket](https://supermarket.chef.io/) under the tools menu. InSpec also allows you to use the command line to learn about which community profiles are available and how to use them. In this exercise you will first discover and then implement the   `ssh-baseline` community profile.
+InSpec allows you to make your own test and compliance profiles, but it also supports the use of test and compliance profiles created by Chef community members. These are found on the [Chef Supermarket](https://supermarket.chef.io/) under the tools menu.
 
-    To find information about the `ssh-baseline` profile from the command line follow these steps:
-        * `inspec help` This command provides a list of InSpec options. These may also be used for narrowing down help topics. You will want help with "supermarket".
-        * `inspec supermarket help` To see the list of commands for using supermarket.
-        * `inspec supermarket profiles` This provides a list of compliance profiles that are available through the Chef Supermarket.
-        * `inspec supermarket info dev-sec/ssh-baseline` This provides information about this particular profile:
-            + name:   ssh-baseline
-            + owner:  dev-sec
-            + url:    https://github.com/dev-sec/ssh-baseline
+You can use InSpec commands to learn about  community profiles and how to use them. In this exercise you will use the command line to first discover and then implement the `ssh-baseline` community profile.
 
-Now that you have all of the information that you need for implementing a community compliance profile. Including a community profile in your cookbook takes two steps, opening your `.kitchen.yml` file and including the ssh-baseline test as a recipe in your suites.
+1. `inspec help` provides a list of InSpec commands.
 
-* Open the `.kitchen.yml` file in your editor.  It should look like:
+    These are the broader inspec commands, you will need to look at "supermarket".
 
-```bash
-driver:
-  name: vagrant
+    ```bash
+    # learn-inspec
+    $ inspec help
 
-provisioner:
-  name: chef_zero
-  always_update_cookbooks: true
+    Commands:
+    inspec archive PATH                # archive a profile to tar.gz (default) ...
+    inspec artifact SUBCOMMAND ...     # Sign, verify and install artifacts
+    inspec check PATH                  # verify all tests at the specified PATH
+    inspec compliance SUBCOMMAND ...   # Chef Compliance commands
+    inspec detect                      # detect the target OS
+    inspec env                         # Output shell-appropriate completion co...
+    inspec exec PATHS                  # run all test files at the specified PATH.
+    inspec help [COMMAND]              # Describe available commands or one spe...
+    inspec init TEMPLATE ...           # Scaffolds a new project
+    inspec json PATH                   # read all tests in PATH and generate a ...
+    inspec shell                       # open an interactive debugging shell
+    inspec supermarket SUBCOMMAND ...  # Supermarket commands
+    inspec vendor PATH                 # Download all dependencies and generate...
+    inspec version                     # prints the version of this tool
 
-verifier:
-  name: inspec
+    Options:
+      l, [--log-level=LOG_LEVEL]       # Set the log level: info (default), debug, warn, error
+      [--log-location=LOG_LOCATION]  # Location to send diagnostic log messages to. (default: STDOUT or STDERR)
+      [--diagnose], [--no-diagnose]  # Show diagnostics (versions, configurations)
+    ```
 
-platforms:
-  - name: ubuntu-16.04
+1. Use `inspec supermarket help` to view supermarket commands.
 
-suites:
-  - name: default
-    run_list:
-      - recipe[learning_inspec::default]
+    ```bash
+    # learn-inspec
+    $ inspec supermarket help
+
+    Commands:
+    inspec supermarket exec PROFILE    # execute a Supermarket profile
+    inspec supermarket help [COMMAND]  # Describe subcommands or one specific subcommand
+    inspec supermarket info PROFILE    # display Supermarket profile details
+    inspec supermarket profiles        # list all available profiles in Chef Supermarket
+    ```
+
+1. `inspec supermarket profiles`
+
+    provides a list of compliance profiles that are available through the Chef Supermarket.
+
+    ```bash
+    # learn-inspec
+    $ inspec supermarket profiles
+
+    == Available profiles:
+
+      * apache2-compliance-test-tthompson thompsontelmate/apache2-compliance-test-tthompson
+      * Apache DISA STIG som3guy/apache-disa-stig
+      * chef-alfresco-inspec-mysql alfresco/chef-alfresco-inspec-mysql
+      * chef-alfresco-inspec-tomcat alfresco/chef-alfresco-inspec-tomcat
+      * chef-client-hardening sliim/chef-client-hardening
+      * CIS Docker Benchmark dev-sec/cis-docker-benchmark
+      * CVE-2016-5195 ndobson/cve-2016-5195
+      * DevSec Apache Baseline dev-sec/apache-baseline
+      * DevSec Linux Baseline dev-sec/linux-baseline
+      * DevSec Linux Patch Baseline dev-sec/linux-patch-baseline
+      * DevSec MySQl Baseline dev-sec/mysql-baseline
+      * DevSec Nginx Baseline dev-sec/nginx-baseline
+      * DevSec PHP Baseline dev-sec/php-baseline
+      * DevSec PostgreSQL Baseline dev-sec/postgres-baseline
+      * DevSec SSH Baseline dev-sec/ssh-baseline
+      * DevSec SSL/TLS Baseline dev-sec/ssl-basline
+      * DevSec Windows Baseline dev-sec/windows-baseline
+      * DevSec Windows Patch Baseline dev-sec/windows-patch-baseline
+      * EC2 Instance - InSpec Profile alexpop/ec2-instance-profile
+      * inspec_java awim/inspec_java
+      * inspec_oracledb awim/inspec_oracledb
+      * profile-test bigbam505/profile-test
+      * RHEL6 STIG paulczar/rhel6-stig
+      * SSL Certificate - InSpec Profile alexpop/ssl-certificate-profile
+      * /tmp Compliance Profile nathenharvey/tmp-compliance-profile
+      * utils alfresco/utils
+    ```
+
+1. `inspec supermarket info dev-sec/ssh-baseline`
+
+    This provides information about this particular profile:
+
+    ```bash
+    # learn-inspec
+    $ inspec supermarket info dev-sec/ssh-baseline
+
+    name:   ssh-baseline
+    owner:  dev-sec
+    url:    https://github.com/dev-sec/ssh-baseline
+
+    description:   SSH compliance profile, used for Security + DevOps. More information is available at http://dev-sec.io
+    ```
+
+
+    Now that you have all of the information that you need for implementing a community compliance profile. Including a community profile in your cookbook takes two steps, opening your `.kitchen.yml` file and including the ssh-baseline test as a recipe in your suites.
+
+1. Open the `.kitchen.yml` file in your editor.
+
+    It should look like:
+
+    ```bash
+    # kitchen_inspec
+    driver:
+      name: vagrant
+
+    provisioner:
+      name: chef_zero
+      always_update_cookbooks: true
+
     verifier:
-      inspec_tests:
-    attributes:
+      name: inspec
 
-```
+    platforms:
+      - name: ubuntu-16.04
+
+    suites:
+      - name: default
+        run_list:
+          - recipe[learning_inspec::default]
+        verifier:
+          inspec_tests:
+        attributes:
+
+       ```
 
 1. Add another line to the .kitchen.yml to pull in the community profile for ssh-baseline, which should look like:
 
-```
-suites:
-- name: default
-  run_list:
-    - recipe[learning_inspec::default]
-  verifier:
-    inspec_tests:
-      - name: dev-sec/ssh-baseline
-      - url: https://github.com/dev-sec/ssh-baseline
-  attributes:
-```
+    ```bash
+    # kitchen_inspec/.kitchen.yml
+    suites:
+     - name: default
+      run_list:
+        - recipe[learning_inspec::default]
+      verifier:
+        inspec_tests:
+          - name: dev-sec/ssh-baseline
+          - url: https://github.com/dev-sec/ssh-baseline
+      attributes:
+    ```
 
-* To see that the new profile is working, enter`kitchen verify`. You should see that the both the original test profile and the community profile are now included.
-* If you recall, you set up `kitchen verify` to log into `verify.txt`.  If you open `verify.txt` in your editor, or if you `cat verify.txt` onto your workstation screen, you will be able to examine the output. If you wished to look for a particular control,  “sshd-48” for example, you might run `cat verify.txt | grep sshd-48`
+1. To see that the new profile is working, enter`kitchen verify`.
+
+    You should see that the both the original test profile and the community profile are now included.
+
+    ```bash
+    #kitchen_inspec
+    $ kitchen verify
+
+    ```
+
+1. If you recall, you set up `kitchen verify` to log into `verify.txt`.
+
+    If you open `verify.txt` in your editor, or if you `cat verify.txt` onto your workstation screen, you will be able to examine the output. If you wished to look for a particular control,  “sshd-48” for example, you might run `cat verify.txt | grep sshd-48`
+
+    ```ruby
+    #learn-inspec
+    $ cat verify.txt
+    $ cat verify.txt | grep sshd-48
+    ```
+
 
 [END_BOX]
 
 [START_BOX]
 
 ##Make Local Changes to the Community Profile
-[PRODNOTE The instructions wanted "Words about how forking just to make a change sucks (the need to integrate upstream changes, etc. In other words, it can be difficult to keep up with changes to the original profile.)" While true, it is also irrelevant. I haven't used github in the inspec demos because it adds complexity without contributingto the goal of understanding InSpec]
 
 You can modify the community profiles to perform additional tests--or to skip specific ones. In this exercise, you will use InSpec to run the ssh-baseline profile instead of running it within a cookbook. To use InSpec for running a profile, you will remove the lines you added to the `.kitchen.yml`, create a custom InSpec profile, and run the profile using InSpec. Finally, you will add a control that skips the `sshd-48` control.
 
-* Remove the `ssh-baseline` profile from your `.kitchen.yml`
-* navigate to the directory with your directory. From the top level of that directory, create a custom profile with `inspec init profile profiles/test`.
+1. Remove the `ssh-baseline` profile from your `.kitchen.yml`
 
-* Modify the test profile to depend on the `ssh-baseline` profile by adding the following depends statement to the  `profiles/test/inspec.yml`:
+    ```bash
+    #kitchen_inspec/.kitchen.yml
+    driver:
+      name: vagrant
 
-```
-    name: profiles/test
-    title: InSpec Profile
-    maintainer: The Authors
-    copyright: The Authors
-    copyright_email: you@example.com
-    license: All Rights Reserved
-    summary: An InSpec Compliance Profile
-    version: 0.1.0
+    provisioner:
+      name: chef_zero
+      always_update_cookbooks: true
 
-    depends:
-        - name: dev-sec/ssh-baseline
-        - git: https://github.com/dev-sec/ssh-baseline
-```
-* Run 'inspec check'
-* Run
-* Modify profile to skip_control sshd-48, for example
-  * In other words, modify profiles/test/controls/example.rb like this:
+    verifier:
+      name: inspec
 
-  # encoding: utf-8
-  # copyright: 2015, The Authors
-  # license: All rights reserved
+    platforms:
+      - name: ubuntu-16.04
 
-  title 'sample section'
+    suites:
+      - name: default
+        run_list:
+          - recipe[learning_inspec::default]
+        verifier:
+          inspec_tests:
+        attributes:
+    ```
 
-  include_controls 'ssh-baseline' do
-    skip_control 'sshd-48'
-  end
+1. Navigate the learn-inspec directory.
 
-* `kitchen verify` should now not show that control being run
-  * To illustrate you can `kitchen verify > verify.txt` and then `cat verify.txt | grep sshd-48`. It should not return any output. You can also examine the text file manually.
-* Now that you know how to modify one control, you can modify Add words on how that control can then be copied into your profile with a new name, modified to your liking, etc.
-  * Not sure what was meant here. We can follow up. Essentially, I think the key point is that you can now further modify the custom profile by skipping additional controls or by adding more.
+    From the top level of learn-inspec, create a custom profile with `inspec init profile profiles/test`.
+
+    ```bash
+    #~/learn-inspec
+    $ inspec init profile profiles/testc
+
+    ```
+
+1. Modify the test profile to depend on the `ssh-baseline` profile.
+
+    Add the following depends statement to the `profiles/test/inspec.yml`:
+
+    ```ruby
+    #learn-inspec/profiles/test
+       name: test
+       title: InSpec Profile
+       maintainer: The Authors
+       copyright: The Authors
+       copyright_email: you@example.com
+       license: All Rights Reserved
+       summary: An InSpec Compliance Profile
+       version: 0.1.0
+
+       depends:
+         - name: dev-sec/ssh-baseline
+           url: https://github.com/dev-sec/ssh-baseline
+    ```
+
+1. Modify the control to include 'ssh-baseline' using an editor of your choice.
+
+    ```ruby
+    #learn-inspec/profiles/test
+    # ensure servers are hardened
+    include_controls 'ssh-baseline'
+    ```
+1. Run 'inspec check' to validate the control.
+
+    ```bash
+    #~/learn-inspec/profiles
+    $ inspec check test
+
+    Location:    TEST
+    Profile:     TEST
+    Controls:    2
+    Timestamp:   2017-05-12T09:22:06-07:00
+    Valid:       true
+
+    No errors or warnings
+
+    ```
+
+
+1. Modify the control to skip_control sshd-48.
+
+    edit profiles/test/controls/example.rb like this:
+
+    ```ruby
+    #learn-inspec/profiles/test/controls/example.rb
+
+    # change the ssh-baseline to skip ssh-48
+    include_controls 'ssh-baseline' do
+      skip_control 'sshd-48'
+    end
+    ```
+
+1. `kitchen verify` should now not show that control being run
+
+   To illustrate you can `kitchen verify > verify.txt` and then `cat verify.txt | grep sshd-48`. It should not return any output. You can also examine the text file manually.
+
+1. Now that you know how to modify one control, you can modify any control.
+
+    Add words on how that control can then be copied into your profile with a new name, modified to your liking, etc.
+
+    You can further modify the custom profile by skipping additional controls or by adding more.
 
 [END_BOX]
 
@@ -344,209 +534,5 @@ In this tutorial, you learned that using InSpec in combination with the larger C
 
 
 [TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
-
-[END_BOX]
-
-
-[START_BOX]
-
-##Create an InSpec profile
-
-Up until now, your InSpec file structure has been flat, meaning that you have created controls and files all in the same place. In this exercise, you will convert your stand-alone control into an InSpec profile, which is a useful framework for creating and storing InSpec test and compliance profiles, for the purpose of organizing controls to support dependency management and code reuse.  Each profile is a standalone structure with its own distribution and execution flow.
-
-In this exercise, you will create a profile for our hello_spec.rb control.  You will then learn to run our tests both locally and remotely by running our new profile.
-
-From your learn-inspec command line, view help for `inspec help init` to examine its usage.
-Next, enter `inspec init help profile` to view the use of profiles.
-Enter `inspec init profile HELLO` to create a profile
-
-View your working directory,`pwd`.
-And then view the contents of your working directory, using `tree`.
-You will see that the HELLO profile is a sort of directory.
-Move to the HELLO directory, 'cd HELLO' and view its contents with 'tree'.
-
-A profile must have both the inspec.yml, which has metadata describing the profile, and the controls directory, which contains all of the tests. The README.md, which explains the profile, its scope and usage, and its libraries directories, which is where all of the InSpec resource extensions would be located, are optional.
-
-1. cat README.md
-   cat controls (is a directory...but there is something in it!)
-1. cat controls/example.rb:
-```
-       encoding: utf-8
-      # copyright: 2015, The Authors
-      # license: All rights reserved
-
-      title 'sample section'
-
-      # you can also use plain tests
-      describe file('/tmp') do
-        it { should be_directory }
-      end
-
-      # you add controls here
-      control 'tmp-1.0' do                        # A unique ID for this control
-        impact 0.7                                # The criticality, if this control fails.
-        title 'Create /tmp directory'             # A human-readable title
-        desc 'An optional description...'
-        describe file('/tmp') do                  # The actual test
-          it { should be_directory }
-        end
-      end
-```
-1. cat inspec.yml
-```
-      name: PROFILE
-      title: InSpec Profile
-      maintainer: The Authors
-      copyright: The Authors
-      copyright_email: you@example.com
-      license: All Rights Reserved
-      summary: An InSpec Compliance Profile
-      version: 0.1.0
-```
-   A note on the inspec.yml.
-   inspec.yml--contains the metadata for your profile:
-
-        name: The projects name (REQUIRED).
-        title: The profile human-readable name.
-        maintainer: Who is responsible for keeping the profile up-to-date.
-        copyright: copyright holder.
-        copyright_email: support contact information for the profile, typically an email address.
-        license: The kind of license that the profile has.
-        summary: One line about the profile.
-        description: Mulitple line description of the profile
-        version: The profile version.
-        supports: What platforms the profile will target.
-         -  os-name ubuntu
-            release: 14.04
-        depends: The list of other profiles on which this profile depends.
-         -  name: inspec
-            path: /Users/username/inspec
-
-1. cat libraries (is an empty directory)
-
-1. Move the controls into the `controls` directory:
-   from the inspec/HELLO prompt:
-   'mv ~/inspec/hello_spec.rb ~/inspec/HELLO/controls/'
-   And then view the contents of the directory again, using `tree`:
-
-Volia! The hello_spec.rb control is now in the HELLO directory.
-
-1. cd .. back to the inspec directory
-1. Notice that 'hello.txt' is still in the ~/inspec directory.  The profile is used to test for the existence of the file outside of the directory in which the controls are situated.
-
-1. cd HELLO
-1. Open inspec.yml in your editor and cut the 'version' line.
-1. You will need to run the HELLO profile and its tests, from a higher-level directory. `cd .. ` and run will need `inspec check HELLO` to verify this control, show how it errors out with the missing version
-1. Run `inspec check HELLO` to test how the metadata works.  Read the inspec check HELLO line and note that it explains that the control failed because the profile version in the inspec.yml file is missing.
-```
-➜  inspec inspec check HELLO
-Location:    HELLO
-Profile:     HELLO
-Controls:    3
-Timestamp:   2017-04-12T13:55:45-07:00
-Valid:       false
-
-  ✖  HELLO/inspec.yml:0:0: Missing profile version in inspec.yml
-
-Summary:     1 errors, 0 warnings
-```
-The output to the command shows:
-   * the location of the tests
-   * the name of the profile used
-   * the total number of controls in the profile
-      * 1 control in HELLO/controls/example.rb
-      * 2 controls in HELLO/hello_spec.
-   * The time the tests in the controls were examined
-   * If the profile is valid.
-
-Add the version line back into the inspec.yml file, return to the learn-inspec directory and run `inspec check HELLO` again. The tests in the profile pass this time.
-
-Finally, run the hello_spec.rb control in the HELLO profile from the command line, with: `inspec exec HELLO/controls/hello_spec.rb`.
-
-[END_BOX]
-
-[START_BOX]
-
-##Scan for compliance
-
-* Add a new control to our profile that tests for SSH version using the sshd_config resource
-
-Add a new control to our profile that tests for SSH version using the sshd_config resource
-The sshd_config inspec audit resource tests the configuration data for the OpenSSH daemon located at `/etc/ssh/sshd_config` on Linux and Unix. sshd=(open)sshdaemon
-
-```
-# encoding: utf-8
-# copyright: 2015, The Authors
-# license: All rights reserved
-
-title 'TBD - sample section'
-
-# you add controls here
-control 'ssh-1.0' do                        # A unique ID for this control
-  impact 0.7                                # The criticality, if this control fails.
-  title 'TBD something about the title...'
-  desc 'Verify sshd is using protocol version 2'             # A human-readable title
-  describe sshd_config do
-    its('Protocol') { should cmp 2 }
-  end
-end
-```
-
-
-inspec check ~/inspec/hello
-
-```
-vagrant@vagrant:~/inspec$ inspec check hello
-Location:    hello
-Profile:     hello
-Controls:    4
-Timestamp:   2017-03-31T20:21:12+00:00
-Valid:       true
-
-No errors or warnings
-```
-
-
-inspec exec ~/inspec/hello/controls/ssh.rb
-
-vagrant@vagrant:~/inspec$ inspec exec ~/inspec/hello/controls/sshd.rb
-```
-Target:  local://
-
-  ✔  ssh-1.0: sshd-resource test
-     ✔  SSH Configuration Protocol should cmp == 2
-
-Profile Summary: 1 successful, 0 failures, 0 skipped
-Test Summary: 1 successful, 0 failures, 0 skipped
-```
-
-[END_BOX]
-
-[START_BOX]
-
-##Use attributes to make your profile more reusable
-
-What happens if you want to to run the same tests on machines with different content?  Or what if you have information that should not be stored in plain-text cookbooks, like user names or passwords?  For these cases, InSpec uses attributes to act in different ways, depending on different conditions.
-
-In this tutorial, you will use two virtual machines and put a hello.txt file onto each one--with slightly different content in each file on each machine.  Then you will add an attribute and a test to our InSpec framework, run the test, see it fail, and then modify the content on each machine so that the test will pass in the correct instance, but otherwise it will fail. Then [**if there is time**] you will modify the control to perform entirely different tests in different situations.
-
-* Create two ubuntu containers
-* File on container 1 contains "hello world"
-* File on container 2 contains "hello universe"
-* Run `inspec exec` against each, one succeeds, one fails
-* Modify profile/control to add a "role" attribute, and to change the expected message based on the role:
-
-  ```ruby
-if role == 'qa'
-  msg = 'hello world'
-else
-  msg = 'hello universe'
-end
-```
-
-  and then modify the control to use `msg` instead of hard-coded test.
-* Add attributes files, one for each role, containing the role attribute
-* Run `inspec exec` with the appropriate file passed in with `--attrs` and see them both succeed.
-* Further explanation and examples on how attributes might help reduce profile sprawl, etc.
 
 [END_BOX]

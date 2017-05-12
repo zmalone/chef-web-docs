@@ -462,17 +462,23 @@ passwd.where{ users == "root"}.entries
 
 `params` may also be used instead of `entries` to view the results of filtering entire records. 'params' outputs a map of all the key/value pairs from the user information. However, you may sometimes need only one of the keys from a filtered user entr y, sometimes you may only need one key from the filtered list. For example, to retrieve all of the user ids of users with bash shells, try:
 
-`passwd.where{ shell == "/bin/bash" }.uids`
+```bash
+# InSpec Shell
+$ passwd.where{ shell == "/bin/bash" }.uids
+```
+
 
 Other resources that allow querying are `crontab`, `groups`, `packages`, `port`, `processes`, `ssl`, `users`, `xinetd`, and `docker`.  See the documentation for querying strategies.
 
 You can use InSpec Shell to manually enter a single test from the command line:
+
 ```bash
 # InSpec Shell
 $ inspec> describe passwd do its('users') { should_not include 'forbidden_user' } end
 ```
 
 Use ';' to chain multple tests in a single shell line:
+
 ```bash
 # InSpec Shell
 $ inspec> describe passwd.uids(0) do its('users') { should cmp 'root' } ;
