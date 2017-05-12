@@ -35,6 +35,7 @@ export class UserProfileService {
       .concat(this._tokenService.validateToken)
       .concat(this.loadUserProfile.bind(this))
       .switchMap(this.identifyUser.bind(this))
+      .switchMap(this.syncMarketo.bind(this))
       .switchMap(() => {
         this.isSignedIn.next(true)
         return this.isSignedIn
@@ -60,6 +61,7 @@ export class UserProfileService {
       this.userProfile.next(userInfo)
       return this.userProfile
     })
+    .switchMap(this.syncMarketo.bind(this))
   }
 
   private loadUserProfile(): Observable<User> {
@@ -88,5 +90,12 @@ export class UserProfileService {
       lastName: userInfo.last_name,
       username: userInfo.display_name,
     })
+  }
+
+  private syncMarketo(data) {
+    // Make the API call and immediately return the input as an observable so we can use this in any
+    // chain. If the Marketo sync fails, this observable should still complete successfully.
+    this._tokenService.put('api/v1/profile_sync_marketo', {})
+    return Observable.of(data)
   }
 }

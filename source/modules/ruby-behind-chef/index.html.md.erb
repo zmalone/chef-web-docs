@@ -5,7 +5,7 @@ description: 'Learn Ruby within the context of Chef.'
 time_to_complete: 60 minutes
 quiz_path: quizzes/ruby-behind-chef.yml
 headings: [
-  { label: 'Variables just happen', href: '#variablesjusthappen' },
+  { label: 'Variables', href: '#variables' },
   { label: 'Strings', href: '#strings' },
   { label: 'Numbers', href: '#numbers' },
   { label: 'Symbols', href: '#symbols' },
@@ -14,22 +14,20 @@ headings: [
   { label: 'Nil', href: '#nil' },
   { label: 'Flow of control', href: '#truefalseandflowofcontrol' },
   { label: 'Lambdas, blocks and procs', href: '#lambdasblocksandprocs' },
-  { label: 'Defining a method', href: '#definingamethod' },
+  { label: 'Methods', href: '#methods' },
   { label: 'Classes', href: '#classes' },
   { label: 'Modules', href: '#modules' }
 ]
 tags: [article]
 video_url: 'https://player.vimeo.com/video/215939141'
 ---
-Chef is built upon a powerful programming language called Ruby. When you write recipes, define attributes, create custom resources, express your expectations in your tests you are writing in Ruby. It does not always feel or look like Ruby because within each context there are specific helpers automatically loaded to make it easier to express what is needed to get work done. This can make it hard to understand what is core to Ruby
+Chef's Domain Specific Language (DSL) is based on a programming language called Ruby. When you write recipes, define attributes, or create custom resources, you're using Ruby. It doesn't always feel or look like Ruby because specific helpers are automatically loaded to make it easier to express what you want to happen. This can make it hard to understand what is actually core to Ruby itself.
 
-This track and series of modules focuses on explaining some of Ruby's core concpets and data structures with Chef and Inspec in mind.
+This module explains some of Ruby's core concepts, with Chef in mind.
 
-## Variables just happen
+## Variables
 
-Ruby allows you to define variables whenever you need them to store nearly any kind of data you want to store.
-
-Variables allow you to describe a value. This can help provide more meaning when reading your code and allow you to replace multiple instance of the same value spread throughout your code. This makes it easier to change the value when requirements change.
+Ruby allows you to define variables whenever you need them to store nearly any kind of data you want to store. Variables let you describe a value. They provide more meaning when reading code and you can use them to replace multiple instances of the same value that are spread throughout your code. You only have to define the variable once. This makes it much easier to change the value the variable represents.
 
 ```ruby
 # recipes/default.rb
@@ -54,16 +52,17 @@ package package_name do
   action :install
 end
 ```
+In the first example, `file_owner` is a variable whose value is 'Administrator'. In the second example, `package_name` is a variable whose value is a node attribute. If the file owner or the node attribute changes, the code only has to be modified in one place.
 
-> This is far different than many other languages that require you to proceed the variable declaration with a keyword to signal that this is a variable. Or other languages that require you to describe the type and size of the variable.
+> Ruby is different than many other languages that require you to precede a variable declaration with a keyword that signals that this is a variable. Also, many other languages require you to describe the type and size of the variable.
 
-When you create a variable within Ruby you do not have to specify a type and it never has to remain that same type for its lifetime. This flexibility puts a lot of emphasis on giving the variable a descriptive name that helps you and others understand what they can expect.
+In Ruby, when you create a variable, you don't have to specify a type and what the variable represents can change during its lifetime. This flexibility means that it makes sense to give the variable a descriptive name that helps you and others understand what they can expect.
 
 ## Strings
 
-Strings are those things cats play with or attached to deals that are too good to be true. In Ruby they refer to the way that we represent text within our source code.
+Strings can be those things cats play with or that are attached to deals that are too good to be true. In Ruby, they refer to the way that we represent text within our source code.
 
-Strings are useful within recipes because they allow us to represent file paths, the content within them, the name of packages, the commands to execute.
+Strings are useful within recipes because they allow us to represent file paths, the content within those files, the names of packages, and the commands to execute.
 
 ```ruby
 # recipes/default.rb
@@ -73,59 +72,59 @@ file 'C:\Users\Frank\poem.txt' do
 end
 ```
 
-You start a String with a single quote and terminate a String with single quote. Anything in between will be considered contents of the String. Which is great until you want to use a single quote within the String.
+You start and end a string with a single quote. Anything in between is the contents of the string. This is fine until you want to use a single quote within the string.
 
 ```ruby
 'The cat's meow reminded me of how much I longed for the days when I could fall asleep in the sun'
 ```
 
-Remember a single-quote termintes the String. If you were to try and define this String within a recipe you would find yourself confronted with an error. But never fear, there are a few ways around it.
+Remember that a single quote terminates the string. If you were to try and define this string within a recipe you'd get an error because of the apostrophe. But never fear, there are a few ways around it.
 
-The first solution is to use the backslash character `\` before the single quote `\'`. Ruby knows then you did not mean to terminate the String and will again consider the String as a whole.
+The first solution is to use the backslash character, `\`, before the single quote: `\'`. This tells Ruby that you didn't mean to terminate the string at that point.
 
 ```ruby
 'The cat\'s meow reminded me of how much I longed for the days when I could fall asleep in the sun'
 ```
 
-This works great for the occasional single-quote inside a String but if you found yourself needing to escape this character often you could also start and terminate your String with double-quotes.
+This is a good solution when you have one single quote inside a string but if you need to escape this character many times over, you might want to start and end your string with double quotes.
 
 ```ruby
 "The cat's meow reminded me of how much I longed for the days when I could fall asleep in the sun"
 ```
 
-And, of course, if you were needing to compose a String that contained a lot of double-quotes you could start and terminate a single-quoted String.
+Of course, if you need to compose a string that contains many double quotes you could start and terminate a single quoted string.
 
-Double-quoted Strings are not simply an alternative to single-quoted Strings. They provide a lot more tricks and that brings us back to that escape character.
+Double quoted strings are not simply an alternative to single quoted strings. They provide a lot more possibilities and that brings us back to the escape character.
 
-Within a double-quoted String the escape character `\` has quite a bit more power. So much power that it is no longer a character that you can use literally unless you escape it.
+Within a double quoted string, the escape character `\` has quite a bit of power. So much power that it is no longer a character that you can use literally unless you escape it.
 
 ```ruby
 "C:\\Users\\Frank\\poem.txt"
 ```
 
-> When working with Windows paths it is often better to use a single-quoted String to save you from having to escape every backslash character.
+> When working with Windows paths, it's often better to use a single quoted string to save you from having to escape every back slash character.
 
-And, of course, if you want to use a double-quote within a double-quoted String you can escape it `\"`.
+Of course, if you want to use a double quote within a double quoted string you can escape it with `\"`.
 
-Here are a few more common characters that you can represent within a double-quoted String:
+Here are a few common formatting strings that you can represent within a double quoted string:
 
 * `\n` – newline
 * `\r` – carriage return
 * `\s` – space
 * `\t` – tab
 
-Finally, double-quoted Strings provide the ability to ecape the confines of the String and insert Ruby code within it.
+Finally, double quoted strings let you escape the confines of the string and insert Ruby code.
 
 ```ruby
 # COMMENT: 18 apple trees times with average yield of 150 apples is ...
 "I have #{ 18 * 150 } apples"
 ```
 
-This is called String Interpolation. Double-quoted Strings look for the `#{}` sequence. Whatever is contained witin the curly-braces is any Ruby code that you want to use. Here we performed a mathematical calculation but again it is
+This is called string interpolation. Double quoted strings look for the `#{}` sequence. The curly braces can contain any Ruby code that you want to use. The example shows a mathematical calculation but you can use whatever code you like.
 
-> This concept is similar to languages and tools that allow you to build templates and then escape for a moment to insert logic or the details. It allows you to separate the facts from the form if you need to use the data in more than one location.
+> The ability in Ruby to escape a string and insert code is similar to languages that allow you to build templates and then escape to insert logic or details. In general, this technique allows you to separate the facts from the form if you need to use the data in more than one location.
 
-String interpolation is a useful tool when you want to combine multiple pieces of data. Like two pieces of a path to create a full path.
+String interpolation is a useful tool when you want to combine multiple pieces of data such as two pieces of a path to create a full path.
 
 ```ruby
 # recipes/default.rb
@@ -139,24 +138,22 @@ file full_path do
 end
 ```
 
-> There is an important side-effect of using String interpolation. Whatever resulting Ruby code you define within that sequence automatically sends the message `to_s` to convert it a String. Every object within Ruby implements this method. The results may or may not be what you expect.
+> String interpolation has an important side effect. Whatever Ruby code you define within that sequence automatically sends the message `to_s` to convert it a string. Every object within Ruby implements this method. The results may or may not be what you expect.
 
-[Ruby Strings](http://www.rubydoc.info/stdlib/core/String) have a lot of methods that allow you to remove whitespace from the left side (lstrip), right side (rstrip), or both sides (strip) of a String. Remove single characters from the end (chomp), split the String into multiple lines (lines) or into smaller Strings based on any pattern you provide (split).
+[Ruby strings](http://www.rubydoc.info/stdlib/core/String) have many methods associated with them. You can remove whitespace from the left side (lstrip), right side (rstrip), or both sides (strip) of a string. You can remove single characters from the end (chomp), split the string into multiple lines (lines) or break it into smaller strings based on any pattern you provide (split). There are even ways to replace specific text within a string with a different set of text (gsub).
 
-There are even ways to replace specific text within a String with a different set of text (gsub).
-
-> When reading Ruby documentation you may see two methods with the same name. For instance, #gsub and #gsub!, which both will look for a pattern and replace it with the text provided. The first method, #gsub, will create a new copy of the String, perform the substitution, and return that new String while leaving the original String intact. The second method, #gsub!, will modify the original String.
+> When you read Ruby documentation, you often see two methods with the same name, but one ends with an exclamation point. For instance, #gsub and #gsub! both look for a pattern and replace it with the text provided. The first method, #gsub, creates a new copy of the string, performs the substitution and returns that new string while leaving the original string intact. The second method, #gsub!, modifies the original string.
 
 ## Numbers
 
-Numbers allow us to present values that we can use in mathematical equations. We can add (+), subtract (-), multiply (*), divide and keep the quotient (/) and divide and keep the remainder (%).
+Numbers allow us to represent values that we can use in mathematical equations. We can add (+), subtract (-), multiply (*), divide and keep the quotient (/), and divide and keep the remainder (%).
 
-Numbers often times come in two varieties:
+Numbers come in two varieties:
 
-  * integers are positive and negative numbers without fractional values
-  * floats are positive and negative numbers with fractional values
+  * integers, which are positive and negative numbers without fractional values.
+  * floats, which are positive and negative numbers with fractional values.
 
-When performing addition, subtraction, and multiplication with integers and floats work as most expect:
+Addition, subtraction, and multiplication with integers and floats work as you would expect:
 
 ```ruby
 1 + 1    # => 2
@@ -164,7 +161,7 @@ When performing addition, subtraction, and multiplication with integers and floa
 2 * 2    # => 4
 ```
 
-Division, however, with integers does not convert the result into a float. Instead the remainder is discarded. To workaround that either the divided (top) or the divisor (bottom) needs to be described as a float.
+However, division with integers does not convert the result into a float. Instead the remainder is discarded. To work around that, either the dividend (top) or the divisor (bottom) needs to be described as a float.
 
 ```ruby
 10 / 3      # => 3
@@ -173,14 +170,14 @@ Division, however, with integers does not convert the result into a float. Inste
 10 / 3.to_f # => 3.3333333333333335
 ```
 
-In the first operation Ruby performs the division between the two integers and yields an integer as a result. In the the next three operations we explicitly saying that one of the numbers is a float. The last operation we are actually converting the integer (3) to a float using the `to_f` method. A float can also be converted to integer through the `to_i` method discarding any fractional values.
+In the first operation, Ruby divides two integers and returns an integer. In the next three operations we explicitly say that one of the numbers is a float. The last operation converts the integer (3) to a float using the `to_f` method. A float can also be converted to an integer with the `to_i` method, which discards any fractional values.
 
 ```ruby
 1.to_f   # => 1.0
 1.1.to_i # => 1
 ```
 
-Strings that contain numeric values are not numbers. Ruby will often raise an error when using most of the operators or surprise you.
+Strings that contain numeric values are not numbers. Ruby often raises an error or surprises you when you perform math with strings.
 
 ```ruby
 "2" + 3  # => TypeError: no implicit conversion of Fixnum into String
@@ -188,7 +185,7 @@ Strings that contain numeric values are not numbers. Ruby will often raise an er
 "2" * 4  # => 2222
 "2" / 2  # => NoMethodError: undefined method `/' for "2":String
 
-Strings can be added to other Strings but not numbers. Strings have no method for subtraction or division. The surprise is with the multiplication which will literally repeat the String the number specified after the multiplication operator.
+Strings can be added to other strings but not to numbers. Strings have no methods for subtraction or division. The real surprise is with multiplication, which literally repeats the string the number of times specified after the multiplication operator.
 
 Strings can be converted to either an integer or float.
 
@@ -201,7 +198,7 @@ Strings can be converted to either an integer or float.
 
 ## Symbols
 
-When working with Ruby you may come in contact with a Ruby Symbol. It is often a single word that starts with a colon, like `:start`. Actually this example of a Symbol is probably one you have seen if you have spent time working with Chef resources.
+A Ruby symbol is a single word that starts with a colon, such as `:start`. If you've spent any time working with Chef resources, you've already seen a fair number of symbols.
 
 ```ruby
 # recipes/default.rb
@@ -211,11 +208,11 @@ service 'httpd' do
 end
 ```
 
-Symbols are kind of like Strings. You can even convert a Symbol to a String `:start.to_s` and a String to a Symbol `'start'.to_sym`. A symbol is often used within code, instead of a String, when a particular function or thing supports only a supported subset of values. This is definitely the case when we look at the actions of a Chef resources. While each resource may have unique actions, the list of actions avialable for a particular resource is a small list.
+Symbols are similar to strings. You can even convert a symbol to a string, for example, `:start.to_s`. You can also convert a string to a symbol, for example, `'start'.to_sym`. A symbol is often used instead of a string when a particular function or thing supports only a small subset of values. This is definitely true for Chef resource actions. While each resource may have unique actions, the list of actions available for a particular resource is small.
 
 ## Arrays
 
-When you need to represent more than a single value it is time to talk about Arrays. An Array is a list of zero of more objects. We used one as an example when we talked about Symbols. The action method of every resource supports multiple actions as long as you combine these actions in an Array.
+When you need to represent more than a single value it's time to think about arrays. An array is a list of zero or more objects. We used one as an example when we talked about symbols. The action method of every resource supports multiple actions as long as you combine these actions in an array.
 
 ```ruby
 # recipes/default.rb
@@ -225,9 +222,9 @@ service 'httpd' do
 end
 ```
 
-An array is defined by starting with a right facing square bracket `[` and ending with a left facing square bracket `]`. Imagining the little serifs, the small projects at the top and bottom, connected togethter to create a box which contains everything in between. Each element, the objects in the Array, is separated with a comma character. In the example above we have two elements: `:start` and `:enable`.
+An array is defined by starting with a right facing square bracket `[` and ending with a left facing square bracket `]`. Imagine that the serifs, the small projections at the top and bottom, connect together to create a box which contains everything in between. All the elements, the objects in the array, are separated from each other with a comma. In the example above, the array has two elements: `:start` and `:enable`.
 
-Arrays are objects like everything else in Ruby and can be assigned to variables. So we could assign it to a variable and then use that variable in place of the literal Array that was there before.
+Just like everything else in Ruby, arrays are objects and can be assigned to variables. That variable can then take the place of the literal array.
 
 ```ruby
 # recipes/default.rb
@@ -239,7 +236,7 @@ service 'httpd' do
 end
 ```
 
-Arrays can contain zero or more objects. We can access those elements by specifying how far are they from the start of the Array or their offset within square brackets placed next to the Array object. Ruby Arrays even support a negative offset which will wrap around to the end of the Array and start working through the Array backwards. Finally, there are a few helper methods to access the first and last element.
+We can access the array elements by specifying how far they are from the start of the array, or their _offset_. Arrays start at 0. Arrays also support a negative offset, which is relative to the end of the array. An index of -1 is the last element of the array, -2 is the next to last element, and so on. Finally, there are a few helper methods to access the first and last elements.
 
 ```ruby
 httpd_actions = [ :start, :enable ]
@@ -253,7 +250,7 @@ Chef::Log.info httpd_actions.first # :start
 Chef::Log.info httpd_actions.last # :enable
 ```
 
-New elements can be added to an Array to the end with `push` or the shovel operator `<<`. They can also be added to the beginning of the Array with `shift`
+New elements are added to the end of an array with `push` or the shovel operator `<<`. They're added to the beginning of the array with `shift`.
 
 ```ruby
 httpd_actions = []
@@ -268,18 +265,18 @@ httpd_actions.shift :reload
 Chef::Log.info httpd_actions # [ :reload, :start, :enable ]
 ```
 
-There are a few more ways to define an Array and it is important to share with you at least one more as it will save you quite a bit of time. If you find yourself creating an Array of Strings it can get difficult to keep track of all the quotes and commas. An array can be started with `%w[` instead and that tells Ruby that each element is separated by whitespace.
+There are a few more ways to define an array and there's one way that can save you quite a bit of time. When you create an array of strings it can be difficult to keep track of all the quotes and commas. If you start the array with `%w[`, that tells Ruby that each element is a string and is separated by whitespace.
 
 ```ruby
 packages_to_install = [ 'libtool', 'autoconf', 'make', 'unzip', 'gcc' ]
 packages_to_install = %w[ libtool autoconf make unzip gcc ]
 ```
 
-In this example, the name of the packages are Strings that contain no whitespaces so it can easily be represented with this alternate syntax.
+In this example, the names of the packages are strings that contain no white spaces so they can easily be represented with the alternative syntax.
 
-> When using the `%w` prefix you are actually free to use a square bracket `%w[]`, parenthesis `%w()`, or `%w{}`.
+> When using the `%w` prefix you can use square brackets `%w[]`, parentheses `%w()`, or curly braces `%w{}`.
 
-Adding a large set of similar objects to an Array would definitely would be useful but retrieving them by their indexes would be rather cumbersome. Arrays provide methods that allow you to traverse through the entire collection of elements in order.
+When arrays are large, retrieving elements by their indexes is cumbersome. Arrays have methods that allow you to traverse the entire collection in order.
 
 ```ruby
 # recipes/default.rb
@@ -291,9 +288,9 @@ for action_name in httpd_actions do
 end
 ```
 
-This for statement will assign the first element within the Array to `action_name` and then execute the code found between the `do` and `end`. It will do it again for the second element and then stop. If there were more elements it would continue until the last element. And if there were *no* elements, an empty Array, the code would simply never be executed.
+The `for` statement assigns the first element in the `httpd_actions` array to `action_name` and then executes the code found between `do` and `end`. It does this again for the second element and then stops. If there were more elements it would continue until the last element. If there were *no* elements, an empty array, the code would never execute.
 
-Array objects have a method called `each` which does this exact same thing. This is often the way you will see it within Chef and Inspec code.
+Array objects have a method called `each` that does the exact same thing. Here's an example. You'll often see this pattern in Chef code.
 
 ```ruby
 # recipes/default.rb
@@ -305,13 +302,11 @@ httpd_actions.each do |action_name|
 end
 ```
 
-We send the each message to the Array and provide it a block of code to execute. The variable that stores each of the elements is now to the right side of the do keyword between two pipe characters. The remainder of the code remains the same.
+The `each` method iterates over the elements in the array and provides a block of code to execute. The variable that stores each of the elements, which in this case is `action_name`, is between the pipe characters. The remainder of the code remains the same.
 
-> The Chef community prefers this second form because it seems more clear the action is being taken by the Array; though neither is more correct or more efficient.
+> The Chef community prefers to use the `each` method because it seems clearer that the action is being taken by the Array; neither method is more correct or efficient than the other.
 
-Arrays become useful when you start thinking identifying redundancy within the code that you write. For instance, two or more resources that share a similar structure save for a single value that may change.
-
-When having to create two or more resources that share the same set of properites you could define the name of each resource in an Array and iterate through each element.
+Arrays become useful when you start to identify redundancy in the code that you write. For instance, there might be two or more resources that share a similar structure except for a single value that may change. In this case, you could define the name of each resource in an array and iterate through each element.
 
 ```ruby
 # recipes/default.rb
@@ -342,9 +337,9 @@ end
 
 ## Hashes
 
-Storing data by position works well in some circumstances (e.g. list of package names or file paths) but sometimes there is a collection of data that often requires each element to be represented with a key or name.
+Storing data according to position works well in some circumstances (for example, a list of package names or file paths) but sometimes there is a collection of data that requires each element to be represented with a key or name.
 
-A Ruby Hash allows for you to store zero or more objects. When these objects are stored another object must be provided to serve as the key. When retrieving an object the same key (or at least one that is eqaul `==`) must be provided.
+A Ruby hash allows you to store zero or more objects. When these objects are stored another object must be provided that serves as the key. When retrieving an object, the same key (or at least one that is equal `==`) must be provided.
 
 ```ruby
 # recipes/default.rb
@@ -357,9 +352,9 @@ connection_info = {
 }
 ```
 
-A Hash is defined by starting with a right facing curly brace `{` and ending with a left facing curly bracket `}`. Each element is a key and its associated value, often called a key-value pair, that is seperated by a hash rocket `=>`. Each element is separated with a comma character. In the example above we have four key-value pairs.
+A hash is defined by starting with a right facing curly brace `{` and ending with a left facing curly bracket `}`. Each element is a key and its associated value, which is separated from the key by a hash rocket `=>`. Elements are also often called key-value pairs. One element is separated from the next element with a comma. In the example above there are four key-value pairs.
 
-Symbols are often times used as the keys in Hashes. So often that Ruby provides a shortcut way of declaring a Hash with Symbol keys. Instead of using a hash rocket `=>` the `:` that prefaces the Symbol key is placed at the end of it used as a separator. That same Hash of connection information above could also be written as:
+Symbols are often used as the keys in hashes. This is so common that Ruby provides a shortcut. Instead of using a hash rocket `=>` the `:` that usually prefaces a symbol is placed after the symbol key. Here is the previous example written with the alternative syntax:
 
 ```ruby
 # recipes/default.rb
@@ -372,9 +367,9 @@ connection_info = {
 }
 ```
 
-Both ways are valid and perform the same but this way is prefered if your Hash consists only of Symbol keys.
+Both ways are valid but the second way is preferred if your hash consists only of symbol keys.
 
-Hashes can contain zero or more objects. We can access those elements by specifying the same key in square brackets placed next to the Hash object.
+We can access hash elements by specifying the key within square brackets after the hash object.
 
 ```ruby
 # recipes/default.rb
@@ -392,9 +387,9 @@ Chef::Log.info connection_info[:username]
 Chef::Log.info connection_info[:password]
 ```
 
-New key-value pairs can be added to a Hash by specifying the a new key in square brackets placed next to the Hash object and the assignment operator `=`. If a value is already associated with that key, the new value replaces the old value.
+New key-value pairs can be added to a hash by specifying the new key in square brackets placed next to the hash object and the assignment operator `=`. If a value is already associated with that key, the new value replaces the old value.
 
-> Symbol keys and String keys are NOT interchangeable.
+> Symbol keys and string keys are NOT interchangeable.
 
 ```ruby
 # recipes/default.rb
@@ -413,7 +408,7 @@ Chef::Log.info connection_info[:socket] # '/tmp/mysql.sock'
 Chef::Log.info connection_info[:password] # 'SuperSecretPassword' NOT 'm3y3sqlr00t'
 ```
 
-Hashes are often used as parameters to Ruby methods; like a Chef resource property. Ruby allows developers to leave off the curly braces around the Hash if they Hash is the only parameter or the last parameter being specified.
+Hashes are often used as parameters to Ruby methods and this frequently happens with Chef resource properties. Ruby allows developers to leave off the curly braces around the hash if the hash is the only parameter or the last parameter being specified.
 
 ```ruby
 # recipes/default.rb
@@ -458,27 +453,23 @@ end
 
 ## Nil
 
-An interesting thing happens when you attempt to retrieve a value from an Array using an index that exceeds the bounds or retrieve a value from a Hash using a key that does not have a value. No error will be raised and a `nil` object is returned.
+An interesting thing happens when you attempt to retrieve a value from an array using an index that exceeds the bounds or retrieve a value from a hash using a key that does not have a value. No error is raised and a `nil` object is returned. Usually, an error is thrown later because the code assumes that the retrieved value is not `nil` and sends that object a message or provides an incorrect value to the function.
 
-Usually an error is thrown later within the code because it assumes the retrieved value is not `nil` and sends that object a message or provides an incorrect value to function.
+With strings, when using string interpolation, the nil value will call `to_s`, converting it to an empty string `""`.
 
-With Strings, when using string interpolation, the nil value will call `to_s` converting it to an empty String `""`.
+With arrays, make sure that you use indexes that are within the bounds of the array or else iterate over the collection with `each`.
 
-With Arrays, ensure you are using indexes that are within the bounds of the Array or iterate over the collection with `each`.
+With hashes, make sure you use consistent types (symbols or strings but not both) and that your keys are spelled correctly.
 
-With Hashes, ensure you are using consistent types (Symbols or Strings but not both) and that your keys are spelled correctly.
+## True, false and flow of control
 
-## True, False and flow of control
+At various points within your code you'll want to make a decision. If a value, calculation, or situation is one thing then you want to follow one path. If it's something else, you may  want to follow a different path. Sometimes you may even want to follow multiple paths, depending on the situation.
 
-At various points within your code you will want to create decisions. If a value, calculation, or situation meets a particular criteria you will want to follow one path. If it does not you may even want to follow a different path. Sometimes you may even want to follow multiple different paths.
+Ruby provides a number of keywords and objects to accommodate your needs but first it's important to understand what Ruby considers truthy. And to talk about what is truthy, it's actually much easier for us to define what is falsey.
 
-Ruby provides a number of keywords and objects to accomodate your needs but it is important first to understand what Ruby considers truthy. And to talk about what is truthy it is actually much easier for us to define what is not; or what is falsey.
+There are two things in Ruby that are falsey. The first is `false`. The second is `nil`. This means that most things in Ruby are truthy. This includes things like an empty string `''`, zero `0`, an empty array `[]`, and an empty hash `{}`.
 
-There are two things that are falsey within Ruby. The first is `false`. The second is `nil`.
-
-This means that most things in Ruby are truthy. This includes things like an empty String `''`, zero `0`, an empty Array `[]`, and an empty Hash `{}`.
-
-The most basic way to control flow is to use the `if` keyword. The `if` keyword is followed by an expression that is evaluated. If it is truthy then the body of code that follows is executed until it reaches the keyword `end`.
+The simplest way to implement control flow is to use the `if` keyword. The `if` keyword is followed by an expression that's evaluated. If it's truthy then the body of code that follows is executed until it reaches the keyword `end`.
 
 ```ruby
 connection_info = {
@@ -493,9 +484,9 @@ if connection_info[:username] == 'root'
 end
 ```
 
-The expression `connection_info[:username] == 'root'` is an equality comparison `==` between the current value associated with the `:username` key in the `connection_info` Hash to the `'root'` String. The result of this comparison is either `true` or `false`. Only if the result is true will the log message be executed.
+The expression `connection_info[:username] == 'root'` is an equality comparison `==` between the current value associated with the `:username` key in the `connection_info` hash to the `'root'` string. The result of this comparison is either `true` or `false`. Only if the result is true is there a log message.
 
-To create a logical path to follow when the expression results in `false` can be addressed with the keyword `else`. If the expression is truthy then the body of code that follows is executed until it reaches the keyword `else`. If the expression is falsey then execute the body of code that follows the `else` until it reaches the keyword `end`.
+To create a logical path to follow when the expression results in `false`, use the `else` keyword. If the expression is truthy then the body of code that follows is executed until it reaches the keyword `else`. If the expression is falsey then the body of code that follows the `else` executes until it reaches the keyword `end`.
 
 ```ruby
 connection_info = {
@@ -508,13 +499,13 @@ connection_info = {
 if connection_info[:username] == 'root'
   Chef::Log.debug 'Establishing a connection as the root user'
 else
-  Chef::Log.warn "Establshing a connection for user: #{connection_info[:username]}; should be root user!"
+  Chef::Log.warn "Establishing a connection for user: #{connection_info[:username]}; should be root user!"
 end
 ```
 
 When a user that is not 'root' is specified in the connection_info a warning is displayed.
 
-When a situation has more two outcomes the `elsif` keyword is useful. It follows an `if` and similar to an `if` requires an expression that will be evaluated.
+When a situation has more than two outcomes the `elsif` keyword is useful. It follows an `if` and, similar to`if`, requires an expression that will be evaluated.
 
 ```ruby
 connection_info = {
@@ -535,9 +526,9 @@ end
 
 When a user is not root but the host is '127.0.0.1' (local) we allow it and provide a debug statement. The warning would only be generated now if the user is not root and the connection is not local.
 
-Ruby provides a few more operators that allow you to combine expressions. This allows you to compose logical statements that evalute multiple expressions and then evaluate them as a whole.
+Ruby provides a few more operators that allow you to combine expressions. This allows you to compose logical statements that evaluate multiple expressions and then evaluate them as a whole.
 
-You may want to ensure that two particular expressions result in a truthy value before performing an operation. For instance, if you wanted to ensure that the connection information has a value for username and password you may write write:
+You may want to ensure that two particular expressions result in a truthy value before performing an operation. For instance, if you want to ensure that the connection information has a value both for the username and the password you might write:
 
 ```ruby
 if connection_info[:username]     # Truthy as long as it is not nil or false
@@ -547,7 +538,7 @@ if connection_info[:username]     # Truthy as long as it is not nil or false
 end
 ```
 
-These two expressions can be evaluated together with `&&` or `and`.  So if the username is present and the password is present then perform the specified code.
+These two expressions can be evaluated together with `&&` or `and`.  If the username is present and the password is present, then perform the specified code.
 
 ```ruby
 if connection_info[:username] && connection_info[:password]
@@ -555,9 +546,9 @@ if connection_info[:username] && connection_info[:password]
 end
 ```
 
-> If the username is not present the second expression, the password, is not evaluated. This is because Ruby will short circuit the remaining evaluations because it knows that the result will never be truthy.
+> If the username is not present the second expression, the password, isn't evaluated. This is because Ruby short circuits the remaining evaluations because it knows that the result will never be truthy.
 
-You may want one expression or another expression to be truthy before performing an operation. For instance, if you allowed a host and port or a connection string:
+You may want one expression or another expression to be truthy before performing an operation. For instance, if you allow a host and port or a connection string you could use this code:
 
 ```ruby
 if (connection_info[:host] && connection_info[:port]) || connection_info[:connection_string]
@@ -565,7 +556,7 @@ if (connection_info[:host] && connection_info[:port]) || connection_info[:connec
 end
 ```
 
-When you find yourself writing a lot of `if` and `elsif` you may find it clearer to use Ruby's `case` and `when` keywords.
+When you find yourself writing a lot of `if` and `elsif` statements, you may find it clearer to use Ruby's `case` and `when` keywords. Here is some code that uses `if` and `elsif` statements to decide what to do, depending on the node's platform.
 
 ```ruby
 if node['platform'] == 'debian' || node['platform'] == 'ubuntu'
@@ -577,7 +568,7 @@ else
 end
 ```
 
-Similar to `if` an expression follows the `case` keyword. Within the case you define `when`s with possible values for the expression. You use the `else` keyword when you want to match on everything.
+This example uses `case` and `when` to do the same thing.
 
 ```ruby
 case node['platform']
@@ -590,6 +581,8 @@ else
 end
 ```
 
+Similar to `if`, an expression follows the `case` keyword. Within the case you define `when`s with possible values for the expression. You use the `else` keyword when you want to match on everything.
+
 It may become important to express the logic in the conditional expression with a negation. Ruby allows you to express negation with either `!` or `not`.
 
 ```ruby
@@ -599,7 +592,7 @@ if !connection_info[:username] && not connection_info[:password]
 end
 ```
 
-Here both inner expressions are negated. If the username or password is falsey the negation will make it `true`. The `&&` still requires that both expressions are truthy before executing the code between the conditional expression and `end`.
+Here, both inner expressions are negated. If the username or password is falsey the negation will make it `true`. The `&&` still requires that both expressions are truthy before executing the code between the conditional expression and `end`.
 
 ```ruby
 if !(connection_info[:username] && connection_info[:password])
@@ -608,7 +601,7 @@ if !(connection_info[:username] && connection_info[:password])
 end
 ```
 
-Here the entire conditional expression has been negated. This is equivalent to the previous example. So if the username or password is falsey then the conditional is falsey until the negation flips it to truthy. The code when thruthy would focus on generating a failure and stopping the execution of the code.
+Here, the entire conditional expression has been negated. This is equivalent to the previous example. So if the username or password is falsey then the conditional is falsey until the negation flips it to truthy. The code generates a failure and stops the execution of the code.
 
 Another way to express negation is with the `unless` keyword. Using `unless` is equivalent to `if !` or `if not`.
 
@@ -619,9 +612,9 @@ unless connection_info[:username] && connection_info[:password]
 end
 ```
 
-Sometimes the `unless` makes it easier to comprehend the conditional expression; sometimes it does not. Use `unless` when it makes sense to read allowed otherwise stick with `if !` or `if not`.
+Sometimes the `unless` makes it easier to understand the conditional expression and sometimes it doesn't. Use `unless` when it makes sense and otherwise stick with `if !` or `if not`.
 
-The extra encumbrance writing conditional expressions within your code can be alleviated by using the inline form:
+The extra work of writing conditional expressions within your code can be lessened by using the inline form:
 
 ```ruby
 # recipes/default.rb
@@ -633,11 +626,11 @@ file '/usr/local/database/database.config' do
 end
 ```
 
-Here we only are setting the owner and group properties for the file resource if those values are present within `connection_info` Hash (Keys with no values will return a nil). When the code you want to execute is one line you can use this alterate syntax. Use whichever makes it easier for you to understand the code.
+Here, we only set the owner and group properties for the file resource if those values are present within the `connection_info` hash. (Remember that keys with no values return a nil). When the code you want to execute is one line you can use this alternative syntax. Use whichever makes it easier for you to understand the code.
 
 ## Lambdas, blocks and procs
 
-Besides storing data we can also store code in our variables, as elements in an Array, or the values associated with keys in a Hash.
+We can store code in our variables, as elements in an array, or as the values associated with keys in a hash.
 
 ```ruby
 # recipes/default.rb
@@ -652,15 +645,15 @@ file '/usr/local/database/database.config' do
 end
 ```
 
-The format variable is populated with a small snippet of code which takes a single parameter `text` and returns a String that is stripped of all whitespace, if any, from the beginning and end of the String.
+The format variable is populated with a code snippet that takes a single parameter `text` and returns a string that is stripped of all whitespace. The code snippet is a _lambda_, which is a function that has no name.
 
-After the lambda function defines a Ruby block. The `do` key signifies the start the block. All the parameters that can be sent to the function are defined between the two pipe `|var1,var2,var3,...|` characters. Then block ends when it reaches the matching `end` keyword. The last expression in the block is returned. In this case `text.to_s.strip` which will return the formatted String.
+The lambda function defines a Ruby block. The `do` key signifies the start the block. All the parameters that can be sent to the function are defined between the two pipe `||` characters. The block ends when it reaches the matching `end` keyword. The last expression in the block is returned. In this case it's `text.to_s.strip`, which returns the formatted string.
 
-> Converting a String to a String has no effect. Adding this method here ensures that whatever Object has been given will be converted to a String. Each Object may define how they convert to a String differently.
+> Converting a string to a string with the `to_s` method has no effect. Adding this method ensures that whatever object has been given, it will be converted to a string. Each object can define string conversion differently.
 
-The `format` variables stores a [Proc](http://www.rubydoc.info/stdlib/core/Proc) which can invoke the stored block of code by sending `format.call` with the value you want to format as an argument.
+The `format` variable stores a [Proc](http://www.rubydoc.info/stdlib/core/Proc), which can invoke the stored block of code by sending `format.call` with the value you want to format as an argument.
 
-Blocks with a single line of code are often more succinctly described with the inline notation:
+Blocks with a single line of code are often more succinctly written with the inline notation:
 
 ```ruby
 # recipes/default.rb
@@ -675,11 +668,11 @@ end
 
 The `do` and the `end` are replaced with `{` and `}` respectively.
 
-## Defining a method
+## Methods
 
-Code that you write may require you to repeat an operation more than once and maybe even a lot of times. We saw that we can define code block with the `lambda` method to create a unit of code that we could invoke over-and-over again.
+You frequently need to repeat an operation more than once. In the previous example, we saw that we can define a code block with the `lambda` method to create a unit of code that we can invoke over and over again.
 
-Ruby allows you to define methods, which provide another way to encapsulate code that can be invoked. Let's revisit the format operation we wrote previously and this time implement it with a method.
+Ruby also allows you to define methods, which are another way to encapsulate code that can be invoked repeatedly. Let's revisit the format operation and this time implement it with a method.
 
 ```ruby
 # recipes/default.rb
@@ -694,22 +687,22 @@ file '/usr/local/database/database.config' do
 end
 ```
 
-A ruby method begins with the `def` keyword, followed by its name, then the list of parameters between the parentheses `(text)`. The method ends when it reaches the `end` keyword matched with the `def` keyword. The last expression in the method is returned. In this case `text.to_s.strip` which will return the formatted String.
+A ruby method begins with the `def` keyword, followed by its name, then the list of parameters between the parentheses, which, in this case, is `(text)`. The method ends when it reaches the `end` keyword matched with the `def` keyword. The last expression in the method is returned. In this case, it's `text.to_s.strip`, which returns the formatted string.
 
-To invoke the method you must specify the name of the method followed the argument that will be formatted. The format is used twice here to format the username and group values.
+To invoke the method you must specify the name of the method followed by its arguments. In the example, the `format` method is used twice to format the username and the group.
 
-In the previous example the format method is invoked with parentheses and without parentheses. When invoking a method they are optional but can be helpful in making the code clearer. Some might argue that the first use with the parentheses makes it more apparent that the format method is using the value as as argument; some may perform the second version.
+In previous example, the format method is invoked both with and without parentheses. Parentheses are optional but can be helpful in making the code clearer. Some might argue that the first use with the parentheses makes it more apparent that the format method is using the value as an argument; some may prefer the second version.
 
-Using parentheses are often required when you want to invoke a method on the result of function. If we wanted to format the username value and then change all the characters to lower case, `downcase`, then we would want to use the parentheses.
+Parentheses are often required when you want to invoke a method on the result of function. If we wanted to format the username value and then change all the characters to lower case with `downcase`, then we would want to use the parentheses.
 
 ```ruby
 format(connection_info[:username]).downcase
 format connection_info[:username].downcase
 ```
 
-Without the parentheses the username value will be lowercased and then formatted. This would cause an error if the username value was an Object that did not define a `downcase` (likely only Strings).
+Without the parentheses, the username value is put in lower case and then formatted. This would cause an error if the username value was an object that did not define `downcase`.
 
-Methods make code reusable and easier to change, and when done right easier to understand. We could use a method to help us check if the configuration provided is valid.
+Methods make code reusable and easier to change and, when done right, easier to understand. We could use a method to help us check if a configuration is valid.
 
 ```ruby
 def is_configuration_valid(cfg)
@@ -721,7 +714,9 @@ if is_configuration_valid(connection_info)
 end
 ```
 
-The method in the above example helps describe what the conditional expression is trying to accomplish through the method name. Methods that return true and false values are common so Ruby allows you to end methods with the question mark `?` character.
+The method's name helps describe what the conditional expression is trying to accomplish.
+
+Methods that return true and false values are common so Ruby allows you to end methods with the question mark `?`.
 
 ```ruby
 def valid_config?(cfg)
@@ -733,9 +728,9 @@ if valid_config?(connection_info)
 end
 ```
 
-In the above example, if the configuration is valid we would execute the code found between the conditional expression and the matching end. Invalid configuration would ignore that code but continue to execute any code that follows. This is one approach to handling invalid configuration. Another approach would be to halt the program execution immediately when the invalid configuration is detected.
+If the configuration is valid we execute the code found between the conditional expression and the matching end. Invalid configurations ignore that code but continue to execute any code that follows. Another approach to handling an invalid configuration would be to halt the program execution immediately, as soon as it's detected.
 
-Methods the modify the original object, have side effects (change some state not related to the arguments provided), or raise errors are often ended with an exclamation point (!).
+Methods that modify the object they're called on or that might raise errors are often ended with an exclamation point (!).
 
 ```ruby
 def valid_config?(cfg)
@@ -753,9 +748,9 @@ check_config!(connection_info)
 # Do what code with valid configuration should do ...
 ```
 
-The method `check_config!` sends the message `valid_config?` with the configuration given to it as a parameter. An invalid configuration will return false, that false value is negated to true and this will send the `raise` method with a String describing the problem. `raise` generates an RuntimeError with the given string which, unless rescued, will cause the execution of the code to halt immediately.
+The method `check_config!` sends the message `valid_config?` with the configuration given to it as a parameter. An invalid configuration returns `false`. That false value is negated to true and this sends the `raise` method with a string that describes the problem. The `raise` method generates a run time error with the given string that, unless rescued, will cause the code to halt immediately.
 
-All methods can receive a block as a parameter; not all of them use it. This is often seen with Arrays and Hashes as they both have an `each` method which accepts a block.
+All methods can receive a block as a parameter but not all of them use it. Blocks are common with arrays and hashes, which both have an `each` method that accepts a block.
 
 ```ruby
 def format(text)
@@ -768,13 +763,13 @@ connection_info.each do |key,value|
 end
 ```
 
-The `each` method iterates through each key-value pair, executing the code within the block for each key-value pair. This block displays the key-value pair in the debug output and then formats the value and reassigns back into the Hash with the same key.
+The `each` method iterates through each key-value pair and executes the code within the block for each of them. This block displays the key-value pair in the debug output, formats the value and puts it back into the hash with the same key.
 
 ## Classes
 
 Ruby allows you to define classes. A class enables you to encapsulate data and the methods associated with that data. When defining a class you are creating something like a blueprint that describes how an instance of the class, an object, will behave.
 
-Using classes are not required to manage the data or the methods that you create. In several of the previous examples we discussed a configuration Hash that we started to develop methods to help us validate.
+Classes are not required to manage the data or the methods that you create. In several of the previous examples we discussed a configuration hash. We developed several methods to help us validate that configuration.
 
 ```ruby
 connection_info = {
@@ -797,7 +792,7 @@ end
 check_config!(connection_info)
 ```
 
-These two methods take the configuration hash as a parameter. They are methods in service to this specific configuration Hash. A more clear way to accomplish this would be to create a new instance of configuration object, load the data into that object, and then ask the configuration object to check itself. Something like the following:
+The two methods take the configuration hash as a parameter. They are designed for this specific configuration hash. A clearer approach is to create a new instance of the configuration object, load the data into that object, and then ask the configuration object to check itself. Here's an example.
 
 ```ruby
 config = Configuration.new
@@ -812,9 +807,9 @@ config.load {
 config.check!
 ```
 
-This approach moves more responsibility to the `Configuration` object itself. The method called `check_config!` has been to renamed `check!`. This new method also no longer requires us to pass it a Hash of that configuration as it has already been loaded and stored within `config` through a method called `load`. Let's walk through creating a class.
+This approach moves more responsibility to the `Configuration` object itself. The method called `check_config!` is renamed `check!`. This new method no longer requires us to pass it a hash of that configuration because it's already been loaded and stored within `config` through a method called `load`. Let's walk through creating a class that encapsulates all this information.
 
-A class begins with the `class` keyword, followed by its name. The name of the class will automatically become a constant so the first letter of the name must be capitalized. The class definition ends when it reaches the `end` keyword matched with the `class` keyword. Creating a class can be done by sending the `new` method to the class constant.
+A class begins with the `class` keyword, followed by its name. The name of the class will automatically become a constant so the first letter of the name must be capitalized. The class definition ends when it reaches the `end` keyword matched with the `class` keyword. Creating a class is done by sending the `new` method to the class constant.
 
 ```ruby
 class Configuration
@@ -824,7 +819,7 @@ end
 config = Configuration.new
 ```
 
-The `Configuration` class starts with a few common methods that it has inherited from ancestor classes and modules. This is how you are able to send it the `new` method and it will generate a new instance of the class. You can view the ancestors of your class and the instance methods that it has inherited.
+The `Configuration` class starts with a few common methods that it inherits from ancestor classes and modules. This example shows how you can include the `new` method so it can generate a new instance of the class. It also demonstrates how you can view the ancestors of your class and the instance methods that it has inherited.
 
 ```ruby
 class Configuration
@@ -836,7 +831,7 @@ config = Configuration.new
 config.methods          # => [:instance_of?, :public_send, :instance...]
 ```
 
-New method can be added to an object by adding them inside the class definition. Methods defined in a class are called _instance methods_ as they are available on an instance, or object, of this class. Let's first define the `load` method that will keep and store the configuration Hash.
+New methods can be added to an object by adding them inside the class definition. Methods defined in a class are called _instance methods_ as they are available on an instance, or object, of this class. Let's first define the `load` method that will keep and store the configuration hash.
 
 ```ruby
 class Configuration
@@ -846,7 +841,7 @@ class Configuration
 end
 ```
 
-The `load` method accepts one parameter named `new_config`. The configuration is then assigned to `@config`. This variable, with the `@` prefix, is called an instance variable. An instance variable stores a value inside an instance of an object keeping it around even after this method has completed its execution. We can retrieve this stored value in other methods, like in the `valid?` or `check!` method.
+The `load` method accepts one parameter named `new_config`. The configuration is then assigned to `@config`. This variable, with the `@` prefix, is called an instance variable. An instance variable stores a value inside an instance of an object and  keeps it even after the method completes. We can retrieve this stored value with other methods, such as the `valid?` or `check!` methods.
 
 ```ruby
 class Configuration
@@ -866,9 +861,9 @@ class Configuration
 end
 ```
 
-After the configuration has been loaded and stored the `valid?` method will check the configuration Hash stored in the instance variable `@config` and then ensure the values are present associated with the keys.
+After the configuration is loaded and stored, the `valid?` method checks the configuration hash stored in the instance variable `@config` to ensure that the values associated with the keys are present.
 
-This works well unless you attempt to send the message `check!` or `valid?` before you have loaded the configuration. In that case an error would be raised because there is no value stored in the instance variable `@config`. We can address this by adding one more additional check to the `valid?` method to ensure that `@config` is not `nil`.
+This works well unless you attempt to send the message `check!` or `valid?` before you've loaded the configuration. In that case, an error is raised because there is no value stored in the instance variable `@config`. We can address this by adding one more additional check to the `valid?` method to ensure that `@config` is not `nil`.
 
 ```ruby
 class Configuration
@@ -899,9 +894,9 @@ config.load {
 config.check!
 ```
 
-If `@config` is `nil` then the conditional evaluation will stop evaluating the remainder of the conditional expression and return a falsely value.
+If `@config` is `nil` then the conditional evaluation will stop evaluating the remainder of the conditional expression and return a falsey value.
 
-It seems as though the `load` method should be required to called at least once. It would be nice if that was automatically taken care of when we create, via `new`, a new instance of this object. Every class has a method called `initialize` that can be overriden to accept parameters and perform any operations that must take place when a new object is initialized.
+It seems as though the `load` method should be required to be called at least once. It would be nice if that was automatically taken care of when we use `new` to create a new instance of this object. Every class has a method called `initialize` that can be overriden to accept parameters and perform any operations that must take place when a new object is initialized.
 
 ```ruby
 class Configuration
@@ -934,11 +929,11 @@ config = Configuration.new {
 config.check!
 ```
 
-Now, when we send the `new` method we pass along the configuration Hash. The `new` method will then send the `initialize` method with that same Hash which sends it to the `load` method. Using a method named `new` to create an instance and defining a method called `initialize` does not seem very intuitive but is how it is done.
+Now, when we send the `new` method we pass along the configuration hash. The `new` method will then invoke the `initialize` method with that same hash, which sends it to the `load` method. Using a method named `new` to create an instance and defining a method called `initialize` does not seem very intuitive but that's how it's done.
 
 ## Modules
 
-Modules provide a way to organize similar methods. However, Ruby does not allow you to create an instance of a module. Instead, Ruby provides you a way to share these module methods with other objects.
+Modules provide a way to organize similar methods. However, Ruby does not allow you to create an instance of a module. Instead, Ruby provides you with a way to share these module methods with other objects.
 
 A module begins with the `module` keyword, followed by its name. The name of the module will automatically become a constant so the first letter of the name must be capitalized. The module definition ends when it reaches the `end` keyword matched with the `module` keyword.
 
@@ -952,9 +947,9 @@ module FileHelpers
 end
 ```
 
-The `file_includes?` helper method here is a useful snippet of code. It checks to make sure the file exists and if it does then it attempts to see if the file contains the specified text.
+The `file_includes?` helper method is a useful snippet of code. It checks to make sure the file exists and if it does then it attempts to see if the file contains the specified text.
 
-When writing resources within your Chef recipes you may find yourself performing this check often as a guard condition before allowing the resource to take action. You can include all the methods in this module into any class
+When writing resources within your Chef recipes you may find yourself performing this check often as a guard condition before allowing a resource to take action. You can include all the methods in this module in any class.
 
 ```ruby
 # recipes/default.rb
@@ -977,4 +972,4 @@ template '/etc/motd' do
 end
 ```
 
-The class `Chef::Resource::Template` includes the methods defined in the `Filehelper` module. Ruby treats this as if the method was defined in that class.
+The class `Chef::Resource::Template` includes the method defined in the `FileHelpers` module. Ruby treats the method as if it were defined in that class.

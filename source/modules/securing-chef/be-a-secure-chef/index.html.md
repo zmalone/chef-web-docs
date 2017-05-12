@@ -62,7 +62,7 @@ For enhanced security, you can disable root login. In the <code class="file-path
 
 ####Install security patches
 
-Always install the latest security patches. Security patches for the Chef server are announced on the Chef blog: <https://www.chef.io/blog/>.
+Always install the latest security patches. Security patches for the Chef server are announced on the Chef blog: <https://blog.chef.io>.
 
 ####Use corporate credentials
 
@@ -102,7 +102,7 @@ For an overview of how to secure the Chef client, see: <https://docs.chef.io/che
 
 ####Install security patches
 
-Always install the latest security patches. Security patches for the Chef client are announced on the Chef blog: <https://www.chef.io/blog/>.
+Always install the latest security patches. Security patches for the Chef client are announced on the Chef blog: <https://blog.chef.io>.
 
 ####Use validatorless bootstrapping
 By default, the Chef client bootstraps its initial connection to the Chef server with a "validator" certificate (.pem file). See <https://docs.chef.io/chef_private_keys.html>. However, there is an alternative, called validatorless bootstrapping that is more streamlined.

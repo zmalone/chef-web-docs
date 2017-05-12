@@ -31,4 +31,9 @@ order: 0
 modules:
 - getting-started-with-lcr
 tags: [beginner]
+related_tracks:
+- getting-started
+- developer-essentials
+- local-development-and-testing
+- devops-transformation
 ---

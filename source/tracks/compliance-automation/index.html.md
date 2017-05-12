@@ -10,9 +10,11 @@ track_class: card-light-brown
 category: Admin
 order: 9
 modules:
+- compliance-as-code-inspec-1-0
 - compliance-as-code-using-inspec
 - using-community-profiles
 - using-the-inspec-shell
+- hp-compliance
 tags: [compliance,beginner]
 video_url: 'https://player.vimeo.com/video/215914828'
 social_share:
@@ -26,4 +28,9 @@ social_share:
     <<: *shared
   twitter:
     post: "`Compliance Automation` putting me on track to spec reqs as code using InSpec, detect problems, & more. You on track?."
+related_tracks:
+- infrastructure-automation
+- integrated-compliance
+- local-development-and-testing
+- continuous-automation
 ---
