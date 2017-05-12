@@ -11,6 +11,9 @@ category: Admin
 order: 9
 modules:
 - compliance-as-code-inspec-1-0
+- compliance-as-code-using-inspec
+- using-community-profiles
+- using-the-inspec-shell
 - hp-compliance
 tags: [compliance,beginner]
 video_url: 'https://player.vimeo.com/video/215914828'
