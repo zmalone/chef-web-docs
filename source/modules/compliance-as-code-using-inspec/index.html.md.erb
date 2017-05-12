@@ -1,15 +1,12 @@
+Compliance as Code Using InSpec
 ---
-id: compliance-as-code-using-inspec
-description: "Learn the basics of InSpec including how to write controls, scan remote systems, and more."
-name: compliance-as-code-using-inspec
 title: 'Compliance as code using InSpec on Ubuntu'
-short_title: 'Compliance as code using InSpec'
-type: topic
+short_title: 'Ubuntu'
 platform: Ubuntu
 platform_id: ubuntu
-category: compliance-automation
+category: local-development
+layout: lesson
 time_to_complete: 60 minutes
-breadcrumb_label: Introduction to Compliance Automation
 headings: [
   { label: 'Prerequisites', href: '#prerequisites' },
   { label: '1. Write a basic test', href: '#step1' },
@@ -20,8 +17,10 @@ headings: [
   { label: '6. Make your profile more reusable', href: '#step6' },
 ]
 ---
+INTRODUCTION
+
 [START_BOX]
-# Introduction to Compliance Automation
+# Module 1: Introduction to Compliance Automation
 
 ## Compliance as Code with InSpec
 
@@ -233,7 +232,9 @@ If you have not already done so, download and install both VirtualBox and Vagran
 
 Once you have VirtualBox and Vagrant installed, you will move to your learn-inspec command line prompt and initalize a virtual machine using vagrant. The workflow is to, enter `vagrant init bento/ubuntu-14.04` into the command line, which will initialize a virtual machine and place a configuration file, called a `Vagrantfile`, into the directory. Once the virtual machine is up and running, you will change the Vagrantfile file and restart the virtual machine using `vagrant up --provision`. To run the virtual machine, run `vagrant up`. `vagrant halt` will stop the virtual machine, and `vagrant destroy` will stop and remove a virtual machine from your system.
 
-1. Initialize Vagrant by entering `vagrant init bento/ubuntu-14.04` into the command line
+1. Initialize Vagrant by entering `vagrant init bento/ubuntu-14.04` into the command line.
+
+    Initializing Vagrant will take a while. It will create a virtual machine and place several files into the `learn-inspec` directory.
 
     ```bash
     # ~/learn-inspec
@@ -292,7 +293,7 @@ Once you have VirtualBox and Vagrant installed, you will move to your learn-insp
 
     The virtual machine that you just created should be named "server".
 
-1. look up the forwarded port information and make note of it.
+1. Look up the forwarded port information and make note of it.
 
     You will need this number later in this exercise.
 
@@ -569,6 +570,7 @@ In this exercise, you will create an InSpec profile for our hello_spec.rb contro
     ```bash
     # ~/learn-inspec/HELLO
     $ cd controls
+    $ ls
 
     example.rb
 
@@ -784,55 +786,84 @@ In this exercise, you will create an InSpec profile for our hello_spec.rb contro
 
 ##Scan for compliance
 
-### Add a new control to our profile that tests for SSH version using the sshd_config resource
+In this exercize, you will add a new control to our profile that tests for SSH version using the `sshd_config` resource. You will then learn to check the validity of your control and how to run it against a remote system.
 
-The sshd_config inspec audit resource tests the configuration data for the OpenSSH daemon located at `/etc/ssh/sshd_config` on Linux and Unix. sshd=(open)sshdaemon
+The sshd_config inspec audit resource tests the configuration data on a your virtual machine for the OpenSSH daemon located at <code class="file-path">/etc/ssh/sshd\_config</code> on Linux and Unix.
 
-```
-# encoding: utf-8
-# copyright: 2015, The Authors
-# license: All rights reserved
+1. Check that your virtual machine is up and running.
 
-title 'TBD - sample section'
+    ```bash
+    $ vagrant global-status
+    ```
+    If you virtual machine is not running, please spin it up:
 
-# you add controls here
-control 'ssh-1.0' do                        # A unique ID for this control
-  impact 0.7                                # The criticality, if this control fails.
-  title 'sshd protocol version 2'
-  desc 'Verify sshd is using protocol version 2'             # A human-readable title
-  describe sshd_config do
-    its('Protocol') { should cmp 2 }
-  end
-end
-```
+    ```bash
+    $ vagrant up --provision
+    ```
+
+1. In the HELLO control, add a control named "sshd.rb".
+
+    ```bash
+    # ~/learn-inspec/HELLO/controls
+    $ touch sshd.rb
+    ```
+
+1. Open the file with an editor of your choice.
+
+    Copy this content into the file:
+
+    ```ruby
+    # ~/learn-inspec/HELLO/controls/sshd.rb
+    # encoding: utf-8
+    # copyright: 2015, The Authors
+    # license: All rights reserved
+
+    title 'TBD - sample section'
+
+    # you add controls here
+    control 'ssh-1.0' do                        # A unique ID for this control
+      impact 0.7                                # The criticality, if this control fails.
+      title 'sshd protocol version 2'
+      desc 'Verify sshd is using protocol version 2'             # A human-readable title
+      describe sshd_config do
+        its('Protocol') { should cmp 2 }
+      end
+    end
+    ```
+
+1. You can run this control with `inspec check`, which determines if the control is valid.
+
+    However, this method does not run the test on a remote system.
+
+    ```bash
+    # ~/learn-inspec
+    $ cd ~/learn-inspec
+    $ inspec check hello
+    Location:    hello
+    Profile:     hello
+    Controls:    4
+    Timestamp:   2017-03-31T20:21:12+00:00
+    Valid:       true
+
+    No errors or warnings
+    ```
+
+1. You can run the test on a remote system by passing `inspec exec` with a `--target` option.
+
+    You should see that your test was successful.
+
+    ```bash
+    # ~/learn-inspec
+    $ inspec exec ~/inspec/HELLO/controls/ssh.rb --target=ssh://vagrant:vagrant@localhost:2222
+
+    Target:  ssh://vagrant@localhost:2222
+
+     ✔  ssh-1.0: Compliance tests
+      ✔  SSH Configuration Protocol should cmp == 2
 
 
-inspec check ~/inspec/hello
-
-```
-vagrant@vagrant:~/inspec$ inspec check hello
-Location:    hello
-Profile:     hello
-Controls:    4
-Timestamp:   2017-03-31T20:21:12+00:00
-Valid:       true
-
-No errors or warnings
-```
-
-
-inspec exec ~/inspec/hello/controls/ssh.rb
-
-vagrant@vagrant:~/inspec$ inspec exec ~/inspec/hello/controls/sshd.rb
-```
-Target:  local://
-
-  ✔  ssh-1.0: sshd-resource test
-     ✔  SSH Configuration Protocol should cmp == 2
-
-Profile Summary: 1 successful, 0 failures, 0 skipped
-Test Summary: 1 successful, 0 failures, 0 skipped
-```
+   Profile Summary: 1 successful, 0 failures, 0 skipped
+   ```
 
 [END_BOX]
 
@@ -842,7 +873,7 @@ Test Summary: 1 successful, 0 failures, 0 skipped
 
 What happens if you want to to run the same tests on machines with different content?  Or what if you have information that should not be stored in plain-text cookbooks, like user names or passwords?  For these cases, InSpec uses attributes to act in different ways, depending on different conditions.
 
-In this tutorial, you will use two virtual machines and put a hello.txt file onto each one--with slightly different content in each file on each machine.  Then you will add an attribute and a test to our InSpec framework, run the test, see it fail, and then modify the content on each machine so that the test will pass in the correct instance, but otherwise it will fail. Then [**if there is time**] you will modify the control to perform entirely different tests in different situations.
+In this exercise, you will use two virtual machines and put a hello.txt file onto each one--with slightly different content in each file on each machine.  Then you will add an attribute and a test to our InSpec framework, run the test, see it fail, and then modify the content on each machine so that the test will pass in the correct instance, but otherwise it will fail. Then [**if there is time**] you will modify the control to perform entirely different tests in different situations.
 
 1. Create two ubuntu containers by copying the following code into the Vagrantfile.
 
@@ -1013,7 +1044,7 @@ In this tutorial, you will use two virtual machines and put a hello.txt file ont
     ```
 1. Add attributes files to each virtual machine containing the role attribute.
 
-    The profile-attribute.yml file will have the same name on each virtual machine, but the content will be slightly different in each case.
+     The profile-attribute.yml file will have the same name on each virtual machine, but the content will be slightly different in each case.
 
     ```bash
     # ~/learn-inspec
@@ -1060,7 +1091,7 @@ In this tutorial, you will use two virtual machines and put a hello.txt file ont
     Profile Summary: 1 successful, 0 failures, 0 skipped
     ```
 
-* Further explanation and examples on how attributes might help reduce profile sprawl, etc.
+As you can see, InSpec makes testing different environments with a single control pretty simple. The ease of extending controls reduces the inevitable sprawl of controls and profiles that happens when every individual system, such as different operating systems or different node roles, need a suite of similar tests designated for that purpose only. 
 
 [END_BOX]
 
@@ -1069,7 +1100,7 @@ In this tutorial, you will use two virtual machines and put a hello.txt file ont
 
 ## Conclusion
 
-In this tutorial, ...
+In this tutorial, you learned to write a basic InSpec controls, integrated your tests into a profile, and used these tools to scan both local and remote systems. You were also introduced to a few of the different environments where you can integrate InSpec into your continuous automation workflow, such as WinRM, Docker, and the Cloud. Finally, you learned to use attributes to test a single control in more than one environment, which will make your controls extendable and flexible.
 
 [TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
 
