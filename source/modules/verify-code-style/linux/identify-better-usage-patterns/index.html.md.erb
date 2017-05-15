@@ -1,0 +1,117 @@
+---
+title: 'Use Foodcritic to identify better usage patterns'
+short_title: 'Identify better usage patterns'
+platform: Linux
+platform_id: rhel
+category: local-development
+order: 2
+time_to_complete: 30 minutes
+snippet_path: test-your-infrastructure-code/rhel/virtualbox/verify-your-code-adheres-to-the-style-guide
+snippet_workstation: ubuntu
+quiz_path: quizzes/verify-code-style/shared/identify-better-usage-patterns.yml
+headings: [
+  { label: '1. Unnecessary string interpolation', href: '#step1' },
+  { label: '2. Simplify your code', href: '#step2' },
+  { label: 'Conclusion', href: '#conclusion' }
+]
+---
+[Foodcritic](https://docs.chef.io/foodcritic.html) is another popular linting tool that comes with the Chef DK.
+
+RuboCop can be run on any Ruby program, and isn't specific to Chef. Foodcritic identifies usage patterns that are specific to Chef code. Many Chef users run both tools as part of their lint testing.
+
+In this part you'll see how Foodcritic can identify usage patterns that improve the quality of your code. You'll also extend Foodcritic by writing a custom rule.
+
+## 1. Identify use of unnecessary string interpolation
+
+In Ruby, [string interpolation](https://en.wikipedia.org/wiki/String_interpolation) enables you to replace placeholders within a string with the values they represent.
+
+Here's an example for a basic web server configuration.
+
+```ruby
+# webserver.rb
+# Write the home page.
+file "#{node['document_root']}/index.html" do
+  content '<html>This is a placeholder</html>'
+end
+```
+
+Here, double quotes `"` indicate the use of string interpolation. This `file` resource combines the document root, stored as a node attribute, with the name of the index file to create a full path to the home page. The `#{}` syntax indicates the placeholder. Its contents can be a variable or block of Ruby code.
+
+The `content` property uses single quotes `'` because it does not require string interpolation &ndash; there are no placeholders to replace.
+
+Double quotes may also be used when the contents of the string contains one or more single quotes. For example:
+
+```ruby
+# webserver.rb
+# Write the home page.
+file "#{node['document_root']}/index.html" do
+  content "<html>Welcome to Suzy's web site!</html>"
+end
+```
+
+You can use double quotes even when string interpolation is not used. However, some people prefer to use double-quotes only when string interpolation is required because it makes the intention of the string clear.
+
+Let's examine a case where lint testing can help identify the use of unnecessary string interpolation. Modify your default recipe to look like this.
+
+<% code_snippet(page: current_page, path: 'use-foodcritic/default-8-rhel') %>
+
+This code resembles the code you wrote in the previous tutorial that configures Apache for both Ubuntu and CentOS.
+
+Notice the use of double quoted strings. Although this program is valid and behaves as you would expect, its intention might not be clear to others. Because string interpolation is not required, it might appear to others that the code intends to use string interpolation but the string is missing additional information.
+
+From your <% fp 'webserver_test' %> cookbook's directory, run `foodcritic ./recipes/*` to run the Foodcritic rules against the default recipe.
+
+<% command_snippet(page: current_page, path: 'use-foodcritic/foodcritic-recipes-1') %>
+
+Foodcritic reports [FC002](http://www.foodcritic.io/#FC002): "Avoid string interpolation where not required".
+
+Now remove the string interpolation to fix the violation. Your recipe should resemble the one you created in the previous tutorial.
+
+<% code_snippet(page: current_page, path: 'use-foodcritic/default-3-2-rhel') %>
+
+Run `foodcritic` a second time to verify that the violation is fixed.
+
+<% command_snippet(page: current_page, path: 'use-foodcritic/foodcritic-recipes-2', features: :stdin) %>
+
+When `foodcritic` produces no output, it indicates that Foodcritic found no violations.
+
+## 2. Use Foodcritic to simplify your code
+
+Say you didn't know about the [service](https://docs.chef.io/resource_service.html) resource, and that you instead use the [execute](https://docs.chef.io/resource_execute.html) resource to manage the Apache service in your `webserver_test` cookbook.
+
+Modify your default recipe like this.
+
+<% code_snippet(page: current_page, path: 'use-foodcritic/default-9-rhel') %>
+
+Although this recipe might work as you expect, it's unnecessarily complex. The `execute` resource requires additional code to ensure that the service is enabled and started only when needed. This code would require additional testing to ensure that it accounts for differences in each version of CentOS and Ubuntu that you support.
+
+Run `foodcritic` to apply Foodcritic's rules to your recipe.
+
+<% command_snippet(page: current_page, path: 'use-foodcritic/foodcritic-recipes-3') %>
+
+Foodcritic reports [FC004](http://www.foodcritic.io/#FC004): "Use a service resource to start and stop services".
+
+The `service` resource takes care of all of the details required to enable and start the service. Modify your recipe to look like the original version, like this.
+
+<% code_snippet(page: current_page, path: 'use-foodcritic/default-3-3-rhel') %>
+
+Run `foodcritic` to verify that the violation is fixed.
+
+<% command_snippet(page: current_page, path: 'use-foodcritic/foodcritic-recipes-4', features: :stdin) %>
+
+By fixing the violations, you've created a recipe that's easier to read, maintain, and verify.
+
+Check out the [Foodcritic documention](http://www.foodcritic.io) to learn more, including how to:
+
+* specify [which rules to run](http://www.foodcritic.io/#choosing-rules-to-run).
+* use rules [written by the community](http://www.foodcritic.io/#extra-rules), which you can use as a model for writing your own rules.
+
+[GITHUB] [Get the code for this tutorial](https://github.com/learn-chef/webserver_test/tree/lesson3_rhel) on GitHub.
+
+## Conclusion
+
+In this tutorial, you saw how to use [RuboCop](http://batsov.com/rubocop/) and [Foodcritic](http://www.foodcritic.io) to help ensure that your code adheres to standard style guidelines and avoids common problems. Running lint testing tools such as RuboCop and Foodcritic helps ensure that the code you write adheres to your team's preferred style. They can also help detect code that surely has an error, such as using an invalid character in a variable name.
+
+Like ChefSpec, RuboCop and Foodcritic do not involve the creation of a virtual instance, and are fast ways to validate the correctness of your work. Once you have code that passes lint and unit testing, you can apply that code to virtual instances using tools such as Test Kitchen and InSpec. After you verify your work on virtual instances, you can move on running your changes to real test infrastructure or submit your change to a continuous delivery system such as Chef Automate.
+
+[TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).

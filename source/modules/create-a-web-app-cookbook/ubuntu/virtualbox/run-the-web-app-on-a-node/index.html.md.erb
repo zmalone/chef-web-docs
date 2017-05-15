@@ -1,0 +1,181 @@
+---
+title: 'Appendix: Running the web app on a node'
+short_title: 'Appendix: Running on a node'
+order: 7
+keywords: TODO
+appendix: true
+snippet_path: create-a-web-app-cookbook/ubuntu/vagrant/configure-mysql-ubuntu-vagrant
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Bring up a Chef server', href: '#step1' },
+  { label: '2. Bring up a node to manage', href: '#step2' },
+  { label: '3. Upload your cookbooks', href: '#step3' },
+  { label: '4. Create data bags', href: '#step4' },
+  { label: '5. Bootstrap your node', href: '#step5' },
+  { label: '6. Verify the configuration', href: '#step6' },
+  { label: '7. Updating your configuration', href: '#step7' },
+  { label: '8. Clean up your environment', href: '#step8' },
+]
+---
+Now that you have the Customers web application working on local test instances through Test Kitchen, you can apply the `lamp_customers` cookbook to a real server, or node.
+
+This part is optional, but it's a good opportunity to apply what you've learned so far.
+
+The following sections outline the steps required to prepare your Chef server and your node to run the Customers web app. If you're interested in using [Chef Automate](https://www.chef.io/automate/) to automatically test, review, build, and deploy changes, check out [Deploy infrastructure changes with Chef Automate](/modules/deploy-infrastructure/) to learn more.
+
+[START_BOX]
+
+## 1. Bring up a Chef server
+
+If you don't have a Chef server, the [Manage a node with Chef server](/modules/manage-a-node-chef-server/) module can help get you started with one.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Bring up a node to manage
+
+Like you did in [Manage a node with Chef server](/modules/manage-a-node-chef-server/ubuntu/), bring up an Ubuntu 14.04 server to manage. Your server can run on spare hardware, a cloud instance, or even a virtual machine.
+
+[Read this page](/modules/manage-a-node-chef-server/ubuntu/hosted/get-a-node-to-bootstrap/) if you just need a refresher on how to prepare your node for the bootstrap process.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Upload your cookbooks to Chef server
+
+[As you did with the chef-client cookbook](/modules/manage-a-node-chef-server/ubuntu/hosted/run-chef-client-periodically#step1) in the _Manage a node with Chef server_ module, use [Berkshelf](https://docs.chef.io/berkshelf.html) to upload the `lamp` and `lamp_customers` cookbooks to the Chef server.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Create data bags on the Chef server
+
+In this module, you created local data bags that contained test data. To configure the Customers web app on a node, you need to create real data bags on your Chef server.
+
+1. [Create a data bag](https://docs.chef.io/data_bags.html#using-knife) named `passwords` using `knife`. You'll need to create a second version of <% fp 'mysql.json' %> file that's similar to the one you used in this module. You can place this file in a temporary directory, away from your Chef respository. Use strong passwords as you would for a production system. You can delete <% fp 'mysql.json' %> from your workstation after you upload the data bag to the Chef server.
+1. Optionally, generate a secret key and [encrypt your data bag item](https://docs.chef.io/data_bags.html#encrypt-a-data-bag-item). You'll also need to transfer your secret key to your node so that your node can decrypt data. By default, the secret key exists at <% fp '/etc/chef/encrypted_data_bag_secret' %> on Linux.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Bootstrap your node
+
+Now you can bootstrap your node. You'll specify the `lamp_customers` cookbook's default recipe in the node's run-list, which will apply the Customers web application configuration.
+
+Refer to the [Manage a node with Chef server](/modules/manage-a-node-chef-server/ubuntu/hosted/bootstrap-your-node/) module for a refresher on how the bootstrap process works. Here's an example that uses key-based authtication.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 23.96.80.167 --ssh-user ubuntu --sudo --identity-file ~/.ssh/my.pem --node-name customers_web_app --run-list 'recipe[lamp_customers]'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Verify the configuration
+
+From a browser, navigate to your server. You'll see this:
+
+![](misc/manage_customers_node.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Updating your node's configuration
+
+Now that you have the initial configuration running on your node, you can make changes to the configuration, test the changes locally, and then apply those changes to your node. Making a small change to the `lamp_customers` cookbook, perhaps to the CSS or the web application code, is all you need to practice the process.
+
+The following steps outline a basic process. Remember, if you're interested in using [Chef Automate](https://www.chef.io/automate/) to automatically test, review, build, and deploy changes, the [Deploy infrastructure changes with Chef Automate](/modules/deploy-infrastructure/) module can help you get started.
+
+### 7.1. Verify your changes locally
+
+Whenever you make a change to a cookbook, it's best to run your cookbook through Test Kitchen on a clean instance to verify that it works as expected before you commit your work to source control or upload to Chef server.
+
+In this module, you wrote InSpec tests that verify the expected configuration and ran those tests through Test Kitchen instances. As you develop your feature, you can run `kitchen converge` and `kitchen verify` to validate your changes. As a final verification step, you can run `kitchen test` to apply and verify the final configuration on a clean instance.
+
+[Other kinds of testing](/modules/get-started-with-testing/) also exist. The reference implementations for the [lamp](https://github.com/learn-chef/lamp) and [lamp_customers](https://github.com/learn-chef/lamp_customers) cookbooks on GitHub should pass ChefSpec, Foodcritic, and Rubocop testing. You can use the ChefSpec tests under the <% 'spec' %> directory as a starting point.
+
+### 7.2. Update your cookbook's version metadata
+
+You should always update your cookbook's version metadata to ensure that each version is tied to a specific set of functionality. Your cookbook's <% fp 'metadata.rb' %> file holds the cookbook's version. When you run the `chef generate cookbook` command to create your cookbook, the initial version is set to 0.1.0. Here's an example.
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/metadata-ubuntu-vagrant-3') %>
+
+Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. Version numbers are typically written as MAJOR.MINOR.PATCH, where:
+
+* MAJOR specifies a change that's incompatible with previous versions.
+* MINOR specifies new functionality that's backwards-compatible with previous versions.
+* PATCH specifies backwards-compatible bug fixes.
+
+According to [Semantic Versioning](http://semver.org), you should set your cookbook's version number to 1.0.0 at the point it's ready to use in production.
+
+### 7.3. Upload your cookbook to Chef server
+
+After you've verified your work locally and updated the version metadata, you're ready to upload your cookbook to Chef server.
+
+If you introduced any new cookbook dependencies in your cookbook, run `berks install` from your cookbook's directory before you upload your updated cookbook to Chef server. This command installs the new depdendencies in Berkshelf's cache, <% fp '~/.berkshelf/cookbooks' %>.
+
+After you've resolved your cookbook's dependencies on other cookbooks, run `berks upload` to upload everything to the Chef server.
+
+When you pin to specific cookbook versions in your cookbook's <% fp 'metadata.rb' %> file, Berkshelf can skip the upload process for cookbook versions that already exist on the Chef server.
+
+### 7.4. Upload any other data to the Chef server
+
+If you're using [roles](https://docs.chef.io/roles.html),  [environments](https://docs.chef.io/environments.html), or [data bags](https://docs.chef.io/data_bags.html), run the cooresponding `knife` commands to upload any changed settings to your Chef server.
+
+### 7.5. Run chef-client on your node
+
+Now that your updated cookbooks and other data are on the Chef server, you're ready to apply the changes to your node. Remember that when you run `chef-client`, your node checks in with the Chef server to get the latest cookbooks and other information and then applies the run-list.
+
+You can refer to the [Manage a node with Chef server](/modules/manage-a-node-chef-server/ubuntu/hosted/update-your-nodes-configuration#step4) module for a refresher on how to run `knife ssh` to update your node's configuration. Here's an example that uses key-based authentication.
+
+```bash
+# ~/learn-chef
+$ knife ssh 23.96.80.167 'sudo chef-client' --manual-list --ssh-user ubuntu --identity-file ~/.ssh/my.pem
+```
+
+### 7.6. Keep up with the latest dependent cookbooks
+
+In this module you _pinned_, or specified, version constraints on the community cookbooks your cookbook depends on. Here's an example from the `lamp` cookbook's metadata file.
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/metadata-ubuntu-vagrant-3') %>
+
+Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. Version numbers are typically written as MAJOR.MINOR.PATCH.
+
+Pinning to the specific versions of the cookbooks you depend on is a recommended practice because it declares a version your cookbook is known to work with. If you don't pin the version, Berkshelf will always download the latest version, which may be incompatible with your cookbook.
+
+You may want to occasionally update your version constraints to point to newer (or perhaps the latest) versions of dependent cookbooks. Newer versions typically include new features, security fixes, and improved ease of use. Unless you require a new feature in your cookbook, you may want to update to newer cookbook versions independently of any other changes to your cookbook. Doing so will minimize complications in case something stops working.
+
+You can get the latest version of a community cookbook from its page on Chef Supermarket or by running the `knife supermarket show` command, like this.
+
+```bash
+# ~/learn-chef
+$ knife supermarket show httpd | grep latest_version
+latest_version:     https://supermarket.chef.io/api/v1/cookbooks/httpd/versions/0.4.5
+```
+
+When you update your dependent cookbook versions, always test and verify that they continue to behave as you expect. Updates to the MINOR version are typically backwards-compatible with previous releases. Updates to the MAJOR version may require you to modify how you use the cookbook.
+
+After you verify updates locally using Test Kitchen, you'll need to run the `berks update` command to update the Berkshelf cache with the newer cookbook versions. `berks update` differs from `berks install` in that `berks install` downloads any new cookbooks that you don't have on your workstation. `berks update` updates existing cookbooks.
+
+[END_BOX]
+
+[START_BOX]
+
+## 8. Clean up your environment
+
+When you're finished, you can optionally perform these steps to remove your cookbooks, data bag, and node metadata from your Chef server.
+
+* Run [knife cookbook delete](https://docs.chef.io/knife_cookbook.html#delete) to delete cookbooks you no longer want from the Chef server. The [bulk delete](https://docs.chef.io/knife_cookbook.html#bulk-delete) option is an easy way to remove multiple cookbooks. For example, `knife cookbook bulk delete . -p` will entirely remove all cookbooks from your Chef server.
+* Run [knife data bag delete](https://docs.chef.io/knife_data_bag.html#delete) to delete your data bag from the Chef server.
+* Run [knife node delete](https://docs.chef.io/knife_node.html#delete) and [knife client delete](https://docs.chef.io/knife_client.html#delete) to remove your node's association and metadata from the Chef server.
+
+Deleting a node from your Chef server removes any data about that node from the server &ndash; it doesn't automatically tear down the instance. Don't forget to tear down any nodes, including any cloud instances, that you used to complete the module.
+
+[END_BOX]

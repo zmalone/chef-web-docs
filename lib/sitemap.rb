@@ -19,6 +19,20 @@ class Middleman::Sitemap::Store
 end
 
 class Middleman::Sitemap::Resource
+  def id
+    ids = []
+    page = self
+    loop do
+      break unless page
+      fragment = (page.data.id ? page.data.id : page.normalized_path.split('/')[-2])
+      break unless fragment
+      break if ids.count > 0 && (fragment === 'modules' || fragment === 'tracks')
+      ids.unshift(fragment)
+      page = page.parent
+    end
+    ids.join('/')
+  end
+
   def title
     parents(true).map { |page| page.data.ignore_breadcrumb ? '' : (page.data.toc_title || page.data.title) }.compact.join(' - ').presence
   end
@@ -36,7 +50,11 @@ class Middleman::Sitemap::Resource
   end
 
   def children
-    super.sort
+    @children_cache ||= super.sort
+  end
+
+  def parent
+    @parent_cache ||= super
   end
 
   def parents(include_self = false)
@@ -86,6 +104,16 @@ class Middleman::Sitemap::Resource
 
   def appendix?
     self.data.appendix == true
+  end
+
+  def minutes
+    return unless self.data.time_to_complete
+    data = self.data.time_to_complete.match(/^([\d]+)(-([\d]+))?\s(minutes?|hours?)$/)
+    return unless data
+    range_min = data[1].to_i
+    range_max = (data[3]) ? data[3].to_i : range_min
+    return [range_min, range_max] unless data[4].start_with? 'hour'
+    [range_min * 60, range_max * 60]
   end
 
   def <=>(other_resource)

@@ -8,6 +8,8 @@ Learn Chef tutorials and skills library are written in markdown and use the Midd
 Installation
 ------------
 
+1. Ensure you have Node 6+, NPM 3+, and Ruby 2.3.1. See the section below for Ubuntu instructions.
+
 1. Clone this repository.
 
         $ git clone git@github.com:chef/chef-web-learn.git
@@ -30,32 +32,83 @@ Installation
         $ sudo apt-get install npm
         $ sudo ln -s /usr/bin/nodejs /usr/bin/node
 
-Start up
---------
+1. Install node packages:
+
+        $ npm install
+
+Start up in development mode
+----------------------------
 
 A server process needs to be running in order to use Middleman.
 
 1. Start the Middleman server in a new terminal window, using chef-web-learn as the working directory.
 
-        $ bin/middleman server
+        $ npm start
+        OR
+        $ bundle exec middleman server
 
-If Middleman stops responding, kill (Ctrl-C) the server and restart it.
+1. The site should now be available locally on port 3001 using BrowserSync for live reloading during
+    development, although the HTML will also be available on port 4567 via Middleman.
 
-Building the tutorials and skills library
------------------------------------------
+        $ http://localhost:3001
 
-1. To build the site (and optimize images, compress javascript, etc), run the following command:
+If you make changes to a content file, stylesheet, or JavaScript file, and save it, the Middleman
+    server will be updated in real time with the change. This allows you to preview changes that
+    make you make locally.
 
-        $ bundle exec middleman build --clean
+If Middleman stops responding, kill (Ctrl-C) the server and restart it. If you make a configuration
+    change, including changes to Middleman helpers, you will need to kill the development server and
+    restart it.
+
+Create a build
+--------------
+
+1. To build the site (and optimize images, compress javascript, etc), set the appropriate
+    environment variables and run the build command, e.g.:
+
+        $ NODE_ENV=production API_ENDPOINT=http://API_ENDPOINT_DOMAIN npm run build
+        OR
+        $ NODE_ENV=production API_ENDPOINT=http://API_ENDPOINT_DOMAIN bundle exec middleman build --clean
 
 1. If you see errors, fix them. The exit code should be 0.
 
         $ echo $?
         $ 0
 
-1. To see the site, open the root html on your local machine by navigating to http://localhost:4567 in your web browser.
+You can test the build by running a local development server (such as
+https://www.npmjs.com/package/http-server) to serve the `build` folder.
 
-1. If you make changes to a .md file and save it, the Middleman server will be updated in real time with the change. This allows you to preview changes that make you make locally.
+Installing current versions of Node and Ruby on Ubuntu
+------------------------------------------------------
+
+The Node and Ruby packages for Ubuntu are outdated. Here is one method of updating them:
+
+   ##### Install Node / NPM:
+        $ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+        $ sudo apt-get install -y nodejs
+
+   ##### Install Ruby and dependencies:
+        $ sudo apt-get update
+        $ sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+        $ sudo apt-get install libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
+        $ gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+        $ curl -sSL https://get.rvm.io | bash -s stable
+        $ source ~/.rvm/scripts/rvm
+        $ rvm install 2.3.1
+        $ rvm use 2.3.1 --default
+        $ gem install bundler
+        $ bundle install
+
+   ##### Increase the number of inotify watches (if you see an error in dev mode):
+        $ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+
+Testing Middleman Helpers
+----------------------------
+
+- run `bundle exec rspec` to run all specs
+- run `bundle exec guard` to auto-run specs for middleman changes
+
 
 Publishing
 ----------

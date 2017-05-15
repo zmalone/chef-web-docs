@@ -1,0 +1,189 @@
+doctype html
+html lang="en"
+  head
+    title= [current_page.title, 'Learn Chef'].compact.join(' | ')
+    link rel='icon' type='image/x-icon' href='/favicon.ico'
+    = canonical_link_tag current_page.url
+    base href="#{current_page.url}"
+    meta charset='utf-8'
+    meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'
+
+    meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'
+    meta property='og:type' content='article'
+    meta property='og:url' content="#{canonical_url_with_trailing_slash(current_page.url)}"
+    meta property='og:title' content="#{meta_og(current_page, 'title')}"
+    meta property='og:description' content="#{meta_og(current_page, 'post')}"
+    - og_image = meta_og(current_page, 'image')
+    - if og_image
+      meta property='og:image' content="#{canonical_url asset_url(og_image)}"
+    meta property='fb:app_id' content="#{social_share_facebook_app_id}"
+
+    - @meta_tags = current_page.data.meta_tags || []
+    - @meta_tags.each do |meta_tag|
+      meta name=meta_tag.name content=meta_tag.content
+    - if current_page.data.description
+      meta name='description' content=current_page.data.description
+    - if current_page.data.keywords
+      meta name='keywords' content=current_page.data.keywords
+
+    = stylesheet_link_tag gulp_css_path('application.css')
+    = yield_content :head
+    = partial 'layouts/demandbase'
+    = partial 'layouts/segment'
+    = javascript_include_tag '//cdn.optimizely.com/js/128576591.js'
+    - if current_page.data.redirect
+      = partial "layouts/redirect", locals: {target: current_page.data.redirect}
+
+  body class="#{get_page_classes(current_page, page_classes)}"
+    app-root
+    noscript#app-content
+      span defaultOverlayTarget=""
+      .contain-to-grid.fixed
+        nav.nav-main.top-bar.row data-topbar="" role="navigation"
+          ul.title-area
+            li.name
+              = link_to '/', class: 'logo-learn-chef' do
+                = image_tag('rally-logo.png', onerror: 'rally-logo.png')
+            /! Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone
+            li.toggle-topbar.menu-icon
+              a href="#"
+                span
+          section.top-bar-section
+            /! Left Nav Section
+            ul.left.links
+              li= link_to 'Tracks', '/tracks/'
+              li= link_to 'Modules', '/modules/'
+            /! Right Nav Section
+            ul.right.links
+              li.nav-link template="ngIf !isSignedIn"
+                a href="#" data-reveal-id="loginModal" Log in
+              li.nav-link template="ngIf !isSignedIn"
+                a href="#" data-reveal-id="SignupModal" Sign up
+              li.nav-link.user-display-name template="ngIf isSignedIn"
+                a href="/profile"
+                  user-display-name
+              li.has-dropdown
+                a.icon.ic-option data-dropdown="dropOptions" aria-controls="dropOptions" aria-expanded="false" data-options="align:left"
+                ul#dropOptions.f-dropdown.nav-dropdown aria-hidden="true" data-dropdown-content=""  aria-autoclose="" tabindex="-1"
+                  li template="ngIf isSignedIn"
+                    = link_to '/profile'
+                      i.icon-sprite.ic-profile
+                      span Profile
+                  li template="ngIf isSignedIn"
+                    = link_to '/profile#progress'
+                      i.icon-sprite.ic-progress
+                      span Progress
+                  li template="ngIf isSignedIn"
+                    a href="#" on-click="logout($event)"
+                      i.icon-sprite.ic-log-out
+                      span Log Out
+                  li
+                    a href="https://www.chef.io/" target="_blank"
+                      i.icon-sprite.ic-about-chef
+                      span About Chef
+      welcome-ribbon
+      //Modal for login and Sign up
+      = partial "layouts/modal", locals: {id: 'loginModal', title: 'Login to your account' } do
+        p.social
+          a.fa.fa-google.login-google.cls-modal
+          a.fa.fa-github.login-github.cls-modal
+          a.fa.fa-twitter.login-twitter.cls-modal
+          a.fa.fa-linkedin.login-linkedin.cls-modal
+          a.ic-chef-supermarket.login-chef.cls-modal
+      //Modal for login and Sign up
+      = partial "layouts/modal", locals: {id: 'SignupModal', title: 'Join the rally using' } do
+        p.social
+          a.fa.fa-google.login-google.cls-modal
+          a.fa.fa-github.login-github.cls-modal
+          a.fa.fa-twitter.login-twitter.cls-modal
+          a.fa.fa-linkedin.login-linkedin.cls-modal
+          a.ic-chef-supermarket.login-chef.cls-modal
+      section
+        .content
+          = yield
+          router-outlet
+
+      footer#footer
+        .row
+          .medium-12.columns
+            .medium-3.columns
+              .head
+                | DOCS
+              ul.links-footer
+                li
+                  a href="https://docs.chef.io/chef_automate.html" target="_blank" Chef Automate docs
+                li
+                  a href="https://docs.chef.io/chef_automate.html" target="_blank" Chef docs
+                li
+                  a href="http://inspec.io/docs/" target="_blank" InSpec docs
+                li
+                  a href="https://www.habitat.sh/docs/overview/" target="_blank" Habitat docs
+            .medium-3.columns
+              .head
+                | COMMUNITY
+              ul.links-footer
+                li
+                  = link_to 'About the Chef Community', '/community/', target: :_blank
+                li
+                  a href="http://inspec.io/community" target="_blank" InSpec Community
+                li
+                  a href="https://www.habitat.sh/community/" target="_blank" Habitat Community
+                li
+                  a href="https://supermarket.chef.io/" target="_blank" Chef Supermarket
+            .medium-3.columns
+              .head
+                | TRAINING & CERTIFICATIONS
+              ul.links-footer
+                li
+                  a href="https://training.chef.io/catalog" target="_blank" Training Catalog
+                li
+                  a href="https://training.chef.io/training/onsite.html" target="_blank" Private Training
+                li
+                  a href="https://training.chef.io/certification" target="_blank" Certification
+            .medium-3.columns
+              .head
+                | MANAGE MY LEARN CHEF PROFILE
+              ul.links-footer
+                li template="ngIf !isSignedIn"
+                  a href="#" data-reveal-id="loginModal" Log in
+                li template="ngIf !isSignedIn"
+                  a href="#" data-reveal-id="SignupModal" Sign up
+                li template="ngIf isSignedIn"
+                  = link_to 'My Profile', '/profile'
+                li template="ngIf isSignedIn"
+                  = link_to 'My Progress', '/profile#progress'
+                li.separator
+                  a href="#" target="_blank" data-reveal-id="contact-modal"
+                    | Contact Chef
+                li
+                  a href="https://www.chef.io/privacy-policy" target="_blank" Privacy Policy
+                li
+                  a href=" https://www.chef.io/cookie-policy/" target="_blank" Cookie Policy
+              .head
+                | Subscribe to updates
+              a.button.btn.btn-primary href="#" data-reveal-id="subscribe-modal"
+                | Keep me updated
+          .medium-12.columns
+            .medium-4.columns
+              a.logo-footer href=""
+            .medium-4.columns.copyright
+              | &copy; #{Time.now.year} Chef Software, Inc.  All Rights Reserved.
+            .medium-4.columns
+              ul.social-icon
+                li
+                  a.ic-fb href="#{social_facebook_share(home_page)}" target="_blank"
+                li
+                  a.ic-google href="#{social_google_plus_share(home_page)}" target="_blank"
+                li
+                  a.ic-twitter href="#{social_twitter_share(home_page)}" target="_blank"
+                li
+                  a.ic-linkedin href="#{social_linkedin_share(home_page)}" target="_blank"
+    #videoModal.reveal-modal aria-hidden="true" aria-labelledby="modalTitle" data-reveal="" role="dialog"
+      h2#modalTitle
+      #videoContainer
+      a.close-video-modal aria-label="Close"  ×
+    = partial "layouts/modal", locals: {id: 'contact-modal', title: 'Contact Chef' } do
+      form#mktoForm_2297
+    = partial "layouts/modal", locals: {id: 'subscribe-modal', title: 'Subscribe to updates' } do
+      form#mktoForm_2298
+  = partial 'layouts/js'

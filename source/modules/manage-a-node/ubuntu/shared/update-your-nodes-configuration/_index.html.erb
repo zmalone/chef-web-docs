@@ -1,0 +1,203 @@
+<% key_points([
+  "You ran `knife bootstrap` to associate your node with the Chef server and do an initial check-in. Bootstrapping is a one-time process.",
+  "The `knife ssh` command enables you to update your node's configuration when your cookbook changes."
+]) %>
+
+During the bootstrap process, your node downloaded and installed `chef-client`, downloaded the latest cookbooks, and executed the run-list.
+
+Chef provides information about your node that you can access from your cookbooks. Here you'll update the  home page to display your node's fully-qualified domain name (FQDN). You'll practice updating your cookbook, uploading it to the Chef server, and seeing the changes appear on your node.
+
+You already [learned how to use the template resource](/modules/learn-the-basics/ubuntu/free/make-your-recipe-more-manageable#step3) to reference the HTML file for your home page. You're ready to add placeholders to your HTML file that are filled in with info about your node as the recipe runs.
+
+[START_BOX]
+
+## 1. Add template code to your HTML
+
+When you bootstrapped your node, the Chef server created what's called a _node object_ for you. This node object contains a number of attributes that describe the node, and these attributes are saved on the Chef server. When a recipe runs, a `node` object is loaded into the program. Chef loads the [node's attributes](https://docs.chef.io/attributes.html) from the Chef server into memory. You can access these attributes from your Chef recipes.
+
+For our home page, we want to display the server's fully qualified domain name (FQDN). To do so, we access the `fqdn` attribute of the `node` object. On the local workstation copy of your `learn_chef_apache2` cookbook, change <code class="file-path">index.html.erb</code> to look like this.
+
+<% code_snippet(page: current_page, path: 'add-template-code-to-your-html/index-html-erb-node1-ubuntu') %>
+
+The <code>&lt;%= %&gt;</code> syntax enables you to provide placeholders in your template file. Placeholders are replaced with their values when `chef-client` runs. You'll work more with templates in future modules, but you can [read more](https://docs.chef.io/templates.html) now in the Chef documentation.
+
+[COMMENT] Keep in mind that this example is for illustrative purposes. In practice, you might modify your web server's configuration file to specify the server's hostname or other info instead of its web page content.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Update your cookbook's version metadata
+
+Before you upload an updated cookbook to Chef server, you should always update your cookbook's version metadata to ensure that each version is tied to a specific set of functionality.
+
+Your cookbook's <code class="file-path">metadata.rb</code> file holds the cookbook's version. When you run the<br>`chef generate cookbook` command to create your cookbook, the initial version is set to 0.1.0. Here's what your `learn_chef_apache2` cookbook's <code class="file-path">metadata.rb</code> file looks like.
+
+<% code_snippet(page: current_page, path: 'add-template-code-to-your-html/metadata-0-1-0-learn_chef_apache2') %>
+
+The `learn_chef_apache2` cookbook is currently at version 0.1.0.
+
+Most Chef cookbooks follow the [Semantic Versioning](http://semver.org) scheme. Version numbers are typically written as MAJOR.MINOR.PATCH, where:
+
+* MAJOR specifies a change that's incompatible with previous versions.
+* MINOR specifies new functionality that's backwards-compatible with previous versions.
+* PATCH specifies backwards-compatible bug fixes.
+
+An update to the HTML template represents a minor change in functionality, so let's increment the middle number, making your cookbook's version 0.2.0.
+
+Modify your copy of <% fp 'metadata.rb' %> like this. The `version` field changes to '0.2.0'.
+
+<% code_snippet(page: current_page, path: 'add-template-code-to-your-html/metadata-0-2-0-learn_chef_apache2') %>
+
+[Learn more about cookbook versioning](https://docs.chef.io/cookbook_versions.html)
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Upload your cookbook to the Chef server
+
+Now you're ready to upload your cookbook to the Chef server. Run the `knife cookbook upload` command like this.
+
+<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/upload-0-2-0-learn_chef_apache2', features: [:stdin, :stderr]) %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Run the cookbook on your node
+
+Now that your updated cookbook is on the Chef server, you can run `chef-client` on your node. The `chef-client` command pulls from Chef server the latest cookbooks from the node's run-list and applies the run-list to the node.
+
+To run `chef-client` on your node remotely from your workstation, you could use the `ssh` utility to create an SSH connection to your node and then run `chef-client`. Another way is to use the [knife ssh](https://docs.chef.io/knife_ssh.html) command. A benefit to using the `knife ssh` command is that it enables you to run `chef-client` (or any other command) on multiple nodes at the same time.
+
+<% if current_page.parent.data.environment != 'virtualbox' %>
+
+Recall that the Chef server stores information about your nodes. This information is indexed and is searchable from tools such as `knife`. When you run `knife ssh`, you can either specify your node's IP address or a [search query](https://docs.chef.io/chef_search.html) that specifies which nodes to connect to. Because the search [query syntax](https://docs.chef.io/knife_search.html#query-syntax) supports multiple search patterns and can contain multiple search criteria, you can use `knife ssh` to run `chef-client` on multiple nodes at the same time.
+
+<% end %>
+
+<% if current_page.parent.data.environment == 'virtualbox' %>
+
+As with `knife bootstrap`, the options you provide to `knife ssh` depend on how you would normally connect to your node over SSH. [The other versions of this module](/modules/<%= current_page.parent.parent.parent.data.id %>/ubuntu/) describe the process more generally. But because your Ubuntu node is managed by Vagrant and VirtualBox, you connect to it by providing its SSH forwarded port.
+
+Run the following command to run `chef-client` on your node.
+
+<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/knife-ccr-node1-ubuntu-1') %>
+
+<% else %>
+
+As with `knife bootstrap`, the options you provide to `knife ssh` depend on how you would normally connect to your node over SSH.
+
+Choose the option that matches how you normally connect to your node over SSH.
+
+* [Update your node using key-based authentication](#updateyournodeusingkeybasedauthentication)
+* [Update your node using password authentication](#updateyournodeusingpasswordauthentication)
+* [Update a local virtual machine using a forwarded port](#updatealocalvirtualmachineusingaforwardedport)
+
+### Update your node using key-based authentication
+
+Replace <code class="placeholder">USER</code> with your username and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">~/.ssh/my.pem</code>. Also replace <code class="placeholder">node1-ubuntu</code> with your node's name if you used a different name to bootstrap your node.
+
+<% accordion('cloud-attributes', "If you're working with a cloud instance", true) do %>
+
+<%= partial 'modules/manage-a-node/shared/cloud_attributes' %>
+
+<% end %>
+
+```bash
+# ~/learn-chef
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user USER --identity-file IDENTITY_FILE --attribute ipaddress
+```
+
+Here's an example.
+
+<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/knife-ccr-node1-ubuntu-1') %>
+
+Here you see that the "hello world" message is replaced with one that includes the node's FQDN.
+
+The `'name:node1-ubuntu'` part is the search query. It returns all nodes that have the name "node1-ubuntu". In practice, you would have only one node with a given name. Recall that a search query supports multiple patterns. If you were to specify `'name:node1-*'`, which uses a wildcard pattern, `knife ssh` would run `sudo chef-client` on all nodes whose name begins with "node1-".
+
+The `--attribute` part tells `knife` which node attribute to use when opening an SSH connection. The default is to use the node's FQDN. For learning purposes, here we specify `ipaddress` to use the node's IP address because your node may not have a resolvable FQDN. In practice, you might omit this argument if your node does have a resolvable FQDN.
+
+[Here are some common built-in node attributes](https://docs.chef.io/attributes.html#automatic-ohai)
+
+### Update your node using password authentication
+
+Replace <code class="placeholder">USER</code> and <code class="placeholder">PASSWORD</code> with your values. Replace `ipaddress` with the appropriate attribute name from the table above if your node is running on a cloud service such as Amazon EC2.
+
+```bash
+# ~/learn-chef
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user USER --ssh-password 'PASSWORD' --attribute ipaddress
+```
+
+The output will resemble the output shown for key-based authentication above.
+
+### Update a local virtual machine using a forwarded port
+
+Replace <code class="placeholder">PORT</code> with your SSH forwarded port, for example, 2222, and <code class="placeholder">IDENTITY\_FILE</code> with your SSH identify file, for example <code class="file-path">/home/user/.vagrant/machines/default/virtualbox/private_key</code>.
+
+```bash
+# ~/learn-chef
+$ knife ssh localhost --ssh-port PORT 'sudo chef-client' --ssh-user vagrant --identity-file IDENTITY_FILE --manual-list
+```
+
+For learning purposes, this version connects directly to localhost using the SSH forwarded port instead of using a search query. To use a search query with a local virtual machine running on Vagrant and VirtualBox, for example, requires a more [complex network configuration](https://github.com/mitchellh/vagrant/issues/2793).
+
+The output will resemble the output shown for key-based authentication above.
+
+<% end %>
+
+[COMMENT] Remember, in practice it's common to configure Chef to act as a service that runs periodically or as part of a continuous integration or continuous delivery (CI/CD) pipeline. For now, we're updating our server configuration by running `chef-client` manually.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Verify the result
+
+As before, run `curl` to verify the configuration. Replace the IP address you see here with yours. You'll see your node's FQDN appear instead of the example shown.
+
+<% command_snippet(page: current_page, path: 'add-template-code-to-your-html/curl-node1-ubuntu-2') %>
+
+<% if current_page.parent.data.environment != 'virtualbox' %>
+
+You can also open a web browser from your workstation and navigate to your web server. Here's an example for a system whose FQDN is "node1-ubuntu".
+
+![The home page with FQDN](manage-a-node/webserver-template-node1-ubuntu.png)
+
+If you bootstrapped a Vagrant instance, one way to verify the configuration is to create an SSH connection to the instance and run `curl localhost`.
+
+```bash
+$ vagrant ssh
+Last login: Thu Dec  3 19:54:48 2015 from 10.0.2.2
+[vagrant@localhost ~]$ curl localhost
+<html>
+  <body>
+    <h1>hello from localhost</h1>
+  </body>
+</html>
+[vagrant@localhost ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+```
+
+The home page now displays "hello from localhost" instead of "hello world".
+
+<% end %>
+
+<% if ['aws-automate', 'opsworks'].include?(current_page.parent.data.environment) %>
+
+<hr />
+
+From the **Nodes** tab in the Chef Automate dashboard, you'll also see that the `chef-client` run succeeded.
+
+![](manage-a-node/chef_automate_nodes_node1_ccr2.png)
+
+<% end %>
+
+To summarize, to update your cookbook you used a _template_. A [template](https://docs.chef.io/templates.html) enables you to write a single, general recipe that’s customized for a particular node as the recipe runs. That means you don’t have to write a custom version of your recipe for every node.
+
+You also ran `knife ssh` to update your node. [knife ssh](https://docs.chef.io/knife_ssh.html) invokes the command you specify over an SSH connection on a node &ndash; in our case `sudo chef-client`. You didn't have to specify the run-list because you already set that up when you bootstrapped the node.
+
+[END_BOX]

@@ -1,0 +1,9 @@
+ul
+  - headings = current_page.data.headings ? current_page.data.headings.dup : []
+  - headings.insert(0, { label: 'Introduction', href: '#top' })
+  - if current_page.data.quiz_path || current_page.data.quiz
+    - headings << { label: 'Test your knowledge', href: '#quiz' }
+  - headings << { label: 'Leave feedback', href: '#disqus' } unless current_page.data.show_disqus == false
+  - headings.each do |heading|
+    li.track-nav == link_to heading[:href] do
+      span == heading[:label]

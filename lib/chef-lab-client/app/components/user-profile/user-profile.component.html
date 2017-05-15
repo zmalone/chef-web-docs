@@ -1,0 +1,94 @@
+<div class="profile-hero">
+  <div class="row">
+    <div class="large-6 medium-8 small-12 columns profile-card">
+      <a *ngIf="!publicProfile" class="settings" (click)="showForm()"><i class="fa fa-cog"></i></a>
+      <div class="user-info" *ngIf="user">
+        <div class="user">
+          <div class="avatar">
+            <img src="{{getProfileImageUrl()}}" />
+            <a *ngIf="!publicProfile" class="link" href="https://www.gravatar.com/" target="_blank"></a>
+          </div>
+        </div>
+        <div class="display-name">
+          {{user.display_name}}<span *ngIf="user.role">{{user.role}}</span><span *ngIf="user.company">{{user.company}}</span>
+        </div>
+      </div>
+      <div class="bio-and-rally-info">
+        <div class="bio">{{user.bio}}</div>
+        <div class="rally-info">
+          <span *ngIf="user">Rallygoer since {{user.created_at|date:'MMM, yyyy'}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="large-6 medium-10 small-12 columns" ng-hide="true" *ngIf="frmStatus">
+      <form class="edit-profile ng-untouched ng-pristine ng-valid" (ngSubmit)="updateUserProfile()">
+        <a class="close-btn" (click)="hideForm()">×</a>
+        <div class="large-12 columns custom-form">
+          <div class="input-control" *ngIf="updateStatus">
+            <div class="success">Profile updated successfully.</div>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+            <input mdInput id="first_name" placeholder="First Name" name="first_name" required type="text" [(ngModel)]="userInfo.first_name" #first_name="ngModel">
+            </md-input-container>
+            <div class="error" *ngIf="first_name.errors && (first_name.dirty || first_name.touched)">First Name is required</div>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+              <input mdInput id="last_name" placeholder="Last Name" name="last_name" required type="text" [(ngModel)]="userInfo.last_name" #last_name="ngModel">
+            </md-input-container>
+            <div class="error" *ngIf="last_name.errors && (last_name.dirty || last_name.touched)">Last Name is required</div>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+            <input mdInput id="display_name" placeholder="Display Name" name="display_name"  type="text" [(ngModel)]="userInfo.display_name" #display_name="ngModel">
+            </md-input-container>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+            <input mdInput id="role" placeholder="Role" name="role" type="text" [(ngModel)]="userInfo.role" #role="ngModel">
+            </md-input-container>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+            <input mdInput id="company" placeholder="Company" name="company" type="text" [(ngModel)]="userInfo.company" #company="ngModel">
+            </md-input-container>
+          </div>
+          <div class="input-control select-control">
+            <span class="mat-input-placeholder-wrapper">
+              <label class="mat-input-placeholder mat-float" for="role">Country</label>
+            </span>
+            <select id="country" name="country" placeholder="Country" [(ngModel)]="userInfo.country">
+              <option value="">Select</option>
+              <option *ngFor="let country of countries" value= {{country.code}}>
+                {{country.name}}
+              </option>
+            </select>
+          </div>
+          <div class="input-control">
+            <md-input-container>
+              <textarea mdInput id="bio" placeholder="About you ( 200 characters max )" name="bio" type="text"
+                        [(ngModel)]="userInfo.bio" #bio="ngModel" maxlength="200"></textarea>
+            </md-input-container>
+          </div>
+        </div>
+        <div class="large-6 columns">
+          <a class="link" href="https://www.chef.io/privacy-policy" target="_blank">Privacy Policy</a>
+        </div>
+        <div class="large-6 columns check-box">
+          <input name="share_profile" [(ngModel)]="userInfo.share_profile" id="share_profile" type="checkbox"><label for="share_profile" translate=""> Share profile to public</label>
+        </div>
+        <div class="large-12 columns">
+          <button type="submit" class="btn btn-primary">Submit</button><a class="fa fa-{{userInfo.provider}} login-type" href=""></a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="row achievements">
+  <div class="large-12 columns">
+    <h2>Achievements</h2>
+    <social-share *ngIf="user.share_profile" url="/lc-rally-user/#/{{user.shared_profile_token}}"></social-share>
+  </div>
+</div>
+<user-coasters [achievements]="achievements"></user-coasters>

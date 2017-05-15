@@ -1,0 +1,39 @@
+.modules-section
+  .row
+    - if defined?(showUserCounts)
+      user-progress-counts
+    - sort_modules(modules.children).each_with_index do |item, index|
+      - tags = [item.page.data.tags, get_track(item.page)&.page&.data&.tags].compact.reduce([], :|)
+      - expanded_tags = expand_tags(tags)
+      - skills_tags = expand_tags get_skill_level_tags(tags)
+      div moduleProgressStatus= "#{get_module_progress_status(current_page)}" order= "#{index}" module="#{item.id}" class="module-tile large-3 medium-4 small-12 columns module-display #{get_tag_classes(expanded_tags)}" data-tags="#{expanded_tags.to_json.tr '"', "'"}"
+        div class="module-card"
+          a href="#{item.page.url}"
+            .header
+              span.title
+                = item.page.data.title
+            user-progress-bar module="#{item.id}"
+            p
+              = item.page.data.description
+            span.time
+              = format_time(item.remaining)
+            - if skills_tags
+              ul.links.tags
+                - skills_tags.each do |tag|
+                  li
+                    a
+                      = tag
+            user-progress-stamp module="#{item.id}"
+            .module-overlay
+              a.button.btn.btn-secondary.user-start-btn href="#{item.page.url}" module="#{item.id}" Start
+              - if item.page.data.video_url
+                a.video-url url="#{item.page.data.video_url}"  watch intro video
+              - if has_social_share?(item.page)
+                p.social
+                  a.fa.fa-google href="#{social_google_plus_share(item.page)}" target="_blank"
+                  a.fa.fa-facebook href="#{social_facebook_share(item.page)}" target="_blank"
+                  a.fa.fa-twitter href="#{social_twitter_share(item.page)}"  target="_blank"
+                  a.fa.fa-linkedin href="#{social_linkedin_share(item.page)}" target="_blank"
+  - if defined?(load_more)
+    .btn-container.load-module
+      button.btn.btn-primary.module-load-more.load-module-btn  total="#{modules.children.size}"  Load more modules

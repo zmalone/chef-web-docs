@@ -1,0 +1,133 @@
+[HEADLINE] Like files, packages and services are also types of resources. Chef applies resources in the order you specify.
+
+Your job is about more than just setting up files. Next you'll apply what you've learned to install and configure a package and service.
+
+Let's extend what you learned about file management in the previous part to manage the Apache HTTP Server package and its service.
+
+Of course, you can set up one web server manually. But with Chef it'll be easier to manage your infrastructure as you scale, add complexity, and roll out new configuration policies.
+
+[START_BOX]
+
+## 1. Ensure the apt cache is up to date
+
+In this part you'll configure Apache. Because we want to install the latest version of Apache, it's important to ensure that your system's package index contains the latest list of what packages are available.
+
+You _could_ run the `apt-get update` command manually when you bring up your instance. But over time, you would need to remember to periodically update the `apt` cache to get the latest updates. Chef provides the [apt_update](https://docs.chef.io/resource_apt_update.html) resource to automate the process.
+
+From your <code class="file-path">~/chef-repo</code> directory, add this code to a file named <code class="file-path">webserver.rb</code>.
+
+<% code_snippet(page: current_page, path: 'ensure-the-apt-cache-is-up-to-date/webserver-1') %>
+
+In a production environment, you might run Chef periodically to ensure your systems are kept up to date. As an example, you might run Chef multiple times in a day. However, you likely don't need to update the `apt` cache every time you run Chef. The `frequency` property specifies how often to update the `apt` cache (in seconds.) Here, we specify 86,400 seconds to update the cache once every 24 hours. (The `_` notation is a Ruby convention that helps make numeric values more readable.)
+
+The `:periodic` action means that the update occurs periodically. Another option would be to use the `:update` action to update the `apt` cache each time Chef runs.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Install the Apache package
+
+Now let's install the Apache package, `apache2`. Modify <code class="file-path">webserver.rb</code> to look like this.
+
+<% code_snippet(page: current_page, path: 'install-the-apache-package/webserver-2') %>
+
+We don't need to specify an action because `:install` is the default.
+
+Now run `chef-client` to apply the recipe.
+
+<% command_snippet(page: current_page, path: 'install-the-apache-package/package-ccr-1') %>
+
+[COMMENT] `sudo` is required because this command installs a package and therefore must be run with root privileges.
+
+Run the recipe a second time.
+
+<% command_snippet(page: current_page, path: 'install-the-apache-package/package-ccr-2') %>
+
+You see that Chef does not apply any changes because there's nothing to do &ndash; it's not yet time to update the `apt` cache and the Apache package is already installed.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Start and enable the Apache service
+
+Now let's first enable the Apache service when the server boots and then start the service. Modify <code class="file-path">webserver.rb</code> to look like this.
+
+<% code_snippet(page: current_page, path: 'start-and-enable-the-apache-service/webserver-3') %>
+
+This code declares multiple actions.
+
+[LINUX] Ubuntu 14.04 provides two init systems. The `supports :status => true` part tells Chef that the `apache2` init script supports the `status` message. This information helps Chef use the appropriate strategy to determine if the `apache2` service is running. If you're interested, [read this blog post](https://www.chef.io/blog/2014/09/18/chef-where-is-my-ubuntu-14-04-service-support/) for more information.
+
+Now apply it.
+
+<% command_snippet(page: current_page, path: 'start-and-enable-the-apache-service/package-ccr-3') %>
+
+The package is already installed, so there's nothing to do. Similarly, the service is already started and enabled. On some Linux distros, Apache is not started or enabled as it is installed. With Chef, this is easy to verify.
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Add a home page
+
+Let's spruce things up and add a custom home page.
+
+You already know how to configure a `file` resource; append one that configures the default home page, <code class="file-path">/var/www/html/index.html</code>, to the end of <code class="file-path">webserver.rb</code>. The entire recipe now looks like this.
+
+<% code_snippet(page: current_page, path: 'add-a-home-page/webserver-4') %>
+
+[LINUX] Versions of Ubuntu prior to 14.04 use <code class="file-path">/var/www/index.html</code> as the default home page, so adjust your recipe accordingly if your version of Ubuntu is prior to 14.04.
+
+Now apply it.
+
+<% command_snippet(page: current_page, path: 'add-a-home-page/package-ccr-4') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Confirm your web site is running
+
+Run the `curl` command to confirm that your web page is available.
+
+<% command_snippet(page: current_page, path: 'confirm-your-web-site-is-running/curl-localhost') %>
+
+<% if current_page.data.page_variants && current_page.data.page_variants.free_vm %>
+
+Normally, you could also access your web server from a browser on another machine. However, the free trial virtual machine does not have a public IP address.
+
+<% elsif !current_page.data.page_variants&.virtualbox %>
+
+Assuming your server's firewall is open for inbound access on port 80, you can access your web server from a browser on another machine. You'll see something like this.
+
+![The basic home page](misc/webserver-basic-remote.png)
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## Summary
+
+You saw how to work with the package and service resources. You now know how to work with four types of resources: [file](http://docs.chef.io/resource_file.html), [apt_update](https://docs.chef.io/resource_apt_update.html), [package](http://docs.chef.io/resource_package.html), and [service](http://docs.chef.io/resource_service.html).
+
+You also saw how to apply multiple actions. But how does Chef know what order to apply resources and actions?
+
+#### Chef works in the order you specify
+
+Let's take another quick look at our web server recipe.
+
+<% code_snippet(page: current_page, path: 'add-a-home-page/webserver-4') %>
+
+The resources are applied in the order they are specified in the recipe. So here the `apt` cache is updated, the package is installed, then the service is configured, and finally the home page is set. If any resource is already in the desired state, Chef simply moves on to the next one.
+
+The same idea applies to the action list `[:enable, :start]` for configuring the service. The service is enabled when the server boots and then it's started.
+
+It's important to always think about how you order things. For example, the recipe wouldn't work if we tried to configure the Apache service before the package is even installed.
+
+A recipe stops if any step fails (don't worry &ndash; Chef provides info about the error). That's why we ordered the service actions the way we did. If the service can't be enabled on boot then we don't want to start it.
+
+[END_BOX]

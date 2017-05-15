@@ -1,0 +1,235 @@
+---
+title: 'Appendix: Cleaning up'
+order: 8
+appendix: true
+snippet_path: deploy-infrastructure/rhel/automate/cleaning-up
+snippet_workstation: ubuntu
+headings: [
+  { label: 'Removing your project', href: '#removingyourchefautomateproject' },
+  { label: 'Removing runners', href: '#removingyourrunners' },
+  { label: 'Removing your workflow org', href: '#removingyourworkfloworganization' },
+  { label: 'Removing cookbooks', href: '#removingyourcookbooksfromthechefserver' },
+  { label: 'Removing RSA private keys', href: '#removingthersaprivatekeyfromyournodes' },
+  { label: 'Removing nodes and clients', href: '#removingyournodesandclients' },
+  { label: 'Removing environments', href: '#removingyourchefenvironments' }
+  ]
+---
+You can keep your existing environment for reference as you experiment with Chef Automate. Here's how to clean up your environment when you're done or want to go through the module a second time.
+
+If you're evaluating Chef Automate and no longer need your installation, you can simply delete any virtual machines or cloud instances that you used. If you prefer, you can also delete the <% fp '~/learn-chef' %> directory on your workstation.
+
+[START_BOX]
+
+## Removing your Chef Automate project
+
+From your workstation, create an SSH connection to your Chef Automate server and run the [automate-ctl delete-project](https://docs.chef.io/ctl_delivery_server.html#delete-project) command.
+
+This example deletes the `learn_chef_httpd` project from the `my-org` organization.
+
+```bash
+$ sudo automate-ctl delete-project default my-org learn_chef_httpd
+Successfully deleted project: 'default/my-org/learn_chef_httpd'
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## Removing your runners
+
+From your workstation, run `delivery api get runners` to list your runners. Then run [delivery api delete runners/RUNNER_FQDN](https://docs.chef.io/job_dispatch.html#remove-a-runner) to delete your runner.
+
+Here's an example.
+
+```bash
+$ delivery api get runners
+[
+  {
+    "health": {},
+    "hostname": "ec2-54-89-253-61.compute-1.amazonaws.com",
+    "id": "92b3bd1b-29d6-4e98-9e8e-3198f0dfcdef",
+    "job": {},
+    "openssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3nwlAImeJKS8wXoMgF6YHkhyY6mXl+Em5vLpTwbr6B63VyHZCr/+ObLipgakyCrkWJPfc/Y7JpdmF+BkSEUCcW1Zw5LlgDj0XMKOUirVfhL+mHnIuOHCMQe8Zi6ZLhCdqBCk+4DKi9zT7JYZiLgbyzb+LSqYF1fn6Whhi3LynlxjzukraAxKZskYj6j7A6ah1QVkfUUaCtmbWkeu8D4GxbEPX7qJpPitXeyXC4KoyD3JkcHO0Nh3Z72OOwrQbceSeqAYRl44TgRGYqL3fGMRBeSULAn0+Uqcun8AlU8HZKgOC5vxCg5MMsMY5mltpqT/pkkImtmoBdIUb+Z3XVa8c7k8qwaKEVdgVn5ZW+7Pz69YGheif49JFV9kfjOjL65D/BihDatzCdGhGnWE5GzbiHKt+MwCezPpEva03rjA2FdgDN4ql6G0jBAlzvnbtaINquYkE2jd4G3PUh5BRu0mIkYz9yS9b/knKZ4uzun5N+WpzfMvwjkPIcdKJeM8MiwhJcduEbS3E05Pf4D7T/BQTlD1sPDKk1iw6fmUmvef1lwEAiC0vRrkJWWr3rLh6kRJtt0xHKWzVlrs8XiIU4hA+Cim7B0212HDJQyqCtPEw2vLX9QWkE2n52ICfqHTJICb4UOaQwA8w4M7LX6WGpQfeDBkyMnRHyvjPQDVN0m5XjQ== job_runner@ec2-54-89-253-61.compute-1.amazonaws.com\n",
+    "os": "linux",
+    "platform": "centos",
+    "platform_family": "rhel",
+    "platform_version": "7.2.1511"
+  }
+]
+```
+
+```bash
+# ~/learn-chef
+$ delivery api delete runners/ec2-54-89-253-61.compute-1.amazonaws.com
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## Removing your workflow organization
+
+From your workstation, run `delivery api delete orgs/ORG_NAME` to delete your workflow organization.
+
+Here's an example.
+
+```bash
+# ~/learn-chef
+$ delivery api delete orgs/my-org
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## Removing your cookbooks from the Chef server
+
+From your workstation, run [knife cookbook list](https://docs.chef.io/knife_cookbook.html#list) to list the cookbooks on the Chef server. Here's an example.
+
+```bash
+# ~/learn-chef
+$ knife cookbook list
+chef-client        7.1.0
+chef-ingredient    0.21.2
+compat_resource    12.16.3
+cron               3.0.0
+delivery-base      0.2.2
+learn_chef_httpd   0.1.2
+logrotate          2.1.0
+ohai               4.2.3
+packagecloud       0.2.5
+push-jobs          3.3.0
+runit              3.0.5
+windows            2.1.1
+yum-epel           2.1.1
+```
+
+You can run [knife cookbook delete](https://docs.chef.io/knife_cookbook.html#delete) to delete an individual cookbook. Or you can run [knife cookbook bulk delete](https://docs.chef.io/knife_cookbook.html#bulk-delete) like this to delete all versions of all cookbooks.
+
+```bash
+# ~/learn-chef
+$ knife cookbook bulk delete '.*' --purge --yes
+All versions of the following cookbooks will be deleted:
+
+chef-client         delivery-base       packagecloud        yum-epel
+chef-ingredient     learn_chef_httpd    push-jobs
+compat_resource     logrotate           runit
+cron                ohai                windows
+
+Deleted cookbook  learn_chef_httpd        [0.1.2]
+Deleted cookbook  learn_chef_httpd        [0.1.1]
+Deleted cookbook  learn_chef_httpd        [0.1.0]
+Deleted cookbook  runit                   [3.0.5]
+Deleted cookbook  chef-client             [7.1.0]
+Deleted cookbook  yum-epel                [2.1.1]
+Deleted cookbook  packagecloud            [0.2.5]
+Deleted cookbook  chef-ingredient         [0.21.2]
+Deleted cookbook  logrotate               [2.1.0]
+Deleted cookbook  ohai                    [4.2.3]
+Deleted cookbook  push-jobs               [3.3.0]
+Deleted cookbook  cron                    [3.0.0]
+Deleted cookbook  delivery-base           [0.2.2]
+Deleted cookbook  windows                 [2.1.1]
+Deleted cookbook  compat_resource         [12.16.3]
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## Removing the RSA private key from your nodes
+
+During the bootstrap process, an RSA private key is generated on your node to enable your node to make API calls to the Chef server. The default location of this key is <% fp '/etc/chef/client.pem' %> on Linux systems.
+
+If you plan to bootstrap your infrastructure nodes a second time, for example, to practice the process, you'll need to log in to each of your nodes and delete the RSA private key file, like this.
+
+```bash
+$ sudo rm /etc/chef/client.pem
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## Removing your nodes and clients
+
+As you experiment, it's a good idea to delete information about your node from the Chef server and from Chef Automate when you no longer need it. That way, your servers contain only relevant information. In practice, it's up to you whether to delete node information when you retire a production system from service.
+
+From your workstation, run [knife node list](https://docs.chef.io/knife_node.html#list) to list your nodes. Here's an example.
+
+```bash
+# ~/learn-chef
+$ knife node list
+acceptance-node
+delivered-node
+ec2-54-210-82-97.compute-1.amazonaws.com
+rehearsal-node
+union-node
+```
+
+Next, run the [knife node delete](https://docs.chef.io/knife_node.html#delete) and [knife client delete](https://docs.chef.io/knife_client.html#delete) commands to delete the data about your nodes from the Chef server.
+
+Here's an example that deletes the node named `acceptance-node`.
+
+```bash
+# ~/learn-chef
+$ knife node delete acceptance-node --yes
+Deleted node[acceptance-node]
+```
+
+```bash
+# ~/learn-chef
+$ knife client delete acceptance-node --yes
+Deleted client[acceptance-node]
+```
+
+Chef makes a distinction between the nodes that are being managed and the clients that are authorized to make API calls to the Chef server. Therefore, you need to run `knife node delete` to remove the node's metadata from the Chef server and `knife client delete` to delete the entry (including the public part of the RSA key pair) from the Chef server's API client list.
+
+To delete a node from the Chef Automate web interface, create an SSH connection to your Chef Automate server and run the [automate-ctl delete-visibility-node](https://docs.chef.io/ctl_delivery_server.html#delete-visibility-node) command. Here's an example that removes the node named `acceptance-node`.
+
+```bash
+# ~/learn-chef
+$ sudo automate-ctl delete-visibility-node acceptance-node
+Node acceptance-node (UUID: c4597587-f122-49bf-98f0-3b1f00f0db52) has been deleted.
+```
+
+You'll no longer see your node listed from the **Nodes** tab in the Chef Automate web interface.
+
+[END_BOX]
+
+[START_BOX]
+
+## Removing your Chef environments
+
+From your workstation, run [knife environment list](https://docs.chef.io/knife_environment.html#list) to list your Chef environments. Here's an example.
+
+```bash
+# ~/learn-chef
+$ knife environment list
+_default
+acceptance-default-my-org-learn_chef_httpd-master
+delivered
+rehearsal
+union
+```
+
+Next, run [knife environment delete](https://docs.chef.io/knife_environment.html#delete) to delete each environment. Here's an example that deletes the environment named `union`.
+
+```bash
+# ~/learn-chef
+$ knife environment delete union --yes
+Deleted union
+```
+
+Run `knife environment list` to verify the environment no longer exists.
+
+```bash
+# ~/learn-chef
+$ knife environment list
+_default
+acceptance-default-my-org-learn_chef_httpd-master
+delivered
+rehearsal
+```
+
+[END_BOX]

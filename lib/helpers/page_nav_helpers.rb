@@ -10,8 +10,8 @@ module PageNavHelpers
         :display => 'Develop and test locally'.upcase,
         :topics => []
       },
-      {:category => 'continuous-deployment',
-        :display => 'Continuous deployment'.upcase,
+      {:category => 'continuous-automation',
+        :display => 'Continuous automation'.upcase,
         :topics => []
       },
       {:category => 'integrated-compliance',
@@ -50,10 +50,12 @@ module PageNavHelpers
         end
 
         if next_page
-          output << content_tag(:a, "", {"name"=>"next", "href"=>"#next"})
+          #output << link_to("#next", anchor: "next")
+          output << content_tag(:a, "", {"name"=>"next", "href"=>"#next", "class"=>"anchor"})
           heading = "Next:&nbsp;#{next_page.data.title}"
         else
-          output << content_tag(:a, "", {"name"=>"conclusion", "href"=>"#conclusion"})
+          output << content_tag(:a, "", {"name"=>"conclusion", "href"=>"#conclusion", "class"=>"anchor"})
+          #output << link_to("#conclusion", anchor: "conclusion")
           heading = "Conclusion"
         end
 
@@ -63,7 +65,7 @@ module PageNavHelpers
         output << render_markdown(&block)
 
         if next_page.nil?
-          output << link_to("Back to Tutorials <i class='fa fa-angle-double-right'></i>", "/tutorials/", class: 'button radius')
+          output << link_to("Back to Modules <i class='fa fa-angle-double-right'></i>", "/modules/", class: 'button radius')
         else
           output << link_to("Next&nbsp;<i class='fa fa-angle-double-right'></i>", next_page, class: 'button radius cta')
         end

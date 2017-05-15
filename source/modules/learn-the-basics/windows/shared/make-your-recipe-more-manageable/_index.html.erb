@@ -1,0 +1,99 @@
+[HEADLINE] A _cookbook_ provides structure to your recipes and enables you to more easily reference external files, such as our web server's home page. In essence, a cookbook helps you stay organized.
+
+So far, you've learned how to manage a package and a service by configuring a web server. You also added a basic web page. But there was one problem &ndash; although it helped you verify that your web server was properly configured, the code for your HTML page was embedded in the Chef recipe.
+
+Let's create a _cookbook_ to make our web server recipe easier to manage.
+
+[START_BOX]
+
+## 1. Create a cookbook
+
+First, from your <code class="file-path">~\chef-repo</code> directory, create the <code class="file-path">cookbooks</code> directory.
+
+<% command_snippet(page: current_page, path: 'create-a-cookbook/mkdir-cookbooks') %>
+
+Now run the following [chef generate cookbook](https://docs.chef.io/ctl_chef.html#chef-generate-cookbook) command to generate a cookbook named `learn_chef_iis`.
+
+<% command_snippet(page: current_page, path: 'create-a-cookbook/chef-generate-cookbook') %>
+
+The <% fp 'cookbooks/learn_chef_iis' %> part tells Chef to create a cookbook named `learn_chef_iis` under the <% fp 'cookbooks' %> directory.
+
+Here's the directory structure that the command created.
+
+<% command_snippet(page: current_page, path: 'create-a-cookbook/tree-cookbook') %>
+
+Note the default recipe, named <code class="file-path">default.rb</code>. This is where we'll move our IIS recipe in a moment.
+
+[COMMENT] The <% fp '.delivery' %> directory contains starter content for working with [Chef Automate](https://www.chef.io/automate/). As you become more famililar with Chef, you can [check out this module](/modules/deploy-infrastructure/) to learn more.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Create a template
+
+Now we'll move the home page to an external file. First, run this command to generate the HTML file for our home page.
+
+<% command_snippet(page: current_page, path: 'create-a-template/chef-generate-template') %>
+
+The file <code class="file-path">Default.htm.erb</code> gets created under <code class="file-path">learn\_chef\_iis\templates</code>.
+
+<% command_snippet(page: current_page, path: 'create-a-template/tree-template') %>
+
+The .erb extension simply means that the file can have placeholders. More on that later.
+
+Now copy the contents of the HTML file from your recipe to the new HTML file, <code class="file-path">Default.htm.erb</code>.
+
+<% code_snippet(page: current_page, path: 'create-a-template/index-1') %>
+
+[COMMENT] Here, you're adding the web site content directly to your cookbook for learning purposes. In practice, your web site content would more likely be some build artifact, for example a .zip or .tar file on your build server. With Chef, you could pull updated web content from your build server and deploy it to your web server.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Update the recipe to reference the HTML template
+
+Write out the recipe, <code class="file-path">default.rb</code>, like this.
+
+<% code_snippet(page: current_page, path: 'update-the-recipe-to-reference-the-html-template/default-1') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Run the cookbook
+
+Now run the cookbook. To do so, we use the `chef-client` command and specify what's called the _run-list_.
+
+<% command_snippet(page: current_page, path: 'run-the-cookbook/cookbook-ccr-1') %>
+
+Previously, you ran `chef-client` to run a single recipe from the command line. A run-list specifies each of the individual recipes from your cookbook that you want to apply. Here, you applied just one recipe, but the run-list can contain multiple recipes from multiple cookbooks.<br><br>In this example, `recipe[learn_chef_iis]` is the same as specifying `recipe[learn_chef_iis::default]`, meaning we want to run the `learn_chef_iis` cookbook's default recipe, <code class="file-path">default.rb</code>.
+
+Run `Invoke-WebRequest` or refresh your web browser to confirm that your web page is still available.
+
+<% command_snippet(page: current_page, path: 'run-the-cookbook/cookbook-iwr-localhost') %>
+
+The result is the same as before, but with a cookbook things are now easier to manage.
+
+Your web server is shaping up! With a [cookbook][cookbook] you're now better organized. A cookbook adds structure to your work. You can now author your HTML code in its own file and use a [template][template] resource to reference it from your recipe.
+
+[END_BOX]
+
+[START_BOX]
+
+## Conclusion
+
+In this module, you learned how Chef's _test and repair_ approach keeps your systems in line with the policies you describe. You started by running a _recipe_, and later created a _cookbook_ to stay better organized.
+
+You also saw the [run-list][run-list]. The run-list lets you specify which recipes to run, and the order in which to run them. This is handy once you have lots of cookbooks, and the order in which they run is important.
+
+The web server cookbook you wrote here likely won't be the one you'd use in production. Only _you_ know the specific needs for your infrastructure. You bring your requirements and Chef provides the tools that help you meet them.
+
+You can continue to experiment with the server that you used for this module. When you're done, check out the next module, [Manage a node](/modules/manage-a-node-chef-server/windows/). There you'll manage a server, or _node_, remotely from your workstation.
+
+[END_BOX]
+
+[cookbook]: https://docs.chef.io/cookbooks.html
+[template]: https://docs.chef.io/resource_template.html
+[run-list]: https://docs.chef.io/nodes.html#about-run-lists

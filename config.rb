@@ -1,7 +1,10 @@
+require 'csv'
 require 'chef/web/core/url_helpers'
+require 'slim'
+require 'lib/gulp'
 require 'lib/sitemap'
-require 'lib/compass'
 require 'lib/markdown'
+require 'lib/tree'
 require 'lib/helpers/deploy_helpers'
 require 'lib/helpers/feature_helpers'
 require 'lib/helpers/tab_helpers'
@@ -16,6 +19,7 @@ require 'lib/helpers/inline_code_helpers'
 require 'lib/helpers/snippet_helpers'
 require 'lib/helpers/button_helpers'
 require 'lib/helpers/key_point_helpers'
+# require 'lib/extension/chef_yaml_to_json/lib/chef_yaml_to_json'
 
 # In development you can use `binding.pry` anywhere to pause execution and bring
 # up a Ruby REPL
@@ -25,30 +29,21 @@ rescue LoadError
   logger.debug 'Pry is missing and will not be loaded.'
 end
 
-###
-# Compass
-###
-
-# Change Compass configuration
-compass_config do |config|
-  # config.output_style = :compact
-  config.line_comments = false
-end
-
 # Slim Configuration
-Slim::Engine.set_default_options pretty: true, disable_escape: true
+Slim::Engine.set_options pretty: true, disable_escape: true
 
 ###
 # Page options, layouts, aliases and proxies
 ###
-
+# activate :chef_yml_to_json
 activate :directory_indexes
 set :trailing_slash, false
-activate :autoprefixer
 
 # Per-page layout changes:
 page '/robots.txt', layout: false
 page '/sitemap.xml', layout: false
+page '/tracks/**/*', layout: 'track'
+page '/modules/**/*', layout: 'module'
 
 # S3 hosting needs a page at the root
 page '/error.html', directory_index: false
@@ -76,30 +71,8 @@ helpers do
   include KeyPointHelpers
 end
 
-# CloudFront
-if deploy?
-  activate :cloudfront do |cloudfront|
-    cloudfront.access_key_id     = aws_access_key_id
-    cloudfront.secret_access_key = aws_secret_access_key
-    cloudfront.distribution_id   = ENV['CLOUDFRONT_DISTRIBUTION_ID']
-  end
-
-  # S3 Redirects
-  activate :s3_redirect do |config|
-    config.bucket = aws_s3_bucket
-    config.aws_access_key_id = aws_access_key_id
-    config.aws_secret_access_key = aws_secret_access_key
-    config.after_build = true
-  end
-else
-  # We use redirects below. The redirect method is not defined. Define it to do
-  # nothing.
-  def redirect(from = '', to = '')
-  end
-end
-
 # Enable Livereload
-activate :livereload unless travis?
+# activate :livereload, no_swf: true, ignore: /^(?!.*source).*$/ unless travis?
 
 # Enable syntax highlighting - turn off the default wrapping
 activate :syntax, wrap: false
@@ -114,101 +87,13 @@ set :css_dir, 'assets/stylesheets'
 set :js_dir, 'assets/javascripts'
 set :images_dir, 'assets/images'
 set :fonts_dir, 'assets/fonts'
+set :root_dir, File.dirname(__FILE__)
 
-# Redirects
-redirect '/additional-resources', '/fundamentals-series/'
-redirect '/chef-training', '/additional-resources/#cheftrainingseminars'
-redirect '/create-your-first-cookbook', '/tutorials/create-your-first-cookbook/'
-redirect '/errors-and-problems', "#{chef_docs_url}/errors.html"
-redirect '/errors-and-problems/401-unauthorized', "#{chef_docs_url}/errors.html#unauthorized"
-redirect '/errors-and-problems/403-forbidden', "#{chef_docs_url}/errors.html#forbidden"
-redirect '/errors-and-problems/workflow-problems', "#{chef_docs_url}/errors.html#workflow-problems"
-redirect '/legacy/starter-use-cases/windows-match', '/legacy/starter-use-cases/windows-batch/'
-redirect '/screencasts', '/additional-resources#cheffundamentalswebinarseries'
-redirect '/screencasts/spring-fundamentals/chef-lab', '/fundamentals-series/chef-lab'
-redirect '/screencasts/spring-fundamentals/week-1', '/fundamentals-series/week-1'
-redirect '/screencasts/spring-fundamentals/week-2', '/fundamentals-series/week-2'
-redirect '/screencasts/spring-fundamentals/week-2/#homework', '/fundamentals-series/week-2/#homework'
-redirect '/screencasts/spring-fundamentals/week-3', '/fundamentals-series/week-3'
-redirect '/screencasts/spring-fundamentals/week-4', '/fundamentals-series/week-4'
-redirect '/screencasts/spring-fundamentals/week-5', '/fundamentals-series/week-5'
-redirect '/screencasts/spring-fundamentals/week-6', '/fundamentals-series/week-6'
-redirect '/set-up-your-chef-environment', '/get-started'
-redirect '/starter-use-cases', '/legacy/starter-use-cases/'
-redirect '/starter-use-cases/convert-bash-to-chef', '/legacy/starter-use-cases/convert-bash-to-chef/'
-redirect '/starter-use-cases/multi-node-ec2', '/legacy/starter-use-cases/multi-node-ec2/'
-redirect '/starter-use-cases/multi_node_ec2', '/legacy/starter-use-cases/multi-node-ec2/'
-redirect '/starter-use-cases/ntp', '/legacy/starter-use-cases/ntp/'
-redirect '/starter-use-cases/windows-match', '/legacy/starter-use-cases/windows-batch/'
-redirect '/starter-use-cases/wordpress', '/legacy/starter-use-cases/wordpress/'
-redirect '/rhel/get-a-virtual-machine', '/rhel/'
-
-redirect '/rhel', '/learn-the-basics/rhel/'
-redirect '/rhel/configure-a-resource', '/learn-the-basics/rhel/configure-a-resource/'
-redirect '/rhel/configure-a-package-and-service', '/learn-the-basics/rhel/configure-a-package-and-service/'
-redirect '/rhel/make-your-recipe-more-manageable', '/learn-the-basics/rhel/make-your-recipe-more-manageable/'
-redirect '/rhel/get-ready-to-add-another-server', '/manage-a-node/rhel/get-set-up/'
-redirect '/rhel/bootstrap-your-node', '/manage-a-node/rhel/bootstrap-your-node/'
-redirect '/rhel/add-dynamic-configuration', '/manage-a-node/rhel/update-your-nodes-configuration/'
-
-redirect '/windows', '/learn-the-basics/windows/'
-redirect '/windows/configure-a-resource', '/learn-the-basics/windows/configure-a-resource/'
-redirect '/windows/configure-a-package-and-service', '/learn-the-basics/windows/configure-a-package-and-service/'
-redirect '/windows/make-your-recipe-more-manageable', '/learn-the-basics/windows/make-your-recipe-more-manageable/'
-redirect '/windows/get-ready-to-add-another-server', '/manage-a-node/windows/get-set-up/'
-redirect '/windows/bootstrap-your-node', '/manage-a-node/windows/bootstrap-your-node/'
-redirect '/windows/add-dynamic-configuration', '/manage-a-node/windows/update-your-nodes-configuration/'
-
-redirect '/ubuntu', '/learn-the-basics/ubuntu/'
-redirect '/ubuntu/configure-a-resource', '/learn-the-basics/ubuntu/configure-a-resource/'
-redirect '/ubuntu/configure-a-package-and-service', '/learn-the-basics/ubuntu/configure-a-package-and-service/'
-redirect '/ubuntu/make-your-recipe-more-manageable', '/learn-the-basics/ubuntu/make-your-recipe-more-manageable/'
-redirect '/ubuntu/get-ready-to-add-another-server', '/manage-a-node/ubuntu/get-set-up/'
-redirect '/ubuntu/bootstrap-your-node', '/manage-a-node/ubuntu/bootstrap-your-node/'
-redirect '/ubuntu/add-dynamic-configuration', '/manage-a-node/ubuntu/update-your-nodes-configuration/'
-
-redirect '/legacy', '/'
-redirect '/legacy/concepts/cookbooks', '/'
-redirect '/legacy/concepts/environments', '/'
-redirect '/legacy/concepts', '/'
-redirect '/legacy/concepts/nodes', '/'
-redirect '/legacy/concepts/organizations', '/'
-redirect '/legacy/concepts/recipes', '/'
-redirect '/legacy/concepts/resources', '/'
-redirect '/legacy/concepts/roles', '/'
-redirect '/legacy/concepts/run-lists', '/'
-redirect '/legacy/get-started', '/'
-redirect '/legacy/starter-use-cases/convert-bash-to-chef', '/'
-redirect '/legacy/starter-use-cases', '/'
-redirect '/legacy/starter-use-cases/multi-node-ec2', '/'
-redirect '/legacy/starter-use-cases/ntp', '/'
-redirect '/legacy/starter-use-cases/windows-batch', '/'
-redirect '/legacy/starter-use-cases/wordpress', '/'
-redirect '/legacy/tutorials/create-your-first-cookbook', '/'
-redirect '/legacy/tutorials', '/'
-redirect '/legacy/tutorials/write-for-multiple-platforms', '/'
-
-redirect '/tutorials/create-your-first-cookbook/', '/'
-redirect '/tutorials/write-for-multiple-platforms', '/'
-
-redirect '/fundamentals-series/chef-lab', '/skills/fundamentals-series-chef-lab/'
-redirect '/fundamentals-series/week-1', '/skills/fundamentals-series-week-1/'
-redirect '/fundamentals-series/week-2', '/skills/fundamentals-series-week-2/'
-redirect '/fundamentals-series/week-3', '/skills/fundamentals-series-week-3/'
-redirect '/fundamentals-series/week-4', '/skills/fundamentals-series-week-4/'
-redirect '/fundamentals-series/week-5', '/skills/fundamentals-series-week-5/'
-redirect '/fundamentals-series/week-6', '/skills/fundamentals-series-week-6/'
-redirect '/fundamentals-series/', '/skills/fundamentals-series-week-1/'
-redirect '/fundamentals-series/rhel', '/skills/fundamentals-series-week-1/'
-
-redirect '/test-your-infrastructure-code', '/tutorials/test-your-infrastructure-code/'
-redirect '/compliance-assess', '/tutorials/compliance-assess/'
-redirect '/compliance-remediate', '/tutorials/compliance-remediate/'
+# Enable generation of navigation tree data based on the site structure
+activate :tree
 
 # Build-specific configuration
 configure :build do
-  # For example, change the Compass output style for deployment
-  activate :minify_css
 
   # Minify Javascript on build
   activate :minify_javascript
@@ -219,19 +104,69 @@ configure :build do
   # Use relative URLs
   activate :relative_assets
 
-  # Compress PNGs after build
-  activate :smusher
 end
 
 before_build do
-  system 'cd lib/chef-lab-client && npm install --production && npm run build' or exit($?.exitstatus)
+  if File.exist?(REV_MANIFEST_PATH)
+    REV_MANIFEST.merge!(JSON.parse(File.read(REV_MANIFEST_PATH)))
+  end
+
+  app.extensions.add_exposed_to_context(self)
+
+  #
+  # Validate track and module metadata and write reports to the build-tests directory.
+  #
+
+  # Create build-tests directory if needed.
+  build_tests_dir = File.join(app.root_path, 'build-tests')
+  Dir.mkdir(build_tests_dir) unless Dir.exist?(build_tests_dir)
+
+  # Validate track metadata.
+  logger.info 'Validating track metadata...'
+  filepath = File.join(build_tests_dir, 'tracks.csv')
+  CSV.open(filepath, "wb") do |csv|
+    csv << ['track', 'path', 'tags', 'video', 'facebook', 'linkedin', 'twitter']
+    tracks.children.each do |track|
+      row_data = []
+      track_data = track.page.data
+      row_data << track_data.title
+      row_data << track.page.path.gsub('/index.html', '')
+      row_data << track_data.fetch('tags', []).join(',')
+      row_data << track_data.fetch('video_url', '')
+      row_data << (track_data.dig('social_share', 'facebook') ? 'Y' : 'N')
+      row_data << (track_data.dig('social_share', 'linkedin') ? 'Y' : 'N')
+      row_data << (track_data.dig('social_share', 'twitter') ? 'Y' : 'N')
+      csv << row_data
+    end
+  end
+
+  # Validate module metadata.
+  logger.info 'Validating module metadata...'
+  filepath = File.join(build_tests_dir, 'modules.csv')
+  CSV.open(filepath, "wb") do |csv|
+    csv << ['module', 'path', 'tags', 'video', 'facebook', 'linkedin', 'twitter']
+    modules.children.each do |mod|
+      row_data = []
+      mod_data = mod.page.data
+      row_data << mod_data.title
+      row_data << mod.page.path.gsub('/index.html', '')
+      row_data << mod_data.fetch('tags', []).join(',')
+      row_data << mod_data.fetch('video_url', '')
+      row_data << (mod_data.dig('social_share', 'facebook') ? 'Y' : 'N')
+      row_data << (mod_data.dig('social_share', 'linkedin') ? 'Y' : 'N')
+      row_data << (mod_data.dig('social_share', 'twitter') ? 'Y' : 'N')
+      csv << row_data
+    end
+  end
 end
 
 # Write out a REVISION file that shows which revision we're running
 after_build do
-  open("#{root_path.join('build', 'REVISION')}", 'w').write(
+  open("#{File.join(File.dirname(__FILE__), 'build', 'REVISION')}", 'w').write(
     ENV['TRAVIS_COMMIT'] || `git rev-parse HEAD`.chomp
   )
+
+  system 'npm run images' or exit($?.exitstatus)
 end
 
 # Enable localization (i18n)

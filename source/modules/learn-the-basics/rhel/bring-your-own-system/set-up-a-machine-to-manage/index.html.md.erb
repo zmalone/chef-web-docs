@@ -1,0 +1,179 @@
+---
+title: 'Set up a machine to manage'
+order: 1
+description: "Set up your Chef environment."
+keywords: TODO
+time_to_complete: 30 minutes
+snippet_path: learn-the-basics/rhel/virtualbox/set-up-a-machine-to-manage
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Bring up a Red Hat Enterprise Linux 7 or CentOS 7 system', href: '#step1' },
+  { label: '2. Verify your SSH client', href: '#step2' },
+  { label: '3. Connect to your system', href: '#step3' },
+  { label: '4. Install the Chef DK', href: '#step4' },
+  { label: '5. Prepare a text editor', href: '#step5' },
+  { label: 'Cleaning up', href: '#cleaningup' },
+  ]
+---
+<%= partial '../../shared/get-set-up/intro' %>
+
+This module relies on a CentOS 7 or Red Hat Enterprise Linux 7 system that you provide.
+
+If you use Amazon Web Services, Microsoft Azure, Google Cloud Platform, VirtualBox, or want to use a free trial virtual machine that runs in your browser, you can [switch to a different option](/modules/learn-the-basics/rhel/) for this module.
+
+[COMMENT] For the interactive Learn Chef modules, we recommend you use CentOS to build Chef skills around managing your Red Hat Enterprise Linux servers. CentOS is a free computing platform that's functionally compatible with Red Hat Enterprise Linux.
+
+<% accordion('test-configuration', 'Test configuration', true) do %>
+
+<% markdown do %>
+
+The output you see might differ depending on your operating system and software versions. We recommend that you install the components as directed in this module, using the specific versions that have been tested.
+
+<% render_machine_config('snippets/learn-the-basics/rhel/virtualbox/machine_config.md') %>
+
+<% end %>
+
+<% end %>
+
+[START_BOX]
+
+## 1. Bring up a Red Hat Enterprise Linux 7 or CentOS 7 system
+
+Bring up a Red Hat Enterprise Linux 7 or CentOS 7 system as you normally would. To enable you to experiment, we recommend using a system that you can easily destroy and bring back up, such as a virtual machine or cloud instance. Your instance might run on virtualization software such as Hyper-V or VMware Fusion, your preferred cloud provider, your data center, or spare hardware.
+
+[COMMENT] Remember, [we provide versions of this module](/modules/learn-the-basics/rhel/) specifically for AWS, Azure, Google Cloud Platform, VirtualBox, or on a free virtual machine.
+
+Ensure that your system:
+
+* provides `root` or `sudo` access.
+* has a resolvable IP address.
+* can access the Internet.
+* provides network access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+
+Although Chef can be run completely from behind the firewall, using a system with Internet access is the easiest way to install packages and perform other common tasks.
+
+[COMMENT] Technically, port 443 is not required for this module. But setting up that port now prepares you for the next module, where you'll configure your server to be managed remotely.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. If you're running Windows &ndash; verify your SSH client
+
+> If you’re physically at your Linux machine, you can skip this part.
+
+In this module, you'll connect to your Linux system over SSH. To do so, you'll need an SSH client. macOS and most Linux distributions come with an SSH client. On Windows, you need to install one.
+
+The easiest way to set up an SSH client is to install the Chef Development Kit (Chef DK) on your workstation. Chef DK version 0.15 and later comes with [Git for Windows](https://git-scm.com/download/win), which includes an SSH client.
+
+Installing the Chef DK now also prepares you for the next module, where you'll use Chef to manage a server remotely from your workstation.
+
+There are two ways to install the Chef DK on Windows.
+
+1. [Download and run the installer](https://downloads.chef.io/chef-dk/) from the Chef downloads page.
+2. Run the installer from PowerShell.
+
+<% command_snippet(page: current_page, path: 'install-the-chef-dk/install-chefdk', workstation: 'windows') %>
+
+After you install the Chef DK, verify that Git and an SSH client are set up properly.
+
+First, open the **Chef Development Kit** shortcut from the desktop or **Start** menu. Open the shortcut as **Adminstrator**.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+Next, run these commands.
+
+<% command_snippet(page: current_page, path: 'verify-your-ssh-client/git--version', workstation: 'windows') %>
+
+<% command_snippet(page: current_page, path: 'verify-your-ssh-client/ssh-no-args', workstation: 'windows', features: [:stdin, :stderr]) %>
+
+Keep your **Chef Development Kit** window open for the next part.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Connect to your system
+
+If you’re physically at your Linux machine, login now as `root` or a user with `sudo` access. Otherwise, connect to your instance over SSH.
+
+Here's an example of how to connect over SSH using key-based authentication. (Replace <% fp '~/.ssh/id_rsa' %> with the path to your private key file, <% ph 'user' %> with your username, and <% ph '10.20.30.40' %> with your IP address.)
+
+```bash
+$ ssh -i ~/.ssh/id_rsa user@10.20.30.40
+The authenticity of host '10.20.30.40 (10.20.30.40)' can't be established.
+RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.20.30.40' (RSA) to the list of known hosts.
+Last login: Thu Aug 11 21:02:18 2016 from 96.228.248.180
+[user@hostname ~]$
+```
+
+Here's an example using password authentication.
+
+```bash
+$ ssh user@10.20.30.40
+The authenticity of host '40.76.28.32 (40.76.28.32)' can't be established.
+RSA key fingerprint is SHA256:YiT1n9QZ64GnXcCeRpYMOLxpJZ9IjCft1Fpf5tvAFuQ.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '40.76.28.32' (RSA) to the list of known hosts.
+user@10.20.30.40's password:
+Last login: Thu Aug 11 21:08:30 2016 from 96.228.248.180
+[user@hostname ~]$
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Install the Chef DK on your system
+
+Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your system. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
+
+From your system, run this from the command line to install the Chef DK.
+
+<% command_snippet(path: 'learn-the-basics/rhel/virtualbox/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'centos', features: [:stdin, :stderr, :stdout]) %>
+
+The `-c` and `-v` arguments specify the Chef DK version this module was last tested with.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Prepare a text editor on your system
+
+Because Chef uses code to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
+
+From your system, install a text editor now. If you're accessing your server from an SSH connection, choose a command-line text editor such as `emacs`, `nano`, or `vim`. Otherwise, you can install a command-line text editor or a graphical editor.
+
+If you're new to using command-line text editors on Linux, here are some resources to help get you started.
+
+<% accordion('emacs-gs', 'Emacs') do %>
+
+<%= partial 'layouts/partials/emacs_gs_rhel' %>
+
+<% end %>
+
+<% accordion('nano-gs', 'Nano') do %>
+
+<%= partial 'layouts/partials/nano_gs_rhel' %>
+
+<% end %>
+
+<% accordion('vim-gs', 'Vim') do %>
+
+<%= partial 'layouts/partials/vim_gs_rhel' %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## Cleaning up
+
+If you used a cloud instance for this module, remember to destroy your instance after you're done.
+
+Or, you can leave your server running if you want to use it to complete the next module. Some cloud providers enable you to temporarily suspend instances to reduce cost.
+
+[END_BOX]

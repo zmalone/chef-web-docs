@@ -1,0 +1,302 @@
+---
+title: 'Configure MySQL'
+order: 4
+keywords: TODO
+time_to_complete: 60 minutes
+snippet_path: create-a-web-app-cookbook/ubuntu/vagrant/configure-mysql-ubuntu-vagrant
+snippet_workstation: ubuntu
+quiz_path: quizzes/create-a-web-app-cookbook/ubuntu/configure-mysql.yml
+headings: [
+  { label: '1. Reference the cookbook', href: '#step1' },
+  { label: '2. Create the database recipe', href: '#step2' },
+  { label: '3. Create a data bag', href: '#step3' },
+  { label: '4. Configure MySQL', href: '#step4' },
+  { label: '5. Create a database instance', href: '#step5' },
+  { label: '6. Set the recipe to run', href: '#step6' },
+  { label: '7. Apply the configuration', href: '#step7' },
+  { label: '8. Verify the configuration', href: '#step8' }
+]
+---
+Now let's configure MySQL. You'll install the MySQL server and client packages and start the service. You'll also learn how to use _data bags_ to hold the MySQL administrator passwords.
+
+<img src="/assets/images/misc/lamp-stack-m.svg" style="width: 300px; box-shadow: none;"/>
+
+For this part, you'll use the [mysql](https://supermarket.chef.io/cookbooks/mysql), [database](https://supermarket.chef.io/cookbooks/database), and [mysql2\_chef_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem) cookbooks from Chef Supermarket.
+
+[START_BOX]
+
+## 1. Reference the mysql cookbook
+
+We'll load the `mysql` cookbook just like we did the `httpd` cookbook. Append a `depends` statement to <% fp 'metadata.rb' %>, making the entire file look like this.
+
+<% code_snippet(page: current_page, path: 'reference-the-mysql-cookbook-ubuntu-vagrant/metadata-ubuntu-vagrant-2') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Create the database recipe
+
+From your <% fp('~/learn-chef/cookbooks/lamp') %> directory, create a recipe named `database` to hold your database configuration code.
+
+<% command_snippet(page: current_page, path: 'create-database-recipe-ubuntu-vagrant/chef-generate-recipe-database-ubuntu-vagrant') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Create a data bag to hold the MySQL passwords
+
+Before you use a community cookbook, you might typically review its documentation to learn how the cookbook works and how to use it.
+
+The [documentation for the mysql cookbook](https://supermarket.chef.io/cookbooks/mysql) provides this example for setting up the MySQL service.
+
+```ruby
+# some_recipe.rb
+mysql_service 'foo' do
+  port '3306'
+  version '5.5'
+  initial_root_password 'change me'
+  action [:create, :start]
+end
+```
+
+Notice that the `initial_root_password` property specifies the root MySQL password. You never want to hardcode sensitive information such as passwords because that information would become available to everyone who reads your recipes.
+
+In practice, you would encrypt sensitive information so that information is available only to the nodes that require them. [Encrypted data bags](https://docs.chef.io/data_bags.html#encrypt-a-data-bag-item), [chef-vault](https://github.com/Nordstrom/chef-vault), and [HashiCorp's Vault](https://www.vaultproject.io) are a few ways Chef users protect their data.
+
+[COMMENT] Learn more about using HashiCorp's Vault with Chef in [this blog](https://www.hashicorp.com/blog/using-hashicorps-vault-with-chef/) and [this module](/modules/securing-chef/managing-secrets-with-chef-and-vault/).
+
+Here, you'll use a [data bag](https://docs.chef.io/data_bags.html) to store the MySQL password. Much like node attributes, a data bag stores information as a series of key-value pairs. Values stored by data bag items can optionally be encrypted to protect confidential information such as certificates, API keys, and in our case, passwords.
+
+In a more production-like environment, data bags exist as objects on the Chef server. From a recipe, you can retrieve data from a data bag. If the data is encrypted, your node would require the appropriate key to decrypt that data.
+
+As you develop your cookbook locally, you can create a test data bag that stays with your cookbook (and does not exist on the Chef server). Your test data bag would include fictitious data, such as passwords, in plain text that can be used to validate your configuration. Because your test data bag contains fictitious data, it's safe to share with others.
+
+When you're ready to run your cookbook in production, you would [create a second data bag](https://docs.chef.io/data_bags.html#create-a-data-bag) on your Chef server, which contains real data, and optionally [encrypt that data](https://docs.chef.io/data_bags.html#encrypt-a-data-bag-item) using your [encryption key](https://docs.chef.io/data_bags.html#secret-keys).
+
+A local data bag item is a JSON file that you maintain with your cookbook. Data bag items typically exist in your cookbook's <% fp 'test/fixtures/default/data_bags' %> directory.
+
+Start by creating the <% fp 'test/fixtures/default/data_bags/passwords' %> directory to create a data bag named `passwords`.
+
+<% command_snippet(page: current_page, path: 'create-a-data-bag-ubuntu-vagrant/mkdir-test-fixtures-ubuntu-vagrant', features: :stdin) %>
+
+Next, write the following to <% fp 'mysql.json' %> in your <% fp 'passwords' %> directory.
+
+<% code_snippet(page: current_page, path: 'create-a-data-bag-ubuntu-vagrant/data-bag-item-ubuntu-vagrant-1') %>
+
+Here, <% fp 'mysql.json' %> defines what's called a _data bag item_, whose id is "mysql". The "root_password" key maps to the value "fakerootpassword", which is the test password you'll use to configure the MySQL service.
+
+Recall that Test Kitchen creates a temporary in-memory Chef server for you. Under the `suites` section of your <% fp '.kitchen.yml' %> file, add an entry named `data_bags_path` that contains the location of your test data bags, like this.
+
+<% code_snippet(page: current_page, path: 'create-a-data-bag-ubuntu-vagrant/kitchen-yml-ubuntu-vagrant-2') %>
+
+This location tells the in-memory Chef server where to locate data bags.
+
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Configure MySQL
+
+Now that you have a test bag that contains a fictitious MySQL root password, you're ready to install the MySQL client and service packages.
+
+Add the following to <% fp 'database.rb' %>.
+
+<% code_snippet(page: current_page, path: 'configure-mysql-ubuntu-vagrant/recipe-database-ubuntu-vagrant-1') %>
+
+`data_bag_item` is a helper method that Chef provides. Here, this helper method loads the data bag item named "mysql" from the "passwords" data bag. Later, the `mysql_service` resource uses  `passwords['root_password']` to retrieve the MySQL root password from the data bag item, much like how you access node attribute values.
+
+[COMMENT] The same call to `data_bag_item` can also be used to decrypt the data bag item if it is encrypted. The [documentation](https://docs.chef.io/data_bags.html#load-with-recipe-dsl) explains this process in further detail.
+
+The `mysql_client` and `mysql_service` resources come from the `mysql` cookbook. The `mysql_client` resource installs the client software that connects to the MySQL server. The `mysql_service` resource installs the MySQL server package, applies a basic configuration, and starts the service. You can [customize the configuration](https://github.com/chef-cookbooks/mysql#usage) later if you need to.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Create a database instance and user
+
+At this point, your `database` recipe configures the MySQL client and service. But it does not set up a database instance. Let's create the database instance and a user to administer it now.
+
+Previously, you used the `mysql` cookbook to set up the MySQL installation. For this part, you'll use the [database](https://supermarket.chef.io/cookbooks/database) cookbook from Chef Supermarket, which enables you to configure MySQL database instances.
+
+The `database` cookbook uses the [mysql2](https://rubygems.org/gems/mysql2/versions/0.4.3) Ruby library (a Ruby library is often packaged as a [gem](http://guides.rubygems.org/what-is-a-gem/)) to connect to MySQL. To install this gem, we'll use the [mysql2\_chef_gem](https://supermarket.chef.io/cookbooks/mysql2_chef_gem) cookbook.
+
+Start by adding two `depends` statements for the `mysql2_chef_gem` and `database` cookbooks to <% fp 'metadata.rb' %>, making the entire file look like this.
+
+
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/metadata-ubuntu-vagrant-3') %>
+
+The [documentation for the database cookbook](https://supermarket.chef.io/cookbooks/database) provides this example for creating a MySQL database instance.
+
+```ruby
+# some_recipe.rb
+# Create a mysql database
+mysql_database 'wordpress-cust01' do
+  connection(
+    :host     => '127.0.0.1',
+    :username => 'root',
+    :password => node['wordpress-cust01']['mysql']['initial_root_password']
+  )
+  action :create
+end
+```
+
+By default, the name you provide to the `mysql_database` resource defines the database name. In this example, the database is named "wordpress-cust01". The `connection` part defines how to connect to the database &ndash; here, its hostname and the credentials for the root MySQL account.
+
+Here's an example adapted from the documentation that creates a MySQL database user.
+
+```ruby
+# some_recipe.rb
+mysql_connection_info = {
+  :host     => '127.0.0.1',
+  :username => 'root',
+  :password => node['mysql']['server_root_password']
+}
+
+...
+
+mysql_database_user 'disenfranchised' do
+  connection mysql_connection_info
+  password   'super_secret'
+  action     :create
+end
+```
+
+To make the `lamp` cookbook more reusable, as you'll see later, you can create additional node attributes to describe the database instance. Start by adding these two node attributes to your default attributes file, <% fp '~/learn-chef/cookbooks/lamp/attributes/default.rb' %>.
+
+
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/attribute-ubuntu-vagrant-2') %>
+
+The entire file looks like this.
+
+
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/attribute-ubuntu-vagrant-3') %>
+
+The `node['lamp']['database']['dbname']` node attribute defines the database name. The default value is "my_company".
+
+The `node['lamp']['database']['admin_username']` node attribute defines the database administrator's name. The default value is "db_admin".
+
+Also notice that the `mysql_database_user` resource specifies the password for the administrator.
+
+```ruby
+# some_recipe.rb
+mysql_database_user 'disenfranchised' do
+  connection mysql_connection_info
+  password   'super_secret'
+  action     :create
+end
+```
+
+Like you did for the MySQL root user, add an entry that defines the password for the administrator to <% fp 'mysql.json' %>, like this.
+
+
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/data-bag-item-ubuntu-vagrant-2') %>
+
+You now have everything you need to configure the database instance. Start by appending this `mysql2_chef_gem` resource to your `database` recipe to install the `mysql2` Ruby gem. The `mysql2_chef_gem` resource comes from the `mysql2_chef_gem` cookbook.
+
+
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/recipe-database-ubuntu-vagrant-2') %>
+
+Next, use the `mysql_database` and `mysql_database_user` resources to create the MySQL database and an administrator user who has `CREATE` and `GRANT` permissions to the database.
+
+
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/recipe-database-ubuntu-vagrant-3') %>
+
+This code:
+
+* uses the two node attributes you created to define the database name and administrator user's name.
+* loads the password for the administrator user from the "passwords" data bag.
+* uses a variable named `mysql_connection_info` to define the connection info. This code uses a variable because the connection info is used in two places.
+
+Your entire `database` recipe looks like this.
+
+
+
+<% code_snippet(page: current_page, path: 'create-database-instance-ubuntu-vagrant/recipe-database-ubuntu-vagrant-4') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Set the database recipe to run
+
+Next, to run the `database` recipe, append an `include_recipe` statement to your default recipe, <% fp 'default.rb' %>. The entire file looks like this.
+
+
+
+<% code_snippet(page: current_page, path: 'run-database-recipe-ubuntu-vagrant/run-database-recipe-ubuntu-vagrant') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Apply the configuration
+
+Let's apply the configuration and verify that MySQL is properly configured. Run `kitchen converge` to apply the `lamp` cookbook.
+
+
+
+<% command_snippet(page: current_page, path: 'apply-the-mysql-configuration-ubuntu-vagrant/kitchen-converge-ubuntu-vagrant-3') %>
+
+You see that `chef-client` completed successfully.
+
+[END_BOX]
+
+[START_BOX]
+
+## 8. Write InSpec tests that verify the configuration
+
+To help ensure that your database configuration stays good as you add new features, let's write a few InSpec tests, similar to what you did for the Apache configuration.
+
+For a MySQL configuration, you might verify that the configuration file exists and contains the items you expect. You might also verify that you can connect to MySQL and list the available databases.
+
+Let's start by running a few commands to explore the state of the system.
+
+Start by running this `kitchen exec` command to print out the contents of the MySQL configuration file, <% fp '/etc/mysql-default/my.cnf' %>.
+
+
+
+<% command_snippet(page: current_page, path: 'verify-the-mysql-configuration-ubuntu-vagrant/kitchen-exec-cat-config-ubuntu-vagrant') %>
+
+Next, run this `kitchen exec` command to run the [SHOW DATABASES](https://dev.mysql.com/doc/refman/5.7/en/show-databases.html) MySQL command.
+
+
+
+<% command_snippet(page: current_page, path: 'verify-the-mysql-configuration-ubuntu-vagrant/kitchen-exec-show-databases-ubuntu-vagrant') %>
+
+The `-p` argument to the `mysql` command specifies the password. You know that "fakerootpassword" permits access because that's the password you specified in the data bag you use for testing.
+
+Now that we know a bit more about the desired configuration, let's write a few tests. Specifically, we'll verify that:
+
+* the MySQL configuration file specifies the expected port (3306) and socket file (<% fp '/run/mysql-default/mysqld.sock' %>).
+* port 3306 is listening with the TCP protocol.
+* the `SHOW DATABASES` command returns the "mysql" database.
+
+Replace the contents of <% fp '~/learn-chef/cookbooks/lamp/test/smoke/default/database_test.rb' %> with this.
+
+
+
+<% code_snippet(page: current_page, path: 'verify-the-mysql-configuration-ubuntu-vagrant/inspec-database-ubuntu-vagrant-1') %>
+
+This code uses the InSpec [mysql_conf](http://inspec.io/docs/reference/resources/mysql_conf/), [port](http://inspec.io/docs/reference/resources/port/), and [command](http://inspec.io/docs/reference/resources/command/) resources.
+
+Run `kitchen verify` to run the InSpec tests.
+
+
+
+<% command_snippet(page: current_page, path: 'verify-the-mysql-configuration-ubuntu-vagrant/kitchen-verify-database-ubuntu-vagrant-1') %>
+
+Success! Each of your tests for Apache and MySQL pass. You've now successfully set up the Linux, Apache, and MySQL portions of your LAMP stack.
+
+<img src="/assets/images/misc/lamp-stack-lam.svg" style="width: 300px; box-shadow: none;"/>
+
+[END_BOX]

@@ -1,4 +1,4 @@
-//= require chef-lab-client
+//= require munchkin
 //= require os-tabs
 //= require platform-window
 //= require nav
@@ -9,5 +9,6 @@
 //= require progress-bar
 //= require platform-tabs
 //= require nav-scroll
+//= require data/track
 
 $(document).foundation();
