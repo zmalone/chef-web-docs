@@ -1,0 +1,137 @@
+---
+title: 'Set up your workstation'
+order: 1
+time_to_complete: 30 minutes
+snippet_path: local-development/ubuntu/vagrant
+snippet_workstation: ubuntu
+headings: [
+  { label: '1. Set up your workstation', href: '#step1' },
+  { label: '2. Prepare your AWS account', href: '#step2' }
+]
+---
+Test Kitchen enables you to specify details about your virtual machine. When working with EC2, this includes its Amazon Machine Image (AMI), instance type, security groups, and how to run Chef &ndash; including which recipes and which tests to run. Test Kitchen is the interface you use to create, destroy, and run Chef on your instances.
+
+Here you'll make sure that your workstation is set up for Chef development. You'll also prepare your AWS account to create test instances.
+
+If you don't have an AWS account, their [one-year free account](https://aws.amazon.com/free/?sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=google&sc_medium=cloud_computing_b&sc_content=aws_free_e&sc_detail=aws%20free%20tier&sc_category=cloud_computing&sc_segment=73823473242&sc_matchtype=e&sc_country=US&s_kwcid=AL!4422!3!73823473242!e!!g!!aws%20free%20tier&ef_id=VV3lAgAAAHK07c0y:20151119221840:s
+) gives you 750 hours per month of usage on the t2.micro tier.
+
+[COMMENT] Although Test Kitchen supports multiple versions of Ubuntu, for this module we recommend you use Ubuntu 14.04 to ensure the results you see match what's shown.
+
+[START_BOX]
+
+## 1. Set up your workstation for Chef development
+
+Although this module doesn't involve the Chef server or bootstrapping a node, we recommend that you complete [Manage an Ubuntu node with Chef server](/modules/manage-a-node-chef-server/ubuntu/) before starting this module.
+
+If you prefer to learn about local development now, before learning how to bootstrap a node, [perform these steps](/modules/manage-a-node-chef-server/ubuntu/hosted/set-up-your-workstation/) to set up your workstation. Then come back to this page.
+
+At this point, your workstation should:
+
+* have the latest version of the Chef Development Kit.
+* have a programmer's text editor that you're comfortable working with.
+* have the <% fp '~/learn-chef' %> directory for you to work in.
+* have Git and an SSH client.
+
+Having Git is important because you'll use it to download starter code to work with.
+
+Having an SSH client is important because you can use it to log in to your Ubuntu instance to verify your work.
+
+If your workstation is running Windows, remember to open the Chef Development Kit desktop shortcut. The desktop shortcut brings up a PowerShell session that's configured to work with Chef.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Prepare your AWS account
+
+You'll use Test Kitchen to create an EC2 instance later in this module. For now, let's ensure you have everything you'll need to create and connect to your instance.
+
+In this part, you'll:
+
+1. [Ensure your IAM role grants permission to launch instances](#step2.1)
+1. [Create your credentials file](#step2.2)
+1. [Note your region and availability zone](#step2.3)
+1. [Note your VPC subnet](#step2.4)
+1. [Create a security group](#step2.5)
+1. [Get the AMI ID for Ubuntu 14.04 in your region](#step2.6)
+1. [Prepare your key pair file](#step2.7)
+
+You can use this table as a checklist of the things you'll need.
+
+| Item                                                         | Example |
+|-------------------------------------------------------------:|-------------|
+| <i class='fa fa-square-o'></i>&nbsp; AWS credentials file          | See [example](#step2.2) |
+| <i class='fa fa-square-o'></i>&nbsp; Region and availability zone  | us-east-1b |
+| <i class='fa fa-square-o'></i>&nbsp; VPC subnet ID                 | subnet-eacb348e |
+| <i class='fa fa-square-o'></i>&nbsp; Security group ID             | sg-2d3b3b48 |
+| <i class='fa fa-square-o'></i>&nbsp; Ubuntu 14.04 AMI ID               | ami-6d1c2007 |
+| <i class='fa fa-square-o'></i>&nbsp; AWS key pair file             | See [example](#step2.7) |
+
+You may want to talk to your AWS administrator if you're unsure of which settings to use.
+
+### 2.1. Ensure your IAM role grants permission to launch instances
+
+If you've used EC2 in the past, your [IAM](http://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) role likely already grants permission to launch instances.
+
+If you're unable to [manually launch an EC2 instance](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html),
+learn how to [update your IAM role to grant permission](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html#permission-to-pass-iam-roles) or ask your AWS administrator for help.
+
+### 2.2. Create your credentials file
+
+There are [a few ways](https://github.com/test-kitchen/kitchen-ec2#initial-setup) to authenticate with AWS from Test Kitchen. One way is to write your AWS secret access key to a <% fp 'credentials' %> file on your workstation.
+
+If you're using Linux or macOS for your workstation, add the following to <% fp '~/.aws/credentials' %>. If you're using Windows, add it to <% fp '%USERPROFILE%\\.aws\\credentials' %>. Replace <% ph 'ACCESS_KEY' %> and <% ph 'SECRET_KEY' %> [with your values](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html#cli-signup).
+
+```ruby
+# ~/.aws/credentials
+[default]
+aws_access_key_id = ACCESS_KEY
+aws_secret_access_key = SECRET_KEY
+```
+
+[This blog post](http://blogs.aws.amazon.com/security/post/Tx3D6U6WSFGOK2H/A-New-and-Standardized-Way-to-Manage-Credentials-in-the-AWS-SDKs) explains how central AWS credential storage works in more detail.
+
+### 2.3. Note your region and availability zone
+
+Note the [region and availability zone](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) where you want your instances to run, for example, `us-east-1b`.
+
+### 2.4. Note your VPC subnet
+
+A VPC subnet is repsonsible for routing network traffic and for allocating IP addresses to instances. You'll need a subnet that allocates IP addresses that are reachable from your workstation. If you use a VPN connection to connect to EC2 instances, then you might use a subnet that allocates IP address on the private network. Others might find it appropriate to use a subnet that allocates IP addresses on the public Internet.
+
+Choose the subnet that best matches how you connect to EC2 instances and note its name, for example, `subnet-eacb348e`.
+
+If you don't have a subnet that you can use, [see the AWS documentation](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html) to learn how to create one.
+
+### 2.5. Create a security group
+
+When you launch an instance, you associate one or more [security groups](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html) with the instance.
+
+Ensure that you have security groups available in your region that allow inbound access on these ports:
+
+* **22** (SSH)
+* **80** (HTTP)
+* **443** (HTTPS)
+
+### 2.6. Get the AMI ID for Ubuntu 14.04 in your region
+
+There are multiple ways to [get the AMI ID](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html) for Ubuntu 14.04 for your region.
+
+If you don't have a preference, you can get the ID from the [AWS Marketplace](https://aws.amazon.com/marketplace).
+
+From the **Manual Launch** tab, note the ID for your region. Here's an example for the EU (Ireland) region. Don't launch the instance now &ndash; you'll launch from Test Kitchen in the next part.
+
+![Ubuntu 14.04 on AWS Marketplace](misc/AWS_Marketplace__Ubuntu_Server_14_04_LTS.png)
+
+[COMMENT] The ID can change when a new AMI is released with security updates, so be sure to get the latest ID from the AWS Marketplace.
+
+### 2.7. Prepare your key pair file
+
+You'll need an EC2 key pair file on your workstation so that Test Kitchen can connect to your instance over SSH.
+
+If you don't have your key pair file set up, [the AWS documentation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html) shows you how.
+
+[END_BOX]

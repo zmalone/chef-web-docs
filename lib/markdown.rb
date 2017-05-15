@@ -34,6 +34,7 @@ module ZurbFoundation
     modals
     anchors
     extras
+    angularize
 
     return @content
   end
@@ -59,7 +60,7 @@ module ZurbFoundation
     content.gsub!(/<p>\[WINDOWS\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-windows blueiconcolor\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[LINUX\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><i class=\"fa fa-2x fa-linux\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[ERROR\] (.+)<\/p>/)  { "<div class=\"alert-box error\"><i class=\"fa fa-2x fa-exclamation-triangle rediconcolor fa-2x\"></i>&nbsp; #{$1}</div>" }
-    content.gsub!(/<p>\[RUBY\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><img class=\"alert-box-icon-small\" src=\"/assets/images/partner/ruby.svg\"></img>&nbsp; #{$1}</div>" }
+    content.gsub!(/<p>\[RUBY\] (.+)<\/p>/)  { "<div class=\"alert-box comment\"><img class=\"alert-box-icon-small\" src=\"/assets/images/partner/ruby.svg\">&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[TIP\] (.+)<\/p>/)  { "<div class=\"alert-box tip\"><i class=\"fa fa-2x fa-info-circle tip-icon\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[GITHUB\] (.+)<\/p>/)  { "<div class=\"alert-box github\"><i class=\"fa fa-2x fa-github\"></i>&nbsp; #{$1}</div>" }
     content.gsub!(/<p>\[FEEDBACK\] (.+)<\/p>/)  { "<div class=\"alert-box feedback\"><i class=\"fa fa-2x fa-comment-o\"></i>&nbsp; #{$1}</div>" }
@@ -120,14 +121,14 @@ module ZurbFoundation
       old = $2
       flat = old.downcase.delete(' ')
       escaped = flat.gsub(/\W/, "")
-      s = ''
-      # if the title looks like a step, create an additional anchor, e.g. #step2
+      # if the title looks like a step, create the anchor as the step number, e.g. #step2
       m = /\A(?<step>\d+(?:\.\d)*)\./.match(flat)
       step = m.nil? ? nil : "step#{m['step']}"
-      s += "<a name=\"#{step}\" href=\"##{step}\"></a>" unless step.nil?
-      # create a second anchor for the long form and link it to the step anchor if it exists; otherwise, link to the long form
+      s = ''
+      s += "<a class=\"anchor\" name=\"#{step}\"></a>" unless step.nil?
+      s += "<a class=\"anchor\" name=\"#{escaped}\"></a>" if step.nil?
       s += "<h#{size}>#{old}"
-      s += "<span class=\"section-links\"><a class=\"section-link\" name=\"#{escaped}\" href=\"##{step || escaped}\"><i class=\"fa fa-paragraph\"></i></a><a class=\"section-link\" name=\"#top\" href=\"#top\"><i class=\"fa fa-long-arrow-up\"></span></i></a>" unless old.match /fa\-paragraph/
+      s += "<span class=\"section-links\"><a class=\"section-link\" href=\"##{step || escaped}\"><i class=\"fa fa-paragraph\"></i></a><a class=\"section-link\" name=\"#top\" href=\"#top\"><i class=\"fa fa-long-arrow-up\"></i></a></span>" unless old.match /fa\-paragraph/
       s += "</h#{size}>"
       s
     end
@@ -142,7 +143,32 @@ module ZurbFoundation
       "<div style='float:right; border:1px solid #666; display: inline-block; padding:5px; border-radius:5px; margin:15px;'><center><i class='fa fa-clock-o fa-3x blueiconcolor'></i><br><b>#{$1} minutes</b></center></div>" }
 
       content.gsub!(/<p>\[START_BOX\]<\/p>\s*(.+?)\s*<p>\[END_BOX\]<\/p>/m) {
-      "<div class='box'>#{$1}</div>" }
+      $1 }
+  end
+
+  def angularize
+    # The HTML markup fed into Angular as a template must be 100% valid, but due to a mix of HTML
+    # and Markdown, and even Markdown processing running twice in some cases, the resulting HTML is
+    # often invalid and must be cleaned up before it can be used with Angular.
+    # TODO: Review this and determine if additional rules are necessary, or if there is an alternative to this.
+    content.gsub!(/<p><hr\s?\/?><\/p>/, '<hr>') # Angular does not support horizontal rules within paragraphs
+    content.gsub!(/<script[^>]*>[^<]*<\/script>/, '') # Angular does not support script tags
+    content.gsub!('</img>', '') # Img tags must be self-closing
+    content.gsub!('<p/>', '') # Paragraph tags cannot be self-closing/empty
+    content.gsub!('<p><p>', '<p>') # Duplicate paragraph opening tags should be reduced
+    content.gsub!('</p></p>', '</p>') # Duplicate paragraph closing tags should be reduced
+    content.gsub!('<p></', '</') # A paragraph shouldn't be opened right before closing another tag
+    content.gsub!('<p><h', '<h') # A paragraph shouldn't be opened right before a heading tag
+    content.gsub!('</div></p>', '</p></div>') # The page_nav_helpers.rb next_page helper results in invalid closing tag order
+    # Markdown loves to add <p> tags, so the final cleanup step ensures that all paragraph opening/closing tags are matched
+    in_paragraph = false
+    content.gsub!(/<(\/)?(p|P)([\s]+[^>]*)*>/) { |match|
+      # Remove closing </p> tags if we're NOT in a paragraph, and opening <p> tags if we ARE in a paragraph
+      next '' if in_paragraph ^ $1
+      in_paragraph = !$1
+      next $&
+    }
+    content << '</p>' if in_paragraph
   end
 
   def render(string)

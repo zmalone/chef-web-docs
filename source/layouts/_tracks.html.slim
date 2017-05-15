@@ -1,0 +1,46 @@
+.tracks-section
+  .row
+    - tracks.children.each_with_index do |item, index|
+      .large-6.medium-6.small-12.columns.track-display order= "#{index}"
+        .track-card class="#{item.page.data.track_class}"
+          header
+            h3
+              span
+                = item.page.data.title
+              span.time
+                - if item.page.data.hours < 1
+                  = (60 * item.page.data.hours).to_i
+                  |  mins
+                - else
+                  = item.page.data.hours
+                  |  hrs
+            .tag-img
+              img src="#{item.page.data.image_url}"
+          p.desc
+            = item.page.data.description
+            - if item.page.data.video_url
+              a.video-url url="#{item.page.data.video_url}"  Watch the intro video.
+          a.track-start-text href="#{item.page.url}" track="#{item.id}"
+            | Get Started
+          .progress-and-social-share
+            user-track-progress track="#{item.id}"
+            - if has_social_share?(item.page)
+              .social-share
+                a.ic-share{ href="#" data-reveal-id="socialShare"
+                data-twitter="#{social_twitter_share(item.page)}"
+                data-facebook="#{social_facebook_share(item.page)}"
+                data-google="#{social_google_plus_share(item.page)}"
+                data-linkedin="#{social_linkedin_share(item.page)}"}
+            - if item.page.data.tags
+              ul.links
+                - item.page.data.tags.each do |tag|
+                  li
+                    a
+                      = expand_tag(tag)
+          .track-record
+            user-progress-stamp track="#{item.id}"
+    .btn-container.load-track
+      button.btn.btn-primary.track-load-more.load-track-btn total="#{tracks.children.size}" Load more tracks
+  //Modal pop up for social sharing
+  = partial "layouts/modal", locals: {id: 'socialShare', classes: 'tiny' } do
+    p#socialContents.social.top-margin

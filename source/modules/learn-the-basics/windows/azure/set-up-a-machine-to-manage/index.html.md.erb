@@ -1,0 +1,118 @@
+---
+title: 'Set up an Azure instance to manage'
+order: 1
+description: "Set up your Chef environment."
+keywords: TODO
+time_to_complete: 30 minutes
+snippet_path: learn-the-basics/windows/azure/set-up-a-machine-to-manage
+snippet_workstation: windows
+headings: [
+  { label: '1. Access your Azure account', href: '#step1' },
+  { label: '2. Launch a Windows Server instance', href: '#step2' },
+  { label: '3. Connect to your instance', href: '#step3' },
+  { label: '4. Install the Chef DK', href: '#step4' },
+  { label: '5. Prepare a text editor', href: '#step5' },
+  { label: 'Cleaning up', href: '#cleaningup' },
+
+  ]
+---
+<%= partial '../../shared/get-set-up/intro' %>
+
+In this part, you'll bring up a Windows Server 2012 R2 instance on Microsoft Azure.
+
+You'll also learn how to [clean up](#cleaningup) your virtual machine when you're done with this module.
+
+<% accordion('test-configuration', 'Test configuration', true) do %>
+
+<% markdown do %>
+
+The output you see might differ depending on the Azure machine image that you choose. The version of the Chef Development Kit that you use can also affect the output that you see. We recommend that you install the components as directed in this module, using the specific versions that have been tested.
+
+For technical support with Azure, [read the FAQ](https://azure.microsoft.com/en-us/support/faq/), [visit the Azure forums](https://azure.microsoft.com/en-us/support/forums/), or [contact support](https://azure.microsoft.com/en-us/support/options/). We're also happy to help as best we can.
+
+<% render_machine_config('snippets/learn-the-basics/windows/azure/machine_config.md') %>
+
+<% end %>
+
+<% end %>
+
+[START_BOX]
+
+## 1. Access your Azure account
+
+Log in to your Azure account. If you don't have an account, Microsoft is offering a [30-day free trial](https://azure.microsoft.com/en-us/free/) for up to $200 (USD) of usage.
+
+If you are unable to use Azure, you can [try a different option](/modules/learn-the-basics/windows/) for this module.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Launch a Windows Server 2012 R2 instance
+
+Next, bring up a Windows Server instance on Azure.
+
+If you're new to Azure, their [Create your first Windows virtual machine in the Azure portal](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-hero-tutorial/) tutorial walks you through the creation of your first Windows Server virtual machine.
+
+[COMMENT] This module refers to the Azure Portal documentation to help you manage your virtual machine. You can also create a virtual machine from [PowerShell](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-ps-create/) or from the Azure [command-line interface](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-quick-create-cli/) (CLI).
+
+
+When you're ready to continue with this module, bring up a **Windows Server 2012 R2 Datacenter** instance, published by Microsoft Windows Server Group.
+
+When you choose the instance size, select **DS1_V2 Standard**.
+
+You can leave the remaining settings at their default values. If you choose to [assign a network security group](https://azure.microsoft.com/en-us/documentation/articles/virtual-networks-create-nsg-arm-pportal/) to your instance, be sure to enable access on ports 80 (HTTP), 443 (HTTPS), 3389 (RDP), and 5985 (WinRM).
+
+[COMMENT] Technically, port 443 is not required for this module. But setting up that port now prepares you for the next module, where you'll configure your server to be managed remotely.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Connect to your Windows Server instance
+
+Next, create a Remote Desktop connection to your instance. The Microsoft documention explains [how to connect using an RDP client](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-hero-tutorial/#connect-to-the-virtual-machine-and-log-on).
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Install the Chef DK on your Windows Server instance
+
+Remember, for learning purposes, you'll start by managing a server directly. To do that, you'll install the Chef DK on your virtual machine. The Chef DK provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
+
+From your Remote Desktop connection, run this from the command line to install the Chef DK.
+
+<% command_snippet(path: 'learn-the-basics/windows/azure/set-up-your-own-server/install-the-chef-dk/install-chefdk', workstation: 'windows', features: [:stdin, :stdout]) %>
+
+The `-channel` and `-version` arguments specify the Chef DK version this module was last tested with.
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Prepare a text editor on your Windows Server instance
+
+Because Chef uses code to express infrastructure policy, it's important that you use a text editor that provides features such as syntax highlighting and line numbering.
+
+From your Remote Desktop connection, install a text editor now.
+
+If you don't have a preferred text editor, here are some that are popular among Chef users:
+
+* [Atom](http://atom.io)
+* [Visual Studio Code](https://code.visualstudio.com)
+* [Sublime Text 2](http://www.sublimetext.com)
+
+[END_BOX]
+
+[START_BOX]
+
+## Cleaning up
+
+After you complete this module, be sure to destroy your virtual machine. Or, you can leave your server running if you want to use it to complete the next module.
+
+You can destroy your virtual machine from the Azure Portal, [PowerShell](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-ps-manage/#delete-a-virtual-machine), or from the [CLI](https://azure.microsoft.com/en-us/documentation/articles/azure-cli-arm-commands/#azure-vm-commands-to-manage-your-azure-virtual-machines).
+
+![](partner/azure/delete_vm.png)
+
+[END_BOX]

@@ -1,0 +1,47 @@
+---
+title: 'Infrastructure as code'
+description: 'Chef allows you to define what a system should look like, the responsibilities of that system, and then safely and reliable roll out changes to that system.'
+order: 3
+time_to_complete: 5 minutes
+quiz_path: quizzes/web-operations-essentials/web-operations-with-chef.yml
+headings: [
+  { label: 'Story', href: '#story' }
+]
+---
+After completing this unit, you’ll be able to:
+
+* describe why infrastructure as code is powerful.
+* describe what a resource is.
+* describe what test-and-repair is.
+
+## Story
+
+Chef provides a human readable, executable language that allows you to express the desired state of a system. For example, a desired state might mean that a particular package is installed or that a particular service is running. Systems described with Chef can be thought of as "infrastructure as code."
+
+Often, when we first try to define the desired state of a system, we write the steps down, maybe as a series of bullet points. We'll list the applications that need to be installed, the services that need to run, the credentials or files that are required, and the systems that need to be configured.
+
+This initial document might evolve into a script that brings the system into the desired state. However, scripts typically assume what the system's initial state is and do not query to find the actual state.
+
+Chef allows you to express the desired state of every _resource_ on your system. Chef defines a resource as a piece of your infrastructure. Examples of resources are a package, a service, a path or a file.
+
+Resources have a type and a name. Properties capture additional details about the resource. Importantly, the resource has an action that it takes. Chef resources have quite a few default values as well as default actions.
+
+Each resource in Chef uses an approach called _test-and-repair_.
+
+<!-- TODO: IMAGE OF RESOURCE TESTING AND REPAIRING -->
+
+In the 'test' part of test-and-repair, the resource queries the system to figure out its current state. For example, if the resource is a package that should be installed, then the resource first queries the system to see if the package is already present. For a service, it would check to see if it is already running. If the package is already installed or the service is already running, no action takes place.
+
+The 'repair' portion is where the resource takes the specified action to bring the system into the desired state. This means, for example, that it would install the package or start the service. Resources can be configured to take action only when other resources take action. For example, you would only want to download a file if you knew that the file existed on a server.
+
+A resource does not describe how it accomplishes its goal. Each resource is associated with a _provider_ and these providers handle the actual implementation details for a particular platform or a specific scenario. Separating the description of the resource from its implementation ensures that the resources describe the desired state in a natural, easy to read language.
+
+A single resource may not be enough to configure a package or application. Multiple resources may be necessary. These resources are collected in a _recipe_ file. The recipe contains the resources, ordered from top-to-bottom, that are necessary to bring the system into the desired state. In addition, an application may require several recipes. There might be one recipe to install an application for clients of the system, another recipe for the server, and a third that contains additional features that are not always required to be installed. Some recipes may even be for a specific platform.
+
+All of the recipes related to a particular scenario, such as installing and configuring an application, are grouped together into a _cookbook_. A cookbook can also include other information such as global values or a file or template that a resource requires. Another advantage to cookbooks is that it makes it easy to version the recipes.
+
+When we think about managing our entire infrastructure we may want to run these recipes on multiple systems. To do that would require us to make them available to every system that Chef manages. These systems are called _nodes_. To make your recipes available to nodes in your infrastructure, you upload cookbooks to the Chef server, a central repository for cookbooks and node information. Each node queries the Chef server and it responds by sending back all the correct recipes, in their cookbooks. The node executes the recipes and then reports back to the Chef server if it succeeded.
+
+Nodes can periodically check in with the Chef server and grab the latest recipes so you know they're always running the latest versions. You can also place nodes within a Chef _environment_. Within that environment, you can apply specific versions of the recipes. For example, you might want to use experimental recipes in a testing environment and only run verified recipes in a production environment.
+
+The ability to express desired state in a natural language makes it easier to understand the state of your system. Resources are powerful because they provide ways to express the desired state of a single element of the system. These resource can be combined together into recipes and then into cookbooks. When infrastructure is described as code it is versionable, testable and reusable, just like the code that makes up your applications.

@@ -1,0 +1,522 @@
+---
+title: 'Add infrastructure to run your web server'
+short_title: 'Add infrastructure'
+order: 5
+time_to_complete: 60 minutes
+snippet_path: deploy-infrastructure/windows/automate/set-up-your-chef-server
+snippet_workstation: ubuntu
+quiz_path: quizzes/deploy-infrastructure/shared/add-infrastructure.yml
+headings: [
+  { label: '1. Bring up infrastructure', href: '#step1' },
+  { label: '2. Understand push jobs', href: '#step2' },
+  { label: '3. Set up push jobs', href: '#step3' },
+  { label: '4. Get the delivery-base cookbook', href: '#step4' },
+  { label: '5. Understand Chef environments', href: '#step5' },
+  { label: '6. Create environments', href: '#step6' },
+  { label: '7. Bootstrap your nodes', href: '#step7' },
+  { label: '8. Run chef-client a second time', href: '#step8' }
+]
+---
+So far, you've created a project, configured your build cookbook to publish the `learn_chef_iis` cookbook to the Chef server, and watched the initial change move through the pipeline. The next step is to create infrastructure environments that can run your cookbook.
+
+Recall that infrastructure can receive build artifacts produced from Chef Automate's build pipeline. These environments are labeled **acceptance**, **union**, **rehearsal**, and **delivered** in this diagram.
+
+<img src="/assets/images/automate/automate-scenario-architecture.svg" style="width: 100%; alt="An example Chef Automate installation" />
+
+For this module, your build artifact is the `learn_chef_iis` cookbook. Because the `learn_chef_iis` cookbook targets Windows Server, you'll bring up Windows Server systems.
+
+Recall that your project uses the `delivery-truck` cookbook to perform many common tasks that are needed to deliver Chef cookbooks. Using the `delivery-truck` cookbook requires coordination between the Chef server and the infrastructure environments, or _nodes_.
+
+In this part, you'll prepare your nodes so that they are ready to run build artifacts (here, the `learn_chef_iis` cookbook) during the Acceptance, Union, Rehearsal, and Delivered stages.
+
+Setting up Chef Automate to deploy cookbooks to infrastructure nodes involves these tasks.
+
+* Bringing up infrastructure environments to configure during the Acceptance, Union, Rehearsal, and Delivered stages.
+* Setting up push jobs on your Chef Automate server.
+* Setting up push jobs on your infrastructure nodes.
+* Creating a Chef environment for each infrastructure node.
+* Bootstrapping your nodes to the Chef server.
+
+Let's start by bringing up infrastructure to run the `learn_chef_iis` cookbook.
+
+[START_BOX]
+
+## 1. Bring up infrastructure
+
+Like your runner, each infrastructure node can be any system that's reachable by Chef Automate. Unlike your runner, each node requires only a reachable IP address and does not need to have an associated FQDN.
+
+For learning purposes, you may find it easiest to bring up infrastructure in the same environment as your Chef Automate installation. The number of servers you bring up is up to you. At a minimum, you can bring up one node that represents your Acceptance environment. A complete setup involves creating 4 servers &ndash; one each for the Acceptance, Union, Rehearsal, and Delivered environments.
+
+[COMMENT] Although we recommend that you bring up fresh instances for this module, you can use the node that you brought up for the _Manage a node with Chef Automate_ module. Also, although Chef [supports multiple versions of Windows Server](https://docs.chef.io/platforms.html#chef-client-ohai-foundational-platforms), we recommend that you use Windows Server 2012 R2 to ensure the results you see match what's shown in this module.
+
+Bring up the number of Windows Server 2012 R2 systems you want to use now. this module was tested using Amazon EC2 **t2.xlarge** instances. As you did in the _Manage a node with Chef Automate_ module, ensure each system's firewall or security group provides inbound network access on ports 80 (HTTP), 443 (HTTPS), RDP (3389), and 5985 (WinRM).
+
+Connect to each system, either directly or over RDP, as it comes up. Then configure the firewall to accept remote WinRM connections.
+
+Here's a refresher on how to connect to your instance, configure the firewall, and verify that your Windows Server node can receive network traffic on port 5985 and through the firewall.
+
+* [Connect to your node](/modules/manage-a-node-chef-automate/windows/automate/get-a-node-to-bootstrap#step3)
+* [Configure the firewall to accept remote WinRM connections](/modules/manage-a-node-chef-automate/windows/automate/get-a-node-to-bootstrap#step4)
+* [Verify the configuration](/modules/manage-a-node-chef-automate/windows/automate/get-a-node-to-bootstrap#step5)
+
+After you verify each server, you can close your RDP connection.
+
+[COMMENT] Here, you configure the firewall manually. In practice, you might use a custom image that's preconfigured or use an automated service to provision your system. For example, you can use Amazon's [EC2Config Service](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/UsingConfig_WinAMI.html) to configure the firewall when your instance first boots.
+
+Note the public IP address for each of your infrastructure nodes.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Understand the role of push jobs
+
+In the _Manage a node with Chef Automate_ module, you used `knife winrm` to [run chef-client on your node](/modules/manage-a-node-chef-automate/windows/automate/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
+
+```bash
+# ~/learn-chef
+$ knife winrm 'name:node1-windows' chef-client --winrm-user USER --winrm-password 'PASSWORD' --attribute ipaddress
+```
+
+The command uses a search query to specify which node to run `chef-client` on. Here, the search query specifies the node's name, **node1-windows**.
+
+There are other ways to run `chef-client` on a node. You can log in directly or over RDP and run `chef-client`. Or you can run `chef-client` at a regular interval as a daemon, cron job, service, or scheduled task, [as you did previously](/modules/manage-a-node-chef-automate/windows/automate/run-chef-client-periodically).
+
+You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. A push job is a way to submit a task to a node, such as running `chef-client`. The push jobs client runs on a node and listens for job requests.
+
+The push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
+
+In the next step, you'll install the push jobs server on your Chef server. Later on this page, you'll upload a copy of the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook to your Chef server. When you bootstrap each of your infrastructure nodes, you'll include `delivery-base` in the node's run-list. The `delivery-base` cookbook performs tasks that prepare a node for use with Chef Automate, including installation of the push jobs client.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Set up push jobs on your Chef server
+
+Here, you'll connect to your Chef server over SSH and [install the push jobs server](https://docs.chef.io/install_chef_automate.html#id3).
+
+From your workstation, create an SSH connection to your Chef server.
+
+Next, [download the push jobs server package](https://downloads.chef.io/push-jobs-server/2.1.1). Here's an example for Chef server running on Ubuntu 14.04.
+
+```bash
+$ wget https://packages.chef.io/files/stable/opscode-push-jobs-server/2.1.1/ubuntu/14.04/opscode-push-jobs-server_2.1.1-1_amd64.deb
+```
+
+Next, run [chef-server-ctl install](https://docs.chef.io/ctl_chef_server.html#install) to install the package. Here's an example.
+
+```bash
+$ sudo chef-server-ctl install opscode-push-jobs-server --path /home/ubuntu/opscode-push-jobs-server_2.1.1-1_amd64.deb
+```
+
+Finally, apply the updated configuration.
+
+```bash
+$ sudo chef-server-ctl reconfigure
+```
+
+```bash
+$ sudo opscode-push-jobs-server-ctl reconfigure
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Get the delivery-base cookbook
+
+The `delivery-truck` cookbook relies on push jobs to run `chef-client` on nodes as the pipeline runs. It therefore requires each node to include the [push-jobs](https://github.com/chef-cookbooks/push-jobs) cookbook in its run-list. The `push-jobs` cookbook installs the push jobs client package and sets it up to run as a service.
+
+The recommended way to include the `push-jobs` cookbook is to use the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook. The `delivery-base` cookbook includes the `push-jobs` cookbook and sets additional node attributes that enable nodes to work with Chef Automate.
+
+You'll bootstrap your node shortly. To prepare for the bootstrap process, you first need to upload a copy of the `delivery-base` cookbook to your Chef server.
+
+To begin, from your workstation move to the <% fp '~/learn-chef/cookbooks' %> directory.
+
+```bash
+# ~/learn-chef
+$ cd ~/learn-chef/cookbooks
+```
+
+One way to set up the `push-jobs` cookbook to run on your nodes for the Acceptance, Union, Rehearsal, and Delivered stages is to clone the `delivery-base` cookbook repo from GitHub, upload it and its dependencies to the Chef server, and then add it to each of your node's run-list.
+
+Clone the `delivery-base` repo from GitHub.
+
+```bash
+# ~/learn-chef/cookbooks
+$ git clone https://github.com/chef-cookbooks/delivery-base
+Cloning into 'delivery-base'...
+remote: Counting objects: 103, done.
+remote: Total 103 (delta 0), reused 0 (delta 0), pack-reused 103
+Receiving objects: 100% (103/103), 16.25 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (27/27), done.
+Checking connectivity... done.
+```
+
+Next, move to the <% fp 'delivery-base' %> directory.
+
+```bash
+# ~/learn-chef/cookbooks
+$ cd ~/learn-chef/cookbooks/delivery-base
+```
+
+Next, run `berks install` to download the cookbooks that `delivery-base` depends on.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ berks install
+Resolving cookbook dependencies...
+Fetching 'delivery-base' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Installing chef-ingredient (0.21.2)
+Using compat_resource (12.16.3)
+Using delivery-base (0.2.2) from source at .
+Installing packagecloud (0.2.5)
+Installing push-jobs (3.3.0)
+Installing runit (3.0.5)
+Installing yum-epel (2.1.1)
+```
+
+Finally, run `berks upload` to upload `delivery-base` and its dependencies to Chef server.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ berks upload
+Uploaded chef-ingredient (1.0.1) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Skipping compat_resource (12.16.3) (frozen)
+Uploaded delivery-base (0.2.3) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Uploaded packagecloud (0.2.5) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Uploaded push-jobs (4.0.0) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Uploaded runit (3.0.5) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Uploaded yum-epel (2.1.1) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+```
+
+-- --
+
+Run `knife cookbook list` to verify `delivery-base` and its dependencies were successfully uploaded to the Chef server.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ knife cookbook list
+chef-client          7.1.0
+chef-ingredient      1.0.1
+compat_resource      12.16.3
+cron                 3.0.0
+delivery-base        0.2.3
+learn_chef_iis       0.1.0
+logrotate            2.1.0
+ohai                 4.2.3
+packagecloud         0.2.5
+push-jobs            4.0.0
+runit                3.0.5
+windows              2.1.1
+yum-epel             2.1.1
+```
+
+Move back to the <% fp '~/learn-chef' %> directory for the next part.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ cd ~/learn-chef
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Understand the role of Chef environments
+
+Each of the Acceptance, Union, Rehearsal, and Delivered stages deploys build artifacts, or the pipeline's output, to some environment. For our project, this means running the `learn_chef_iis` cookbook on the infrastructure environments for each of the Acceptance, Union, Rehearsal, and Delivered stages.
+
+Recall the `knife winrm` command we discussed earlier (as before, you don't need to run this command):
+
+```bash
+# ~/learn-chef
+$ knife winrm 'name:node1-windows' chef-client --winrm-user USER --winrm-password 'PASSWORD' --attribute ipaddress
+```
+
+Also recall that push jobs enable you to submit tasks, such as running `chef-client`, to your nodes. Push jobs use the same search mechanism as shown in the `knife winrm` example.
+
+Chef Automate uses [environments](https://docs.chef.io/environments.html) to provide additional search criteria when push jobs run. As an example, when phases in the Acceptance stage run, you want only the infrastructure node that's associated with the Acceptance stage (and not the Union, Rehearsal, or Delivered stages) to run your cookbook.
+
+A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as a way to tag a node for a specific purpose.
+
+Every pipeline stage is associated with the name of a Chef environment. For the Acceptance stage, the name comes in this form:
+
+<code class='placeholder'>\<STAGE></code>-<code class='placeholder'>\<ENTERPRISE></code>-<code class='placeholder'>\<ORGANIZATION></code>-<code class='placeholder'>\<PROJECT></code>-<code class='placeholder'>\<PIPELINE></code>
+
+For this project, the environment name during the Acceptance stage is:
+
+**acceptance-default-my-org-learn\_chef\_iis-master**
+
+where:
+
+* **acceptance** is the stage.
+* **default** is the enterprise.
+* **my-org** is the organization.
+* **learn\_chef\_iis** is the project.
+* **master** is the pipeline.
+
+Similar logic applies to the Union, Rehearsal, and Delivered stages. However, because the Union, Rehearsal, and Delivered stages can be shared among multiple projects, their environment names are fixed to be **union**, **rehearsal**, and **delivered**, respectively.
+
+Because the push job's search mechanism finds all nodes that are associated with the given Chef environment, you can associate multiple nodes with a given stage, for example, to run a cookbook that configures a multi-tiered application.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Create the Chef environments
+
+Next, create the Chef environments. Run the following [knife environment create](https://docs.chef.io/knife_environment.html#create) command to create the environment for the Acceptance stage.
+
+```bash
+# ~/learn-chef
+$ knife environment create acceptance-default-my-org-learn_chef_iis-master -d "The acceptance environment"
+Created acceptance-default-my-org-learn_chef_iis-master
+```
+
+Now repeat the process for the remaining stages.
+
+```bash
+# ~/learn-chef
+$ knife environment create union -d "The union environment"
+Created union
+$ knife environment create rehearsal -d "The rehearsal environment"
+Created rehearsal
+$ knife environment create delivered -d "The delivered environment"
+Created delivered
+```
+
+Run `knife environment list` to verify the environments were properly created.
+
+```bash
+# ~/learn-chef
+$ knife environment list
+_default
+acceptance-default-my-org-learn_chef_iis-master
+delivered
+rehearsal
+union
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Bootstrap your nodes
+
+Now that you have the required environments set up and the `delivery-base` cookbook on your Chef server, you're ready to bootstrap your infrastructure nodes.
+
+The process is similar to the one you did in the [Manage a node with Chef Automate](/modules/manage-a-node-chef-automate/windows/automate/bootstrap-your-node) module with two minor variations.
+
+* Each node's run-list contains two recipes &ndash; the `delivery-base` cookbook's default recipe and the `learn_chef_iis` cookbook's default recipe.
+* Each node is associated with a Chef environment that you created in the previous step.
+
+From your workstation, start by bootstrapping the node that cooresponds to the Acceptance stage. Replace <% ph 'IP_ADDRESS' %> with your node's public IP address, and <% ph 'USERNAME' %> and <% ph 'PASSWORD' %> with the username and password you would normally use to connect.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap windows winrm IP_ADDRESS --winrm-user USERNAME --winrm-password 'PASSWORD' --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_iis]' --environment acceptance-default-my-org-learn_chef_iis-master --yes
+```
+
+Here's an example. Sample output is omitted for brevity.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap windows winrm 54.236.143.224 --winrm-user Administrator --winrm-password '@dbLD6fsYX' --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_iis]' --environment acceptance-default-my-org-learn_chef_iis-master --yes
+```
+
+Run the `curl` command to verify the configuration. Here's an example.
+
+```bash
+# ~/learn-chef
+$ curl 54.236.143.224
+<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>
+```
+
+You can also verify the configuration from a web browser.
+
+![](automate/browser-hello-world.png)
+
+If you created infrastructure for the Union, Rehearsal, and Delivered environments, repeat the bootstrap process for those nodes now. Here are examples (sample output is omitted for brevity).
+
+```bash
+# ~/learn-chef
+$ knife bootstrap windows winrm 54.88.192.68 --winrm-user Administrator --winrm-password 'dW364Rr2h(j' --node-name union-node --run-list 'recipe[delivery-base],recipe[learn_chef_iis]' --environment union --yes
+```
+
+```bash
+# ~/learn-chef
+$ knife bootstrap windows winrm 52.90.9.48 --winrm-user Administrator --winrm-password 'rm.gLB%Yb3h' --node-name rehearsal-node --run-list 'recipe[delivery-base],recipe[learn_chef_iis]' --environment rehearsal --yes
+```
+
+```bash
+# ~/learn-chef
+$ knife bootstrap windows winrm 54.89.188.42 --winrm-user Administrator --winrm-password 'x!PLT$sAHg' --node-name delivered-node --run-list 'recipe[delivery-base],recipe[learn_chef_iis]' --environment delivered --yes
+```
+
+You can specify any name you want for the `--node-name` argument. Each bootstrap commmand shown here specifies a node name that corresponds to that node's function. For example, `union-node` specifies the name for the node that corresponds to the Union stage and `union` Chef environment.
+
+Repeat the process to verify the configuration on each node.
+
+-- --
+
+As optional exercises, let's run a few commands to verify that everything's set up correctly.
+
+First, run the following `knife node list` command to list the infrastructure nodes associated with your Chef server.
+
+```bash
+# ~/learn-chef
+$ knife node list | grep node
+acceptance-node
+delivered-node
+rehearsal-node
+union-node
+```
+
+You can view details about your node by running the `knife node show` command. Here's an example for the Acceptance node.
+
+
+```bash
+$ knife node show acceptance-node
+Node Name:   acceptance-node
+Environment: acceptance-default-my-org-learn_chef_iis-master
+FQDN:        WIN-SSM2QGQOL57
+IP:          54.236.143.224
+Run List:    recipe[delivery-base], recipe[learn_chef_iis]
+Roles:
+Recipes:     delivery-base, delivery-base::default, learn_chef_iis, learn_chef_iis::default, push-jobs::default, push-jobs::install, push-jobs::package, push-jobs::config, push-jobs::service, push-jobs::service_windows
+Platform:    windows 6.3.9600
+Tags:
+```
+
+The **Recipes** part contains the node's expanded run-list. For example, the `delivery-base` cookbook's default recipe includes the `push-jobs` cookbook's default recipe ([source code](https://github.com/chef-cookbooks/delivery-base/blob/master/recipes/default.rb)), which in turn includes other recipes ([source code](https://github.com/chef-cookbooks/push-jobs/blob/master/recipes/default.rb)).
+
+In the _Manage a node with Chef Automate_ module, you used Chef Automate's visibility feature to [view your node from the dashboard](/modules/manage-a-node-chef-automate/windows/automate/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
+
+From the Chef Automate web interface, select **Nodes**. From the search box at the top of the page, enter **node_name: *-node** to display only the nodes whose names end with "-node", then click the search button.
+
+![](automate/visibility-filter-results.png)
+
+At the bottom of the page, you'll see your nodes, including the Chef environment each node is associated with.
+
+![](automate/visibility-filter-results-nodes-iis.png)
+
+As an optional exercise, you can select one of your nodes to view its run history and other details.
+
+<% accordion('stages-environments', 'Stages versus environments') do %>
+
+<% markdown do %>
+
+In this module, we use the terms _stages_ and _environments_ quite frequently. For example, there's the Acceptance stage and there's the Acceptance environment. Both are related, but it's important to distinguish between the two.
+
+For example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this module, the Acceptance environment is a Windows Server system that applies the `learn_chef_iis` cookbook to configure the web configuration. The Acceptance stage deploys the web configuration by triggering `chef-client` to run on Windows Server system.
+
+You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this module your Chef Automate project is a Chef cookbook, a project can be an application or some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
+
+<% end %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 8. Use push jobs to run chef-client a second time
+
+The bootstrap process performed an initial `chef-client` run on your nodes. In previous modules, such as _Manage a node with Chef Automate_, you ran `knife winrm` from your workstation to trigger `chef-client` remotely on your node.
+
+Recall that your runner performs build tasks as changes move through Chef Automate's pipeline. During the Acceptance, Union, Rehearsal, and Delivered stages, the runner uses push jobs to initiate the `chef-client` run on your infrastructure nodes.
+
+Before pushing a change through the pipeline, first verify that your runner can successfully submit push jobs to your nodes. You'll run push jobs in stages; each stage will use a search query that's more constrained. Doing so will help diagnose any issues in your setup.
+
+From your workstation, create an SSH connection to your runner.
+
+Then run `knife node status` to to see which nodes are available to accept push jobs.
+
+```bash
+$ sudo knife node status --config /var/opt/delivery/workspace/etc/delivery.rb
+acceptance-node	available
+delivered-node	available
+rehearsal-node	available
+union-node	available
+```
+
+You see `acceptance-node`, `union-node`, `rehearsal-node`, and `delivered-node` are available to receive push jobs. If you set up fewer infrastructure nodes, for example, one node for the Acceptance environment only, you would see only that node listed.
+
+Next, run the following `knife job start` command to run `chef-client` on each node that contains `learn_chef_iis` in its run-list.
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_iis*)' --config /var/opt/delivery/workspace/etc/delivery.rb
+Started.  Job ID: f51379f44299c002768df1ffabe1ff24
+.Running (1/4 in progress) ...
+.................................Complete.
+command:     chef-client
+created_at:  Fri, 24 Feb 2017 15:29:46 GMT
+env:
+id:          f51379f44299c002768df1ffabe1ff24
+nodes:
+  succeeded:
+    acceptance-node
+    delivered-node
+    union-node
+    rehearsal-node
+run_timeout: 3600
+status:      complete
+updated_at:  Fri, 24 Feb 2017 15:30:21 GMT
+```
+
+As expected, `chef-client` ran on all four of your nodes.
+
+Next, constrain the query to include nodes that contain both the `learn_chef_iis` and `push-jobs` cookbooks in their run-lists.
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_iis*) AND (recipes:push-jobs*)' --config /var/opt/delivery/workspace/etc/delivery.rb
+Started.  Job ID: f51379f442990c058827e1b75abcdb34
+.Running (1/4 in progress) ...
+................................Complete.
+command:     chef-client
+created_at:  Fri, 24 Feb 2017 15:30:45 GMT
+env:
+id:          f51379f442990c058827e1b75abcdb34
+nodes:
+  succeeded:
+    union-node
+    rehearsal-node
+    acceptance-node
+    delivered-node
+run_timeout: 3600
+status:      complete
+updated_at:  Fri, 24 Feb 2017 15:31:20 GMT
+```
+
+Again, `chef-client` ran on all four of your nodes.
+
+Finally, constrain the query to include only the node associated with the Acceptance environment.
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_iis*) AND (recipes:push-jobs*) AND chef_environment:acceptance-default-my-org-learn_chef_iis-master' --config /var/opt/delivery/workspace/etc/delivery.rb
+Started.  Job ID: f51379f44299e398a58645a6a0e4ffbb
+.Running (1/1 in progress) ...
+................................Complete.
+command:     chef-client
+created_at:  Fri, 24 Feb 2017 15:31:36 GMT
+env:
+id:          f51379f44299e398a58645a6a0e4ffbb
+nodes:
+  succeeded: acceptance-node
+run_timeout: 3600
+status:      complete
+updated_at:  Fri, 24 Feb 2017 15:32:11 GMT
+```
+
+This time, `chef-client` ran only on the node named `acceptance-node`, as expected.
+
+Everything checks out. You can now close your SSH connection.
+
+[END_BOX]

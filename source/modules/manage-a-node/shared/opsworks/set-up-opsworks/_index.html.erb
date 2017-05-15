@@ -1,0 +1,305 @@
+In this part, you'll set up AWS OpsWorks for Chef Automate. You'll also set up your workstation to work with it.
+
+[COMMENT] If you already have an OpsWorks for Chef Automate installation and your workstation is set up to use it, you can <%= link_to 'move on to the next part', current_page.next_page %>, where you'll get a basic web server cookbook and upload that cookbook to your Chef server.
+
+[START_BOX]
+
+## OpsWorks for Chef Automate overview
+
+If you want to learn more about OpsWorks for Chef Automate before you begin, [check out the AWS user guide](http://docs.aws.amazon.com/opsworks/latest/userguide/welcome.html) and [Chef documentation](https://docs.chef.io/aws_opsworks_chef_automate.html).
+
+[END_BOX]
+
+[START_BOX]
+
+## 1. Bring up OpsWorks for Chef Automate
+
+If you don't already have an OpsWorks for Chef Automate installation set up, [follow the user guide](http://docs.aws.amazon.com/opsworks/latest/userguide/gettingstarted-opscm.html).
+
+The user guide walks you through bootstrapping your first node. But for now, you only need to perform these tasks:
+
+1. Create your AWS account if you don't have one already.
+1. Access your AWS account and security credentials.
+1. Set up a VPC.
+1. Set up an EC2 key pair.
+1. Bring up an OpsWorks for Chef Automate instance through the AWS console.
+1. Download your Chef Automate login credentials and the starter kit.
+
+The setup process takes about 20 minutes to complete. While your instance is provisioned, you can move on to the next step where you'll set up your workstation to work with Chef server and Chef Automate.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Set up your workstation
+
+<% platform_long_name = case current_page.parent.data.platform_id
+when 'rhel'
+  'Red Hat Enterprise Linux or CentOS'
+when 'ubuntu'
+  'Ubuntu'
+when 'windows'
+  'Windows Server'
+end %>
+
+Recall that your workstation is the computer from which you author your cookbooks and administer your network. Although you're configuring <%= platform_long_name %>, your workstation can be any OS you choose &ndash; be it Linux, macOS, or Windows.
+
+[COMMENT] Remember, you can also use a virtual machine, such as an EC2 instance, as your workstation as you experiment with Chef. Just make sure your VM meets the [system requirements](https://docs.chef.io/install_dk.html#review-prerequisites). <% if current_page.parent.data.environment == 'virtualbox' %>Also ensure that nested virtualization, available through a program such as VMware Fusion, is enabled if you're using another virtual machine as your workstation.<% end %>
+
+[WINDOWS] If you're using a Windows 7 workstation, [you'll need to install Windows PowerShell 4.0](http://social.technet.microsoft.com/wiki/contents/articles/21016.how-to-install-windows-powershell-4-0.aspx) or later before you begin. PowerShell is part of the Windows Management Framework.
+
+### 2.1. Install the Chef DK
+
+In the first module, [Learn the Chef basics](/modules/learn-the-basics/), you used the tools provided by the Chef Development Kit (Chef DK) to configure a virtual machine directly. Now it's time to install the Chef DK on your workstation so that you can manage a node remotely.
+
+<a class='button radius cta' href='https://downloads.chef.io/chef-dk/' target='_blank'>Install the Chef DK&nbsp;&nbsp;<i class='fa fa-external-link'></i></a>
+
+### 2.2. Open a command prompt
+
+In this module, you'll run Chef commands from a command prompt to manage your node remotely.
+
+#### Linux or macOS
+
+If you're running Linux or macOS as your workstation, open a terminal window like you normally would.
+
+#### Windows
+
+If you're running Windows as your workstation, open the Chef Development Kit desktop shortcut. The desktop shortcut brings up a PowerShell session that's configured to work with Chef.
+
+![](misc/chefdk-desktop-shortcut-windows.png)
+
+### 2.3. Verify your Chef DK installation
+
+Next, ensure that you can access the Chef DK from the command line. Run `chef --version` to verify the version. This module was last tested on the versions shown here.
+
+<% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/opsworks/set-up-your-workstation/verify-chef-dk/chef-version') %>
+
+[COMMENT] If you receive an error, the [documentation](https://docs.chef.io/install_dk.html) describes additional steps that can help you set up your workstation. For example, if you're running multiple versions of Ruby, you may need to configure your terminal session [to use Chef's Ruby](https://docs.chef.io/install_dk.html#set-system-ruby).
+
+### 2.4. Set up your text editor
+
+Now's a good time to make sure your favorite text editor is set up. We recommend that you use a text editor that provides features such as syntax highlighting and line numbering.
+
+Here are a few graphical text editors that are popular among Chef users.
+
+* [Atom](http://atom.io)
+* [Sublime Text](http://www.sublimetext.com)
+* [Visual Studio Code](https://code.visualstudio.com)
+
+If you're on Linux or macOS and prefer using a command-line text editor, `emacs`, `nano`, and `vim` are popular. Here are some resources to help get you started.
+
+* [Absolute Beginner's Guide to Emacs](http://www.jesshamrick.com/2012/09/10/absolute-beginners-guide-to-emacs/)
+* [The Beginner’s Guide to Nano, the Linux Command-Line Text Editor](http://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/)
+* [Interactive Vim module](http://www.openvim.com/)
+
+### 2.5. Install Git
+
+In this module, you'll obtain starter code from GitHub. You do not need to create a GitHub account, but you'll need a Git client.
+
+Git is popular here at Chef and with the Chef community. Even if you use another version control system, you may find it useful to install the Git client so that you can participate in the community's many open-source projects.
+
+#### Linux or macOS
+
+If you're running Linux or macOS as your workstation, [download and install Git](https://git-scm.com/downloads) now.
+
+After you install Git, run `git --version` to verify the installation.
+
+<% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/opsworks/set-up-your-workstation/install-git/git-version') %>
+
+#### Windows
+
+If you're running Windows as your workstation, Chef DK version 0.15 and later comes with [Git for Windows](https://git-scm.com/download/win).
+
+From your Chef DK PowerShell session, run `git --version` to verify the installation.
+
+<% command_snippet(path: 'learn-the-basics/ubuntu/virtualbox/set-up-a-machine-to-manage/verify-your-ssh-client/git--version', workstation: 'windows', replace_prompt: "PS >") %>
+
+<% if current_page.parent.data.platform_id == 'windows' %>
+
+### 2.6. Verify your RDP client
+
+Although not required, you may find it useful to have an RDP client installed on your workstation. This enables you to connect to your Windows Server instance to verify your work.
+
+<% accordion('install-rdp-windows', 'Windows users') do %>
+
+<% markdown do %>
+
+Windows comes with an RDP client. Run `mstsc` from the command prompt to bring up Remote Desktop.
+
+<% end %>
+
+<% end %>
+
+<% accordion('install-rdp-macosx', 'macOS users') do %>
+
+<% markdown do %>
+
+[Download Microsoft Remote Desktop](https://itunes.apple.com/us/app/microsoft-remote-desktop/id715768417?mt=12) from the Apple App Store. The RDP client from Microsoft's web site might not work.
+
+<% end %>
+
+<% end %>
+
+<% accordion('install-rdp-linux', 'Linux users') do %>
+
+<% markdown do %>
+
+[Remmina](http://www.remmina.org/wp/) is a popular RDP client for Linux.
+
+<% end %>
+
+<% end %>
+
+<% else %>
+
+### 2.6. Verify your SSH client
+
+Although not required, you may find it useful to have an SSH client installed on your workstation. This enables you to connect to your Linux server to verify your work. macOS and most Linux distributions come with an SSH client. On Windows, you need to install one.
+
+On Windows you can install the client or you can use the SSH client that comes with Git for Windows, which is part of the Chef DK.
+
+From your Chef DK PowerShell session, run `ssh` to verify that your SSH client is available.
+
+<% command_snippet(path: 'learn-the-basics/ubuntu/virtualbox/set-up-a-machine-to-manage/verify-your-ssh-client/ssh-no-args', workstation: 'windows', replace_prompt: "PS >", features: [:stdin, :stderr]) %>
+
+<% end %>
+
+### 2.7. Extract the starter kit
+
+The starter kit, <% fp 'download.zip' %>, that you downloaded in [step 1](#step1) contains files that enable you to authenticate with the Chef server.
+
+Extract the starter kit to your home directory. Here's an example for a Linux workstation.
+
+<% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/opsworks/set-up-your-chef-server/extract-starter-kit/unzip-starter-kit') %>
+
+[WINDOWS] In the Learn Chef modules, we use the <code class="file-path">~</code> character in directory names, which is a common shortcut for the user's home directory on Linux, but also works in PowerShell. On Windows, <code class="file-path">~</code> refers to your home directory, for example, <code class="file-path">C:\Users\Administrator</code>.
+
+The name of the root directory in the starter kit matches your Chef Automate server's subdomain, for example, **test-k2ii6jzywrc7497e**.
+
+In the Learn Chef modules, we use <% fp '~/learn-chef' %> as the root directory to keep all learning materials in one place.
+
+Although not required, you can rename the root directory in the starter kit to <% fp 'learn-chef' %>. If you prefer not to rename the root directory, be sure to replace <% fp 'learn-chef' %> with your directory name in the parts that follow.
+
+<% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/opsworks/set-up-your-chef-server/extract-starter-kit/rename-root-dir', features: :stdin) %>
+
+If you have the `tree` utility available, you'll see this directory structure.
+
+<% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/opsworks/set-up-your-chef-server/extract-starter-kit/tree-starter-kit') %>
+
+On Windows, the command looks similar to this.
+
+```ps
+$ tree C:\Users\Administrator\learn-chef /F
+Folder PATH listing
+Volume serial number is 74CD-635A
+C:\USERS\ADMINISTRATOR\LEARN-CHEF
+│   chefignore
+│   README.md
+│
+├───.chef
+│   │   knife.rb
+│   │   private.pem
+│   │
+│   └───ca_certs
+│           opsworks-cm-ca-2016-root.pem
+│
+├───cookbooks
+│       README.md
+│
+├───environments
+│       README.md
+│
+└───roles
+        README.md
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Authenticate with the Chef server
+
+In this step, you'll learn how the authentication process works and verify your starter kit is set up to authenticate commands with your Chef server.
+
+<%= partial 'modules/manage-a-node/rhel/shared/set-up-your-chef-server/knife_and_rsa_key' %>
+
+The starter kit provides these files. Your <code class="file-path">~/learn-chef/.chef</code> directory contains:
+
+* your `knife` configuration file, <code class="file-path">knife.rb</code>
+* your RSA private key
+
+Your `knife` configuration file should resemble this one.
+
+<% code_snippet(path: 'manage-a-node/rhel/opsworks/set-up-your-chef-server/generate-knife-config/knife-rb') %>
+
+Your RSA private key should resemble this one.
+
+```bash
+# ~
+$ cat ~/learn-chef/.chef/private.pem
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAqJCxFv1BoqlTJeK5zTZ6vX6hvQuDzlaN0v+Fo5R2zobP72Ga
+N8GUOhaYSM0Zkg+epchPS9JX81Euv847g662BBneuT4+W6ImqtHtoqB2iEw9vJbZ
+UoIpYRzVCMLpCc3hf3St5FcIz/t55VIAOML8O33CZMkY3o+EUHQx65aI3IDFVcmz
+xIFF+ziLbYc7Q1YHumXzv1pOP9o6QqFCcl/r4x5g9sj0eeYwYQBNppy9oELsrBuu
+/SEKs41X+tm1nP/sDrxOeI5ybytcN3MZN0SjniMTP+7Knh6xnfeFbmaC9Hp/bpbd
+lmaWv4iNJIhLBy/4LUkTh9jpC2knzJnq/bG4wQIDAQABAoIBAEbSXAUrrLr551xg
+kO3+eL1LCgtSXjOAPCAtiWl8BBqrm4uY92F7rJpnSd40hgzPETnYGjDiFF+/eSPP
+M0QVUJYShHhSBYMccqCMiQot3v9PARVOT8qRs28A3STMN3dkeK9761mPQX2Yy9Mk
+i8FNcwpPwS/1KcTAibf/ycWQvrndlflL3KCl/Nnv//Das3dn41npkAB6sGySOPir
+rajRuVR9REieRfx/vAGeOFkmWzuizBAxb+GXmYRy/Z+H+daEuqNd7QHAue4xg1s+
+7yPB4V+EobpQVVssNkidX5SUcMvu+pU5l7OF9PP1zNMhvQItmhi77VXOj61fVeKP
+JTaeHQECgYEA0lH6gVZRpmimoPJ5bNFeBKax/BzK1D7p7rD/z/i1qkiG3yCWYvQ/
+1T4pl9kVndhubxaTUug/DcCpSp+va8vnQ3jS7LvDfS2SxNySH/g8XZ/EyO8Zvbfk
+lqkpAdh3agKP310jB+dxqjbEwvdG9CdZyXK1ottXTzN07s0tCFcL7nECgYEAzS0X
+OTs0FNSLc667Nq99NdcuoHkKsqxYn7zpoyaslqc4o9tABBXCimQJzIWbY3u477B/
+1VrP8Ortepp0kev1ythYOGCAXBpukADLgw/1ygxVL51R+K6wbWDJyggMXvpOAhZX
+WT0RiVeyOE2tyLERlIV4Q3t7lyXiLJ1irdhBN1ECgYA7FmT2aTXPNp95oCWU+M0d
+KWffmIczUemO8ZMs7oa7LF0X2qPlcRFt62TsEEUOb3u3IfSJ2k28o1/sYyh5dHOo
+dQ53jk2108asH/u9l5P+CaDTgrkMn9lMqoGmzxXdZpLdAeGRmuhIFdL5o1b/yP5k
+piF5e33v9ljnriT0rt/fQQKBgGT9ZsrzzzXdoG2ublaFidnwerDeI1dk35JwqAd4
+R8c3s/djOdVI6KK5ruEOenezNEo2dBWOR3/sAswwLmSM4kTfzDyjs0qib/1Nht6S
+AodbHqr7IpfnVEviMjDRWVV+mtsIKCJynqkdk0mHYpzAG0khkRqWMzUonnUbWrD7
+Gs6hAoGBAKrv2c3/42gSNu8MZFG8r8xmLehRg/Rj6nfFizTu9FH+ph8B4HgECBnV
+1aHXvOsOaSDkjyPKa5hHCX145xWjme7blrSJfbsKiAAswSOJytc+PAPIULeocBr6
+hW6cD7rMrt5D/6Ofxts8nQnNQ5Z3UJOtB6V3CFzlvw5oRXw1sIE0
+-----END RSA PRIVATE KEY-----
+```
+
+First, return to the AWS console and wait for your OpsWorks for Chef Automate installation to finish.
+
+Then, from your <% fp '~/learn-chef' %> directory, run this command to validate the SSL certificate from your Chef server. This helps ensure you're able to authenticate commands with the Chef server.
+
+<% command_snippet(workstation: 'ubuntu', path: 'manage-a-node/rhel/opsworks/set-up-your-chef-server/validate-ssl-cert/knife-ssl-check') %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Log in to the Chef Automate dashboard
+
+Chef Automate provides a web interface where you can monitor and visualize the status of your nodes. Let's take a look.
+
+1. From a web browser, navigate to your Chef Automate server over HTTPS using its hostname, for example, **https://test-k2ii6jzywrc7497e.gamma.opsworks-cm.io**.
+
+  [COMMENT] When prompted, accept the server's certificate. Chef Automate comes with a self-signed SSL certificate. In a production environment, you would typically set up a certificate chain that's rooted by a trusted certificate authority (CA) to enable the Chef Automate server to verify its authenticity.
+
+1. Sign in using the credentials you downloaded in [step 1](#step1) (the details are in <% fp 'credentials.csv' %>).
+
+  ![](manage-a-node/chef_automate_sign_in_admin.png)
+
+1. The Chef Automate dashboard appears. Select the **Nodes** tab.
+
+  ![](manage-a-node/chef_automate_nodes_tab.png)
+
+Notice that the **Nodes** dashboard is initially empty. During the bootstrap process, your nodes will do an initial `chef-client` run and report data back to Chef Automate. You'll do that shortly.
+
+![](manage-a-node/chef_automate_nodes_initial_state.png)
+
+Leave your browser window open for the next part.
+
+At this point, you have a Chef server and a Chef Automate server set up through OpsWorks for Chef Automate and your workstation is configured to work with them.
+
+Chef server gives you a persistent location to store your cookbooks and information about your nodes. The `knife` command enables you to communicate with the Chef server. Chef Automate's visibilty feature gives you insight into what's happening on your Chef server.
+
+[END_BOX]

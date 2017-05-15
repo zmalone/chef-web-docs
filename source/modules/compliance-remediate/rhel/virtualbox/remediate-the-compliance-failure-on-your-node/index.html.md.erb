@@ -1,0 +1,118 @@
+---
+title: 'Remediate the compliance failure on your node'
+short_title: 'Remediate on your node'
+order: 3
+keywords: TODO
+time_to_complete: 30 minutes
+snippet_path: compliance_scanner/rhel/virtualbox/remediate-the-compliance-failure-on-your-node
+snippet_workstation: ubuntu
+quiz_path: quizzes/compliance-remediate/shared/remediate-the-compliance-failure-on-your-node.yml
+headings: [
+  { label: '1. Upload the ssh cookbook', href: '#step1' },
+  { label: '2. Bootstrap your node', href: '#step2' },
+  { label: '3. Rerun the scan', href: '#step3' },
+  { label: 'Clean up your environment', href: '#howtocleanupyourenvironment' },
+  { label: 'Conclusion', href: '#conclusion' }
+]
+---
+In this part, you'll apply the SSH configuration to your CentOS node and then rerun the compliance scan to verify the fix.
+
+To apply the SSH configuration, you'll upload the `ssh` cookbook to your Chef server and then bootstrap your CentOS node.
+
+Recall that during the bootstrap process, a node installs `chef-client` and performs the initial check-in to the Chef server. When you bootstrap a node, you specify the _run-list_, which includes the recipes that you want to apply. `chef-client` fetches the latest cookbooks from the Chef server. To update your node's configuration, you upload a new version of your cookbook to the Chef server and run `chef-client` on your node.
+
+[START_BOX]
+
+## 1. Upload the ssh cookbook to your Chef server
+
+The first step is to upload the `ssh` cookbook to the Chef server. This allows the node to fetch the cookbook during the bootstrap process.
+
+Run this comand from your <% fp '~/learn-chef' %> directory.
+
+<% command_snippet(page: current_page, path: 'upload-the-cookbook/knife-cookbook-upload', features: [:stdin, :stderr]) %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Bootstrap your node
+
+Next, bootstrap your CentOS 7 node. In the _Manage a node_ module, you chose whether to bootstrap [using a password or key-based authentication](/modules/manage-a-node-chef-server/rhel/hosted/bootstrap-your-node/). Here, you'll use the second apprach with the SSH private key that you created in the previous module.
+
+Run this `knife bootstrap` command. Replace the IP address and the values of `--ssh-user` and `--identify-file` as needed.
+
+<% command_snippet(page: current_page, path: 'bootstrap-your-node/bootstrap-node1', features: [:stdin, :stderr, :stdout]) %>
+
+`chef-client` runs during the bootstrap process. You see the SSH configuration file, <% fp '/etc/ssh/sshd_config' %>, get updated to include the `Protocol 2` setting.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Rerun the compliance scan
+
+You've applied the updated SSH configuration to your node. Now let's scan your node against the CIS Benchmarks a second time to see whether the **Set SSH Protocol to 2** rule pases.
+
+We expect the rule to pass because we verified the configuration on a test instance and saw the expected output when `chef-client` ran on the node.
+
+From the dashboard in the web interface, select your node and click **Scan**.
+
+![](compliance/scan_button_centos7.png)
+
+Clear the checkbox for **Operating System Patch Level** and select **cis/cis-centos7-level1**.
+
+![](compliance/select_profiles_centos7.png)
+
+Click **Scan now** to start the scan.
+
+![](compliance/scan_now_button.png)
+
+Watch as your node is scanned. The scan may take a few minutes to complete.
+
+![](compliance/scan_in_progress.png)
+
+From the scan report, scroll to the **Set SSH Protocol to 2** rule. You see that the test passes.
+
+![](compliance/ssh_protocol2_compliant_centos7.png)
+
+Congratulations. You're one step closer to meeting your compliance goals.
+
+[END_BOX]
+
+[START_BOX]
+
+### How to clean up your environment
+
+[Follow these steps](/modules/manage-a-node-chef-server/rhel/hosted/run-chef-client-periodically/#howtocleanupyourenvironment) from the _Manage a node_ module if you want to clean up your Chef server after you complete this module or you want to repeat the module from the beginning.
+
+To remove the `ssh` cookbook from your Chef server, run `knife cookbook delete ssh`.
+
+<% command_snippet(page: current_page, path: 'cleanup/knife-cookbook-delete', features: [:stdin, :stderr]) %>
+
+To remove the node from your Chef compliance scanner, select the node from the dashboard and click **Remove**.
+
+![](compliance/remove_node_centos7.png)
+
+[END_BOX]
+
+## Conclusion
+
+In this module, you used Chef to remediate a failure of one of the predefined rules in the CIS Security Benchmarks.
+
+You started with local development using Test Kitchen. Developing your code on local instances helps you to experiment and iterate more quickly.
+
+After verifying that your cookbook properly remediates the compliance failure on a test instance, you uploaded your cookbook to the Chef server and applied the configuration to your node. You then repeated the compliance scan to verify that the SSH configuration satisfies the compliance rule.
+
+At the [start of the previous module](/modules/compliance-assess/rhel/bring-your-own-system/), we proposed 5 stages that, together, will let you meet your compliance challenges:
+
+* **Analyze**
+* **Specify**
+* **Test**
+* **Remediate**
+* **Certify**
+
+With remediation in place, you've successfully completed 4 of these 5 stages. The final stage, **Certify**, depends on your compliance process. The Chef compliance scanner provides automated tests and reports that prove the state of your infrastructure. This independent evidence can greatly decrease the time it takes to receive a final human sign off. Also, when nodes are managed by Chef, you can use automation to repair compliance failures and ensure that the nodes remain within compliance guidelines.
+
+The built-in compliance profiles are a great start, but they may not cover your organization's unique requirements. We're working on a module that teaches you how to write custom compliance profiles. [Follow us on Twitter](https://twitter.com/learnchef) to get the latest updates.
+
+[GITHUB] [Get the code for this module](https://github.com/learn-chef/ssh) on GitHub.

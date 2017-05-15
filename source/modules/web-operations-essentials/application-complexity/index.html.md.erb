@@ -1,0 +1,58 @@
+---
+id: application-complexity
+title: 'Understanding the complexity of an application'
+short_title: 'Understanding the complexity of an application'
+description: 'Understanding the value of Chef requires that you first understand the complexity of a software application.'
+order: 1
+time_to_complete: 5 minutes
+quiz_path: quizzes/web-operations-essentials/application-complexity.yml
+headings: [
+  { label: 'Story', href: '#story' }
+]
+---
+After completing this unit, you'll be able to:
+
+* understand the complexity of a web application.
+* explain a few common roles within this web application.
+* explain the value of Chef for managing web applications.
+
+## Story
+
+Understanding the value of Chef requires that you first understand the complexity of a software application. But before we get to software, let's talk about something a litle more concrete.
+
+Imagine that you're a food truck owner and you're thinking about setting up a restaurant. Obviously, you're already familiar with nearly every aspect of the food service business. As you make plans, you write down what you think happens, in a general way, in a restaurant:
+
+* Someone greets customers and seats them at a table.
+* Someone gives the customers a menu and takes their orders.
+* The chefs take the orders and turn them into correctly prepared meals and beverages.
+* Someone calculates the total cost of the meal and presents it to the customers.
+* Someone takes the customers' payments.
+
+With your food truck you handle a similar list of tasks all by yourself. For a restaurant, you would need to hire more people.
+
+To help make sense of this, you draw a diagram of your new restaurant and include all the people you imagine you'll need.
+
+![Restaurant Diagram](assets/images/developer-essentials/01-restaurant-diagram.png)
+
+A single greeter brings customers into the restaurant and seats them at a table. For lunch, you think that three food servers and a kitchen with four chefs should be enough. A traditional point-of-sale (POS) system will send orders to the kitchen and handle the billing.
+
+Web applications often have a similar story. A web application might start off small, with a single system to handle many different responsibilities. But as the application becomes more popular, more systems need to be added and assigned various roles.
+
+Generally, a web application needs to:
+
+* receive a request from a user's browser.
+* process the request and return a response.
+* create, retrieve, update, and delete user specific data in a shared store.
+* create and report on the completion of long running jobs.
+
+The worfklow looks something like this:
+
+![Web Application Diagram](assets/images/developer-essentials/02-web_application-diagram.png)
+
+A user makes a request to the web site. This request is first handled by a load balancer. The load balancer selects an application server and forwards the user's request to it. The application server processes the request, transmits information to a shared data store, receives information from the shared data store, and then assembles a response that it delivers back to the user.
+
+Sometimes, a user's request requires more computational power and time to complete than normal. This request is added to a job queue. Each job in the queue is processed by a worker system that allocates the resources required to complete the request. When a job finishes, the job server often inserts information into a shared data store where the application server can retrieve it and present it to the user.
+
+A large application is actually made up of the coordinated efforts of a large number of roles. Each role can contain one or more systems. How many systems take on a particular role depends on the amount of traffic. Application servers are the first to scale up as traffic increases. Shared data stores often have backups. A job queue can be supported by many worker systems.
+
+How does Chef fit in? With Chef, you can define all the roles that make up your application and apply them to as many systems as you need, whether you have one machine or thousands.

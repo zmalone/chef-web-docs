@@ -1,0 +1,1328 @@
+---
+title: 'Add infrastructure to run your web server'
+short_title: 'Add infrastructure'
+order: 5
+time_to_complete: 60 minutes
+snippet_path: deploy-infrastructure/ubuntu/automate/set-up-your-chef-server
+snippet_workstation: ubuntu
+quiz_path: quizzes/deploy-infrastructure/shared/add-infrastructure.yml
+headings: [
+  { label: '1. Bring up infrastructure', href: '#step1' },
+  { label: '2. Understand push jobs', href: '#step2' },
+  { label: '3. Set up push jobs', href: '#step3' },
+  { label: '4. Get the delivery-base cookbook', href: '#step4' },
+  { label: '5. Understand Chef environments', href: '#step5' },
+  { label: '6. Create environments', href: '#step6' },
+  { label: '7. Bootstrap your nodes', href: '#step7' },
+  { label: '8. Run chef-client a second time', href: '#step8' }
+]
+---
+So far, you've created a project, configured your build cookbook to publish the `learn_chef_apache2` cookbook to the Chef server, and watched the initial change move through the pipeline. The next step is to create infrastructure environments that can run your cookbook.
+
+Recall that infrastructure can receive build artifacts produced from Chef Automate's build pipeline. These environments are labeled **acceptance**, **union**, **rehearsal**, and **delivered** in this diagram.
+
+<img src="/assets/images/automate/automate-scenario-architecture.svg" style="width: 100%; alt="An example Chef Automate installation" />
+
+For this module, your build artifact is the `learn_chef_apache2` cookbook. Because the `learn_chef_apache2` cookbook targets Ubuntu, you'll bring up Ubuntu systems.
+
+Recall that your project uses the `delivery-truck` cookbook to perform many common tasks that are needed to deliver Chef cookbooks. Using the `delivery-truck` cookbook requires coordination between the Chef server and the infrastructure environments, or _nodes_.
+
+In this part, you'll prepare your nodes so that they are ready to run build artifacts (here, the `learn_chef_apache2` cookbook) during the Acceptance, Union, Rehearsal, and Delivered stages.
+
+Setting up Chef Automate to deploy cookbooks to infrastructure nodes involves these tasks.
+
+* Bringing up infrastructure environments to configure during the Acceptance, Union, Rehearsal, and Delivered stages.
+* Setting up push jobs on your Chef Automate server.
+* Setting up push jobs on your infrastructure nodes.
+* Creating a Chef environment for each infrastructure node.
+* Bootstrapping your nodes to the Chef server.
+
+Let's start by bringing up infrastructure to run the `learn_chef_apache2` cookbook.
+
+[START_BOX]
+
+## 1. Bring up infrastructure
+
+Like your runner, each infrastructure node can be any system that's reachable by Chef Automate. Unlike your runner, each node requires only a reachable IP address and does not need to have an associated FQDN.
+
+For learning purposes, you may find it easiest to bring up infrastructure in the same environment as your Chef Automate installation. The number of servers you bring up is up to you. At a minimum, you can bring up one node that represents your Acceptance environment. A complete setup involves creating 4 servers &ndash; one each for the Acceptance, Union, Rehearsal, and Delivered environments.
+
+[COMMENT] Although we recommend that you bring up fresh instances for this module, you can use the node that you brought up for the _Manage a node with Chef Automate_ module. Also, although Chef [supports multiple versions of Ubuntu](https://docs.chef.io/platforms.html#chef-client-ohai-foundational-platforms), we recommend that you use Ubuntu 14.04 to ensure the results you see match what's shown in this module.
+
+Bring up the number of Ubuntu 14.04 systems you want to use now. If you're using cloud instances, you can use the smallest instance size that's available, for instance, an Amazon EC2 **t2.micro** instance. As you did in the _Manage a node with Chef Automate_ module, ensure each system's firewall or security group provides inbound network access on ports 22, 80, and 443.
+
+Note the public IP address for each of your infrastructure nodes.
+
+While your servers come up, you can move on to the next step.
+
+[END_BOX]
+
+[START_BOX]
+
+## 2. Understand the role of push jobs
+
+In the _Manage a node with Chef Automate_ module, you used `knife ssh` to [run chef-client on your node](/modules/manage-a-node-chef-automate/ubuntu/automate/update-your-nodes-configuration#step4), remotely from your workstation. Here's an example (you don't need to run this command):
+
+```bash
+# ~/learn-chef
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user ubuntu --identity-file ~/.ssh/private_key --attribute ipaddress
+```
+
+The command uses a search query to specify which node to run `chef-client` on. Here, the search query specifies the node's name, **node1-ubuntu**.
+
+There are other ways to run `chef-client` on a node. You can log in directly over SSH and run `sudo chef-client`. Or you can run `chef-client` at a regular interval as a daemon, cron job, service, or scheduled task, [as you did previously](/modules/manage-a-node-chef-automate/ubuntu/automate/run-chef-client-periodically).
+
+You can also use [push jobs](https://docs.chef.io/push_jobs.html) to run `chef-client`. A push job is a way to submit a task to a node, such as running `chef-client`. The push jobs client runs on a node and listens for job requests.
+
+The push jobs server runs on the Chef server. The push jobs server sends a heartbeat message to tell nodes that the push jobs server is available. The push jobs server in turn listens for heartbeat messages from each push jobs client to know which clients are available to accept jobs.
+
+In the next step, you'll install the push jobs server on your Chef server. Later on this page, you'll upload a copy of the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook to your Chef server. When you bootstrap each of your infrastructure nodes, you'll include `delivery-base` in the node's run-list. The `delivery-base` cookbook performs tasks that prepare a node for use with Chef Automate, including installation of the push jobs client.
+
+[END_BOX]
+
+[START_BOX]
+
+## 3. Set up push jobs on your Chef server
+
+Here, you'll connect to your Chef server over SSH and [install the push jobs server](https://docs.chef.io/install_chef_automate.html#id3).
+
+From your workstation, create an SSH connection to your Chef server.
+
+Next, [download the push jobs server package](https://downloads.chef.io/push-jobs-server/2.1.1). Here's an example for Chef server running on Ubuntu 14.04.
+
+```bash
+$ wget https://packages.chef.io/files/stable/opscode-push-jobs-server/2.1.1/ubuntu/14.04/opscode-push-jobs-server_2.1.1-1_amd64.deb
+```
+
+Next, run [chef-server-ctl install](https://docs.chef.io/ctl_chef_server.html#install) to install the package. Here's an example.
+
+```bash
+$ sudo chef-server-ctl install opscode-push-jobs-server --path /home/ubuntu/opscode-push-jobs-server_2.1.1-1_amd64.deb
+```
+
+Finally, apply the updated configuration.
+
+```bash
+$ sudo chef-server-ctl reconfigure
+```
+
+```bash
+$ sudo opscode-push-jobs-server-ctl reconfigure
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 4. Get the delivery-base cookbook
+
+The `delivery-truck` cookbook relies on push jobs to run `chef-client` on nodes as the pipeline runs. It therefore requires each node to include the [push-jobs](https://github.com/chef-cookbooks/push-jobs) cookbook in its run-list. The `push-jobs` cookbook installs the push jobs client package and sets it up to run as a service.
+
+The recommended way to include the `push-jobs` cookbook is to use the [delivery-base](https://github.com/chef-cookbooks/delivery-base) cookbook. The `delivery-base` cookbook includes the `push-jobs` cookbook and sets additional node attributes that enable nodes to work with Chef Automate.
+
+You'll bootstrap your node shortly. To prepare for the bootstrap process, you first need to upload a copy of the `delivery-base` cookbook to your Chef server.
+
+To begin, from your workstation move to the <% fp '~/learn-chef/cookbooks' %> directory.
+
+```bash
+# ~/learn-chef
+$ cd ~/learn-chef/cookbooks
+```
+
+One way to set up the `push-jobs` cookbook to run on your nodes for the Acceptance, Union, Rehearsal, and Delivered stages is to clone the `delivery-base` cookbook repo from GitHub, upload it and its dependencies to the Chef server, and then add it to each of your node's run-list.
+
+Clone the `delivery-base` repo from GitHub.
+
+```bash
+# ~/learn-chef/cookbooks
+$ git clone https://github.com/chef-cookbooks/delivery-base
+Cloning into 'delivery-base'...
+remote: Counting objects: 103, done.
+remote: Total 103 (delta 0), reused 0 (delta 0), pack-reused 103
+Receiving objects: 100% (103/103), 16.25 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (27/27), done.
+Checking connectivity... done.
+```
+
+Next, move to the <% fp 'delivery-base' %> directory.
+
+```bash
+# ~/learn-chef/cookbooks
+$ cd ~/learn-chef/cookbooks/delivery-base
+```
+
+Next, run `berks install` to download the cookbooks that `delivery-base` depends on.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ berks install
+Resolving cookbook dependencies...
+Fetching 'delivery-base' from source at .
+Fetching cookbook index from https://supermarket.chef.io...
+Installing chef-ingredient (0.21.2)
+Using compat_resource (12.16.3)
+Using delivery-base (0.2.2) from source at .
+Installing packagecloud (0.2.5)
+Installing push-jobs (3.3.0)
+Installing runit (3.0.5)
+Installing yum-epel (2.1.1)
+```
+
+Finally, run `berks upload` to upload `delivery-base` and its dependencies to Chef server.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ berks upload
+Uploaded chef-ingredient (1.0.1) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Skipping compat_resource (12.16.3) (frozen)
+Uploaded delivery-base (0.2.3) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Uploaded packagecloud (0.2.5) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Uploaded push-jobs (4.0.0) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Uploaded runit (3.0.5) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+Uploaded yum-epel (2.1.1) to: 'https://ec2-54-90-95-197.compute-1.amazonaws.com:443/organizations/automate'
+```
+
+-- --
+
+Run `knife cookbook list` to verify `delivery-base` and its dependencies were successfully uploaded to the Chef server.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ knife cookbook list
+chef-client          7.1.0
+chef-ingredient      1.0.1
+compat_resource      12.16.3
+cron                 3.0.0
+delivery-base        0.2.3
+learn_chef_apache2   0.1.0
+logrotate            2.1.0
+ohai                 4.2.3
+packagecloud         0.2.5
+push-jobs            4.0.0
+runit                3.0.5
+windows              2.1.1
+yum-epel             2.1.1
+```
+
+Move back to the <% fp '~/learn-chef' %> directory for the next part.
+
+```bash
+# ~/learn-chef/cookbooks/delivery-base
+$ cd ~/learn-chef
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 5. Understand the role of Chef environments
+
+Each of the Acceptance, Union, Rehearsal, and Delivered stages deploys build artifacts, or the pipeline's output, to some environment. For our project, this means running the `learn_chef_apache2` cookbook on the infrastructure environments for each of the Acceptance, Union, Rehearsal, and Delivered stages.
+
+Recall the `knife ssh` command we discussed earlier (as before, you don't need to run this command):
+
+```bash
+# ~/learn-chef
+$ knife ssh 'name:node1-ubuntu' 'sudo chef-client' --ssh-user ubuntu --identity-file ~/.ssh/private_key --attribute ipaddress
+```
+
+Also recall that push jobs enable you to submit tasks, such as running `chef-client`, to your nodes. Push jobs use the same search mechanism as shown in the `knife ssh` example.
+
+Chef Automate uses [environments](https://docs.chef.io/environments.html) to provide additional search criteria when push jobs run. As an example, when phases in the Acceptance stage run, you want only the infrastructure node that's associated with the Acceptance stage (and not the Union, Rehearsal, or Delivered stages) to run your cookbook.
+
+A Chef environment enables you to control how a node behaves given that node's role in the overall lifecycle of your application or service. Think of an environment as a way to tag a node for a specific purpose.
+
+Every pipeline stage is associated with the name of a Chef environment. For the Acceptance stage, the name comes in this form:
+
+<code class='placeholder'>\<STAGE></code>-<code class='placeholder'>\<ENTERPRISE></code>-<code class='placeholder'>\<ORGANIZATION></code>-<code class='placeholder'>\<PROJECT></code>-<code class='placeholder'>\<PIPELINE></code>
+
+For this project, the environment name during the Acceptance stage is:
+
+**acceptance-default-my-org-learn\_chef\_apache2-master**
+
+where:
+
+* **acceptance** is the stage.
+* **default** is the enterprise.
+* **my-org** is the organization.
+* **learn\_chef\_apache2** is the project.
+* **master** is the pipeline.
+
+Similar logic applies to the Union, Rehearsal, and Delivered stages. However, because the Union, Rehearsal, and Delivered stages can be shared among multiple projects, their environment names are fixed to be **union**, **rehearsal**, and **delivered**, respectively.
+
+Because the push job's search mechanism finds all nodes that are associated with the given Chef environment, you can associate multiple nodes with a given stage, for example, to run a cookbook that configures a multi-tiered application.
+
+[END_BOX]
+
+[START_BOX]
+
+## 6. Create the Chef environments
+
+Next, create the Chef environments. Run the following [knife environment create](https://docs.chef.io/knife_environment.html#create) command to create the environment for the Acceptance stage.
+
+```bash
+# ~/learn-chef
+$ knife environment create acceptance-default-my-org-learn_chef_apache2-master -d "The acceptance environment"
+Created acceptance-default-my-org-learn_chef_apache2-master
+```
+
+Now repeat the process for the remaining stages.
+
+```bash
+# ~/learn-chef
+$ knife environment create union -d "The union environment"
+Created union
+$ knife environment create rehearsal -d "The rehearsal environment"
+Created rehearsal
+$ knife environment create delivered -d "The delivered environment"
+Created delivered
+```
+
+Run `knife environment list` to verify the environments were properly created.
+
+```bash
+# ~/learn-chef
+$ knife environment list
+_default
+acceptance-default-my-org-learn_chef_apache2-master
+delivered
+rehearsal
+union
+```
+
+[END_BOX]
+
+[START_BOX]
+
+## 7. Bootstrap your nodes
+
+Now that you have the required environments set up and the `delivery-base` cookbook on your Chef server, you're ready to bootstrap your infrastructure nodes.
+
+The process is similar to the one you did in the [Manage a node with Chef Automate](/modules/manage-a-node-chef-automate/ubuntu/automate/bootstrap-your-node) module with two minor variations.
+
+* Each node's run-list contains two recipes &ndash; the `delivery-base` cookbook's default recipe and the `learn_chef_apache2` cookbook's default recipe.
+* Each node is associated with a Chef environment that you created in the previous step.
+
+From your workstation, start by bootstrapping the node that cooresponds to the Acceptance stage. Replace <% ph 'IP_ADDRESS' %> with your node's public IP address, and <% ph 'USERNAME' %> and <% ph 'IDENTITY_FILE' %> with the username and SSH private key file you would normally use to connect over SSH.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap IP_ADDRESS --ssh-user USERNAME --identity-file IDENTITY_FILE --sudo --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment acceptance-default-my-org-learn_chef_apache2-master --yes
+```
+
+Here's an example.
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 54.89.127.214 --ssh-user ubuntu --identity-file ~/.ssh/private_key --sudo --node-name acceptance-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment acceptance-default-my-org-learn_chef_apache2-master --yes
+Creating new client for acceptance-node
+Creating new node for acceptance-node
+Connecting to 54.89.127.214
+54.89.127.214 -----> Installing Chef Omnibus (-v 12)
+54.89.127.214 downloading https://omnitruck-direct.chef.io/chef/install.sh
+54.89.127.214   to file /tmp/install.sh.1383/install.sh
+54.89.127.214 trying wget...
+54.89.127.214 ubuntu 14.04 x86_64
+54.89.127.214 Getting information for chef stable 12 for ubuntu...
+54.89.127.214 downloading https://omnitruck-direct.chef.io/stable/chef/metadata?v=12&p=ubuntu&pv=14.04&m=x86_64
+54.89.127.214   to file /tmp/install.sh.1387/metadata.txt
+54.89.127.214 trying wget...
+54.89.127.214 sha1	44b98305130512a9eeb1dc58d1a05619d868413f
+54.89.127.214 sha256	efae38189bce47612fea72079353634c8782ef47e73f9993a00ed7710ed95408
+54.89.127.214 url	https://packages.chef.io/files/stable/chef/12.19.33/ubuntu/14.04/chef_12.19.33-1_amd64.deb
+54.89.127.214 version	12.19.33
+54.89.127.214 downloaded metadata file looks valid...
+54.89.127.214 downloading https://packages.chef.io/files/stable/chef/12.19.33/ubuntu/14.04/chef_12.19.33-1_amd64.deb
+54.89.127.214   to file /tmp/install.sh.1387/chef_12.19.33-1_amd64.deb
+54.89.127.214 trying wget...
+54.89.127.214 Comparing checksum with sha256sum...
+54.89.127.214 Installing chef 12
+54.89.127.214 installing with dpkg...
+54.89.127.214 Selecting previously unselected package chef.
+(Reading database ... 51205 files and directories currently installed.)
+54.89.127.214 Preparing to unpack .../chef_12.19.33-1_amd64.deb ...
+54.89.127.214 Unpacking chef (12.19.33-1) ...
+54.89.127.214 Setting up chef (12.19.33-1) ...
+54.89.127.214 Thank you for installing Chef!
+54.89.127.214 Starting the first Chef Client run...
+54.89.127.214 [2017-02-23T15:13:07+00:00] INFO: Forking chef instance to converge...
+54.89.127.214 Starting Chef Client, version 12.19.33
+54.89.127.214 [2017-02-23T15:13:07+00:00] INFO: *** Chef 12.19.33 ***
+54.89.127.214 [2017-02-23T15:13:07+00:00] INFO: Platform: x86_64-linux
+54.89.127.214 [2017-02-23T15:13:07+00:00] INFO: Chef-client pid: 1471
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Setting the run_list to ["recipe[delivery-base]", "recipe[learn_chef_apache2]"] from CLI options
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Run List is [recipe[delivery-base], recipe[learn_chef_apache2]]
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Run List expands to [delivery-base, learn_chef_apache2]
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Starting Chef Run for acceptance-node
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Running start handlers
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Start handlers complete.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: HTTP Request Returned 404 Not Found:
+54.89.127.214 resolving cookbooks for run list: ["delivery-base", "learn_chef_apache2"]
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Loading cookbooks [delivery-base@0.2.3, push-jobs@4.0.0, runit@3.0.5, packagecloud@0.2.5, yum-epel@2.1.1, compat_resource@12.16.3, chef-ingredient@1.0.1, learn_chef_apache2@0.1.0]
+54.89.127.214 Synchronizing Cookbooks:
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/delivery-base/.kitchen.yml in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/delivery-base/LICENSE in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/delivery-base/attributes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/delivery-base/chefignore in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/delivery-base/recipes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/resources/service_runit.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/delivery-base/metadata.json in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/resources/service_upstart.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/delivery-base/.rubocop.yml in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/delivery-base/README.md in the cache.
+54.89.127.214   [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/recipes/package.rb in the cache.
+54.89.127.214 - delivery-base (0.2.3)
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/resources/service_systemd.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/recipes/config.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/recipes/service_windows.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/recipes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/recipes/install.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/libraries/matchers.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/recipes/service.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/attributes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/templates/sv-chef-push-jobs-client-run.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/templates/init_systemd.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/libraries/helpers.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/CHANGELOG.md in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/MAINTAINERS.md in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/.foodcritic in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/CONTRIBUTING.md in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/templates/init_upstart.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/templates/push-jobs-client.rb.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/metadata.json in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/libraries/matchers.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/recipes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/push-jobs/README.md in the cache.
+54.89.127.214   - push-jobs (4.0.0)
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/libraries/helpers.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/libraries/provider_runit_service.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/files/default/runit.seed in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/libraries/resource_runit_service.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/attributes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/templates/default/log-config.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/MAINTAINERS.md in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/templates/debian/init.d.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/CONTRIBUTING.md in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/.foodcritic in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/CHANGELOG.md in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/resources/repo.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/metadata.json in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/providers/repo.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/runit/README.md in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/libraries/matcher.rb in the cache.
+54.89.127.214   [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/libraries/helper.rb in the cache.
+54.89.127.214 - runit (3.0.5)
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/attributes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/templates/default/apt.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/templates/default/yum.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/THANKS in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/Gemfile.lock in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/.kitchen.yml in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/metadata.json in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/chefignore in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/Berksfile.lock in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/.rubocop.yml in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/Berksfile in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/Rakefile in the cache.
+54.89.127.214 [2017-02-23T15:13:08+00:00] INFO: Storing updated cookbooks/packagecloud/Gemfile in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/packagecloud/README.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/recipes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/packagecloud/LICENSE in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/packagecloud/Thorfile in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/attributes/epel-testing-source.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/attributes/epel.rb in the cache.
+54.89.127.214   [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/attributes/epel-testing-debuginfo.rb in the cache.
+54.89.127.214 - packagecloud (0.2.5)
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/attributes/epel-debuginfo.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/attributes/epel-source.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/attributes/epel-testing.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/README.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/metadata.json in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/attributes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/MAINTAINERS.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/CHANGELOG.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/libraries/autoload.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/yum-epel/CONTRIBUTING.md in the cache.
+54.89.127.214   - yum-epel (2.1.1)
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/resource/lwrp_base.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/systemd_unit.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/property.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/recipe.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/yum_repository.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/apt_repository.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/apt_update.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource/action_class.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource_builder.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/declare_resource.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/property.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/recipe.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/core.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/universal.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/dsl/platform_introspection.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/constants.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/apt_update.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/resource.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/delayed_evaluator.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/support/yum_repo.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/yum_repository.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/apt_repository.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/notifying_block.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/lazy_module_include.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/systemd_unit.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/provider/noop.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/properties.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/powershell_out.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/recipe.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource/lwrp_base.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef/chef/mixin/params_validate.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/property.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/runner.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_collection/resource_list.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_collection/resource_set.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_builder.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/exceptions.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/recipe_hook.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/run_context.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/log.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/provider.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/resource_collection.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/mixin/params_validate.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef/node.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches/chef.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/copied_from_chef.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/monkeypatches.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/resource.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/compat_resource.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/CONTRIBUTING.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/MAINTAINERS.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_compat/mixin/properties.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/files/lib/chef_upstream_version.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/CHANGELOG.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/metadata.json in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/resources/ingredient_config.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/compat_resource/README.md in the cache.
+54.89.127.214   [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/libraries/chef_ingredient_provider.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/resources/omnibus_service.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/libraries/chef_server_ingredient_shim.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/libraries/default_handler.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/libraries/matchers.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/recipes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/libraries/chef_ingredient_resource.rb in the cache.
+54.89.127.214 - compat_resource (12.16.3)
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/libraries/helpers.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/libraries/omnitruck_handler.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/MAINTAINERS.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/attributes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/CONTRIBUTING.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/.foodcritic in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/CHANGELOG.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/metadata.json in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/learn_chef_apache2/templates/index.html.erb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/learn_chef_apache2/recipes/default.rb in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/chef-ingredient/README.md in the cache.
+54.89.127.214   - chef-ingredient (1.0.1)
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/learn_chef_apache2/DELIVERY.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/learn_chef_apache2/README.md in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/learn_chef_apache2/metadata.json in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/learn_chef_apache2/LICENSE in the cache.
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Storing updated cookbooks/learn_chef_apache2/chefignore in the cache.
+54.89.127.214   - learn_chef_apache2 (0.1.0)
+54.89.127.214 Installing Cookbook Gems:
+54.89.127.214 Compiling Cookbooks...
+54.89.127.214 [2017-02-23T15:13:09+00:00] INFO: Neither ['push_jobs']['local_package_path'] nor ['push_jobs']['package_url'] and ['push_jobs']['package_checksum'] set. Chef Push Jobs client will be installed from packages.chef.io.
+54.89.127.214 Converging 8 resources
+54.89.127.214 Recipe: push-jobs::package
+54.89.127.214   * chef_ingredient[push-jobs-client] action install[2017-02-23T15:13:09+00:00] INFO: Processing chef_ingredient[push-jobs-client] action install (push-jobs::package line 51)
+54.89.127.214
+54.89.127.214   Recipe: <Dynamically Defined Resource>
+54.89.127.214     * chef_gem[mixlib-install] action install[2017-02-23T15:13:09+00:00] INFO: Processing chef_gem[mixlib-install] action install (dynamically defined)
+54.89.127.214 [2017-02-23T15:13:10+00:00] INFO: chef_gem[mixlib-install] installed mixlib-install at ~> 2.1
+54.89.127.214
+54.89.127.214       - install version ~> 2.1 of package mixlib-install
+54.89.127.214     * ruby_block[stop chef run] action nothing[2017-02-23T15:13:10+00:00] INFO: Processing ruby_block[stop chef run] action nothing (/var/chef/cache/cookbooks/chef-ingredient/libraries/helpers.rb line 263)
+54.89.127.214  (skipped due to action :nothing)
+54.89.127.214     * remote_file[/var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb] action create[2017-02-23T15:13:10+00:00] INFO: Processing remote_file[/var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb] action create (/var/chef/cache/cookbooks/chef-ingredient/libraries/default_handler.rb line 106)
+54.89.127.214 [2017-02-23T15:13:12+00:00] INFO: remote_file[/var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb] created file /var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb
+54.89.127.214
+54.89.127.214       - create new file /var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb[2017-02-23T15:13:12+00:00] INFO: remote_file[/var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb] updated file contents /var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb
+54.89.127.214
+54.89.127.214       - update content in file /var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb from none to ea8e96
+54.89.127.214       (file sizes exceed 10000000 bytes, diff output suppressed)[2017-02-23T15:13:12+00:00] INFO: remote_file[/var/chef/cache/push-jobs-client_2.1.4-1_amd64.deb] mode changed to 644
+54.89.127.214
+54.89.127.214       - change mode from '' to '0644'
+54.89.127.214     * apt_package[push-jobs-client] action install[2017-02-23T15:13:12+00:00] INFO: Processing apt_package[push-jobs-client] action install (/var/chef/cache/cookbooks/chef-ingredient/libraries/default_handler.rb line 52)
+54.89.127.214 [2017-02-23T15:13:13+00:00] INFO: apt_package[push-jobs-client] installing package(s): push-jobs-client
+54.89.127.214 [2017-02-23T15:13:16+00:00] INFO: apt_package[push-jobs-client] installed push-jobs-client at 2.1.4-1
+54.89.127.214
+54.89.127.214       - install version 2.1.4-1 of package push-jobs-client
+54.89.127.214
+54.89.127.214 Recipe: push-jobs::config
+54.89.127.214   * directory[/etc/chef] action create[2017-02-23T15:13:16+00:00] INFO: Processing directory[/etc/chef] action create (push-jobs::config line 24)
+54.89.127.214  (up to date)
+54.89.127.214   * template[/etc/chef/push-jobs-client.rb] action create[2017-02-23T15:13:16+00:00] INFO: Processing template[/etc/chef/push-jobs-client.rb] action create (push-jobs::config line 34)
+54.89.127.214 [2017-02-23T15:13:16+00:00] INFO: template[/etc/chef/push-jobs-client.rb] created file /etc/chef/push-jobs-client.rb
+54.89.127.214
+54.89.127.214     - create new file /etc/chef/push-jobs-client.rb[2017-02-23T15:13:16+00:00] INFO: template[/etc/chef/push-jobs-client.rb] updated file contents /etc/chef/push-jobs-client.rb
+54.89.127.214
+54.89.127.214     - update content in file /etc/chef/push-jobs-client.rb from none to d0274b
+54.89.127.214     --- /etc/chef/push-jobs-client.rb	2017-02-23 15:13:16.872761176 +0000
+54.89.127.214     +++ /etc/chef/.chef-push-jobs-client20170223-1471-1gbs4i2.rb	2017-02-23 15:13:16.872761176 +0000
+54.89.127.214     @@ -1 +1,21 @@
+54.89.127.214     +# Generated by Chef
+54.89.127.214     +#
+54.89.127.214     +# Local modifications will be overwritten!
+54.89.127.214     +
+54.89.127.214     +LC_ALL='en_US.UTF-8'
+54.89.127.214     +
+54.89.127.214     +# Chef server connect options
+54.89.127.214     +chef_server_url   'https://ec2-54-90-95-197.compute-1.amazonaws.com/organizations/automate'
+54.89.127.214     +node_name         'acceptance-node'
+54.89.127.214     +client_key        '/etc/chef/client.pem'
+54.89.127.214     +trusted_certs_dir '/etc/chef/trusted_certs'
+54.89.127.214     +verify_api_cert   true
+54.89.127.214     +ssl_verify_mode   :verify_peer
+54.89.127.214     +allow_unencrypted true
+54.89.127.214     +
+54.89.127.214     +# The whitelist comes from node['push_jobs']['whitelist']
+54.89.127.214     +whitelist({"chef-client"=>"chef-client"})
+54.89.127.214     +
+54.89.127.214     +# We're under runit, so don't output timestamp
+54.89.127.214     +Mixlib::Log::Formatter.show_time = false[2017-02-23T15:13:16+00:00] INFO: template[/etc/chef/push-jobs-client.rb] owner changed to 0
+54.89.127.214 [2017-02-23T15:13:16+00:00] INFO: template[/etc/chef/push-jobs-client.rb] group changed to 0
+54.89.127.214 [2017-02-23T15:13:16+00:00] INFO: template[/etc/chef/push-jobs-client.rb] mode changed to 644
+54.89.127.214
+54.89.127.214     - change mode from '' to '0644'
+54.89.127.214     - change owner from '' to 'root'
+54.89.127.214     - change group from '' to 'root'
+54.89.127.214 Recipe: push-jobs::service
+54.89.127.214   * push_jobs_service_upstart[push-jobs] action start[2017-02-23T15:13:16+00:00] INFO: Processing push_jobs_service_upstart[push-jobs] action start (push-jobs::service line 29)
+54.89.127.214
+54.89.127.214     * service[chef-push-jobs-client] action nothing[2017-02-23T15:13:16+00:00] INFO: Processing service[chef-push-jobs-client] action nothing (/var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb line 77)
+54.89.127.214  (skipped due to action :nothing)
+54.89.127.214     * template[/etc/init/chef-push-jobs-client.conf] action create[2017-02-23T15:13:16+00:00] INFO: Processing template[/etc/init/chef-push-jobs-client.conf] action create (/var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb line 81)
+54.89.127.214 [2017-02-23T15:13:16+00:00] INFO: template[/etc/init/chef-push-jobs-client.conf] created file /etc/init/chef-push-jobs-client.conf
+54.89.127.214
+54.89.127.214       - create new file /etc/init/chef-push-jobs-client.conf[2017-02-23T15:13:16+00:00] INFO: template[/etc/init/chef-push-jobs-client.conf] updated file contents /etc/init/chef-push-jobs-client.conf
+54.89.127.214
+54.89.127.214       - update content in file /etc/init/chef-push-jobs-client.conf from none to 8d1c0c
+54.89.127.214       --- /etc/init/chef-push-jobs-client.conf	2017-02-23 15:13:16.896761176 +0000
+54.89.127.214       +++ /etc/init/.chef-chef-push-jobs-client20170223-1471-9sag91.conf	2017-02-23 15:13:16.892761176 +0000
+54.89.127.214       @@ -1 +1,9 @@
+54.89.127.214       +description "Chef Push Jobs Client"
+54.89.127.214       +
+54.89.127.214       +start on runlevel [2345]
+54.89.127.214       +stop on runlevel [!2345]
+54.89.127.214       +respawn
+54.89.127.214       +respawn limit 10 5
+54.89.127.214       +
+54.89.127.214       +exec /opt/push-jobs-client/bin/pushy-client -l info -c /etc/chef/push-jobs-client.rb
+54.89.127.214 [2017-02-23T15:13:16+00:00] INFO: template[/etc/init/chef-push-jobs-client.conf] sending restart action to service[chef-push-jobs-client] (immediate)
+54.89.127.214     * service[chef-push-jobs-client] action restart[2017-02-23T15:13:16+00:00] INFO: Processing service[chef-push-jobs-client] action restart (/var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb line 31)
+54.89.127.214 [2017-02-23T15:13:16+00:00] INFO: service[chef-push-jobs-client] restarted
+54.89.127.214
+54.89.127.214       - restart service service[chef-push-jobs-client]
+54.89.127.214     * service[chef-push-jobs-client] action start[2017-02-23T15:13:16+00:00] INFO: Processing service[chef-push-jobs-client] action start (/var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb line 31)
+54.89.127.214  (up to date)
+54.89.127.214
+54.89.127.214   * push_jobs_service_upstart[push-jobs] action enable[2017-02-23T15:13:17+00:00] INFO: Processing push_jobs_service_upstart[push-jobs] action enable (push-jobs::service line 29)
+54.89.127.214
+54.89.127.214     * service[chef-push-jobs-client] action nothing[2017-02-23T15:13:17+00:00] INFO: Processing service[chef-push-jobs-client] action nothing (/var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb line 77)
+54.89.127.214  (skipped due to action :nothing)
+54.89.127.214     * template[/etc/init/chef-push-jobs-client.conf] action create[2017-02-23T15:13:17+00:00] INFO: Processing template[/etc/init/chef-push-jobs-client.conf] action create (/var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb line 81)
+54.89.127.214  (up to date)
+54.89.127.214     * service[chef-push-jobs-client] action enable[2017-02-23T15:13:17+00:00] INFO: Processing service[chef-push-jobs-client] action enable (/var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb line 56)
+54.89.127.214  (up to date)
+54.89.127.214      (up to date)
+54.89.127.214 Recipe: learn_chef_apache2::default
+54.89.127.214   * apt_update[Update the apt cache daily] action periodic[2017-02-23T15:13:17+00:00] INFO: Processing apt_update[Update the apt cache daily] action periodic (learn_chef_apache2::default line 6)
+54.89.127.214
+54.89.127.214     - update new lists of packages
+54.89.127.214     * directory[/var/lib/apt/periodic] action create[2017-02-23T15:13:17+00:00] INFO: Processing directory[/var/lib/apt/periodic] action create (/opt/chef/embedded/lib/ruby/gems/2.3.0/gems/chef-12.19.33/lib/chef/provider/apt_update.rb line 70)
+54.89.127.214  (up to date)
+54.89.127.214     * directory[/etc/apt/apt.conf.d] action create[2017-02-23T15:13:17+00:00] INFO: Processing directory[/etc/apt/apt.conf.d] action create (/opt/chef/embedded/lib/ruby/gems/2.3.0/gems/chef-12.19.33/lib/chef/provider/apt_update.rb line 70)
+54.89.127.214  (up to date)
+54.89.127.214     * file[/etc/apt/apt.conf.d/15update-stamp] action create_if_missing[2017-02-23T15:13:17+00:00] INFO: Processing file[/etc/apt/apt.conf.d/15update-stamp] action create_if_missing (/opt/chef/embedded/lib/ruby/gems/2.3.0/gems/chef-12.19.33/lib/chef/provider/apt_update.rb line 75)
+54.89.127.214  (up to date)
+54.89.127.214     * execute[apt-get -q update] action run[2017-02-23T15:13:17+00:00] INFO: Processing execute[apt-get -q update] action run (/opt/chef/embedded/lib/ruby/gems/2.3.0/gems/chef-12.19.33/lib/chef/provider/apt_update.rb line 80)
+54.89.127.214
+54.89.127.214       [execute] Ign http://us-east-1.ec2.archive.ubuntu.com trusty InRelease
+54.89.127.214                 Get:1 http://us-east-1.ec2.archive.ubuntu.com trusty-updates InRelease [65.9 kB]
+54.89.127.214                 Get:2 http://us-east-1.ec2.archive.ubuntu.com trusty-backports InRelease [65.9 kB]
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty Release.gpg
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty Release
+54.89.127.214                 Get:3 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/main Sources [392 kB]
+54.89.127.214                 Get:4 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/restricted Sources [5911 B]
+54.89.127.214                 Get:5 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/universe Sources [174 kB]
+54.89.127.214                 Get:6 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/multiverse Sources [7510 B]
+54.89.127.214                 Get:7 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/main amd64 Packages [954 kB]
+54.89.127.214                 Get:8 http://security.ubuntu.com trusty-security InRelease [65.9 kB]
+54.89.127.214                 Get:9 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/restricted amd64 Packages [16.4 kB]
+54.89.127.214                 Get:10 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/universe amd64 Packages [399 kB]
+54.89.127.214                 Get:11 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/multiverse amd64 Packages [14.0 kB]
+54.89.127.214                 Get:12 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/main Translation-en [473 kB]
+54.89.127.214                 Get:13 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/multiverse Translation-en [7340 B]
+54.89.127.214                 Get:14 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/restricted Translation-en [3847 B]
+54.89.127.214                 Get:15 http://us-east-1.ec2.archive.ubuntu.com trusty-updates/universe Translation-en [211 kB]
+54.89.127.214                 Get:16 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/main Sources [9652 B]
+54.89.127.214                 Get:17 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/restricted Sources [28 B]
+54.89.127.214                 Get:18 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/universe Sources [35.3 kB]
+54.89.127.214                 Get:19 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/multiverse Sources [1898 B]
+54.89.127.214                 Get:20 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/main amd64 Packages [13.3 kB]
+54.89.127.214                 Get:21 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/restricted amd64 Packages [28 B]
+54.89.127.214                 Get:22 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/universe amd64 Packages [43.2 kB]
+54.89.127.214                 Get:23 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/multiverse amd64 Packages [1571 B]
+54.89.127.214                 Get:24 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/main Translation-en [7493 B]
+54.89.127.214                 Get:25 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/multiverse Translation-en [1215 B]
+54.89.127.214                 Get:26 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/restricted Translation-en [28 B]
+54.89.127.214                 Get:27 http://us-east-1.ec2.archive.ubuntu.com trusty-backports/universe Translation-en [36.8 kB]
+54.89.127.214                 Get:28 http://us-east-1.ec2.archive.ubuntu.com trusty/main Sources [1064 kB]
+54.89.127.214                 Get:29 http://security.ubuntu.com trusty-security/main Sources [126 kB]
+54.89.127.214                 Get:30 http://us-east-1.ec2.archive.ubuntu.com trusty/restricted Sources [5433 B]
+54.89.127.214                 Get:31 http://us-east-1.ec2.archive.ubuntu.com trusty/universe Sources [6399 kB]
+54.89.127.214                 Get:32 http://security.ubuntu.com trusty-security/universe Sources [49.9 kB]
+54.89.127.214                 Get:33 http://security.ubuntu.com trusty-security/main amd64 Packages [588 kB]
+54.89.127.214                 Get:34 http://security.ubuntu.com trusty-security/universe amd64 Packages [153 kB]
+54.89.127.214                 Get:35 http://security.ubuntu.com trusty-security/main Translation-en [325 kB]
+54.89.127.214                 Get:36 http://us-east-1.ec2.archive.ubuntu.com trusty/multiverse Sources [174 kB]
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty/main amd64 Packages
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty/restricted amd64 Packages
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty/universe amd64 Packages
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty/multiverse amd64 Packages
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty/main Translation-en
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty/multiverse Translation-en
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty/restricted Translation-en
+54.89.127.214                 Hit http://us-east-1.ec2.archive.ubuntu.com trusty/universe Translation-en
+54.89.127.214                 Get:37 http://security.ubuntu.com trusty-security/universe Translation-en [89.5 kB]
+54.89.127.214                 Fetched 12.0 MB in 5s (2342 kB/s)
+54.89.127.214                 Reading package lists...
+54.89.127.214 [2017-02-23T15:13:24+00:00] INFO: execute[apt-get -q update] ran successfully
+54.89.127.214       - execute apt-get -q update
+54.89.127.214
+54.89.127.214   * apt_package[apache2] action install[2017-02-23T15:13:24+00:00] INFO: Processing apt_package[apache2] action install (learn_chef_apache2::default line 11)
+54.89.127.214 [2017-02-23T15:13:30+00:00] INFO: apt_package[apache2] installed apache2 at 2.4.7-1ubuntu4.13
+54.89.127.214
+54.89.127.214     - install version 2.4.7-1ubuntu4.13 of package apache2
+54.89.127.214   * service[apache2] action enable[2017-02-23T15:13:30+00:00] INFO: Processing service[apache2] action enable (learn_chef_apache2::default line 13)
+54.89.127.214  (up to date)
+54.89.127.214   * service[apache2] action start[2017-02-23T15:13:31+00:00] INFO: Processing service[apache2] action start (learn_chef_apache2::default line 13)
+54.89.127.214  (up to date)
+54.89.127.214   * template[/var/www/html/index.html] action create[2017-02-23T15:13:31+00:00] INFO: Processing template[/var/www/html/index.html] action create (learn_chef_apache2::default line 18)
+54.89.127.214 [2017-02-23T15:13:31+00:00] INFO: template[/var/www/html/index.html] backed up to /var/chef/backup/var/www/html/index.html.chef-20170223151331.048110
+54.89.127.214 [2017-02-23T15:13:31+00:00] INFO: template[/var/www/html/index.html] updated file contents /var/www/html/index.html
+54.89.127.214
+54.89.127.214     - update content in file /var/www/html/index.html from 538f31 to ef4ffd
+54.89.127.214     --- /var/www/html/index.html	2017-02-23 15:13:27.608761176 +0000
+54.89.127.214     +++ /var/www/html/.chef-index20170223-1471-fefsd3.html	2017-02-23 15:13:31.040761176 +0000
+54.89.127.214     @@ -1,379 +1,6 @@
+54.89.127.214     -
+54.89.127.214     -<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+54.89.127.214     -<html xmlns="http://www.w3.org/1999/xhtml">
+54.89.127.214     -  <!--
+54.89.127.214     -    Modified from the Debian original for Ubuntu
+54.89.127.214     -    Last updated: 2014-03-19
+54.89.127.214     -    See: https://launchpad.net/bugs/1288690
+54.89.127.214     -  -->
+54.89.127.214     -  <head>
+54.89.127.214     -    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+54.89.127.214     -    <title>Apache2 Ubuntu Default Page: It works</title>
+54.89.127.214     -    <style type="text/css" media="screen">
+54.89.127.214     -  * {
+54.89.127.214     -    margin: 0px 0px 0px 0px;
+54.89.127.214     -    padding: 0px 0px 0px 0px;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  body, html {
+54.89.127.214     -    padding: 3px 3px 3px 3px;
+54.89.127.214     -
+54.89.127.214     -    background-color: #D8DBE2;
+54.89.127.214     -
+54.89.127.214     -    font-family: Verdana, sans-serif;
+54.89.127.214     -    font-size: 11pt;
+54.89.127.214     -    text-align: center;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.main_page {
+54.89.127.214     -    position: relative;
+54.89.127.214     -    display: table;
+54.89.127.214     -
+54.89.127.214     -    width: 800px;
+54.89.127.214     -
+54.89.127.214     -    margin-bottom: 3px;
+54.89.127.214     -    margin-left: auto;
+54.89.127.214     -    margin-right: auto;
+54.89.127.214     -    padding: 0px 0px 0px 0px;
+54.89.127.214     -
+54.89.127.214     -    border-width: 2px;
+54.89.127.214     -    border-color: #212738;
+54.89.127.214     -    border-style: solid;
+54.89.127.214     -
+54.89.127.214     -    background-color: #FFFFFF;
+54.89.127.214     -
+54.89.127.214     -    text-align: center;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.page_header {
+54.89.127.214     -    height: 99px;
+54.89.127.214     -    width: 100%;
+54.89.127.214     -
+54.89.127.214     -    background-color: #F5F6F7;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.page_header span {
+54.89.127.214     -    margin: 15px 0px 0px 50px;
+54.89.127.214     -
+54.89.127.214     -    font-size: 180%;
+54.89.127.214     -    font-weight: bold;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.page_header img {
+54.89.127.214     -    margin: 3px 0px 0px 40px;
+54.89.127.214     -
+54.89.127.214     -    border: 0px 0px 0px;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.table_of_contents {
+54.89.127.214     -    clear: left;
+54.89.127.214     -
+54.89.127.214     -    min-width: 200px;
+54.89.127.214     -
+54.89.127.214     -    margin: 3px 3px 3px 3px;
+54.89.127.214     -
+54.89.127.214     -    background-color: #FFFFFF;
+54.89.127.214     -
+54.89.127.214     -    text-align: left;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.table_of_contents_item {
+54.89.127.214     -    clear: left;
+54.89.127.214     -
+54.89.127.214     -    width: 100%;
+54.89.127.214     -
+54.89.127.214     -    margin: 4px 0px 0px 0px;
+54.89.127.214     -
+54.89.127.214     -    background-color: #FFFFFF;
+54.89.127.214     -
+54.89.127.214     -    color: #000000;
+54.89.127.214     -    text-align: left;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.table_of_contents_item a {
+54.89.127.214     -    margin: 6px 0px 0px 6px;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.content_section {
+54.89.127.214     -    margin: 3px 3px 3px 3px;
+54.89.127.214     -
+54.89.127.214     -    background-color: #FFFFFF;
+54.89.127.214     -
+54.89.127.214     -    text-align: left;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.content_section_text {
+54.89.127.214     -    padding: 4px 8px 4px 8px;
+54.89.127.214     -
+54.89.127.214     -    color: #000000;
+54.89.127.214     -    font-size: 100%;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.content_section_text pre {
+54.89.127.214     -    margin: 8px 0px 8px 0px;
+54.89.127.214     -    padding: 8px 8px 8px 8px;
+54.89.127.214     -
+54.89.127.214     -    border-width: 1px;
+54.89.127.214     -    border-style: dotted;
+54.89.127.214     -    border-color: #000000;
+54.89.127.214     -
+54.89.127.214     -    background-color: #F5F6F7;
+54.89.127.214     -
+54.89.127.214     -    font-style: italic;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.content_section_text p {
+54.89.127.214     -    margin-bottom: 6px;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.content_section_text ul, div.content_section_text li {
+54.89.127.214     -    padding: 4px 8px 4px 16px;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.section_header {
+54.89.127.214     -    padding: 3px 6px 3px 6px;
+54.89.127.214     -
+54.89.127.214     -    background-color: #8E9CB2;
+54.89.127.214     -
+54.89.127.214     -    color: #FFFFFF;
+54.89.127.214     -    font-weight: bold;
+54.89.127.214     -    font-size: 112%;
+54.89.127.214     -    text-align: center;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.section_header_red {
+54.89.127.214     -    background-color: #CD214F;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.section_header_grey {
+54.89.127.214     -    background-color: #9F9386;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  .floating_element {
+54.89.127.214     -    position: relative;
+54.89.127.214     -    float: left;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.table_of_contents_item a,
+54.89.127.214     -  div.content_section_text a {
+54.89.127.214     -    text-decoration: none;
+54.89.127.214     -    font-weight: bold;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.table_of_contents_item a:link,
+54.89.127.214     -  div.table_of_contents_item a:visited,
+54.89.127.214     -  div.table_of_contents_item a:active {
+54.89.127.214     -    color: #000000;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.table_of_contents_item a:hover {
+54.89.127.214     -    background-color: #000000;
+54.89.127.214     -
+54.89.127.214     -    color: #FFFFFF;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.content_section_text a:link,
+54.89.127.214     -  div.content_section_text a:visited,
+54.89.127.214     -   div.content_section_text a:active {
+54.89.127.214     -    background-color: #DCDFE6;
+54.89.127.214     -
+54.89.127.214     -    color: #000000;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.content_section_text a:hover {
+54.89.127.214     -    background-color: #000000;
+54.89.127.214     -
+54.89.127.214     -    color: #DCDFE6;
+54.89.127.214     -  }
+54.89.127.214     -
+54.89.127.214     -  div.validator {
+54.89.127.214     -  }
+54.89.127.214     -    </style>
+54.89.127.214     -  </head>
+54.89.127.214     +<html>
+54.89.127.214        <body>
+54.89.127.214     -    <div class="main_page">
+54.89.127.214     -      <div class="page_header floating_element">
+54.89.127.214     -        <img src="/icons/ubuntu-logo.png" alt="Ubuntu Logo" class="floating_element"/>
+54.89.127.214     -        <span class="floating_element">
+54.89.127.214     -          Apache2 Ubuntu Default Page
+54.89.127.214     -        </span>
+54.89.127.214     -      </div>
+54.89.127.214     -<!--      <div class="table_of_contents floating_element">
+54.89.127.214     -        <div class="section_header section_header_grey">
+54.89.127.214     -          TABLE OF CONTENTS
+54.89.127.214     -        </div>
+54.89.127.214     -        <div class="table_of_contents_item floating_element">
+54.89.127.214     -          <a href="#about">About</a>
+54.89.127.214     -        </div>
+54.89.127.214     -        <div class="table_of_contents_item floating_element">
+54.89.127.214     -          <a href="#changes">Changes</a>
+54.89.127.214     -        </div>
+54.89.127.214     -        <div class="table_of_contents_item floating_element">
+54.89.127.214     -          <a href="#scope">Scope</a>
+54.89.127.214     -        </div>
+54.89.127.214     -        <div class="table_of_contents_item floating_element">
+54.89.127.214     -          <a href="#files">Config files</a>
+54.89.127.214     -        </div>
+54.89.127.214     -      </div>
+54.89.127.214     --->
+54.89.127.214     -      <div class="content_section floating_element">
+54.89.127.214     -
+54.89.127.214     -
+54.89.127.214     -        <div class="section_header section_header_red">
+54.89.127.214     -          <div id="about"></div>
+54.89.127.214     -          It works!
+54.89.127.214     -        </div>
+54.89.127.214     -        <div class="content_section_text">
+54.89.127.214     -          <p>
+54.89.127.214     -                This is the default welcome page used to test the correct
+54.89.127.214     -                operation of the Apache2 server after installation on Ubuntu systems.
+54.89.127.214     -                It is based on the equivalent page on Debian, from which the Ubuntu Apache
+54.89.127.214     -                packaging is derived.
+54.89.127.214     -                If you can read this page, it means that the Apache HTTP server installed at
+54.89.127.214     -                this site is working properly. You should <b>replace this file</b> (located at
+54.89.127.214     -                <tt>/var/www/html/index.html</tt>) before continuing to operate your HTTP server.
+54.89.127.214     -          </p>
+54.89.127.214     -
+54.89.127.214     -
+54.89.127.214     -          <p>
+54.89.127.214     -                If you are a normal user of this web site and don't know what this page is
+54.89.127.214     -                about, this probably means that the site is currently unavailable due to
+54.89.127.214     -                maintenance.
+54.89.127.214     -                If the problem persists, please contact the site's administrator.
+54.89.127.214     -          </p>
+54.89.127.214     -
+54.89.127.214     -        </div>
+54.89.127.214     -        <div class="section_header">
+54.89.127.214     -          <div id="changes"></div>
+54.89.127.214     -                Configuration Overview
+54.89.127.214     -        </div>
+54.89.127.214     -        <div class="content_section_text">
+54.89.127.214     -          <p>
+54.89.127.214     -                Ubuntu's Apache2 default configuration is different from the
+54.89.127.214     -                upstream default configuration, and split into several files optimized for
+54.89.127.214     -                interaction with Ubuntu tools. The configuration system is
+54.89.127.214     -                <b>fully documented in
+54.89.127.214     -                /usr/share/doc/apache2/README.Debian.gz</b>. Refer to this for the full
+54.89.127.214     -                documentation. Documentation for the web server itself can be
+54.89.127.214     -                found by accessing the <a href="/manual">manual</a> if the <tt>apache2-doc</tt>
+54.89.127.214     -                package was installed on this server.
+54.89.127.214     -
+54.89.127.214     -          </p>
+54.89.127.214     -          <p>
+54.89.127.214     -                The configuration layout for an Apache2 web server installation on Ubuntu systems is as follows:
+54.89.127.214     -          </p>
+54.89.127.214     -          <pre>
+54.89.127.214     -/etc/apache2/
+54.89.127.214     -|-- apache2.conf
+54.89.127.214     -|       `--  ports.conf
+54.89.127.214     -|-- mods-enabled
+54.89.127.214     -|       |-- *.load
+54.89.127.214     -|       `-- *.conf
+54.89.127.214     -|-- conf-enabled
+54.89.127.214     -|       `-- *.conf
+54.89.127.214     -|-- sites-enabled
+54.89.127.214     -|       `-- *.conf
+54.89.127.214     -          </pre>
+54.89.127.214     -          <ul>
+54.89.127.214     -                        <li>
+54.89.127.214     -                           <tt>apache2.conf</tt> is the main configuration
+54.89.127.214     -                           file. It puts the pieces together by including all remaining configuration
+54.89.127.214     -                           files when starting up the web server.
+54.89.127.214     -                        </li>
+54.89.127.214     -
+54.89.127.214     -                        <li>
+54.89.127.214     -                           <tt>ports.conf</tt> is always included from the
+54.89.127.214     -                           main configuration file. It is used to determine the listening ports for
+54.89.127.214     -                           incoming connections, and this file can be customized anytime.
+54.89.127.214     -                        </li>
+54.89.127.214     -
+54.89.127.214     -                        <li>
+54.89.127.214     -                           Configuration files in the <tt>mods-enabled/</tt>,
+54.89.127.214     -                           <tt>conf-enabled/</tt> and <tt>sites-enabled/</tt> directories contain
+54.89.127.214     -                           particular configuration snippets which manage modules, global configuration
+54.89.127.214     -                           fragments, or virtual host configurations, respectively.
+54.89.127.214     -                        </li>
+54.89.127.214     -
+54.89.127.214     -                        <li>
+54.89.127.214     -                           They are activated by symlinking available
+54.89.127.214     -                           configuration files from their respective
+54.89.127.214     -                           *-available/ counterparts. These should be managed
+54.89.127.214     -                           by using our helpers
+54.89.127.214     -                           <tt>
+54.89.127.214     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2enmod">a2enmod</a>,
+54.89.127.214     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2dismod">a2dismod</a>,
+54.89.127.214     -                           </tt>
+54.89.127.214     -                           <tt>
+54.89.127.214     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2ensite">a2ensite</a>,
+54.89.127.214     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2dissite">a2dissite</a>,
+54.89.127.214     -                            </tt>
+54.89.127.214     -                                and
+54.89.127.214     -                           <tt>
+54.89.127.214     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2enconf">a2enconf</a>,
+54.89.127.214     -                                <a href="http://manpages.debian.org/cgi-bin/man.cgi?query=a2disconf">a2disconf</a>
+54.89.127.214     -                           </tt>. See their respective man pages for detailed information.
+54.89.127.214     -                        </li>
+54.89.127.214     -
+54.89.127.214     -                        <li>
+54.89.127.214     -                           The binary is called apache2. Due to the use of
+54.89.127.214     -                           environment variables, in the default configuration, apache2 needs to be
+54.89.127.214     -                           started/stopped with <tt>/etc/init.d/apache2</tt> or <tt>apache2ctl</tt>.
+54.89.127.214     -                           <b>Calling <tt>/usr/bin/apache2</tt> directly will not work</b> with the
+54.89.127.214     -                           default configuration.
+54.89.127.214     -                        </li>
+54.89.127.214     -          </ul>
+54.89.127.214     -        </div>
+54.89.127.214     -
+54.89.127.214     -        <div class="section_header">
+54.89.127.214     -            <div id="docroot"></div>
+54.89.127.214     -                Document Roots
+54.89.127.214     -        </div>
+54.89.127.214     -
+54.89.127.214     -        <div class="content_section_text">
+54.89.127.214     -            <p>
+54.89.127.214     -                By default, Ubuntu does not allow access through the web browser to
+54.89.127.214     -                <em>any</em> file apart of those located in <tt>/var/www</tt>,
+54.89.127.214     -                <a href="http://httpd.apache.org/docs/2.4/mod/mod_userdir.html">public_html</a>
+54.89.127.214     -                directories (when enabled) and <tt>/usr/share</tt> (for web
+54.89.127.214     -                applications). If your site is using a web document root
+54.89.127.214     -                located elsewhere (such as in <tt>/srv</tt>) you may need to whitelist your
+54.89.127.214     -                document root directory in <tt>/etc/apache2/apache2.conf</tt>.
+54.89.127.214     -            </p>
+54.89.127.214     -            <p>
+54.89.127.214     -                The default Ubuntu document root is <tt>/var/www/html</tt>. You
+54.89.127.214     -                can make your own virtual hosts under /var/www. This is different
+54.89.127.214     -                to previous releases which provides better security out of the box.
+54.89.127.214     -            </p>
+54.89.127.214     -        </div>
+54.89.127.214     -
+54.89.127.214     -        <div class="section_header">
+54.89.127.214     -          <div id="bugs"></div>
+54.89.127.214     -                Reporting Problems
+54.89.127.214     -        </div>
+54.89.127.214     -        <div class="content_section_text">
+54.89.127.214     -          <p>
+54.89.127.214     -                Please use the <tt>ubuntu-bug</tt> tool to report bugs in the
+54.89.127.214     -                Apache2 package with Ubuntu. However, check <a
+54.89.127.214     -                href="https://bugs.launchpad.net/ubuntu/+source/apache2">existing
+54.89.127.214     -                bug reports</a> before reporting a new bug.
+54.89.127.214     -          </p>
+54.89.127.214     -          <p>
+54.89.127.214     -                Please report bugs specific to modules (such as PHP and others)
+54.89.127.214     -                to respective packages, not to the web server itself.
+54.89.127.214     -          </p>
+54.89.127.214     -        </div>
+54.89.127.214     -
+54.89.127.214     -
+54.89.127.214     -
+54.89.127.214     -
+54.89.127.214     -      </div>
+54.89.127.214     -    </div>
+54.89.127.214     -    <div class="validator">
+54.89.127.214     -    <p>
+54.89.127.214     -      <a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>
+54.89.127.214     -    </p>
+54.89.127.214     -    </div>
+54.89.127.214     +    <h1>hello world</h1>
+54.89.127.214        </body>
+54.89.127.214      </html>
+54.89.127.214     -
+54.89.127.214 [2017-02-23T15:13:31+00:00] INFO: template[/etc/chef/push-jobs-client.rb] sending restart action to push_jobs_service_upstart[push-jobs] (delayed)
+54.89.127.214 Recipe: push-jobs::service
+54.89.127.214   * push_jobs_service_upstart[push-jobs] action restart[2017-02-23T15:13:31+00:00] INFO: Processing push_jobs_service_upstart[push-jobs] action restart (push-jobs::service line 29)
+54.89.127.214
+54.89.127.214     * service[chef-push-jobs-client] action restart[2017-02-23T15:13:31+00:00] INFO: Processing service[chef-push-jobs-client] action restart (/var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb line 47)
+54.89.127.214 [2017-02-23T15:13:32+00:00] INFO: service[chef-push-jobs-client] restarted
+54.89.127.214
+54.89.127.214       - restart service service[chef-push-jobs-client]
+54.89.127.214
+54.89.127.214 [2017-02-23T15:13:32+00:00] INFO: Chef Run complete in 23.715354149 seconds
+54.89.127.214
+54.89.127.214 Running handlers:
+54.89.127.214 [2017-02-23T15:13:32+00:00] INFO: Running report handlers
+54.89.127.214 Running handlers complete
+54.89.127.214 [2017-02-23T15:13:32+00:00] INFO: Report handlers complete
+54.89.127.214
+54.89.127.214 Deprecated features used!
+54.89.127.214   Property `sensitive` of resource `chef_ingredient_ingredient_config` overwrites an existing method. Please use a different property name. This will raise an exception in Chef 13. at 1 location:
+54.89.127.214     - /var/chef/cache/cookbooks/chef-ingredient/resources/ingredient_config.rb:24:in `class_from_file'
+54.89.127.214    See https://docs.chef.io/deprecations_property_name_collision.html for further details.
+54.89.127.214   An attempt was made to change version from :latest to nil by calling version(nil). In Chef 12, this does a get rather than a set. In Chef 13, this will change to set the value to nil. at 1 location:
+54.89.127.214     - /var/chef/cache/cookbooks/push-jobs/recipes/package.rb:52:in `block in from_file'
+54.89.127.214    See https://docs.chef.io/deprecations_custom_resource_cleanups.html for further details.
+54.89.127.214   Cloning resource attributes for service[chef-push-jobs-client] from prior resource
+54.89.127.214 Previous service[chef-push-jobs-client]: /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:77:in `create_init'
+54.89.127.214 Current  service[chef-push-jobs-client]: /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:31:in `block in class_from_file' at 1 location:
+54.89.127.214     - /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:31:in `block in class_from_file'
+54.89.127.214    See https://docs.chef.io/deprecations_resource_cloning.html for further details.
+54.89.127.214   Cloning resource attributes for service[chef-push-jobs-client] from prior resource
+54.89.127.214 Previous service[chef-push-jobs-client]: /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:77:in `create_init'
+54.89.127.214 Current  service[chef-push-jobs-client]: /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:56:in `block in class_from_file' at 1 location:
+54.89.127.214     - /var/chef/cache/cookbooks/push-jobs/resources/service_upstart.rb:56:in `block in class_from_file'
+54.89.127.214    See https://docs.chef.io/deprecations_resource_cloning.html for further details.
+54.89.127.214
+54.89.127.214 Chef Client finished, 14/27 resources updated in 25 seconds
+```
+
+Run the `curl` command to verify the configuration. Here's an example.
+
+```bash
+# ~/learn-chef
+$ curl 54.89.127.214
+<html>
+  <body>
+    <h1>hello world</h1>
+  </body>
+</html>
+```
+
+You can also verify the configuration from a web browser.
+
+![](automate/browser-hello-world.png)
+
+If you created infrastructure for the Union, Rehearsal, and Delivered environments, repeat the bootstrap process for those nodes now. Here are examples (sample output is omitted for brevity).
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 54.90.118.14 --ssh-user ubuntu --identity-file ~/.ssh/private_key --sudo --node-name union-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment union --yes
+```
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 54.159.73.124 --ssh-user ubuntu --identity-file ~/.ssh/private_key --sudo --node-name rehearsal-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment rehearsal --yes
+```
+
+```bash
+# ~/learn-chef
+$ knife bootstrap 52.203.119.170 --ssh-user ubuntu --identity-file ~/.ssh/private_key --sudo --node-name delivered-node --run-list 'recipe[delivery-base],recipe[learn_chef_apache2]' --environment delivered --yes
+```
+
+You can specify any name you want for the `--node-name` argument. Each bootstrap commmand shown here specifies a node name that corresponds to that node's function. For example, `union-node` specifies the name for the node that corresponds to the Union stage and `union` Chef environment.
+
+Repeat the process to verify the configuration on each node.
+
+-- --
+
+As optional exercises, let's run a few commands to verify that everything's set up correctly.
+
+First, run the following `knife node list` command to list the infrastructure nodes associated with your Chef server.
+
+```bash
+# ~/learn-chef
+$ knife node list | grep node
+acceptance-node
+delivered-node
+rehearsal-node
+union-node
+```
+
+You can view details about your node by running the `knife node show` command. Here's an example for the Acceptance node.
+
+
+```bash
+$ knife node show acceptance-node
+Node Name:   acceptance-node
+Environment: acceptance-default-my-org-learn_chef_apache2-master
+FQDN:        ip-172-31-26-26.ec2.internal
+IP:          54.89.127.214
+Run List:    recipe[delivery-base], recipe[learn_chef_apache2]
+Roles:
+Recipes:     delivery-base, delivery-base::default, learn_chef_apache2, learn_chef_apache2::default, push-jobs::default, push-jobs::install, push-jobs::package, push-jobs::config, push-jobs::service
+Platform:    ubuntu 14.04
+Tags:
+```
+
+The **Recipes** part contains the node's expanded run-list. For example, the `delivery-base` cookbook's default recipe includes the `push-jobs` cookbook's default recipe ([source code](https://github.com/chef-cookbooks/delivery-base/blob/master/recipes/default.rb)), which in turn includes other recipes ([source code](https://github.com/chef-cookbooks/push-jobs/blob/master/recipes/default.rb)).
+
+In the _Manage a node with Chef Automate_ module, you used Chef Automate's visibility feature to [view your node from the dashboard](/modules/manage-a-node-chef-automate/ubuntu/automate/bootstrap-your-node#step2). Let's view the infrastructure nodes you just bootstrapped.
+
+From the Chef Automate web interface, select **Nodes**. From the search box at the top of the page, enter **node_name: *-node** to display only the nodes whose names end with "-node", then click the search button.
+
+![](automate/visibility-filter-results.png)
+
+At the bottom of the page, you'll see your nodes, including the Chef environment each node is associated with.
+
+![](automate/visibility-filter-results-nodes-apache2.png)
+
+As an optional exercise, you can select one of your nodes to view its run history and other details.
+
+<% accordion('stages-environments', 'Stages versus environments') do %>
+
+<% markdown do %>
+
+In this module, we use the terms _stages_ and _environments_ quite frequently. For example, there's the Acceptance stage and there's the Acceptance environment. Both are related, but it's important to distinguish between the two.
+
+For example, the Acceptance _stage_ refers to the pipeline stage and its four phases &ndash; provision, deploy, smoke, and functional. The Acceptance _environment_ refers to the infrastructure environment that's associated with the Acceptance stage. In this module, the Acceptance environment is an Ubuntu server that applies the `learn_chef_apache2` cookbook to configure the web configuration. The Acceptance stage deploys the web configuration by triggering `chef-client` to run on the Ubuntu  server.
+
+You can set up a distinct runtime environment for each of the Acceptance, Union, Rehearsal, and Delivered stages of the pipeline. It's also possible to allow multiple stages to share the same environment. Although in this module your Chef Automate project is a Chef cookbook, a project can be an application or some other artifact that doesn't involve Chef. Your infrastructure environments would be whatever you require for the artifact to run.
+
+<% end %>
+
+<% end %>
+
+[END_BOX]
+
+[START_BOX]
+
+## 8. Use push jobs to run chef-client a second time
+
+The bootstrap process performed an initial `chef-client` run on your nodes. In previous modules, such as _Manage a node with Chef Automate_, you ran `knife ssh` from your workstation to trigger `chef-client` remotely on your node.
+
+Recall that your runner performs build tasks as changes move through Chef Automate's pipeline. During the Acceptance, Union, Rehearsal, and Delivered stages, the runner uses push jobs to initiate the `chef-client` run on your infrastructure nodes.
+
+Before pushing a change through the pipeline, first verify that your runner can successfully submit push jobs to your nodes. You'll run push jobs in stages; each stage will use a search query that's more constrained. Doing so will help diagnose any issues in your setup.
+
+From your workstation, create an SSH connection to your runner.
+
+Then run `knife node status` to to see which nodes are available to accept push jobs.
+
+```bash
+$ sudo knife node status --config /var/opt/delivery/workspace/etc/delivery.rb
+acceptance-node	available
+delivered-node	available
+rehearsal-node	available
+union-node	available
+```
+
+You see `acceptance-node`, `union-node`, `rehearsal-node`, and `delivered-node` are available to receive push jobs. If you set up fewer infrastructure nodes, for example, one node for the Acceptance environment only, you would see only that node listed.
+
+Next, run the following `knife job start` command to run `chef-client` on each node that contains `learn_chef_apache2` in its run-list.
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_apache2*)' --config /var/opt/delivery/workspace/etc/delivery.rb
+Started.  Job ID: b71bd578992b22e088b1d9d83d0d8cf8
+.Running (1/4 in progress) ...
+....Complete.
+command:     chef-client
+created_at:  Wed, 22 Feb 2017 15:14:48 GMT
+env:
+id:          b71bd578992b22e088b1d9d83d0d8cf8
+nodes:
+  succeeded:
+    acceptance-node
+    delivered-node
+    rehearsal-node
+    union-node
+run_timeout: 3600
+status:      complete
+updated_at:  Wed, 22 Feb 2017 15:14:53 GMT
+```
+
+As expected, `chef-client` ran on all four of your nodes.
+
+Next, constrain the query to include nodes that contain both the `learn_chef_apache2` and `push-jobs` cookbooks in their run-lists.
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_apache2*) AND (recipes:push-jobs*)' --config /var/opt/delivery/workspace/etc/delivery.rb
+Started.  Job ID: b71bd578992b734a894184627439a6bc
+.Running (1/4 in progress) ...
+....Complete.
+command:     chef-client
+created_at:  Wed, 22 Feb 2017 15:15:28 GMT
+env:
+id:          b71bd578992b734a894184627439a6bc
+nodes:
+  succeeded:
+    acceptance-node
+    delivered-node
+    rehearsal-node
+    union-node
+run_timeout: 3600
+status:      complete
+updated_at:  Wed, 22 Feb 2017 15:15:33 GMT
+```
+
+Again, `chef-client` ran on all four of your nodes.
+
+Finally, constrain the query to include only the node associated with the Acceptance environment.
+
+```bash
+$ sudo knife job start 'chef-client' --search '(recipes:learn_chef_apache2*) AND (recipes:push-jobs*) AND chef_environment:acceptance-default-my-org-learn_chef_apache2-master' --config /var/opt/delivery/workspace/etc/delivery.rb
+Started.  Job ID: b71bd578992bde5a6a58bb3c1964b915
+.Running (1/1 in progress) ...
+....Complete.
+command:     chef-client
+created_at:  Wed, 22 Feb 2017 15:15:50 GMT
+env:
+id:          b71bd578992bde5a6a58bb3c1964b915
+nodes:
+  succeeded: acceptance-node
+run_timeout: 3600
+status:      complete
+updated_at:  Wed, 22 Feb 2017 15:15:55 GMT
+```
+
+This time, `chef-client` ran only on the node named `acceptance-node`, as expected.
+
+Everything checks out. You can now close your SSH connection.
+
+[END_BOX]

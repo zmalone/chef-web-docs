@@ -1,0 +1,51 @@
+---
+title: 'The Challenges of system configuration'
+description: 'Applications are the coordinated effort of a lot of systems. Understanding the challenges in configuring a system is essential.'
+order: 2
+time_to_complete: 5 minutes
+quiz_path: quizzes/web-operations-essentials/application-component.yml
+headings: [
+  { label: 'Story', href: '#story' }
+]
+---
+After completing this unit, you’ll be able to:
+
+* describe some of the manual steps required to configure a system.
+* describe the differences between documentation, scripts and the Chef language.
+
+## Story
+
+As we learned in the last section, a restaurant and a modern application have quite a few similiarities. They both must receive requests, process those requests, and return the correct results.
+
+For both restaurants and web applications, the best way to satisfy an increasing number of customers is to define multiple, distinct roles. Each role performs a specialized operation that contributes to the entire process and can be performed by more than one person or system.
+
+A web application relies on the coordinated effort of a large number of roles. For each role we have to define:
+
+* the required computing power.
+* the software that must be installed.
+* how the software should be configured.
+* if and how the role can be accessed, either externally by customers or internally by other systems.
+* the role's ability to access other systems.
+
+To get a sense of how complex even a simple web application can be, let's think about what it takes to make a single desktop computer able to use that application. A computer generally comes with an operating system and some pre-installed software. Sometimes this software is enough but you often need to install more.
+
+To install that software, you might copy an application or run an installation script. Sometimes you have to  download source code, then install it and all of its dependencies, then compile it, and then run the installer. No matter what, the software installation requires a number of manual steps.
+
+Sometimes software works the way you want it to as soon as it's installed. Other times, it has to be configured to work properly. For most desktop applications, you can configure the software through a preferences panel. Other applications, particularly applications that run in the background, have no user interface and rely on configuration files or on a set of flags.
+
+Additionally, the software needs to be able to reach out to and be reached by other systems. This usually means configuring the software so that it is visible to other software on the same network and can connect with it.
+You'll need to protect your software from malicious attacks and limit its communication to authorized systems.
+
+All of these tasks represent a lot of changes. For a single system, like a new computer that you want to personalize, this work is often something you're willing to do once. It can be useful to perform all of this work manually in order to understand the process and identify requirements. As you work, you can capture each step required to install an application, configure a service, or modify a file.
+
+The procedure is often a document that you store on a shared location where others besides yourself can use it. It's even better if this document is an executable script that can run on a system. Ideally, the script can run on a system that's already been configured and figure out what work needs to be done and what's already the way it should be.
+
+Setting up systems initially is only a part of what it takes to manage a web application. As time goes on, security patches need to be installed, new features are released, performance improvements are possible, and, eventually, you'll  have to replace or upgrade each of the systems that you run.
+
+In terms of a web application, breaking it down into a set of roles allows you to define the purpose of each of the systems that are a part of it. Each of these roles need its requirements met, the software installed and configured, the services running, and connections to the correct machines. This might be easy when working with a single system but not when you're working with hundreds or even thousands of machines.
+
+Documentation helps articulate the requirements of a system but requires a human being to perform all the steps. Manual procedures are slow, error prone, and difficult to keep current.
+
+Traditional scripts are better because they are automated but they may not take into consideration the state of existing systems. They may also not be as clear as documentation because they often focus only on updating a system.
+
+Chef provides a language that allows you to express the desired state of each system so  that it can fulfill its role. The Chef language is executable, human readable, and can distinguish between necessary and unnecessary work. Because it can make this distinction, you can use it both on new systems and on systems that have already been installed and configured.

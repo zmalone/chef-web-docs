@@ -1,0 +1,78 @@
+<div class="quiz-and-cta" [class.unit-complete]="isUnitComplete">
+  <form *ngIf="hasQuiz" (ngSubmit)="onSubmit()" #quizForm="ngForm">
+    <a class="anchor" name="quiz"></a>
+    <h2>Test your knowledge</h2>
+    <div *ngIf="!isUnitComplete && !isSignedIn" class="sign-up-msg">
+      <i class="ic-sign-up"></i>
+      <user-profile-link></user-profile-link>
+    </div>
+    <div *ngFor="let question of questions; let q = index">
+      <h5 [innerHTML]="question.question"></h5>
+      <ul>
+        <li *ngFor="let choice of question.choices; let c = index"
+            [class.right-ans]="submitted && submittedAnswers[q] == c && correctAnswers[q] == c"
+            [class.wrong-ans]="submitted && submittedAnswers[q] == c && correctAnswers[q] != c"
+        >
+          <input id="ans{{q}}Label{{c}}" type="radio" name="ans{{q}}" value="{{c}}" [(ngModel)]="answers[q]" [disabled]="complete" />
+          <label for="ans{{q}}Label{{c}}" translate="" [innerHTML]="choice"></label>
+        </li>
+      </ul>
+    </div>
+    <div class="quiz-message" *ngIf="submitted && !complete">
+      <span>You got {{numCorrect}} out of {{questions.length}} answers right.</span>
+    </div>
+    <div class="check" *ngIf="!complete">
+      <button [disabled]="!quizForm.form.valid" [class.btn-secondary]="!submitted" [class.btn-red]="submitted && !complete">
+        <span *ngIf="!submitted">Check your answers</span>
+        <span *ngIf="submitted">Try again</span>
+      </button>
+    </div>
+  </form>
+  <div class="cta cta-unit-incomplete" *ngIf="!isUnitComplete && !hasQuiz">
+    <div class="info">
+      <user-profile-link></user-profile-link>
+    </div>
+  </div>
+  <div class="cta cta-unit-complete" *ngIf="isUnitComplete && !showSpecialCoaster && !isModuleComplete && !isTrackComplete">
+    <div class="info">
+      <h3 *ngIf="hasQuiz">
+        <i class="chef-cap"></i>
+        <p class="msg-copy"><span>You’re Cooking Now!</span> <br>You got {{numCorrect}} out of {{questions.length}} answers right.</p>
+      </h3>
+      <user-profile-link></user-profile-link>
+    </div>
+  </div>
+  <div class="cta cta-coaster-award" *ngIf="isUnitComplete && showSpecialCoaster">
+    <div class="coaster-img">
+      <img src="{{specialCoaster.image_url}}" />
+    </div>
+    <div class="info">
+      <h3 *ngIf="hasQuiz"><span>Awesome Sauce!</span> You got {{numCorrect}} out of {{questions.length}} answers right, completed your first module, and earned a special edition coaster.</h3>
+      <h3 *ngIf="!hasQuiz"><span>Way to go!</span> You've completed your first module and earned a special edition coaster.</h3>
+      <user-profile-link></user-profile-link>
+      <social-share url="{{trackSocialShare.url}}" [socialData]="trackSocialShare"></social-share>
+    </div>
+  </div>
+  <div class="cta cta-module-complete" *ngIf="isUnitComplete && isModuleComplete && !isTrackComplete && !showSpecialCoaster">
+    <div class="coaster-img">
+      <img src="/assets/images/tracks/complete-stamp.png" />
+    </div>
+    <div class="info">
+      <h3 *ngIf="hasQuiz"><span>Way to go!</span><br> You have completed this module.</h3>
+      <h3 *ngIf="!hasQuiz"><span>Way to go!</span><br> You've completed this module.</h3>
+      <user-profile-link></user-profile-link>
+      <social-share url="{{trackSocialShare.url}}" [socialData]="trackSocialShare"></social-share>
+    </div>
+  </div>
+  <div class="cta cta-track-complete" *ngIf="isUnitComplete && isTrackComplete">
+    <div class="coaster-img">
+      <img src="{{trackCoaster.image_url}}" />
+    </div>
+    <div class="info">
+      <h3 *ngIf="hasQuiz"><span>Awesome Sauce!</span> You got {{numCorrect}} out of {{questions.length}} answers right and have completed the track.</h3>
+      <h3 *ngIf="!hasQuiz"><span>Way to go!</span><br> You've completed this track.</h3>
+      <user-profile-link></user-profile-link>
+      <social-share url="{{trackSocialShare.url}}" [socialData]="trackSocialShare"></social-share>
+    </div>
+  </div>
+</div>
