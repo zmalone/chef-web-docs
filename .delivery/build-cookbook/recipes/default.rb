@@ -16,11 +16,6 @@ include_recipe 'cia_infra::aws_prereq'
 # data bags. It may go away in the future.
 include_recipe 'chef-sugar::default'
 
-# We use the chef_handler recipe/cookbook so that we can register the an
-# exception handler. The only issue here is that we register it inside the
-# recipe so we are only going to get converge time exceptions.
-include_recipe 'chef_handler::default'
-
 # We include the delivery-truck default recipe so any setup that delivery-truck
 # needs gets done.
 include_recipe 'delivery-truck::default'
