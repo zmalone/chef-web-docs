@@ -19,7 +19,8 @@ execute 'build the site' do
     'DISABLE_SOCIAL' => true,
     'CHEF_LAB_URL' => 'https://lab.chef.io',
     'NODE_ENV' => 'production',
-    'API_ENDPOINT' => 'https://learnchef-backend-acceptance.chef.io'
+    'API_ENDPOINT' => 'https://learnchef-backend-acceptance.chef.io',
+    'LEARN_CHEF_URL' => 'https://learn.chef.io'
   )
   timeout 7200
   cwd node['delivery']['workspace']['repo']
