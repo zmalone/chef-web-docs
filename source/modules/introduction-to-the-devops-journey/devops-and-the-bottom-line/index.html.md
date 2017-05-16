@@ -1,5 +1,4 @@
 ---
-id: devops-and-the-bottom-line
 title: 'DevOps and the bottom line'
 short_title: 'DevOps and the bottom line'
 description: "Learn how companies that practice DevOps show a measurable link between IT investment and organizational performance."
