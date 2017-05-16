@@ -18,6 +18,7 @@ execute 'build the site' do
     'HOME' => node['delivery']['workspace']['cache'],
     'CHEF_LAB_URL' => 'https://lab.chef.io',
     'NODE_ENV' => 'production',
+    'LEARN_CHEF_URL' => 'https://learn.chef.io'
     'API_ENDPOINT' => 'https://learnchef-backend.chef.io'
   )
   timeout 7200

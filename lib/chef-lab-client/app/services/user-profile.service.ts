@@ -32,8 +32,7 @@ export class UserProfileService {
     // For sameWindow oAuth, observable is undefined here
     if (!observable) return Observable.never()
     return observable
-      .concat(this._tokenService.validateToken)
-      .concat(this.loadUserProfile.bind(this))
+      .switchMap(this.loadUserProfile.bind(this))
       .switchMap(this.identifyUser.bind(this))
       .switchMap(this.syncMarketo.bind(this))
       .switchMap(() => {
@@ -69,7 +68,7 @@ export class UserProfileService {
       .map(res => <User> res.json() )
       .switchMap(userInfo => {
         this.userProfile.next(userInfo)
-        return this.userProfile
+        return this.userProfile.first()
       })
   }
 
