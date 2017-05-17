@@ -3,7 +3,7 @@ title: Becoming a Part of the Chef Community
 track_id: 9
 track_hero: /assets/images/tracks/infrastructure-automation.jpg
 image_url: /assets/images/coasters/chef-community.png
-description: "Break bread with the existing Chef community, and find out how to build a community in your own organization. Learn about Supermarket, messaging tools, and in-house groups as ways to meet your fellow Chefs."
+description: "Go through the menu of ways to get involved with the global Chef community, and find out how to build a community within your own organization. Learn about Chef Supermarket, messaging tools, and in-house groups as ways to meet and work with other Chefs."
 hours: 2
 level: Beginner
 track_class: card-light-yellow
