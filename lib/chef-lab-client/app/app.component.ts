@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
     private el: ElementRef,
   ) {
 
-    this._tokenService.init({
+    const params = {
       apiBase: process.env.API_ENDPOINT,
       oAuthBase: process.env.API_ENDPOINT,
       oAuthPaths: {
@@ -37,7 +37,9 @@ export class AppComponent implements OnInit {
         chef: '/auth/chef_oauth2',
       },
       oAuthWindowType: (this.device.browser === 'ie') ? 'sameWindow' : 'newWindow',
-    })
+    }
+    if (this.device.browser === 'ie') params['oAuthCallbackPath'] = 'oauth_callback/'
+    this._tokenService.init(params)
     this.progressService.init()
 
   }
