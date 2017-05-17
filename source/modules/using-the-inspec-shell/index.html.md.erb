@@ -140,7 +140,7 @@ Follow these steps to find out more about InSpec resources and how to use them.
 * **be**
     is used for comparing numerical values:
 
-    ```ruby
+    ```bash
     # Matcher "be" Examples
     describe file('hello.txt') do
       its('size') { should be = 10 } # The file should be 10.
@@ -158,7 +158,7 @@ Follow these steps to find out more about InSpec resources and how to use them.
 
       `cmp` allows for more flexibility than matchers such as `be` or `eq`.  `cmp` can allow for comparing different values while also ignoring case sensitivity.
 
-    ```ruby
+    ```bash
     # Matcher "cmp" Example
     describe ssh_config do
        its('Protocol') { should cmp '2' } # This example compares strings to numbers
@@ -171,7 +171,7 @@ Follow these steps to find out more about InSpec resources and how to use them.
 
     The `eq` compared value must be the desired value, meaning that values passed as strings will only match strings and values passed as numbers will only match numbers.
 
-    ```ruby
+    ```bash
     # Matcher "eq" examples
     describe ssh_config
        its('Protocol') { should eq 2 } # The protocol should only equal 2.
@@ -185,7 +185,7 @@ Follow these steps to find out more about InSpec resources and how to use them.
 * **include**
     is used to verify that a string is included in a list.
 
-    ```ruby
+    ```bash
     # Matcher "include" Examples
     describe passwd do
       its('users') { should include 'myuser' } # 'myuser' should be in the list of users.
@@ -199,7 +199,7 @@ Follow these steps to find out more about InSpec resources and how to use them.
 * **match**
     is used to check if a string matches a regular expression.
 
-    ```ruby
+    ```bash
     # Matcher "match" examples
     describe file('hello.txt') do
       its('name') { should match /hello/ } # The name should match for the regex /hello/.
@@ -261,7 +261,7 @@ To understand InSpec resources, try using the `file` resource.
 
     Try testing for the existence of a file by writing a control directly in the InSpec shell command line.
 
-    ```ruby
+    ```bash
     # InSpec Shell
     $ inspec> describe file('hello.txt') do
     $ inspec> it { should exist }
@@ -278,7 +278,7 @@ To understand InSpec resources, try using the `file` resource.
 
     This test may also be written as in one line, as:
 
-    ```ruby
+    ```bash
     # InSpec Shell
     describe file('hello.txt') do it { should exist } end
     ```
@@ -289,7 +289,7 @@ To understand InSpec resources, try using the `file` resource.
 
     Finally, enter the control again (you can use the up arrow key), `describe file('hello.txt') do it { should exist } end`, and watch the controls pass the test.
 
-    ```ruby
+    ```bash
     $ inspec> exit
     learn-inspec$ echo "hello world" > hello.txt
     learn-inspec$ inspec shell
@@ -312,7 +312,7 @@ To understand InSpec resources, try using the `file` resource.
 
     For example:
 
-    ```ruby
+    ```bash
     #InSpec Shell
     $ inspec> describe file('hello.txt') do it { should exist }; its('content') { should match /hello/ } end
 
@@ -364,8 +364,7 @@ To understand InSpec resources, try using the `file` resource.
        end
     ```
 
-1. Restart the machine using the new Vagrantfile and connect to the server:
-
+1. Restart the machine using the new Vagrantfile and connect to the server
     ```bash
     # ~/learn-inspec
     $ vagrant up --provision
@@ -408,13 +407,13 @@ To understand InSpec resources, try using the `file` resource.
 
     A generic example of a `passwd` entry might be:
 
-    ```ruby
+    ```bash
     root:x:1234:5678:additional_info:/home/dir/:/bin/bash
     ```
 
     The parts of this `passwd` entry are:
 
-    ```ruby
+    ```bash
     - A user name (`users`): 'root' (from the above example)
     - The password (`passwords`) for that user 'x'
     - The user identifier (`uid`) assigned to the user  '1234'
@@ -450,36 +449,36 @@ To understand InSpec resources, try using the `file` resource.
 
     Try out some of these:
 
-    ```ruby
+    ```bash
     # InSpec Shell
     passwd.gids
     passwd.where{ gid == "1" }.entries
     ```
 
-    ```ruby
+    ```bash
     # InSpec Shell
     passwd.homes
     passwd.where{ user = "sbin" }.entries
     ```
 
-    ```ruby
+    ```bash
     # InSpec Shell
     passwd.passwords # (if it shows 'x' they are stored in the shadow directory)
     {passwd.where{ password == "x" }.entries
     ```
-    ```ruby
+    ```bash
     # InSpec Shell
     passwd.shells
     passwd.where{ shell = "bash"}.entries
     ```
 
-    ```ruby
+    ```bash
     # InSpec Shell
     passwd.uids
     passwd.where{ uid == "1"}.entries
     ```
 
-    ```ruby
+    ```bash
     # InSpec Shell
     passwd.users
     passwd.where{ users == "root"}.entries

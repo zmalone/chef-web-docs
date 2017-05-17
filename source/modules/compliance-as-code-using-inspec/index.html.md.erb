@@ -37,6 +37,7 @@ Vagrant also provides access to base virtual machine images, called _boxes_. [Ha
 1. ChefDK (includes InSpec) <https://downloads.chef.io/chefdk>.
 
 This tutorial is written for a MacOS or Linux workstation and an Ubuntu 14.04 virtual machine running on Vagrant and Virtualbox. However, it can be adapted to most systems running the ChefDK and connecting to a second machine that also runs the ChefDK.
+
 ###Concepts
 
 These are the concepts that you will learn about in this tutorial:
@@ -123,7 +124,7 @@ The control file contains a remarkable amount of information in a very brief for
       Profile Summary: 0 successful, 1 failures, 0 skipped
     ```
 
-    The output shows us the name of the control and what the test expected to see happen, citing the specific control that failed. The 'profile summary' shows a tally of all the controls in the profile, based on their status as successful, failures, or skipped tests. A failing test will appear in red letters. This particular failing result shows you both that the test ran as it should have and that the `hello.txt` file does not exist in the directory.
+    The output will show you the name of the control and what the test expected to see happen, citing the specific control that failed. The 'profile summary' shows a tally of all the controls in the profile, based on their status as successful, failures, or skipped tests. A failing test will appear in red letters. This particular failing result shows you both that the test ran as it should have and that the `hello.txt` file does not exist in the directory.
 
     To make the test pass, you will create a `hello.txt` file in this directory and then use 'inspec exec' to run the test. The output should show the test passing.
 
@@ -179,7 +180,7 @@ An InSpec control may contain more than one test. However, it is advisable that 
 
     You should show the second test failing because the hello.txt file is currently empty.
 
-    ```bash
+    ```ruby
      # ~/learn-inspec
      $ inspec exec hello_spec.rb
 
@@ -198,7 +199,7 @@ An InSpec control may contain more than one test. However, it is advisable that 
 
     This time, you should see both tests pass.
 
-     ```bash
+     ```ruby
      # ~/learn-inspec
      $ echo "hello world" > hello.text
      $ inspec exec hello_spec.rb
@@ -309,6 +310,7 @@ Once you have VirtualBox and Vagrant installed, you will move to your learn-insp
     ```bash
     # ~/learn-inspec
     $ vagrant ssh server
+
     Welcome to Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-112-generic x86_64)
 
      * Documentation:  https://help.ubuntu.com/
@@ -329,7 +331,7 @@ Once you have VirtualBox and Vagrant installed, you will move to your learn-insp
 
 1. Test your virtual machine with the control that you wrote earlier in this module.
 
-    You will run the control using `inspec exec` and passing a `target` option, in this case, it will be `--target=ssh://vagrant:vagrant@localhost:YOUR-PORT-NUM`. After running the control, you should see both tests failing. The control failed because neither the "hello.text" file nor its contents exist on the virtual machine.
+    You will run the control using `inspec exec` and passing a `target` option, as shown in the following code example. After running the control, you should see both tests fail. The tests failed because neither the "hello.text" file nor its contents exist on the virtual machine.
 
     ```bash
     # ~/learn-inspec
@@ -477,6 +479,7 @@ In this exercise, you will create an InSpec profile for our hello_spec.rb contro
     ```bash
     # ~/learn-inspec
     $ inspec init profile HELLO
+
     Create new profile at /Users/kimberlygarmoe/inspec/HELLO
     * Create directory controls
     * Create file controls/example.rb

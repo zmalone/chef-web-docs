@@ -29,7 +29,7 @@ In this tutorial, you will use Test Kitchen and Inspec with virtual machines usi
 
 In this tutorial, you'll learn how to use [InSpec](http://inspec.io/) to verify a server's configuration. You'll run InSpec from Test Kitchen on a virtual machine running on your workstation.
 
-[COMMENT] This tutorial follows [Compliance as code using InSpec](/tutorials/compliance-as-code-using-inspec/). You may wish to continue working with the same system from the previous tutorial, if it is still availible. You will also have the material you will need to start a new system.
+[COMMENT] This tutorial follows [Compliance as code using InSpec](/tutorials/compliance-as-code-using-inspec/). You may wish to continue working with the same system from the previous tutorial, if it is still available. You will also have the material you will need to start a new system.
 
 [COMMENT] If you're new to automated testing, consider reading [Getting started with automated testing](/skills/get-started-with-testing/) before you start this tutorial.
 
@@ -45,7 +45,7 @@ The idea behind test-driven development is to use tests, also called _specificat
 
 <script type="text/javascript" src="https://www.brighttalk.com/clients/js/embed/embed.js"></script> <object class="BrightTALKEmbed" width="705" height="660">     <param name="player" value="channel_player"/>     <param name="domain" value="https://www.brighttalk.com"/>     <param name="channelid" value="11349"/>     <param name="communicationid" value="191263"/>     <param name="autoStart" value="false"/>     <param name="theme" value=""/> </object>
 
-An important benefit of test-driven development is that it helps limit the scope of your work. You know you're done when all tests pass. And because the tests are code, they're versionable through source control. When a requirement changes, you capture that change by updating the tests. This gives you the complete history of your requirements and better insight into when and how your requirements changed.
+An important benefit of test-driven development is that it helps limit the scope of your work. You know you're done when all tests pass. And because the tests are code, they're version-able through source control. When a requirement changes, you capture that change by updating the tests. This gives you the complete history of your requirements and better insight into when and how your requirements changed.
 
 [END_BOX]
 
@@ -53,24 +53,28 @@ An important benefit of test-driven development is that it helps limit the scope
 
 ##Get Started with Test Kitchen and InSpec
 
-This module introduces the use of InSpec and Chef Supermarket community compliance profiles.
+This module introduces the use of InSpec and Chef Supermarket community compliance profiles. You will first simulate including a community compliance profile into your InSpec controls in the safe testing environment of Chef Test Kitchen. Once you have established that the profile works as expected in the testing environment, you will build it in InSpec and use it to scan a node. Later, you will use InSpec to alter the way that the community profile works.
 
-Test Kitchen is a tool for testing code by simulating different environments. Test kitchen makes it possible to incorporate infrastructure testing into your continuous integration workflow, shortening the time needed for performing testing, giving feedback, and remediating problems.
+Test Kitchen is Chef's tool for testing code by simulating different environments. Test kitchen makes it possible to incorporate infrastructure testing into your continuous integration workflow, shortening the time needed for performing testing, giving feedback, and remediating problems.
 
-In this lesson you will use first use Test Kitchen to write a test for the ssh-baseline community profile, watch it fail, and then write just enough code to make it pass. You will learn about using communities profiles community profile, Test Kitchen, and testing with InSpec. Later, you will use InSpec to alter the way that the community profile works.
+In this lesson you will use first use Test Kitchen to write a test for the ssh-baseline community profile, watch it fail, and then write just enough code to make it pass. You will learn about using communities profiles community profile, Test Kitchen, and testing with InSpec.
 
-Chef cookbooks are the fundamental unit of configuration and policy distribution in Chef.  A cookbook defines a scenario and contains everything that is required to support that scenario. Learn more [about cookbooks](https://docs.chef.io/cookbooks.html).  In this scenario, you will quickly generate a cookbook and make a few changes to it before moving on to InSpec and Chef Supermarket community profiles.
+Test Kitchen is a test harness that lets you set up infrastructure nodes and validate them in a safe environment before moving your infrastructure into production.
+
+Chef cookbooks are the fundamental unit of configuration and policy distribution in Chef.  A cookbook defines a process and contains everything that is required to support that process. Learn more [about cookbooks](https://docs.chef.io/cookbooks.html).
+
+In this scenario, you will quickly generate a cookbook and make a few changes to it before moving on to InSpec and Chef Supermarket community profiles.
 
 1. Get Test Kitchen up and running on your workstation.
 
-    Navigate to your `learn-chef` directory, install Test Kitchen with `gem install test-kitchen` and verify the installation with `kitchen version`.
+    Navigate to your home directory and install Test Kitchen with `gem install test-kitchen` and verify the installation with `kitchen version`.
 
     ```bash
-    $ cd learn-chef
-    learn-chef$ gem install test-kitchen
+    $ cd ~
+    $ gem install test-kitchen
     Successfully installed test-kitchen-1.16.0
     1 gem installed
-    learn-chef$ kitchen version
+    $ kitchen version
     Test Kitchen version 1.15.0
     ```
 1. Generate a Chef cookbook.
@@ -78,6 +82,7 @@ Chef cookbooks are the fundamental unit of configuration and policy distribution
     Use the command `chef generate cookbook kitchen_inspec`.
 
     ```bash
+    # ~
     $ chef generate cookbook kitchen_inspec
     Generating cookbook kitchen_inspec
     - Ensuring correct cookbook file content
@@ -107,15 +112,15 @@ Chef cookbooks are the fundamental unit of configuration and policy distribution
     You will see that an active git repo has been created for this project.
 
     ```bash
-    learn-inspec$ cd kitchen_inspec
+    $ cd kitchen_inspec
     kitchen_inspec git:(master)$
     ```
 
-1. As part of generating a cookbook, a `.kitchen.yml` is created in the `kitchen_inspec` directory.
+1. As part of generating a cookbook, a <% fp '.kitchen.yml' %>is created in the `kitchen_inspec` directory.
 
-    You will use this file to define what programs are required for running Test Kitchen. Open the `.kitchen.yml` in an editor of your choice.
+    You will use this file to define what programs are required for running Test Kitchen. Open the <% fp '.kitchen.yml' %> in the editor of your choice.
 
-    ```bash
+    ```yaml
     driver:
      name: vagrant
 
@@ -153,7 +158,7 @@ Chef cookbooks are the fundamental unit of configuration and policy distribution
 
     Then, try making a few changes to remove the centos-7.2 platform and change the ubuntu instance to 14.04.
 
-    ```bash
+    ```yaml
     #/kitchen_inspec/.kitchen.yml
     driver:
       name: vagrant
@@ -186,7 +191,8 @@ Chef cookbooks are the fundamental unit of configuration and policy distribution
     Running `kitchen create` spins up an instance of the ubuntu-14.04.
 
     ```bash
-    kitchen create
+    #/kitchen_inspec
+    $ kitchen create
     -----> Starting Kitchen (v1.15.0)
     -----> Creating <default-ubuntu-1404>...
           Bringing machine 'default' up with 'virtualbox' provider...
@@ -194,14 +200,27 @@ Chef cookbooks are the fundamental unit of configuration and policy distribution
           [...]
           [...]
     ```
+1. 'kitchen converge' writes all of the changes you have made onto the node.
+
+    ```bash
+    #kitchen_inspec
+    $ kitchen converge
+     -----> Converging <default-ubuntu-1404>...
+       Preparing files for transfer
+       Preparing dna.json
+       Resolving cookbook dependencies with Berkshelf 5.6.0...
+        ...
+       Running handlers complete
+       Chef Client finished, 0/0 resources updated in 01 seconds
+       Finished converging <default-ubuntu-1404> (0m25.56s).
 
 1. Then you should enter `kitchen list` to view the machines that Test Kitchen has set up.
 
     Notice that Test Kitchen already has a running instance, default-ubuntu-1404.
 
     ```bash
-    kitchen_inspec git:(master)$ ✗ kitchen list
-
+    # kitchen_inspec
+     $ kitchen list
       Instance             Driver   Provisioner  Verifier  Transport  Last Action  Last Error
       default-ubuntu-1404  Vagrant  ChefZero     Inspec    Ssh        Created      <None>
     ```
@@ -211,22 +230,24 @@ Chef cookbooks are the fundamental unit of configuration and policy distribution
     You can direct the log information into this file with, `kitchen verify > verify.txt`.
 
     ```bash
-    kitchen_inspec git:(master)$ ✗ touch verify.text
-    kitchen_inspec git:(master)$ ✗ kitchen verify > verify.txt
+    #/kitchen_inspec
+    $ touch verify.text
+    $ kitchen verify > verify.txt
     ```
 
 1. Finally, look at contents of the verify.txt file using `cat verify.txt`.
 
-    You will notice that Test Kitchen uses InSpec tests and targets a vagrant instance at forwarded port 2201. These default integration tests are located at `~/kitchen_inspec/test/smoke/default/default_test.rb`.
+    You will notice the results from two InSpec tests at the very end of the verify.txt output. This is because Test Kitchen uses InSpec tests as its default verifier and targets a vagrant instance at forwarded port 2222. The default integration controls are located at <% fp '~/kitchen_inspec/test/smoke/default/default_test.rb' %>.
 
     ```bash
-    kitchen_spec git:(master)$ ✗ cat verify.txt
+    #/kitchen_inspec
+    $ cat verify.txt
     -----> Starting Kitchen (v1.15.0)
     -----> Setting up <default-ubuntu-1404>...
          [...]
-   Finished setting up <default-ubuntu-1404> (0m0.00s).
+    Finished setting up <default-ubuntu-1404> (0m0.00s).
     -----> Verifying <default-ubuntu-1404>...
-   Loaded
+    Loaded
 
     Target:  ssh://vagrant@127.0.0.1:2201
 
@@ -241,7 +262,7 @@ Chef cookbooks are the fundamental unit of configuration and policy distribution
       Test Summary: 2 successful, 0 failures, 2 skipped
           Finished verifying <default-ubuntu-1404> (0m0.44s).
       -----> Kitchen is finished. (0m15.86s)
-```
+    ```
 
 ## Add a Chef Supermarket Community Profile
 
@@ -254,7 +275,7 @@ You can use InSpec commands to learn about  community profiles and how to use th
     These are the broader inspec commands, you will need to look at "supermarket".
 
     ```bash
-    # learn-inspec
+    # learn-inspect
     $ inspec help
 
     Commands:
@@ -294,6 +315,8 @@ You can use InSpec commands to learn about  community profiles and how to use th
 
 1. Use `inspec supermarket profiles` to view the list of compliance profiles available through the Chef Supermarket.
 
+    You will use the profile for dev-sec/ssh-baseline.
+
     ```bash
     # learn-inspec
     $ inspec supermarket profiles
@@ -306,7 +329,7 @@ You can use InSpec commands to learn about  community profiles and how to use th
       * chef-alfresco-inspec-tomcat alfresco/chef-alfresco-inspec-tomcat
       * chef-client-hardening sliim/chef-client-hardening
       * CIS Docker Benchmark dev-sec/cis-docker-benchmark
-      * CVE-2016-5195 ndobson/cve-2016-5195
+      * CVE-2016-5195 ndobson/cvi-2016-5195
       * DevSec Apache Baseline dev-sec/apache-baseline
       * DevSec Linux Baseline dev-sec/linux-baseline
       * DevSec Linux Patch Baseline dev-sec/linux-patch-baseline
@@ -343,14 +366,14 @@ You can use InSpec commands to learn about  community profiles and how to use th
     description:   SSH compliance profile, used for Security + DevOps. More information is available at http://dev-sec.io
     ```
 
+    Make note of the URL for this profile, because you will need it to include the ssh-baseline profile.
+    Now that you have all of the information that you need for implementing a community compliance profile. Including a community profile in your cookbook takes two steps: opening your <% fp 'kitchen_inspec/.kitchen.yml' %>file and including the ssh-baseline recipe in the suites.
 
-    Now that you have all of the information that you need for implementing a community compliance profile. Including a community profile in your cookbook takes two steps, opening your `.kitchen.yml` file and including the ssh-baseline test as a recipe in your suites.
-
-1. Open the `.kitchen.yml` file in your editor.
+1. Open the <% fp '.kitchen.yml' %>file in your editor.
 
     It should look like:
 
-    ```bash
+    ```yaml
     # kitchen_inspec
     driver:
       name: vagrant
@@ -375,9 +398,13 @@ You can use InSpec commands to learn about  community profiles and how to use th
 
        ```
 
-1. Add another line to the .kitchen.yml to pull in the community profile for ssh-baseline, which should look like:
+1. Include the ssh-baseline profile in your suites.
 
-    ```bash
+    You will do this by adding another line to the .kitchen.yml that pulls in the community profile.
+
+    At this point, you can also decide to ignore or remove the smoke tests. Change your <% fp 'kitchen_inspec/.kitchen.yml' %> to look like:
+
+    ```yaml
     # kitchen_inspec/.kitchen.yml
     suites:
      - name: default
@@ -385,29 +412,72 @@ You can use InSpec commands to learn about  community profiles and how to use th
         - recipe[learning_inspec::default]
       verifier:
         inspec_tests:
-          - name: dev-sec/ssh-baseline
           - url: https://github.com/dev-sec/ssh-baseline
       attributes:
     ```
 
-1. To see that the new profile is working, enter`kitchen verify`.
+1. To see that the new profile is working, enter `kitchen verify`.
 
-    You should see that the both the original test profile and the community profile are now included.
+    You should see that the ssh-baseline controls are tested -- but that they largely fail!
 
     ```bash
     #kitchen_inspec
     $ kitchen verify
+     ...
+     Profile Summary: 15 successful, 53 failures, 0 skipped
+     Test Summary: 48 successful, 54 failures, 2 skipped
 
     ```
+1. The profile tests fail because the node has not yet been correctly hardened.
 
-1. If you recall, you set up `kitchen verify` to log into `verify.txt`.
-
-    If you open `verify.txt` in your editor, or if you `cat verify.txt` onto your workstation screen, you will be able to examine the output. If you wished to look for a particular control,  “sshd-48” for example, you might run `cat verify.txt | grep sshd-48`
+    Fixing the node will take two additional steps. First, you will need to declare your cookbook's dependency on the recipes for 'os-hardening' and 'ssh-hardening'.  You will do this by opening up <% fp 'metadata.rb' %> in your editor and adding the following dependency statements at the bottom of the file:
 
     ```ruby
-    #learn-inspec
-    $ cat verify.txt
-    $ cat verify.txt | grep sshd-48
+     # metadata.rb
+     name 'kitchen_inspec'
+     maintainer 'The Authors'
+     maintainer_email 'you@example.com'
+     license 'all_rights'
+     description 'Installs/Configures kitchen_inspec'
+     long_description 'Installs/Configures kitchen_inspec'
+     version '0.1.0'
+
+     # The `issues_url` points to the location where issues for this cookbook are
+     # tracked.  A `View Issues` link will be displayed on this cookbook's page when
+     # uploaded to a Supermarket.
+     #
+     # issues_url 'https://github.com/<insert_org_here>/kitchen_inspec/issues' if respond_to?(:issues_url)
+
+     # The `source_url` points to the development repository for this cookbook.  A
+     # `View Source` link will be displayed on this cookbook's page when uploaded to
+     # a Supermarket.
+     #
+     # source_url 'https://github.com/<insert_org_here>/kitchen_inspec' if respond_to?(:source_url)
+
+     depends 'os-hardening'
+     depends 'ssh-hardening'
+    ```
+
+1. You will also need to make a pair of complementary changes in the <% fp 'recipes/default.rb' %>file.
+
+    ```ruby
+     # recipes/default.rb
+     # Cookbook:: kitchen_inspec
+     # Recipe:: default
+     #
+     # Copyright:: 2017, The Authors, All Rights Reserved
+
+     include_recipe ‘os-hardening’
+     include_recipe ‘ssh-hardening’
+    ```
+
+1. Run `kitchen verify` again, and this time you should see all the controls pass!
+
+    ```bash
+     $ kitchen verify
+
+      Profile Summary: 68 successful, 0 failures, 0 skipped
+      Test Summary: 100 successful, 0 failures, 0 skipped
     ```
 
 
@@ -417,7 +487,22 @@ You can use InSpec commands to learn about  community profiles and how to use th
 
 ##Make Local Changes to the Community Profile
 
-You can modify the community profiles to perform additional tests--or to skip specific ones. In this exercise, you will use InSpec to run the ssh-baseline profile instead of running it within a cookbook. To use InSpec for running a profile, you will remove the lines you added to the `.kitchen.yml`, create a custom InSpec profile, and run the profile using InSpec. Finally, you will add a control that skips the `sshd-48` control.
+In this section, you will take the InSpec profile that you constructed in the Test Kitchen environment and turn it into a live InSpec profile. Once you have made the transition to an InSpec profile, you will modify the profile to exclude one of the tests from the community profile.
+
+The relationship between a remotely defined community profile and a locally defined set of customizations in the form of included, excluded, and uniquely defined controls is the essence of InSpec. It is the ability to define a profile by what is unique to it while leaving those parts that are commonly held to the management of other [providers?] that makes it both agile and elegant.
+
+Using your local control file, you can modify the the included community profiles to skip individual controls or perform additional ones. In this exercise, you will use InSpec to run the ssh-baseline profile instead of running it within a cookbook. To use InSpec for running a profile, you will remove the lines you added to the `.kitchen.yml`, create a custom InSpec profile, and run the profile using InSpec. Finally, you will add a control that skips the `sshd-48` control.
+
+1. If you recall, you can set up `kitchen verify` to log into `verify.txt`.
+
+    If you open `verify.txt` in your editor, or if you `cat verify.txt` onto your workstation screen, you will be able to examine the output. If you wished to look for a particular control,  “sshd-48” for example, you might run `cat verify.txt | grep sshd-48`
+
+    ```ruby
+    #learn-inspec
+    $ kitchen verify < verify.txt
+    $ cat verify.txt | grep sshd-48
+       ✔  sshd-48: Server: DH primes
+    ```
 
 1. Remove the `ssh-baseline` profile from your `.kitchen.yml`
 
@@ -459,7 +544,7 @@ You can modify the community profiles to perform additional tests--or to skip sp
 
     Add the following depends statement to the `profiles/test/inspec.yml`:
 
-    ```ruby
+    ```yaml
     #learn-inspec/profiles/test
        name: test
        title: InSpec Profile
@@ -475,14 +560,17 @@ You can modify the community profiles to perform additional tests--or to skip sp
            url: https://github.com/dev-sec/ssh-baseline
     ```
 
-1. Modify the control to include 'ssh-baseline' using an editor of your choice.
+1. Modify the control to include `ssh-baseline` profile using an editor of your choice.
 
     ```ruby
-    #learn-inspec/profiles/test/controls/example.rbß
+    #learn-inspec/profiles/test/controls/example.rb
     # ensure servers are hardened
+    title 'ssh-baseline`
+
     include_controls 'ssh-baseline'
+
     ```
-1. Run 'inspec check' to validate the control.
+1. Run `inspec check` to validate the control.
 
     ```bash
     #~/learn-inspec/profiles
@@ -498,10 +586,9 @@ You can modify the community profiles to perform additional tests--or to skip sp
 
     ```
 
+1. Modify the control to `skip_control sshd-48`.
 
-1. Modify the control to skip_control sshd-48.
-
-    Edit profiles/test/controls/example.rb like this:
+    Edit <% fp 'profiles/test/controls/example.rb' %> like this:
 
     ```ruby
     #learn-inspec/profiles/test/controls/example.rb
