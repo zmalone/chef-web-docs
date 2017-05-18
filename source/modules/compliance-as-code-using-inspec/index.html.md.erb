@@ -32,11 +32,11 @@ InSpec is short for "infrastructure specification", which is exactly what InSpec
 Before starting this tutorial, you need to have the following installed on your workstation:
 
 1. VirtualBox <https://www.virtualbox.org/> is a "hypervisor" program, which means that it manages virtual machine installations. Each running virtual machine is called an "instance".
-1. Vagrant <https://www.vagrantup.com/downloads.html> makes woriking with hypervisor programs easier by using a configuration file, called a `Vagrantfile`  that defines a the structure of a virtual machine, such as available memory, host name, and network setting using a sort of template. This template can be re-used for launching as many copies of a vm instance as you need, as many times as you need.
+1. Vagrant <https://www.vagrantup.com/downloads.html> makes working with hypervisor programs easier by using a configuration file, called a `Vagrantfile`  that defines a the structure of a virtual machine, such as available memory, host name, and network setting using a sort of template. This template can be re-used for launching as many copies of a vm instance as you need, as many times as you need.
 Vagrant also provides access to base virtual machine images, called _boxes_. [HashiCorp's Atlas](https://www.hashicorp.com/atlas.html) is a place where you can access prebuilt boxes or upload new boxes for others to use. [Bento](http://chef.github.io/bento/) is a Chef project that provides ready-to-use Vagrant boxes for many common platforms, including Ubuntu.
 1. ChefDK (includes InSpec) <https://downloads.chef.io/chefdk>.
 
-This tutorial is written for a MacOS or Linux workstation and an Ubuntu 14.04 virtual machine running on Vagrant and Virtualbox. However, it can be adapted to most systems running the ChefDK and connecting to a second machine that also runs the ChefDK.
+This tutorial is written for a MacOS or Linux workstation and an Ubuntu 14.04 virtual machine running on Vagrant and VirtualBox. However, it can be adapted to most systems running the ChefDK and connecting to a second machine that also runs the ChefDK.
 
 ###Concepts
 
@@ -73,7 +73,7 @@ From the `learn-inspec` directory on your workstation you will write your first 
     touch 'hello_spec.rb'
     ```
 
-1. With the editor of your choice, open 'hello_spec.rb' and copy the follwing code into the file:
+1. With the editor of your choice, open 'hello_spec.rb' and copy the following code into the file:
 
     ```ruby
     # ~/learn-inspec/hello_spec.rb
@@ -224,7 +224,7 @@ While InSpec can be used to verify that your local system conforms to your speci
 
 If you have not already done so, download and install both VirtualBox and Vagrant. VirtualBox is software for creating virtual machines. Vagrant is software for configuring virtual machines.
 
-Once you have VirtualBox and Vagrant installed, you will move to your learn-inspec command line prompt and initalize a virtual machine using vagrant. The workflow is to, enter `vagrant init bento/ubuntu-14.04` into the command line, which will initialize a virtual machine and place a configuration file, called a `Vagrantfile`, into the directory. Once the virtual machine is up and running, you will change the Vagrantfile file and restart the virtual machine using `vagrant up --provision`. To run the virtual machine, run `vagrant up`. `vagrant halt` will stop the virtual machine, and `vagrant destroy` will stop and remove a virtual machine from your system.
+Once you have VirtualBox and Vagrant installed, you will move to your learn-inspec command line prompt and initialize a virtual machine using vagrant. The workflow is to, enter `vagrant init bento/ubuntu-14.04` into the command line, which will initialize a virtual machine and place a configuration file, called a `Vagrantfile`, into the directory. Once the virtual machine is up and running, you will change the Vagrantfile file and restart the virtual machine using `vagrant up --provision`. To run the virtual machine, run `vagrant up`. `vagrant halt` will stop the virtual machine, and `vagrant destroy` will stop and remove a virtual machine from your system.
 
 1. Initialize Vagrant by entering `vagrant init bento/ubuntu-14.04` into the command line.
 
@@ -281,7 +281,7 @@ Once you have VirtualBox and Vagrant installed, you will move to your learn-insp
 
     id       name   provider   state   directory
     -----------------------------------------------------------------------
-    b8548e4  server    virtualbox running  /Users/yourname/learn-inspec
+    b8548e4  server    VirtualBox running  /Users/yourname/learn-inspec
 
     ```
 
@@ -505,7 +505,6 @@ In this exercise, you will create an InSpec profile for our hello_spec.rb contro
     │   ├── controls
     │   │   ├── example.rb
     │   │   ├── hello_spec.rb
-    │   │   ├── hello_spec_2.rb
     │   │   ├── profile.rb
     │   │   └── sshd.rb
     │   ├── hello.txt
@@ -527,7 +526,6 @@ In this exercise, you will create an InSpec profile for our hello_spec.rb contro
     ├── controls
     │   ├── example.rb
     │   ├── hello_spec.rb
-    │   ├── hello_spec_2.rb
     │   ├── profile.rb
     │   └── sshd.rb
     ├── hello.txt
@@ -612,7 +610,7 @@ In this exercise, you will create an InSpec profile for our hello_spec.rb contro
       version: 0.1.0
     ```
 
-    The inspec.yml contains the metadata for your profile, some of which is reqired for the profile to run.
+    The inspec.yml contains the metadata for your profile, some of which is required for the profile to run.
 
     ```bash
     # inspec.yml fields
@@ -678,7 +676,7 @@ In this exercise, you will create an InSpec profile for our hello_spec.rb contro
 
     `cd .. ` back into `learn-inspec` and run `inspec check HELLO` to verify this control.
 
-    Notice that it errors out with because the `inspec.yml` file is missing the version metadata.
+    Notice that it errors out with because the version metadata is missing from the `inspec.yml` file.
 
     ```bash
     # ~/learn-inspec
@@ -716,7 +714,7 @@ In this exercise, you will create an InSpec profile for our hello_spec.rb contro
     The output shows the test failing, but it also provides a lot of important information.
 
     ```ruby
-    # Inspec Check Explanation
+    # InSpec Check Explanation
     The output to the command shows:
        * the location of the tests
        * the name of the profile used
@@ -784,7 +782,7 @@ In this exercise, you will create an InSpec profile for our hello_spec.rb contro
 
 ##Scan for compliance
 
-In this exercize, you will add a new control to our profile that tests for SSH version using the `sshd_config` resource. You will then learn to check the validity of your control and how to run it against a remote system.
+In this exercise, you will add a new control to our profile that tests for SSH version using the `sshd_config` resource. You will then learn to check the validity of your control and how to run it against a remote system.
 
 The sshd_config inspec audit resource tests the configuration data on a your virtual machine for the OpenSSH daemon located at <code class="file-path">/etc/ssh/sshd\_config</code> on Linux and Unix.
 
@@ -871,7 +869,7 @@ The sshd_config inspec audit resource tests the configuration data on a your vir
 
 What happens if you want to to run the same tests on machines with different content?  Or what if you have information that should not be stored in plain-text cookbooks, like user names or passwords?  For these cases, InSpec uses attributes to act in different ways, depending on different conditions.
 
-In this exercise, you will use two virtual machines and put a hello.txt file onto each one--with slightly different content in each file on each machine.  Then you will add an attribute and a test to our InSpec framework, run the test, see it fail, and then modify the content on each machine so that the test will pass in the correct instance, but otherwise it will fail. Then [**if there is time**] you will modify the control to perform entirely different tests in different situations.
+In this exercise, you will use two virtual machines and put a hello.txt file onto each one--with slightly different content in each file on each machine.  Then you will add an attribute and a test to our InSpec framework, run the test, see it fail, and then modify the content on each machine so that the test will pass in the correct instance, but otherwise it will fail.
 
 1. Create two ubuntu containers by copying the following code into the Vagrantfile.
 
@@ -904,7 +902,7 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
     end
     ```
 
-1. Find and make note of the forwarded ports for both the "qa" amd "dev" virtual machines.
+1. Find and make note of the forwarded ports for both the "qa" and "dev" virtual machines.
 
     ```bash
     # ~/learn-inspec
@@ -1059,7 +1057,7 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
     vagrant@vagrant:dev$ exit
     ```
 
-1. Run `inspec exec` with the appropriate file passed in with `--attrs`.
+1. Run `inspec exec` passed with `--attrs` and the name of the attribute file.
 
     Both commands should succeed on both 'qa' and 'dev'
 
