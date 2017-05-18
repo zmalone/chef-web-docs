@@ -47,9 +47,9 @@ export class QuizComponent implements OnInit {
       this.progressService.activeUserProgress.subscribe(() => {
         const moduleId = this.progressService.getModuleRoot(this.siteDataService.currentPage().id)
         const trackId = this.progressService.getTracksByModule(moduleId)[0]
-        this.isUnitComplete = !!this.progressService.isComplete('units', this.siteDataService.currentPage().id)
-        this.isModuleComplete = !!this.progressService.isComplete('modules', moduleId)
-        this.isTrackComplete = !!this.progressService.isComplete('tracks', trackId)
+        this.isUnitComplete = this.progressService.isComplete('units', this.siteDataService.currentPage().id)
+        this.isModuleComplete = this.progressService.isComplete('modules', moduleId)
+        this.isTrackComplete = this.progressService.isComplete('tracks', trackId)
         const achievements = Object.keys(this.progressService.getAchievements())
         this.showSpecialCoaster = (achievements.length === 1) && (achievements[0] === 'grand-opening') &&
             enableSpecialCoaster && !this.isTrackComplete
