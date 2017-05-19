@@ -17,6 +17,7 @@ import { ModuleNextBtnDirective } from './directives/module-next-btn/module-next
 import { CheckBoxDirective } from './directives/check-box/check-box.directive'
 import { TabsDirective } from './directives/tabs/tabs.directive'
 import { UserProfileService } from './services/user-profile.service'
+import { DisqusCommentsComponent } from './components/disqus-comments/disqus-comments.component'
 import { UserProgressBarComponent } from './components/user-progress-bar/user-progress-bar.component'
 import { UserProgressStampComponent } from './components/user-progress-stamp/user-progress-stamp.component'
 import { UserTrackProgressComponent } from './components/user-track-progress/user-track-progress.component'
@@ -69,6 +70,7 @@ export const routes = RouterModule.forRoot(routerConfig, { useHash: true })
     ModuleNextBtnDirective,
     CheckBoxDirective,
     TabsDirective,
+    DisqusCommentsComponent,
     UserProgressBarComponent,
     UserProgressStampComponent,
     UserTrackProgressComponent,
