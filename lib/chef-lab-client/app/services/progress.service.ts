@@ -330,7 +330,7 @@ export class ProgressService {
       // Don't allow anonymous users to keep more than a certain amount progress locally
       const excludeIds = ['getting-started', 'grand-opening']
       const anonLimitTracks = 1
-      const anonLimitModules = 10
+      const anonLimitModules = 8
       const anonLimitAchievements = 1
       const completedTracks = Object.keys(dataLocal['tracks'] || {}).filter(id => {
         return dataLocal['tracks'][id].completed_at && excludeIds.indexOf(id) === -1
