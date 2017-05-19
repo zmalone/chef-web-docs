@@ -31,7 +31,9 @@ export class UserProfileService {
     const observable = this._tokenService.signInOAuth(serviceName)
     // For sameWindow oAuth, observable is undefined here
     if (!observable) return Observable.never()
-    return observable
+    // Due to the use of Observable.fromEvent in signInOAuth, use `first` here to unsubscribe after
+    // the first message is received to avoid repeating events if a user signs out and back in.
+    return observable.first()
       .switchMap(this.loadUserProfile.bind(this))
       .switchMap(this.identifyUser.bind(this))
       .switchMap(this.syncMarketo.bind(this))
