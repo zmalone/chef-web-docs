@@ -1,15 +1,15 @@
 ---
-id: compliance-as-code-using-inspec
+id: learn-the-inspec-basics
 description: "Learn the basics of InSpec including how to write controls, scan remote systems, and more."
-name: compliance-as-code-using-inspec
-title: 'Compliance as code using InSpec'
-short_title: 'Compliance as code using InSpec'
+name: learn-the-inspec-basics
+title: 'Learn the InSpec basics'
+short_title: 'Learn the InSpec basics'
 type: topic
 platform: Ubuntu
 platform_id: ubuntu
 category: compliance-automation
 time_to_complete: 60 minutes
-breadcrumb_label: Introduction to Compliance Automation
+quiz_path: quizzes/learn-the-inspec-basics.yml
 headings: [
   { label: 'Prerequisites', href: '#prerequisites' },
   { label: 'Write a basic test', href: '#writeabasicinspectest' },
@@ -18,29 +18,27 @@ headings: [
   { label: 'Create a profile', href: '#createaprofile' },
   { label: 'Scan for compliance', href: '#scanforcompliance' },
   { label: 'Make your profile more reusable', href: '#makeyourprofilemorereusable' },
+  { label: 'Conclusion', href: '#conclusion' }
 ]
 ---
-[START_BOX]
-# Compliance as Code with InSpec
-
 Compliance is an emerging and exciting area of automation. Compliance means that your systems conform to the standards or regulations that you need to follow in your work. Fortunately, you can use a great Chef product--InSpec--to ensure that your infrastructure operates and follows the rules and regulations of your company and industry. Compliance as code automates auditing processes, saving money, time, and most importantly, your relationships with customers and stakeholders.
 
 InSpec is short for "infrastructure specification", which is exactly what InSpec allows you to do. InSpec allows you to _specify_, or define and automate infrastructure, integration, and compliance testing, ensuring that your systems and processes adhere to government, industry,  and company standards.
 
 ## Prerequisites
 
-Before starting this tutorial, you need to have the following installed on your workstation:
+Before starting this module, you need to have the following installed on your workstation:
 
 * VirtualBox <https://www.virtualbox.org/> is a "hypervisor" program, which means that it manages virtual machine installations. Each running virtual machine is called an "instance".
 * Vagrant <https://www.vagrantup.com/downloads.html> makes working with hypervisor programs easier by using a configuration file, called a `Vagrantfile`  that defines a the structure of a virtual machine, such as available memory, host name, and network setting using a sort of template. This template can be re-used for launching as many copies of a vm instance as you need, as many times as you need.
 Vagrant also provides access to base virtual machine images, called _boxes_. [HashiCorp's Atlas](https://www.hashicorp.com/atlas.html) is a place where you can access prebuilt boxes or upload new boxes for others to use. [Bento](http://chef.github.io/bento/) is a Chef project that provides ready-to-use Vagrant boxes for many common platforms, including Ubuntu.
 * ChefDK (includes InSpec) <https://downloads.chef.io/chefdk> provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
 
-This tutorial is written for a MacOS or Linux workstation and an Ubuntu 14.04 virtual machine running on Vagrant and VirtualBox. However, it can be adapted to most systems running the ChefDK and connecting to a second machine that also runs the ChefDK.
+This module is written for a macOS or Linux workstation and an Ubuntu 14.04 virtual machine running on Vagrant and VirtualBox. However, it can be adapted to most systems running the ChefDK and connecting to a second machine that also runs the ChefDK.
 
 ### Concepts
 
-These are the concepts that you will learn about in this tutorial:
+These are the concepts that you will learn about in this module:
 
 * Audit - Comprehensive review of an organization's adherence to regulator guidelines. Some of the areas that an audit examines are security policies, user access controls, and risk management procedures.
 * Compliance - When a system runs according to a defined set of rules it is in compliance. 'Compliance' can be used to describe technological processes as well as organizations that run in accordance with government, industry, or company policies.
@@ -48,10 +46,6 @@ These are the concepts that you will learn about in this tutorial:
 * Control - The expression of practices for auditing settings and processes in code, which are stored within a control file in and InSpec profile.
 * Scanning and remote scanning - Running compliance tests against a local or remote computer.
 * Profiles -  A collection of tests stored in one or more control to designed to satisfy a compliance policy. In InSpec, the profile is the structure in which controls are coded.
-
-[END_BOX]
-
-[START_BOX]
 
 ## Write a basic InSpec test
 
@@ -140,9 +134,6 @@ The control file contains a remarkable amount of information in a very brief for
 
          Profile Summary: 1 successful, 0 failures, 0 skipped
     ```
-[END_BOX]
-
-[START_BOX]
 
 ## Add a second test
 
@@ -207,10 +198,6 @@ In this excercise, you will edit the control file to include a second test that 
        Test Summary: 2 successful, 0 failures, 0 skipped
     ```
 
-[END_BOX]
-
-[START_BOX]
-
 ## Scan a remote system
 
 While InSpec can be used to verify that your local system conforms to your specifications, you can also use it to test your remote systems. In this exercise, you will create a virtual machine and scan it with your `hello_spec.rb` control, writing just enough code to make the tests pass on the remote virtual machine.
@@ -232,7 +219,7 @@ If you have not already done so, download and install both VirtualBox and Vagran
 
     ```ruby
     # learn-inspec/Vagrantfile
-    # This is the first Vagrantfile ubuntu server needed in the tutorial.
+    # This is the first Vagrantfile ubuntu server needed in the module.
 
     # encoding: utf-8
     # -*- mode: ruby -*-
@@ -431,10 +418,6 @@ security_groups.each do |security_group|
    end
 end
 ```
-
-[END_BOX]
-
-[START_BOX]
 
 ## Create a Profile
 
@@ -758,10 +741,6 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
 
     ```
 
-[END_BOX]
-
-[START_BOX]
-
 ## Scan for compliance
 
 In this exercise, you will add a new control to your profile that tests for SSH version using the `sshd_config` resource. You will then learn to check the validity of your control and how to run it against a remote system.
@@ -844,10 +823,6 @@ The sshd_config inspec audit resource tests the configuration data on a your vir
 
     Profile Summary: 1 successful, 0 failures, 0 skipped
    ```
-
-[END_BOX]
-
-[START_BOX]
 
 ## Make your profile more reusable
 
@@ -1074,15 +1049,8 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
 
 As you can see, InSpec makes testing different environments with a single control pretty simple. The ease of extending controls reduces the inevitable sprawl of controls and profiles that happens when every individual system, such as ones with different operating systems or different node roles, need a suite of similar tests designated for that purpose only.
 
-[END_BOX]
-
-
-[START_BOX]
-
 ## Conclusion
 
-In this tutorial, you learned to write a basic InSpec control, integrated your tests into a profile, and used these tools to scan both local and remote systems. You were also introduced to a few of the different environments where you can integrate InSpec into your continuous automation workflow, such as WinRM, Docker, and the cloud. Finally, you learned to use attributes to test a single control in more than one environment, which will make your controls extendable and flexible.
+In this module, you learned to write a basic InSpec control, integrated your tests into a profile, and used these tools to scan both local and remote systems. You were also introduced to a few of the different environments where you can integrate InSpec into your continuous automation workflow, such as WinRM, Docker, and the cloud. Finally, you learned to use attributes to test a single control in more than one environment, which will make your controls extendable and flexible.
 
 [TRAINING] Ready to dig deeper? Join us in-person or online at an upcoming instructor-led training event. [Learn more about our course offerings](https://www.chef.io/training/) or [check out our upcoming classes](https://www.chef.io/blog/events/category/training-events/). Use discount code **LEARN-CHEF** to save 10%. Use what you've learned to [gain official Chef certification](https://training.chef.io/certification).
-
-[END_BOX]

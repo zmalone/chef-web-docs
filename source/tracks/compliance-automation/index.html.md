@@ -11,7 +11,7 @@ category: Admin
 order: 9
 modules:
 - compliance-as-code-inspec-1-0
-- compliance-as-code-using-inspec
+- learn-the-inspec-basics
 - using-community-profiles
 - using-the-inspec-shell
 - hp-compliance
