@@ -60,7 +60,7 @@ export class UserProfileService {
     .map(res => <User> res.json())
     .switchMap(userInfo => {
       this.userProfile.next(userInfo)
-      return this.userProfile
+      return this.userProfile.first()
     })
     .switchMap(this.syncMarketo.bind(this))
   }
