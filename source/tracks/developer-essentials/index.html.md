@@ -20,14 +20,14 @@ video_url: 'https://player.vimeo.com/video/215924054'
 social_share:
   shared: &shared
     title: "Pick Up These Chef Developer Essentials"
-    post: "Currently acquiring the tools to write, store and test code in a DevOps environment via the `Developer Essentials` track at Learn Chef Rally. Get what you need now."
+    post: "Currently acquiring the tools to write, store and test code in a DevOps environment via the Developer Essentials track at Learn Chef Rally. Get what you need now."
     image: /assets/images/social/track-share-developer-essentials.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Getting the tools to write, store & test code in a DevOps environment with Learn Chef's `Developer Essentials` track: "
+    post: "Getting the tools to write, store & test code in a DevOps environment with Learn Chef's Developer Essentials track: "
 related_tracks:
 - infrastructure-automation
 - local-development-and-testing

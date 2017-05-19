@@ -23,14 +23,14 @@ video_url: 'https://player.vimeo.com/video/215936849'
 social_share:
   shared: &shared
     title: "Gain A Better Understanding Of Writing Cookbooks"
-    post: "`Writing Cookbooks` track at Learn Chef Rally is showing me how to turn scripts into recipes, recognize common cookbooks patterns, and more. Write your own ticket now."
+    post: "Writing Cookbooks track at Learn Chef Rally is showing me how to turn scripts into recipes, recognize common cookbooks patterns, and more. Write your own ticket now."
     image: /assets/images/social/track-share-extending-chef.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Viewing `Extending Chef` track to learn its out-of-box capabilities: Ohai plugins, multiplatform cookbooks, more: "
+    post: "Viewing Extending Chef track to learn its out-of-box capabilities: Ohai plugins, multiplatform cookbooks, more: "
 related_tracks:
 - infrastructure-automation
 - local-development-and-testing

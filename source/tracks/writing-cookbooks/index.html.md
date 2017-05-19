@@ -19,14 +19,14 @@ tags: [infrastructure,intermediate]
 social_share:
   shared: &shared
     title: "Gain A Better Understanding Of Writing Cookbooks"
-    post: "`Writing Cookbooks` track at Learn Chef Rally is showing me how to turn scripts into recipes, recognize common cookbooks patterns, and more. Write your own ticket today."
+    post: "Writing Cookbooks track at Learn Chef Rally is showing me how to turn scripts into recipes, recognize common cookbooks patterns, and more. Write your own ticket today."
     image: /assets/images/social/track-share-writing-cookbooks.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "`Writing Cookbooks` showing me how to turn scripts into recipes, recognize cookbook patterns, & more: "
+    post: "Writing Cookbooks showing me how to turn scripts into recipes, recognize cookbook patterns, & more: "
 related_tracks:
 - infrastructure-automation
 - local-development-and-testing
