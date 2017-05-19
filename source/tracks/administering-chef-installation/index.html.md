@@ -17,14 +17,14 @@ video_url: 'https://player.vimeo.com/video/215936836'
 social_share:
   shared: &shared
     title: "Go Behind The Scenes Of Administering A Chef Installation"
-    post: "Polishing off the `Administering a Chef Installation` track at Learn Chef Rally. Discovering how Chef server components work together, plus best practices for securing the server. Indulge yourself."
+    post: "Polishing off the Administering a Chef Installation track at Learn Chef Rally. Discovering how Chef server components work together, plus best practices for securing the server. Indulge yourself."
     image: /assets/images/social/track-share-administering-chef-installation.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Wrapping up `Administering a Chef Installation` track showing how Chef server components work together. Dig in at: "
+    post: "Wrapping up Administering a Chef Installation track showing how Chef server components work together. Dig in at: "
 related_tracks:
 - infrastructure-automation
 - continuous-automation
