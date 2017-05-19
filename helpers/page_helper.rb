@@ -237,7 +237,7 @@ module PageHelper
     content = page.data.social_share.try(&:twitter).try(&:post) ||
               page.data.social_share.try(&:post) ||
               truncate(page.data.description, length: 140)
-    "#{sharer_url}?text=#{content}&url=#{encoded_canonical_url(page.url)}"
+    "#{sharer_url}?text=#{CGI::escape(content)}&url=#{encoded_canonical_url(page.url)}"
   end
 
   def social_facebook_share(page)
@@ -260,7 +260,7 @@ module PageHelper
     sharer_url = social_data['sharer_url']
     title = page.data.social_share.try(&:linkedin).try(&:title) || page.data.title
     summary = page.data.social_share.try(&:linkedin).try(&:post) || page.data.description
-    "#{sharer_url}?mini=true&title=#{title}&summary=#{summary}&url=#{encoded_canonical_url(page.url)}"
+    "#{sharer_url}?mini=true&title=#{CGI::escape(title)}&summary=#{CGI::escape(summary)}&url=#{encoded_canonical_url(page.url)}"
   end
 
   def encoded_canonical_url(url)

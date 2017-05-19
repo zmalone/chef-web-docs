@@ -33,9 +33,9 @@ export class SocialShareComponent implements OnChanges {
     this.facebookURL = this.sharerUrls['facebook'] + 'u=' + url
     this.googleURL = this.sharerUrls['google'] + 'url=' + url
     this.twitterURL = this.sharerUrls['twitter'] + 'text=' +
-      socialData['tweet_text'] + '&url=' + url
-    this.linkedinURL = this.sharerUrls['linkedin'] + '&title=' + socialData['linkedin_title'] +
-      '&summary=' + socialData['linkedin_summary'] + '&url=' + url
+        encodeURIComponent(socialData['tweet_text']) + '&url=' + url
+    this.linkedinURL = this.sharerUrls['linkedin'] + '&title=' + encodeURIComponent(socialData['linkedin_title']) +
+      '&summary=' + encodeURIComponent(socialData['linkedin_summary']) + '&url=' + url
     if (process.env.DISABLE_SOCIAL && process.env.DISABLE_SOCIAL !== 'false') {
       this.facebookURL = this.googleURL = this.twitterURL = this.linkedinURL = '#'
     }
