@@ -21,7 +21,7 @@ export class ProgressService {
   ) {
   }
 
-  init() {
+  public init(): void {
     this.userProfileService.isAuthenticated().subscribe((next) => {
       this.isAuthenticated = next
       if (!this.isAuthenticated) {
@@ -40,7 +40,8 @@ export class ProgressService {
     if (trackData[pageId]) return <LearningType> 'tracks'
   }
 
-  public startPage(pageId) {
+  public startPage(pageId: string): Observable<any> {
+    if (!pageId) return Observable.from([])
     const observables = []
     const learningType = this.getLearningType(pageId)
     if (learningType) {
@@ -106,28 +107,29 @@ export class ProgressService {
     return Observable.merge(...observables)
   }
 
-  private awardAchievements() {
+  private awardAchievements(): Observable<any> {
     const modulesData = this.getUserProgressData('modules')
     const tracksData = this.getUserProgressData('tracks')
     const achievementsData = this.getUserProgressData('achievements')
     const observables = []
 
     // If any modules have been completed, grant the special edition "grand opening" coaster
-    if (Object.keys(modulesData).filter((id) => { return modulesData[id].completed_at }).length > 0) {
-      if (!achievementsData['grand-opening']) {
-        observables.push(this.updateField('achievements', 'grand-opening', {
-          'achievement_type': 'standard',
-          'earned_at': new Date().toISOString(),
-        }))
-      }
+    const completedModules = Object.keys(modulesData).filter((id) => { return modulesData[id].completed_at })
+    if (completedModules.length > 0 && !achievementsData['grand-opening']) {
+      observables.push(this.updateField('achievements', 'grand-opening', {
+        'achievement_type': 'standard',
+        'related_name': completedModules[0],
+        'earned_at': new Date().toISOString(),
+      }))
     }
 
-    // If any tracks have been completed, grant the track coasters
     const completedTracks = Object.keys(tracksData).filter((id) => { return tracksData[id].completed_at })
+    // If any tracks have been completed, grant the track coasters
     completedTracks.forEach(trackId => {
       if (!achievementsData[trackId]) {
         observables.push(this.updateField('achievements', trackId, {
           'achievement_type': 'standard',
+          'related_name': trackId,
           'earned_at': new Date().toISOString(),
         }))
       }
@@ -136,16 +138,16 @@ export class ProgressService {
     return Observable.merge(...observables)
   }
 
-  public isStarted(learningType: LearningType, pageId: string | void) {
+  public isStarted(learningType: LearningType, pageId: string | void): boolean {
     if (!pageId) return false
     const data = this.getUserProgressData(learningType, pageId)
-    return data && data.started_at
+    return !!(data && data.started_at)
   }
 
-  public isComplete(learningType: LearningType, pageId: string | void) {
+  public isComplete(learningType: LearningType, pageId: string | void): boolean {
     if (!pageId) return false
     const data = this.getUserProgressData(learningType, pageId)
-    return data && data.completed_at
+    return !!(data && data.completed_at)
   }
 
   public getLastAccessed(learningType: LearningType, pageId: string) {
@@ -323,6 +325,30 @@ export class ProgressService {
   private updateField(learningType: LearningType, pageId: string, fieldValues: object) {
     const dataLocal = this.activeUserProgress.getValue()
 
+    // Detect potential fraud
+    if (!this.isAuthenticated) {
+      // Don't allow anonymous users to keep more than a certain amount progress locally
+      const excludeIds = ['getting-started', 'grand-opening']
+      const anonLimitTracks = 1
+      const anonLimitModules = 8
+      const anonLimitAchievements = 1
+      const completedTracks = Object.keys(dataLocal['tracks'] || {}).filter(id => {
+        return dataLocal['tracks'][id].completed_at && excludeIds.indexOf(id) === -1
+      })
+      const completedModules = Object.keys(dataLocal['modules'] || {}).filter(id => {
+        return dataLocal['modules'][id].completed_at && excludeIds.indexOf(id) === -1
+      })
+      const achievements = Object.keys(dataLocal['achievements'] || {}).filter(id => {
+        return excludeIds.indexOf(id) === -1
+      })
+      if ((completedTracks.length >= anonLimitTracks) ||
+          (completedModules.length >= anonLimitModules) ||
+          (achievements.length >= anonLimitAchievements)) {
+        // console.log('Potential fraud!', learningType, pageId, fieldValues)
+        return Observable.from([])
+      }
+    }
+
     // Build full and partial data objects
     dataLocal[learningType] = dataLocal[learningType] || {}
     dataLocal[learningType][pageId] = dataLocal[learningType][pageId] || {}
@@ -333,7 +359,7 @@ export class ProgressService {
     Object.assign(dataLocal[learningType][pageId], fieldValues)
 
     // Update local storage with the full data object
-    localStorage.setItem('userProgressInfo', JSON.stringify(dataLocal))
+    localStorage.setItem('userProgressInfo', btoa(JSON.stringify(dataLocal)))
 
     // Handle Marketo/Segment tracking
     this.segmentService.track(learningType, { pageId: pageId, ...fieldValues}).subscribe()
@@ -388,12 +414,20 @@ export class ProgressService {
   }
 
   private initUserProgressData() {
-    let existing: Object
-    try {
-      existing = JSON.parse(localStorage.getItem('userProgressInfo')) || {}
-    } catch (e) {
-      existing = {}
+    let existing = {}
+    const localData = localStorage.getItem('userProgressInfo')
+    if (localData) {
+      try {
+        existing = JSON.parse(atob(localData)) || {}
+      } catch (e) {
+        try {
+          existing = JSON.parse(localData) || {}
+        } catch (e) {
+          console.error('Error loading user profile', e)
+        }
+      }
     }
+
     const pageId = this.siteDataService.currentPage().id
 
     if (!this.isAuthenticated) {
@@ -414,7 +448,7 @@ export class ProgressService {
 
     return this._tokenService.get('api/v1/progress').map(res => res.json()).subscribe(
       res => {
-        localStorage.setItem('userProgressInfo', JSON.stringify(res))
+        localStorage.setItem('userProgressInfo', btoa(JSON.stringify(res)))
         this.activeUserProgress.next(res)
         this.startPage(pageId)
       },

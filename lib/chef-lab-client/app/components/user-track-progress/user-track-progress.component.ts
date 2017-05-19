@@ -20,9 +20,10 @@ export class UserTrackProgressComponent implements OnInit {
   ngOnInit() {
     const trackData = this.siteDataService.dataTree().tracks[this.track]
     const modules = trackData && trackData.modules || []
-    this.progressService.activeUserProgress.subscribe((active) => {
-      this.modules = modules.map(module => {
-        return this.progressService.isComplete('modules', module)
+    this.progressService.activeUserProgress.subscribe(data => {
+      data = data['modules'] || {}
+      this.modules = modules.map(moduleId => {
+        return data[moduleId] && data[moduleId].completed_at
       })
     })
   }
