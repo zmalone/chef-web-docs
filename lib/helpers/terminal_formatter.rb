@@ -53,8 +53,17 @@ module Middleman
             if line.length > 1 && line.start_with?('$ ')
               # begins with prompt, so push prompt character onto gutter and add the remaining
               # line to the lines of code
-              gutters.push gutter(@prompt)
-              line = line.length > 2 ? line[2..-1] : ""
+
+              # TODO Special case for InSpec shell commands. We may want to generalize/refactor this.
+              if line.start_with?(inspec_prompt)
+                gutters.push gutter(inspec_prompt)
+                len = inspec_prompt.length + 1
+                line = line.length > len ? line[len..-1] : ""
+              else
+                gutters.push gutter(@prompt)
+                line = line.length > 2 ? line[2..-1] : ""
+              end
+
               lines_of_code.push line_of_code(line, true, false)
               in_command = is_continuation?(line)
             else
@@ -84,8 +93,18 @@ module Middleman
           @prompt
         end
 
+        def inspec_prompt
+          '$ inspec&gt;'
+        end
+
         def gutter(line)
-          gutter_value = line.start_with?(command_character) ? command_character : "&nbsp;"
+          if line.start_with?(inspec_prompt)
+            gutter_value = inspec_prompt
+          elsif line.start_with?(command_character)
+            gutter_value = command_character
+          else
+            gutter_value = "&nbsp;"
+          end
           "<span class='line-number'>#{gutter_value}</span>"
         end
 
