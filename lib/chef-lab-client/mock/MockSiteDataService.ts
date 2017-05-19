@@ -1,7 +1,10 @@
 /* tslint:disable:trailing-comma quotemark */
 export default class MockSiteDataService {
   currentPage() {
-    return {}
+    return {
+      url: '/modules/learn-the-basics',
+      id: 'learn-the-basics'
+    }
   }
 
   dataTree() {
@@ -14,6 +17,7 @@ export default class MockSiteDataService {
             5795
           ],
           "children": [
+            "getting-started",
             "infrastructure-automation",
             "application-automation",
             "compliance-automation",
@@ -29,6 +33,20 @@ export default class MockSiteDataService {
             "administering-chef-installation",
             "writing-cookbooks"
           ]
+        },
+        "getting-started": {
+          "url": "/tracks/getting-started",
+          "modules": [
+            "getting-started-with-lcr"
+          ],
+          "parent": "tracks"
+        },
+        "beyond-essentials-track": {
+          "url": "/tracks/beyond-essentials",
+          "modules": [
+            "beyond-essentials"
+          ],
+          "parent": "tracks"
         },
         "infrastructure-automation": {
           "url": "/tracks/infrastructure-automation",
@@ -214,6 +232,7 @@ export default class MockSiteDataService {
           ],
           "is_fork": true,
           "children": [
+            "getting-started-with-lcr",
             "equifax-compliance",
             "fundamentals-series-week-1",
             "be-a-secure-chef",
@@ -275,6 +294,10 @@ export default class MockSiteDataService {
             "equifax-devops",
             "equifax-auburn"
           ]
+        },
+        "getting-started-with-lcr": {
+          "url": "/modules/getting-started-with-lcr",
+          "parent": "modules"
         },
         "equifax-compliance": {
           "url": "/modules/equifax-compliance",
