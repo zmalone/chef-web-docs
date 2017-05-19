@@ -16,15 +16,15 @@ execute 'build the site' do
   environment(
     'PATH' => '/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games',
     'HOME' => node['delivery']['workspace']['cache'],
-    'DISABLE_SOCIAL' => true,
     'CHEF_LAB_URL' => 'https://lab.chef.io',
     'NODE_ENV' => 'production',
-    'API_ENDPOINT' => 'https://learnchef-backend-acceptance.chef.io'
+    'LEARN_CHEF_URL' => 'https://learn.chef.io',
+    'API_ENDPOINT' => 'https://learnchef-backend.chef.io'
   )
   timeout 7200
   cwd node['delivery']['workspace']['repo']
 end
 
-cia_delivery_publish_artifact 'lc-rally' do
+cia_delivery_publish_artifact 'chef-web-learn' do
   build_path 'build'
 end

@@ -21,15 +21,22 @@ export class WelcomeRibbonComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    document.getElementsByTagName('body')[0].classList.add('has-welcome')
-    if (this.siteDataService.currentPage().id === 'getting-started-with-lcr') this.hideRibbon()
-    if (localStorage.getItem('hideWelcome')) this.hideRibbon()
-    this.userProfileService.isAuthenticated().subscribe((next) => {
-      if (next) this.hideRibbon()
+    this.userProfileService.isAuthenticated().subscribe(isSignedIn => {
+      if (isSignedIn || !this.showRibbon()) this.hideRibbon()
     })
     this.progressService.activeUserProgress.subscribe(() => {
       if (Object.keys(this.progressService.getAchievements()).length) this.hideRibbon()
     })
+  }
+
+  public showRibbon(event?: Event) {
+    if (event) event.preventDefault()
+    if (localStorage.getItem('hideWelcome')) return false
+    if (this.siteDataService.currentPage().id === 'getting-started-with-lcr') return false
+
+    this.isHidden = false
+    document.getElementsByTagName('body')[0].classList.add('has-welcome')
+    return true
   }
 
   public hideRibbon(event?: Event) {

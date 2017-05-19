@@ -1,10 +1,10 @@
-cia_infra_static_site 'lc-rally' do
+cia_infra_static_site 'chef-web-learn' do
   action :deploy
-  restricted true
+  redirect_file File.join(node['delivery']['workspace']['repo'], 'config', 'redirects.json')
 end
 
-cia_infra_cdn 'lc-rally' do
+cia_infra_cdn 'chef-web-learn' do
   action [:deploy, :purge_all]
-  host_name 'lc-rally'
-  domain_name 'chef.co'
+  host_name 'learn'
+  domain_name 'chef.io'
 end

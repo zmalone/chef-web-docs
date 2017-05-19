@@ -3,7 +3,7 @@ title: Writing Cookbooks
 track_id: 14
 track_hero: /assets/images/tracks/infrastructure-automation.jpg
 image_url: /assets/images/coasters/writing-cookbooks.png
-description: "Sample and savor advanced techniques for writing cookbooks, including how to turn scripts into recipes. Get familiar with common patterns used in cookbooks, as well as how to use notifications, helper methods and data bags. "
+description: "Sample advanced techniques for writing cookbooks, including how to turn scripts into recipes. Get familiar with common patterns used in cookbooks, as well as how to use notifications, helper methods and data bags. "
 hours: 8
 level: Beginner
 track_class: card-red
@@ -19,14 +19,14 @@ tags: [infrastructure,intermediate]
 social_share:
   shared: &shared
     title: "Gain A Better Understanding Of Writing Cookbooks"
-    post: "`Writing Cookbooks` track at Learn Chef Rally is showing me how to turn scripts into recipes, recognize common cookbooks patterns, and more. Write your own ticket today."
+    post: "Writing Cookbooks track at Learn Chef Rally is showing me how to turn scripts into recipes, recognize common cookbooks patterns, and more. Write your own ticket today."
     image: /assets/images/social/track-share-writing-cookbooks.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "`Writing Cookbooks` showing me how to turn scripts into recipes, recognize cookbook patterns, & more: "
+    post: "Writing Cookbooks showing me how to turn scripts into recipes, recognize cookbook patterns, & more: "
 related_tracks:
 - infrastructure-automation
 - local-development-and-testing

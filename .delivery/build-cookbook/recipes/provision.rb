@@ -1,12 +1,9 @@
 include_recipe 'delivery-truck::provision'
 
-static_site = cia_infra_static_site 'lc-rally' do
-  restricted true
-end
+static_site = cia_infra_static_site 'chef-web-learn'
 
-cia_infra_cdn 'lc-rally' do
-  host_name 'lc-rally'
-  domain_name 'chef.co'
-  bucket_name static_site.bucket_name
-  restricted true
+cia_infra_cdn 'chef-web-learn' do
+  host_name 'learn'
+  domain_name 'chef.io'
+  endpoint static_site.fqdn
 end

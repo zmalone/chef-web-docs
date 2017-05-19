@@ -420,8 +420,7 @@ export class ProgressService {
       },
       error => {
         console.log('Error getting user progress from the database', error)
-        this.activeUserProgress.next(existing)
-        this.startPage(pageId)
+        this.userProfileService.signOut()
       },
     )
   }
