@@ -15,7 +15,7 @@ Use the Custom Resource DSL to define property behaviors within custom resources
 
 .. end_tag
 
-New in Chef Client 12.5.
+Custom resources are new in Chef Client 12.5 and can be used on Chef 12.1 or later by depending on the compat_resource cookbook.
 
 action_class
 =====================================================
@@ -528,9 +528,11 @@ For example, the following custom resource creates and/or updates user propertie
      end
 
      if property_is_set?(:password)
-       if system("rabbitmqctl authenticate_user #{username} #{password}") != 0 do
+       if system("rabbitmqctl authenticate_user #{username} #{password}") != 0
          converge_by "Updating password for user #{username} ..." do
-       system("rabbitmqctl update_user #{username} --password #{password}")
+           system("rabbitmqctl update_user #{username} --password #{password}")
+         end
+       end
      end
    end
 
