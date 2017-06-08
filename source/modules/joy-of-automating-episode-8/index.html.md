@@ -10,6 +10,18 @@ headings: [
   { label: 'Reference', href: '#reference' }
 ]
 tags: [video]
+social_share:
+  shared: &shared
+    title: "Understand how to Manage Configuration"
+    post: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+    title: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io #learnchef"
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Another Learn @Chef Rally module in the books! Check it out. #learnchef"
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

@@ -11,6 +11,18 @@ headings: [
 ]
 tags: [article]
 video_url: 'https://player.vimeo.com/video/215926031'
+social_share:
+  shared: &shared
+    title: "Forging Connections Among People"
+    post: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+    title: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io #learnchef"
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Another Learn @Chef Rally module in the books! Check it out. #learnchef"
 ---
 DevOps is about transforming the way our companies run and part of that transformation is understanding that our companies are about people over products. In any company, you need human beings who do many different things. You need CEOs, you need sales reps, you need software developers, you need marketers, you need system administrators, the list goes on and on. All of these people are necessary and all of them bring their own talents and experiences to the table.
 

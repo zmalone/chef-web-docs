@@ -4,6 +4,18 @@ title: 'Chef fundamentals series'
 description: 'This webinar series helps prepare you to use Chef to write infrastructure.'
 keywords: 'chef, fundamentals, overview, webinar'
 tags: [video]
+social_share:
+  shared: &shared
+    title: "Understanding the Chef Fundamentals"
+    post: "Just brushed up on my Chef fundamentals in Learn Chef Rally! Give it a try: learn.chef.io"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+    title: "Just brushed up on my Chef fundamentals in Learn Chef Rally! Give it a try: learn.chef.io #learnchef"
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Just brushed up on my @Chef fundamentals in Learn Chef Rally! Give it a try. #learnchef"
 ---
 This webinar series helps prepare you to use Chef to write infrastructure. Each unit in the course has hands-on exercises to reinforce the material. You'll learn Chef by using it. At the end of the class, you will have a code repository that can be used and modified to solve real business problems.
 

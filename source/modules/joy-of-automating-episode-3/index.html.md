@@ -11,6 +11,18 @@ headings: [
   { label: 'Further activities', href: '#furtheractivities' }
 ]
 tags: [video]
+social_share:
+  shared: &shared
+    title: "Learn How to Work with Legacy Code - Redis"
+    post: "Learning about legacy code in Learn Chef Rally! Check it out: learn.chef.io"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+    title: "Learning about legacy code in Learn Chef Rally! Check it out: learn.chef.io #learnchef"
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Learning about legacy code in Learn Chef Rally! Check it out. #learnchef"
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

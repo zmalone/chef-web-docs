@@ -16,6 +16,18 @@ headings: [
   { label: "What's next", href: '#what39snext' }
 ]
 tags: [article]
+social_share:
+  shared: &shared
+    title: "Continuous Availability at IBM"
+    post: "Awesome sauce. I just completed a module on Learn Chef Rally! Learn.chef.io"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+    title: "Awesome sauce. I just completed a module on Learn Chef Rally! Learn.chef.io #learnchef"
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Awesome sauce. I just completed a module on Learn Chef Rally. @chef #learnchef"
 ---
 IBM sponsors many well-known sporting events, such as the [US Open](http://www.usopen.org/index.html) and the [Wimbledon Championships](http://www.wimbledon.com/index.html). The IBM Continuous Availability Services – Events Infrastructure (CAS-EI) is the team that operates and manages the very popular web sites for these events. For example, during this year's Wimbledon Championships, the team delivered half-a-billion page views during the two-week tournament.
 
