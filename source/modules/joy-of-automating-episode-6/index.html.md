@@ -12,11 +12,10 @@ tags: [video]
 social_share:
   shared: &shared
     title: "How to Refactor a Custom Resource - Redis"
-    post: "Huzzah! I just completed a module in Learn Chef Rally. Check it out: learn.chef.io"
+    post: "Huzzah! I just completed a module in Learn Chef Rally. Check it out: learn.chef.io #learnchef"
     image: /assets/images/social/module-share.png
   facebook:
     <<: *shared
-    title: "Huzzah! I just completed a module in Learn Chef Rally. Check it out: learn.chef.io #learnchef"
   linkedin:
     <<: *shared
   twitter:

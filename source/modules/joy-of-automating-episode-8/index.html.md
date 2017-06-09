@@ -13,11 +13,10 @@ tags: [video]
 social_share:
   shared: &shared
     title: "Understand how to Manage Configuration"
-    post: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io"
+    post: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io #learnchef"
     image: /assets/images/social/module-share.png
   facebook:
     <<: *shared
-    title: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io #learnchef"
   linkedin:
     <<: *shared
   twitter:

@@ -13,11 +13,10 @@ tags: [video]
 social_share:
   shared: &shared
     title: "Understand Refactoring Templates"
-    post: "I'm learning all about refactoring templates on Chef's Learn Chef Rally: learn.chef.io"
+    post: "I'm learning all about refactoring templates on Chef's Learn Chef Rally: learn.chef.io #learnchef"
     image: /assets/images/social/module-share.png
   facebook:
     <<: *shared
-    title: "I'm learning all about refactoring templates on Chef's Learn Chef Rally: learn.chef.io #learnchef"
   linkedin:
     <<: *shared
   twitter:

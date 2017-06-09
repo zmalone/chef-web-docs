@@ -19,11 +19,10 @@ tags: [article]
 social_share:
   shared: &shared
     title: "Continuous Availability at IBM"
-    post: "Awesome sauce. I just completed a module on Learn Chef Rally! Learn.chef.io"
+    post: "Awesome sauce. I just completed a module on Learn Chef Rally! Learn.chef.io #learnchef"
     image: /assets/images/social/module-share.png
   facebook:
     <<: *shared
-    title: "Awesome sauce. I just completed a module on Learn Chef Rally! Learn.chef.io #learnchef"
   linkedin:
     <<: *shared
   twitter:

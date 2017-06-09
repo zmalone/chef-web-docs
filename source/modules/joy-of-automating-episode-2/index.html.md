@@ -14,11 +14,10 @@ tags: [video]
 social_share:
   shared: &shared
     title: "Scripts to Recipes with Python, Pip, and Django"
-    post: "Awesome sauce. I just completed a module on Learn Chef Rally! Learn.chef.io"
+    post: "Awesome sauce. I just completed a module on Learn Chef Rally! Learn.chef.io #learnchef"
     image: /assets/images/social/module-share.png
   facebook:
     <<: *shared
-    title: "Awesome sauce. I just completed a module on Learn Chef Rally! Learn.chef.io #learnchef"
   linkedin:
     <<: *shared
   twitter:

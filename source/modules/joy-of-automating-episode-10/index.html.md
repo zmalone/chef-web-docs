@@ -13,11 +13,10 @@ tags: [video]
 social_share:
   shared: &shared
     title: "Understanding Helper Methods - NTP Cookbook"
-    post: "Want to learn about DevOps, automation and Chef? Join me on Learn Chef Rally! Learn.chef.io"
+    post: "Want to learn about DevOps, automation and Chef? Join me on Learn Chef Rally! Learn.chef.io #learnchef"
     image: /assets/images/social/module-share.png
   facebook:
     <<: *shared
-    title: "Want to learn about DevOps, automation and Chef? Join me on Learn Chef Rally! Learn.chef.io #learnchef"
   linkedin:
     <<: *shared
   twitter:

@@ -13,11 +13,10 @@ tags: [video]
 social_share:
   shared: &shared
     title: "How to Use Community Cookbooks - Jenkins"
-    post: "I just completed another module on Learn Chef Rally: learn.chef.io"
+    post: "I just completed another module on Learn Chef Rally: learn.chef.io #learnchef"
     image: /assets/images/social/module-share.png
   facebook:
     <<: *shared
-    title: "I just completed another module on Learn Chef Rally: learn.chef.io #learnchef"
   linkedin:
     <<: *shared
   twitter:

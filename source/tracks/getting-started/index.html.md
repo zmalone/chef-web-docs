@@ -15,12 +15,10 @@ social_share:
   shared: &shared
     title: "Getting Started with Chef"
     post: "'Getting Started with Chef' learning module highlights the many resources available for learning Chef, 
-      as well as proven roadmaps to proficiency. Come join us for the ride at: learn.chef.io"
+      as well as proven roadmaps to proficiency. Come join us for the ride at: learn.chef.io #learnchef"
     image: /assets/images/social/track-share-getting-started.png
   facebook:
     <<: *shared
-    title: "'Getting Started with Chef' learning module highlights the many resources available for learning Chef, 
-      as well as proven roadmaps to proficiency. Come join us for the ride at: learn.chef.io #learnchef"
   linkedin:
     <<: *shared
   twitter:

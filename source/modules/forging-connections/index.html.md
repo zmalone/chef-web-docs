@@ -14,11 +14,10 @@ video_url: 'https://player.vimeo.com/video/215926031'
 social_share:
   shared: &shared
     title: "Forging Connections Among People"
-    post: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io"
+    post: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io #learnchef"
     image: /assets/images/social/module-share.png
   facebook:
     <<: *shared
-    title: "Another Learn Chef Rally module in the books! Check it out: learn.chef.io #learnchef"
   linkedin:
     <<: *shared
   twitter:
