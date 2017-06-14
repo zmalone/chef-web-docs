@@ -288,9 +288,9 @@ module PageHelper
   end
 
   def meta_og(page, type)
-    content = page.data.try(&:social_share).try(&:shared).try(type)
+    content = page.data.try(&:social_share).try(&:shared).try(type) || ''
     # Append hashtag?
-    content << ' #learnchef' if type === 'post' && content && !content.scan(/#learnchef/i).any?
-    content
+    content << ' #learnchef' if type === 'post' && !content.scan(/#learnchef/i).any?
+    content.gsub!('"', '&quot;')
   end
 end
