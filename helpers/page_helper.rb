@@ -292,5 +292,6 @@ module PageHelper
     # Append hashtag?
     content << ' #learnchef' if type === 'post' && !content.scan(/#learnchef/i).any?
     content.gsub!('"', '&quot;')
+    content
   end
 end
