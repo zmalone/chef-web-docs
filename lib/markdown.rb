@@ -160,7 +160,7 @@ module ZurbFoundation
     content.gsub!('<p></', '</') # A paragraph shouldn't be opened right before closing another tag
     content.gsub!('<p><h', '<h') # A paragraph shouldn't be opened right before a heading tag
     content.gsub!('</div></p>', '</p></div>') # The page_nav_helpers.rb next_page helper results in invalid closing tag order
-    # Markdown loves to add <p> tags, so the final cleanup step ensures that all paragraph opening/closing tags are matched
+    # Markdown loves to add <p> tags, so in this cleanup step ensures that all paragraph opening/closing tags are matched
     in_paragraph = false
     content.gsub!(/<(\/)?(p|P)([\s]+[^>]*)*>/) { |match|
       # Remove closing </p> tags if we're NOT in a paragraph, and opening <p> tags if we ARE in a paragraph
@@ -169,6 +169,13 @@ module ZurbFoundation
       next $&
     }
     content << '</p>' if in_paragraph
+    # A paragraph shouldn't be closed right after a heading tag is closed, so remove this pair of tags if any
+    loop do
+      end_pos = @content.index(/<\/h([0-9])><\/p>/)
+      start_pos = @content.rindex('<p>', end_pos || 0)
+      break if !end_pos || !start_pos
+      @content = @content[0..(start_pos - 1)] + @content[(start_pos + 3)..(end_pos + 4)] + @content[(end_pos + 9)..-1]
+    end
   end
 
   def render(string)
