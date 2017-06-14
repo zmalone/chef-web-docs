@@ -19,15 +19,15 @@ tags: [compliance,beginner]
 video_url: 'https://player.vimeo.com/video/215914828'
 social_share:
   shared: &shared
-    title: "Sharpen Your Skills In Compliance Automation"
-    post: "Compliance Automation at Learn Chef Rally is putting me on track to specify compliance and security requirements as code using InSpec, proactively detect problems, and more. Fast-track your own learning now"
+    title: "Compliance Automation on Learn Chef Rally"
+    post: "\"Compliance Automation\" teaches how to specify compliance and security requirements as code using InSpec, proactively detect problems, and more: learn.chef.io #learnchef"
     image: /assets/images/social/track-share-compliance-automation.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Compliance Automation putting me on track to spec reqs as code using InSpec, detect problems, & more. You on track?"
+    post: "On track to spec reqs as code using InSpec, find problems, and more -- thanks to Learn Chef Rally. #learnchef"
 related_tracks:
 - infrastructure-automation
 - integrated-compliance

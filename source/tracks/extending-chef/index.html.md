@@ -22,15 +22,15 @@ tags: [infrastructure,intermediate]
 video_url: 'https://player.vimeo.com/video/215936849'
 social_share:
   shared: &shared
-    title: "Gain A Better Understanding Of Writing Cookbooks"
-    post: "Writing Cookbooks track at Learn Chef Rally is showing me how to turn scripts into recipes, recognize common cookbooks patterns, and more. Write your own ticket now."
+    title: "Learning How to Extend Chef"
+    post: "Just learned how to develop Ohai plugins, write multiplatform cookbooks and more with the \"Extending Chef\" track at #LearnChef Rally: learn.chef.io"
     image: /assets/images/social/track-share-extending-chef.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Viewing Extending Chef track to learn its out-of-box capabilities: Ohai plugins, multiplatform cookbooks, more: "
+    post: "Learn how to develop Ohai plugins, write cookbooks & more with the \"Extending Chef\" track at #LearnChef Rally: learn.chef.io"
 related_tracks:
 - infrastructure-automation
 - local-development-and-testing

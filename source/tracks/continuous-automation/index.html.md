@@ -17,15 +17,15 @@ tags: [infrastructure,intermediate]
 video_url: 'https://player.vimeo.com/video/215934498'
 social_share:
   shared: &shared
-    title: "Learn To Improve Workflows With Continuous Automation"
-    post: "Working through Continuous Automation track learning how to gain infrastructure visibility using Chef Automate, and how to deploy cookbooks using Chef Automate pipeline. Take a closer look now."
+    title: "Continuous Automation on Learn Chef Rally"
+    post: "Learn how to use Chef Automate to gain infrastructure visibility, as well as deploy cookbooks with the Automate pipeline: learn.chef.io #learnchef"
     image: /assets/images/social/track-share-continuous-automation.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Compliance Automation putting me on track to spec reqs as code using InSpec, detect problems, & more. You on track?"
+    post: "Learn how to use Chef Automate to gain infrastructure visibility & deploy cookbooks with #LearnChef"
 related_tracks:
 - infrastructure-automation
 - integrated-compliance

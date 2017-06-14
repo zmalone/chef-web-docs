@@ -238,7 +238,7 @@ module PageHelper
               page.data.social_share.try(&:post) ||
               truncate(page.data.description, length: 140)
     # Append hashtag
-    content << ' #learnchef' unless content.index('#learnchef')
+    content << ' #learnchef' unless content.scan(/#learnchef/i).any?
     "#{sharer_url}?text=#{CGI::escape(content)}&url=#{encoded_canonical_url(page.url)}"
   end
 
@@ -290,7 +290,7 @@ module PageHelper
   def meta_og(page, type)
     content = page.data.try(&:social_share).try(&:shared).try(type)
     # Append hashtag?
-    content << ' #learnchef' if type === 'post' && content && !content.index('#learnchef')
+    content << ' #learnchef' if type === 'post' && content && !content.scan(/#learnchef/i).any?
     content
   end
 end

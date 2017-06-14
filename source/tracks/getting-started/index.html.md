@@ -14,7 +14,7 @@ modules:
 social_share:
   shared: &shared
     title: "Getting Started with Chef"
-    post: "'Getting Started with Chef' learning module highlights the many resources available for learning Chef, 
+    post: "\"Getting Started with Chef\" learning module highlights the many resources available for learning Chef, 
       as well as proven roadmaps to proficiency. Come join us for the ride at: learn.chef.io #learnchef"
     image: /assets/images/social/track-share-getting-started.png
   facebook:
@@ -22,7 +22,7 @@ social_share:
   linkedin:
     <<: *shared
   twitter:
-    post: "Learning about Chef educational resources & roadmaps to proficiency via 'Getting Started' module. #learnchef"
+    post: "Learning about Chef educational resources & roadmaps to proficiency via \"Getting Started\" module. #learnchef"
 hours: 0.16666666666667
 level: Beginner
 track_class: card-red
