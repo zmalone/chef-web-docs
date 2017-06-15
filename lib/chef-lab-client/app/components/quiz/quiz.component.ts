@@ -23,7 +23,7 @@ export class QuizComponent implements OnInit {
   public showSpecialCoaster = false
   public specialCoaster: string
   public trackCoaster: string
-  public pageSocialShare: Object
+  public moduleSocialShare: Object
   public trackSocialShare: Object
 
   constructor(
@@ -33,7 +33,7 @@ export class QuizComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.pageSocialShare = this.siteDataService.currentPage().socialShare
+    this.moduleSocialShare = this.siteDataService.currentPage().moduleSocialShare
     this.trackSocialShare = this.siteDataService.currentPage().trackSocialShare
     this.questions = this.siteDataService.currentPage().quiz || []
     this.correctAnswers = this.questions.map((question: any) => {
