@@ -18,15 +18,15 @@ tags: [devops,culture]
 video_url: 'https://player.vimeo.com/video/215925431'
 social_share:
   shared: &shared
-    title: "Discover How To Make The DevOps Transformation journey"
-    post: "Starting the DevOps journey with Learn Chef Rally's DevOps Transformation track. Want to adopt DevOps principles in your own org? The trip starts here."
+    title: "Leading a DevOps Transformation"
+    post: "Just made it to Learn Chef Rally's \"DevOps Transformation\" track. Want to adopt DevOps principles in your own org? The trip starts here: learn.chef.io"
     image: /assets/images/social/track-share-devops-transformation.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Learn Chef's DevOps Transformation track is helping me transform my org with proven DevOps principles: "
+    post: "#LearnChef's \"DevOps Transformation\" track is helping me revamp my org w/ DevOps principles."
 related_tracks:
 - getting-started
 - infrastructure-automation

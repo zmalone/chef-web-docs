@@ -10,6 +10,17 @@ headings: [
   { label: 'Resources', href: '#resources' }
 ]
 tags: [video]
+social_share:
+  shared: &shared
+    title: "Understand Refactoring Templates"
+    post: "I'm learning all about refactoring templates on Chef's Learn Chef Rally: learn.chef.io #learnchef"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "I'm learning all about refactoring templates on Chef's Learn Chef Rally. #learnchef"
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

@@ -18,15 +18,15 @@ modules:
 tags: [infrastructure,intermediate]
 social_share:
   shared: &shared
-    title: "Gain A Better Understanding Of Writing Cookbooks"
-    post: "Writing Cookbooks track at Learn Chef Rally is showing me how to turn scripts into recipes, recognize common cookbooks patterns, and more. Write your own ticket today."
+    title: "Writing Cookbooks on Learn Chef Rally"
+    post: "Want to learn advanced techniques for writing cookbooks? Check out the \"Writing Cookbooks\" track on #LearnChef: learn.chef.io"
     image: /assets/images/social/track-share-writing-cookbooks.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Writing Cookbooks showing me how to turn scripts into recipes, recognize cookbook patterns, & more: "
+    post: "Want to learn advanced techiques for writing cookbooks? Check out the \"Writing Cookbooks\" track on #LearnChef"
 related_tracks:
 - infrastructure-automation
 - local-development-and-testing

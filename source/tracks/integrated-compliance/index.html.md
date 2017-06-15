@@ -19,15 +19,15 @@ tags: [compliance,intermediate]
 video_url: 'https://player.vimeo.com/video/215931739'
 social_share:
   shared: &shared
-    title: "Learn The How-To's Of Integrated Compliance"
-    post: "Integrated Compliance track at Learn Chef Rally is showing how to use continuous automation to remediate compliance failures in Chef cookbooks. Get learning now."
+    title: "Integrated Compliance on Learn Chef Rally"
+    post: "\"Integrated Compliance\" track at Learn Chef Rally schooled me on using continuous automation to remediate compliance failures in Chef cookbooks: learn.chef.io #learnchef"
     image: /assets/images/social/track-share-integrated-compliance.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Using continuous automation to fix cookbook compliance issues, thanks to Learn Chef's Integrated Compliance track."
+    post: "Learning how to use continuous automation to fix cookbook compliance issues with #LearnChef"
 related_tracks:
 - infrastructure-automation
 - compliance-automation

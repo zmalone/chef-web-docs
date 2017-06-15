@@ -11,6 +11,17 @@ headings: [
   { label: 'Further activities', href: '#furtheractivities' }
 ]
 tags: [video]
+social_share:
+  shared: &shared
+    title: "Scripts to Recipes with Tomcat"
+    post: "Huzzah! I just completed a module in Learn Chef Rally. Check it out: learn.chef.io #learnchef"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Huzzah! I just completed a module in Learn Chef Rally. Check it out. #learnchef"
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

@@ -10,6 +10,17 @@ headings: [
   { label: 'Resources', href: '#resources' }
 ]
 tags: [video]
+social_share:
+  shared: &shared
+    title: "Understanding Helper Methods - NTP Cookbook"
+    post: "Want to learn about DevOps, automation and Chef? Join me on Learn Chef Rally! Learn.chef.io #learnchef"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Want to learn about DevOps, automation and Chef? Join me on Learn Chef Rally! #learnchef"
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

@@ -11,6 +11,17 @@ headings: [
   { label: 'Further activities', href: '#furtheractivities' }
 ]
 tags: [video]
+social_share:
+  shared: &shared
+    title: "Scripts to Recipes with Python, Pip, and Django"
+    post: "Awesome sauce. I just completed a module on Learn Chef Rally! Learn.chef.io #learnchef"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "Awesome sauce. I just completed a module on Learn Chef Rally. @chef #learnchef"
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

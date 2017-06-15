@@ -10,6 +10,17 @@ headings: [
   { label: 'Further activities', href: '#furtheractivities' }
 ]
 tags: [video]
+social_share:
+  shared: &shared
+    title: "How to Use Community Cookbooks - Jenkins"
+    post: "I just completed another module on Learn Chef Rally: learn.chef.io #learnchef"
+    image: /assets/images/social/module-share.png
+  facebook:
+    <<: *shared
+  linkedin:
+    <<: *shared
+  twitter:
+    post: "I just completed another module on Learn Chef Rally! #learnchef"
 ---
 This video comes from [The Joy of Automating](https://www.youtube.com/playlist?list=PL11cZfNdwNyORJfIYA8t07PRMchyDXIjq) series, hosted by Franklin Webber.
 

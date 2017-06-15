@@ -13,16 +13,16 @@ modules:
 - getting-started-with-lcr
 social_share:
   shared: &shared
-    title: "See what it takes to get started with Chef"
-    post: "Develop and practice basic skills, learn more advanced techniques,
-          pick up new tips and tricks, and connect with other Chef users. Get Rallygoing today."
+    title: "Getting Started with Chef"
+    post: "\"Getting Started with Chef\" learning module highlights the many resources available for learning Chef, 
+      as well as proven roadmaps to proficiency. Come join us for the ride at: learn.chef.io #learnchef"
     image: /assets/images/social/track-share-getting-started.png
   facebook:
     <<: *shared
   linkedin:
     <<: *shared
   twitter:
-    post: "Learning about Chef educational resources and roadmaps to proficiency via 'Getting Started' learning module. You can, too!"
+    post: "Learning about Chef educational resources & roadmaps to proficiency via \"Getting Started\" module. #learnchef"
 hours: 0.16666666666667
 level: Beginner
 track_class: card-red
