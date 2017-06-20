@@ -33,6 +33,7 @@ Before starting this module, you need to have the following installed on your wo
 * Vagrant <https://www.vagrantup.com/downloads.html> makes working with hypervisor programs easier by using a configuration file, called a `Vagrantfile`  that defines a the structure of a virtual machine, such as available memory, host name, and network setting using a sort of template. This template can be re-used for launching as many copies of a vm instance as you need, as many times as you need.
 Vagrant also provides access to base virtual machine images, called _boxes_. [HashiCorp's Atlas](https://www.hashicorp.com/atlas.html) is a place where you can access prebuilt boxes or upload new boxes for others to use. [Bento](http://chef.github.io/bento/) is a Chef project that provides ready-to-use Vagrant boxes for many common platforms, including Ubuntu.
 * ChefDK (includes InSpec) <https://downloads.chef.io/chefdk> provides tools that enable you to manage your servers remotely from your workstation. But it also provides tools that allow you to configure a machine directly.
+* You will need the `tree` utility installed on your workstation. To check if `tree` is installed, enter `which tree` into the command line. If tree is not found, then you will need to install it on your workstation using homebrew <https://brew.sh/>. First, check to see if homebrew is installed on your worksation by entering `which brew` in the command line prompt. If brew is not found,  then install homebrew by copying the following command into at into the command line prompt: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"` After successfully loading homebrew, install the `tree` utility by entering `brew install tree`.
 
 This module is written for a macOS or Linux workstation and an Ubuntu 14.04 virtual machine running on Vagrant and VirtualBox. However, it can be adapted to most systems running the ChefDK and connecting to a second machine that also runs the ChefDK.
 
@@ -207,7 +208,7 @@ If you have not already done so, download and install both VirtualBox and Vagran
 
 1. Initialize Vagrant by entering `vagrant init bento/ubuntu-14.04` into the command line.
 
-    Initializing Vagrant will take a while. It will create a virtual machine and place several files into the `learn-inspec` directory.
+    Initializing Vagrant will take a while. It will creates an environment for your virtual machine and places a configuration file, called a Vagrantfile, into the `learn-inspec` directory.
 
     ```bash
     # ~/learn-inspec
@@ -252,7 +253,7 @@ If you have not already done so, download and install both VirtualBox and Vagran
 
     Additional commands such as `vagrant halt` command will stop the virtual machine, and `vagrant destroy` will stop and remove a virtual machine from your system.
 
-1. Let's take a minute to explore your new virtual machine.
+1. Exploring your new virtual machine.
 
     By using, `vagrant global-status`, you are able to see all of virtual machines that are running on your system. This command provides the a uniqe id, assigned name, provider(hypervisor), state, and directory for each machine:
 
@@ -451,13 +452,13 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
     Create a new profile
     ```
 
-1. Enter `inspec init profile HELLO` to create a profile named "HELLO".
+1. Enter `inspec init profile profile-1` to create a profile named "profile-1".
 
     ```bash
     # ~/learn-inspec
-    $ inspec init profile HELLO
+    $ inspec init profile profile-1
 
-    Create new profile at /Users/kimberlygarmoe/inspec/HELLO
+    Create new profile at /Users/kimberlygarmoe/inspec/profile-1
     * Create directory controls
     * Create file controls/example.rb
     * Create file inspec.yml
@@ -477,7 +478,7 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
     ```bash
     # ~/learn-inspec
     $ tree
-    ├── HELLO
+    ├── profile-1
     │   ├── README.md
     │   ├── controls
     │   │   ├── example.rb
@@ -490,14 +491,16 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
     │   └── libraries
     ```
 
-    You will see that the HELLO profile is a directory.
+    You will see that the profile-1 profile is a directory.
 
-1. Change to the HELLO directory and view its contents with 'tree'.
+1. Change to the profile-1 directory and view its contents with 'tree'.
 
     ```bash
     # ~/learn-inspec
-    $ inspec cd HELLO
-    HELLO tree
+    $ cd profile-1
+    $ tree
+
+    profile-1 tree
     .
     ├── README.md
     ├── controls
@@ -518,7 +521,7 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
 1. Examine the README with `cat README.md`.
 
     ```bash
-    # ~/learn-inspec/HELLO
+    # ~/learn-inspec/profile-1
     $ cat README.md
 
     # Example InSpec Profile
@@ -529,7 +532,7 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
 1. Change into the `controls` directory and examine the contents:
 
     ```bash
-    # ~/learn-inspec/HELLO
+    # ~/learn-inspec/profile-1
     $ cd controls
     $ ls
 
@@ -560,10 +563,10 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
          end
     ```
 
-1. Return to the "HELLO" directory and examine the inspec.yml.
+1. Return to the "profile-1" directory and examine the inspec.yml.
 
     ```bash
-    # ~/learn-inspec/HELLO/controls
+    # ~/learn-inspec/profile-1/controls
     $ cd ..
     $ cat inspec.yml
       name: PROFILE
@@ -602,9 +605,9 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
     You will use the `mv FILE NEW_LOCATION` command.
 
     ```bash
-    # ~/learn-inspec/HELLO
+    # ~/learn-inspec/profile-1
     $ cd controls
-    $ mv ~/learn-inspec/hello_spec.rb ~/learn-inspec/HELLO/controls/
+    $ mv ~/learn-inspec/hello_spec.rb ~/learn-inspec/profile-1/controls/
     $ tree
 
     .
@@ -614,22 +617,22 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
 
     Notice that 'hello.txt' is still in the `~/inspec` directory. InSpec profiles are used to test for the existence of the file outside of the directory in which the controls are situated.
 
-1. It's now time to make a change to the `inspec.yml` file to understand its role.
+1. Learn about the `inspec.yml` by changing it.
 
-    Return to the `HELLO` directory.
+    Return to the `profile-1` directory.
 
     ```bash
-    # ~/learn-inspec/HELLO/controls
+    # ~/learn-inspec/profile-1/controls
     $ cd ..
     $ pwd
-    ~/Users/yourname/learn-inspec/HELLO
+    ~/Users/yourname/learn-inspec/profile-1
     ```
 
     Open `inspec.yml` in the editor of your choice and remove the "version" line, so that it looks like:
 
     ```ruby
-    # ~/learn-inspec/HELLO/inspec.yml
-    name: HELLO
+    # ~/learn-inspec/profile-1/inspec.yml
+    name: profile-1
     title: InSpec Profile
     maintainer: The Authors
     copyright: The Authors
@@ -638,19 +641,19 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
     summary: An InSpec Compliance Profile
     ```
 
-1. You will need to run the HELLO profile and its tests, from a higher-level directory.
+1. You will need to run the profile-1 profile and its tests, from a higher-level directory.
 
-    Change directories back into the `learn-inspec` directory and run `inspec check HELLO` to verify this control.
+    Change directories back into the `learn-inspec` directory and run `inspec check profile-1` to verify this control.
 
     Notice that it errors out because the version metadata is missing from the `inspec.yml` file.
 
     ```bash
     # ~/learn-inspec
     $ cd ..
-    $ inspec check HELLO
+    $ inspec check profile-1
 
-    Location:    HELLO
-    Profile:     HELLO
+    Location:    profile-1
+    Profile:     profile-1
     Controls:    3
     Timestamp:   2017-03-30T23:33:57+00:00
     Valid:       false
@@ -660,20 +663,20 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
     Summary:     1 errors, 0 warnings
 
     ```
-1. Run `inspec check HELLO` to test how the metadata works.
+1. Run `inspec check profile-1` to test how the metadata works.
 
     You should see the profile failing.
 
     ```bash
     # ~/learn-inspec
-    $ inspec check HELLO
-    Location:    HELLO
-    Profile:     HELLO
+    $ inspec check profile-1
+    Location:    profile-1
+    Profile:     profile-1
     Controls:    3
     Timestamp:   2017-04-12T13:55:45-07:00
     Valid:       false
 
-      ✖  HELLO/inspec.yml:0:0: Missing profile version in inspec.yml
+      ✖  profile-1/inspec.yml:0:0: Missing profile version in inspec.yml
 
     Summary:     1 errors, 0 warnings
    ```
@@ -685,21 +688,21 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
        * the location of the tests
        * the name of the profile used
        * the total number of controls in the profile (3)
-          * 1 control in HELLO/controls/example.rb
-          * 2 controls in HELLO/hello_spec.
+          * 1 control in profile-1/controls/example.rb
+          * 2 controls in profile-1/hello_spec.
        * The time the tests in the controls were examined
        * If the profile is valid.
        * The reason that the profile is invalid
        * A summary of the check
     ```
 
-1. Navigate back to the `HELLO` profile.
+1. Navigate back to the `profile-1` profile.
 
     Add the version line back into the `inspec.yml` file.
 
     ```ruby
-    # ~/learn-inspec/HELLO/inspec.yml
-    name: HELLO
+    # ~/learn-inspec/profile-1/inspec.yml
+    name: profile-1
     title: InSpec Profile
     maintainer: The Authors
     copyright: The Authors
@@ -711,13 +714,13 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
 
 1. Return to the `~/learn-inspec` directory and run `inspec check` again.
 
-    This time the HELLO control should be valid.
+    This time the profile-1 control should be valid.
 
     ```bash
     # ~/learn-inspec
-    $inspec check HELLO
-    Location:    HELLO
-    Profile:     HELLO
+    $inspec check profile-1
+    Location:    profile-1
+    Profile:     profile-1
     Controls:    3
     Timestamp:   2017-04-12T13:55:45-07:00
     Valid:       true
@@ -725,11 +728,11 @@ You will start off by creating an InSpec profile for your hello_spec.rb control.
     No errors or warnings
     ```
 
-1. Run the HELLO profile in the `~/learn-inspec` directory using `inspec exec HELLO/controls/hello_spec.rb`.
+1. Run the profile-1 profile in the `~/learn-inspec` directory using `inspec exec profile-1/controls/hello_spec.rb`.
 
     ```bash
     # ~/learn-inspec
-    $ inspec exec HELLO/controls/hello_spec.rb
+    $ inspec exec profile-1/controls/hello_spec.rb
 
     Target:  local://
 
@@ -761,11 +764,11 @@ The sshd_config inspec audit resource tests the configuration data on a your vir
     $ vagrant up --provision
     ```
 
-1. Change directory to `~/learn-inspec/HELLO/controls` and add a control named "sshd.rb".
+1. Change directory to `~/learn-inspec/profile-1/controls` and add a control named "sshd.rb".
 
     ```bash
     # ~/learn-inspec
-    $ cd HELLO/controls
+    $ cd profile-1/controls
     $ touch sshd.rb
     ```
 
@@ -774,7 +777,7 @@ The sshd_config inspec audit resource tests the configuration data on a your vir
     Copy this content into the file:
 
     ```ruby
-    # ~/learn-inspec/HELLO/controls/sshd.rb
+    # ~/learn-inspec/profile-1/controls/sshd.rb
     # encoding: utf-8
     # copyright: 2015, The Authors
     # license: All rights reserved
@@ -797,9 +800,9 @@ The sshd_config inspec audit resource tests the configuration data on a your vir
     However, this method does not run the test on a remote system.
 
     ```bash
-    # ~/learn-inspec/HELLO/controls
+    # ~/learn-inspec/profile-1/controls
     $ cd ~/learn-inspec
-    $ inspec check hello
+    $ inspec check profile-1
     Location:    hello
     Profile:     hello
     Controls:    4
@@ -815,7 +818,7 @@ The sshd_config inspec audit resource tests the configuration data on a your vir
 
     ```bash
     # ~/learn-inspec
-    $ inspec exec ~/learn-inspec/HELLO/controls/sshd.rb --target=ssh://vagrant:vagrant@localhost:2222
+    $ inspec exec ~/learn-inspec/profile-1/controls/sshd.rb --target=ssh://vagrant:vagrant@localhost:2222
 
     Target:  ssh://vagrant@localhost:2222
 
@@ -903,7 +906,7 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
 
     ```bash
     # ~/learn-inspec
-    $ inspec exec HELLO --target=ssh://vagrant:vagrant@localhost:2222
+    $ inspec exec profile-1 --target=ssh://vagrant:vagrant@localhost:2222
       ×  world-1.0: hello world (1 failed)
        ✔  File hello.txt should exist
        ×  File hello.txt content should match /hello universe/
@@ -915,17 +918,17 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
          -/hello universe/
          +hello world
 
-    $ inspec exec HELLO --target=ssh://vagrant:vagrant@localhost:2200
+    $ inspec exec profile-1 --target=ssh://vagrant:vagrant@localhost:2200
       ✔  world-1.0: hello world
          ✔  File hello.txt should exist
          ✔  File hello.txt content should match /hello universe/
 
     ```
 
-1. Modify the world-1.0 control in `~/learn-inspec/HELLO/controls/hello_spec.rb` to add a "role" attribute:
+1. Modify the world-1.0 control in `~/learn-inspec/profile-1/controls/hello_spec.rb` to add a "role" attribute:
 
     ```ruby
-    # ~/learn-inspec/HELLO/controls/hello_spec.rb
+    # ~/learn-inspec/profile-1/controls/hello_spec.rb
     var_role = attribute('role', default: 'qa', description: "the node's role")
 
     control "world-1.0" do
@@ -1002,7 +1005,7 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
 
 1. Add attributes files to each virtual machine containing the role attribute.
 
-     The `profile-attribute.yml` file will have the same name on each virtual machine, but the content will be slightly different in each case.
+     The `profile-attribute.yml` file will be slightly different on each machine, but the content will be slightly different in each case.
 
     ```bash
     # ~/learn-inspec
@@ -1025,7 +1028,7 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
 
     ```bash
     # ~/learn-inspec
-    $ inspec exec HELLO --target=ssh://vagrant:vagrant@localhost:2222 --attrs profile-attribute.yml
+    $ inspec exec profile-1 --target=ssh://vagrant:vagrant@localhost:2222 --attrs profile-attribute.yml
 
     Target:  ssh://vagrant@localhost:2222
 
@@ -1036,7 +1039,7 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
 
     Profile Summary: 1 successful, 0 failures, 0 skipped
 
-    $ inspec exec HELLO --target=ssh://vagrant:vagrant@localhost:2200 --attrs profile-attribute.yml
+    $ inspec exec profile-1 --target=ssh://vagrant:vagrant@localhost:2200 --attrs profile-attribute.yml
 
     Target:  ssh://vagrant@localhost:2200
 
