@@ -764,7 +764,7 @@ The sshd_config inspec audit resource tests the configuration data on a your vir
 
 ## Make your profile more reusable
 
-What happens if you want to to run the same tests on machines with different content?  Or what if you have information that should not be stored in plain-text, such asi user names or passwords?  For these cases, InSpec uses attributes to act in different ways, depending on different conditions.
+What happens if you want to to run the same tests on machines with different content?  Or what if you have information that should not be stored in plain-text, such as user names or passwords?  For these cases, InSpec uses attributes to act in different ways, depending on different conditions.
 
 In this exercise, you will use two virtual machines and put a hello.txt file onto each one--with slightly different content in each file on each machine.  Then you will add an attribute and a test to your InSpec framework, run the test, see it fail, and then modify the content on each machine so that the test will pass in the correct instance, but otherwise it will fail.
 
@@ -878,7 +878,9 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
 
     ```
 
-1. Modify the world-1.0 control in `~/learn-inspec/hello-world/controls/hello_spec.rb` to add a "role" attribute:
+    ## Modify your controls and profile to use attributes.
+
+1. Modify the world-1.0 control in `~/learn-inspec/hello-world/controls/hello_spec.rb` to include a  "role" attribute:
 
     ```ruby
     var_role = attribute('role', default: 'node1', description: "the node's role")
@@ -895,7 +897,7 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
     end
     ```
 
-1. Add in an `if` conditional block to change the expected message based on the role.
+1. Add an `if` conditional block to change the expected message based on the role.
 
     ```ruby
     var_role = attribute('role', default: 'node1', description: "the node's role")
@@ -910,7 +912,7 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
         its ('content') { should match /hello_spec/ }
       end
 
-      # ADD IN THIS BLOCK:
+      # ADD THIS BLOCK:
       if var_role == 'node1'
         msg = 'hello world'
       else
@@ -946,25 +948,10 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
     end
     ```
 
-1. You will need to add attribute files into hello-world by adding a file directory and then inserting two attribute files at that location.
-
-1. From the hello-world directory, use `tree` to examine the directory.
-    ```bash
-    $ tree
-    .
-    ├── README.md
-    ├── controls
-    │   ├── hello_spec.rb
-    │   ├── profile.rb
-    │   └── sshd.rb
-    ├── hello.txt
-    ├── inspec.lock
-    ├── inspec.yml
-    └── libraries
-    ```
-1. From the command line at hello-world make a new directory named "files", using `mkdir files`.
+1. From the hello-world directory, add another sub-directory named "files", using `mkdir files`.
 
 1. Confirm the presence of the files directory using `tree`:
+
     ```bash
     $ tree
     .
@@ -1031,7 +1018,7 @@ In this exercise, you will use two virtual machines and put a hello.txt file ont
 
 As you can see, InSpec makes testing different environments with a single control pretty simple. The ease of extending controls reduces the inevitable sprawl of controls and profiles that happens when every individual system, such as ones with different operating systems or different node roles, need a suite of similar tests designated for that purpose only.
 
-1. Well done! Before you move on, remember to remove both of your virtual machines using the `vagrant destroy` command.
+Well done! Before you move on, remember to remove both of your virtual machines using the `vagrant destroy` command.
 
 ## Conclusion
 
