@@ -7,9 +7,12 @@ The following prerequisites apply to every installation of the Chef server.
 
 Platforms
 =====================================================
-.. tag adopted_platforms_server
+.. tag adopted_platforms_server_h2
 
-The following table lists the Foundational platforms for the Chef server:
+Mainstream Support
+-----------------------------------------------------
+
+The following table lists the mainstream support platforms and versions for the Chef Server:
 
 .. list-table::
    :widths: 280 100 120
@@ -19,8 +22,8 @@ The following table lists the Foundational platforms for the Chef server:
      - Architecture
      - Version
    * - CentOS
-     -
-     - ``5.x``, ``6.x``, ``7.x``
+     - ``x86_64``
+     - ``6.x``, ``7.x``
    * - Oracle Linux
      -
      - ``5.x``, ``6.x``

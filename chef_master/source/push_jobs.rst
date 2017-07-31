@@ -29,7 +29,7 @@ Platforms
 -----------------------------------------------------
 .. tag adopted_platforms_push_jobs
 
-The following table lists the Foundational platforms for the Chef push jobs:
+The following table lists the mainstream support platforms for the Chef push jobs client:
 
 .. list-table::
    :widths: 280 100 120
