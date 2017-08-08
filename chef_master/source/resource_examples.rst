@@ -429,7 +429,6 @@ The following example shows how start a service named ``example_service`` and im
 
    service 'example_service' do
      action :start
-     provider Chef::Provider::Service::Init
      notifies :restart, 'service[nginx]', :immediately
    end
 
@@ -1027,12 +1026,9 @@ New in Chef Client 12.1.
 
 .. code-block:: ruby
 
-   execute 'apt-get update' do
-     ignore_failure true
-     action :nothing
-   end.run_action(:run) if node['platform_family'] == 'debian'
+   apt_update
 
-   node.set['build_essential']['compiletime'] = true
+   node.override['build_essential']['compiletime'] = true
    include_recipe 'build-essential'
    include_recipe 'mysql::client'
 
@@ -5637,8 +5633,8 @@ The following example shows how to use variables within a Ruby block to set envi
 
 .. code-block:: ruby
 
-   node.set[:rbenv][:root] = rbenv_root
-   node.set[:ruby_build][:bin_path] = rbenv_binary_path
+   node.override[:rbenv][:root] = rbenv_root
+   node.override[:ruby_build][:bin_path] = rbenv_binary_path
 
    ruby_block 'initialize' do
      block do
@@ -6180,7 +6176,6 @@ The following example shows how start a service named ``example_service`` and im
 
    service 'example_service' do
      action :start
-     provider Chef::Provider::Service::Init
      notifies :restart, 'service[nginx]', :immediately
    end
 
