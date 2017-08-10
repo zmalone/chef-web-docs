@@ -761,10 +761,7 @@ This subcommand has the following options:
    Arbitrary options to be added to the bootstrap command when using cURL. This option may not be used in the same command with ``--bootstrap-install-command``.
 
 ``--bootstrap-install-command COMMAND``
-   Execute a custom installation command sequence for the chef-client. This option may not be used in the same command with ``--bootstrap-curl-options``, ``--bootstrap-install-sh``, or ``--bootstrap-wget-options``.
-
-``--bootstrap-install-sh URL``
-   Fetch and execute an installation script at the specified URL. This option may not be used in the same command with ``--bootstrap-install-command``.
+   Execute a custom installation command sequence for the chef-client. This option may not be used in the same command with ``--bootstrap-curl-options`` or ``--bootstrap-wget-options``.
 
 ``--bootstrap-no-proxy NO_PROXY_URL_or_IP``
    A URL or IP address that specifies a location that should not be proxied.
@@ -2263,7 +2260,7 @@ batch
 -----------------------------------------------------
 .. tag resource_batch_summary
 
-Use the **batch** resource to execute a batch script using the cmd.exe interpreter. The **batch** resource creates and executes a temporary file (similar to how the **script** resource behaves), rather than running the command inline. This resource inherits actions (``:run`` and ``:nothing``) and properties (``creates``, ``cwd``, ``environment``, ``group``, ``path``, ``timeout``, and ``user``) from the **execute** resource. Commands that are executed with this resource are (by their nature) not idempotent, as they are typically unique to the environment in which they are run. Use ``not_if`` and ``only_if`` to guard this resource for idempotence.
+Use the **batch** resource to execute a batch script using the cmd.exe interpreter on Windows. The **batch** resource creates and executes a temporary file (similar to how the **script** resource behaves), rather than running the command inline. Commands that are executed with this resource are (by their nature) not idempotent, as they are typically unique to the environment in which they are run. Use ``not_if`` and ``only_if`` to guard this resource for idempotence.
 
 .. end_tag
 

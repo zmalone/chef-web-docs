@@ -93,7 +93,7 @@ Setup
 
 **Nodes**::doc:`Install via Bootstrap </install_bootstrap>` | :doc:`Install via URL </install_omnibus>` | :doc:`Install on Windows </install_windows>` | :doc:`Install on Junos OS </junos>` | :doc:`chef-client (executable) </ctl_chef_client>` | :doc:`client.rb </config_rb_client>` | :doc:`Upgrades </upgrade_client>` | :doc:`Security </chef_client_security>`
 
-**Server**: `Hosted Chef Server <https://manage.chef.io/signup>`_ | `Install Standalone <https://docs.chef.io/install_server.html#standalone>`_ | :doc:`Install High Availability </install_server_ha>` | :doc:`Upgrade High Availability </upgrade_server_ha_v2>`  | :doc:`AWS Marketplace </aws_marketplace>` | :doc:`Microsoft Azure </azure_portal>` | :doc:`Openstack </openstack>`
+**Server**: `Hosted Chef Server <https://manage.chef.io/signup>`_ | `Install Standalone <https://docs.chef.io/install_server.html#standalone>`_ | :doc:`Install High Availability </install_server_ha>` | :doc:`Upgrade High Availability </upgrade_server_ha_v2>`  | :doc:`AWS Marketplace </aws_marketplace>` | :doc:`Microsoft Azure </azure_portal>`
 
 **Supermarket**: `Public Supermarket <https://supermarket.chef.io>`_ | :doc:`Install Private Supermarket </install_supermarket>` | `Customize Supermarket </install_supermarket.html#customize-supermarket>`_ | `Run in Kitchen </install_supermarket.html#run-supermarket-in-kitchen>`_
 
@@ -148,7 +148,7 @@ Chef DK
 
 **Kitchen**: :doc:`About Kitchen </kitchen>` | :doc:`kitchen (executable) </ctl_kitchen>` | :doc:`.kitchen.yml </config_yml_kitchen>` :doc:`kitchen-vagrant </plugin_kitchen_vagrant>`
 
-**Knife**: :doc:`About Knife </knife>` | :doc:`Common Options </knife_common_options>` | :doc:`Using Knife </knife_using>` | :doc:`knife.rb </config_rb_knife>` | :doc:`knife bootstrap </knife_bootstrap>` | :doc:`knife client </knife_client>` | :doc:`knife configure </knife_configure>` | :doc:`knife cookbook </knife_cookbook>` | :doc:`knife cookbook site </knife_cookbook_site>` | :doc:`knife data bag </knife_data_bag>` | :doc:`knife delete </knife_delete>` | :doc:`knife deps </knife_deps>` | :doc:`knife diff </knife_diff>` | :doc:`knife download </knife_download>` | :doc:`knife edit </knife_edit>` | :doc:`knife environment </knife_environment>` | :doc:`knife exec </knife_exec>` | :doc:`knife list </knife_list>` | :doc:`knife node </knife_node>` | :doc:`knife raw </knife_raw>` | :doc:`knife recipe list </knife_recipe_list>` | :doc:`knife role </knife_role>` | :doc:`knife search </knife_search>` | :doc:`knife serve </knife_serve>` | :doc:`knife show </knife_show>` | :doc:`knife ssh </knife_ssh>` | :doc:`knife ssl_check </knife_ssl_check>` | :doc:`knife ssl_fetch </knife_ssl_fetch>` | :doc:`knife status </knife_status>` | :doc:`knife tag </knife_tag>` | :doc:`knife upload </knife_upload>` | :doc:`knife user </knife_user>` | :doc:`knife xargs </knife_xargs>`
+**Knife**: :doc:`About Knife </knife>` | :doc:`Common Options </knife_common_options>` | :doc:`Using Knife </knife_using>` | :doc:`knife.rb </config_rb_knife>` | :doc:`knife bootstrap </knife_bootstrap>` | :doc:`knife client </knife_client>` | :doc:`knife configure </knife_configure>` | :doc:`knife cookbook </knife_cookbook>` | :doc:`knife cookbook site </knife_cookbook_site>` | :doc:`knife data bag </knife_data_bag>` | :doc:`knife delete </knife_delete>` | :doc:`knife deps </knife_deps>` | :doc:`knife diff </knife_diff>` | :doc:`knife download </knife_download>` | :doc:`knife edit </knife_edit>` | :doc:`knife environment </knife_environment>` | :doc:`knife exec </knife_exec>` | :doc:`knife list </knife_list>` | :doc:`knife node </knife_node>` | :doc:`knife raw </knife_raw>` | :doc:`knife recipe list </knife_recipe_list>` | :doc:`knife role </knife_role>` | :doc:`knife search </knife_search>` | :doc:`knife serve </knife_serve>` | :doc:`knife show </knife_show>` | :doc:`knife ssh </knife_ssh>` | :doc:`knife ssl check </knife_ssl_check>` | :doc:`knife ssl fetch </knife_ssl_fetch>` | :doc:`knife status </knife_status>` | :doc:`knife tag </knife_tag>` | :doc:`knife upload </knife_upload>` | :doc:`knife user </knife_user>` | :doc:`knife xargs </knife_xargs>`
 
 **knife opc**: :doc:`About knife opc </plugin_knife_opc>` | :ref:`plugin_knife_opc-knife-rb-configuration` | :ref:`plugin_knife_opc-opc-user-list` | :ref:`plugin_knife_opc-opc-user-show` | :ref:`plugin_knife_opc-opc-user-create` | :ref:`plugin_knife_opc-opc-user-delete` | :ref:`plugin_knife_opc-opc-user-edit` | :ref:`plugin_knife_opc-opc-user-password` | :ref:`plugin_knife_opc-opc-org-list` | :ref:`plugin_knife_opc-opc-org-show` | :ref:`plugin_knife_opc-opc-org-create` | :ref:`plugin_knife_opc-opc-org-delete` | :ref:`plugin_knife_opc-opc-org-user-add` | :ref:`plugin_knife_opc-opc-org-user-remove`
 
@@ -250,12 +250,14 @@ Delivery CLI
 
 Integrations
 -----------------------------------------------------
-:doc:`w/Bitbucket </integrate_delivery_bitbucket>` |
-:doc:`w/Email (SMTP) </integrate_delivery_smtp>` |
-:doc:`w/GitHub </integrate_delivery_github>` |
-:doc:`w/LDAP </integrate_delivery_ldap>` |
-:doc:`w/SAML </integrate_chef_automate_saml>` |
-:doc:`w/Slack </integrate_delivery_slack>`
+:doc:`Authentication w/LDAP </integrate_delivery_ldap>` |
+:doc:`Authentication w/SAML </integrate_chef_automate_saml>` |
+:doc:`Node Notifications w/Slack </integrate_node_notifications_slack>` |
+:doc:`Node Notifications w/Webhooks </integrate_node_notifications_webhook>` |
+:doc:`Workflow w/Bitbucket </integrate_delivery_bitbucket>` |
+:doc:`Workflow w/Email (SMTP) </integrate_delivery_smtp>` |
+:doc:`Workflow w/GitHub </integrate_delivery_github>` |
+:doc:`Workflow w/Slack </integrate_delivery_slack>`
 
 Cookbooks
 -----------------------------------------------------
@@ -318,6 +320,7 @@ Compliance scanner
 :doc:`Upgrade Compliance </upgrade_compliance>` |
 :doc:`chef-compliance.rb </config_rb_compliance>` |
 :doc:`Chef Compliance API </api_compliance>`
+:doc: `Profile Store </profile_store>`
 
 AWS OpsWorks for Chef Automate
 -----------------------------------------------------
@@ -576,6 +579,8 @@ Addenda
    integrate_delivery_ldap
    integrate_delivery_slack
    integrate_delivery_smtp
+   integrate_node_notifications_slack
+   integrate_node_notifications_webhook
    junos
    kitchen
    knife
@@ -615,7 +620,6 @@ Addenda
    nodes
    ohai
    ohai_custom
-   openstack
    packages
    page_not_found
    perform_compliance_scan
@@ -633,6 +637,7 @@ Addenda
    plugin_knife_windows
    policy
    policyfile
+   profile_store
    proxies
    provisioning
    provisioning_aws
