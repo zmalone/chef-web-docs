@@ -66,6 +66,7 @@ The ``create-backup`` subcommand is used to create Chef Automate backups. By def
         --no-license                 Do not back up Chef Automate's license file
         --no-notifications           Do not back up Chef Automate's notifications rulestore
         --no-wait                    Do not wait for non-blocking backup operations
+        --no-wait-for-lock           Do not wait for Elasticsearch lock
         --quiet                      Do not output non-error information
         --rabbit                     Back up Chef Automate's RabbitMQ queues
         --retry-limit                Maximum number of times to retry archive uploads to S3
@@ -133,6 +134,10 @@ The ``delete-backups`` subcommand is used to delete Chef Automate backup archive
 
    $ automate-ctl delete-backups REGEX [options]
         --force                      Agree to all warnings and prompts
+        --max-archives [integer]     Maximum number of backup archives to keep
+        --max-snapshots [integer]    Maximum number of Elasticsearch snapshots to keep
+        --pattern [string]           Delete backups matching the Ruby RegExp pattern
+        --no-wait-for-lock           Do not wait for Elasticsearch lock<Paste>
     -h, --help                       Show the usage message
 
 **Examples**
@@ -145,6 +150,32 @@ Deleting a single Elasticsearch snapshot:
 
 Deleting all backup archives and snapshots from October, 2016:
   ``$ automate-ctl delete-backups 2016-10-.+-chef-automate-backup --force``
+
+delete-elasticsearch-lock
+=====================================================
+The ``delete-elasticsearch-lock`` subcommand is used to delete the exclusive Elasticsearch lock document that is used by several of Chef Automate's services to coordinate major operations. Each service should create and remove this lock automatically, but in the event of an issue an operator can use this command to manually free the lock.
+
+Added in Chef Automate version 1.6.87.
+
+**Syntax**
+
+.. code-block:: bash
+
+   $ automate-ctl delete-elasticsearch-lock [options]
+        --force                      Agree to all warnings and prompts
+    -h, --help                       Show the usage message
+
+**Examples**
+
+.. code-block:: bash
+
+   $ automate-ctl delete-elasticsearch-lock
+
+   HOSTNAME            PROCESS  PID    TIME
+   automate.myorg.com  reaper   12345  2017-08-11T16:46:33Z
+
+   Removing the Elasticsearch lock before the process completes can cause race conditions. Are you sure you wish to proceed? (yes/no):
+   $ yes
 
 delete-enterprise
 =====================================================
@@ -215,6 +246,7 @@ New in Chef Automate 1.6.87.
       -n, --name NODE_NAME             The name of the node you wish to delete
       -o, --org ORG_NAME               The organization name of the node you wish to delete
       -s, --chef-server-fqdn FQDN      The fully qualified domain name of the node's Chef server
+      -b, --batch-size string          Maximum number of documents to modify in each Elasicsearch bulk request
       -d, --[no-]node-data             Delete the node run and converge data
       -c, --[no-]compliance-data       Delete the node compliance data
           --force                      Agree to all warnings and prompts
@@ -253,10 +285,10 @@ This subcommand has the following syntax:
 
 .. code-block:: bash
 
-   $ automate-ctl gather-logs 
+   $ automate-ctl gather-logs
         --all-logs          Gather all of the logs, regardless of size or age.
 
-.. warning:: The ``--all-logs`` option can potentially take up a large amount of disk space. 
+.. warning:: The ``--all-logs`` option can potentially take up a large amount of disk space.
 
 generate-password-reset-token
 =====================================================
@@ -456,83 +488,89 @@ The ``node-summary`` subcommand produces a summary of the nodes that are known t
 
 New in Chef Automate 0.5.328.
 
-The default setting for ``node-summary`` is to display the name, status, and the last time the nodes were checked.
+The default setting for ``node-summary`` is to display the name, UUID, status, and the last time the nodes checked in via the Chef Client, Inspec, or the liveness agent.
 
 **Syntax**
 
-.. code-block:: none
+.. code-block:: bash
 
-   $ automate-ctl node-summary [option]
-
-     Option:
-     --json                    Produce a detailed report in JSON format.
-
+   $ automate-ctl node-summary [options]
+       -f, --format string              The output format. 'text' or 'json'
+       -r, --request-timeout int        The Elasticsearch client request timeout in seconds
+       -h, --help                       Show this message
 
 **Examples**
 
-Producing a summary of nodes known to Automate using the ``node-summary`` default behavior.
-
-.. code-block:: none
-
-  $ automate-ctl node-summary
-  name, status, last_checkin
-  builder-1-acceptance, missing, 2017-02-22T19:41:14.000Z
-  builder-1-delivered, success, 2017-02-25T19:54:08.000Z
-
-Producing a summary of nodes known to Automate in JSON.
+Produce a summary of nodes known to Automate using the ``node-summary`` default behavior.
 
 .. code-block:: bash
 
-  $ automate-ctl node-summary --json
+  $ automate-ctl node-summary
+  NAME         UUID                                  STATUS   LAST CHECKIN
+  chef-test-1  f44c40a4-a0bb-4120-bd75-079972d98072  success  2017-02-22T19:41:14.000Z
+  chef-test-2  8703593e-723a-4394-a36d-34da11a2f668  missing  2017-02-25T19:54:08.000Z
+
+Produce a summary of nodes known to Automate in JSON.
+
+.. code-block:: bash
+
+  $ automate-ctl node-summary --format json
   [
     {
-      "chef_version": "12.16.42",
+      "chef_version": "12.21.3",
       "checkin": "2017-02-22T19:41:14.000Z",
       "@timestamp": "2017-02-22T19:41:14.000Z",
       "platform_version": "10.12.3",
-      "fqdn": "",
-      "name": "builder-1-delivered",
-      "organization_name": "acme",
+      "fqdn": "chef-test-1",
+      "name": "chef-test-1",
+      "organization_name": "chef",
       "platform_family": "mac_os_x",
       "platform": "mac_os_x",
       "status": "success",
+      "uuid": "f44c40a4-a0bb-4120-bd75-079972d98072",
       "chef_server_status": "present"
     },
     ...
   ]
 
-Explanation of fields:
+Explanation of fields
 -----------------------------------------------------
-chef_version
+``chef_version``
    The version of the Chef Client that ran on the node.
-checkin
+``checkin``
    The last time Chef Client ran on the node.
-@timestamp
+``@timestamp``
    The time when the node's information was received by Chef Automate.
-platform_version
+``platform_version``
    Platform version information discovered by ohai on the node.
-fqdn
+``fqdn``
    Fully qualified domain name of the node.
-name
+``name``
    Name of the node in Chef Server.
-organization_name
+``organization_name``
    The name of the Chef Server organization the node belongs to.
-platform_family
+``platform_family``
    Platform family information discovered by ohai on the node.
-platform
+``platform``
    Platform information discovered by ohai on the node.
-status
-   "success" if the last Chef Client run succeeded on the node
-   "failure" if the last Chef Client run failed on the node
-   "missing" if Chef Client did not run in the expected check-in duration configured in Chef Automate (default is 12 hours).
-chef_server_status
+``status``
+   ``success`` if the last Chef Client run succeeded on the node.
+
+   ``failure`` if the last Chef Client run failed on the node.
+
+   ``live`` if the liveness agent has successfully updated Chef Automate, but the Chef Client has not run within the expected check-in duration configured in Chef Automate (default is 12 hours).
+
+   ``missing`` if Chef Client did not run within the expected check-in duration configured in Chef Automate (default is 12 hours).
+``uuid``
+   The universally unique identifier of the node in Chef Automate.
+``chef_server_status``
    This field is only populated in Opsworks for Chef Automate instances.
-   "present": Node is still present on the Chef Server.
-   "missing": Node is still present on the Chef Server.
-ec2
+
+   ``present``: Node is still present on the Chef Server.
+
+   ``missing``: Node is still present on the Chef Server.
+``ec2``
    EC2 information discovered by ohai on the node. This field is only populated in Chef Automate instances that are running on EC2
-
-
 
 preflight-check
 =====================================================
@@ -608,6 +646,7 @@ The command is intended to restore an Automate instance completely from backup, 
         --no-notifications           Do not restore Chef Automate's notifications rulestore
         --no-rabbit                  Do not restore Chef Automate's RabbitMQ data
         --no-wait                    Do not wait for non-blocking restore operations
+        --no-wait-for-lock           Do not wait for Elasticsearch lock
         --quiet                      Do not output non-error information
         --retry-limit                Maximum number of times to retry archive downloads from S3
         --staging-dir [string]       The path to use for temporary files during restore
@@ -641,18 +680,18 @@ This subcommand has the following syntax:
 .. code-block:: bash
 
    $ automate-ctl show-config
-   
+
 telemetry
 =====================================================
 
-The ``telemetry`` subcommand is used in conjunction with additional subcommands to query the ``status`` of, ``enable`` or ``disable`` telemetry server wide. 
+The ``telemetry`` subcommand is used in conjunction with additional subcommands to query the ``status`` of, ``enable`` or ``disable`` telemetry server wide.
 
 This subcommand has the following syntax:
 
 .. code-block:: bash
 
  $ automate-ctl telemetry status
-    
+
 **Examples**
 
 Query current status:
