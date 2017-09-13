@@ -3,8 +3,6 @@ Chef Client Overview
 =====================================================
 `[edit on GitHub] <https://github.com/chef/chef-web-docs/blob/master/chef_master/source/chef_client.rst>`__
 
-
-
 .. note:: For the ``chef-client`` command line tool, see :doc:`chef-client(executable) </ctl_chef_client>`
    The chef-client executable can be run as a daemon.
 
@@ -25,6 +23,7 @@ Chef Client Overview
        * Compiling the resource collection by loading each of the required cookbooks, including recipes, attributes, and all other dependencies
        * Taking the appropriate and required actions to configure the node
        * Looking for exceptions and notifications, handling each as required
+       * Using :doc:`Ohai </ohai>` to determine the system state
 
        .. end_tag
 

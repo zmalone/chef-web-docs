@@ -71,6 +71,7 @@ The key components of nodes that are under management by Chef include:
        * Compiling the resource collection by loading each of the required cookbooks, including recipes, attributes, and all other dependencies
        * Taking the appropriate and required actions to configure the node
        * Looking for exceptions and notifications, handling each as required
+       * Using :doc:`Ohai </ohai>` to determine the system state
 
        .. end_tag
 
