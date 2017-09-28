@@ -26,13 +26,13 @@ The Knife Quick Reference provides an all-in-one quick reference of knife comman
 
    * - Topic
      - Description
-   * - `Setting up Knife </knife_setup>`_
+   * - `Setting up Knife </knife_setup.html>`_
      - Configure knife to interact with your organization's Chef server and infrastructure.
-   * - `Knife Common Options </knife_options>`_
+   * - `Knife Common Options </knife_options.html>`_
      - Common options that are available for all knife subcommands.
-   * - `knife.rb </config_rb_knife>`_
+   * - `knife.rb </config_rb_knife.html>`_
      - Common options for the ``knife.rb`` file
-   * - `knife.rb Optional Settings </config_rb_knife_optional_settings>`_
+   * - `knife.rb Optional Settings </config_rb_knife_optional_settings.html>`_
      - Additional options for your ``knife.rb``
 
 .. end_tag
@@ -46,7 +46,7 @@ Plugin Command Syntax
 -----------------------------------------------------
 All knife subcommands have the following syntax:
 
-   knife subcommand [ARGUMENT] (options)
+   ``knife subcommand [ARGUMENT] (options)``
 
 Each subcommand has its own set of arguments and options.
 
