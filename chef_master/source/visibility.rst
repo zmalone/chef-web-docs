@@ -58,14 +58,9 @@ This tab provides a summary of the compliance status across all nodes of your cl
 
 .. tag beta_note
 
-If you are using Chef Automate 0.8.5, this functionality is hidden behind a ``beta`` feature flag. See the `Chef Automate 0.8.5 release notes </release_notes_chef_automate.html##what-s-new-in-0-8-5>`_ for more details.
+This feature is in ``beta`` release. To access this feature, place your cursor anywhere on an Automate page, type ``beta`` and enable the feature.
 
 .. end_tag
 
 Chef Automate also continues to support the reporting of compliance data through the **Nodes** tab. If you need to continue using the previous compliance view, you can enable it easily by typing ``legacy`` in the UI and toggling on this view in the menu.
 
-Your compliance data will be available by clicking **Compliance Status** under the **Nodes** tab.
-
-.. image:: ../../images/visibility_compliance_overview.png
-
-This view provides a summary of the compliance status across all nodes of your fleet at the top of the page. It also includes a detailed list of nodes and highlights critical, major, and minor control violations.

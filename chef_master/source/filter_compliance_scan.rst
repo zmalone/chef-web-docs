@@ -15,7 +15,7 @@ The **Compliance** tab in your Chef Automate cluster allows you to upload, searc
 
 .. tag beta_note
 
-If you are using Chef Automate 0.8.5, this functionality is hidden behind a ``beta`` feature flag. See the `Chef Automate 0.8.5 release notes </release_notes_chef_automate.html##what-s-new-in-0-8-5>`_ for more details.
+This feature is in ``beta`` release. To access this feature, place your cursor anywhere on an Automate page, type ``beta`` and enable the feature.
 
 .. end_tag
 
@@ -26,21 +26,21 @@ To begin viewing and filtering your reports, click the **Compliance** tab at the
 
 You can filter by Profile, Control, Node, Platform, Environment, or a combination of these categories when you are in either the **Node Status** or **Profile Status** views. 
 
-.. image:: ../../images/compliance_filter_1.png
+.. image:: ../../images/automate_compliance_filter.png
 
 Clear a Filter
 ===============================================
 
 To clear a filter, simply click on the filter icon and remove the filter or clear all filtering.
 
-.. image:: ../../images/compliance_filter_2.png
+.. image:: ../../images/automate_compliance_search_bar.png
 
 Switching views
 ===============================================
 
 In addition to filtering your reporting data, you can also switch your views to see compliance report results by node status or by profile status.
 
-.. image:: ../../images/compliance_filter_3.png
+.. image:: ../../images/automate_compliance_toggle.png
    :width: 200px
    :height: 41px
 
