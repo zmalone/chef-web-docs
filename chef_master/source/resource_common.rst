@@ -206,21 +206,21 @@ The following arguments can be used with the ``not_if`` or ``only_if`` guard pro
 
    .. code-block:: ruby
 
-      not_if 'grep adam /etc/passwd', :user => 'adam'
+      not_if 'grep adam /etc/passwd', user: = 'adam'
 
 ``:group``
    Specify the group that a command will run as. For example:
 
    .. code-block:: ruby
 
-      not_if 'grep adam /etc/passwd', :group => 'adam'
+      not_if 'grep adam /etc/passwd', group: = 'adam'
 
 ``:environment``
    Specify a Hash of environment variables to be set. For example:
 
    .. code-block:: ruby
 
-      not_if 'grep adam /etc/passwd', :environment => {
+      not_if 'grep adam /etc/passwd', environment: = {
         'HOME' => '/home/adam'
       }
 
@@ -229,14 +229,14 @@ The following arguments can be used with the ``not_if`` or ``only_if`` guard pro
 
    .. code-block:: ruby
 
-      not_if 'grep adam passwd', :cwd => '/etc'
+      not_if 'grep adam passwd', cwd: = '/etc'
 
 ``:timeout``
    Set a timeout for a command. For example:
 
    .. code-block:: ruby
 
-      not_if 'sleep 10000', :timeout => 10
+      not_if 'sleep 10000', timeout: = 10
 
 .. end_tag
 
@@ -420,7 +420,7 @@ and requires adding the ``environment`` property to the ``not_if`` guard stateme
    bash 'javatooling' do
      environment 'JAVA_HOME' => '/usr/lib/java/jdk1.7/home'
      code 'java-based-daemon-ctl.sh -start'
-     not_if 'java-based-daemon-ctl.sh -test-started', :environment => 'JAVA_HOME' => '/usr/lib/java/jdk1.7/home'
+     not_if 'java-based-daemon-ctl.sh -test-started', environment: = 'JAVA_HOME' = '/usr/lib/java/jdk1.7/home'
    end
 
 To inherit properties, add the ``guard_interpreter`` property to the resource block and set it to the appropriate value:
@@ -502,7 +502,7 @@ The following example shows how to use lazy evaluation with template variables:
    template '/tmp/canvey_island.txt' do
      source 'canvey_island.txt.erb'
      variables(lazy {
-       { :canvey_island => node.run_state['sea_power'] }
+       { canvey_island: = node.run_state['sea_power'] }
      })
    end
 
@@ -1033,7 +1033,7 @@ For example:
      rights :read, 'Everyone'
      rights :write, 'domain\group'
      rights :full_control, 'group_name_or_user_name'
-     rights :full_control, 'user_name', :applies_to_children => true
+     rights :full_control, 'user_name', applies_to_children = true
    end
 
 or:
@@ -1041,8 +1041,8 @@ or:
 .. code-block:: ruby
 
     rights :read, ['Administrators','Everyone']
-    rights :full_control, 'Users', :applies_to_children => true
-    rights :write, 'Sally', :applies_to_children => :containers_only, :applies_to_self => false, :one_level_deep => true
+    rights :full_control, 'Users', applies_to_children: = true
+    rights :write, 'Sally', applies_to_children = :containers_only, applies_to_self: = false, one_level_deep: = true
 
 Some other important things to know when using the ``rights`` attribute:
 
@@ -1058,7 +1058,7 @@ Use the ``deny_rights`` property to deny specific rights to specific users. The 
      rights :read, 'Everyone'
      rights :write, 'domain\group'
      rights :full_control, 'group_name_or_user_name'
-     rights :full_control, 'user_name', :applies_to_children => true
+     rights :full_control, 'user_name', applies_to_children: = true
      deny_rights :read, ['Julian', 'Lewis']
    end
 
