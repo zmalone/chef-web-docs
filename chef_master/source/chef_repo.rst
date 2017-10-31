@@ -3,8 +3,6 @@ About the chef-repo
 =====================================================
 `[edit on GitHub] <https://github.com/chef/chef-web-docs/blob/master/chef_master/source/chef_repo.rst>`__
 
-.. note:: For information about the accessing the source code implementation of Chef (the Chef repo on GitHub), see `Community Contributions </community_contributions.html>`__.
-
 .. tag chef_repo_description
 
 The chef-repo is a directory on your workstation that stores:
@@ -24,8 +22,6 @@ Directory Structure
 =====================================================
 The chef-repo contains several directories, each with a README file that describes what it is for and how to use that directory when managing systems.
 
-.. note:: This document describes the default directory that is present in most instances of the chef-repo.
-
 The sub-directories in the chef-repo are:
 
 .. list-table::
@@ -35,7 +31,7 @@ The sub-directories in the chef-repo are:
    * - Directory
      - Description
    * - ``.chef/``
-     - A hidden directory that is used to store validation key files and the knife.rb file.
+     - A hidden directory that is used to store validation key files and optionally a knife.rb file.
    * - ``cookbooks/``
      - Contains cookbooks that have been downloaded from the `Chef Supermarket <https://supermarket.chef.io/>`__ or created locally.
    * - ``data_bags/``
@@ -49,7 +45,7 @@ The sub-directories in the chef-repo are:
 -----------------------------------------------------
 .. tag all_directory_chef
 
-The .chef directory is a hidden directory that is used to store validation key files and the knife.rb file.
+The .chef directory is a hidden directory that is used to store validation key files and optionally a knife.rb file.
 
 .. end_tag
 
