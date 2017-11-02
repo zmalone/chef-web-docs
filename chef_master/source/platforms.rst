@@ -48,7 +48,7 @@ The following table lists the commercially-supported platforms and versions for 
      - ``10``, ``11``
    * - macOS
      - ``x86_64``
-     - ``10.10``, ``10.11``, ``10.12``
+     - ``10.10``, ``10.11``, ``10.12``, ``10.13``
    * - Oracle Enterprise Linux
      - ``i386`` (5.x only), ``x86_64``
      - ``5.x``, ``6.x``, ``7.x``
@@ -99,11 +99,11 @@ The following platforms are supported only via the community:
      -
      - ``42``
    * - Scientific Linux
-     - ``i386`` (5.x only), ``x86-64``
-     - ``5.x``, ``6.x``, ``7.x``
+     - ``x86-64``
+     - ``6.x``, ``7.x``
    * - Ubuntu
      - ``x86``, ``x86_64``
-     - non-LTS releases
+     - Current non-LTS releases
 
 Chef DK
 ------------------------------------------------------
@@ -122,7 +122,7 @@ The following table lists the commercially-supported platforms and versions for 
      - Version
    * - macOS
      -
-     - ``10.10``, ``10.11``, ``10.12``
+     - ``10.10``, ``10.11``, ``10.12``, ``10.13``
    * - Red Hat Enterprise Linux
      -
      - ``6.x``, ``7.x``
@@ -134,7 +134,7 @@ The following table lists the commercially-supported platforms and versions for 
      - ``14.04``, ``16.04``
    * - Microsoft Windows
      -
-     - ``7``, ``8``, ``8.1``, ``10``, ``2008 R2``, ``2012``, ``2012 R2``
+     - ``7``, ``8``, ``8.1``, ``10``, ``2008 R2``, ``2012``, ``2012 R2``, ``2016``
 
 Community Support
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -150,12 +150,9 @@ The following platforms are supported only via the community:
    * - Debian
      -
      - ``7.x``, ``8.x``, ``9.x``
-   * - macOS
-     -
-     - ``10.9`` (and earlier)
-   * - Microsoft Windows
-     -
-     - ``Vista``, ``XP``, ``2000``, ``2003``, ``2003 R2``, ``2008``
+   * - Scientific Linux
+     - ``x86-64``
+     - ``6.x``, ``7.x``
 
 Chef Server
 ------------------------------------------------------
