@@ -110,14 +110,15 @@ The following examples show how to use common properties in a recipe.
 
 **Use the provider common property**
 
-.. tag resource_package_use_provider_attribute
+.. tag resource_service_use_provider_attribute
 
 .. To use the ``:provider`` common attribute in a recipe:
 
 .. code-block:: ruby
 
-   package 'some_package' do
-     provider Chef::Provider::Package::Rubygems
+   service 'some_service' do
+     provider Chef::Provider::Service::Upstart
+     action [ :enable, :start ]
    end
 
 .. end_tag
@@ -131,7 +132,7 @@ The following examples show how to use common properties in a recipe.
 .. code-block:: ruby
 
    service 'apache' do
-     action :start
+     action [ :enable, :start ]
      retries 3
    end
 
@@ -170,13 +171,13 @@ A guard property is useful for ensuring that a resource is idempotent by allowin
 
 .. note:: .. tag resources_common_guards_execute_resource
 
-          When using the ``not_if`` and ``only_if`` guards with the **execute** resource, the current working directory property (``cwd``) is **not** inherited from the resource. For example:
+          When using the ``not_if`` and ``only_if`` guards with the **execute** resource, the guard's environment is inherited from the resource's environment. For example:
 
           .. code-block:: ruby
 
              execute 'bundle install' do
                cwd '/myapp'
-               not_if 'bundle check' # This is not run inside /myapp
+               not_if 'bundle check' # This is run from /myapp
              end
 
           .. end_tag
