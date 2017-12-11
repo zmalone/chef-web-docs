@@ -352,6 +352,47 @@ This subcommand has the following syntax:
 
    $ automate-ctl delete-user ENT_NAME john_smith
 
+.. _delete-runner:
+
+delete-runner
+=====================================================
+The ``delete-runner`` subcommand deletes a remote node configured as a job runner, which was used by Chef Automate to run phase jobs. For more information on runners, please see the `Runners documentation </runners.html>`_.
+
+Added in Chef Automate version 1.7.114.
+
+**Syntax**
+
+.. code-block:: bash
+
+   $ automate-ctl delete-runner FQDN [options]
+
+     Arguments:
+       FQDN       Fully qualified domain name of the remote host that will be deleted as a runner
+
+     Options:
+      -h, --help                            Show the usage message
+      -e, --enterprise                      Legacy option, only required if you have more than one enterprise configured. Workflow enterprise to delete the runner from
+      -y, --yes                             Skip configuration confirmation and overwrite any existing Chef Server nodes of the same name as FQDN
+
+
+**Example**
+
+.. code-block:: bash
+
+   $ automate-ctl delete-runner
+
+Delete the runner runner-hostname.mydomain.co when there is only one enterprise configured.
+
+.. code-block:: bash
+
+   $ automate-ctl delete-runner runner-hostname.mydomain.co
+
+Delete the runner runner-hostname.mydomain.co when multiple enterprises are configured.
+
+.. code-block:: bash
+
+   $ automate-ctl install-runner runner-hostname.mydomain.co -e myenterprise
+
 delete-node
 =====================================================
 The ``delete-node`` subcommand is used to delete a node and it's corresponding history from Chef Automate. The user must provide some combination of the node's UUID, name, organization name, and chef server FQDN to determine which node to delete. In the event that multiple nodes are found, a list of matching nodes will displayed. Narrow the search by providing more search parameters or use the UUID to delete the node.
@@ -526,6 +567,7 @@ The ``install-runner`` subcommand configures a remote node as a job runner, whic
       -y, --yes                             Skip configuration confirmation and overwrite any existing Chef Server nodes of the same name as FQDN
       -e, --enterprise                      Legacy option, only required if you have more than one enterprise configured. Workflow enterprise to add the runner into
       --fips-custom-cert-filename FILENAME  If you have a self-signed or self-owned Certificate Authority (CA) and wish to operate in FIPS mode, pass this flag the path to a file containing your custom certificate chain on your Automate server. This file will be copied to the runner and used when running jobs in FIPS mode. If you have purchased a certificate from a known CA for Automate server, you can ignore this flag. Please see the Automate FIPS docs for details.
+      --full-ohai                           If `--full-ohai` flag set, Chef will run with full Ohai plugins.
 
 
 .. note:: The username provided must be a user who has sudo access on the remote node. If the user is a member of a domain, then the username value should be entered as ``user@domain``.
@@ -698,9 +740,11 @@ Produce a summary of nodes known to Automate using the ``node-summary`` default 
 .. code-block:: bash
 
   $ automate-ctl node-summary
-  NAME         UUID                                  STATUS   LAST CHECKIN
-  chef-test-1  f44c40a4-a0bb-4120-bd75-079972d98072  success  2017-02-22T19:41:14.000Z
-  chef-test-2  8703593e-723a-4394-a36d-34da11a2f668  missing  2017-02-25T19:54:08.000Z
+  NAME                              UUID                                  STATUS            LAST CHECKIN
+  chef-test-1                       f44c40a4-a0bb-4120-bd75-079972d98072  success           2017-02-22T19:41:14.000Z
+  chef-test-2                       8703593e-723a-4394-a36d-34da11a2f668  missing           2017-02-25T19:54:08.000Z
+  agentless-scan-node1.example.com  63d49e04-f1f2-4d80-61a0-4f332d58b492  scan-unreachable  2017-12-05T20:29:39Z
+  agentless-scan-node2.example.com  825e90c1-cb23-4f6a-6c0e-35e5b2d12ea4  scan-passed       2017-12-07T18:50:57Z
 
 Produce a summary of nodes known to Automate in JSON.
 
@@ -753,6 +797,15 @@ Explanation of fields
    ``live`` if the liveness agent has successfully updated Chef Automate, but the Chef Client has not run within the expected check-in duration configured in Chef Automate (default is 12 hours).
 
    ``missing`` if Chef Client did not run within the expected check-in duration configured in Chef Automate (default is 12 hours).
+
+   ``scan-failed`` if a node set up for `ad-hoc scanning <automate_compliance_scanner.html>`__ failed its latest compliance scan.
+
+   ``scan-passed`` if a node set up for `ad-hoc scanning <automate_compliance_scanner.html>`__ passed its latest compliance scan.
+
+   ``scan-skipped`` if a node set up for `ad-hoc scanning <automate_compliance_scanner.html>`__ skipped its latest compliance scan.
+
+   ``scan-unreachable`` if a node set up for `ad-hoc scanning <automate_scanner.html>`__ either could not be reached for scanning or has not been scanned within the past hour.
+
 ``uuid``
    The universally unique identifier of the node in Chef Automate.
 ``chef_server_status``

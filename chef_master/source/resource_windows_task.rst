@@ -150,7 +150,7 @@ Examples
 
 .. tag windows_task_examples
 
-**Create a scheduled task to run every 15 minutes**
+**Create a scheduled task to run every 15 minutes as the Administrator user**
 
 .. code-block:: ruby
 
@@ -168,8 +168,6 @@ Examples
 .. code-block:: ruby
 
    windows_task 'chef-client' do
-     user 'Administrator'
-     password 'Password'
      command 'chef-client'
      run_level :highest
      frequency :daily
@@ -181,8 +179,6 @@ Examples
 .. code-block:: ruby
 
    windows_task 'chef-client' do
-     user 'Administrator'
-     password 'Password'
      command 'chef-client'
      run_level :highest
      frequency :weekly
@@ -194,8 +190,6 @@ Examples
 .. code-block:: ruby
 
    windows_task 'chef-client' do
-     user 'Administrator'
-     password 'Password'
      command 'chef-client'
      run_level :highest
      frequency :once
@@ -207,8 +201,6 @@ Examples
 .. code-block:: ruby
 
    windows_task 'chef-client' do
-     user 'Administrator'
-     password 'Password'
      command 'chef-client'
      run_level :highest
      frequency :weekly
@@ -216,13 +208,22 @@ Examples
      random_delay '60'
    end
 
+**Create a scheduled task to run weekly starting on Dec 28th 2018**
+
+.. code-block:: ruby
+
+   windows_task 'chef-client 8' do
+     command 'chef-client'
+     run_level :highest
+     frequency :weekly
+     start_day '12/28/2018'
+   end
+
 **Create a scheduled task to run every Monday, Friday every 2 weeks**
 
 .. code-block:: ruby
 
    windows_task 'chef-client' do
-     user 'Administrator'
-     password 'Password'
      command 'chef-client'
      run_level :highest
      frequency :weekly
@@ -235,8 +236,6 @@ Examples
 .. code-block:: ruby
 
    windows_task 'chef-client' do
-     user 'Administrator'
-     password 'Password'
      command 'chef-client'
      run_level :highest
      frequency :on_idle
