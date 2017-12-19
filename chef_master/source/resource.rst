@@ -344,7 +344,7 @@ The following resources are platform resources (i.e. "are available from the che
    * - `mdadm </resource_mdadm.html>`__
      - .. tag resource_mdadm_summary
 
-       Use the **mdadm** resource to manage RAID devices in a Linux environment using the mdadm utility. The **mdadm** provider will create and assemble an array, but it will not create the config file that is used to persist the array upon reboot. If the config file is required, it must be done by specifying a template with the correct array layout, and then by using the **mount** provider to create a file systems table (fstab) entry.
+       Use the **mdadm** resource to manage RAID devices in a Linux environment using the mdadm utility. The **mdadm** resource will create and assemble an array, but it will not create the config file that is used to persist the array upon reboot. If the config file is required, it must be done by specifying a template with the correct array layout, and then by using the **mount** provider to create a file systems table (fstab) entry.
 
        .. end_tag
 
@@ -531,7 +531,7 @@ The following resources are platform resources (i.e. "are available from the che
    * - `windows_service </resource_windows_service.html>`__
      - .. tag resource_service_windows
 
-       Use the **windows_service** resource to manage a service on the Microsoft Windows platform. New in Chef Client 12.0.
+       Use the **windows_service** resource to manage a service on the Microsoft Windows platform.
 
        .. end_tag
 
