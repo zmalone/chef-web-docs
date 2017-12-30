@@ -17,7 +17,7 @@ For example, Chef includes built-in resources to manage files, packages, templat
 
 .. end_tag
 
-Custom resources were introduced in Chef version 12.5 and are now the preferred method of writing your own resources in Chef. If you are using an older version of the chef-client, please see our `legacy documentation <https://docs-archive.chef.io/release/12-4/custom_resources.html>`__, as well as the `compat_resource <https://github.com/chef-cookbooks/compat_resource>`__ cookbook for information on using custom resources with chef-client 12.1 - 12.4.
+Custom resources were introduced in Chef version 12.5 and are now the preferred method of writing your own resources in Chef. If you are using an older version of the chef-client, please see our `legacy documentation <https://docs-archive.chef.io/release/12-4/custom_resources.html>`__.
 
 As of Chef client 12.14, individual resource properties can be marked as ``sensitive: true``, which suppresses the value of that property when exporting the resource's state.
 
@@ -274,14 +274,11 @@ Use the **template** resource to create an ``httpd.service`` on the node based o
 
 .. code-block:: ruby
 
-   template "/lib/systemd/system/httpd-#{instance_name}.service" do
+   template "/lib/systemd/system/httpd-#{new_resource.instance_name}.service" do
      source 'httpd.service.erb'
      variables(
        instance_name: new_resource.instance_name
      )
-     owner 'root'
-     group 'root'
-     mode '0644'
      action :create
    end
 
@@ -302,9 +299,6 @@ Use the **template** resource to configure httpd on the node based on the ``http
        instance_name: new_resource.instance_name,
        port: new_resource.port
      )
-     owner 'root'
-     group 'root'
-     mode '0644'
      action :create
    end
 
@@ -321,9 +315,6 @@ Use the **directory** resource to create the ``/var/www/vhosts`` directory on th
 
    directory "/var/www/vhosts/#{new_resource.instance_name}" do
      recursive true
-     owner 'root'
-     group 'root'
-     mode '0755'
      action :create
    end
 
@@ -422,9 +413,6 @@ Final Resource
        variables(
          instance_name: new_resource.instance_name
        )
-       owner 'root'
-       group 'root'
-       mode '0644'
        action :create
      end
 
@@ -434,17 +422,11 @@ Final Resource
          instance_name: new_resource.instance_name,
          port: new_resource.port
        )
-       owner 'root'
-       group 'root'
-       mode '0644'
        action :create
      end
 
      directory "/var/www/vhosts/#{new_resource.instance_name}" do
        recursive true
-       owner 'root'
-       group 'root'
-       mode '0755'
        action :create
      end
 
@@ -520,16 +502,12 @@ Methods may be made available to the custom resource actions by using an ``actio
 
    action :delete do
      helper_method
-     FileUtils.rm(new_resource.file) if file_ex
+     FileUtils.rm(new_resource.file) if file_exist
    end
 
    action_class do
 
      def file_exist
-       ::File.exist?(new_resource.file)
-     end
-
-     def file_ex
        ::File.exist?(new_resource.file)
      end
 
@@ -567,8 +545,8 @@ For example, a custom resource defines two properties (``content`` and ``path``)
    property :path, String, name_property: true
 
    load_current_value do
-     if ::File.exist?(new_resource.path)
-       content IO.read(new_resource.path)
+     if ::File.exist?(path)
+       content IO.read(path)
      end
    end
 
@@ -578,7 +556,7 @@ For example, a custom resource defines two properties (``content`` and ``path``)
      end
    end
 
-When the file does not exist, the ``IO.write(path, content)`` code is executed and the chef-client output will print something similar to:
+When the file does not exist, the ``IO.write(new_resource.path, new_resource.content)`` code is executed and the chef-client output will print something similar to:
 
 .. code-block:: bash
 
