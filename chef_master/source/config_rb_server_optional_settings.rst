@@ -116,6 +116,11 @@ This configuration file has the following settings for ``bookshelf``:
 ``bookshelf['enable']``
    Enable a service. Default value: ``true``.
 
+``bookshelf['enable_request_logging']``
+   Use to configure request logging for the bookshelf service. Default value: ``false``.
+
+   New in Chef server 12.17.15.
+
 ``bookshelf['external_url']``
    The base URL to which the service is to return links to API resources. Use ``:host_header`` to ensure the URL is derived from the host header of the incoming HTTP request. Default value: ``:host_header``.
 
@@ -695,6 +700,11 @@ This configuration file has the following settings for ``nginx``:
 
    New in Chef server 12.17
 
+``nginx['show_welcome_page']``
+   Determines whether or not the default nginx welcome page is shown. Default value: ``true``.
+
+   New in Chef server 12.17.15.
+
 ``nginx['worker_connections']``
    The maximum number of simultaneous clients. Use with ``nginx['worker_processes']`` to determine the maximum number of allowed clients. Default value: ``10240``.
 
@@ -722,6 +732,11 @@ This configuration file has the following settings for ``oc_bifrost``:
 
 ``oc_bifrost['enable']``
    Enable a service. Default value: ``true``.
+
+``oc_bifrost['enable_request_logging']``
+   Use to configure request logging for the ``oc_bifrost`` service. Default value: ``true``.
+
+   New in Chef server 12.17.15.
 
 ``oc_bifrost['extended_perf_log']``
    Default value: ``true``.
@@ -1056,6 +1071,11 @@ This configuration file has the following settings for ``opscode-erchef``:
 
 ``opscode_erchef['enable_actionlog']``
    Use to enable Chef actions, a premium feature of the Chef server. Default value: ``false``.
+
+``opscode_erchef['enable_request_logging']``
+   Use to configure request logging for the ``opscode_erchef`` service. Default value: ``true``.
+
+   New in Chef server 12.17.15.
 
 ``opscode_erchef['ha']``
    Run the Chef server in a high availability topology. When ``topology`` is set to ``ha``, this setting defaults to ``true``. Default value: ``false``.
