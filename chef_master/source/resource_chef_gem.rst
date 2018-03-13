@@ -35,13 +35,12 @@ The full syntax for all of the properties that are available to the **chef_gem**
 .. code-block:: ruby
 
    chef_gem 'name' do
-     clear_sources              TrueClass, FalseClass
-     include_default_source     TrueClass, FalseClass
-     compile_time               TrueClass, FalseClass
+     clear_sources              True, False
+     include_default_source     True, False
+     compile_time               True, False
      notifies                   # see description
      options                    String
      package_name               String # defaults to 'name' if not specified
-     provider                   Chef::Provider::Package::Rubygems
      source                     String, Array
      subscribes                 # see description
      timeout                    String, Integer
@@ -54,7 +53,7 @@ where
 * ``chef_gem`` tells the chef-client to manage a gem
 * ``'name'`` is the name of the gem
 * ``action`` identifies which steps the chef-client will take to bring the node into the desired state
-* ``clear_sources``, ``include_default_source``, ``gem_binary``, ``options``, ``package_name``, ``provider``, ``source``, ``timeout``, and ``version`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
+* ``clear_sources``, ``include_default_source``, ``gem_binary``, ``options``, ``package_name``, ``source``, ``timeout``, and ``version`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
 
 Actions
 =====================================================
@@ -87,7 +86,7 @@ Properties
 This resource has the following properties:
 
 ``clear_sources``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Set to ``true`` to download a gem from the path specified by the ``source`` property (and not from RubyGems). Default value: ``false``.
 
@@ -103,7 +102,7 @@ This resource has the following properties:
    New in Chef Client 12.3.
 
 ``compile_time``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Controls the phase during which a gem is installed on a node. Set to ``true`` to install a gem while the resource collection is being built (the "compile phase"). Set to ``false`` to install a gem while the chef-client is configuring the node (the "converge phase"). Possible values: ``nil`` (for verbose warnings), ``true`` (to warn once per chef-client run), or ``false`` (to remove all warnings). Recommended value: ``false``.
 
@@ -134,14 +133,14 @@ This resource has the following properties:
    New in Chef Client 12.1.
 
 ``include_default_source``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Set to ``false`` to not include ``Chef::Config[:rubygems_url]`` in the sources. Default value: ``true``.
 
    New in Chef Client 13.0
 
 ``ignore_failure``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Continue running a recipe if a resource fails for any reason. Default value: ``false``.
 
@@ -188,11 +187,6 @@ This resource has the following properties:
    **Ruby Types:** String
 
    The name of the gem. Default value: the ``name`` of the resource block See "Syntax" section above for more information.
-
-``provider``
-   **Ruby Type:** Chef Class
-
-   Optional. Explicitly specifies a provider. See "Providers" section below for more information.
 
 ``retries``
    **Ruby Type:** Integer
@@ -267,52 +261,6 @@ This resource has the following properties:
    **Ruby Types:** String
 
    The version of a gem to be installed or upgraded.
-
-Providers
-=====================================================
-.. tag resources_common_provider
-
-Where a resource represents a piece of the system (and its desired state), a provider defines the steps that are needed to bring that piece of the system from its current state into the desired state.
-
-.. end_tag
-
-.. tag resources_common_provider_attributes
-
-The chef-client will determine the correct provider based on configuration data collected by Ohai at the start of the chef-client run. This configuration data is then mapped to a platform and an associated list of providers.
-
-Generally, it's best to let the chef-client choose the provider, and this is (by far) the most common approach. However, in some cases, specifying a provider may be desirable. There are two approaches:
-
-* Use a more specific short name---``yum_package "foo" do`` instead of ``package "foo" do``, ``script "foo" do`` instead of ``bash "foo" do``, and so on---when available
-* Use ``declare_resource``. This replaces all previous use cases where the provider class was passed in through the ``provider`` property:
-
-  .. code-block:: ruby
-
-     pkg_resource = case node['platform_family']
-       when 'debian'
-         :dpkg_package
-       when 'fedora', 'rhel', 'amazon'
-         :rpm_package
-       end
-
-     pkg_path = (pkg_resource == :dpkg_package) ? '/tmp/foo.deb' : '/tmp/foo.rpm'
-
-     declare_resource(pkg_resource, pkg_path) do
-       action :install
-     end
-
-.. end_tag
-
-.. tag resource_provider_list_note
-
-For reference, the providers available for this resource are listed below. However please note that specifying a provider via its long name (such as ``Chef::Provider::Package``) using the ``provider`` property is not recommended. If a provider needs to be called manually, use one of the two approaches detailed above.
-
-.. end_tag
-
-``Chef::Provider::Package``, ``package``
-   When this short name is used, the chef-client will attempt to determine the correct provider during the chef-client run.
-
-``Chef::Provider::Package::Rubygems``, ``chef_gem``
-   Can be used with the ``options`` attribute.
 
 Examples
 =====================================================

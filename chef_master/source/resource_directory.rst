@@ -33,13 +33,12 @@ The full syntax for all of the properties that are available to the **directory*
 
    directory 'name' do
      group                      String, Integer
-     inherits                   TrueClass, FalseClass
+     inherits                   True, False
      mode                       String, Integer
      notifies                   # see description
      owner                      String, Integer
      path                       String # defaults to 'name' if not specified
-     provider                   Chef::Provider::Directory
-     recursive                  TrueClass, FalseClass
+     recursive                  True, False
      rights                     Hash
      subscribes                 # see description
      action                     Symbol # defaults to :create if not specified
@@ -50,7 +49,7 @@ where
 * ``directory`` is the resource
 * ``name`` is the name of the resource block; when the ``path`` property is not specified, ``name`` is also the path to the directory, from the root
 * ``action`` identifies the steps the chef-client will take to bring the node into the desired state
-* ``group``, ``inherits``, ``mode``, ``owner``, ``path``, ``provider``, ``recursive``, and ``rights`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
+* ``group``, ``inherits``, ``mode``, ``owner``, ``path``, ``recursive``, and ``rights`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
 
 Actions
 =====================================================
@@ -79,12 +78,12 @@ This resource has the following properties:
    A string or ID that identifies the group owner by group name, including fully qualified group names such as ``domain\group`` or ``group@domain``. If this value is not specified, existing groups remain unchanged and new group assignments use the default ``POSIX`` group (if available).
 
 ``ignore_failure``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Continue running a recipe if a resource fails for any reason. Default value: ``false``.
 
 ``inherits``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Microsoft Windows only. Whether a file inherits rights from its parent directory. Default value: ``true``.
 
@@ -143,13 +142,8 @@ This resource has the following properties:
 
    The path to the directory. Using a fully qualified path is recommended, but is not always required. Default value: the ``name`` of the resource block See "Syntax" section above for more information.
 
-``provider``
-   **Ruby Type:** Chef Class
-
-   Optional. Explicitly specifies a provider.
-
 ``recursive``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Create or delete parent directories recursively. For the ``owner``, ``group``, and ``mode`` properties, the value of this attribute applies only to the leaf directory. Default value: ``false``.
 

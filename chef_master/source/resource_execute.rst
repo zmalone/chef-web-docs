@@ -57,11 +57,10 @@ The full syntax for all of the properties that are available to the **execute** 
      cwd                        String
      environment                Hash # env is an alias for environment
      group                      String, Integer
-     live_stream                TrueClass, FalseClass
+     live_stream                True, False
      notifies                   # see description
-     provider                   Chef::Provider::Execute
      returns                    Integer, Array
-     sensitive                  TrueClass, FalseClass
+     sensitive                  True, False
      subscribes                 # see description
      timeout                    Integer, Float
      umask                      String, Integer
@@ -77,7 +76,7 @@ where
 * ``name`` is the name of the resource block
 * ``command`` is the command to be run
 * ``action`` identifies the steps the chef-client will take to bring the node into the desired state
-* ``command``, ``creates``, ``cwd``, ``environment``, ``group``, ``live_stream``,  ``provider``, ``returns``, ``sensitive``, ``timeout``, ``user``, ``password``, ``domain`` and ``umask`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
+* ``command``, ``creates``, ``cwd``, ``environment``, ``group``, ``live_stream``, ``returns``, ``sensitive``, ``timeout``, ``user``, ``password``, ``domain`` and ``umask`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
 
 Actions
 =====================================================
@@ -121,12 +120,12 @@ This resource has the following properties:
    The group name or group ID that must be changed before running a command.
 
 ``ignore_failure``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Continue running a recipe if a resource fails for any reason. Default value: ``false``.
 
 ``live_stream``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Send the output of the command run by this **execute** resource block to the chef-client event stream. Default value: ``false``.
 
@@ -166,11 +165,6 @@ This resource has the following properties:
 
    .. end_tag
 
-``provider``
-   **Ruby Type:** Chef Class
-
-   Optional. Explicitly specifies a provider.
-
 ``retries``
    **Ruby Type:** Integer
 
@@ -187,7 +181,7 @@ This resource has the following properties:
    The return value for a command. This may be an array of accepted values. An exception is raised when the return value(s) do not match. Default value: ``0``.
 
 ``sensitive``
-   **Ruby Types:** TrueClass, FalseClass
+   **Ruby Types:** True, False
 
    Ensure that sensitive resource data is not logged by the chef-client. Default value: ``false``.
 
