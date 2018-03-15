@@ -38,20 +38,6 @@ The examples in this section show functionality that is common across all resour
 
 .. end_tag
 
-**Use the provider common attribute**
-
-.. tag resource_package_use_provider_attribute
-
-.. To use the ``:provider`` common attribute in a recipe:
-
-.. code-block:: ruby
-
-   package 'some_package' do
-     provider Chef::Provider::Package::Rubygems
-   end
-
-.. end_tag
-
 **Use the retries common attribute**
 
 .. tag resource_service_use_supports_attribute
@@ -61,22 +47,6 @@ The examples in this section show functionality that is common across all resour
 .. code-block:: ruby
 
    service 'apache' do
-     action [ :enable, :start ]
-     retries 3
-   end
-
-.. end_tag
-
-**Use the retries and providers common attributes**
-
-.. tag resource_service_use_provider_and_supports_attributes
-
-.. To use the ``provider`` and ``retries`` common attributes in a recipe:
-
-.. code-block:: ruby
-
-   service 'some_service' do
-     provider Chef::Provider::Service::Upstart
      action [ :enable, :start ]
      retries 3
    end
@@ -3734,7 +3704,7 @@ mdadm
 =====================================================
 .. tag resource_mdadm_summary
 
-Use the **mdadm** resource to manage RAID devices in a Linux environment using the mdadm utility. The **mdadm** resource will create and assemble an array, but it will not create the config file that is used to persist the array upon reboot. If the config file is required, it must be done by specifying a template with the correct array layout, and then by using the **mount** provider to create a file systems table (fstab) entry.
+Use the **mdadm** resource to manage RAID devices in a Linux environment using the mdadm utility. The **mdadm** resource will create and assemble an array, but it will not create the config file that is used to persist the array upon reboot. If the config file is required, it must be done by specifying a template with the correct array layout, and then by using the **mount** resource to create a file systems table (fstab) entry.
 
 .. end_tag
 
