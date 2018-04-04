@@ -1736,8 +1736,6 @@ where
 
 Actions
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
-.. tag resource_systemd_unit_actions
-
 This resource has the following actions:
 
 ``:create``
@@ -1781,8 +1779,6 @@ This resource has the following actions:
 
 ``:reload_or_try_restart``
    For units that are services, this action reloads the configuration of the service without restarting, if possible; otherwise, it will try to restart the service so the new configuration is applied.
-
-.. end_tag
 
 Properties
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -9102,15 +9098,11 @@ Example
 
 windows_service
 -----------------------------------------------------
-.. tag resource_service_windows
 
 Use the **windows_service** resource to manage a service on the Microsoft Windows platform.
 
-.. end_tag
-
 Syntax
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
-.. tag resource_service_windows_syntax
 
 A **windows_service** resource block manages the state of a service on a machine that is running Microsoft Windows. For example:
 
@@ -9129,6 +9121,7 @@ The full syntax for all of the properties that are available to the **windows_se
      init_command               String
      notifies                   # see description
      pattern                    String
+     provider                   Chef::Provider::Service::Windows
      reload_command             String
      restart_command            String
      run_as_password            String
@@ -9149,13 +9142,11 @@ where
 * ``windows_service`` is the resource
 * ``name`` is the name of the resource block
 * ``action`` identifies the steps the chef-client will take to bring the node into the desired state
-* ``init_command``, ``pattern``, ``provider``, ``reload_command``, ``restart_command``, ``run_as_password``, ``run_as_user``, ``service_name``, ``start_command``, ``startup_type``, ``status_command``, ``stop_command``, ``supports``, and ``timeout`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
+* ``init_command``, ``pattern``, ``reload_command``, ``restart_command``, ``run_as_password``, ``run_as_user``, ``service_name``, ``start_command``, ``startup_type``, ``status_command``, ``stop_command``, ``supports``, and ``timeout`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
 
-.. end_tag
 
 Actions
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
-.. tag resource_service_windows_actions
 
 This resource has the following actions:
 
@@ -9183,7 +9174,6 @@ This resource has the following actions:
 ``:stop``
    Stop a service.
 
-.. end_tag
 
 Properties
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
