@@ -1,10 +1,18 @@
 =====================================================
-Release Notes: Chef Client 12.0 - 14.0
+Release Notes: Chef Client 12.0 - 14.0.202
 =====================================================
 `[edit on GitHub] <https://github.com/chef/chef-web-docs/blob/master/chef_master/source/release_notes.rst>`__
 
 Chef Client is released on a monthly schedule with new releases the first Wednesday of every month. Below are the major changes for each release. For a detailed list of changes see the `Chef changelog <https://github.com/chef/chef/blob/master/CHANGELOG.md>`__
 
+What's New in 14.0.202
+=====================================================
+This release fixes a handful of regressions that were present in the 14.0 release:
+
+* Resources contained in cookbooks would be used instead of built-in Chef Client resources, which resulted in older resources running
+* Resources failed due to missing ``property_is_set?`` and ``resources`` methods
+* yum_package changed the order of ``disablerepo`` and ``enablerepo`` options
+* Depsolving large numbers of cookbooks with Chef zero/local took a very long time
 
 What's New in 14.0
 =====================================================
@@ -4508,18 +4516,20 @@ desired_state
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. tag dsl_custom_resource_method_property_desired_state
 
-Add ``desired_state:`` to get or set the list of desired state properties for a resource, which describe the desired state of the node, such as permissions on an existing file. This value may be ``true`` or ``false``.
+Add ``desired_state:`` to set the desired state property for a resource. This value may be ``true`` or ``false``, and all properties default to true.
 
-* When ``true``, the state of the system will determine the value.
-* When ``false``, the values defined by the recipe or custom resource will determine the value, i.e. "the desired state of this system includes setting the value defined in this custom resource or recipe"
+* When ``true``, the state of the property is determined by the state of the system
+* When ``false``, the value of the property impacts how the resource executes, but it is not determined by the state of the system.
 
-For example, the following properties define the ``owner``, ``group``, and ``mode`` properties for a file that already exists on the node, and with ``desired_state`` set to ``false``:
+For example, if you were to write a resource to create volumes on a cloud provider you would need define properties such as ``volume_name``, ``volume_size``, and ``volume_region``. The state of these properties would determine if your resource needed to converge or not. For the resource to function you would also need to define properties such as ``cloud_login`` and ``cloud_password``. These are necessary properties for interacting with the cloud provider, but their state has no impact on decision to converge the resource or not, so you would set ``desired_state`` to ``false`` for these properties.
 
 .. code-block:: ruby
 
-   property :owner, String, default: 'root', desired_state: false
-   property :group, String, default: 'root', desired_state: false
-   property :mode, String, default: '0755', desired_state: false
+   property :volume_name, String
+   property :volume_size, Integer
+   property :volume_region, String
+   property :cloud_login, String, desired_state: false
+   property :cloud_password, String, desired_state: false
 
 .. end_tag
 

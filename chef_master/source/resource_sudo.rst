@@ -39,7 +39,7 @@ This resource has the following syntax:
 where:
 
 * ``sudo`` is the resource
-* ``'name`` is the name of the ``sudoers.d`` file, or the name of the resource block
+* ``name`` is the name of the ``sudoers.d`` file, or the name of the resource block
 * ``commands``, ``command_aliases``, ``config_prefix``, ``defaults``, ``env_keep_add``, ``env_keep_subtract``, ``filename``, ``groups``, ``host``, ``noexec``, ``nopasswd``, ``notifies``, ``runas``, ``setenv``, ``subscribes``, ``template``, ``users``, ``variables``, and ``visudo_binary`` are the properties available to this resource
 
 Actions
@@ -235,6 +235,15 @@ Examples
 
    sudo 'admin' do
      user 'admin'
+   end
+   
+**Grant a user and groups sudo privileges for any command**
+
+.. code-block:: ruby
+
+   sudo 'admins' do
+     users 'bob'
+     groups 'sysadmins, superusers'
    end
 
 **Grant passwordless sudo privileges for specific commands**
