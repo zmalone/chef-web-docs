@@ -248,52 +248,6 @@ The following example shows how to use the ``not_if`` condition to create a file
 
 .. end_tag
 
-**Install a file from a remote location using bash**
-
-.. tag resource_remote_file_install_with_bash
-
-The following is an example of how to install the ``foo123`` module for Nginx. This module adds shell-style functionality to an Nginx configuration file and does the following:
-
-* Declares three variables
-* Gets the Nginx file from a remote location
-* Installs the file using Bash to the path specified by the ``src_filepath`` variable
-
-.. code-block:: ruby
-
-   # the following code sample is similar to the ``upload_progress_module``
-   # recipe in the ``nginx`` cookbook:
-   # https://github.com/chef-cookbooks/nginx
-
-   src_filename = "foo123-nginx-module-v#{
-     node['nginx']['foo123']['version']
-   }.tar.gz"
-   src_filepath = "#{Chef::Config['file_cache_path']}/#{src_filename}"
-   extract_path = "#{
-     Chef::Config['file_cache_path']
-     }/nginx_foo123_module/#{
-     node['nginx']['foo123']['checksum']
-   }"
-
-   remote_file 'src_filepath' do
-     source node['nginx']['foo123']['url']
-     checksum node['nginx']['foo123']['checksum']
-     owner 'root'
-     group 'root'
-     mode '0755'
-   end
-
-   bash 'extract_module' do
-     cwd ::File.dirname(src_filepath)
-     code <<-EOH
-       mkdir -p #{extract_path}
-       tar xzf #{src_filename} -C #{extract_path}
-       mv #{extract_path}/*/* #{extract_path}/
-       EOH
-     not_if { ::File.exist?(extract_path) }
-   end
-
-.. end_tag
-
 only_if Examples
 -----------------------------------------------------
 The following examples show how to use ``only_if`` as a condition in a recipe:
@@ -720,8 +674,6 @@ The following example shows how start a service named ``example_service`` and im
      notifies :restart, 'service[nginx]', :immediately
    end
 
-where by using the default ``provider`` for the **service**, the recipe is telling the chef-client to determine the specific provider to be used during the chef-client run based on the platform of the node on which the recipe will run.
-
 .. end_tag
 
 **Restart one service before restarting another**
@@ -908,7 +860,7 @@ Run in Compile Phase
 The chef-client processes recipes in two phases:
 
 #. First, each resource in the node object is identified and a resource collection is built. All recipes are loaded in a specific order, and then the actions specified within each of them are identified. This is also referred to as the "compile phase".
-#. Next, the chef-client configures the system based on the order of the resources in the resource collection. Each resource is mapped to a provider, which then examines the node and performs the necessary steps to complete the action. This is also referred to as the "execution phase".
+#. Next, the chef-client configures the system based on the order of the resources in the resource collection. Each resource then examines the node and performs the necessary steps to complete the action. This is also referred to as the "execution phase".
 
 Typically, actions are processed during the execution phase of the chef-client run. However, sometimes it is necessary to run an action during the compile phase. For example, a resource can be configured to install a package during the compile phase to ensure that application is available to other resources during the execution phase.
 
