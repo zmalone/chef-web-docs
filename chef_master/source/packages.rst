@@ -156,7 +156,7 @@ On Microsoft Windows systems the Chef install script is invoked using Windows Po
 
 .. end_tag
 
-Chef install Script Options
+Chef Install Script Options
 -----------------------------------------------------
 .. tag packages_install_script_options
 
