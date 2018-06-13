@@ -9,14 +9,14 @@ A Policyfile is an optional way to manage role, environment, and community cookb
 
 .. note:: Consider the following before using Policyfiles:
 
-   * Policyfile is not supported as part of a Chef Automate workflow
+   * Policyfile is not natively supported as part of a Chef Automate workflow
    * Policyfile is intended to be used with Chef server 12.3 or above, and Chef client 12.8 or above
 
 .. end_tag
 
 Why Policyfile?
 =====================================================
-For some users of Chef, Policyfile will make it easier to test and promote code safely with a simpler interface. Policyfile improves the user experience and resolves real-world problems that some workflows built around Chef must deal with. The following sections discuss in more detail some of the good reasons to use Policyfile, including:
+For many users of Chef, Policyfile will make it easier to test and promote code safely with a simpler interface. Policyfile improves the user experience and resolves real-world problems that some workflows built around Chef must deal with. The following sections discuss in more detail some of the good reasons to use Policyfile, including:
 
 * Focus the workflow on the entire system
 * Safer development workflows
@@ -273,6 +273,7 @@ For example:
    cookbook "policyfile_demo", path: "cookbooks/policyfile_demo"
    cookbook "jenkins", "~> 2.1"
    cookbook "mysql", github: "chef-cookbooks/mysql", branch: "master"
+   default["mysql"]["version"] = "8.0.1"
 
 .. end_tag
 
@@ -310,12 +311,7 @@ The ``policy_name`` and ``policy_group`` settings for a node are stored as searc
 
 Test w/Kitchen
 =====================================================
-Kitchen may be used to test Policyfile files. Add the following to .kitchen.yml:
-
-.. code-block:: yaml
-
-   provisioner:
-     name: policyfile_zero
+Kitchen may be used to test Policyfile files.
 
 A named run-list may be used on a per-suite basis:
 
@@ -334,7 +330,6 @@ or globally:
 .. code-block:: yaml
 
    provisioner:
-     name: policyfile_zero
      named_run_list: integration_test_run_list
 
 or testing with policies per-suite, once the Policyfile files are available in your repo:
@@ -351,7 +346,7 @@ or testing with policies per-suite, once the Policyfile files are available in y
             policyfile: policies/defaulttwo.rb
          attributes
 	 
-.. note:: As ``policyfile_zero`` explicitly tests outside the context of a Chef server, the ``policy_groups`` concept is not applicable.
+.. note:: As Kitchen explicitly tests outside the context of a Chef server, the ``policy_groups`` concept is not applicable.
 
 chef Commands
 =====================================================
