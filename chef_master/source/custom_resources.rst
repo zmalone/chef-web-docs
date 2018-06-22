@@ -69,7 +69,7 @@ This example ``site`` utilizes Chef's built in ``file``, ``service`` and ``packa
      end
 
      file '/var/www/html/index.html' do
-       content homepage
+       content new_resource.homepage
      end
    end
 
@@ -147,7 +147,7 @@ For example, the ``httpd.rb`` file in the ``website`` cookbook could be assigned
      end
 
      file '/var/www/html/index.html' do
-       content homepage
+       content new_resource.homepage
      end
    end
 
@@ -653,18 +653,15 @@ Use the ``load_current_value`` method to guard against property values being rep
 
 .. code-block:: ruby
 
-   action :some_action do
-
-     load_current_value do
-       if ::File.exist?('/var/www/html/index.html')
-         homepage IO.read('/var/www/html/index.html')
-       end
-       if ::File.exist?('/var/www/html/404.html')
-         page_not_found IO.read('/var/www/html/404.html')
-       end
-     end
-
-   end
+    load_current_value do
+      if ::File.exist?('/var/www/html/index.html')
+        homepage IO.read('/var/www/html/index.html')
+      end
+      
+      if ::File.exist?('/var/www/html/404.html')
+        page_not_found IO.read('/var/www/html/404.html')
+      end
+    end
 
 This ensures the values for ``homepage`` and ``page_not_found`` are not changed to the default values when the chef-client configures the node.
 
