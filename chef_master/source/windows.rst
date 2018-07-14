@@ -1704,7 +1704,7 @@ This argument has the following options:
 
    .. end_tag
 
-   Deprecated in Chef Client 12.0.
+   Deprecated in Chef Client 12.0. Removed in Chef Client 14.0
 
 ``-G GATEWAY``, ``--ssh-gateway GATEWAY``
    The SSH tunnel or gateway that is used to run a bootstrap action on a machine that is not accessible from the workstation.
@@ -1742,7 +1742,7 @@ This argument has the following options:
 ``--template-file TEMPLATE``
    The path to a template file to be used during a bootstrap operation.
 
-   Deprecated in Chef Client 12.0.
+   Deprecated in Chef Client 12.0. Removed in Chef Client 14.0
 
 ``-x USER_NAME``, ``--ssh-user USER_NAME``
    The SSH user name.
@@ -3655,7 +3655,7 @@ This resource has the following properties:
 ``flags``
    **Ruby Type:** String
 
-   A string that is passed to the Windows PowerShell command. Default value: ``-NoLogo, -NonInteractive, -NoProfile, -ExecutionPolicy RemoteSigned, -InputFormat None, -File``.
+   A string that is passed to the Windows PowerShell command. Default value (Windows PowerShell 3.0+): ``-NoLogo, -NonInteractive, -NoProfile, -ExecutionPolicy Bypass, -InputFormat None``.
 
 ``group``
    **Ruby Types:** String, Integer
