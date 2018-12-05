@@ -38,7 +38,7 @@ The full syntax for all of the properties that are available to the **windows_se
     run_as_password       String
     run_as_user           String # default value: "LocalSystem"
     service_name          String # default value: 'name' unless specified
-    service_type          Integer # default value: "SERVICE_WIN32_OWN_PROCESS"
+    service_type          Integer # default value: 16
     start_command         String, false
     startup_type          Symbol # default value: :automatic
     status_command        String, false
@@ -195,7 +195,11 @@ The windows_service resource has the following properties:
 ``service_name``
    **Ruby Type:** String | **Default Value:** ``The resource block's name``
 
-   The name of the service. Default value: the ``name`` of the resource block. See the "Syntax" section above for more information.
+   An optional property to set the service name if it differs from the resource block's name.
+
+
+``service_type``
+   **Ruby Type:** Integer | **Default Value:** ``16``
 
 ``start_command``
    **Ruby Type:** String

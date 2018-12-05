@@ -59,13 +59,6 @@ The apt_package resource has the following actions:
 ``:lock``
    Locks the apt package to a specific version.
 
-``:nothing``
-   .. tag resources_common_actions_nothing
-
-   This resource block does not act unless notified by another resource to take action. Once notified, this resource block either runs immediately or is queued up to run at the end of the Chef Client run.
-
-   .. end_tag
-
 ``:purge``
    Purge a package. This action typically removes the configuration files as well as the package.
 
@@ -80,6 +73,13 @@ The apt_package resource has the following actions:
 
 ``:upgrade``
    Install a package and/or ensure that a package is the latest version.
+
+``:nothing``
+   .. tag resources_common_actions_nothing
+
+   This resource block does not act unless notified by another resource to take action. Once notified, this resource block either runs immediately or is queued up to run at the end of the Chef Client run.
+
+   .. end_tag
 
 Properties
 =====================================================

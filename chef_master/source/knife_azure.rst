@@ -24,7 +24,7 @@ Install the latest version of Chef Workstation from `Chef Downloads <https://dow
 
 For Windows versions older than 2012r2, download `ChefDK <https://downloads.chef.io/chefdk/>`__.
 
-Install Knife Azure 
+Install Knife Azure
 ------------------------------------------------------
 
 If Chef Client was installed using RubyGems, install the ``knife azure`` with the following command:
@@ -172,7 +172,7 @@ This argument has the following options:
 ``--verify-ssl-cert``
    The SSL certificate used to verify communication over HTTPS.
 
-internal lb create 
+internal lb create
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 Use the ``internal lb create`` argument to create a new internal load balancer within a cloud service.
 
@@ -209,13 +209,13 @@ This argument has the following options:
 ``--chef-zero-port PORT``
    Port (or port range) to start chef-zero on.  Port ranges lik1000,1010 or 8889-9999 will try all given ports until one works.
 
-``--config-option OPTION=VALUE`` 
+``--config-option OPTION=VALUE``
    Override a single configuration option.
 
 ``--[no-]color``
    Use colored output, defaults to enabled.
 
-``-d``, ``--disable-editing`` 
+``-d``, ``--disable-editing``
    Do not open EDITOR, just accept the data as is.
 
 ``--defaults``
@@ -227,10 +227,10 @@ This argument has the following options:
 ``-E``, ``--environment ENVIRONMENT``
    Set the Chef environment (except for in searches where this will be flagrantly ignored)
 
-``-F``, ``--format FORMAT`` 
+``-F``, ``--format FORMAT``
    Which format to use for output.
 
-``--[no-]fips`` 
+``--[no-]fips``
    Enable fips mode.
 
 ``--[no-]listen``
@@ -266,7 +266,7 @@ This argument has the following options:
 ``-u``, ``--user USER API``
    Client Username.
 
-``-v``, ``--version`` 
+``-v``, ``--version``
    Show Chef version.
 
 ``-V``, ``--verbose``
@@ -281,7 +281,7 @@ This argument has the following options:
 ``-z``, ``--local-mode``
    Point knife commands at local repository instead of server.
 
-internal lb list 
+internal lb list
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 Use the ``internal lb create`` argument to a list of defined load balancers for all cloud services. Does not show public facing load balancers.
 
@@ -309,13 +309,13 @@ This argument has the following options:
 ``--chef-zero-port PORT``
    Port (or port range) to start chef-zero on.  Port ranges lik1000,1010 or 8889-9999 will try all given ports until one works.
 
-``--config-option OPTION=VALUE`` 
+``--config-option OPTION=VALUE``
    Override a single configuration option.
 
 ``--[no-]color``
    Use colored output, defaults to enabled.
 
-``-d``, ``--disable-editing`` 
+``-d``, ``--disable-editing``
    Do not open EDITOR, just accept the data as is.
 
 ``--defaults``
@@ -327,10 +327,10 @@ This argument has the following options:
 ``-E``, ``--environment ENVIRONMENT``
    Set the Chef environment (except for in searches where this will be flagrantly ignored)
 
-``-F``, ``--format FORMAT`` 
+``-F``, ``--format FORMAT``
    Which format to use for output.
 
-``--[no-]fips`` 
+``--[no-]fips``
    Enable fips mode.
 
 ``--[no-]listen``
@@ -363,7 +363,7 @@ This argument has the following options:
 ``-u``, ``--user USER API``
    Client Username.
 
-``-v``, ``--version`` 
+``-v``, ``--version``
    Show Chef version.
 
 ``-V``, ``--verbose``
@@ -537,7 +537,7 @@ This argument has the following options:
 ``--template-file TEMPLATE``
    The path to a template file to be used during a bootstrap operation.
 
-   Deprecated in Chef Client 12.0.
+   Deprecated in Chef Client 12.0. Use --bootstrap-template instead.
 
 ``--thumbprint THUMBPRINT``
    The thumbprint of the SSL certificate.
@@ -780,4 +780,3 @@ This argument has the following options:
 
 ``--verify-ssl-cert``
    The SSL certificate used to verify communication over HTTPS.
-

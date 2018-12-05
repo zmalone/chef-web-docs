@@ -28,6 +28,9 @@ where:
 
 Actions
 =====================================================
+
+The windows_font resource has the following actions:
+
 ``:install``
    Default. Install the font to the system fonts directory.
 

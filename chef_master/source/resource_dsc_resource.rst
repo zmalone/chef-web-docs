@@ -76,12 +76,14 @@ The full syntax for all of the properties that are available to the **dsc_resour
      reboot_action              Symbol # default value: :nothing
      resource                   String
      timeout                    Integer
+     action                     Symbol # defaults to :run if not specified
    end
 
 where:
 
 * ``dsc_resource`` is the resource.
 * ``name`` is the name given to the resource block.
+* ``action`` identifies which steps the chef-client will take to bring the node into the desired state.
 * ``property`` is zero (or more) properties in the DSC resource, where each property is entered on a separate line, ``:dsc_property_name`` is the case-insensitive name of that property, and ``"property_value"`` is a Ruby value to be applied by the chef-client
 * ``module_name``, ``module_version``, ``property``, ``reboot_action``, ``resource``, and ``timeout`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
 
@@ -92,6 +94,9 @@ Actions
 
 The dsc_resource resource has the following actions:
 
+``:run``
+    Run the DSC code.
+
 ``:nothing``
    Default.
 
@@ -100,9 +105,6 @@ The dsc_resource resource has the following actions:
    This resource block does not act unless notified by another resource to take action. Once notified, this resource block either runs immediately or is queued up to run at the end of the Chef Client run.
 
    .. end_tag
-
-``:reboot_action``
-   Use to request an immediate reboot or to queue a reboot using the ``:reboot_now`` (immediate reboot) or ``:request_reboot`` (queued reboot) actions built into the **reboot** resource.
 
 Properties
 =====================================================
