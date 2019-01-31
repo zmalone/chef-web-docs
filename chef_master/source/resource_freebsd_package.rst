@@ -81,7 +81,7 @@ The freebsd_package resource has the following properties:
 ``source``
    **Ruby Type:** String
 
-   Optional. The path to a package in the local file system.
+   The optional path to a package on the local file system.
 
 
 ``timeout``

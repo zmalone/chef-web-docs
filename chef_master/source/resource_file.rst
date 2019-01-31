@@ -35,7 +35,7 @@ The full syntax for all of the properties that are available to the **file** res
 
    file 'name' do
      atomic_update              true, false
-     backup                     false, Integer
+     backup                     Integer, false # default value: 5
      checksum                   String
      content                    String
      force_unlink               true, false
@@ -44,7 +44,7 @@ The full syntax for all of the properties that are available to the **file** res
      manage_symlink_source      true, false
      mode                       String, Integer
      owner                      String, Integer
-     path                       String # defaults to 'name' if not specified
+     path                       String # default value: 'name' unless specified
      rights                     Hash
      verify                     String, Block
      action                     Symbol # defaults to :create if not specified

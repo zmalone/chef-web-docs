@@ -50,7 +50,7 @@ The full syntax for all of the properties that are available to the **execute** 
 .. code-block:: ruby
 
   execute 'name' do
-    command
+    command          String, Array # default value: 'name' unless specified
     creates          String
     cwd              String
     default_env      true, false # default value: false
@@ -92,7 +92,7 @@ Properties
 The execute resource has the following properties:
 
 ``command``
-   **Ruby Type:** String, Array
+   **Ruby Type:** String, Array | **Default Value:** ``'name'``
 
    The name of the command to be executed. Default value: the ``name`` of the resource block. See "Syntax" section above for more information.
 
@@ -172,7 +172,7 @@ The execute resource has the following properties:
 ``user``
    **Ruby Type:** String, Integer
 
-   The user name of the user identity with which to launch the new process. The user name may optionally be specifed with a domain, i.e. domainuser or user@my.dns.domain.com via Universal Principal Name (UPN)format. It can also be specified without a domain simply as user if the domain is instead specified using the domain attribute. On Windows only, if this property is specified, the password property must be specified.
+   The user name of the user identity with which to launch the new process. The user name may optionally be specifed with a domain, i.e. domainuser or user@my.dns.domain.com via Universal Principal Name (UPN)format. It can also be specified without a domain simply as user if the domain is instead specified using the domain property. On Windows only, if this property is specified, the password property must be specified.
 
 Common Resource Functionality
 =====================================================
